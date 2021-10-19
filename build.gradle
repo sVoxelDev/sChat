@@ -1,0 +1,94 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+plugins {
+    id 'com.github.johnrengelman.shadow' version '7.1.0'
+    id 'kr.entree.spigradle' version '2.2.4'
+    id 'io.freefair.lombok' version '6.2.0'
+    id 'java'
+    id 'jacoco'
+    id 'idea'
+}
+
+apply from: "$rootDir/gradle/jacoco.gradle"
+apply from: "$rootDir/gradle/publish.gradle"
+
+if (project.hasProperty("local_script")) {
+    apply from: file(local_script + "/build.local.gradle")
+}
+
+sourceCompatibility = 16
+targetCompatibility = 16
+
+ext {
+    mcVersion = project.property("mcVersion")
+}
+
+group project.property("group")
+
+spigot {
+    name = project.property("pluginName")
+    authors = [project.property("author")]
+    apiVersion = project.property("apiVersion")
+    load = STARTUP
+    //    depends = ['']
+    //    softDepends = [''
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs += ["-parameters"]
+    options.fork = true
+    options.forkOptions.executable = 'javac'
+}
+
+archivesBaseName = project.property("pluginName")
+
+repositories {
+    mavenCentral()
+    spigot()
+    maven { url = 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation spigot(mcVersion)
+
+    //Add dependencies here
+
+    //Test dependencies
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    testImplementation 'org.mockito:mockito-core:4.0.0'
+    testImplementation 'com.github.seeseemelk:MockBukkit-v1.16:1.5.2'
+    testImplementation 'org.assertj:assertj-core:3.21.0'
+}
+
+shadowJar {
+    classifier = ''
+//    dependencies {
+//        include(dependency('co.aikar:acf-paper:0.5.0-SNAPSHOT'))
+//    }
+//    relocate 'co.aikar.commands', "${packageName}.acf"
+//    relocate 'co.aikar.locales', "${packageName}.locales"
+}
+
+tasks.build.dependsOn(shadowJar)
+tasks.publish.dependsOn(shadowJar)
+tasks.prepareSpigotPlugins.dependsOn(shadowJar)
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+    ignoreFailures = false
+}
+
+processResources {
+    project.properties.put("version", this.version)
+    expand project.properties
+}
+
+defaultTasks 'build'
