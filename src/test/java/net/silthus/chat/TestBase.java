@@ -1,4 +1,4 @@
-package net.silthus.template;
+package net.silthus.chat;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
@@ -7,22 +7,15 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class TemplatePluginTests {
+public abstract class TestBase {
 
-    private ServerMock server;
+    protected ServerMock server;
+    protected SChat plugin;
 
     @BeforeEach
     public void setUp() {
         server = MockBukkit.mock();
-        MockBukkit.load(TemplatePlugin.class);
-    }
-
-    @Test
-    public void shouldFirePlayerJoinEvent() {
-
-        server.addPlayer();
-
-        server.getPluginManager().assertEventFired(PlayerJoinEvent.class);
+        plugin = MockBukkit.load(SChat.class);
     }
 
     @AfterEach

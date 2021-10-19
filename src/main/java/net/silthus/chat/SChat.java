@@ -1,4 +1,4 @@
-package net.silthus.template;
+package net.silthus.chat;
 
 import kr.entree.spigradle.annotations.PluginMain;
 import lombok.Getter;
@@ -13,17 +13,17 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import java.io.File;
 
 @PluginMain
-public class TemplatePlugin extends JavaPlugin implements Listener {
+public class SChat extends JavaPlugin {
 
     @Getter
     @Accessors(fluent = true)
-    private static TemplatePlugin instance;
+    private static SChat instance;
 
-    public TemplatePlugin() {
+    public SChat() {
         instance = this;
     }
 
-    public TemplatePlugin(
+    public SChat(
             JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
         instance = this;
@@ -33,12 +33,5 @@ public class TemplatePlugin extends JavaPlugin implements Listener {
     public void onEnable() {
 
         saveDefaultConfig();
-
-        getServer().getPluginManager().registerEvents(this, this);
-    }
-
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        getLogger().info("Player joined.");
     }
 }

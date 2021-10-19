@@ -57,6 +57,7 @@ dependencies {
     implementation spigot(mcVersion)
 
     //Add dependencies here
+    implementation 'net.md-5:bungeecord-chat:1.16-R0.4'
 
     //Test dependencies
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
