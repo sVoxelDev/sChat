@@ -50,7 +50,12 @@ archivesBaseName = project.property("pluginName")
 repositories {
     mavenCentral()
     spigot()
+    maven { url = "https://repo.aikar.co/content/groups/aikar/" }
     maven { url = 'https://jitpack.io' }
+    maven {
+        name = "sonatype-oss-snapshots"
+        url = "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
 }
 
 dependencies {
@@ -58,6 +63,12 @@ dependencies {
 
     //Add dependencies here
     implementation 'net.md-5:bungeecord-chat:1.16-R0.4'
+    implementation "co.aikar:acf-paper:0.5.0-SNAPSHOT"
+    implementation "com.github.MilkBowl:VaultAPI:1.7"
+
+    implementation 'net.kyori:adventure-api:4.9.2'
+    implementation 'net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT'
+    implementation 'net.kyori:adventure-platform-bukkit:4.0.0'
 
     //Test dependencies
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
@@ -68,11 +79,13 @@ dependencies {
 
 shadowJar {
     classifier = ''
-//    dependencies {
-//        include(dependency('co.aikar:acf-paper:0.5.0-SNAPSHOT'))
-//    }
-//    relocate 'co.aikar.commands', "${packageName}.acf"
-//    relocate 'co.aikar.locales', "${packageName}.locales"
+    dependencies {
+        include(dependency('co.aikar::'))
+        include(dependency('net.kyori::'))
+    }
+    relocate 'co.aikar.commands', "${packageName}.acf"
+    relocate 'co.aikar.locales', "${packageName}.locales"
+    relocate 'net.kyori', "${pluginName}.text"
 }
 
 tasks.build.dependsOn(shadowJar)
