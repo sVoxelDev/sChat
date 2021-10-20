@@ -24,7 +24,14 @@ public class ChannelTests {
     @Test
     void create() {
 
-        assertThat(channel.getAlias()).isEqualTo("test");
+        assertThat(channel)
+                .extracting(
+                        Channel::getAlias,
+                        Channel::getPermission
+                ).contains(
+                        "test",
+                        Constants.CHANNEL_PERMISSION + ".test"
+                );
         assertThat(channel.config())
                 .extracting(
                         Channel.Config::name,
@@ -48,13 +55,20 @@ public class ChannelTests {
 
             channel.config()
                     .prefix(ChatColor.GOLD + "[Server]" + ChatColor.BLUE)
-                    .suffix(ChatColor.RED + ": " + ChatColor.GRAY);
+                    .suffix(ChatColor.RED + ": ");
 
-            String message = channel.format(server.addPlayer(), "Hello chatters!");
+            String message = channel.format(new ChatMessage(server.addPlayer(), "Hello chatters!"));
 
-            assertThat(message).isEqualTo(ChatColor.GOLD + "[Server]" + ChatColor.BLUE + "Player0" + ChatColor.RED + ": " + ChatColor.GRAY + "Hello chatters!");
+            assertThat(message).isEqualTo(ChatColor.GOLD + "[Server]" + ChatColor.BLUE + "Player0" + ChatColor.RED + ": " + ChatColor.WHITE + "Hello chatters!");
         }
 
+        @Test
+        void format_withNullPrefixOrSuffix() {
+
+            String message = channel.format(new ChatMessage(server.addPlayer(), "test"));
+
+            assertThat(message).isEqualTo("Player0: §ftest");
+        }
     }
 
     @Nested

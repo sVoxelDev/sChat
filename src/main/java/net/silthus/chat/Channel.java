@@ -6,10 +6,9 @@ import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.Player;
 
-@Getter
 @Log
+@Getter
 public class Channel {
 
     private final String alias;
@@ -26,8 +25,12 @@ public class Channel {
         this.config = new Config(config);
     }
 
-    public String format(Player player, String message) {
-        return config().prefix() + player.getDisplayName() + config().suffix() + message;
+    public String getPermission() {
+        return Constants.CHANNEL_PERMISSION + "." + getAlias();
+    }
+
+    public String format(ChatMessage message) {
+        return config().prefix() + message.player().getDisplayName() + config().suffix() + config().color() + message.message();
     }
 
     @Data
