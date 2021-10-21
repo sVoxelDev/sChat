@@ -1,26 +1,32 @@
 package net.silthus.chat;
 
+import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.md_5.bungee.api.ChatColor;
+import net.silthus.chat.config.ChannelConfig;
 import org.bukkit.configuration.MemoryConfiguration;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
-import java.awt.*;
+import static org.assertj.core.api.Assertions.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-
-public class ChannelTests {
+public class ChannelTests extends TestBase {
 
     private Channel channel;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
+        super.setUp();
+
         channel = new Channel("test");
     }
 
     @Test
     void create() {
 
+        assertThat(channel)
+                .isInstanceOf(ChatTarget.class);
         assertThat(channel)
                 .extracting(
                         Channel::getAlias,
@@ -29,44 +35,188 @@ public class ChannelTests {
                         "test",
                         Constants.CHANNEL_PERMISSION + ".test"
                 );
-        assertThat(channel.config())
+        assertThat(channel.getName())
+                .isEqualTo("test");
+        assertThat(channel.getConfig())
+                .extracting(ChannelConfig::getName)
+                .isEqualTo(null);
+        assertThat(channel.getConfig().getFormat())
                 .extracting(
-                        Channel.Config::name,
-                        Channel.Config::prefix,
-                        Channel.Config::suffix,
-                        Channel.Config::color
+                        Format::getPrefix,
+                        Format::getSuffix,
+                        Format::getChatColor
                 ).contains(
-                        "test",
                         null,
                         ": ",
-                        ChatColor.WHITE
+                        null
                 );
     }
 
-    @Nested
-    @DisplayName("with formatting")
-    class Formatting extends TestBase {
+    @Test
+    void equalsBasedOnAlias() {
+        Channel channel1 = new Channel("test");
+        Channel channel2 = new Channel("test");
 
-        @Test
-        void format() {
+        assertThat(channel1).isEqualTo(channel2);
+    }
 
-            channel.config()
-                    .prefix(ChatColor.GOLD + "[Server]" + ChatColor.BLUE)
-                    .suffix(ChatColor.RED + ": ");
+    @Test
+    void hasEmptyTargetList_byDefault() {
+        assertThat(channel.getTargets())
+                .isEmpty();
+    }
 
-            String message = channel.format(new ChatMessage(server.addPlayer(), "Hello chatters!"));
+    @Test
+    void getTargets_isImmutable() {
+        assertThatExceptionOfType(UnsupportedOperationException.class)
+                .isThrownBy(() -> channel.getTargets().add(Chatter.of(server.addPlayer())));
+    }
 
-            assertThat(message).isEqualTo(ChatColor.GOLD + "[Server]" + ChatColor.BLUE + "Player0" + ChatColor.RED + ": " + ChatColor.WHITE + "Hello chatters!");
-        }
+    @Test
+    void join_addsPlayerToChannelTargets() {
+        Chatter player = Chatter.of(server.addPlayer());
+        channel.join(player);
 
-        @Test
-        @Disabled
-        void format_withNullPrefixOrSuffix() {
+        assertThat(channel.getTargets())
+                .contains(player);
+    }
 
-            String message = channel.format(new ChatMessage(server.addPlayer(), "test"));
+    @Test
+    void join_canOnlyJoinChannelOnce() {
+        Chatter player = Chatter.of(server.addPlayer());
+        channel.join(player);
+        channel.join(player);
 
-            assertThat(message).isEqualTo("Player0: §ftest");
-        }
+        assertThat(channel.getTargets())
+                .hasSize(1);
+    }
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void join_throwsNullPointer_ifPlayerIsNull() {
+
+        assertThatExceptionOfType(NullPointerException.class)
+                .isThrownBy(() -> channel.join(null));
+    }
+
+    @Test
+    void leave_removesChatTarget_fromChannelTargets() {
+        Chatter player = Chatter.of(server.addPlayer());
+        channel.join(player);
+        assertThat(channel.getTargets()).contains(player);
+
+        channel.leave(player);
+
+        assertThat(channel.getTargets()).isEmpty();
+    }
+
+    @Test
+    void leave_doesNothingIfPlayerIsNotJoined() {
+
+        Chatter player = Chatter.of(server.addPlayer());
+        channel.join(player);
+        assertThatCode(() -> channel.leave(Chatter.of(server.addPlayer())))
+                .doesNotThrowAnyException();
+        assertThat(channel.getTargets()).contains(player);
+    }
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void leave_throwsNullPointer_ifPlayerIsNull() {
+
+        assertThatExceptionOfType(NullPointerException.class)
+                .isThrownBy(() -> channel.leave(null));
+    }
+
+    @Test
+    void sendMessage_sendsMessageToNobody() {
+
+        PlayerMock player = server.addPlayer();
+        channel.sendMessage(new Message(ChatSource.of(player), "test"));
+
+        assertThat(channel.getTargets()).isEmpty();
+        assertThat(player.nextMessage()).isNull();
+    }
+
+    @Test
+    void sendMessage_sendsMessageToAllJoinedTargets() {
+
+        PlayerMock player0 = server.addPlayer();
+        Chatter chatter0 = Chatter.of(player0);
+        channel.join(chatter0);
+        PlayerMock player1 = server.addPlayer();
+        Chatter chatter1 = Chatter.of(player1);
+        channel.join(chatter1);
+        PlayerMock player2 = server.addPlayer();
+
+        channel.sendMessage(Message.of(chatter0, "test"));
+
+        assertThat(player0.nextMessage()).isEqualTo("Player0: test");
+        assertThat(player1.nextMessage()).isEqualTo("Player0: test");
+        assertThat(player2.nextMessage()).isNull();
+    }
+
+    @Test
+    void sendFormattedMessage_doesNotFormatAgain() {
+        Message message = Message.of(ChatSource.of(server.addPlayer()), "test").format(Format.defaultFormat());
+
+        PlayerMock player = server.addPlayer();
+        Chatter chatter = Chatter.of(player);
+        channel.join(chatter);
+        channel.sendMessage(message);
+
+        assertThat(player.nextMessage()).isEqualTo("Player0: test");
+    }
+
+    @Test
+    void sendMessage_storesLastMessage() {
+        Message message = Message.of(ChatSource.of(server.addPlayer()), "test").format(Format.defaultFormat());
+
+        PlayerMock player = server.addPlayer();
+        Chatter chatter = Chatter.of(player);
+        channel.join(chatter);
+        channel.sendMessage(message);
+
+        assertThat(channel.getLastReceivedMessage())
+                .isNotNull()
+                .extracting(Message::message)
+                .isEqualTo("Player0: test");
+    }
+
+    @Test
+    void getLastReceivedMessage_returnsNullByDefault() {
+
+        assertThat(channel.getLastReceivedMessage())
+                .isNull();
+    }
+
+    @Test
+    void getReceivedMessages_isEmpty() {
+
+        assertThat(channel.getReceivedMessages())
+                .isEmpty();
+    }
+
+    @Test
+    void sendMultipleMessage_returnedbyLastMessages() {
+
+        Message message = Message.of(ChatSource.of(server.addPlayer()), "test").format(Format.defaultFormat());
+
+        PlayerMock player = server.addPlayer();
+        Chatter chatter = Chatter.of(player);
+        channel.join(chatter);
+        channel.sendMessage(message);
+        channel.sendMessage(Message.of(ChatSource.of(server.addPlayer()), "foobar").format(Format.defaultFormat()));
+        channel.sendMessage("Heyho");
+
+        assertThat(channel.getReceivedMessages())
+                .hasSize(3)
+                .extracting(Message::message)
+                .containsExactly(
+                        "Player0: test",
+                        "Player2: foobar",
+                        "Heyho"
+                );
     }
 
     @Nested
@@ -80,70 +230,22 @@ public class ChannelTests {
             cfg.set("name", "Test");
             cfg.set("prefix", "[Test] ");
             cfg.set("suffix", " - ");
-            cfg.set("color", "GRAY");
+            cfg.set("chat_color", "GRAY");
 
-            Channel channel = new Channel("test", cfg);
+            Channel channel = new Channel("test", new ChannelConfig(cfg));
 
-            assertThat(channel.config())
+            assertThat(channel.getName())
+                    .isEqualTo("Test");
+            assertThat(channel.getConfig().getFormat())
                     .extracting(
-                            Channel.Config::name,
-                            Channel.Config::prefix,
-                            Channel.Config::suffix,
-                            Channel.Config::color
+                            Format::getPrefix,
+                            Format::getSuffix,
+                            Format::getChatColor
                     ).contains(
-                            "Test",
                             "[Test] ",
                             " - ",
                             ChatColor.GRAY
                     );
-        }
-
-        @Test
-        void color_withHexFormat() {
-
-            setAndAssertColor("#000000", ChatColor.of(Color.BLACK));
-        }
-
-        @Test
-        void color_withMcName() {
-
-            setAndAssertColor("DARK_PURPLE", ChatColor.DARK_PURPLE);
-        }
-
-        @Test
-        void color_withMcLegacyFormat() {
-
-            setAndAssertColor("&7", ChatColor.GRAY);
-        }
-
-        @Test
-        void color_catchesInvalidColors() {
-
-            channel.config().color(ChatColor.BLUE);
-
-            assertThatCode(() -> channel.config().color("FOO"))
-                    .doesNotThrowAnyException();
-
-            assertThat(channel.config().color()).isEqualTo(ChatColor.BLUE);
-        }
-
-        @Test
-        void color_catchesInvalidLegacyColorCodes() {
-
-            channel.config().color(ChatColor.BLUE);
-
-            assertThatCode(() -> channel.config().color("&z"))
-                    .doesNotThrowAnyException();
-
-            assertThat(channel.config().color()).isEqualTo(ChatColor.BLUE);
-        }
-
-        private void setAndAssertColor(String colorCode, ChatColor expectedColor) {
-
-            Channel.Config config = channel.config()
-                    .color(colorCode);
-
-            assertThat(config.color()).isEqualTo(expectedColor);
         }
 
     }
