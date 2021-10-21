@@ -64,7 +64,7 @@ dependencies {
     //Add dependencies here
     implementation 'net.md-5:bungeecord-chat:1.16-R0.4'
     implementation "co.aikar:acf-paper:0.5.0-SNAPSHOT"
-    implementation "com.github.MilkBowl:VaultAPI:1.7"
+    implementation "com.github.MilkBowl:VaultAPI:1.7.1"
 
     implementation 'net.kyori:adventure-api:4.9.2'
     implementation 'net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT'
