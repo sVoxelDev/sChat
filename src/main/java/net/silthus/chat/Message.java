@@ -1,6 +1,7 @@
 package net.silthus.chat;
 
 import lombok.Value;
+import lombok.With;
 import lombok.experimental.Accessors;
 
 @Value
@@ -17,19 +18,20 @@ public class Message {
 
     ChatSource source;
     String message;
-    boolean formatted;
+    @With
+    Format format;
 
     public Message(ChatSource source, String message) {
-        this(source, message, false);
+        this(source, message, Format.defaultFormat());
     }
 
-    private Message(ChatSource source, String message, boolean formatted) {
+    private Message(ChatSource source, String message, Format format) {
         this.source = source;
         this.message = message;
-        this.formatted = formatted;
+        this.format = format;
     }
 
-    public Message format(Format format) {
-        return new Message(source(), format.applyTo(this), true);
+    public String formattedMessage() {
+        return format().applyTo(this);
     }
 }

@@ -1,5 +1,6 @@
 package net.silthus.chat;
 
+import co.aikar.commands.BukkitCommandManager;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,5 +17,14 @@ class SChatTest extends TestBase {
     void createThrows() {
         assertThatExceptionOfType(IllegalStateException.class)
                 .isThrownBy(SChat::new);
+    }
+
+    @Test
+    void onEnable_registersCommands() {
+
+        assertThat(plugin.getCommandManager())
+                .isNotNull()
+                .extracting(BukkitCommandManager::hasRegisteredCommands)
+                .isEqualTo(true);
     }
 }

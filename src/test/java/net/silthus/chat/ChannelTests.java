@@ -158,7 +158,7 @@ public class ChannelTests extends TestBase {
 
     @Test
     void sendFormattedMessage_doesNotFormatAgain() {
-        Message message = Message.of(ChatSource.of(server.addPlayer()), "test").format(Format.defaultFormat());
+        Message message = Message.of(ChatSource.of(server.addPlayer()), "test");
 
         PlayerMock player = server.addPlayer();
         Chatter chatter = Chatter.of(player);
@@ -170,7 +170,7 @@ public class ChannelTests extends TestBase {
 
     @Test
     void sendMessage_storesLastMessage() {
-        Message message = Message.of(ChatSource.of(server.addPlayer()), "test").format(Format.defaultFormat());
+        Message message = Message.of(ChatSource.of(server.addPlayer()), "test");
 
         PlayerMock player = server.addPlayer();
         Chatter chatter = Chatter.of(player);
@@ -179,8 +179,13 @@ public class ChannelTests extends TestBase {
 
         assertThat(channel.getLastReceivedMessage())
                 .isNotNull()
-                .extracting(Message::message)
-                .isEqualTo("Player0: test");
+                .extracting(
+                        Message::message,
+                        m -> m.source().getDisplayName()
+                ).contains(
+                        "test",
+                        "Player0"
+                );
     }
 
     @Test
@@ -200,21 +205,21 @@ public class ChannelTests extends TestBase {
     @Test
     void sendMultipleMessage_returnedbyLastMessages() {
 
-        Message message = Message.of(ChatSource.of(server.addPlayer()), "test").format(Format.defaultFormat());
+        Message message = Message.of(ChatSource.of(server.addPlayer()), "test");
 
         PlayerMock player = server.addPlayer();
         Chatter chatter = Chatter.of(player);
         channel.join(chatter);
         channel.sendMessage(message);
-        channel.sendMessage(Message.of(ChatSource.of(server.addPlayer()), "foobar").format(Format.defaultFormat()));
+        channel.sendMessage(Message.of(ChatSource.of(server.addPlayer()), "foobar"));
         channel.sendMessage("Heyho");
 
         assertThat(channel.getReceivedMessages())
                 .hasSize(3)
                 .extracting(Message::message)
                 .containsExactly(
-                        "Player0: test",
-                        "Player2: foobar",
+                        "test",
+                        "foobar",
                         "Heyho"
                 );
     }

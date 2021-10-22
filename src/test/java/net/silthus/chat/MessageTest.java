@@ -20,18 +20,23 @@ class MessageTest extends TestBase {
     }
 
     @Test
-    void format_updatesMessage() {
+    void withFormat_setsMessageFormat() {
 
-        Message message = Message.of(ChatSource.of(server.addPlayer()), "test")
-                .format(Format.builder().build());
+        Message message = Message.of(ChatSource.of(server.addPlayer()), "test");
+        assertThat(message.format()).isNotNull();
+
+        Format format = Format.builder().prefix("!").build();
+        message = message.withFormat(format);
 
         assertThat(message)
                 .extracting(
-                        Message::formatted,
-                        Message::message
+                        Message::format,
+                        Message::message,
+                        Message::formattedMessage
                 ).contains(
-                        true,
-                        "Player0: test"
+                        format,
+                        "test",
+                        "!Player0: test"
                 );
     }
 }

@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.silthus.chat.config.ChannelConfig;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -29,6 +30,11 @@ public class Channel extends AbstractChatTarget {
         this.config = config;
     }
 
+    public Channel(String alias, ConfigurationSection config) {
+        this(alias, new ChannelConfig(config));
+    }
+
+
     public String getName() {
         if (getConfig().getName() != null)
             return getConfig().getName();
@@ -52,11 +58,7 @@ public class Channel extends AbstractChatTarget {
     }
 
     public void sendMessage(Message message) {
-        final Message chatMessage;
-        if (message.formatted())
-            chatMessage = message;
-        else
-            chatMessage = message.format(getConfig().getFormat());
+        final Message chatMessage = message.withFormat(getConfig().getFormat());
         getTargets().forEach(chatter -> chatter.sendMessage(chatMessage));
         setLastMessage(message);
     }
