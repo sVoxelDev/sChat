@@ -5,5 +5,6 @@ import co.aikar.commands.annotation.CommandAlias;
 
 @CommandAlias("schat:channel|channel|ch")
 public class ChannelCommands extends BaseCommand {
-    
+
+
 }

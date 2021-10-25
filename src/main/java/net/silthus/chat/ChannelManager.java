@@ -1,5 +1,7 @@
 package net.silthus.chat;
 
+import lombok.NonNull;
+import net.silthus.chat.config.PluginConfig;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,22 +30,29 @@ public class ChannelManager implements Listener {
         return List.copyOf(chatters.values());
     }
 
-    public void load(ConfigurationSection config) {
-        ConfigurationSection channels = config.getConfigurationSection("channels");
-        for (String channelKey : channels.getKeys(false)) {
-            this.channels.add(new Channel(channelKey, channels.getConfigurationSection(channelKey)));
-        }
+    public void load(@NonNull PluginConfig config) {
+        channels.clear();
+        loadChannelsFromConfig(config.getChannels());
+    }
+
+    private void loadChannelsFromConfig(ConfigurationSection channels) {
+        if (channels == null) return;
+        channels.getKeys(false).forEach(channelKey ->
+                loadChannelFromConfig(channelKey, channels.getConfigurationSection(channelKey))
+        );
+    }
+
+    private void loadChannelFromConfig(String channelKey, ConfigurationSection config) {
+        this.channels.add(new Channel(channelKey, config));
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onJoin(PlayerJoinEvent event) {
-
         registerChatter(event.getPlayer());
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onQuit(PlayerQuitEvent event) {
-
         unregisterChatter(event.getPlayer());
     }
 

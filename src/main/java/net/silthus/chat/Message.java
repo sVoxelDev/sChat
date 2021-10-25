@@ -1,10 +1,10 @@
 package net.silthus.chat;
 
-import lombok.Value;
+import lombok.Getter;
 import lombok.With;
 import lombok.experimental.Accessors;
 
-@Value
+@Getter
 @Accessors(fluent = true)
 public class Message {
 

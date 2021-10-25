@@ -182,14 +182,14 @@ public class FormatTests {
         @Test
         void format_withNullPrefixOrSuffix() {
             String message = Format.builder()
-                    .prefix(null)
                     .build()
+                    .withPrefix(null)
                     .applyTo(Message.of(source, "test"));
             assertThat(message).isEqualTo("Player0: test");
 
             message = Format.builder()
-                    .suffix(null)
                     .build()
+                    .withSuffix(null)
                     .applyTo(Message.of(source, "test"));
             assertThat(message).isEqualTo("Player0test");
         }

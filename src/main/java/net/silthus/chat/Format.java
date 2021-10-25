@@ -26,6 +26,7 @@ public class Format {
                 .chatColor(config.getString("chat_color"))
                 .build();
     }
+
     @With
     @Builder.Default
     String prefix = DEFAULT_PREFIX;
