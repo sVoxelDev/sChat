@@ -2,16 +2,15 @@ package net.silthus.chat;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Stack;
+import java.util.Queue;
+import java.util.concurrent.LinkedTransferQueue;
 
 public abstract class AbstractChatTarget implements ChatTarget {
 
-    private final Stack<Message> receivedMessages = new Stack<>();
+    private final Queue<Message> receivedMessages = new LinkedTransferQueue<>();
 
     @Override
     public Message getLastReceivedMessage() {
-        if (receivedMessages.isEmpty())
-            return null;
         return receivedMessages.peek();
     }
 
@@ -20,7 +19,7 @@ public abstract class AbstractChatTarget implements ChatTarget {
         return List.copyOf(receivedMessages);
     }
 
-    protected void setLastMessage(Message lastMessage) {
-        this.receivedMessages.push(lastMessage);
+    protected void addReceivedMessage(Message lastMessage) {
+        this.receivedMessages.add(lastMessage);
     }
 }

@@ -5,22 +5,18 @@ import lombok.extern.java.Log;
 import net.silthus.chat.config.PluginConfig;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.*;
 
 @Log(topic = Constants.PLUGIN_NAME)
-public class ChannelManager implements Listener {
+public class ChatManager {
 
     private final SChat plugin;
     private final Set<Channel> channels = new HashSet<>();
     private final Map<UUID, Chatter> chatters = new HashMap<>();
 
-    public ChannelManager(SChat plugin) {
+    public ChatManager(SChat plugin) {
         this.plugin = plugin;
     }
 
@@ -59,24 +55,14 @@ public class ChannelManager implements Listener {
         this.channels.add(new Channel(channelKey, config));
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onJoin(PlayerJoinEvent event) {
-        registerChatter(event.getPlayer());
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onQuit(PlayerQuitEvent event) {
-        unregisterChatter(event.getPlayer());
-    }
-
-    private Chatter registerChatter(Player player) {
+    public Chatter registerChatter(Player player) {
         Chatter chatter = Chatter.of(player);
         plugin.getServer().getPluginManager().registerEvents(chatter, plugin);
         chatters.put(chatter.getUniqueId(), chatter);
         return chatter;
     }
 
-    private void unregisterChatter(Player player) {
+    public void unregisterChatter(Player player) {
         Chatter chatter = chatters.remove(player.getUniqueId());
         if (chatter != null)
             HandlerList.unregisterAll(chatter);

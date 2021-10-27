@@ -62,15 +62,14 @@ public class ChatterTests extends TestBase {
     void sendMessage_sendsMessageToPlayer() {
         chatter.sendMessage("Hello Chatter!");
 
-        assertThat(player.nextMessage())
-                .isEqualTo("Hello Chatter!");
+        assertReceivedMessage(player, "Hello Chatter!");
     }
 
     @Test
     void sendMessage_formatsTheMessageIfNotFormatted() {
         sendMessage(server.addPlayer(), "Hi");
 
-        assertThat(player.nextMessage()).isEqualTo("Player1: Hi");
+        assertReceivedMessage(player, "Player1: Hi");
     }
 
     @Test

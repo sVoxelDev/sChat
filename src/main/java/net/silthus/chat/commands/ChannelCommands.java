@@ -25,8 +25,8 @@ public class ChannelCommands extends BaseCommand {
     @Subcommand("test")
     public void test(Player player, String message) {
 
-        Chatter chatter = plugin.getChannelManager().getChatter(player);
-        for (Channel channel : plugin.getChannelManager().getChannels()) {
+        Chatter chatter = plugin.getChatManager().getChatter(player);
+        for (Channel channel : plugin.getChatManager().getChannels()) {
             channel.add(chatter);
             chatter.setActiveChannel(channel);
             chatter.sendMessageTo(channel, message);

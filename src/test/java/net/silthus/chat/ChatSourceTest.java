@@ -22,8 +22,13 @@ class ChatSourceTest extends TestBase {
     void sendMessageTo() {
 
         PlayerMock player = server.addPlayer();
-        source.sendMessageTo(ChatTarget.of(player), "Hi there!");
+        ChatTarget target = ChatTarget.of(player);
+        source.sendMessageTo(target, "Hi there!");
 
-        assertThat(player.nextMessage()).isEqualTo("Player0: Hi there!");
+        assertThat(target.getLastReceivedMessage())
+                .isNotNull()
+                .extracting(Message::formattedMessage)
+                .isEqualTo("Player0: Hi there!");
+        assertReceivedMessage(player, "Player0: Hi there!");
     }
 }

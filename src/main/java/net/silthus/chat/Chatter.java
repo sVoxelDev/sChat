@@ -2,6 +2,8 @@ package net.silthus.chat;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import net.kyori.adventure.audience.MessageType;
+import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -47,9 +49,10 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
                         .nbtPath(message.source() != null ? "global" : "system")
                         .storage(Key.key("schat:channel")))
                 .build();
-        SChat.instance().getAudiences().player(player).sendMessage(text);
-//        player.sendMessage(message.formattedMessage());
-        setLastMessage(message);
+        Identity source = message.source() != null ? Identity.identity(message.source().getUniqueId()) : Identity.nil();
+        SChat.instance().getAudiences().player(getPlayer())
+                .sendMessage(source, text, MessageType.CHAT);
+        addReceivedMessage(message);
     }
 
     @Override

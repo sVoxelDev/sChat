@@ -9,7 +9,8 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.silthus.chat.commands.ChannelCommands;
 import net.silthus.chat.config.PluginConfig;
-import net.silthus.chat.protocollib.ChatPacketListener;
+import net.silthus.chat.listeners.ChatPacketListener;
+import net.silthus.chat.listeners.PlayerListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,6 +18,7 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 
 import java.io.File;
 
+@Getter
 @PluginMain
 public class SChat extends JavaPlugin {
 
@@ -25,14 +27,14 @@ public class SChat extends JavaPlugin {
     private static SChat instance;
     @Getter
     private static boolean testing = false;
-    @Getter
+
     private PaperCommandManager commandManager;
-    @Getter
-    private ChannelManager channelManager;
-    @Getter
+    private ChatManager chatManager;
     private ProtocolManager protocolManager;
-    @Getter
     private BukkitAudiences audiences;
+
+    private ChatPacketListener chatPacketListener;
+    private PlayerListener playerListener;
 
     public SChat() {
         instance = this;
@@ -56,18 +58,20 @@ public class SChat extends JavaPlugin {
             setupProtocolLib();
             setupCommands();
         }
+
+        setupListeners();
     }
 
     private void setupAndLoadChannels() {
-        channelManager = new ChannelManager(this);
-        channelManager.load(new PluginConfig(getConfig()));
-        getServer().getPluginManager().registerEvents(channelManager, this);
+        chatManager = new ChatManager(this);
+        chatManager.load(new PluginConfig(getConfig()));
     }
 
     private void setupProtocolLib() {
         if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
             protocolManager = ProtocolLibrary.getProtocolManager();
-            protocolManager.addPacketListener(new ChatPacketListener(this));
+            chatPacketListener = new ChatPacketListener(this);
+            protocolManager.addPacketListener(chatPacketListener);
             getLogger().info("Enabled ProtocolLib handler.");
         }
     }
@@ -75,5 +79,10 @@ public class SChat extends JavaPlugin {
     private void setupCommands() {
         commandManager = new PaperCommandManager(this);
         commandManager.registerCommand(new ChannelCommands(this));
+    }
+
+    private void setupListeners() {
+        playerListener = new PlayerListener(this);
+        getServer().getPluginManager().registerEvents(playerListener, this);
     }
 }

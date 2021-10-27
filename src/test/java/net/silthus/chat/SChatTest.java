@@ -36,9 +36,9 @@ class SChatTest extends TestBase {
     @Test
     void onEnable_loadsChannelsFromConfig() {
 
-        assertThat(plugin.getChannelManager().getChannels())
+        assertThat(plugin.getChatManager().getChannels())
                 .hasSize(1);
-        Optional<Channel> channel = plugin.getChannelManager().getChannels().stream().findFirst();
+        Optional<Channel> channel = plugin.getChatManager().getChannels().stream().findFirst();
         assertThat(channel)
                 .isPresent().get()
                 .extracting(
