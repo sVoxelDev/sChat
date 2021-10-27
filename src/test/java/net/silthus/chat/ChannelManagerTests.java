@@ -59,6 +59,29 @@ public class ChannelManagerTests extends TestBase {
                 .isThrownBy(() -> manager.getChatters().add(Chatter.of(server.addPlayer())));
     }
 
+    @Test
+    void getChatter_createsChatterOnTheFly() {
+        PlayerMock player = new PlayerMock(server, "test");
+        Chatter chatter = manager.getChatter(player);
+        assertThat(chatter)
+                .isNotNull()
+                .extracting(Chatter::getUniqueId)
+                .isEqualTo(player.getUniqueId());
+        assertThat(getRegisteredListeners()).contains(chatter);
+    }
+
+    @Test
+    void getChatter_doesNotCreateDuplicateChatter() {
+        PlayerMock player = server.addPlayer();
+        assertThat(manager.getChatters()).hasSize(1);
+        Chatter chatter = manager.getChatter(player);
+        assertThat(manager.getChatters()).hasSize(1);
+        assertThat(chatter)
+                .isNotNull()
+                .extracting(Chatter::getUniqueId)
+                .isEqualTo(player.getUniqueId());
+    }
+
     @Nested
     class Load {
 

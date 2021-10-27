@@ -9,15 +9,19 @@ import org.bukkit.configuration.ConfigurationSection;
 @Data
 public class ChannelConfig {
 
-    private String name;
-    private Format format;
-
-    public ChannelConfig(ConfigurationSection config) {
-        this.name = config.getString("name");
-        this.format = Format.of(config);
+    public static ChannelConfig of(ConfigurationSection config) {
+        return new ChannelConfig(config);
     }
 
-    public ChannelConfig() {
-        this.format = Format.builder().build();
+    private String name;
+    private Format format = Format.defaultFormat();
+
+    public ChannelConfig() {}
+
+    private ChannelConfig(ConfigurationSection config) {
+        this.name = config.getString("name");
+        ConfigurationSection formatSection = config.getConfigurationSection("format");
+        if (formatSection != null)
+            this.format = Format.of(formatSection);
     }
 }

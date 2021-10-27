@@ -2,7 +2,7 @@ channels:
   global:
     name: Global
     format:
-      prefix: '&6[&aG&6]&r'
+      prefix: '§6[§aG§6]§r'
       # alternate formatting
       # prefix: <gold>[<green>G<gold>]<reset>
       chat_color: GREEN

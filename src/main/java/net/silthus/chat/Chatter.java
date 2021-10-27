@@ -2,6 +2,10 @@ package net.silthus.chat;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -37,7 +41,14 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
 
     @Override
     public void sendMessage(Message message) {
-        player.sendMessage(message.formattedMessage());
+        TextComponent text = Component.text()
+                .append(LegacyComponentSerializer.legacySection().deserialize(message.formattedMessage()))
+                .append(Component.storageNBT()
+                        .nbtPath(message.source() != null ? "global" : "system")
+                        .storage(Key.key("schat:channel")))
+                .build();
+        SChat.instance().getAudiences().player(player).sendMessage(text);
+//        player.sendMessage(message.formattedMessage());
         setLastMessage(message);
     }
 

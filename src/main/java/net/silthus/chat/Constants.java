@@ -5,6 +5,8 @@ import net.md_5.bungee.api.ChatColor;
 public final class Constants {
     private Constants() {}
 
+    public static final String PLUGIN_NAME = "sChat";
+
     public static final String BASE_PERMISSION = "schat";
     public static final String CHANNEL_PERMISSION = BASE_PERMISSION + ".channel";
 

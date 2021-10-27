@@ -31,7 +31,7 @@ public class Channel extends AbstractChatTarget {
     }
 
     public Channel(String alias, ConfigurationSection config) {
-        this(alias, new ChannelConfig(config));
+        this(alias, ChannelConfig.of(config));
     }
 
 
@@ -49,11 +49,11 @@ public class Channel extends AbstractChatTarget {
         return List.copyOf(targets);
     }
 
-    public void join(@NonNull ChatTarget chatter) {
+    public void add(@NonNull ChatTarget chatter) {
         this.targets.add(chatter);
     }
 
-    public void leave(@NonNull ChatTarget chatter) {
+    public void remove(@NonNull ChatTarget chatter) {
         this.targets.remove(chatter);
     }
 

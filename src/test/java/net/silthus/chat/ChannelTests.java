@@ -75,7 +75,7 @@ public class ChannelTests extends TestBase {
     @Test
     void join_addsPlayerToChannelTargets() {
         Chatter player = Chatter.of(server.addPlayer());
-        channel.join(player);
+        channel.add(player);
 
         assertThat(channel.getTargets())
                 .contains(player);
@@ -84,8 +84,8 @@ public class ChannelTests extends TestBase {
     @Test
     void join_canOnlyJoinChannelOnce() {
         Chatter player = Chatter.of(server.addPlayer());
-        channel.join(player);
-        channel.join(player);
+        channel.add(player);
+        channel.add(player);
 
         assertThat(channel.getTargets())
                 .hasSize(1);
@@ -96,16 +96,16 @@ public class ChannelTests extends TestBase {
     void join_throwsNullPointer_ifPlayerIsNull() {
 
         assertThatExceptionOfType(NullPointerException.class)
-                .isThrownBy(() -> channel.join(null));
+                .isThrownBy(() -> channel.add(null));
     }
 
     @Test
     void leave_removesChatTarget_fromChannelTargets() {
         Chatter player = Chatter.of(server.addPlayer());
-        channel.join(player);
+        channel.add(player);
         assertThat(channel.getTargets()).contains(player);
 
-        channel.leave(player);
+        channel.remove(player);
 
         assertThat(channel.getTargets()).isEmpty();
     }
@@ -114,8 +114,8 @@ public class ChannelTests extends TestBase {
     void leave_doesNothingIfPlayerIsNotJoined() {
 
         Chatter player = Chatter.of(server.addPlayer());
-        channel.join(player);
-        assertThatCode(() -> channel.leave(Chatter.of(server.addPlayer())))
+        channel.add(player);
+        assertThatCode(() -> channel.remove(Chatter.of(server.addPlayer())))
                 .doesNotThrowAnyException();
         assertThat(channel.getTargets()).contains(player);
     }
@@ -125,7 +125,7 @@ public class ChannelTests extends TestBase {
     void leave_throwsNullPointer_ifPlayerIsNull() {
 
         assertThatExceptionOfType(NullPointerException.class)
-                .isThrownBy(() -> channel.leave(null));
+                .isThrownBy(() -> channel.remove(null));
     }
 
     @Test
@@ -143,10 +143,10 @@ public class ChannelTests extends TestBase {
 
         PlayerMock player0 = server.addPlayer();
         Chatter chatter0 = Chatter.of(player0);
-        channel.join(chatter0);
+        channel.add(chatter0);
         PlayerMock player1 = server.addPlayer();
         Chatter chatter1 = Chatter.of(player1);
-        channel.join(chatter1);
+        channel.add(chatter1);
         PlayerMock player2 = server.addPlayer();
 
         channel.sendMessage(Message.of(chatter0, "test"));
@@ -162,7 +162,7 @@ public class ChannelTests extends TestBase {
 
         PlayerMock player = server.addPlayer();
         Chatter chatter = Chatter.of(player);
-        channel.join(chatter);
+        channel.add(chatter);
         channel.sendMessage(message);
 
         assertThat(player.nextMessage()).isEqualTo("Player0: test");
@@ -174,7 +174,7 @@ public class ChannelTests extends TestBase {
 
         PlayerMock player = server.addPlayer();
         Chatter chatter = Chatter.of(player);
-        channel.join(chatter);
+        channel.add(chatter);
         channel.sendMessage(message);
 
         assertThat(channel.getLastReceivedMessage())
@@ -209,7 +209,7 @@ public class ChannelTests extends TestBase {
 
         PlayerMock player = server.addPlayer();
         Chatter chatter = Chatter.of(player);
-        channel.join(chatter);
+        channel.add(chatter);
         channel.sendMessage(message);
         channel.sendMessage(Message.of(ChatSource.of(server.addPlayer()), "foobar"));
         channel.sendMessage("Heyho");
@@ -233,11 +233,11 @@ public class ChannelTests extends TestBase {
 
             MemoryConfiguration cfg = new MemoryConfiguration();
             cfg.set("name", "Test");
-            cfg.set("prefix", "[Test] ");
-            cfg.set("suffix", " - ");
-            cfg.set("chat_color", "GRAY");
+            cfg.set("format.prefix", "[Test] ");
+            cfg.set("format.suffix", " - ");
+            cfg.set("format.chat_color", "GRAY");
 
-            Channel channel = new Channel("test", new ChannelConfig(cfg));
+            Channel channel = new Channel("test", ChannelConfig.of(cfg));
 
             assertThat(channel.getName())
                     .isEqualTo("Test");
