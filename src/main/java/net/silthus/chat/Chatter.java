@@ -21,13 +21,17 @@ import java.util.UUID;
 public class Chatter extends AbstractChatTarget implements Listener, ChatSource, ChatTarget {
 
     public static Chatter of(Player player) {
+        return SChat.instance().getChatManager().registerChatter(player);
+    }
+
+    static Chatter create(Player player) {
         return new Chatter(player);
     }
 
     private final Player player;
     private Channel activeChannel;
 
-    public Chatter(Player player) {
+    Chatter(Player player) {
         this.player = player;
     }
 
@@ -41,31 +45,27 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         return getPlayer().getDisplayName();
     }
 
+    public void setActiveChannel(Channel activeChannel) {
+        this.activeChannel = activeChannel;
+        if (activeChannel != null)
+            activeChannel.add(this);
+    }
+
     @Override
     public void sendMessage(Message message) {
-        TextComponent text = Component.text()
-                .append(LegacyComponentSerializer.legacySection().deserialize(message.formattedMessage()))
-                .append(Component.storageNBT()
-                        .nbtPath(message.source() != null ? "global" : "system")
-                        .storage(Key.key("schat:channel")))
-                .build();
-        Identity source = message.source() != null ? Identity.identity(message.source().getUniqueId()) : Identity.nil();
-        SChat.instance().getAudiences().player(getPlayer())
-                .sendMessage(source, text, MessageType.CHAT);
+        SChat.instance().getAudiences()
+                .player(getPlayer())
+                .sendMessage(
+                        getIdentity(message),
+                        appendSourceMetadataToMessage(message),
+                        MessageType.CHAT
+                );
         addReceivedMessage(message);
     }
 
     @Override
     public void sendMessageTo(ChatTarget target, String message) {
         target.sendMessage(Message.of(this, message));
-    }
-
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
-        if (isNotApplicable(event)) return;
-
-        sendMessageTo(getActiveChannel(), event.getMessage());
-        event.setCancelled(true);
     }
 
     private boolean isNotApplicable(AsyncPlayerChatEvent event) {
@@ -81,5 +81,26 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         event.getPlayer().sendMessage(Constants.Errors.NO_ACTIVE_CHANNEL);
         event.setCancelled(true);
         return true;
+    }
+
+    private Identity getIdentity(Message message) {
+        return message.getSource() != null ? Identity.identity(message.getSource().getUniqueId()) : Identity.nil();
+    }
+
+    private TextComponent appendSourceMetadataToMessage(Message message) {
+        return Component.text()
+                .append(LegacyComponentSerializer.legacySection().deserialize(message.formattedMessage()))
+                .append(Component.storageNBT()
+                        .nbtPath(message.getSource() != null ? "global" : "system")
+                        .storage(Key.key("schat:channel")))
+                .build();
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
+        if (isNotApplicable(event)) return;
+
+        sendMessageTo(getActiveChannel(), event.getMessage());
+        event.setCancelled(true);
     }
 }

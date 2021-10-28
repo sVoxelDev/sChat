@@ -2,10 +2,13 @@ package net.silthus.chat;
 
 import lombok.NonNull;
 import lombok.extern.java.Log;
-import net.silthus.chat.config.PluginConfig;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -13,58 +16,74 @@ import java.util.*;
 public class ChatManager {
 
     private final SChat plugin;
-    private final Set<Channel> channels = new HashSet<>();
-    private final Map<UUID, Chatter> chatters = new HashMap<>();
+    private final Map<UUID, Chatter> chatters = Collections.synchronizedMap(new HashMap<>());
+
+    final PlayerListener playerListener;
 
     public ChatManager(SChat plugin) {
         this.plugin = plugin;
-    }
-
-    public List<Channel> getChannels() {
-        return List.copyOf(channels);
-    }
-
-    public Optional<Channel> getChannel(String alias) {
-        return channels.stream()
-                .filter(channel -> channel.getAlias().equals(alias))
-                .findFirst();
+        this.playerListener = new PlayerListener();
+        plugin.getServer().getPluginManager().registerEvents(playerListener, plugin);
     }
 
     public Collection<Chatter> getChatters() {
         return List.copyOf(chatters.values());
     }
 
-    public Chatter getChatter(@NonNull Player player) {
-        return chatters.getOrDefault(player.getUniqueId(), registerChatter(player));
+    public void autoJoinChannels(Chatter chatter) {
+        plugin.getChannelRegistry().getChannels().stream()
+                .filter(channel -> chatter.getPlayer().hasPermission(channel.getAutoJoinPermission()))
+                .forEach(chatter::subscribe);
     }
 
-    public void load(@NonNull PluginConfig config) {
-        channels.clear();
-        loadChannelsFromConfig(config.getChannels());
+    public Chatter getOrCreateChatter(@NonNull Player player) {
+        if (chatters.containsKey(player.getUniqueId()))
+            return chatters.get(player.getUniqueId());
+        return registerChatter(Chatter.create(player));
     }
 
-    private void loadChannelsFromConfig(ConfigurationSection channels) {
-        if (channels == null) return;
-        channels.getKeys(false).forEach(channelKey ->
-                loadChannelFromConfig(channelKey, channels.getConfigurationSection(channelKey))
-        );
-        log.info("Loaded " + this.channels.size() + " channels.");
+    public Chatter registerChatter(@NonNull Player player) {
+        return getOrCreateChatter(player);
     }
 
-    private void loadChannelFromConfig(String channelKey, ConfigurationSection config) {
-        this.channels.add(new Channel(channelKey, config));
-    }
-
-    public Chatter registerChatter(Player player) {
-        Chatter chatter = Chatter.of(player);
+    public Chatter registerChatter(@NonNull Chatter chatter) {
+        addChatterToCache(chatter);
         plugin.getServer().getPluginManager().registerEvents(chatter, plugin);
-        chatters.put(chatter.getUniqueId(), chatter);
         return chatter;
     }
 
-    public void unregisterChatter(Player player) {
+    private void addChatterToCache(@NotNull Chatter chatter) {
+        unregisterListener(chatters.put(chatter.getUniqueId(), chatter));
+    }
+
+    public void unregisterChatter(@NonNull Player player) {
         Chatter chatter = chatters.remove(player.getUniqueId());
-        if (chatter != null)
-            HandlerList.unregisterAll(chatter);
+        unregisterListener(chatter);
+        unsubscribeAll(chatter);
+    }
+
+    private void unregisterListener(Chatter chatter) {
+        if (chatter == null) return;
+        HandlerList.unregisterAll(chatter);
+    }
+
+    private void unsubscribeAll(Chatter chatter) {
+        if (chatter == null) return;
+        chatter.getSubscriptions().forEach(channel -> channel.remove(chatter));
+    }
+
+    class PlayerListener implements Listener {
+
+
+        @EventHandler(ignoreCancelled = true)
+        public void onJoin(PlayerJoinEvent event) {
+            Chatter chatter = registerChatter(event.getPlayer());
+            autoJoinChannels(chatter);
+        }
+
+        @EventHandler(ignoreCancelled = true)
+        public void onQuit(PlayerQuitEvent event) {
+            unregisterChatter(event.getPlayer());
+        }
     }
 }

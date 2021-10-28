@@ -2,7 +2,6 @@ package net.silthus.chat;
 
 import co.aikar.commands.BukkitCommandManager;
 import net.md_5.bungee.api.ChatColor;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -24,7 +23,6 @@ class SChatTest extends TestBase {
     }
 
     @Test
-    @Disabled
     void onEnable_registersCommands() {
 
         assertThat(plugin.getCommandManager())
@@ -36,13 +34,13 @@ class SChatTest extends TestBase {
     @Test
     void onEnable_loadsChannelsFromConfig() {
 
-        assertThat(plugin.getChatManager().getChannels())
+        assertThat(plugin.getChannelRegistry().getChannels())
                 .hasSize(1);
-        Optional<Channel> channel = plugin.getChatManager().getChannels().stream().findFirst();
+        Optional<Channel> channel = plugin.getChannelRegistry().getChannels().stream().findFirst();
         assertThat(channel)
                 .isPresent().get()
                 .extracting(
-                        Channel::getAlias,
+                        Channel::getIdentifier,
                         Channel::getName,
                         c -> c.getConfig().getFormat().applyTo(Message.of("test")),
                         c -> c.getConfig().getFormat().applyTo(Message.of(ChatSource.of(server.addPlayer()), "test"))

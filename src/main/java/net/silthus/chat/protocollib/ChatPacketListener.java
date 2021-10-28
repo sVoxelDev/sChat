@@ -1,4 +1,4 @@
-package net.silthus.chat.listeners;
+package net.silthus.chat.protocollib;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
@@ -50,7 +50,7 @@ public class ChatPacketListener extends PacketAdapter {
                 String data = storage.nbtPath();
                 Key key = storage.storage();
                 if (key.asString().equals("schat:channel")) {
-                    Optional<Channel> channel = plugin.getChatManager().getChannel(data);
+                    Optional<Channel> channel = plugin.getChannelRegistry().get(data);
                     channel.ifPresent(c -> {
                         text.append(c.getReceivedMessages().stream().map(message -> {
                             TextComponent deserialize = LegacyComponentSerializer.legacySection().deserialize(message.formattedMessage());
@@ -62,8 +62,8 @@ public class ChatPacketListener extends PacketAdapter {
         }
         text.append(originalMessage);
         text.append(newline()).append(text("| ").color(DARK_AQUA));
-        for (Channel channel : plugin.getChatManager().getChannels()) {
-            text.append(text(channel.getName()).color(GREEN).clickEvent(clickEvent(ClickEvent.Action.RUN_COMMAND, "/schat join " + channel.getAlias())))
+        for (Channel channel : plugin.getChannelRegistry().getChannels()) {
+            text.append(text(channel.getName()).color(GREEN).clickEvent(clickEvent(ClickEvent.Action.RUN_COMMAND, "/schat join " + channel.getIdentifier())))
                     .append(text(" | ").color(DARK_AQUA));
         }
         TextComponent message = text.build();

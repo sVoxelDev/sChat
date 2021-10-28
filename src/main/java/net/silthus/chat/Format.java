@@ -55,15 +55,15 @@ public class Format {
         StringBuilder sb = new StringBuilder();
         if (getChatColor() != null)
             sb.append(getChatColor());
-        return sb.append(message.message()).toString();
+        return sb.append(message.getMessage()).toString();
     }
 
     private String formatMessageSource(Message message) {
         StringBuilder sb = new StringBuilder();
-        if (message.source() != null) {
+        if (message.getSource() != null) {
             if (getPrefix() != null)
                 sb.append(getPrefix());
-            sb.append(message.source().getDisplayName());
+            sb.append(message.getSource().getDisplayName());
             if (getSuffix() != null)
                 sb.append(getSuffix());
         }

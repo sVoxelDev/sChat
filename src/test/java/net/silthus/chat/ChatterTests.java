@@ -1,21 +1,23 @@
-package net.silthus.chat.chatter;
+package net.silthus.chat;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import net.silthus.chat.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.Mockito.*;
 
 public class ChatterTests extends TestBase {
-
     private PlayerMock player;
+
     private Chatter chatter;
 
     @Override
@@ -24,7 +26,11 @@ public class ChatterTests extends TestBase {
         super.setUp();
 
         player = server.addPlayer();
-        chatter = spy(Chatter.of(player));
+        chatter = plugin.getChatManager().registerChatter(spy(Chatter.of(player)));
+    }
+
+    private void sendMessage(Player source, String message) {
+        chatter.sendMessage(Message.of(ChatSource.of(source), message));
     }
 
     @Test
@@ -45,6 +51,18 @@ public class ChatterTests extends TestBase {
 
         Bukkit.getPluginManager().registerEvents(chatter, plugin);
         assertThat(getRegisteredListeners()).contains(chatter);
+    }
+
+    @Test
+    void of_usesGlobalChatterCache() {
+        PlayerMock player = server.addPlayer();
+        Chatter chatter = Chatter.of(player);
+        Message message = Message.of("test");
+        chatter.addReceivedMessage(message);
+
+        Chatter newChatter = Chatter.of(player);
+        assertThat(newChatter).isSameAs(chatter);
+        assertThat(newChatter.getLastReceivedMessage()).isEqualTo(message);
     }
 
     @Test
@@ -79,19 +97,19 @@ public class ChatterTests extends TestBase {
 
         assertThat(chatter.getLastReceivedMessage())
                 .isNotNull()
-                .extracting(Message::message)
+                .extracting(Message::getMessage)
                 .isEqualTo("Hi there");
     }
 
     @Test
-    void getFocusedChannel() {
+    void getActiveChannel() {
         Channel channel = chatter.getActiveChannel();
 
         assertThat(channel).isNull();
     }
 
     @Test
-    void setFocusedChannel_setsChannel() {
+    void setActiveChannel_setsChannel() {
         Channel channel = new Channel("test");
         chatter.setActiveChannel(channel);
 
@@ -99,19 +117,99 @@ public class ChatterTests extends TestBase {
                 .isEqualTo(channel);
     }
 
-    private void sendMessage(Player source, String message) {
-        chatter.sendMessage(Message.of(ChatSource.of(source), message));
+    @Test
+    void setActiveChannel_addsPlayerAsTargetToChannel() {
+        Channel channel = new Channel("test");
+        assertThat(channel.getTargets()).isEmpty();
+        chatter.setActiveChannel(channel);
+        assertThat(channel.getTargets()).contains(chatter);
+    }
+
+    @Test
+    void setActiveChannel_toNull() {
+        Channel channel = new Channel("test");
+        chatter.setActiveChannel(channel);
+        chatter.setActiveChannel(null);
+        assertThat(chatter.getActiveChannel()).isNull();
+    }
+
+    @Test
+    void subscribe_addsChatterAsChannelTarget() {
+        Channel channel = new Channel("test");
+        chatter.subscribe(channel);
+
+        assertThat(channel.getTargets()).contains(chatter);
+        assertThat(chatter.getSubscriptions()).contains(channel);
+    }
+
+    @Test
+    void subscribe_onlyAddsChatterOnce() {
+        Channel channel = new Channel("test");
+        chatter.subscribe(channel);
+        chatter.subscribe(channel);
+
+        assertThat(channel.getTargets()).hasSize(1);
+        assertThat(chatter.getSubscriptions()).hasSize(1);
+    }
+
+    @Test
+    void subscribe_sendsMessageToSubscriber() {
+        Channel channel = new Channel("test");
+        chatter.subscribe(channel);
+
+        channel.sendMessage("test");
+
+        assertThat(chatter.getLastReceivedMessage())
+                .isNotNull()
+                .extracting(Message::getMessage)
+                .isEqualTo("test");
+    }
+
+    @Test
+    void not_subscribed_doesNotSendMessageToChatter() {
+        Channel channel = new Channel("test");
+        channel.sendMessage("test");
+
+        assertThat(chatter.getLastReceivedMessage()).isNull();
+    }
+
+    @Test
+    void unsubscribe_doesNothingIfNotSubscribed() {
+
+        assertThatCode(() -> chatter.unsubscribe(new Channel("test")))
+                .doesNotThrowAnyException();
+        assertThat(chatter.getSubscriptions()).isEmpty();
+    }
+
+    @Test
+    void unsubscribe_removesSubscription() {
+
+        Channel channel = new Channel("test");
+        chatter.subscribe(channel);
+        assertThat(chatter.getSubscriptions()).contains(channel);
+
+        chatter.unsubscribe(channel);
+        assertThat(chatter.getSubscriptions()).isEmpty();
+    }
+
+    @Test
+    void unsubscribe_doesNotSendMessageToOldSubscriber() {
+        Channel channel = new Channel("test");
+        chatter.subscribe(channel);
+
+        chatter.unsubscribe(channel);
+        channel.sendMessage("test");
+        assertThat(chatter.getLastReceivedMessage()).isNull();
     }
 
     @Nested
-    @Disabled
     @DisplayName("with player chatting")
     class PlayerChatEvent {
 
         private ArgumentCaptor<AsyncPlayerChatEvent> eventCaptor;
 
         @BeforeEach
-        void setUp() {
+        public void setUp() {
             Bukkit.getPluginManager().registerEvents(chatter, plugin);
             eventCaptor = ArgumentCaptor.forClass(AsyncPlayerChatEvent.class);
         }
@@ -155,7 +253,7 @@ public class ChatterTests extends TestBase {
             Channel channel = new Channel("test");
             chatter.setActiveChannel(channel);
 
-            PlayerMock player2 = server.addPlayer();
+            PlayerMock player2 = new PlayerMock(server, "test");
             AsyncPlayerChatEvent event = chat(player2, "hi");
 
             assertThat(event.isCancelled()).isFalse();
@@ -169,7 +267,8 @@ public class ChatterTests extends TestBase {
 
         private AsyncPlayerChatEvent chat(Player player, String message) {
             player.chat(message);
-            verify(chatter).onPlayerChat(eventCaptor.capture());
+            server.getScheduler().waitAsyncEventsFinished();
+            verify(chatter, atLeastOnce()).onPlayerChat(eventCaptor.capture());
             return eventCaptor.getValue();
         }
     }

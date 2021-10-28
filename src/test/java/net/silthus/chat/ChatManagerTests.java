@@ -1,13 +1,13 @@
 package net.silthus.chat;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import net.silthus.chat.config.PluginConfig;
-import org.bukkit.configuration.MemoryConfiguration;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class ChatManagerTests extends TestBase {
 
@@ -22,21 +22,10 @@ public class ChatManagerTests extends TestBase {
     }
 
     @Test
-    void onEnable_createsChannelManager() {
+    void onEnable_createsChatManager() {
 
         assertThat(plugin.getChatManager())
                 .isNotNull();
-    }
-
-    @Test
-    void getChannels_isEmptyBeforeLoad() {
-        assertThat(manager.getChannels()).isEmpty();
-    }
-
-    @Test
-    void getChannels_isImmutable() {
-        assertThatExceptionOfType(UnsupportedOperationException.class)
-                .isThrownBy(() -> manager.getChannels().add(new Channel("test")));
     }
 
     @Test
@@ -53,7 +42,7 @@ public class ChatManagerTests extends TestBase {
     @Test
     void getChatter_createsChatterOnTheFly() {
         PlayerMock player = new PlayerMock(server, "test");
-        Chatter chatter = manager.getChatter(player);
+        Chatter chatter = manager.getOrCreateChatter(player);
         assertThat(chatter)
                 .isNotNull()
                 .extracting(Chatter::getUniqueId)
@@ -67,7 +56,7 @@ public class ChatManagerTests extends TestBase {
         manager.registerChatter(player);
         assertThat(manager.getChatters()).hasSize(1);
 
-        Chatter chatter = manager.getChatter(player);
+        Chatter chatter = manager.getOrCreateChatter(player);
 
         assertThat(manager.getChatters()).hasSize(1);
         assertThat(chatter)
@@ -118,42 +107,80 @@ public class ChatManagerTests extends TestBase {
     }
 
     @Nested
-    class Load {
+    class Listeners {
 
-        @Test
-        void load_loadsChannelsFromConfig() {
+        private ChatManager.PlayerListener listener;
 
-            loadTwoChannels();
-
-            assertThat(manager.getChannels())
-                    .hasSize(2);
+        @BeforeEach
+        void setUp() {
+            listener = manager.playerListener;
         }
 
         @Test
-        void load_doesNotError_ifConfigSectionIsEmpty() {
-            assertThatCode(this::loadFromEmptyChannelConfig)
-                    .doesNotThrowAnyException();
-            assertThat(manager.getChannels()).isEmpty();
+        void registerListener() {
+
+            assertThat(listener).isNotNull();
+            assertThat(getRegisteredListeners())
+                    .contains(listener);
         }
 
         @Test
-        void load_clearsPreviousChannels() {
-            loadTwoChannels();
-            assertThat(manager.getChannels()).hasSize(2);
+        void playerIsAddedToChatters_onJoin() {
 
-            loadFromEmptyChannelConfig();
-            assertThat(manager.getChannels()).isEmpty();
+            Chatter chatter = Chatter.of(server.addPlayer());
+
+            assertThat(manager.getChatters())
+                    .hasSize(1)
+                    .containsExactly(chatter);
+            assertThat(getRegisteredListeners())
+                    .contains(chatter);
         }
 
-        private void loadTwoChannels() {
-            MemoryConfiguration cfg = new MemoryConfiguration();
-            cfg.set("channels.test1.name", "Test 1");
-            cfg.set("channels.test2.name", "Test 2");
-            manager.load(new PluginConfig(cfg));
+        @Test
+        void onJoin_player_autoSubscribes_toConfiguredChannels() {
+
+            Channel channel = new Channel("test");
+            plugin.getChannelRegistry().add(channel);
+            PlayerMock player = new PlayerMock(server, "test");
+            player.addAttachment(plugin, Constants.Permissions.getAutoJoinPermission(channel), true);
+            assertThat(channel.getTargets()).isEmpty();
+
+            server.addPlayer(player);
+            assertThat(channel.getTargets()).contains(Chatter.of(player));
         }
 
-        private void loadFromEmptyChannelConfig() {
-            manager.load(new PluginConfig(new MemoryConfiguration()));
+        @Test
+        void onJoin_doesNotSubscribe_toChannelsWithoutPermission() {
+
+            Channel channel = new Channel("test");
+            plugin.getChannelRegistry().add(channel);
+
+            PlayerMock player = server.addPlayer();
+            Chatter chatter = manager.getOrCreateChatter(player);
+            assertThat(chatter.getSubscriptions()).isEmpty();
+        }
+
+        @Test
+        void onQuit_removesPlayerFromChatters() {
+
+            PlayerMock player = server.addPlayer();
+            assertThat(manager.getChatters()).hasSize(1);
+
+            listener.onQuit(new PlayerQuitEvent(player, "bye"));
+            assertThat(manager.getChatters()).isEmpty();
+            assertThat(getRegisteredListeners())
+                    .doesNotContain(Chatter.of(player));
+        }
+
+        @Test
+        void onQuit_noRegisteredPlayer_doesNothing() {
+
+            PlayerMock player = new PlayerMock(server, "test");
+
+            listener.onQuit(new PlayerQuitEvent(player, "bye"));
+            assertThat(manager.getChatters()).isEmpty();
+            assertThat(getRegisteredListeners())
+                    .doesNotContain(Chatter.of(player));
         }
     }
 }

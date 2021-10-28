@@ -9,8 +9,7 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.silthus.chat.commands.ChannelCommands;
 import net.silthus.chat.config.PluginConfig;
-import net.silthus.chat.listeners.ChatPacketListener;
-import net.silthus.chat.listeners.PlayerListener;
+import net.silthus.chat.protocollib.ChatPacketListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,13 +27,14 @@ public class SChat extends JavaPlugin {
     @Getter
     private static boolean testing = false;
 
-    private PaperCommandManager commandManager;
+    private ChannelRegistry channelRegistry;
     private ChatManager chatManager;
+
+    private PaperCommandManager commandManager;
     private ProtocolManager protocolManager;
     private BukkitAudiences audiences;
 
     private ChatPacketListener chatPacketListener;
-    private PlayerListener playerListener;
 
     public SChat() {
         instance = this;
@@ -52,19 +52,30 @@ public class SChat extends JavaPlugin {
         saveDefaultConfig();
 
         setupAndLoadChannels();
-        audiences = BukkitAudiences.create(this);
+        setupChatManager();
 
-        if (!isTesting()) {
-            setupProtocolLib();
-            setupCommands();
-        }
+        setupAdventureTextLibrary();
+        setupProtocolLib();
+        setupCommands();
+    }
 
-        setupListeners();
+    @Override
+    public void onDisable() {
+
+        commandManager.unregisterCommands();
     }
 
     private void setupAndLoadChannels() {
+        channelRegistry = new ChannelRegistry(this);
+        channelRegistry.load(new PluginConfig(getConfig()));
+    }
+
+    private void setupChatManager() {
         chatManager = new ChatManager(this);
-        chatManager.load(new PluginConfig(getConfig()));
+    }
+
+    private void setupAdventureTextLibrary() {
+        audiences = BukkitAudiences.create(this);
     }
 
     private void setupProtocolLib() {
@@ -79,10 +90,5 @@ public class SChat extends JavaPlugin {
     private void setupCommands() {
         commandManager = new PaperCommandManager(this);
         commandManager.registerCommand(new ChannelCommands(this));
-    }
-
-    private void setupListeners() {
-        playerListener = new PlayerListener(this);
-        getServer().getPluginManager().registerEvents(playerListener, this);
     }
 }

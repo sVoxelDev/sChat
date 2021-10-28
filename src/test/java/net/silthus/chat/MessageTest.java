@@ -11,8 +11,8 @@ class MessageTest extends TestBase {
         Message message = Message.of("Hello");
         assertThat(message)
                 .extracting(
-                        Message::source,
-                        Message::message
+                        Message::getSource,
+                        Message::getMessage
                 ).contains(
                         null,
                         "Hello"
@@ -23,15 +23,15 @@ class MessageTest extends TestBase {
     void withFormat_setsMessageFormat() {
 
         Message message = Message.of(ChatSource.of(server.addPlayer()), "test");
-        assertThat(message.format()).isNotNull();
+        assertThat(message.getFormat()).isNotNull();
 
         Format format = Format.builder().prefix("!").build();
         message = message.withFormat(format);
 
         assertThat(message)
                 .extracting(
-                        Message::format,
-                        Message::message,
+                        Message::getFormat,
+                        Message::getMessage,
                         Message::formattedMessage
                 ).contains(
                         format,

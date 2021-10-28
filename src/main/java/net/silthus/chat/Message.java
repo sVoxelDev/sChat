@@ -2,10 +2,8 @@ package net.silthus.chat;
 
 import lombok.Getter;
 import lombok.With;
-import lombok.experimental.Accessors;
 
 @Getter
-@Accessors(fluent = true)
 public class Message {
 
     public static Message of(String message) {
@@ -32,6 +30,6 @@ public class Message {
     }
 
     public String formattedMessage() {
-        return format().applyTo(this);
+        return getFormat().applyTo(this);
     }
 }

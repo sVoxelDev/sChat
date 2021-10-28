@@ -1,8 +1,8 @@
 package net.silthus.chat.commands;
 
-import org.junit.jupiter.api.Disabled;
+import net.silthus.chat.TestBase;
 
-@Disabled
-class ChannelCommandsTest {
+class ChannelCommandsTest extends TestBase {
+
 
 }

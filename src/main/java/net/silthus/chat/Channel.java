@@ -3,46 +3,49 @@ package net.silthus.chat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import lombok.ToString;
 import lombok.extern.java.Log;
 import net.silthus.chat.config.ChannelConfig;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Log
 @Data
-@EqualsAndHashCode(of = "alias", callSuper = false)
+@ToString(of = {"identifier", "config"})
+@EqualsAndHashCode(of = "identifier", callSuper = false)
 public class Channel extends AbstractChatTarget {
 
-    private final String alias;
+    private final String identifier;
     private final ChannelConfig config;
-    private final Set<ChatTarget> targets = new HashSet<>();
+    private final Set<ChatTarget> targets = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>()));
 
-    public Channel(String alias) {
-        this(alias, new ChannelConfig());
+    public Channel(String identifier) {
+        this(identifier, new ChannelConfig());
     }
 
-    public Channel(String alias, ChannelConfig config) {
-        this.alias = alias;
+    public Channel(String identifier, ChannelConfig config) {
+        this.identifier = identifier;
         this.config = config;
     }
 
-    public Channel(String alias, ConfigurationSection config) {
-        this(alias, ChannelConfig.of(config));
+    public Channel(String identifier, ConfigurationSection config) {
+        this(identifier, ChannelConfig.of(config));
     }
 
 
     public String getName() {
         if (getConfig().getName() != null)
             return getConfig().getName();
-        return getAlias();
+        return getIdentifier();
     }
 
     public String getPermission() {
-        return Constants.CHANNEL_PERMISSION + "." + getAlias();
+        return Constants.Permissions.getChannelPermission(this);
+    }
+
+    public String getAutoJoinPermission() {
+        return Constants.Permissions.getAutoJoinPermission(this);
     }
 
     public Collection<ChatTarget> getTargets() {

@@ -29,11 +29,11 @@ public class ChannelTests extends TestBase {
                 .isInstanceOf(ChatTarget.class);
         assertThat(channel)
                 .extracting(
-                        Channel::getAlias,
+                        Channel::getIdentifier,
                         Channel::getPermission
                 ).contains(
                         "test",
-                        Constants.CHANNEL_PERMISSION + ".test"
+                        Constants.Permissions.CHANNEL_PERMISSION + ".test"
                 );
         assertThat(channel.getName())
                 .isEqualTo("test");
@@ -180,8 +180,8 @@ public class ChannelTests extends TestBase {
         assertThat(channel.getLastReceivedMessage())
                 .isNotNull()
                 .extracting(
-                        Message::message,
-                        m -> m.source().getDisplayName()
+                        Message::getMessage,
+                        m -> m.getSource().getDisplayName()
                 ).contains(
                         "test",
                         "Player0"
@@ -216,12 +216,23 @@ public class ChannelTests extends TestBase {
 
         assertThat(channel.getReceivedMessages())
                 .hasSize(3)
-                .extracting(Message::message)
+                .extracting(Message::getMessage)
                 .containsExactly(
                         "test",
                         "foobar",
                         "Heyho"
                 );
+    }
+
+    @Test
+    void subscribedTarget_isRemoved_onUnregister() throws InterruptedException {
+        PlayerMock player = server.addPlayer();
+        Chatter chatter = Chatter.of(player);
+        chatter.subscribe(channel);
+
+        assertThat(channel.getTargets()).contains(chatter);
+        plugin.getChatManager().unregisterChatter(player);
+        assertThat(channel.getTargets()).isEmpty();
     }
 
     @Nested

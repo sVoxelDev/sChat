@@ -19,4 +19,10 @@ public interface ChatTarget {
     Message getLastReceivedMessage();
 
     Collection<Message> getReceivedMessages();
+
+    Collection<Channel> getSubscriptions();
+
+    void subscribe(Channel channel);
+
+    void unsubscribe(Channel channel);
 }
