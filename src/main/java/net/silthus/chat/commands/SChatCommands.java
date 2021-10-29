@@ -3,15 +3,10 @@ package net.silthus.chat.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.MessageType;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.Flags;
-import co.aikar.commands.annotation.Subcommand;
+import co.aikar.commands.annotation.*;
 import co.aikar.locales.MessageKey;
-import net.silthus.chat.AccessDeniedException;
-import net.silthus.chat.Channel;
-import net.silthus.chat.Chatter;
-import net.silthus.chat.SChat;
+import net.silthus.chat.*;
+import org.bukkit.ChatColor;
 
 import static net.silthus.chat.Constants.Language.*;
 
@@ -26,6 +21,29 @@ public class SChatCommands extends BaseCommand {
 
     public SChatCommands(SChat plugin) {
         this.plugin = plugin;
+    }
+
+    @CommandAlias("test")
+    @Subcommand("test")
+    public class TestCommands extends BaseCommand {
+
+        @Subcommand("center")
+        @CommandCompletion("* -")
+        public void center(String text, @Default(" ") String spacer) {
+            getCurrentCommandIssuer().sendMessage(ChatUtil.centerText(text, spacer));
+        }
+
+        @Subcommand("wrap")
+        @CommandCompletion("*")
+        public void wrapText(String text) {
+            getCurrentCommandIssuer().sendMessage(ChatUtil.wrapText(text, FontInfo.LEFT_LINE_CORNER.toString(), FontInfo.LONG_MINUS.toString(), FontInfo.RIGHT_LINE_CORNER.toString()));
+        }
+
+        @Subcommand("space")
+        @CommandCompletion("*")
+        public void spaceText(String text) {
+            getCurrentCommandIssuer().sendMessage(ChatUtil.spaceAndCenterText("|", "|", "|", " ", "Hi", ChatColor.GREEN + "there", ChatColor.BOLD + "Player!"));
+        }
     }
 
     @Subcommand("channel|ch")

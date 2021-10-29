@@ -1,9 +1,12 @@
 package net.silthus.chat;
 
 import lombok.NonNull;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.md_5.bungee.api.ChatColor;
 
 public final class Constants {
+
     private Constants() {
     }
 
@@ -40,5 +43,11 @@ public final class Constants {
         public static final String DEFAULT_PREFIX = null;
         public static final String DEFAULT_SUFFIX = ": ";
         public static final ChatColor DEFAULT_CHAT_COLOR = null;
+    }
+
+    public static class View {
+
+        public static final TextColor FRAME_COLOR = NamedTextColor.GRAY;
+        public static final String CHANNEL_DIVIDER = "│";
     }
 }
