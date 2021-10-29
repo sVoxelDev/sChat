@@ -3,7 +3,6 @@ package net.silthus.chat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.map.MinecraftFont;
 
 import java.util.ArrayList;
 
@@ -24,10 +23,11 @@ public class TabbedChatView {
     }
 
     public Component footer() {
-        int leftWidth = MinecraftFont.Font.getWidth("┌");
-        int dashWidth = MinecraftFont.Font.getWidth("─");
-        int rightWidth = MinecraftFont.Font.getWidth("┐");
-        return text("┌─");
+        return text().build();
+//        int leftWidth = MinecraftFont.Font.getWidth("┌");
+//        int dashWidth = MinecraftFont.Font.getWidth("─");
+//        int rightWidth = MinecraftFont.Font.getWidth("┐");
+//        return text("┌─");
     }
 
     Component channelTabs(Chatter chatter) {

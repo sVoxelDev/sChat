@@ -38,6 +38,7 @@ public class ChatPacketListener extends PacketAdapter {
     @Override
     public void onPacketSending(PacketEvent event) {
         if (event.getPacketType() != PacketType.Play.Server.CHAT) return;
+        if (Chatter.of(event.getPlayer()).getActiveChannel() == null) return;
         PacketContainer packet = event.getPacket();
         WrappedChatComponent chat = packet.getChatComponents().read(0);
         String json = chat.getJson();

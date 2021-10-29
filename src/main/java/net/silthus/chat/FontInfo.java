@@ -91,13 +91,13 @@ public enum FontInfo {
     QUESTION_MARK('?', 5),
     SLASH('/', 5),
     BACK_SLASH('\\', 5),
-    LONG_MINUS('─', 4),
-    LONG_LINE('│', 4),
-    LEFT_LINE_CORNER('┌', 4),
-    RIGHT_LINE_CORNER('┐', 4),
+    LONG_MINUS('\u2500', 8), // ─
+    LONG_LINE('\u2502', 5), // │
+    LEFT_LINE_CORNER('\u250C', 8), // ┌
+    RIGHT_LINE_CORNER('\u2510', 8), // ┐
     CARET('>', 4),
-    DOWN_CARET('⏷', 8),
-    DOUBLE_ARROW_RIGHT('⇒', 7),
+    DOWN_CARET('\u23F7', 5), // ⏷
+    DOUBLE_ARROW_RIGHT('\u21D2', 7), // ⇒
     LINE('|', 1),
     TILDE('~', 5),
     TICK('`', 2),

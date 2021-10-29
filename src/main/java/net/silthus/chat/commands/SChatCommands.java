@@ -36,13 +36,19 @@ public class SChatCommands extends BaseCommand {
         @Subcommand("wrap")
         @CommandCompletion("*")
         public void wrapText(String text) {
-            getCurrentCommandIssuer().sendMessage(ChatUtil.wrapText(text, FontInfo.LEFT_LINE_CORNER.toString(), FontInfo.LONG_MINUS.toString(), FontInfo.RIGHT_LINE_CORNER.toString()));
+            getCurrentCommandIssuer().sendMessage(ChatUtil.wrapText(text, "|-", "-", "-|"));
         }
 
         @Subcommand("space")
         @CommandCompletion("*")
         public void spaceText(String text) {
-            getCurrentCommandIssuer().sendMessage(ChatUtil.spaceAndCenterText("|", "|", "|", " ", "Hi", ChatColor.GREEN + "there", ChatColor.BOLD + "Player!"));
+            getCurrentCommandIssuer().sendMessage(ChatUtil.spaceAndCenterText("|-", "|", "-|", " ", "Hi", ChatColor.GREEN + "there" + ChatColor.RESET, ChatColor.BOLD + "Player!" + ChatColor.RESET));
+        }
+
+        @Subcommand("frame")
+        public void frame() {
+            getCurrentCommandIssuer().sendMessage(ChatUtil.wrapText(FontInfo.LONG_MINUS.toString(), FontInfo.LEFT_LINE_CORNER.toString(), FontInfo.LONG_MINUS.toString(), FontInfo.RIGHT_LINE_CORNER.toString()));
+            getCurrentCommandIssuer().sendMessage(ChatUtil.wrapText("Global | Local | Trade", FontInfo.LONG_LINE.toString(), " ", FontInfo.LONG_LINE.toString()));
         }
     }
 

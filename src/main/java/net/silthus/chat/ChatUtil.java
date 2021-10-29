@@ -7,9 +7,9 @@ public final class ChatUtil {
     public static final int PADDING = 1;
     public static final int MARGIN = 5;
     public static final int MAX_LINE_LENGTH = 320;
-    private static final int MAX_USABLE_LINE_LENGTH = MAX_LINE_LENGTH - MARGIN * 2;
+    private static final int MAX_USABLE_LINE_LENGTH = MAX_LINE_LENGTH;
 
-    public static int getTextLength(String str) {
+    public static int   getTextLength(String str) {
         if (str == null || str.isEmpty()) return 0;
         str = ChatColor.translateAlternateColorCodes('&', str);
         int length = 0;
@@ -41,7 +41,7 @@ public final class ChatUtil {
 
     public static String spaceAndCenterText(String leftCorner, String divider, String rightCorner, String spacer, String... text) {
         StringBuilder sb = new StringBuilder();
-        int availableSpacePerText = (MAX_USABLE_LINE_LENGTH / text.length) - getTextLength(leftCorner) - getTextLength(rightCorner) - getTextLength(divider) * text.length;
+        int availableSpacePerText = (MAX_USABLE_LINE_LENGTH / text.length) - (getTextLength(leftCorner) + getTextLength(rightCorner) + (getTextLength(divider) * (text.length - 1)));
         for (int i = 0; i < text.length; i++) {
             String fragment = text[i];
             sb.append(centerText(fragment, spacer, availableSpacePerText));
@@ -52,7 +52,7 @@ public final class ChatUtil {
     }
 
     private static String centerText(String text, String spacer, int lineLength) {
-        int spacerLength = getSpacerLength(spacer);
+        int spacerLength = getTextLength(spacer);
         int compensated = 0;
         StringBuilder prefix = new StringBuilder();
         StringBuilder suffix = new StringBuilder();
@@ -62,10 +62,6 @@ public final class ChatUtil {
             compensated += spacerLength;
         }
         return prefix.append(text).append(suffix).toString();
-    }
-
-    private static int getSpacerLength(String spacer) {
-        return getTextLength(spacer) + PADDING;
     }
 
     private static int getPixelsToCenterText(String text, int lineLength) {
