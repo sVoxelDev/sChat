@@ -1,21 +1,32 @@
 package net.silthus.chat;
 
+import co.aikar.commands.InvalidCommandArgument;
 import co.aikar.commands.PaperCommandManager;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.google.common.base.Strings;
 import kr.entree.spigradle.annotations.PluginMain;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.silthus.chat.commands.ChannelCommands;
+import net.silthus.chat.commands.SChatCommands;
 import net.silthus.chat.config.PluginConfig;
 import net.silthus.chat.protocollib.ChatPacketListener;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
 @PluginMain
@@ -49,7 +60,7 @@ public class SChat extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
+        setupAndLoadConfigs();
 
         setupAndLoadChannels();
         setupChatManager();
@@ -63,6 +74,11 @@ public class SChat extends JavaPlugin {
     public void onDisable() {
 
         commandManager.unregisterCommands();
+    }
+
+    private void setupAndLoadConfigs() {
+        saveDefaultConfig();
+        saveResource("lang_en.yaml", false);
     }
 
     private void setupAndLoadChannels() {
@@ -89,6 +105,100 @@ public class SChat extends JavaPlugin {
 
     private void setupCommands() {
         commandManager = new PaperCommandManager(this);
-        commandManager.registerCommand(new ChannelCommands(this));
+
+        registerChatterContext(commandManager);
+        registerChannelContext(commandManager);
+
+        registerChannelCompletion(commandManager);
+
+        loadCommandLocales(commandManager);
+
+        commandManager.registerCommand(new SChatCommands(this));
+    }
+
+    private void registerChannelContext(PaperCommandManager commandManager) {
+        commandManager.getCommandContexts().registerContext(Channel.class, context -> {
+            String channelIdentifier = context.popFirstArg();
+            return getChannelRegistry().get(channelIdentifier)
+                    .orElseThrow(() -> new InvalidCommandArgument("The channel '" + channelIdentifier + "' does not exist."));
+        });
+    }
+
+    private void registerChatterContext(PaperCommandManager commandManager) {
+        commandManager.getCommandContexts().registerIssuerAwareContext(Chatter.class, context -> {
+            if (context.hasFlag("self")) {
+                return Chatter.of(context.getPlayer());
+            }
+
+            String arg = context.popFirstArg();
+            Player player;
+            if (isEntitySelector(arg)) {
+                player = selectPlayer(context.getSender(), arg);
+            } else {
+                if (Strings.isNullOrEmpty(arg)) {
+                    return Chatter.of(context.getPlayer());
+                }
+                try {
+                    return getChatManager().getChatter(UUID.fromString(arg));
+                } catch (Exception e) {
+                    Optional<Chatter> chatter = getChatManager().getChatter(arg);
+                    if (chatter.isPresent()) return chatter.get();
+                    player = Bukkit.getPlayerExact(arg);
+                }
+            }
+
+            if (player == null) {
+                throw new InvalidCommandArgument("The player '" + arg + "' was not found.");
+            }
+
+            return Chatter.of(player);
+        });
+    }
+
+    private void registerChannelCompletion(PaperCommandManager commandManager) {
+        commandManager.getCommandCompletions().registerAsyncCompletion("channels", context ->
+                getChannelRegistry().getChannels().stream()
+                .map(Channel::getIdentifier)
+                .collect(Collectors.toSet()));
+    }
+
+    private void loadCommandLocales(PaperCommandManager commandManager) {
+        try {
+            commandManager.getLocales().loadYamlLanguageFile("lang_en.yaml", Locale.ENGLISH);
+        } catch (IOException | InvalidConfigurationException e) {
+            getLogger().severe("Failed to load language config: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private boolean isEntitySelector(String arg) {
+        return !Strings.isNullOrEmpty(arg) && arg.startsWith("@");
+    }
+
+    private Player selectPlayer(CommandSender sender, String playerIdentifier) {
+
+        List<Player> matchedPlayers;
+        try {
+            matchedPlayers = getServer().selectEntities(sender, playerIdentifier).parallelStream()
+                    .unordered()
+                    .filter(e -> e instanceof Player)
+                    .map(e -> ((Player) e))
+                    .collect(Collectors.toList());
+        }
+        catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            throw new InvalidCommandArgument(String.format("Error parsing selector '%s' for %s! See console for more details",
+                    playerIdentifier, sender.getName()));
+        }
+        if (matchedPlayers.isEmpty()) {
+            throw new InvalidCommandArgument(String.format("No player found with selector '%s' for %s",
+                    playerIdentifier, sender.getName()));
+        }
+        if (matchedPlayers.size() > 1) {
+            throw new InvalidCommandArgument(String.format("Error parsing selector '%s' for %s. ambiguous result (more than one player matched) - %s",
+                    playerIdentifier, sender.getName(), matchedPlayers.toString()));
+        }
+
+        return matchedPlayers.get(0);
     }
 }

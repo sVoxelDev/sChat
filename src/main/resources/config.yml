@@ -6,3 +6,10 @@ channels:
       # alternate formatting
       # prefix: <gold>[<green>G<gold>]<reset>
       chat_color: GREEN
+  trade:
+    name: Trade
+    format:
+      prefix: '§6[§7T§6]§r'
+      chat_color: GRAY
+  team:
+    name: Team

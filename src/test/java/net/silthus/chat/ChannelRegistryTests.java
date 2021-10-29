@@ -63,6 +63,15 @@ public class ChannelRegistryTests extends TestBase {
     }
 
     @Test
+    void add_addsChannelWithLowercase() {
+        addChannel("FOO");
+        assertThat(registry.getChannels())
+                .first()
+                .extracting(Channel::getIdentifier)
+                .isEqualTo("foo");
+    }
+
+    @Test
     void remove_removesChannelFromRegistry() {
         Channel channel = new Channel("test");
         registry.add(channel);
@@ -94,16 +103,46 @@ public class ChannelRegistryTests extends TestBase {
     }
 
     @Test
+    void remove_withLowerCase_Identifier() {
+        addChannel("test");
+        registry.remove("TEST");
+        assertThat(registry.getChannels()).isEmpty();
+
+        addChannel("test");
+        registry.remove(new Channel("TesT"));
+        assertThat(registry.getChannels()).isEmpty();
+    }
+
+    @Test
+    void remove_null_doesNotThrow() {
+
+        assertThat(registry.remove((String) null)).isNull();
+    }
+
+    @Test
     void contains_returnsTrueIfChannelExists() {
 
-        registry.add(new Channel("test"));
+        addChannel("test");
 
         assertThat(registry.contains("test")).isTrue();
     }
 
     @Test
+    void contains_withLowerCase_returnsTrue() {
+
+        addChannel("test");
+
+        assertThat(registry.contains("tEsT")).isTrue();
+    }
+
+    @Test
     void contains_returnsFalseIfChannelIsNotPresent() {
         assertThat(registry.contains("foobar")).isFalse();
+    }
+
+    @Test
+    void contains_null_returnsFalse() {
+        assertThat(registry.contains((String) null)).isFalse();
     }
 
     @Test
@@ -117,7 +156,7 @@ public class ChannelRegistryTests extends TestBase {
     @Test
     void size_returnsChannelRegistrySize() {
         assertThat(registry.size()).isZero();
-        registry.add(new Channel("test"));
+        addChannel("test");
         assertThat(registry.size()).isOne();
     }
 
@@ -126,7 +165,7 @@ public class ChannelRegistryTests extends TestBase {
         Iterator<Channel> iterator = registry.iterator();
         assertThat(iterator).isNotNull();
         assertThat(iterator.hasNext()).isFalse();
-        registry.add(new Channel("test"));
+        addChannel("test");
         assertThat(iterator.hasNext()).isFalse();
 
         assertThat(registry.iterator().hasNext()).isTrue();
@@ -139,7 +178,7 @@ public class ChannelRegistryTests extends TestBase {
 
     @Test
     void getChannel_findsChannelByIdentifier() {
-        registry.add(new Channel("foo"));
+        addChannel("foo");
         assertThat(registry.get("foo"))
                 .isPresent().get()
                 .extracting(
@@ -149,6 +188,20 @@ public class ChannelRegistryTests extends TestBase {
                         "foo",
                         "foo"
                 );
+    }
+
+    @Test
+    void getChannel_withUpperCase_findsChannel() {
+
+        addChannel("foo");
+        assertThat(registry.get("FoO"))
+                .isPresent().get()
+                .extracting(Channel::getIdentifier)
+                .isEqualTo("foo");
+    }
+
+    private void addChannel(String identifier) {
+        registry.add(new Channel(identifier));
     }
 
     @Nested

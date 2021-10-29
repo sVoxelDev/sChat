@@ -53,6 +53,12 @@ public class ChannelTests extends TestBase {
     }
 
     @Test
+    void create_lowerCasesIdentifier() {
+        Channel channel = new Channel("TEsT");
+        assertThat(channel.getIdentifier()).isEqualTo("test");
+    }
+
+    @Test
     void equalsBasedOnAlias() {
         Channel channel1 = new Channel("test");
         Channel channel2 = new Channel("test");

@@ -25,7 +25,7 @@ public class ChannelRegistry implements Iterable<Channel> {
     }
 
     public Optional<Channel> get(String identifier) {
-        return Optional.ofNullable(channels.get(identifier));
+        return Optional.ofNullable(channels.get(identifier.toLowerCase()));
     }
 
     public int size() {
@@ -33,7 +33,8 @@ public class ChannelRegistry implements Iterable<Channel> {
     }
 
     public boolean contains(String identifier) {
-        return channels.containsKey(identifier);
+        if (identifier == null) return false;
+        return channels.containsKey(identifier.toLowerCase());
     }
 
     public boolean contains(Channel channel) {
@@ -54,7 +55,8 @@ public class ChannelRegistry implements Iterable<Channel> {
     }
 
     public Channel remove(String identifier) {
-        return this.channels.remove(identifier);
+        if (identifier == null) return null;
+        return this.channels.remove(identifier.toLowerCase());
     }
 
     private void loadChannelsFromConfig(ConfigurationSection channels) {

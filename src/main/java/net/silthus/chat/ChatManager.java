@@ -42,6 +42,16 @@ public class ChatManager {
         return registerChatter(Chatter.create(player));
     }
 
+    public Chatter getChatter(UUID id) {
+        return chatters.get(id);
+    }
+
+    public Optional<Chatter> getChatter(String playerName) {
+        return chatters.values().stream()
+                .filter(chatter -> chatter.getPlayer().getName().equalsIgnoreCase(playerName))
+                .findFirst();
+    }
+
     public Chatter registerChatter(@NonNull Player player) {
         return getOrCreateChatter(player);
     }

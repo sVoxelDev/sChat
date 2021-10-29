@@ -2,6 +2,7 @@ package net.silthus.chat;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -52,8 +53,7 @@ public class ChatManagerTests extends TestBase {
 
     @Test
     void getChatter_doesNotCreateDuplicateChatter() {
-        PlayerMock player = server.addPlayer();
-        manager.registerChatter(player);
+        PlayerMock player = addChatter();
         assertThat(manager.getChatters()).hasSize(1);
 
         Chatter chatter = manager.getOrCreateChatter(player);
@@ -62,6 +62,33 @@ public class ChatManagerTests extends TestBase {
         assertThat(chatter)
                 .isNotNull()
                 .extracting(Chatter::getUniqueId)
+                .isEqualTo(player.getUniqueId());
+    }
+
+    @NotNull
+    private PlayerMock addChatter() {
+        PlayerMock player = server.addPlayer();
+        manager.registerChatter(player);
+        return player;
+    }
+
+    @Test
+    void getChatter_byId() {
+        PlayerMock player = addChatter();
+
+        assertThat(manager.getChatter(player.getUniqueId()))
+                .isNotNull()
+                .extracting(Chatter::getUniqueId)
+                .isEqualTo(player.getUniqueId());
+    }
+
+    @Test
+    void getChatter_byName() {
+        PlayerMock player = addChatter();
+
+        assertThat(manager.getChatter(player.getName()))
+                .isPresent()
+                .get().extracting(Chatter::getUniqueId)
                 .isEqualTo(player.getUniqueId());
     }
 

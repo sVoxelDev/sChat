@@ -48,7 +48,17 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     public void setActiveChannel(Channel activeChannel) {
         this.activeChannel = activeChannel;
         if (activeChannel != null)
-            activeChannel.add(this);
+            subscribe(activeChannel);
+    }
+
+    public boolean canJoin(Channel channel) {
+        return getPlayer().hasPermission(channel.getPermission());
+    }
+
+    public void join(Channel channel) throws AccessDeniedException {
+        if (!canJoin(channel))
+            throw new AccessDeniedException("You don't have permission to join the channel: " + channel.getIdentifier());
+        setActiveChannel(channel);
     }
 
     @Override

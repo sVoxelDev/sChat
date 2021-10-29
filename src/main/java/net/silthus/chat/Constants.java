@@ -24,6 +24,12 @@ public final class Constants {
         }
     }
 
+    public static class Language {
+        public static final String ACF_BASE_KEY = "commands";
+        public static final String ACCESS_TO_CHANNEL_DENIED = "access-to-channel-denied";
+        public static final String JOINED_CHANNEL = "joined-channel";
+    }
+
     public static class Errors {
 
         public static final String NO_ACTIVE_CHANNEL = ChatColor.RED + "You have no active channel to write in. Select one with /join <channel>";

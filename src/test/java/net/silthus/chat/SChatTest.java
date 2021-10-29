@@ -35,8 +35,10 @@ class SChatTest extends TestBase {
     void onEnable_loadsChannelsFromConfig() {
 
         assertThat(plugin.getChannelRegistry().getChannels())
-                .hasSize(1);
-        Optional<Channel> channel = plugin.getChannelRegistry().getChannels().stream().findFirst();
+                .hasSizeGreaterThanOrEqualTo(1);
+        Optional<Channel> channel = plugin.getChannelRegistry().getChannels().stream()
+                .filter(c -> c.getIdentifier().equals("global"))
+                .findFirst();
         assertThat(channel)
                 .isPresent().get()
                 .extracting(

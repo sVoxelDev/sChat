@@ -25,7 +25,7 @@ public class Channel extends AbstractChatTarget {
     }
 
     public Channel(String identifier, ChannelConfig config) {
-        this.identifier = identifier;
+        this.identifier = identifier.toLowerCase();
         this.config = config;
     }
 

@@ -11,8 +11,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class ChatterTests extends TestBase {
@@ -26,6 +25,7 @@ public class ChatterTests extends TestBase {
         super.setUp();
 
         player = server.addPlayer();
+        player.addAttachment(plugin, Constants.Permissions.getChannelPermission(new Channel("test")), true);
         chatter = plugin.getChatManager().registerChatter(spy(Chatter.of(player)));
     }
 
@@ -200,6 +200,33 @@ public class ChatterTests extends TestBase {
         chatter.unsubscribe(channel);
         channel.sendMessage("test");
         assertThat(chatter.getLastReceivedMessage()).isNull();
+    }
+
+    @Test
+    void join_subscribesAndSetsActiveChannel() throws AccessDeniedException {
+
+        Channel channel = new Channel("test");
+        chatter.join(channel);
+        assertThat(chatter.getSubscriptions()).contains(channel);
+        assertThat(channel.getTargets()).contains(chatter);
+        assertThat(chatter.getActiveChannel()).isSameAs(channel);
+    }
+
+    @Test
+    void join_throwsIfPlayerCannotJoinChannel() {
+
+        assertThatExceptionOfType(AccessDeniedException.class)
+                .isThrownBy(() -> chatter.join(new Channel("foobar")));
+    }
+
+    @Test
+    void canJoin_returnsTrueIfPlayerCanJoinTheChannel() {
+        assertThat(chatter.canJoin(new Channel("test"))).isTrue();
+    }
+
+    @Test
+    void canJoin_isFalse_ifPlayerHasNoPermission() {
+        assertThat(chatter.canJoin(new Channel("abc"))).isFalse();
     }
 
     @Nested
