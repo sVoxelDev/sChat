@@ -1,12 +1,11 @@
 package net.silthus.chat;
 
 import org.bukkit.ChatColor;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.withinPercentage;
 
-@Disabled
 class ChatUtilTest {
 
     @Test
@@ -20,20 +19,36 @@ class ChatUtilTest {
 
         final String str = " &6Hello&l! ";
         String centerText = ChatUtil.centerText(str, FontInfo.MINUS.toString());
-        assertThat(centerText).isEqualTo("-------------------- &6Hello&l! --------------------");
+        assertNotExceedingMaxLineLength(centerText);
+        assertThat(centerText).isEqualTo("------------------------ &6Hello&l! ------------------------");
     }
 
     @Test
     void frameText_addsSpacingAndLeftAndRightSuffix() {
         final String str = "Hi";
         String text = ChatUtil.wrapText(str, "|-", "-", "-|");
-        assertThat(text).isEqualTo("|----------------------Hi----------------------|");
+        assertNotExceedingMaxLineLength(text);
+        assertThat(text).isEqualTo("|--------------------------Hi--------------------------|");
     }
 
     @Test
     void spaceAndCenterText() {
         final String[] text = {"Hi", "there", "friend!"};
         String result = ChatUtil.spaceAndCenterText("|- ", " | ", "-|", " ", text);
-        assertThat(result).isEqualTo("|-      Hi      |    there    |   friend!  -|");
+        assertNotExceedingMaxLineLength(result);
+        assertThat(result).isEqualTo("|-        Hi        |      there      |     friend!    -|");
+    }
+
+    @Test
+    void centerText_isNotLonger_thanMaxLineLength() {
+        final String str = "Hi";
+        String text = ChatUtil.centerText("Hi", "-");
+        assertNotExceedingMaxLineLength(text);
+    }
+
+    private void assertNotExceedingMaxLineLength(String text) {
+        int textLength = ChatUtil.getTextLength(text);
+        assertThat(textLength).isLessThan(ChatUtil.MAX_LINE_LENGTH);
+        assertThat(textLength).isCloseTo(ChatUtil.MAX_LINE_LENGTH, withinPercentage(5));
     }
 }

@@ -5,11 +5,9 @@ import org.bukkit.ChatColor;
 public final class ChatUtil {
 
     public static final int PADDING = 1;
-    public static final int MARGIN = 5;
-    public static final int MAX_LINE_LENGTH = 320;
-    private static final int MAX_USABLE_LINE_LENGTH = MAX_LINE_LENGTH;
+    public static final int MAX_LINE_LENGTH = 316;
 
-    public static int   getTextLength(String str) {
+    public static int getTextLength(String str) {
         if (str == null || str.isEmpty()) return 0;
         str = ChatColor.translateAlternateColorCodes('&', str);
         int length = 0;
@@ -31,17 +29,17 @@ public final class ChatUtil {
     }
 
     public static String wrapText(String text, String leftCorner, String spacer, String rightCorner) {
-        int lineLength = MAX_USABLE_LINE_LENGTH - getTextLength(leftCorner) - getTextLength(rightCorner);
+        int lineLength = MAX_LINE_LENGTH - getTextLength(leftCorner) - getTextLength(rightCorner);
         return leftCorner + centerText(text, spacer, lineLength) + rightCorner;
     }
 
     public static String centerText(String text, String spacer) {
-        return centerText(text, spacer, MAX_USABLE_LINE_LENGTH);
+        return centerText(text, spacer, MAX_LINE_LENGTH);
     }
 
     public static String spaceAndCenterText(String leftCorner, String divider, String rightCorner, String spacer, String... text) {
         StringBuilder sb = new StringBuilder();
-        int availableSpacePerText = (MAX_USABLE_LINE_LENGTH / text.length) - (getTextLength(leftCorner) + getTextLength(rightCorner) + (getTextLength(divider) * (text.length - 1)));
+        int availableSpacePerText = (MAX_LINE_LENGTH / text.length) - (getTextLength(leftCorner) + getTextLength(rightCorner) + (getTextLength(divider) * (text.length - 1)));
         for (int i = 0; i < text.length; i++) {
             String fragment = text[i];
             sb.append(centerText(fragment, spacer, availableSpacePerText));
