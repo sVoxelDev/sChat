@@ -39,7 +39,7 @@ public class SChat extends JavaPlugin {
     private static boolean testing = false;
 
     private ChannelRegistry channelRegistry;
-    private ChatManager chatManager;
+    private ChatterManager chatterManager;
 
     private PaperCommandManager commandManager;
     private ProtocolManager protocolManager;
@@ -87,7 +87,7 @@ public class SChat extends JavaPlugin {
     }
 
     private void setupChatManager() {
-        chatManager = new ChatManager(this);
+        chatterManager = new ChatterManager(this);
     }
 
     private void setupAdventureTextLibrary() {
@@ -139,9 +139,9 @@ public class SChat extends JavaPlugin {
                     return Chatter.of(context.getPlayer());
                 }
                 try {
-                    return getChatManager().getChatter(UUID.fromString(arg));
+                    return getChatterManager().getChatter(UUID.fromString(arg));
                 } catch (Exception e) {
-                    Optional<Chatter> chatter = getChatManager().getChatter(arg);
+                    Optional<Chatter> chatter = getChatterManager().getChatter(arg);
                     if (chatter.isPresent()) return chatter.get();
                     player = Bukkit.getPlayerExact(arg);
                 }

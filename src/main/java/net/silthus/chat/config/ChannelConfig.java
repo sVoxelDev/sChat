@@ -18,11 +18,15 @@ public class ChannelConfig {
         return new ChannelConfig(config);
     }
 
-    private String name;
-    private Format format = Format.defaultFormat();
-
-    public ChannelConfig() {
+    public static ChannelConfig empty() {
+        return ChannelConfig.builder().build();
     }
+
+    private String name;
+    @Builder.Default
+    private boolean protect = false;
+    @Builder.Default
+    private Format format = Format.defaultFormat();
 
     private ChannelConfig(ConfigurationSection config) {
         this.name = config.getString("name");

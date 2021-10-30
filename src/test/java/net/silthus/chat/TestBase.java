@@ -5,6 +5,7 @@ import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import lombok.SneakyThrows;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.silthus.chat.config.ChannelConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,5 +53,13 @@ public abstract class TestBase {
 
     protected void assertReceivedMessage(PlayerMock player, String message) {
         assertThat(player.nextMessage()).isEqualTo(message);
+    }
+
+    protected Channel createChannel(Function<ChannelConfig.ChannelConfigBuilder, ChannelConfig.ChannelConfigBuilder> cfg) {
+        return createChannel("test", cfg);
+    }
+
+    protected Channel createChannel(String name, Function<ChannelConfig.ChannelConfigBuilder, ChannelConfig.ChannelConfigBuilder> cfg) {
+        return new Channel(name, cfg.apply(ChannelConfig.builder()).build());
     }
 }

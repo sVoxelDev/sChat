@@ -7,6 +7,7 @@ import lombok.ToString;
 import lombok.extern.java.Log;
 import net.silthus.chat.config.ChannelConfig;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 
@@ -21,7 +22,7 @@ public class Channel extends AbstractChatTarget {
     private final Set<ChatTarget> targets = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>()));
 
     public Channel(String identifier) {
-        this(identifier, new ChannelConfig());
+        this(identifier, ChannelConfig.empty());
     }
 
     public Channel(String identifier, ChannelConfig config) {
@@ -50,6 +51,13 @@ public class Channel extends AbstractChatTarget {
 
     public Collection<ChatTarget> getTargets() {
         return List.copyOf(targets);
+    }
+
+    public boolean canJoin(Player player) {
+        if (getConfig().isProtect()) {
+            return player.hasPermission(getPermission());
+        }
+        return true;
     }
 
     public void add(@NonNull ChatTarget chatter) {

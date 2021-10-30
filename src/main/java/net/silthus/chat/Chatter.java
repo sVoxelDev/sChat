@@ -20,7 +20,7 @@ import java.util.UUID;
 public class Chatter extends AbstractChatTarget implements Listener, ChatSource, ChatTarget {
 
     public static Chatter of(Player player) {
-        return SChat.instance().getChatManager().registerChatter(player);
+        return SChat.instance().getChatterManager().registerChatter(player);
     }
 
     static Chatter create(Player player) {
@@ -34,7 +34,6 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         this.player = player;
     }
 
-    @Override
     public UUID getUniqueId() {
         return getPlayer().getUniqueId();
     }
@@ -56,7 +55,7 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     }
 
     public boolean canJoin(Channel channel) {
-        return getPlayer().hasPermission(channel.getPermission());
+        return channel.canJoin(getPlayer());
     }
 
     public void join(Channel channel) throws AccessDeniedException {
@@ -78,7 +77,11 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     }
 
     private Identity getIdentity(Message message) {
-        return message.getSource() != null ? Identity.identity(message.getSource().getUniqueId()) : Identity.nil();
+        try {
+            return message.getSource() != null ? Identity.identity(UUID.fromString(message.getSource().getIdentifier())) : Identity.nil();
+        } catch (IllegalArgumentException e) {
+            return Identity.nil();
+        }
     }
 
     private TextComponent appendSourceMetadataToMessage(Message message) {

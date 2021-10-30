@@ -1,7 +1,11 @@
-package net.silthus.chat;
+package net.silthus.chat.layout;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.silthus.chat.Channel;
+import net.silthus.chat.Chatter;
+import net.silthus.chat.Message;
+import net.silthus.chat.TestBase;
 import org.bukkit.ChatColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

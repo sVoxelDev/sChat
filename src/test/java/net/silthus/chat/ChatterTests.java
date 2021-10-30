@@ -26,7 +26,7 @@ public class ChatterTests extends TestBase {
 
         player = server.addPlayer();
         player.addAttachment(plugin, Constants.Permissions.getChannelPermission(new Channel("test")), true);
-        chatter = plugin.getChatManager().registerChatter(spy(Chatter.of(player)));
+        chatter = plugin.getChatterManager().registerChatter(spy(Chatter.of(player)));
     }
 
     private void sendMessage(Player source, String message) {
@@ -38,11 +38,11 @@ public class ChatterTests extends TestBase {
         assertThat(chatter)
                 .isInstanceOf(Listener.class)
                 .extracting(
-                        Chatter::getUniqueId,
+                        Chatter::getIdentifier,
                         Chatter::getDisplayName,
                         ChatTarget::getIdentifier
                 ).contains(
-                        player.getUniqueId(),
+                        player.getUniqueId().toString(),
                         player.getDisplayName(),
                         player.getUniqueId().toString()
                 );
@@ -218,7 +218,7 @@ public class ChatterTests extends TestBase {
     void join_throwsIfPlayerCannotJoinChannel() {
 
         assertThatExceptionOfType(AccessDeniedException.class)
-                .isThrownBy(() -> chatter.join(new Channel("foobar")));
+                .isThrownBy(() -> chatter.join(createChannel("foo", cfg -> cfg.protect(true))));
     }
 
     @Test
@@ -228,7 +228,7 @@ public class ChatterTests extends TestBase {
 
     @Test
     void canJoin_isFalse_ifPlayerHasNoPermission() {
-        assertThat(chatter.canJoin(new Channel("abc"))).isFalse();
+        assertThat(chatter.canJoin(createChannel("foobar", cfg -> cfg.protect(true)))).isFalse();
     }
 
     @Nested

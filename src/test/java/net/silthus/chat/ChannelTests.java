@@ -246,14 +246,38 @@ public class ChannelTests extends TestBase {
     }
 
     @Test
-    void subscribedTarget_isRemoved_onUnregister() throws InterruptedException {
+    void subscribedTarget_isRemoved_onUnregister() {
         PlayerMock player = server.addPlayer();
         Chatter chatter = Chatter.of(player);
         chatter.subscribe(channel);
 
         assertThat(channel.getTargets()).contains(chatter);
-        plugin.getChatManager().unregisterChatter(player);
+        plugin.getChatterManager().unregisterChatter(player);
         assertThat(channel.getTargets()).isEmpty();
+    }
+
+    @Test
+    void canJoin_unprotected_isTrue() {
+        Channel channel = createChannel(c -> c.protect(false));
+
+        assertThat(channel.canJoin(server.addPlayer())).isTrue();
+    }
+
+    @Test
+    void canJoin_protected_withoutPermission_isFalse() {
+        Channel channel = createChannel(c -> c.protect(true));
+
+        assertThat(channel.canJoin(server.addPlayer())).isFalse();
+    }
+
+    @Test
+    void canJoin_protected_withPermission_isTrue() {
+        Channel channel = createChannel(c -> c.protect(true));
+
+        PlayerMock player = server.addPlayer();
+        player.addAttachment(plugin, channel.getPermission(), true);
+
+        assertThat(channel.canJoin(player)).isTrue();
     }
 
     @Nested

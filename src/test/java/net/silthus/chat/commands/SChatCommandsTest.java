@@ -32,7 +32,7 @@ class SChatCommandsTest extends TestBase {
         @Test
         void join_withoutPermission_fails() {
 
-            Channel channel = new Channel("test");
+            Channel channel = createChannel(cfg -> cfg.protect(true));
             plugin.getChannelRegistry().add(channel);
 
             PlayerMock player = server.addPlayer();

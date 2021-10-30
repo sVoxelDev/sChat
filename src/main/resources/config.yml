@@ -1,6 +1,7 @@
 channels:
   global:
     name: Global
+    protected: false
     format:
       prefix: '§6[§aG§6]§r'
       # alternate formatting
@@ -12,4 +13,6 @@ channels:
       prefix: '§6[§7T§6]§r'
       chat_color: GRAY
   team:
-    name: Team
+    # Protecting a channel requires the "schat.channel.<id>" permission to join it.
+    # For the team channel this would be "schat.channel.team".
+    protected: true

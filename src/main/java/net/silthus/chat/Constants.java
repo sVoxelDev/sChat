@@ -13,7 +13,12 @@ public final class Constants {
 
     public static final String PLUGIN_NAME = "sChat";
     public static final Key NBT_CHAT_TARGET_KEY = Key.key("schat:target");
-    public static final String SYSTEM_TARGET_IDENTIFIER = "system";
+
+    public static class Targets {
+
+        public static final String EMPTY = "none";
+        public static final String SYSTEM = "system";
+    }
 
     public static class Permissions {
 

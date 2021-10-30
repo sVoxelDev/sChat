@@ -1,4 +1,4 @@
-package net.silthus.chat;
+package net.silthus.chat.layout;
 
 public enum FontInfo {
 

@@ -13,14 +13,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 @Log(topic = Constants.PLUGIN_NAME)
-public class ChatManager {
+public class ChatterManager {
 
     private final SChat plugin;
-    private final Map<UUID, Chatter> chatters = Collections.synchronizedMap(new HashMap<>());
+    private final Map<String, Chatter> chatters = Collections.synchronizedMap(new HashMap<>());
 
     final PlayerListener playerListener;
 
-    public ChatManager(SChat plugin) {
+    public ChatterManager(SChat plugin) {
         this.plugin = plugin;
         this.playerListener = new PlayerListener();
         plugin.getServer().getPluginManager().registerEvents(playerListener, plugin);
@@ -37,13 +37,13 @@ public class ChatManager {
     }
 
     public Chatter getOrCreateChatter(@NonNull Player player) {
-        if (chatters.containsKey(player.getUniqueId()))
-            return chatters.get(player.getUniqueId());
+        if (chatters.containsKey(player.getUniqueId().toString()))
+            return chatters.get(player.getUniqueId().toString());
         return registerChatter(Chatter.create(player));
     }
 
     public Chatter getChatter(UUID id) {
-        return chatters.get(id);
+        return chatters.get(id.toString());
     }
 
     public Optional<Chatter> getChatter(String playerName) {
@@ -63,11 +63,11 @@ public class ChatManager {
     }
 
     private void addChatterToCache(@NotNull Chatter chatter) {
-        unregisterListener(chatters.put(chatter.getUniqueId(), chatter));
+        unregisterListener(chatters.put(chatter.getIdentifier(), chatter));
     }
 
     public void unregisterChatter(@NonNull Player player) {
-        Chatter chatter = chatters.remove(player.getUniqueId());
+        Chatter chatter = chatters.remove(player.getUniqueId().toString());
         unregisterListener(chatter);
         unsubscribeAll(chatter);
     }
@@ -79,7 +79,7 @@ public class ChatManager {
 
     private void unsubscribeAll(Chatter chatter) {
         if (chatter == null) return;
-        chatter.getSubscriptions().forEach(channel -> channel.remove(chatter));
+        chatter.getSubscriptions().forEach(chatter::unsubscribe);
     }
 
     class PlayerListener implements Listener {

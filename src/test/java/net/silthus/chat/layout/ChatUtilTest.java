@@ -1,5 +1,6 @@
-package net.silthus.chat;
+package net.silthus.chat.layout;
 
+import org.assertj.core.api.Assertions;
 import org.bukkit.ChatColor;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ class ChatUtilTest {
     @Test
     void getLength_returnsStringLength() {
         final String str = "> [&6Admin] " + ChatColor.GRAY + "User: " + ChatColor.BOLD + "Hi!";
-        assertThat(ChatUtil.getTextLength(str)).isEqualTo(90);
+        Assertions.assertThat(ChatUtil.getTextLength(str)).isEqualTo(90);
     }
 
     @Test

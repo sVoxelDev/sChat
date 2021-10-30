@@ -5,7 +5,12 @@ import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.MessageType;
 import co.aikar.commands.annotation.*;
 import co.aikar.locales.MessageKey;
-import net.silthus.chat.*;
+import net.silthus.chat.AccessDeniedException;
+import net.silthus.chat.Channel;
+import net.silthus.chat.Chatter;
+import net.silthus.chat.SChat;
+import net.silthus.chat.layout.ChatUtil;
+import net.silthus.chat.layout.FontInfo;
 import org.bukkit.ChatColor;
 
 import static net.silthus.chat.Constants.Language.*;

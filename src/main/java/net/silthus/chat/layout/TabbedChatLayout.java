@@ -1,9 +1,13 @@
-package net.silthus.chat;
+package net.silthus.chat.layout;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.silthus.chat.Channel;
+import net.silthus.chat.ChatLayout;
+import net.silthus.chat.Chatter;
+import net.silthus.chat.Message;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.*;

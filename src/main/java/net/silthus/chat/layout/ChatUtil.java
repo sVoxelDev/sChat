@@ -1,4 +1,4 @@
-package net.silthus.chat;
+package net.silthus.chat.layout;
 
 import org.bukkit.ChatColor;
 
