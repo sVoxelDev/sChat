@@ -138,7 +138,7 @@ public class ChannelTests extends TestBase {
     void sendMessage_sendsMessageToNobody() {
 
         PlayerMock player = server.addPlayer();
-        channel.sendMessage(new Message(ChatSource.of(player), "test"));
+        channel.sendMessage(Message.of(ChatSource.of(player), "test"));
 
         assertThat(channel.getTargets()).isEmpty();
         assertThat(player.nextMessage()).isNull();
@@ -228,6 +228,21 @@ public class ChannelTests extends TestBase {
                         "foobar",
                         "Heyho"
                 );
+    }
+
+    @Test
+    void sendMessage_setsTargetToChannel() {
+
+        Message message = Message.of(ChatSource.of(server.addPlayer()), "test");
+        Chatter chatter = Chatter.of(server.addPlayer());
+        channel.add(chatter);
+
+        channel.sendMessage(message);
+
+        assertThat(chatter.getLastReceivedMessage())
+                .isNotNull()
+                .extracting(Message::getTarget)
+                .isSameAs(channel);
     }
 
     @Test

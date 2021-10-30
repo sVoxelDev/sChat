@@ -232,6 +232,14 @@ public class ChannelRegistryTests extends TestBase {
             assertThat(registry.getChannels()).isEmpty();
         }
 
+        @Test
+        void load_registersSystemChannel_ifConfigured() {
+            MemoryConfiguration cfg = new MemoryConfiguration();
+            PluginConfig config = new PluginConfig(cfg);
+
+            registry.load(config);
+        }
+
         private void loadTwoChannels() {
             MemoryConfiguration cfg = new MemoryConfiguration();
             cfg.set("channels.test1.name", "Test 1");

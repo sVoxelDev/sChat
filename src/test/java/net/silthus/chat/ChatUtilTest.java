@@ -1,11 +1,13 @@
 package net.silthus.chat;
 
 import org.bukkit.ChatColor;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.withinPercentage;
 
+@Disabled
 class ChatUtilTest {
 
     @Test

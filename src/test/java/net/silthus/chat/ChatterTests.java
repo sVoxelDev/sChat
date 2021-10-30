@@ -39,10 +39,12 @@ public class ChatterTests extends TestBase {
                 .isInstanceOf(Listener.class)
                 .extracting(
                         Chatter::getUniqueId,
-                        Chatter::getDisplayName
+                        Chatter::getDisplayName,
+                        ChatTarget::getIdentifier
                 ).contains(
                         player.getUniqueId(),
-                        player.getDisplayName()
+                        player.getDisplayName(),
+                        player.getUniqueId().toString()
                 );
     }
 

@@ -13,6 +13,4 @@ public interface ChatSource {
     UUID getUniqueId();
 
     String getDisplayName();
-
-    void sendMessageTo(ChatTarget target, String message);
 }

@@ -10,9 +10,15 @@ public interface ChatTarget {
         return Chatter.of(player);
     }
 
+    static ChatTarget empty() {
+        return new EmptyChatTarget();
+    }
+
     default void sendMessage(String message) {
         sendMessage(Message.of(message));
     }
+
+    String getIdentifier();
 
     void sendMessage(Message message);
 

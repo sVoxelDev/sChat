@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -41,6 +40,11 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     }
 
     @Override
+    public String getIdentifier() {
+        return getUniqueId().toString();
+    }
+
+    @Override
     public String getDisplayName() {
         return getPlayer().getDisplayName();
     }
@@ -73,9 +77,27 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         addReceivedMessage(message);
     }
 
-    @Override
-    public void sendMessageTo(ChatTarget target, String message) {
-        target.sendMessage(Message.of(this, message));
+    private Identity getIdentity(Message message) {
+        return message.getSource() != null ? Identity.identity(message.getSource().getUniqueId()) : Identity.nil();
+    }
+
+    private TextComponent appendSourceMetadataToMessage(Message message) {
+        return Component.text()
+                .append(LegacyComponentSerializer.legacySection().deserialize(message.formattedMessage()))
+                .append(Component.storageNBT()
+                        .nbtPath(message.getTarget().getIdentifier())
+                        .storage(Constants.NBT_CHAT_TARGET_KEY))
+                .build();
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
+        if (isNotApplicable(event)) return;
+
+        Message.of(this, event.getMessage())
+                .withTarget(getActiveChannel())
+                .send();
+        event.setCancelled(true);
     }
 
     private boolean isNotApplicable(AsyncPlayerChatEvent event) {
@@ -91,26 +113,5 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         event.getPlayer().sendMessage(Constants.Errors.NO_ACTIVE_CHANNEL);
         event.setCancelled(true);
         return true;
-    }
-
-    private Identity getIdentity(Message message) {
-        return message.getSource() != null ? Identity.identity(message.getSource().getUniqueId()) : Identity.nil();
-    }
-
-    private TextComponent appendSourceMetadataToMessage(Message message) {
-        return Component.text()
-                .append(LegacyComponentSerializer.legacySection().deserialize(message.formattedMessage()))
-                .append(Component.storageNBT()
-                        .nbtPath(message.getSource() != null ? "global" : "system")
-                        .storage(Key.key("schat:channel")))
-                .build();
-    }
-
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
-        if (isNotApplicable(event)) return;
-
-        sendMessageTo(getActiveChannel(), event.getMessage());
-        event.setCancelled(true);
     }
 }

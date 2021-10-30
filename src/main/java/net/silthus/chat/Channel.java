@@ -61,9 +61,9 @@ public class Channel extends AbstractChatTarget {
     }
 
     public void sendMessage(Message message) {
-        final Message chatMessage = message.withFormat(getConfig().getFormat());
-        getTargets().forEach(chatter -> chatter.sendMessage(chatMessage));
+        final Message chatMessage = message.withFormat(getConfig().getFormat())
+                .withTarget(this);
+        getTargets().forEach(target -> target.sendMessage(chatMessage));
         addReceivedMessage(message);
     }
-
 }

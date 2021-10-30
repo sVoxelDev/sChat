@@ -12,10 +12,12 @@ class MessageTest extends TestBase {
         assertThat(message)
                 .extracting(
                         Message::getSource,
-                        Message::getMessage
+                        Message::getMessage,
+                        Message::getTarget
                 ).contains(
                         null,
-                        "Hello"
+                        "Hello",
+                        ChatTarget.empty()
                 );
     }
 
@@ -38,5 +40,50 @@ class MessageTest extends TestBase {
                         "test",
                         "!Player0: test"
                 );
+    }
+
+    @Test
+    void target_isEmptyByDefault() {
+
+        Message message = Message.of("test");
+        assertThat(message.getTarget())
+                .isNotNull()
+                .isInstanceOf(EmptyChatTarget.class);
+    }
+
+    @Test
+    void withTarget_setsMessageTarget() {
+        Message message = Message.of("hi");
+        ChatTarget target = ChatTarget.of(server.addPlayer());
+        Message withTarget = message.withTarget(target);
+
+        assertThat(withTarget.getTarget())
+                .isEqualTo(target);
+    }
+
+    @Test
+    void withNullTarget_doesNotSetTarget() {
+
+        Message message = Message.of("test").withTarget(null);
+
+        assertThat(message.getTarget())
+                .isNotNull()
+                .isInstanceOf(EmptyChatTarget.class);
+        ChatTarget target = ChatTarget.of(server.addPlayer());
+        message = message.withTarget(target);
+
+        assertThat(message.withTarget(null).getTarget())
+                .isSameAs(target);
+    }
+
+    @Test
+    void send_sendsMessageToTarget() {
+
+        ChatTarget target = ChatTarget.empty();
+        Message message = Message.of("hi").withTarget(target);
+
+        message.send();
+
+        assertThat(target.getLastReceivedMessage()).isEqualTo(message);
     }
 }

@@ -1,16 +1,19 @@
 package net.silthus.chat;
 
 import lombok.NonNull;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.md_5.bungee.api.ChatColor;
+
+import java.util.function.Function;
 
 public final class Constants {
 
-    private Constants() {
-    }
-
     public static final String PLUGIN_NAME = "sChat";
+    public static final Key NBT_CHAT_TARGET_KEY = Key.key("schat:target");
+    public static final String SYSTEM_TARGET_IDENTIFIER = "system";
 
     public static class Permissions {
 
@@ -47,7 +50,17 @@ public final class Constants {
 
     public static class View {
 
-        public static final TextColor FRAME_COLOR = NamedTextColor.GRAY;
+        public static final TextColor FRAME_COLOR = NamedTextColor.DARK_GRAY;
+        public static final TextColor INFO_COLOR = NamedTextColor.GRAY;
+        public static final TextColor COMMAND = NamedTextColor.AQUA;
+        public static final TextColor ACTIVE_COLOR = NamedTextColor.GREEN;
+        public static final TextColor INACTIVE_COLOR = NamedTextColor.GRAY;
+        public static final TextDecoration ACTIVE_DECORATION = TextDecoration.UNDERLINED;
+
         public static final String CHANNEL_DIVIDER = "│";
+    }
+
+    public static class Commands {
+        public static final Function<Channel, String> JOIN_CHANNEL = channel -> "/schat channel join " + channel.getIdentifier();
     }
 }
