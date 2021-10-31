@@ -14,6 +14,10 @@ public interface ChatTarget {
         return new EmptyChatTarget();
     }
 
+    static Console console() {
+        return Console.instance();
+    }
+
     default void sendMessage(String message) {
         sendMessage(Message.of(message));
     }

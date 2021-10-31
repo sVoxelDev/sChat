@@ -18,6 +18,7 @@ public final class Constants {
 
         public static final String EMPTY = "none";
         public static final String SYSTEM = "system";
+        public static final String CONSOLE = "console";
     }
 
     public static class Permissions {

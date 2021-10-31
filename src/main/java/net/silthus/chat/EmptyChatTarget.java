@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(of = {"identifier"}, callSuper = false)
 final class EmptyChatTarget extends AbstractChatTarget implements ChatTarget {
 
-    private final String identifier = Constants.Targets.SYSTEM;
+    private final String identifier = Constants.Targets.EMPTY;
 
     @Override
     public String getIdentifier() {

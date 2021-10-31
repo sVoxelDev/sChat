@@ -63,7 +63,8 @@ public class SChat extends JavaPlugin {
         setupAndLoadConfigs();
 
         setupAndLoadChannels();
-        setupChatManager();
+        setupChatterManager();
+        setupConsoleChatter();
 
         setupAdventureTextLibrary();
         setupProtocolLib();
@@ -86,8 +87,12 @@ public class SChat extends JavaPlugin {
         channelRegistry.load(new PluginConfig(getConfig()));
     }
 
-    private void setupChatManager() {
+    private void setupChatterManager() {
         chatterManager = new ChatterManager(this);
+    }
+
+    private void setupConsoleChatter() {
+        getServer().getPluginManager().registerEvents(Console.init(null), this);
     }
 
     private void setupAdventureTextLibrary() {
