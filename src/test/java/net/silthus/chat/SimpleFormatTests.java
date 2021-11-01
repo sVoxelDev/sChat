@@ -1,6 +1,7 @@
 package net.silthus.chat;
 
 import net.md_5.bungee.api.ChatColor;
+import net.silthus.chat.formats.SimpleFormat;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,18 +12,18 @@ import java.awt.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class FormatTests {
+public class SimpleFormatTests {
 
     @Test
     void create_withDefaults() {
 
-        Format format = Format.builder().build();
+        SimpleFormat format = SimpleFormat.builder().build();
 
         assertThat(format)
                 .extracting(
-                        Format::getPrefix,
-                        Format::getSuffix,
-                        Format::getChatColor
+                        SimpleFormat::getPrefix,
+                        SimpleFormat::getSuffix,
+                        SimpleFormat::getChatColor
                 ).contains(
                         null,
                         ": ",
@@ -32,7 +33,7 @@ public class FormatTests {
 
     @Test
     void create_withBuilder() {
-        Format format = Format.builder()
+        SimpleFormat format = SimpleFormat.builder()
                 .prefix("[A]")
                 .suffix("[B]")
                 .chatColor(ChatColor.AQUA)
@@ -40,9 +41,9 @@ public class FormatTests {
 
         assertThat(format)
                 .extracting(
-                        Format::getPrefix,
-                        Format::getSuffix,
-                        Format::getChatColor
+                        SimpleFormat::getPrefix,
+                        SimpleFormat::getSuffix,
+                        SimpleFormat::getChatColor
                 ).contains(
                         "[A]",
                         "[B]",
@@ -58,13 +59,13 @@ public class FormatTests {
         cfg.set("suffix", " - ");
         cfg.set("chat_color", "GRAY");
 
-        Format format = Format.of(cfg);
+        SimpleFormat format = Format.fromConfig(cfg);
 
         assertThat(format)
                 .extracting(
-                        Format::getPrefix,
-                        Format::getSuffix,
-                        Format::getChatColor
+                        SimpleFormat::getPrefix,
+                        SimpleFormat::getSuffix,
+                        SimpleFormat::getChatColor
                 ).contains(
                         "[Test] ",
                         " - ",
@@ -93,7 +94,7 @@ public class FormatTests {
     @Test
     void color_catchesInvalidColors() {
 
-        Format format = Format.builder()
+        SimpleFormat format = SimpleFormat.builder()
                 .chatColor("FOO")
                 .build();
 
@@ -103,7 +104,7 @@ public class FormatTests {
     @Test
     void color_catchesInvalidLegacyColorCodes() {
 
-        Format format = Format.builder()
+        SimpleFormat format = SimpleFormat.builder()
                 .chatColor("&z")
                 .build();
 
@@ -113,13 +114,13 @@ public class FormatTests {
     @Test
     void withEmptyConfig() {
 
-        Format format = Format.of(new MemoryConfiguration());
+        SimpleFormat format = Format.fromConfig(new MemoryConfiguration());
 
         assertThat(format)
                 .extracting(
-                        Format::getPrefix,
-                        Format::getSuffix,
-                        Format::getChatColor
+                        SimpleFormat::getPrefix,
+                        SimpleFormat::getSuffix,
+                        SimpleFormat::getChatColor
                 ).contains(
                         null,
                         ": ",
@@ -133,20 +134,20 @@ public class FormatTests {
         MemoryConfiguration cfg = new MemoryConfiguration();
         cfg.set("color", "  ");
 
-        Format format = Format.of(cfg);
+        SimpleFormat format = Format.fromConfig(cfg);
 
         assertThat(format.getChatColor()).isNull();
     }
 
     private void setAndAssertColor(String colorCode, ChatColor expectedColor) {
 
-        Format format = Format.builder()
+        SimpleFormat format = SimpleFormat.builder()
                 .chatColor(colorCode)
                 .build();
 
         assertThat(format.getChatColor()).isEqualTo(expectedColor);
 
-        format = Format.builder().build()
+        format = SimpleFormat.builder().build()
                 .withChatColor(colorCode);
         assertThat(format.getChatColor()).isEqualTo(expectedColor);
     }
@@ -168,7 +169,7 @@ public class FormatTests {
         @Test
         void format() {
 
-            Format format = Format.builder()
+            SimpleFormat format = SimpleFormat.builder()
                     .prefix(ChatColor.GOLD + "[Server]" + ChatColor.BLUE)
                     .suffix(ChatColor.RED + ": ")
                     .chatColor(ChatColor.GREEN)
@@ -181,13 +182,13 @@ public class FormatTests {
 
         @Test
         void format_withNullPrefixOrSuffix() {
-            String message = Format.builder()
+            String message = SimpleFormat.builder()
                     .build()
                     .withPrefix(null)
                     .applyTo(Message.of(source, "test"));
             assertThat(message).isEqualTo("Player0: test");
 
-            message = Format.builder()
+            message = SimpleFormat.builder()
                     .build()
                     .withSuffix(null)
                     .applyTo(Message.of(source, "test"));
@@ -197,7 +198,7 @@ public class FormatTests {
         @Test
         void format_withNullColorIgnoresTheColor() {
 
-            String message = Format.builder()
+            String message = SimpleFormat.builder()
                     .chatColor((ChatColor) null)
                     .build()
                     .applyTo(Message.of(source, "test"));
@@ -206,7 +207,7 @@ public class FormatTests {
 
         @Test
         void format_withNullSource_ignoresSource_andPrefixSuffix() {
-            String message = Format.builder().build()
+            String message = SimpleFormat.builder().build()
                     .applyTo(Message.of("test"));
 
             assertThat(message).isEqualTo("test");

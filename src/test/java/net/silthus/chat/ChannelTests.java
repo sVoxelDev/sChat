@@ -3,6 +3,7 @@ package net.silthus.chat;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.md_5.bungee.api.ChatColor;
 import net.silthus.chat.config.ChannelConfig;
+import net.silthus.chat.formats.SimpleFormat;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,9 +43,9 @@ public class ChannelTests extends TestBase {
                 .isEqualTo(null);
         assertThat(channel.getConfig().getFormat())
                 .extracting(
-                        Format::getPrefix,
-                        Format::getSuffix,
-                        Format::getChatColor
+                        SimpleFormat::getPrefix,
+                        SimpleFormat::getSuffix,
+                        SimpleFormat::getChatColor
                 ).contains(
                         null,
                         ": ",
@@ -299,9 +300,9 @@ public class ChannelTests extends TestBase {
                     .isEqualTo("Test");
             assertThat(channel.getConfig().getFormat())
                     .extracting(
-                            Format::getPrefix,
-                            Format::getSuffix,
-                            Format::getChatColor
+                            SimpleFormat::getPrefix,
+                            SimpleFormat::getSuffix,
+                            SimpleFormat::getChatColor
                     ).contains(
                             "[Test] ",
                             " - ",

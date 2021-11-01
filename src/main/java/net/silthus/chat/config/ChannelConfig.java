@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.extern.java.Log;
 import net.silthus.chat.Format;
+import net.silthus.chat.formats.SimpleFormat;
 import org.bukkit.configuration.ConfigurationSection;
 
 @Log
@@ -26,12 +27,14 @@ public class ChannelConfig {
     @Builder.Default
     private boolean protect = false;
     @Builder.Default
-    private Format format = Format.defaultFormat();
+    private SimpleFormat format = Format.defaultFormat();
 
     private ChannelConfig(ConfigurationSection config) {
         this.name = config.getString("name");
         ConfigurationSection formatSection = config.getConfigurationSection("format");
         if (formatSection != null)
-            this.format = Format.of(formatSection);
+            this.format = Format.fromConfig(formatSection);
+        else
+            this.format = Format.defaultFormat();
     }
 }

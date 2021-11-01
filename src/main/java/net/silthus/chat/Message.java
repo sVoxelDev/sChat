@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.With;
+import net.silthus.chat.formats.SimpleFormat;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -19,7 +20,8 @@ public class Message {
 
     ChatSource source;
     String message;
-    @With Format format;
+    @With
+    SimpleFormat format;
     ChatTarget target;
 
     private Message(ChatSource source, String message) {

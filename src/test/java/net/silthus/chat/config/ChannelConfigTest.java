@@ -1,7 +1,7 @@
 package net.silthus.chat.config;
 
 import net.md_5.bungee.api.ChatColor;
-import net.silthus.chat.Format;
+import net.silthus.chat.formats.SimpleFormat;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.Test;
 
@@ -23,9 +23,9 @@ class ChannelConfigTest {
                 .isEqualTo("Test");
         assertThat(config.getFormat())
                 .extracting(
-                        Format::getPrefix,
-                        Format::getSuffix,
-                        Format::getChatColor
+                        SimpleFormat::getPrefix,
+                        SimpleFormat::getSuffix,
+                        SimpleFormat::getChatColor
                 ).contains(
                         "foo-",
                         "-bar: ",

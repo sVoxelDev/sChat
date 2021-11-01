@@ -74,6 +74,7 @@ public class SChat extends JavaPlugin {
     @Override
     public void onDisable() {
 
+        Console.instance = null;
         commandManager.unregisterCommands();
     }
 

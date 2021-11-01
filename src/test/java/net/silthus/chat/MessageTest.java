@@ -1,5 +1,6 @@
 package net.silthus.chat;
 
+import net.silthus.chat.formats.SimpleFormat;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +28,7 @@ class MessageTest extends TestBase {
         Message message = Message.of(ChatSource.of(server.addPlayer()), "test");
         assertThat(message.getFormat()).isNotNull();
 
-        Format format = Format.builder().prefix("!").build();
+        SimpleFormat format = SimpleFormat.builder().prefix("!").build();
         message = message.withFormat(format);
 
         assertThat(message)
