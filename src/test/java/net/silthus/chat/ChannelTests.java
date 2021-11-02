@@ -18,7 +18,7 @@ public class ChannelTests extends TestBase {
     public void setUp() {
         super.setUp();
 
-        channel = new Channel("test");
+        channel = ChatTarget.channel("test");
     }
 
     @Test
@@ -37,22 +37,22 @@ public class ChannelTests extends TestBase {
         assertThat(channel.getName())
                 .isEqualTo("test");
         assertThat(channel.getConfig())
-                .extracting(ChannelConfig::getName)
+                .extracting(ChannelConfig::name)
                 .isEqualTo(null);
-        assertThat(channel.getConfig().getFormat())
+        assertThat(channel.getConfig().format())
                 .isNotNull();
     }
 
     @Test
     void create_lowerCasesIdentifier() {
-        Channel channel = new Channel("TEsT");
+        Channel channel = ChatTarget.channel("TEsT");
         assertThat(channel.getIdentifier()).isEqualTo("test");
     }
 
     @Test
     void equalsBasedOnAlias() {
-        Channel channel1 = new Channel("test");
-        Channel channel2 = new Channel("test");
+        Channel channel1 = ChatTarget.channel("test");
+        Channel channel2 = ChatTarget.channel("test");
 
         assertThat(channel1).isEqualTo(channel2);
     }
@@ -187,7 +187,7 @@ public class ChannelTests extends TestBase {
 
     @Test
     void sendMessage_storesFormattedChannelMessage() {
-        Channel channel = new Channel("test", ChannelConfig.builder().format(Format.miniMessage("[<channel_name]<sender_name>: <message>")).build());
+        Channel channel = Channel.channel("test", ChannelConfig.defaults().format(Format.miniMessage("[<channel_name]<sender_name>: <message>")));
         Message message = ChatSource.named("test").message("test").to(channel).send();
 
         assertThat(channel.getLastReceivedMessage())
@@ -281,6 +281,59 @@ public class ChannelTests extends TestBase {
         assertThat(channel.canJoin(player)).isTrue();
     }
 
+    @Test
+    void canAutoJoin_true_ifConfigured() {
+
+        Channel channel = createChannel(config -> config.autoJoin(true));
+        assertThat(channel.canAutoJoin(server.addPlayer())).isTrue();
+    }
+
+    @Test
+    void canAutoJoin_playerWithPermission_notConfigured_isTrue() {
+        Channel channel = createChannel(config -> config.autoJoin(false));
+        PlayerMock player = server.addPlayer();
+        player.addAttachment(plugin, channel.getAutoJoinPermission(), true);
+
+        assertThat(channel.canAutoJoin(player)).isTrue();
+    }
+
+    @Test
+    void canAutoJoin_protectedChannel_noPermission_isFalse() {
+        Channel channel = createChannel(config -> config.autoJoin(true).protect(true));
+
+        assertThat(channel.canAutoJoin(server.addPlayer())).isFalse();
+    }
+
+    @Test
+    void canAutoJoin_protected_bothPermissions_isTrue() {
+        Channel channel = createChannel(config -> config.protect(true).autoJoin(false));
+
+        PlayerMock player = server.addPlayer();
+        player.addAttachment(plugin, channel.getPermission(), true);
+        player.addAttachment(plugin, channel.getAutoJoinPermission(), true);
+
+        assertThat(channel.canAutoJoin(player)).isTrue();
+    }
+
+    @Test
+    void message_isSentToConsole() {
+        Channel channel = createChannel(config -> config.sendToConsole(true));
+
+        Message message = channel.sendMessage("test");
+        assertThat(Console.console().getLastReceivedMessage())
+                .isNotNull()
+                .isEqualTo(message);
+    }
+
+    @Test
+    void message_sendToConsole_false_isNotSentToConsole() {
+        Channel channel = createChannel(config -> config.sendToConsole(false));
+
+        channel.sendMessage("test");
+        assertThat(Console.console().getLastReceivedMessage())
+                .isNull();
+    }
+
     @Nested
     @DisplayName("with config")
     class WithConfig {
@@ -291,13 +344,13 @@ public class ChannelTests extends TestBase {
             MemoryConfiguration cfg = new MemoryConfiguration();
             cfg.set("name", "Test");
             cfg.set("format", "<green><message>");
+            cfg.set("console", true);
 
-            Channel channel = new Channel("test", ChannelConfig.of(cfg));
+            Channel channel = Channel.channel("test", ChannelConfig.of(cfg));
 
-            assertThat(channel.getName())
-                    .isEqualTo("Test");
-            assertThat(channel.getConfig().getFormat())
-                    .isNotNull();
+            assertThat(channel.getName()).isEqualTo("Test");
+            assertThat(channel.getConfig().format()).isNotNull();
+            assertThat(channel.getConfig().sendToConsole()).isTrue();
         }
 
     }

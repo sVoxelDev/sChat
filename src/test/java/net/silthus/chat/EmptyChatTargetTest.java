@@ -1,5 +1,6 @@
 package net.silthus.chat;
 
+import net.silthus.chat.config.ChannelConfig;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.chat.Constants.Targets.EMPTY;
@@ -13,5 +14,19 @@ class EmptyChatTargetTest {
         assertThat(target)
                 .extracting(ChatTarget::getIdentifier)
                 .isEqualTo(EMPTY);
+    }
+
+    @Test
+    void channel_fromConfig() {
+        Channel channel = ChatTarget.channel("test", ChannelConfig.defaults().name("Test 1"));
+        assertThat(channel)
+                .isNotNull()
+                .extracting(
+                        Channel::getIdentifier,
+                        Channel::getName
+                ).contains(
+                        "test",
+                        "Test 1"
+                );
     }
 }

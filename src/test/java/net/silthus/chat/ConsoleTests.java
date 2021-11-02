@@ -1,10 +1,16 @@
 package net.silthus.chat;
 
 import be.seeseemelk.mockbukkit.command.ConsoleCommandSenderMock;
-import org.junit.jupiter.api.*;
+import net.silthus.chat.config.ConsoleConfig;
+import org.bukkit.event.server.ServerCommandEvent;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.mock;
 
 public class ConsoleTests {
 
@@ -16,24 +22,7 @@ public class ConsoleTests {
     @Test
     void instance_beforeOnEnable() {
         assertThatExceptionOfType(UnsupportedOperationException.class)
-                .isThrownBy(Console::instance);
-    }
-
-    @Test
-    void init_setsConsoleInstance() {
-        Channel channel = new Channel("test");
-        Console.init(channel);
-        assertThat(Console.instance())
-                .isNotNull()
-                .extracting(Console::getActiveChannel)
-                .isEqualTo(channel);
-    }
-
-    @Test
-    void init_twice_throws() {
-        Console.init(new Channel("test"));
-        assertThatExceptionOfType(UnsupportedOperationException.class)
-                .isThrownBy(() -> Console.init(new Channel("test2")));
+                .isThrownBy(Console::console);
     }
 
     @Nested
@@ -46,7 +35,13 @@ public class ConsoleTests {
         public void setUp() {
             super.setUp();
 
-            console = Console.instance();
+            console = Console.console();
+        }
+
+        @Test
+        void init_twice_throws() {
+            assertThatExceptionOfType(UnsupportedOperationException.class)
+                    .isThrownBy(() -> Console.init(mock(ConsoleConfig.class)));
         }
 
         @Test
@@ -58,7 +53,7 @@ public class ConsoleTests {
                     .extracting(ChatTarget::getIdentifier)
                     .isEqualTo(Constants.Targets.CONSOLE);
 
-            assertThat(Console.instance()).isSameAs(target);
+            assertThat(Console.console()).isSameAs(target);
         }
 
         @Test
@@ -81,10 +76,32 @@ public class ConsoleTests {
         }
 
         @Test
-        @Disabled
-        void getActiveChannel_isNotNull() {
-            assertThat(console.getActiveChannel())
+        void getTarget_isNotNull() {
+            assertThat(console.getTarget())
                     .isNotNull();
+        }
+
+        @Test
+        void onChat_sendsMessageToDefaultTarget() {
+
+            console.onConsoleChat(new ServerCommandEvent(server.getConsoleSender(), "Hi there!"));
+            assertThat(console.getTarget().getLastReceivedMessage())
+                    .isNotNull()
+                    .extracting(Message::getMessage)
+                    .isEqualTo("Hi there!");
+            assertThat(((ConsoleCommandSenderMock) server.getConsoleSender()).nextMessage())
+                    .isNotNull()
+                    .contains("Hi there!");
+        }
+
+        @Test
+        void onChat_doesNotSendCommandsAsMessage() {
+            console.onConsoleChat(new ServerCommandEvent(server.getConsoleSender(), "/tell hi"));
+
+            assertThat(console.getTarget().getLastReceivedMessage())
+                    .isNull();
+            assertThat(((ConsoleCommandSenderMock) server.getConsoleSender()).nextMessage())
+                    .isNull();
         }
     }
 }

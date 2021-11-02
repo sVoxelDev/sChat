@@ -41,14 +41,14 @@ public class ChannelRegistryTests extends TestBase {
     @Test
     void getChannels_isImmutable() {
         assertThatExceptionOfType(UnsupportedOperationException.class)
-                .isThrownBy(() -> registry.getChannels().add(new Channel("test")));
+                .isThrownBy(() -> registry.getChannels().add(ChatTarget.channel("test")));
     }
 
     @Test
     void add_addsChannelToRegistry() {
-        Channel channel = new Channel("foo", ChannelConfig.builder()
+        Channel channel = Channel.channel("foo", ChannelConfig.defaults()
                 .name("Test")
-                .format(Format.defaultFormat()).build());
+                .format(Format.defaultFormat()));
         registry.add(channel);
 
         assertThat(registry.getChannels())
@@ -73,7 +73,7 @@ public class ChannelRegistryTests extends TestBase {
 
     @Test
     void remove_removesChannelFromRegistry() {
-        Channel channel = new Channel("test");
+        Channel channel = ChatTarget.channel("test");
         registry.add(channel);
         assertThat(registry.size()).isOne();
 
@@ -83,12 +83,12 @@ public class ChannelRegistryTests extends TestBase {
 
     @Test
     void remove_returnsFalse_ifChannelNotRegistered() {
-        assertThat(registry.remove(new Channel("test"))).isFalse();
+        assertThat(registry.remove(ChatTarget.channel("test"))).isFalse();
     }
 
     @Test
     void remove_withIdentifier_returnsChannel() {
-        Channel test = new Channel("test");
+        Channel test = ChatTarget.channel("test");
         registry.add(test);
         Channel channel = registry.remove("test");
         assertThat(channel)
@@ -109,7 +109,7 @@ public class ChannelRegistryTests extends TestBase {
         assertThat(registry.getChannels()).isEmpty();
 
         addChannel("test");
-        registry.remove(new Channel("TesT"));
+        registry.remove(ChatTarget.channel("TesT"));
         assertThat(registry.getChannels()).isEmpty();
     }
 
@@ -147,7 +147,7 @@ public class ChannelRegistryTests extends TestBase {
 
     @Test
     void contains_withChannel_returnsTrue() {
-        Channel channel = new Channel("test");
+        Channel channel = ChatTarget.channel("test");
         assertThat(registry.contains(channel)).isFalse();
         registry.add(channel);
         assertThat(registry.contains(channel)).isTrue();
@@ -200,8 +200,14 @@ public class ChannelRegistryTests extends TestBase {
                 .isEqualTo("foo");
     }
 
+    @Test
+    void getChannel_withNullIdentifier_returnsEmpty() {
+        assertThat(registry.get(null))
+                .isEmpty();
+    }
+
     private void addChannel(String identifier) {
-        registry.add(new Channel(identifier));
+        registry.add(ChatTarget.channel(identifier));
     }
 
     @Nested
@@ -235,7 +241,7 @@ public class ChannelRegistryTests extends TestBase {
         @Test
         void load_registersSystemChannel_ifConfigured() {
             MemoryConfiguration cfg = new MemoryConfiguration();
-            PluginConfig config = new PluginConfig(cfg);
+            PluginConfig config = PluginConfig.fromConfig(cfg);
 
             registry.load(config);
         }
@@ -244,11 +250,11 @@ public class ChannelRegistryTests extends TestBase {
             MemoryConfiguration cfg = new MemoryConfiguration();
             cfg.set("channels.test1.name", "Test 1");
             cfg.set("channels.test2.name", "Test 2");
-            registry.load(new PluginConfig(cfg));
+            registry.load(PluginConfig.fromConfig(cfg));
         }
 
         private void loadFromEmptyChannelConfig() {
-            registry.load(new PluginConfig(new MemoryConfiguration()));
+            registry.load(PluginConfig.fromConfig(new MemoryConfiguration()));
         }
     }
 }

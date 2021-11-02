@@ -57,12 +57,12 @@ public abstract class TestBase {
         assertThat(player.nextMessage()).isEqualTo(message);
     }
 
-    protected Channel createChannel(Function<ChannelConfig.ChannelConfigBuilder, ChannelConfig.ChannelConfigBuilder> cfg) {
+    protected Channel createChannel(Function<ChannelConfig, ChannelConfig> cfg) {
         return createChannel("test", cfg);
     }
 
-    protected Channel createChannel(String name, Function<ChannelConfig.ChannelConfigBuilder, ChannelConfig.ChannelConfigBuilder> cfg) {
-        return new Channel(name, cfg.apply(ChannelConfig.builder()).build());
+    protected Channel createChannel(String name, Function<ChannelConfig, ChannelConfig> cfg) {
+        return Channel.channel(name, cfg.apply(ChannelConfig.defaults()));
     }
 
     protected String toText(Component component) {

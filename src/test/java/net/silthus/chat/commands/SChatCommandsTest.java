@@ -3,6 +3,7 @@ package net.silthus.chat.commands;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.md_5.bungee.api.ChatColor;
 import net.silthus.chat.Channel;
+import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Chatter;
 import net.silthus.chat.TestBase;
 import org.junit.jupiter.api.Nested;
@@ -18,7 +19,7 @@ class SChatCommandsTest extends TestBase {
         @Test
         void join_JoinsPlayerToChannel() {
 
-            Channel channel = new Channel("test");
+            Channel channel = ChatTarget.channel("test");
             plugin.getChannelRegistry().add(channel);
 
             PlayerMock player = server.addPlayer();

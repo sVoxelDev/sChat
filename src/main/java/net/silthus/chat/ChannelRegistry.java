@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.silthus.chat.config.PluginConfig;
-import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.*;
 
@@ -25,6 +24,7 @@ public class ChannelRegistry implements Iterable<Channel> {
     }
 
     public Optional<Channel> get(String identifier) {
+        if (identifier == null) return Optional.empty();
         return Optional.ofNullable(channels.get(identifier.toLowerCase()));
     }
 
@@ -43,7 +43,13 @@ public class ChannelRegistry implements Iterable<Channel> {
 
     public void load(@NonNull PluginConfig config) {
         channels.clear();
-        loadChannelsFromConfig(config.getChannels());
+        loadChannels(config);
+    }
+
+    private void loadChannels(@NonNull PluginConfig config) {
+        config.channels().entrySet().stream()
+                .map(entry -> Channel.channel(entry.getKey(), entry.getValue()))
+                .forEach(this::add);
     }
 
     public void add(@NonNull Channel channel) {
@@ -57,17 +63,5 @@ public class ChannelRegistry implements Iterable<Channel> {
     public Channel remove(String identifier) {
         if (identifier == null) return null;
         return this.channels.remove(identifier.toLowerCase());
-    }
-
-    private void loadChannelsFromConfig(ConfigurationSection channels) {
-        if (channels == null) return;
-        channels.getKeys(false).forEach(channelKey ->
-                loadChannelFromConfig(channelKey, channels.getConfigurationSection(channelKey))
-        );
-        log.info("Loaded " + this.channels.size() + " channels.");
-    }
-
-    private void loadChannelFromConfig(String identifier, ConfigurationSection config) {
-        add(new Channel(identifier, config));
     }
 }

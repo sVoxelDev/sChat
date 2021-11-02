@@ -133,7 +133,7 @@ public class ChatterManagerTests extends TestBase {
     void unregisterChatter_unsubscribesChannels() {
 
         Chatter chatter = registerChatter();
-        Channel channel = new Channel("test");
+        Channel channel = ChatTarget.channel("test");
         chatter.subscribe(channel);
 
         manager.unregisterChatter(chatter.getPlayer());
@@ -179,7 +179,7 @@ public class ChatterManagerTests extends TestBase {
         @Test
         void onJoin_player_autoSubscribes_toConfiguredChannels() {
 
-            Channel channel = new Channel("test");
+            Channel channel = ChatTarget.channel("test");
             plugin.getChannelRegistry().add(channel);
             PlayerMock player = new PlayerMock(server, "test");
             player.addAttachment(plugin, Constants.Permissions.getAutoJoinPermission(channel), true);
@@ -192,12 +192,36 @@ public class ChatterManagerTests extends TestBase {
         @Test
         void onJoin_doesNotSubscribe_toChannelsWithoutPermission() {
 
-            Channel channel = new Channel("test");
+            Channel channel = createChannel(config -> config.protect(true));
             plugin.getChannelRegistry().add(channel);
 
             PlayerMock player = server.addPlayer();
             Chatter chatter = manager.getOrCreateChatter(player);
-            assertThat(chatter.getSubscriptions()).isEmpty();
+            assertThat(chatter.getSubscriptions()).doesNotContain(channel);
+        }
+
+        @Test
+        void onJoin_doesNotJoinProtectedChannels_withoutPermission() {
+
+            Channel channel = createChannel(config -> config.protect(true));
+            plugin.getChannelRegistry().add(channel);
+
+            PlayerMock player = new PlayerMock(server, "test");
+            player.addAttachment(plugin, Constants.Permissions.getAutoJoinPermission(channel), true);
+            assertThat(channel.getTargets()).isEmpty();
+
+            server.addPlayer(player);
+            assertThat(channel.getTargets()).doesNotContain(Chatter.of(player));
+        }
+
+        @Test
+        void onJoin_channelWithAutoJoin_joinsAllRegardlessOfPermission() {
+
+            Channel channel = createChannel(config -> config.autoJoin(true));
+            plugin.getChannelRegistry().add(channel);
+
+            Chatter chatter = Chatter.of(server.addPlayer());
+            assertThat(channel.getTargets()).contains(chatter);
         }
 
         @Test

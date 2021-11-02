@@ -32,7 +32,7 @@ public class ChatterManager {
 
     public void autoJoinChannels(Chatter chatter) {
         plugin.getChannelRegistry().getChannels().stream()
-                .filter(channel -> chatter.getPlayer().hasPermission(channel.getAutoJoinPermission()))
+                .filter(channel -> channel.canAutoJoin(chatter.getPlayer()))
                 .forEach(chatter::subscribe);
     }
 
@@ -87,8 +87,7 @@ public class ChatterManager {
 
         @EventHandler(ignoreCancelled = true)
         public void onJoin(PlayerJoinEvent event) {
-            Chatter chatter = registerChatter(event.getPlayer());
-            autoJoinChannels(chatter);
+            autoJoinChannels(registerChatter(event.getPlayer()));
         }
 
         @EventHandler(ignoreCancelled = true)

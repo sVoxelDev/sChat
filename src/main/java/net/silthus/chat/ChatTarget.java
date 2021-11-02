@@ -1,5 +1,6 @@
 package net.silthus.chat;
 
+import net.silthus.chat.config.ChannelConfig;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
@@ -14,17 +15,20 @@ public interface ChatTarget {
         return new NilChatTarget();
     }
 
-    // TODO: test
-    static Channel channel(String channelName) {
-        return new Channel(channelName);
+    static Channel channel(String identifier) {
+        return Channel.channel(identifier);
+    }
+
+    static Channel channel(String identifier, ChannelConfig config) {
+        return Channel.channel(identifier, config);
     }
 
     static Console console() {
-        return Console.instance();
+        return Console.console();
     }
 
-    default void sendMessage(String message) {
-        sendMessage(Message.message(message).withFormat(Format.directMessage()));
+    default Message sendMessage(String message) {
+        return sendMessage(Message.message(message).withFormat(Format.directMessage()));
     }
 
     String getIdentifier();

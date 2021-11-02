@@ -1,8 +1,9 @@
 package net.silthus.chat.layout;
 
+import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.silthus.chat.Channel;
+import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Chatter;
 import net.silthus.chat.TestBase;
 import org.bukkit.ChatColor;
@@ -25,7 +26,7 @@ public class TabbedChatLayoutTests extends TestBase {
 
         view = new TabbedChatLayout();
         chatter = Chatter.of(server.addPlayer());
-        chatter.setActiveChannel(new Channel("test"));
+        chatter.setActiveChannel(ChatTarget.channel("test"));
     }
 
     @Test
@@ -45,7 +46,7 @@ public class TabbedChatLayoutTests extends TestBase {
     @Test
     void channels_renders_noChannelInfo() {
 
-        Chatter chatter = Chatter.of(server.addPlayer());
+        Chatter chatter = Chatter.of(new PlayerMock(server, "test"));
         assertThat(chatter.getSubscriptions()).isEmpty();
 
         Component component = view.channelTabs(chatter);
@@ -66,7 +67,7 @@ public class TabbedChatLayoutTests extends TestBase {
     @Test
     void channels_renders_activeChannelUnderlined() {
         addChannels();
-        chatter.setActiveChannel(new Channel("active"));
+        chatter.setActiveChannel(ChatTarget.channel("active"));
 
         String text = getText(view.channelTabs(chatter));
         assertThat(text)
@@ -84,7 +85,7 @@ public class TabbedChatLayoutTests extends TestBase {
     }
 
     private void addChannels() {
-        chatter.subscribe(new Channel("test"));
-        chatter.subscribe(new Channel("foobar"));
+        chatter.subscribe(ChatTarget.channel("test"));
+        chatter.subscribe(ChatTarget.channel("foobar"));
     }
 }

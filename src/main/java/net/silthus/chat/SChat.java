@@ -38,6 +38,8 @@ public class SChat extends JavaPlugin {
     @Getter
     private static boolean testing = false;
 
+    private PluginConfig pluginConfig;
+
     private ChannelRegistry channelRegistry;
     private ChatterManager chatterManager;
 
@@ -81,11 +83,12 @@ public class SChat extends JavaPlugin {
     private void setupAndLoadConfigs() {
         saveDefaultConfig();
         saveResource("lang_en.yaml", false);
+        pluginConfig = PluginConfig.fromConfig(getConfig());
     }
 
     private void setupAndLoadChannels() {
         channelRegistry = new ChannelRegistry(this);
-        channelRegistry.load(new PluginConfig(getConfig()));
+        channelRegistry.load(getPluginConfig());
     }
 
     private void setupChatterManager() {
@@ -93,7 +96,7 @@ public class SChat extends JavaPlugin {
     }
 
     private void setupConsoleChatter() {
-        getServer().getPluginManager().registerEvents(Console.init(null), this);
+        getServer().getPluginManager().registerEvents(Console.init(getPluginConfig().console()), this);
     }
 
     private void setupAdventureTextLibrary() {

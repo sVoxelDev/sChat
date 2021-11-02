@@ -25,7 +25,7 @@ public class ChatterTests extends TestBase {
         super.setUp();
 
         player = server.addPlayer();
-        player.addAttachment(plugin, Constants.Permissions.getChannelPermission(new Channel("test")), true);
+        player.addAttachment(plugin, Constants.Permissions.getChannelPermission(ChatTarget.channel("test")), true);
         chatter = plugin.getChatterManager().registerChatter(spy(Chatter.of(player)));
     }
 
@@ -112,7 +112,7 @@ public class ChatterTests extends TestBase {
 
     @Test
     void setActiveChannel_setsChannel() {
-        Channel channel = new Channel("test");
+        Channel channel = ChatTarget.channel("test");
         chatter.setActiveChannel(channel);
 
         assertThat(chatter.getActiveChannel())
@@ -121,7 +121,7 @@ public class ChatterTests extends TestBase {
 
     @Test
     void setActiveChannel_addsPlayerAsTargetToChannel() {
-        Channel channel = new Channel("test");
+        Channel channel = ChatTarget.channel("test");
         assertThat(channel.getTargets()).isEmpty();
         chatter.setActiveChannel(channel);
         assertThat(channel.getTargets()).contains(chatter);
@@ -129,7 +129,7 @@ public class ChatterTests extends TestBase {
 
     @Test
     void setActiveChannel_toNull() {
-        Channel channel = new Channel("test");
+        Channel channel = ChatTarget.channel("test");
         chatter.setActiveChannel(channel);
         chatter.setActiveChannel(null);
         assertThat(chatter.getActiveChannel()).isNull();
@@ -137,7 +137,7 @@ public class ChatterTests extends TestBase {
 
     @Test
     void subscribe_addsChatterAsChannelTarget() {
-        Channel channel = new Channel("test");
+        Channel channel = ChatTarget.channel("test");
         chatter.subscribe(channel);
 
         assertThat(channel.getTargets()).contains(chatter);
@@ -146,17 +146,17 @@ public class ChatterTests extends TestBase {
 
     @Test
     void subscribe_onlyAddsChatterOnce() {
-        Channel channel = new Channel("test");
+        Channel channel = ChatTarget.channel("test");
         chatter.subscribe(channel);
         chatter.subscribe(channel);
 
         assertThat(channel.getTargets()).hasSize(1);
-        assertThat(chatter.getSubscriptions()).hasSize(1);
+        assertThat(chatter.getSubscriptions()).containsOnlyOnce(channel);
     }
 
     @Test
     void subscribe_sendsMessageToSubscriber() {
-        Channel channel = new Channel("test");
+        Channel channel = ChatTarget.channel("test");
         chatter.subscribe(channel);
 
         channel.sendMessage("test");
@@ -169,7 +169,7 @@ public class ChatterTests extends TestBase {
 
     @Test
     void not_subscribed_doesNotSendMessageToChatter() {
-        Channel channel = new Channel("test");
+        Channel channel = ChatTarget.channel("test");
         channel.sendMessage("test");
 
         assertThat(chatter.getLastReceivedMessage()).isNull();
@@ -178,25 +178,24 @@ public class ChatterTests extends TestBase {
     @Test
     void unsubscribe_doesNothingIfNotSubscribed() {
 
-        assertThatCode(() -> chatter.unsubscribe(new Channel("test")))
+        assertThatCode(() -> chatter.unsubscribe(ChatTarget.channel("test")))
                 .doesNotThrowAnyException();
-        assertThat(chatter.getSubscriptions()).isEmpty();
     }
 
     @Test
     void unsubscribe_removesSubscription() {
 
-        Channel channel = new Channel("test");
+        Channel channel = ChatTarget.channel("test");
         chatter.subscribe(channel);
         assertThat(chatter.getSubscriptions()).contains(channel);
 
         chatter.unsubscribe(channel);
-        assertThat(chatter.getSubscriptions()).isEmpty();
+        assertThat(chatter.getSubscriptions()).doesNotContain(channel);
     }
 
     @Test
     void unsubscribe_doesNotSendMessageToOldSubscriber() {
-        Channel channel = new Channel("test");
+        Channel channel = ChatTarget.channel("test");
         chatter.subscribe(channel);
 
         chatter.unsubscribe(channel);
@@ -207,7 +206,7 @@ public class ChatterTests extends TestBase {
     @Test
     void join_subscribesAndSetsActiveChannel() throws AccessDeniedException {
 
-        Channel channel = new Channel("test");
+        Channel channel = ChatTarget.channel("test");
         chatter.join(channel);
         assertThat(chatter.getSubscriptions()).contains(channel);
         assertThat(channel.getTargets()).contains(chatter);
@@ -223,7 +222,7 @@ public class ChatterTests extends TestBase {
 
     @Test
     void canJoin_returnsTrueIfPlayerCanJoinTheChannel() {
-        assertThat(chatter.canJoin(new Channel("test"))).isTrue();
+        assertThat(chatter.canJoin(ChatTarget.channel("test"))).isTrue();
     }
 
     @Test
@@ -254,7 +253,7 @@ public class ChatterTests extends TestBase {
         @Test
         void onChat_forwardsMessageToActiveChannel() {
 
-            Channel channel = new Channel("test");
+            Channel channel = ChatTarget.channel("test");
             chatter.setActiveChannel(channel);
             AsyncPlayerChatEvent event = chat("Hi");
 
@@ -279,7 +278,7 @@ public class ChatterTests extends TestBase {
         @Test
         void onChat_onlyReactsToChatter() {
 
-            Channel channel = new Channel("test");
+            Channel channel = ChatTarget.channel("test");
             chatter.setActiveChannel(channel);
 
             PlayerMock player2 = new PlayerMock(server, "test");
