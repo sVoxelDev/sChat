@@ -5,6 +5,8 @@ import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import lombok.SneakyThrows;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.silthus.chat.config.ChannelConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -61,5 +63,13 @@ public abstract class TestBase {
 
     protected Channel createChannel(String name, Function<ChannelConfig.ChannelConfigBuilder, ChannelConfig.ChannelConfigBuilder> cfg) {
         return new Channel(name, cfg.apply(ChannelConfig.builder()).build());
+    }
+
+    protected String toText(Component component) {
+        return LegacyComponentSerializer.legacyAmpersand().serialize(component);
+    }
+
+    protected String toText(Message message) {
+        return toText(message.formattedMessage());
     }
 }

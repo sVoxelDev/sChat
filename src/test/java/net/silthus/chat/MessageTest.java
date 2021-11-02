@@ -1,6 +1,5 @@
 package net.silthus.chat;
 
-import net.silthus.chat.formats.SimpleFormat;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -9,33 +8,33 @@ class MessageTest extends TestBase {
 
     @Test
     void ofMessageString() {
-        Message message = Message.of("Hello");
+        Message message = Message.message("Hello");
         assertThat(message)
                 .extracting(
                         Message::getSource,
                         Message::getMessage,
                         Message::getTarget
                 ).contains(
-                        null,
+                        ChatSource.nil(),
                         "Hello",
-                        ChatTarget.empty()
+                        ChatTarget.nil()
                 );
     }
 
     @Test
     void withFormat_setsMessageFormat() {
 
-        Message message = Message.of(ChatSource.of(server.addPlayer()), "test");
+        Message message = Message.message(ChatSource.player(server.addPlayer()), "test");
         assertThat(message.getFormat()).isNotNull();
 
-        SimpleFormat format = SimpleFormat.builder().prefix("!").build();
+        Format format = Format.miniMessage("!<sender_name>: <message>");
         message = message.withFormat(format);
 
         assertThat(message)
                 .extracting(
                         Message::getFormat,
                         Message::getMessage,
-                        Message::formattedMessage
+                        msg -> toText(msg.formattedMessage())
                 ).contains(
                         format,
                         "test",
@@ -46,17 +45,17 @@ class MessageTest extends TestBase {
     @Test
     void target_isEmptyByDefault() {
 
-        Message message = Message.of("test");
+        Message message = Message.message("test");
         assertThat(message.getTarget())
                 .isNotNull()
-                .isInstanceOf(EmptyChatTarget.class);
+                .isInstanceOf(NilChatTarget.class);
     }
 
     @Test
     void withTarget_setsMessageTarget() {
-        Message message = Message.of("hi");
-        ChatTarget target = ChatTarget.of(server.addPlayer());
-        Message withTarget = message.withTarget(target);
+        Message message = Message.message("hi");
+        ChatTarget target = ChatTarget.player(server.addPlayer());
+        Message withTarget = message.to(target);
 
         assertThat(withTarget.getTarget())
                 .isEqualTo(target);
@@ -65,26 +64,32 @@ class MessageTest extends TestBase {
     @Test
     void withNullTarget_doesNotSetTarget() {
 
-        Message message = Message.of("test").withTarget(null);
+        Message message = Message.message("test").to(null);
 
         assertThat(message.getTarget())
                 .isNotNull()
-                .isInstanceOf(EmptyChatTarget.class);
-        ChatTarget target = ChatTarget.of(server.addPlayer());
-        message = message.withTarget(target);
+                .isInstanceOf(NilChatTarget.class);
+        ChatTarget target = ChatTarget.player(server.addPlayer());
+        message = message.to(target);
 
-        assertThat(message.withTarget(null).getTarget())
+        assertThat(message.to(null).getTarget())
                 .isSameAs(target);
     }
 
     @Test
     void send_sendsMessageToTarget() {
 
-        ChatTarget target = ChatTarget.empty();
-        Message message = Message.of("hi").withTarget(target);
+        ChatTarget target = ChatTarget.nil();
+        Message message = Message.message("hi").to(target);
 
         message.send();
 
         assertThat(target.getLastReceivedMessage()).isEqualTo(message);
+    }
+
+    @Test
+    void emptySource_usesDirectMessageFormat() {
+        Message message = Message.message("test");
+        assertThat(toText(message)).isEqualTo("test");
     }
 }

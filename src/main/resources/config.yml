@@ -17,17 +17,11 @@ channels:
     # You can use any PlaceholderAPI placeholders with the {placeholder} syntax.
     # The following custom mini message placeholders are available:
     # - <channel_name>: The name of the channel (see above).
-    # - <sender_vault_prefix>: The vault prefix of the sending player (requires Vault).
-    # - <sender_displayname>: The name or nick of the sending player.
-    # - <sender_vault_suffix>: The vault suffix of the sending placer (requires Vault).
+    # - <sender_name>: The name or nick of the sending player.
     # - <message>: The message that is being sent.
-    # format: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset> {sender_vault_prefix}{player_displayname}<chat_color>: <sender_vault_suffix><message>'
-    chat_color: GREEN
+    format: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset> <yellow><sender_name><gray>: <green><message>'
   trade:
     name: Trade
-    format:
-      prefix: '§6[§7T§6]§r'
-      chat_color: GRAY
   team:
     # Protecting a channel requires the "schat.channel.<id>" permission to join it.
     # For the team channel this would be "schat.channel.team".

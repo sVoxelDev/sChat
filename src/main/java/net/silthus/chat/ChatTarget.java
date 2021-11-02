@@ -6,12 +6,17 @@ import java.util.Collection;
 
 public interface ChatTarget {
 
-    static ChatTarget of(Player player) {
+    static ChatTarget player(Player player) {
         return Chatter.of(player);
     }
 
-    static ChatTarget empty() {
-        return new EmptyChatTarget();
+    static ChatTarget nil() {
+        return new NilChatTarget();
+    }
+
+    // TODO: test
+    static Channel channel(String channelName) {
+        return new Channel(channelName);
     }
 
     static Console console() {
@@ -19,12 +24,12 @@ public interface ChatTarget {
     }
 
     default void sendMessage(String message) {
-        sendMessage(Message.of(message));
+        sendMessage(Message.message(message).withFormat(Format.directMessage()));
     }
 
     String getIdentifier();
 
-    void sendMessage(Message message);
+    Message sendMessage(Message message);
 
     Message getLastReceivedMessage();
 

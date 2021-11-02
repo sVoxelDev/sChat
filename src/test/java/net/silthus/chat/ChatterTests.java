@@ -30,7 +30,7 @@ public class ChatterTests extends TestBase {
     }
 
     private void sendMessage(Player source, String message) {
-        chatter.sendMessage(Message.of(ChatSource.of(source), message));
+        chatter.sendMessage(Message.message(ChatSource.player(source), message));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class ChatterTests extends TestBase {
     void of_usesGlobalChatterCache() {
         PlayerMock player = server.addPlayer();
         Chatter chatter = Chatter.of(player);
-        Message message = Message.of("test");
+        Message message = Message.message("test");
         chatter.addReceivedMessage(message);
 
         Chatter newChatter = Chatter.of(player);
@@ -260,7 +260,7 @@ public class ChatterTests extends TestBase {
 
             assertThat(channel.getLastReceivedMessage())
                     .isNotNull()
-                    .extracting(Message::formattedMessage)
+                    .extracting(ChatterTests.this::toText)
                     .isEqualTo("Player0: Hi");
             assertThat(event.isCancelled()).isTrue();
         }

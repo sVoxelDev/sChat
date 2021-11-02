@@ -3,7 +3,6 @@ package net.silthus.chat.layout;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.silthus.chat.Channel;
 import net.silthus.chat.ChatLayout;
 import net.silthus.chat.Chatter;
@@ -44,12 +43,12 @@ public class TabbedChatLayout implements ChatLayout {
         return builder.build();
     }
 
-    Component[] renderMessages(Message[] messages) {
-        Component[] components = new Component[messages.length];
-        for (int i = 0; i < messages.length; i++) {
-            components[i] = LegacyComponentSerializer.legacySection().deserialize(messages[i].formattedMessage());
+    Component renderMessages(Message[] messages) {
+        TextComponent.Builder builder = text();
+        for (Message message : messages) {
+            builder.append(message.formattedMessage()).append(newline());
         }
-        return components;
+        return builder.build();
     }
 
     Component clearChat() {

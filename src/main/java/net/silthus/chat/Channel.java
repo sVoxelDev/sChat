@@ -68,10 +68,11 @@ public class Channel extends AbstractChatTarget {
         this.targets.remove(chatter);
     }
 
-    public void sendMessage(Message message) {
+    public Message sendMessage(Message message) {
         final Message chatMessage = message.withFormat(getConfig().getFormat())
-                .withTarget(this);
+                .to(this);
         getTargets().forEach(target -> target.sendMessage(chatMessage));
-        addReceivedMessage(message);
+        addReceivedMessage(chatMessage);
+        return chatMessage;
     }
 }

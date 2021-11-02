@@ -3,7 +3,7 @@ package net.silthus.chat;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(of = {"identifier"}, callSuper = false)
-final class EmptyChatTarget extends AbstractChatTarget implements ChatTarget {
+final class NilChatTarget extends AbstractChatTarget implements ChatTarget {
 
     private final String identifier = Constants.Targets.EMPTY;
 
@@ -13,7 +13,8 @@ final class EmptyChatTarget extends AbstractChatTarget implements ChatTarget {
     }
 
     @Override
-    public void sendMessage(Message message) {
+    public Message sendMessage(Message message) {
         addReceivedMessage(message);
+        return message;
     }
 }

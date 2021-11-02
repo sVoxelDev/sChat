@@ -6,7 +6,6 @@ import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -48,6 +47,11 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         return getPlayer().getDisplayName();
     }
 
+    @Override
+    public boolean isPlayer() {
+        return true;
+    }
+
     public void setActiveChannel(Channel activeChannel) {
         this.activeChannel = activeChannel;
         if (activeChannel != null)
@@ -65,7 +69,7 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     }
 
     @Override
-    public void sendMessage(Message message) {
+    public Message sendMessage(Message message) {
         SChat.instance().getAudiences()
                 .player(getPlayer())
                 .sendMessage(
@@ -74,6 +78,7 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
                         MessageType.CHAT
                 );
         addReceivedMessage(message);
+        return message;
     }
 
     private Identity getIdentity(Message message) {
@@ -86,7 +91,7 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
 
     private TextComponent appendSourceMetadataToMessage(Message message) {
         return Component.text()
-                .append(LegacyComponentSerializer.legacySection().deserialize(message.formattedMessage()))
+                .append(message.formattedMessage())
                 .append(Component.storageNBT()
                         .nbtPath(message.getTarget().getIdentifier())
                         .storage(Constants.NBT_CHAT_TARGET_KEY))
@@ -97,8 +102,8 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         if (isNotApplicable(event)) return;
 
-        Message.of(this, event.getMessage())
-                .withTarget(getActiveChannel())
+        Message.message(this, event.getMessage())
+                .to(getActiveChannel())
                 .send();
         event.setCancelled(true);
     }

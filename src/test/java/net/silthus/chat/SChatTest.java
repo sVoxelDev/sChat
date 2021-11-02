@@ -1,7 +1,6 @@
 package net.silthus.chat;
 
 import co.aikar.commands.BukkitCommandManager;
-import net.md_5.bungee.api.ChatColor;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -44,13 +43,11 @@ class SChatTest extends TestBase {
                 .extracting(
                         Channel::getIdentifier,
                         Channel::getName,
-                        c -> c.getConfig().getFormat().applyTo(Message.of("test")),
-                        c -> c.getConfig().getFormat().applyTo(Message.of(ChatSource.of(server.addPlayer()), "test"))
+                        c -> toText(c.getConfig().getFormat().applyTo(Message.message(ChatSource.player(server.addPlayer()), "test").to(c)))
                 ).contains(
                         "global",
                         "Global",
-                        ChatColor.GREEN + "test",
-                        ChatColor.GOLD + "[" + ChatColor.GREEN + "G" + ChatColor.GOLD + "]" + ChatColor.RESET + "Player0: " + ChatColor.GREEN + "test"
+                        "&6[&aGlobal&6]&r &ePlayer0&7: &atest"
                 );
     }
 }

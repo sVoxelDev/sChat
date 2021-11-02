@@ -1,9 +1,7 @@
 package net.silthus.chat;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import net.md_5.bungee.api.ChatColor;
 import net.silthus.chat.config.ChannelConfig;
-import net.silthus.chat.formats.SimpleFormat;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,15 +40,7 @@ public class ChannelTests extends TestBase {
                 .extracting(ChannelConfig::getName)
                 .isEqualTo(null);
         assertThat(channel.getConfig().getFormat())
-                .extracting(
-                        SimpleFormat::getPrefix,
-                        SimpleFormat::getSuffix,
-                        SimpleFormat::getChatColor
-                ).contains(
-                        null,
-                        ": ",
-                        null
-                );
+                .isNotNull();
     }
 
     @Test
@@ -139,7 +129,7 @@ public class ChannelTests extends TestBase {
     void sendMessage_sendsMessageToNobody() {
 
         PlayerMock player = server.addPlayer();
-        channel.sendMessage(Message.of(ChatSource.of(player), "test"));
+        channel.sendMessage(Message.message(ChatSource.player(player), "test"));
 
         assertThat(channel.getTargets()).isEmpty();
         assertThat(player.nextMessage()).isNull();
@@ -156,7 +146,7 @@ public class ChannelTests extends TestBase {
         channel.add(chatter1);
         PlayerMock player2 = server.addPlayer();
 
-        channel.sendMessage(Message.of(chatter0, "test"));
+        channel.sendMessage(Message.message(chatter0, "test"));
 
         assertThat(player0.nextMessage()).isEqualTo("Player0: test");
         assertThat(player1.nextMessage()).isEqualTo("Player0: test");
@@ -165,7 +155,7 @@ public class ChannelTests extends TestBase {
 
     @Test
     void sendFormattedMessage_doesNotFormatAgain() {
-        Message message = Message.of(ChatSource.of(server.addPlayer()), "test");
+        Message message = Message.message(ChatSource.player(server.addPlayer()), "test");
 
         PlayerMock player = server.addPlayer();
         Chatter chatter = Chatter.of(player);
@@ -177,7 +167,7 @@ public class ChannelTests extends TestBase {
 
     @Test
     void sendMessage_storesLastMessage() {
-        Message message = Message.of(ChatSource.of(server.addPlayer()), "test");
+        Message message = Message.message(ChatSource.player(server.addPlayer()), "test");
 
         PlayerMock player = server.addPlayer();
         Chatter chatter = Chatter.of(player);
@@ -193,6 +183,16 @@ public class ChannelTests extends TestBase {
                         "test",
                         "Player0"
                 );
+    }
+
+    @Test
+    void sendMessage_storesFormattedChannelMessage() {
+        Channel channel = new Channel("test", ChannelConfig.builder().format(Format.miniMessage("[<channel_name]<sender_name>: <message>")).build());
+        Message message = ChatSource.named("test").message("test").to(channel).send();
+
+        assertThat(channel.getLastReceivedMessage())
+                .isNotNull()
+                .isEqualTo(message);
     }
 
     @Test
@@ -212,13 +212,13 @@ public class ChannelTests extends TestBase {
     @Test
     void sendMultipleMessage_returnedbyLastMessages() {
 
-        Message message = Message.of(ChatSource.of(server.addPlayer()), "test");
+        Message message = Message.message(ChatSource.player(server.addPlayer()), "test");
 
         PlayerMock player = server.addPlayer();
         Chatter chatter = Chatter.of(player);
         channel.add(chatter);
         channel.sendMessage(message);
-        channel.sendMessage(Message.of(ChatSource.of(server.addPlayer()), "foobar"));
+        channel.sendMessage(Message.message(ChatSource.player(server.addPlayer()), "foobar"));
         channel.sendMessage("Heyho");
 
         assertThat(channel.getReceivedMessages())
@@ -234,7 +234,7 @@ public class ChannelTests extends TestBase {
     @Test
     void sendMessage_setsTargetToChannel() {
 
-        Message message = Message.of(ChatSource.of(server.addPlayer()), "test");
+        Message message = Message.message(ChatSource.player(server.addPlayer()), "test");
         Chatter chatter = Chatter.of(server.addPlayer());
         channel.add(chatter);
 
@@ -290,24 +290,14 @@ public class ChannelTests extends TestBase {
 
             MemoryConfiguration cfg = new MemoryConfiguration();
             cfg.set("name", "Test");
-            cfg.set("format.prefix", "[Test] ");
-            cfg.set("format.suffix", " - ");
-            cfg.set("format.chat_color", "GRAY");
+            cfg.set("format", "<green><message>");
 
             Channel channel = new Channel("test", ChannelConfig.of(cfg));
 
             assertThat(channel.getName())
                     .isEqualTo("Test");
             assertThat(channel.getConfig().getFormat())
-                    .extracting(
-                            SimpleFormat::getPrefix,
-                            SimpleFormat::getSuffix,
-                            SimpleFormat::getChatColor
-                    ).contains(
-                            "[Test] ",
-                            " - ",
-                            ChatColor.GRAY
-                    );
+                    .isNotNull();
         }
 
     }

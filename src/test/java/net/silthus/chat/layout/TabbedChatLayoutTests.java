@@ -4,12 +4,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.silthus.chat.Channel;
 import net.silthus.chat.Chatter;
-import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
 import org.bukkit.ChatColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static net.kyori.adventure.text.Component.newline;
 import static net.silthus.chat.Constants.View.CHANNEL_DIVIDER;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,14 +25,7 @@ public class TabbedChatLayoutTests extends TestBase {
 
         view = new TabbedChatLayout();
         chatter = Chatter.of(server.addPlayer());
-
-
-    }
-
-    @Test
-    void create() {
-        TabbedChatLayout view = new TabbedChatLayout();
-        view.render(chatter, Message.of("test"), Message.of("line 2"));
+        chatter.setActiveChannel(new Channel("test"));
     }
 
     @Test
@@ -46,12 +39,13 @@ public class TabbedChatLayoutTests extends TestBase {
         Component component = view.clearChat();
         assertThat(component.children())
                 .hasSize(100)
-                .allMatch(c -> c.equals(Component.newline()));
+                .allMatch(c -> c.equals(newline()));
     }
 
     @Test
     void channels_renders_noChannelInfo() {
 
+        Chatter chatter = Chatter.of(server.addPlayer());
         assertThat(chatter.getSubscriptions()).isEmpty();
 
         Component component = view.channelTabs(chatter);

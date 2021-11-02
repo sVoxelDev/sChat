@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"identifier"})
-final class NamedChatSource implements ChatSource {
+class NamedChatSource implements ChatSource {
 
     private final String identifier;
     private String displayName;

@@ -48,10 +48,8 @@ public final class Constants {
     }
 
     public static class Formatting {
-
-        public static final String DEFAULT_PREFIX = null;
-        public static final String DEFAULT_SUFFIX = ": ";
-        public static final ChatColor DEFAULT_CHAT_COLOR = null;
+        public static final String DEFAULT_FORMAT = "<sender_name>: <message>";
+        public static final String DIRECT_MESSAGE = "<message>";
     }
 
     public static class View {

@@ -9,7 +9,7 @@ class EmptyChatTargetTest {
 
     @Test
     void create() {
-        ChatTarget target = ChatTarget.empty();
+        ChatTarget target = ChatTarget.nil();
         assertThat(target)
                 .extracting(ChatTarget::getIdentifier)
                 .isEqualTo(EMPTY);

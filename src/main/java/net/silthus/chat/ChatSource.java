@@ -4,19 +4,31 @@ import org.bukkit.entity.Player;
 
 public interface ChatSource {
 
-    static ChatSource of(Player player) {
+    static ChatSource player(Player player) {
         return Chatter.of(player);
     }
 
-    static ChatSource of(String identifier) {
+    static ChatSource named(String identifier) {
         return new NamedChatSource(identifier);
     }
 
-    static ChatSource of(String identifier, String displayName) {
+    static ChatSource named(String identifier, String displayName) {
         return new NamedChatSource(identifier, displayName);
+    }
+
+    static ChatSource nil() {
+        return new NilChatSource();
     }
 
     String getIdentifier();
 
     String getDisplayName();
+
+    default boolean isPlayer() {
+        return false;
+    }
+
+    default Message message(String message) {
+        return Message.message(this, message);
+    }
 }
