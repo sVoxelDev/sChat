@@ -3,6 +3,7 @@ package net.silthus.chat.layout;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.silthus.chat.Channel;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Chatter;
 import net.silthus.chat.TestBase;
@@ -74,6 +75,18 @@ public class TabbedChatLayoutTests extends TestBase {
                 .contains(ChatColor.GREEN + "" + ChatColor.UNDERLINE + "active")
                 .doesNotContain(ChatColor.GREEN + "" + ChatColor.UNDERLINE + "test")
                 .contains(ChatColor.GRAY + "" + "test");
+    }
+
+    @Test
+    void supports_channelName_placeholders() {
+
+        Channel channel = createChannel(config -> config.name("<player_name>"));
+        chatter.subscribe(channel);
+        chatter.setActiveChannel(channel);
+
+        String text = getText(view.channelTabs(chatter));
+
+        assertThat(text).contains(chatter.getDisplayName());
     }
 
     private String getStripedText(Component component) {

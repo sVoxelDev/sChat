@@ -80,9 +80,10 @@ public class Channel extends AbstractChatTarget {
         final Message chatMessage = message.withFormat(getConfig().format()).to(this);
 
         getTargets().forEach(target -> target.sendMessage(chatMessage));
-        if (getConfig().sendToConsole())
+        if (getConfig().sendToConsole()) {
             Console.console().sendMessage(chatMessage);
-
+        }
+        // TODO: BUG the last message is not shown to the player
         addReceivedMessage(chatMessage);
         return chatMessage;
     }

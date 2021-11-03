@@ -70,6 +70,7 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
 
     @Override
     public Message sendMessage(Message message) {
+        // TODO: use other metadata mechanism
         SChat.instance().getAudiences()
                 .player(getPlayer())
                 .sendMessage(

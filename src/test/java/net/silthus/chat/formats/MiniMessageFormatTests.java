@@ -40,6 +40,13 @@ public class MiniMessageFormatTests extends TestBase {
                 .isEqualTo("[test channel]Player0: test");
     }
 
+    @Test
+    void withoutMessageTag_appendsMessageTag() {
+        MiniMessageFormat format = new MiniMessageFormat("source: ");
+        String text = toText(format.applyTo(Message.message("test")));
+        assertThat(text).isEqualTo("source: test");
+    }
+
     private String toText(String format, Message message) {
         return toText(Format.miniMessage(format).applyTo(message));
     }
