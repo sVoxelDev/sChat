@@ -1,6 +1,7 @@
 package net.silthus.chat;
 
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.Value;
 import net.kyori.adventure.text.Component;
 
@@ -16,15 +17,15 @@ import java.util.stream.Stream;
 public class Message {
 
     public static MessageBuilder message() {
-        return new MessageBuilder();
+        return new MessageBuilder(Format.defaultFormat());
     }
 
     public static MessageBuilder message(String message) {
-        return message().text(message);
+        return new MessageBuilder(Format.noFormat()).text(message);
     }
 
     public static MessageBuilder message(ChatSource source, String message) {
-        return message(message).source(source);
+        return new MessageBuilder(Format.defaultFormat()).text(message).source(source);
     }
 
     Message parent;
@@ -33,7 +34,7 @@ public class Message {
     @Builder.Default
     Component text = Component.empty();
     @Builder.Default
-    Format format = Format.defaultFormat();
+    Format format = Format.noFormat();
     Channel channel;
     @Builder.Default
     Collection<ChatTarget> targets = new HashSet<>();
@@ -42,46 +43,56 @@ public class Message {
         return toBuilder().parent(this);
     }
 
-    public Component formattedMessage() {
+    public Component formatted() {
         return format.applyTo(this);
     }
 
     public static class MessageBuilder {
 
-        public MessageBuilder from(ChatSource source) {
+        private final Format defaultFormat;
+
+        private MessageBuilder(Format defaultFormat) {
+            this.defaultFormat = defaultFormat;
+        }
+
+        private MessageBuilder() {
+            this.defaultFormat = Format.defaultFormat();
+        }
+
+        public MessageBuilder from(@NonNull ChatSource source) {
             return source(source);
         }
 
-        public MessageBuilder to(Channel channel) {
+        public MessageBuilder to(@NonNull Channel channel) {
             return channel(channel).to((ChatTarget) channel);
         }
 
-        public MessageBuilder to(ChatTarget... targets) {
+        public MessageBuilder to(@NonNull ChatTarget... targets) {
             return targets(Stream.concat(targets$set ? targets$value.stream() : Stream.empty(), Arrays.stream(targets)).collect(Collectors.toSet()));
         }
 
-        public MessageBuilder to(Collection<ChatTarget> targets) {
+        public MessageBuilder to(@NonNull Collection<ChatTarget> targets) {
             HashSet<ChatTarget> chatTargets = new HashSet<>(targets);
             if (this.targets$set)
                 chatTargets.addAll(this.targets$value);
             return targets(chatTargets);
         }
 
-        public MessageBuilder text(Component component) {
+        public MessageBuilder text(@NonNull Component component) {
             this.text$value = component;
             this.text$set = true;
             return this;
         }
 
-        public MessageBuilder text(String text) {
+        public MessageBuilder text(@NonNull String text) {
             return text(Component.text(text));
         }
 
-        public MessageBuilder targets(ChatTarget... targets) {
+        public MessageBuilder targets(@NonNull ChatTarget... targets) {
             return targets(Arrays.asList(targets));
         }
 
-        public MessageBuilder targets(Collection<ChatTarget> targets) {
+        public MessageBuilder targets(@NonNull Collection<ChatTarget> targets) {
             this.targets$value = Set.copyOf(targets);
             this.targets$set = true;
             return this;
@@ -90,6 +101,16 @@ public class Message {
         private MessageBuilder parent(Message message) {
             this.parent = message;
             return this;
+        }
+
+        public Message build() {
+            Format format = channel != null ? channel.getConfig().format() : defaultFormat;
+            if (format$set) format = format$value;
+            ChatSource source = source$set ? source$value : $default$source();
+            Component text = text$set ? text$value : $default$text();
+            Collection<ChatTarget> targets = targets$set ? targets$value : $default$targets();
+
+            return new Message(parent, source, text, format, channel, targets);
         }
 
         public Message send() {

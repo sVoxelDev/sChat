@@ -57,9 +57,9 @@ class ChannelConfigTest extends TestBase {
                 .format(config.format())
                 .to(Channel.channel("test"))
                 .build()
-                .formattedMessage();
+                .formatted();
 
         assertThat(config.format()).isNotNull();
-        assertThat(toText(component)).isEqualTo("&6[&atest&6]&r &esource&7: &atest");
+        assertThat(toText(component)).isEqualTo("&6[&atest&6]&esource&7: &atest");
     }
 }

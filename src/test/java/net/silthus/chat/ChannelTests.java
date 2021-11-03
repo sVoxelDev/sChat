@@ -148,8 +148,8 @@ public class ChannelTests extends TestBase {
 
         chatter0.message("test").to(channel).send();
 
-        assertThat(player0.nextMessage()).isEqualTo("Player0: test");
-        assertThat(player1.nextMessage()).isEqualTo("Player0: test");
+        assertThat(player0.nextMessage()).contains("test");
+        assertThat(player1.nextMessage()).contains("test");
         assertThat(player2.nextMessage()).isNull();
     }
 
@@ -163,6 +163,7 @@ public class ChannelTests extends TestBase {
         ChatSource.player(server.addPlayer())
                 .message("test")
                 .to(channel)
+                .format(Format.defaultFormat())
                 .send();
 
         assertThat(player.nextMessage()).isEqualTo("Player1: test");
@@ -186,7 +187,7 @@ public class ChannelTests extends TestBase {
                         this::toText,
                         m -> m.getSource().getDisplayName()
                 ).contains(
-                        "Player1: test",
+                        "&6[&atest&6]&ePlayer1&7: &atest",
                         "Player1"
                 );
     }

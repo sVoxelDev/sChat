@@ -47,7 +47,7 @@ class SChatTest extends TestBase {
                 ).contains(
                         "global",
                         "Global",
-                        "&6[&aGlobal&6]&r &ePlayer0&7: &atest"
+                        "&6[&aGlobal&6]&ePlayer0&7: &atest"
                 );
     }
 }

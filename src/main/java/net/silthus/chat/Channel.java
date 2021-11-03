@@ -76,12 +76,17 @@ public class Channel extends AbstractChatTarget {
         this.targets.remove(target);
     }
 
+    @Override
+    public Message sendMessage(String message) {
+
+        return Message.message(message).to(this).send();
+    }
+
     public void sendMessage(Message message) {
         addReceivedMessage(message);
 
         Message.MessageBuilder channelMessage = message.copy()
                 .channel(this)
-                .format(getConfig().format())
                 .targets(getTargets());
 
         if (getConfig().sendToConsole())

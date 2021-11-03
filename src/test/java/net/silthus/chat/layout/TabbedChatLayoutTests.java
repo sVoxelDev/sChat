@@ -80,7 +80,7 @@ public class TabbedChatLayoutTests extends TestBase {
     @Test
     void supports_channelName_placeholders() {
 
-        Channel channel = createChannel(config -> config.name("<player_name>"));
+        Channel channel = createChannel("foo", config -> config.name("<player_name>"));
         chatter.subscribe(channel);
         chatter.setActiveChannel(channel);
 

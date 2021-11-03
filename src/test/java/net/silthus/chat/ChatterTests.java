@@ -101,7 +101,7 @@ public class ChatterTests extends TestBase {
         assertThat(chatter.getLastReceivedMessage())
                 .isNotNull()
                 .extracting(this::toText)
-                .isEqualTo("Hi there");
+                .isEqualTo("Player1: Hi there");
     }
 
     @Test
@@ -160,17 +160,24 @@ public class ChatterTests extends TestBase {
         Channel channel = ChatTarget.channel("test");
         chatter.subscribe(channel);
 
-        channel.sendMessage("test");
+        Message message = channel.sendMessage("test");
 
         assertThat(chatter.getLastReceivedMessage())
                 .isNotNull()
-                .extracting(this::toText)
-                .isEqualTo("test");
+                .extracting(
+                        Message::getParent,
+                        this::toText,
+                        Message::getSource
+                ).contains(
+                        message,
+                        "&6[&atest&6]&7: &atest",
+                        ChatSource.nil()
+                );
     }
 
     @Test
     void not_subscribed_doesNotSendMessageToChatter() {
-        Channel channel = ChatTarget.channel("test");
+        Channel channel = ChatTarget.channel("foobar");
         channel.sendMessage("test");
 
         assertThat(chatter.getLastReceivedMessage()).isNull();
@@ -261,7 +268,7 @@ public class ChatterTests extends TestBase {
             assertThat(channel.getLastReceivedMessage())
                     .isNotNull()
                     .extracting(ChatterTests.this::toText)
-                    .isEqualTo("Player0: Hi");
+                    .isEqualTo("&6[&atest&6]&ePlayer0&7: &aHi");
             assertThat(event.isCancelled()).isTrue();
         }
 

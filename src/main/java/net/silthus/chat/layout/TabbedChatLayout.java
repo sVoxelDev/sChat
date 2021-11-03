@@ -48,7 +48,7 @@ public class TabbedChatLayout implements ChatLayout {
     Component renderMessages(Message[] messages) {
         TextComponent.Builder builder = text();
         for (Message message : messages) {
-            builder.append(message.formattedMessage()).append(newline());
+            builder.append(message.formatted()).append(newline());
         }
         return builder.build();
     }

@@ -90,7 +90,7 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
 
     private TextComponent appendSourceMetadataToMessage(Message message) {
         return Component.text()
-                .append(message.getText())
+                .append(message.formatted())
                 // TODO: use other metadata mechanism
 //                .append(Component.storageNBT()
 //                        .nbtPath(message.getTargets().getIdentifier())

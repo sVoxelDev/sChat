@@ -9,16 +9,11 @@ class MessageTest extends TestBase {
     @Test
     void ofMessageString() {
         Message message = Message.message("Hello").build();
-        assertThat(message)
-                .extracting(
-                        Message::getSource,
-                        this::toText,
-                        Message::getTargets
-                ).contains(
-                        ChatSource.nil(),
-                        "Hello",
-                        ChatTarget.nil()
-                );
+
+        assertThat(message.getSource())
+                .isNotNull().isEqualTo(ChatSource.nil());
+        assertThat(toText(message)).isEqualTo("Hello");
+        assertThat(message.getTargets()).isEmpty();
     }
 
     @Test
@@ -27,24 +22,6 @@ class MessageTest extends TestBase {
         Message message = Message.message("test").build();
         assertThat(message.getTargets())
                 .isEmpty();
-    }
-
-    @Test
-    void withNullTarget_doesNotSetTarget() {
-
-        Message message = Message.message("test").to((ChatTarget) null).build();
-
-        assertThat(message.getTargets())
-                .isNotNull()
-                .doesNotContainNull()
-                .first()
-                .isInstanceOf(NilChatTarget.class);
-        ChatTarget target = ChatTarget.player(server.addPlayer());
-
-        Message.MessageBuilder builder = message.copy().to(target);
-
-        assertThat(builder.to((ChatTarget) null).build().getTargets())
-                .containsExactly(target);
     }
 
     @Test
@@ -68,8 +45,64 @@ class MessageTest extends TestBase {
     }
 
     @Test
+    void toChannel_setsChannel_andTarget() {
+
+        Channel channel = Channel.channel("test");
+        Message message = Message.message("hi").to(channel).build();
+
+        assertThat(message.getChannel())
+                .isNotNull().isEqualTo(channel);
+        assertThat(message.getTargets())
+                .contains(channel);
+    }
+
+    @Test
     void emptySource_usesDirectMessageFormat() {
         Message message = Message.message("test").build();
         assertThat(toText(message)).isEqualTo("test");
+    }
+
+    @Test
+    void message_withSource_usesDefaultFormat() {
+
+        Message message = Message.message(ChatSource.named("test"), "Hi there!").build();
+
+        assertThat(toText(message)).isEqualTo("test: Hi there!");
+    }
+
+    @Test
+    void format_overrides_channelFormat() {
+
+        Message message = ChatSource.named("test")
+                .message("Hi")
+                .to(Channel.channel("channel"))
+                .format(Format.noFormat())
+                .build();
+        String text = toText(message);
+
+        assertThat(text).isEqualTo("Hi");
+    }
+
+    @Test
+    void format_usesChannelFormat_ifNotSet() {
+
+        Message message = ChatSource.named("test")
+                .message("Hi")
+                .to(Channel.channel("channel"))
+                .build();
+        String text = toText(message);
+
+        assertThat(text).isEqualTo("&6[&achannel&6]&etest&7: &aHi");
+    }
+
+    @Test
+    void format_noFormat_noChannel_usesDefaultFormat() {
+
+        Message message = ChatSource.named("test")
+                .message("Hi")
+                .build();
+        String text = toText(message);
+
+        assertThat(text).isEqualTo("test: Hi");
     }
 }

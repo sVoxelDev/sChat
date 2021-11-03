@@ -29,8 +29,8 @@ channels:
     # - <channel_name>: The name of the channel (see above).
     # - <sender_name>: The name or nick of the sending player.
     # - <message>: The message that is being sent.
-    # default: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset> <yellow><sender_name><gray>: <green><message>'
-    format: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset> <yellow><sender_name><gray>: <green><message>'
+    # default: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset><yellow><sender_name><gray>: <green><message>'
+    format: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset><yellow><sender_name><gray>: <green><message>'
   trade:
     name: Trade
   team:

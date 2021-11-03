@@ -13,8 +13,8 @@ public interface Format {
         return miniMessage(Constants.Formatting.DEFAULT_CHANNEL_FORMAT);
     }
 
-    static Format directMessage() {
-        return miniMessage(Constants.Formatting.DIRECT_MESSAGE);
+    static Format noFormat() {
+        return miniMessage(Constants.Formatting.NO_FORMAT);
     }
 
     static Format miniMessage(String format) {

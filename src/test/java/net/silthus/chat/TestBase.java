@@ -70,6 +70,6 @@ public abstract class TestBase {
     }
 
     protected String toText(Message message) {
-        return toText(message.formattedMessage());
+        return toText(message.formatted());
     }
 }

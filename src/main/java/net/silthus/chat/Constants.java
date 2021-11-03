@@ -48,9 +48,9 @@ public final class Constants {
     }
 
     public static class Formatting {
-        public static final String DEFAULT_CHANNEL_FORMAT = "<gold>[</gold><green><channel_name></green><gold>]</gold><reset> <yellow><sender_name><gray>: <green><message>";
+        public static final String DEFAULT_CHANNEL_FORMAT = "<gold>[</gold><green><channel_name></green><gold>]</gold><reset><yellow><sender_name><gray>: <green><message>";
         public static final String DEFAULT_FORMAT = "<sender_name>: <message>";
-        public static final String DIRECT_MESSAGE = "<message>";
+        public static final String NO_FORMAT = "<message>";
     }
 
     public static class View {
