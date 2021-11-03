@@ -185,7 +185,7 @@ public class ChannelTests extends TestBase {
                 .isNotNull()
                 .extracting(
                         this::toText,
-                        m -> m.getSource().getDisplayName()
+                        m -> m.getSource().getName()
                 ).contains(
                         "&6[&atest&6]&ePlayer1&7: &atest",
                         "Player1"

@@ -79,7 +79,7 @@ public class ChatterManager {
 
     private void unsubscribeAll(Chatter chatter) {
         if (chatter == null) return;
-        chatter.getSubscriptions().forEach(chatter::unsubscribe);
+        chatter.getSubscriptions().forEach(channelSubscription -> chatter.unsubscribe(channelSubscription.getChannel()));
     }
 
     class PlayerListener implements Listener {

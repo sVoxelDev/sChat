@@ -30,7 +30,7 @@ public final class Console extends AbstractChatTarget implements ChatSource, Lis
     private final String identifier = Constants.Targets.CONSOLE;
     private ChatTarget target;
 
-    private String displayName = "Console";
+    private String name = "Console";
 
     private Console(ConsoleConfig config) {
         this.target = SChat.instance().getChannelRegistry().get(config.defaultChannel()).orElse(null);

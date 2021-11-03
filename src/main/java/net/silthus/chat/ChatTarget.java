@@ -39,9 +39,9 @@ public interface ChatTarget {
 
     Collection<Message> getReceivedMessages();
 
-    Collection<Channel> getSubscriptions();
+    Collection<ChannelSubscription> getSubscriptions();
 
-    void subscribe(Channel channel);
+    ChannelSubscription subscribe(Channel channel);
 
     void unsubscribe(Channel channel);
 }

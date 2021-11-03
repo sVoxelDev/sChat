@@ -86,7 +86,7 @@ public class TabbedChatLayoutTests extends TestBase {
 
         String text = getText(view.channelTabs(chatter));
 
-        assertThat(text).contains(chatter.getDisplayName());
+        assertThat(text).contains(chatter.getName());
     }
 
     private String getStripedText(Component component) {

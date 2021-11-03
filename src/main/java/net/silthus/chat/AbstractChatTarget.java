@@ -8,7 +8,7 @@ import java.util.concurrent.LinkedTransferQueue;
 public abstract class AbstractChatTarget implements ChatTarget {
 
     private final Queue<Message> receivedMessages = new LinkedTransferQueue<>();
-    private final Set<Channel> subscriptions = new HashSet<>();
+    private final Set<ChannelSubscription> subscriptions = new HashSet<>();
 
     @Override
     public Message getLastReceivedMessage() {
@@ -25,19 +25,21 @@ public abstract class AbstractChatTarget implements ChatTarget {
     }
 
     @Override
-    public Collection<Channel> getSubscriptions() {
+    public Collection<ChannelSubscription> getSubscriptions() {
         return List.copyOf(subscriptions);
     }
 
     @Override
-    public void subscribe(@NonNull Channel channel) {
+    public ChannelSubscription subscribe(@NonNull Channel channel) {
         channel.add(this);
-        subscriptions.add(channel);
+        ChannelSubscription subscription = new ChannelSubscription(channel, this);
+        subscriptions.add(subscription);
+        return subscription;
     }
 
     @Override
     public void unsubscribe(@NonNull Channel channel) {
         channel.remove(this);
-        subscriptions.remove(channel);
+        subscriptions.removeIf(subscription -> subscription.getChannel().equals(channel));
     }
 }

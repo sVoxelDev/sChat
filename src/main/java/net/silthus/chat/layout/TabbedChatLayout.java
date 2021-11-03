@@ -5,10 +5,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
-import net.silthus.chat.Channel;
-import net.silthus.chat.ChatLayout;
-import net.silthus.chat.Chatter;
-import net.silthus.chat.Message;
+import net.silthus.chat.*;
 
 import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
@@ -39,8 +36,8 @@ public class TabbedChatLayout implements ChatLayout {
         }
 
         TextComponent.Builder builder = text().append(text(CHANNEL_DIVIDER + " ").color(FRAME_COLOR));
-        for (Channel channel : chatter.getSubscriptions()) {
-            builder.append(channel(chatter, channel));
+        for (ChannelSubscription subscription : chatter.getSubscriptions()) {
+            builder.append(channel(chatter, subscription.getChannel()));
         }
         return builder.build();
     }
@@ -87,6 +84,6 @@ public class TabbedChatLayout implements ChatLayout {
     }
 
     private Template playerName(Chatter chatter) {
-        return Template.template("player_name", chatter.getDisplayName());
+        return Template.template("player_name", chatter.getName());
     }
 }

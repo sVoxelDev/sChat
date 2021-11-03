@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 class NamedChatSource implements ChatSource {
 
     private final String identifier;
-    private String displayName;
+    private String name;
 
     NamedChatSource(String identifier) {
         this(identifier, identifier);

@@ -1,5 +1,6 @@
 package net.silthus.chat;
 
+import net.silthus.chat.config.ChannelConfig;
 import org.bukkit.entity.Player;
 
 public interface ChatSource {
@@ -16,13 +17,21 @@ public interface ChatSource {
         return new NamedChatSource(identifier, displayName);
     }
 
+    static Channel channel(String identifier) {
+        return Channel.channel(identifier);
+    }
+
+    static Channel channel(String identifier, ChannelConfig config) {
+        return Channel.channel(identifier, config);
+    }
+
     static ChatSource nil() {
         return new NilChatSource();
     }
 
     String getIdentifier();
 
-    String getDisplayName();
+    String getName();
 
     default boolean isPlayer() {
         return false;

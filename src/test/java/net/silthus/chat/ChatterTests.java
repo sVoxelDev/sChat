@@ -40,7 +40,7 @@ public class ChatterTests extends TestBase {
                 .isInstanceOf(Listener.class)
                 .extracting(
                         Chatter::getIdentifier,
-                        Chatter::getDisplayName,
+                        Chatter::getName,
                         ChatTarget::getIdentifier
                 ).contains(
                         player.getUniqueId().toString(),
@@ -142,7 +142,8 @@ public class ChatterTests extends TestBase {
         chatter.subscribe(channel);
 
         assertThat(channel.getTargets()).contains(chatter);
-        assertThat(chatter.getSubscriptions()).contains(channel);
+        assertThat(chatter.getSubscriptions())
+                .contains(new ChannelSubscription(channel, chatter));
     }
 
     @Test
@@ -152,7 +153,7 @@ public class ChatterTests extends TestBase {
         chatter.subscribe(channel);
 
         assertThat(channel.getTargets()).hasSize(1);
-        assertThat(chatter.getSubscriptions()).containsOnlyOnce(channel);
+        assertThat(chatter.getSubscriptions()).containsOnlyOnce(new ChannelSubscription(channel, chatter));
     }
 
     @Test
@@ -195,10 +196,10 @@ public class ChatterTests extends TestBase {
 
         Channel channel = ChatTarget.channel("test");
         chatter.subscribe(channel);
-        assertThat(chatter.getSubscriptions()).contains(channel);
+        assertThat(chatter.getSubscriptions()).contains(new ChannelSubscription(channel, chatter));
 
         chatter.unsubscribe(channel);
-        assertThat(chatter.getSubscriptions()).doesNotContain(channel);
+        assertThat(chatter.getSubscriptions()).doesNotContain(new ChannelSubscription(channel, chatter));
     }
 
     @Test
@@ -216,7 +217,7 @@ public class ChatterTests extends TestBase {
 
         Channel channel = ChatTarget.channel("test");
         chatter.join(channel);
-        assertThat(chatter.getSubscriptions()).contains(channel);
+        assertThat(chatter.getSubscriptions()).contains(new ChannelSubscription(channel, chatter));
         assertThat(channel.getTargets()).contains(chatter);
         assertThat(chatter.getActiveChannel()).isSameAs(channel);
     }
@@ -236,6 +237,22 @@ public class ChatterTests extends TestBase {
     @Test
     void canJoin_isFalse_ifPlayerHasNoPermission() {
         assertThat(chatter.canJoin(createChannel("foobar", cfg -> cfg.protect(true)))).isFalse();
+    }
+
+    @Test
+    void subscribe_returnsSubscription() {
+
+        Channel channel = Channel.channel("test");
+        ChannelSubscription subscription = chatter.subscribe(channel);
+
+        assertThat(subscription)
+                .extracting(
+                        ChannelSubscription::getChannel,
+                        ChannelSubscription::getTarget
+                ).contains(
+                        channel,
+                        chatter
+                );
     }
 
     @Nested

@@ -43,7 +43,7 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     }
 
     @Override
-    public String getDisplayName() {
+    public String getName() {
         return getPlayer().getDisplayName();
     }
 

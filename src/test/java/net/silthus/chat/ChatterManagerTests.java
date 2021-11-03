@@ -197,7 +197,9 @@ public class ChatterManagerTests extends TestBase {
 
             PlayerMock player = server.addPlayer();
             Chatter chatter = manager.getOrCreateChatter(player);
-            assertThat(chatter.getSubscriptions()).doesNotContain(channel);
+            assertThat(chatter.getSubscriptions())
+                    .extracting(ChannelSubscription::getChannel)
+                    .doesNotContain(channel);
         }
 
         @Test

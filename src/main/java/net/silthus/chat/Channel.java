@@ -14,7 +14,7 @@ import java.util.*;
 @Data
 @ToString(of = {"identifier", "config"})
 @EqualsAndHashCode(of = "identifier", callSuper = false)
-public class Channel extends AbstractChatTarget {
+public class Channel extends AbstractChatTarget implements ChatSource {
 
     public static Channel channel(String identifier) {
         return new Channel(identifier);

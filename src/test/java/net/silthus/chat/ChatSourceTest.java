@@ -33,7 +33,7 @@ class ChatSourceTest extends TestBase {
                 .isNotNull()
                 .extracting(
                         ChatSource::getIdentifier,
-                        ChatSource::getDisplayName
+                        ChatSource::getName
                 ).contains(
                         id,
                         name

@@ -37,7 +37,7 @@ public class MiniMessageFormat implements Format {
     }
 
     private Template senderTemplate(Message message) {
-        return Template.template("sender_name", message.getSource().getDisplayName());
+        return Template.template("sender_name", message.getSource().getName());
     }
 
     private Template channelTemplate(Message message) {
