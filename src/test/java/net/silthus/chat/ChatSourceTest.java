@@ -44,7 +44,7 @@ class ChatSourceTest extends TestBase {
     void message_createsMessageWithSource() {
 
         ChatSource source = ChatSource.named("test");
-        Message message = source.message("Hi there!");
+        Message message = source.message("Hi there!").send();
 
         assertThat(message.getSource()).isEqualTo(source);
     }

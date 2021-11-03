@@ -26,7 +26,7 @@ public class ChannelConfig {
     private boolean protect = false;
     private boolean sendToConsole = true;
     private boolean autoJoin = true;
-    private Format format = Format.defaultFormat();
+    private Format format = Format.channelFormat();
 
     private ChannelConfig(ConfigurationSection config) {
         this.name = config.getString("name");

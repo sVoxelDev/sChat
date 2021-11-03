@@ -69,8 +69,7 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     }
 
     @Override
-    public Message sendMessage(Message message) {
-        // TODO: use other metadata mechanism
+    public void sendMessage(Message message) {
         SChat.instance().getAudiences()
                 .player(getPlayer())
                 .sendMessage(
@@ -79,7 +78,6 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
                         MessageType.CHAT
                 );
         addReceivedMessage(message);
-        return message;
     }
 
     private Identity getIdentity(Message message) {
@@ -92,10 +90,11 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
 
     private TextComponent appendSourceMetadataToMessage(Message message) {
         return Component.text()
-                .append(message.formattedMessage())
-                .append(Component.storageNBT()
-                        .nbtPath(message.getTarget().getIdentifier())
-                        .storage(Constants.NBT_CHAT_TARGET_KEY))
+                .append(message.getText())
+                // TODO: use other metadata mechanism
+//                .append(Component.storageNBT()
+//                        .nbtPath(message.getTargets().getIdentifier())
+//                        .storage(Constants.NBT_CHAT_TARGET_KEY))
                 .build();
     }
 

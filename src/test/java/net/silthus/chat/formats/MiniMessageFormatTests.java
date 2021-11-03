@@ -9,32 +9,32 @@ public class MiniMessageFormatTests extends TestBase {
 
     @Test
     void create() {
-        assertThat(toText("<message>", Message.message("test")))
+        assertThat(toText("<message>", Message.message("test").build()))
                 .isEqualTo("test");
     }
 
     @Test
     void withColor() {
-        assertThat(toText("<green><message>", Message.message("test")))
+        assertThat(toText("<green><message>", Message.message("test").build()))
                 .isEqualTo("&atest");
     }
 
     @Test
     void withSource() {
-        assertThat(toText("<sender_name>: <message>", Message.message(ChatSource.player(server.addPlayer()), "test")))
+        assertThat(toText("<sender_name>: <message>", Message.message(ChatSource.player(server.addPlayer()), "test").build()))
                 .isEqualTo("Player0: test");
     }
 
     @Test
     void withNullSource() {
-        assertThat(toText("<sender_name>: <message>", Message.message("test")))
+        assertThat(toText("<sender_name>: <message>", Message.message("test").build()))
                 .isEqualTo(": test");
     }
 
     @Test
     void withChannelName() {
         Message message = Message.message(ChatSource.player(server.addPlayer()), "test")
-                .to(ChatTarget.channel("test channel"));
+                .to(ChatTarget.channel("test channel")).build();
 
         assertThat(toText("[<channel_name>]<sender_name>: <message>", message))
                 .isEqualTo("[test channel]Player0: test");
@@ -43,7 +43,7 @@ public class MiniMessageFormatTests extends TestBase {
     @Test
     void withoutMessageTag_appendsMessageTag() {
         MiniMessageFormat format = new MiniMessageFormat("source: ");
-        String text = toText(format.applyTo(Message.message("test")));
+        String text = toText(format.applyTo(Message.message("test").build()));
         assertThat(text).isEqualTo("source: test");
     }
 

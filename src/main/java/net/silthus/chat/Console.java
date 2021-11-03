@@ -37,12 +37,11 @@ public final class Console extends AbstractChatTarget implements ChatSource, Lis
     }
 
     @Override
-    public Message sendMessage(Message message) {
+    public void sendMessage(Message message) {
         SChat.instance()
                 .getAudiences().console()
-                .sendMessage(message.formattedMessage());
+                .sendMessage(message.getText());
         addReceivedMessage(message);
-        return message;
     }
 
     @EventHandler(ignoreCancelled = true)

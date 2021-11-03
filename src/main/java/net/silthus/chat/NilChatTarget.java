@@ -13,8 +13,7 @@ final class NilChatTarget extends AbstractChatTarget implements ChatTarget {
     }
 
     @Override
-    public Message sendMessage(Message message) {
+    public void sendMessage(Message message) {
         addReceivedMessage(message);
-        return message;
     }
 }

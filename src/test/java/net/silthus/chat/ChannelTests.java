@@ -129,7 +129,7 @@ public class ChannelTests extends TestBase {
     void sendMessage_sendsMessageToNobody() {
 
         PlayerMock player = server.addPlayer();
-        channel.sendMessage(Message.message(ChatSource.player(player), "test"));
+        ChatSource.player(player).message("test").to(channel).send();
 
         assertThat(channel.getTargets()).isEmpty();
         assertThat(player.nextMessage()).isNull();
@@ -146,7 +146,7 @@ public class ChannelTests extends TestBase {
         channel.add(chatter1);
         PlayerMock player2 = server.addPlayer();
 
-        channel.sendMessage(Message.message(chatter0, "test"));
+        chatter0.message("test").to(channel).send();
 
         assertThat(player0.nextMessage()).isEqualTo("Player0: test");
         assertThat(player1.nextMessage()).isEqualTo("Player0: test");
@@ -155,33 +155,39 @@ public class ChannelTests extends TestBase {
 
     @Test
     void sendFormattedMessage_doesNotFormatAgain() {
-        Message message = Message.message(ChatSource.player(server.addPlayer()), "test");
 
         PlayerMock player = server.addPlayer();
         Chatter chatter = Chatter.of(player);
-        channel.add(chatter);
-        channel.sendMessage(message);
+        chatter.subscribe(channel);
 
-        assertThat(player.nextMessage()).isEqualTo("Player0: test");
+        ChatSource.player(server.addPlayer())
+                .message("test")
+                .to(channel)
+                .send();
+
+        assertThat(player.nextMessage()).isEqualTo("Player1: test");
     }
 
     @Test
     void sendMessage_storesLastMessage() {
-        Message message = Message.message(ChatSource.player(server.addPlayer()), "test");
 
         PlayerMock player = server.addPlayer();
         Chatter chatter = Chatter.of(player);
         channel.add(chatter);
-        channel.sendMessage(message);
+
+        ChatSource.player(server.addPlayer())
+                .message("test")
+                .to(channel)
+                .send();
 
         assertThat(channel.getLastReceivedMessage())
                 .isNotNull()
                 .extracting(
-                        Message::getMessage,
+                        this::toText,
                         m -> m.getSource().getDisplayName()
                 ).contains(
-                        "test",
-                        "Player0"
+                        "Player1: test",
+                        "Player1"
                 );
     }
 
@@ -212,18 +218,20 @@ public class ChannelTests extends TestBase {
     @Test
     void sendMultipleMessage_returnedbyLastMessages() {
 
-        Message message = Message.message(ChatSource.player(server.addPlayer()), "test");
+        ChatSource source1 = ChatSource.player(server.addPlayer());
+        ChatSource source2 = ChatSource.player(server.addPlayer());
 
         PlayerMock player = server.addPlayer();
         Chatter chatter = Chatter.of(player);
         channel.add(chatter);
-        channel.sendMessage(message);
-        channel.sendMessage(Message.message(ChatSource.player(server.addPlayer()), "foobar"));
+
+        source1.message("test").to(channel).send();
+        source2.message("foobar").to(channel).send();
         channel.sendMessage("Heyho");
 
         assertThat(channel.getReceivedMessages())
                 .hasSize(3)
-                .extracting(Message::getMessage)
+                .extracting(message -> toText(message.getText()))
                 .containsExactly(
                         "test",
                         "foobar",
@@ -234,15 +242,17 @@ public class ChannelTests extends TestBase {
     @Test
     void sendMessage_setsTargetToChannel() {
 
-        Message message = Message.message(ChatSource.player(server.addPlayer()), "test");
         Chatter chatter = Chatter.of(server.addPlayer());
         channel.add(chatter);
 
-        channel.sendMessage(message);
+        ChatSource.player(server.addPlayer())
+                .message("test")
+                .to(channel)
+                .send();
 
         assertThat(chatter.getLastReceivedMessage())
                 .isNotNull()
-                .extracting(Message::getTarget)
+                .extracting(Message::getChannel)
                 .isSameAs(channel);
     }
 
@@ -320,7 +330,7 @@ public class ChannelTests extends TestBase {
         Channel channel = createChannel(config -> config.sendToConsole(true));
 
         Message message = channel.sendMessage("test");
-        assertThat(Console.console().getLastReceivedMessage())
+        assertThat(Console.console().getLastReceivedMessage().getParent())
                 .isNotNull()
                 .isEqualTo(message);
     }

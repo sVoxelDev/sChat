@@ -64,8 +64,7 @@ public class ConsoleTests {
         @Test
         void sendMessage_sendsMessageToConsole() {
 
-            Message message = Message.message("Hi");
-            console.sendMessage(message);
+            Message message = Message.message("Hi").to(console).send();
 
             assertThat(((ConsoleCommandSenderMock) server.getConsoleSender()).nextMessage())
                     .isNotNull()
@@ -87,8 +86,8 @@ public class ConsoleTests {
             console.onConsoleChat(new ServerCommandEvent(server.getConsoleSender(), "Hi there!"));
             assertThat(console.getTarget().getLastReceivedMessage())
                     .isNotNull()
-                    .extracting(Message::getMessage)
-                    .isEqualTo("Hi there!");
+                    .extracting(this::toText)
+                    .isEqualTo("Console: Hi there!");
             assertThat(((ConsoleCommandSenderMock) server.getConsoleSender()).nextMessage())
                     .isNotNull()
                     .contains("Hi there!");

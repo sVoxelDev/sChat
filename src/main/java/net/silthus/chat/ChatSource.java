@@ -28,7 +28,7 @@ public interface ChatSource {
         return false;
     }
 
-    default Message message(String message) {
+    default Message.MessageBuilder message(String message) {
         return Message.message(this, message);
     }
 }

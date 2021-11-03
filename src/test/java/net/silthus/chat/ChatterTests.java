@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import static net.silthus.chat.Message.message;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -30,7 +31,7 @@ public class ChatterTests extends TestBase {
     }
 
     private void sendMessage(Player source, String message) {
-        chatter.sendMessage(Message.message(ChatSource.player(source), message));
+        ChatSource.player(source).message(message).to(chatter).send();
     }
 
     @Test
@@ -59,7 +60,7 @@ public class ChatterTests extends TestBase {
     void of_usesGlobalChatterCache() {
         PlayerMock player = server.addPlayer();
         Chatter chatter = Chatter.of(player);
-        Message message = Message.message("test");
+        Message message = message("test").send();
         chatter.addReceivedMessage(message);
 
         Chatter newChatter = Chatter.of(player);
@@ -99,7 +100,7 @@ public class ChatterTests extends TestBase {
 
         assertThat(chatter.getLastReceivedMessage())
                 .isNotNull()
-                .extracting(Message::getMessage)
+                .extracting(this::toText)
                 .isEqualTo("Hi there");
     }
 
@@ -163,7 +164,7 @@ public class ChatterTests extends TestBase {
 
         assertThat(chatter.getLastReceivedMessage())
                 .isNotNull()
-                .extracting(Message::getMessage)
+                .extracting(this::toText)
                 .isEqualTo("test");
     }
 

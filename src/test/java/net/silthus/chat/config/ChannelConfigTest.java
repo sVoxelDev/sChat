@@ -54,8 +54,9 @@ class ChannelConfigTest extends TestBase {
         ChannelConfig config = ChannelConfig.of(cfg);
 
         Component component = Message.message(ChatSource.named("source"), "test")
-                .withFormat(config.format())
+                .format(config.format())
                 .to(Channel.channel("test"))
+                .build()
                 .formattedMessage();
 
         assertThat(config.format()).isNotNull();

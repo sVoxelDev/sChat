@@ -28,12 +28,12 @@ public interface ChatTarget {
     }
 
     default Message sendMessage(String message) {
-        return sendMessage(Message.message(message).withFormat(Format.directMessage()));
+        return Message.message(message).to(this).send();
     }
 
     String getIdentifier();
 
-    Message sendMessage(Message message);
+    void sendMessage(Message message);
 
     Message getLastReceivedMessage();
 

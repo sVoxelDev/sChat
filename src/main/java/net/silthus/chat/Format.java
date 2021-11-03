@@ -9,6 +9,10 @@ public interface Format {
         return miniMessage(Constants.Formatting.DEFAULT_FORMAT);
     }
 
+    static Format channelFormat() {
+        return miniMessage(Constants.Formatting.DEFAULT_CHANNEL_FORMAT);
+    }
+
     static Format directMessage() {
         return miniMessage(Constants.Formatting.DIRECT_MESSAGE);
     }

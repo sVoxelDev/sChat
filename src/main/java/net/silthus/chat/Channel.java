@@ -76,15 +76,17 @@ public class Channel extends AbstractChatTarget {
         this.targets.remove(target);
     }
 
-    public Message sendMessage(Message message) {
-        final Message chatMessage = message.withFormat(getConfig().format()).to(this);
+    public void sendMessage(Message message) {
+        addReceivedMessage(message);
 
-        getTargets().forEach(target -> target.sendMessage(chatMessage));
-        if (getConfig().sendToConsole()) {
-            Console.console().sendMessage(chatMessage);
-        }
-        // TODO: BUG the last message is not shown to the player
-        addReceivedMessage(chatMessage);
-        return chatMessage;
+        Message.MessageBuilder channelMessage = message.copy()
+                .channel(this)
+                .format(getConfig().format())
+                .targets(getTargets());
+
+        if (getConfig().sendToConsole())
+            channelMessage.to(Console.console());
+
+        channelMessage.send();
     }
 }

@@ -4,7 +4,6 @@ import lombok.extern.java.Log;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
-import net.silthus.chat.Channel;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Format;
 import net.silthus.chat.Message;
@@ -34,7 +33,7 @@ public class MiniMessageFormat implements Format {
     }
 
     private Template messageTemplate(Message message) {
-        return Template.template("message", message.getMessage());
+        return Template.template("message", message.getText());
     }
 
     private Template senderTemplate(Message message) {
@@ -42,8 +41,8 @@ public class MiniMessageFormat implements Format {
     }
 
     private Template channelTemplate(Message message) {
-        if (message.getTarget() instanceof Channel) {
-            return Template.template("channel_name", ((Channel) message.getTarget()).getName());
+        if (message.getChannel() != null) {
+            return Template.template("channel_name", message.getChannel().getName());
         }
         return Template.template("channel_name", Component.empty());
     }
