@@ -1,6 +1,7 @@
 package net.silthus.chat;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
 import net.kyori.adventure.text.Component;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Value
+@EqualsAndHashCode(of = "id")
 @Builder(builderMethodName = "message", toBuilder = true)
 public class Message {
 
@@ -18,6 +20,10 @@ public class Message {
     }
 
     public static MessageBuilder message(String message) {
+        return message(Component.text(message));
+    }
+
+    public static MessageBuilder message(Component message) {
         return new MessageBuilder(Format.noFormat()).text(message);
     }
 

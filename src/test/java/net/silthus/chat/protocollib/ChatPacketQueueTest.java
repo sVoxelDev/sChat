@@ -54,7 +54,7 @@ class ChatPacketQueueTest extends TestBase {
         Message message = message();
         UUID messageId = listener.queueMessage(message);
 
-        assertThat(listener.getMessage(messageId))
+        assertThat(listener.getQueuedMessage(messageId))
                 .isNotNull()
                 .isEqualTo(message);
     }

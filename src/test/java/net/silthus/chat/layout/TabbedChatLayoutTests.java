@@ -3,13 +3,12 @@ package net.silthus.chat.layout;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.silthus.chat.Channel;
-import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Chatter;
-import net.silthus.chat.TestBase;
+import net.silthus.chat.*;
 import org.bukkit.ChatColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static net.kyori.adventure.text.Component.newline;
 import static net.silthus.chat.Constants.View.CHANNEL_DIVIDER;
@@ -87,6 +86,15 @@ public class TabbedChatLayoutTests extends TestBase {
         String text = getText(view.channelTabs(chatter));
 
         assertThat(text).contains(chatter.getName());
+    }
+
+    @Test
+    void renders_onlyUniqueMessages() {
+
+        Message message = Message.message("test").format(Format.noFormat()).build();
+
+        Component component = view.renderMessages(List.of(message, message));
+        assertThat(toText(component)).containsOnlyOnce("test");
     }
 
     private String getStripedText(Component component) {

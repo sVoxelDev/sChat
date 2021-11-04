@@ -2,7 +2,6 @@ package net.silthus.chat;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -70,7 +69,8 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
 
     @Override
     public void sendMessage(Message message) {
-        getPlayer().sendMessage(getIdentity(message), appendMessageId(message), MessageType.CHAT);
+        SChat.instance().getChatPacketQueue().queueMessage(message);
+        getPlayer().sendMessage(getIdentity(message), appendMessageId(message));
         addReceivedMessage(message);
     }
 

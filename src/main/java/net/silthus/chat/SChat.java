@@ -6,7 +6,9 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.google.common.base.Strings;
 import kr.entree.spigradle.annotations.PluginMain;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.silthus.chat.commands.SChatCommands;
 import net.silthus.chat.config.PluginConfig;
@@ -45,6 +47,7 @@ public class SChat extends JavaPlugin {
     private PaperCommandManager commandManager;
     private ProtocolManager protocolManager;
 
+    @Setter(AccessLevel.PACKAGE)
     private ChatPacketQueue chatPacketQueue;
 
     public SChat() {
@@ -68,6 +71,18 @@ public class SChat extends JavaPlugin {
 
         setupProtocolLib();
         setupCommands();
+
+        boolean isPapermc = false;
+        try {
+            Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData");
+            isPapermc = true;
+        } catch (ClassNotFoundException e) {
+            Bukkit.getLogger().info("Not paper");
+        }
+
+        if (isPapermc) {
+            Bukkit.getLogger().info("Got paper");
+        }
     }
 
     @Override

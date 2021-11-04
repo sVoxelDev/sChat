@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.silthus.chat.config.ChannelConfig;
+import net.silthus.chat.protocollib.ChatPacketQueue;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -28,6 +29,7 @@ public abstract class TestBase {
     public void setUp() {
         server = MockBukkit.mock();
         plugin = MockBukkit.load(SChat.class);
+        plugin.setChatPacketQueue(new ChatPacketQueue(plugin));
     }
 
     @AfterEach

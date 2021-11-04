@@ -7,6 +7,10 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.silthus.chat.*;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+
 import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
@@ -20,7 +24,7 @@ public class TabbedChatLayout implements ChatLayout {
     public Component render(Chatter chatter, Message... messages) {
 
         return text().append(clearChat())
-                .append(renderMessages(messages))
+                .append(renderMessages(List.of(messages)))
                 .append(footer())
                 .append(channelTabs(chatter))
                 .build();
@@ -42,9 +46,9 @@ public class TabbedChatLayout implements ChatLayout {
         return builder.build();
     }
 
-    Component renderMessages(Message[] messages) {
+    Component renderMessages(Collection<Message> messages) {
         TextComponent.Builder builder = text();
-        for (Message message : messages) {
+        for (Message message : new HashSet<>(messages)) {
             builder.append(message.formatted()).append(newline());
         }
         return builder.build();
