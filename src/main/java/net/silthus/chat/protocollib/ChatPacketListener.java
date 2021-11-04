@@ -5,19 +5,42 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.silthus.chat.Chatter;
+import net.silthus.chat.Message;
 import net.silthus.chat.SChat;
 import net.silthus.chat.layout.TabbedChatLayout;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class ChatPacketListener extends PacketAdapter {
 
     private final SChat plugin;
+    @Getter
+    private final Map<UUID, Message> queuedMessages = Collections.synchronizedMap(new HashMap<>());
 
     public ChatPacketListener(SChat plugin) {
         super(plugin, PacketType.Play.Server.CHAT);
         this.plugin = plugin;
+    }
+
+    public UUID addMessage(Message message) {
+        UUID id = UUID.randomUUID();
+        this.queuedMessages.put(id, message);
+        return id;
+    }
+
+    public Message getMessage(UUID id) {
+        return queuedMessages.get(id);
+    }
+
+    public boolean hasMessage(String id) {
+        return queuedMessages.containsKey(UUID.fromString(id));
     }
 
     @Override
