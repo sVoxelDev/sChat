@@ -5,17 +5,13 @@ import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.MessageType;
 import co.aikar.commands.annotation.*;
 import co.aikar.locales.MessageKey;
-import net.silthus.chat.AccessDeniedException;
-import net.silthus.chat.Channel;
-import net.silthus.chat.Chatter;
-import net.silthus.chat.SChat;
-import net.silthus.chat.layout.ChatUtil;
-import net.silthus.chat.layout.FontInfo;
-import org.bukkit.ChatColor;
+import net.silthus.chat.*;
 
 import static net.silthus.chat.Constants.Language.*;
+import static net.silthus.chat.Constants.*;
 
 @CommandAlias("schat")
+@CommandPermission(PERMISSION_PLAYER_COMMANDS)
 public class SChatCommands extends BaseCommand {
 
     static MessageKey key(String key) {
@@ -28,49 +24,35 @@ public class SChatCommands extends BaseCommand {
         this.plugin = plugin;
     }
 
-    @CommandAlias("test")
-    @Subcommand("test")
-    public class TestCommands extends BaseCommand {
-
-        @Subcommand("center")
-        @CommandCompletion("* -")
-        public void center(String text, @Default(" ") String spacer) {
-            getCurrentCommandIssuer().sendMessage(ChatUtil.centerText(text, spacer));
-        }
-
-        @Subcommand("wrap")
-        @CommandCompletion("*")
-        public void wrapText(String text) {
-            getCurrentCommandIssuer().sendMessage(ChatUtil.wrapText(text, "|-", "-", "-|"));
-        }
-
-        @Subcommand("space")
-        @CommandCompletion("*")
-        public void spaceText(String text) {
-            getCurrentCommandIssuer().sendMessage(ChatUtil.spaceAndCenterText("|-", "|", "-|", " ", "Hi", ChatColor.GREEN + "there" + ChatColor.RESET, ChatColor.BOLD + "Player!" + ChatColor.RESET));
-        }
-
-        @Subcommand("frame")
-        public void frame() {
-            getCurrentCommandIssuer().sendMessage(ChatUtil.wrapText(FontInfo.LONG_MINUS.toString(), FontInfo.LEFT_LINE_CORNER.toString(), FontInfo.LONG_MINUS.toString(), FontInfo.RIGHT_LINE_CORNER.toString()));
-            getCurrentCommandIssuer().sendMessage(ChatUtil.wrapText("Global | Local | Trade", FontInfo.LONG_LINE.toString(), " ", FontInfo.LONG_LINE.toString()));
-        }
-    }
-
     @Subcommand("channel|ch")
     @CommandAlias("channel")
+    @CommandPermission(PERMISSION_PLAYER_CHANNEL_COMMANDS)
     public class ChannelCommands extends BaseCommand {
 
         @Subcommand("join")
         @CommandAlias("join|ch")
         @CommandCompletion("@channels")
-        public void join(Channel channel, @Flags("self") Chatter chatter) {
+        @CommandPermission(PERMISSION_PLAYER_CHANNEL_JOIN)
+        public void join(@Flags("self") Chatter chatter, Channel channel) {
             try {
                 chatter.join(channel);
-                success(JOINED_CHANNEL, "{channel}", channel.getIdentifier());
+                success(JOINED_CHANNEL, "{channel}", channel.getName());
             } catch (AccessDeniedException e) {
-                error(ACCESS_TO_CHANNEL_DENIED, "{channel}", channel.getIdentifier());
-                throw new ConditionFailedException(key(ACCESS_TO_CHANNEL_DENIED), "{channel}", channel.getIdentifier());
+                error(ACCESS_TO_CHANNEL_DENIED, "{channel}", channel.getName());
+                throw new ConditionFailedException(key(ACCESS_TO_CHANNEL_DENIED), "{channel}", channel.getName());
+            }
+        }
+
+        @Subcommand("message|msg")
+        @CommandAlias("ch")
+        @CommandCompletion("@channels *")
+        @CommandPermission(PERMISSION_PLAYER_CHANNEL_QUICKMESSAGE)
+        public void quickMessage(@Flags("self") Chatter chatter, Channel channel, String message) {
+            if (channel.canSendMessage(chatter)) {
+                Message.message(chatter, message).to(channel).send();
+            } else {
+                error(SEND_TO_CHANNEL_DENIED, "{channel}", channel.getName());
+                throw new ConditionFailedException(key(SEND_TO_CHANNEL_DENIED), "{channel}", channel.getName());
             }
         }
     }

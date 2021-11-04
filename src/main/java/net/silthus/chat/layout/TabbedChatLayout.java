@@ -1,6 +1,7 @@
 package net.silthus.chat.layout;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -8,10 +9,11 @@ import net.kyori.adventure.text.minimessage.Template;
 import net.silthus.chat.*;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static net.kyori.adventure.text.Component.*;
+import static net.kyori.adventure.text.Component.newline;
+import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
 import static net.kyori.adventure.text.minimessage.template.TemplateResolver.templates;
@@ -25,13 +27,13 @@ public class TabbedChatLayout implements ChatLayout {
 
         return text().append(clearChat())
                 .append(renderMessages(List.of(messages)))
-                .append(footer())
-                .append(channelTabs(chatter))
+                .append(newline())
+                .append(footer(chatter))
                 .build();
     }
 
-    public Component footer() {
-        return empty();
+    public Component footer(Chatter chatter) {
+        return channelTabs(chatter);
     }
 
     Component channelTabs(Chatter chatter) {
@@ -47,11 +49,17 @@ public class TabbedChatLayout implements ChatLayout {
     }
 
     Component renderMessages(Collection<Message> messages) {
-        TextComponent.Builder builder = text();
-        for (Message message : new HashSet<>(messages)) {
-            builder.append(message.formatted()).append(newline());
-        }
-        return builder.build();
+        List<Component> components = messages.stream()
+                .distinct()
+                .sorted()
+                .map(Message::formatted)
+                .collect(Collectors.toList());
+        return Component.join(
+                JoinConfiguration.builder()
+                        .separator(newline())
+                        .build(),
+                components
+        );
     }
 
     Component clearChat() {

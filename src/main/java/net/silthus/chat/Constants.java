@@ -14,6 +14,11 @@ public final class Constants {
     public static final String PLUGIN_NAME = "sChat";
     public static final Key NBT_MESSAGE_ID = Key.key("schat:messageid");
 
+    public static final String PERMISSION_PLAYER_COMMANDS = "schat.player.cmd";
+    public static final String PERMISSION_PLAYER_CHANNEL_COMMANDS = "schat.player.cmd.channel";
+    public static final String PERMISSION_PLAYER_CHANNEL_JOIN = "schat.player.cmd.channel.join";
+    public static final String PERMISSION_PLAYER_CHANNEL_QUICKMESSAGE = "schat.player.cmd.channel.quickmessage";
+
     public static class Targets {
 
         public static final String EMPTY = "none";
@@ -24,9 +29,9 @@ public final class Constants {
     public static class Permissions {
 
         public static final String BASE_PERMISSION = PLUGIN_NAME.toLowerCase();
+
         public static final String CHANNEL_PERMISSION = BASE_PERMISSION + ".channel";
         public static final String AUTO_JOIN_CHANNE_SUFFIX = ".autojoin";
-
         public static String getChannelPermission(@NonNull Channel channel) {
             return (CHANNEL_PERMISSION + "." + channel.getIdentifier()).toLowerCase();
         }
@@ -39,6 +44,7 @@ public final class Constants {
     public static class Language {
         public static final String ACF_BASE_KEY = "commands";
         public static final String ACCESS_TO_CHANNEL_DENIED = "access-to-channel-denied";
+        public static final String SEND_TO_CHANNEL_DENIED = "send-to-channel-denied";
         public static final String JOINED_CHANNEL = "joined-channel";
     }
 

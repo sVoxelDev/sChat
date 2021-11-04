@@ -62,6 +62,10 @@ public class Channel extends AbstractChatTarget implements ChatSource {
         return true;
     }
 
+    public boolean canSendMessage(Chatter chatter) {
+        return canJoin(chatter.getPlayer());
+    }
+
     public boolean canAutoJoin(Player player) {
         if (!canJoin(player)) return false;
         if (canJoin(player) && getConfig().autoJoin()) return true;

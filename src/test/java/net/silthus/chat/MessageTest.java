@@ -2,7 +2,11 @@ package net.silthus.chat;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 
 class MessageTest extends TestBase {
 
@@ -104,5 +108,30 @@ class MessageTest extends TestBase {
         String text = toText(message);
 
         assertThat(text).isEqualTo("test: Hi");
+    }
+
+    @Test
+    void timestamp_isSetOnCreate() {
+        Message message = Message.message("test").build();
+        assertThat(message.getTimestamp())
+                .isNotNull()
+                .isCloseTo(Instant.now(), within(100, ChronoUnit.MILLIS));
+    }
+
+    @Test
+    void copy_createsNewTimestamp() throws InterruptedException {
+        Message message = Message.message("test").build();
+        Thread.sleep(1L);
+        Message copy = message.copy().build();
+
+        assertThat(message.getTimestamp()).isNotEqualTo(copy.getTimestamp());
+    }
+
+    @Test
+    void copy_isNotEqual() {
+        Message message = Message.message("test").build();
+        Message copy = message.copy().build();
+
+        assertThat(message).isNotEqualTo(copy);
     }
 }

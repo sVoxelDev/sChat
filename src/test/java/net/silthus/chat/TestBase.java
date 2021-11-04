@@ -8,6 +8,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.protocollib.ChatPacketQueue;
+import org.assertj.core.internal.bytebuddy.utility.RandomString;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -15,6 +16,10 @@ import org.bukkit.plugin.RegisteredListener;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -67,4 +72,20 @@ public abstract class TestBase {
     protected String toText(Message message) {
         return toText(message.formatted());
     }
+
+    protected Message randomMessage() {
+        return Message.message(RandomString.make() + "-" + Instant.now()).build();
+    }
+
+    @SneakyThrows
+    protected Collection<Message> randomMessages(int count) {
+        ArrayList<Message> list = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            list.add(randomMessage());
+            Thread.sleep(10L);
+        }
+        Collections.shuffle(list);
+        return list;
+    }
+
 }

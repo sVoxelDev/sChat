@@ -1,4 +1,5 @@
 commands:
   reload-success: "sLimits successfully reloaded. Loaded {limits} limits."
   access-to-channel-denied: "You don't have permission to access the '{channel}' channel."
+  send-to-channel-denied: "You don't have permission to send messages to the '{channel}' channel."
   joined-channel: "&7You joined the channel: &6{channel}&7."

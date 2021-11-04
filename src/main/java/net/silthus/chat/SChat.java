@@ -71,18 +71,18 @@ public class SChat extends JavaPlugin {
 
         setupProtocolLib();
         setupCommands();
-
-        boolean isPapermc = false;
-        try {
-            Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData");
-            isPapermc = true;
-        } catch (ClassNotFoundException e) {
-            Bukkit.getLogger().info("Not paper");
-        }
-
-        if (isPapermc) {
-            Bukkit.getLogger().info("Got paper");
-        }
+//
+//        boolean isPapermc = false;
+//        try {
+//            Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData");
+//            isPapermc = true;
+//        } catch (ClassNotFoundException e) {
+//            Bukkit.getLogger().info("Not paper");
+//        }
+//
+//        if (isPapermc) {
+//            Bukkit.getLogger().info("Got paper");
+//        }
     }
 
     @Override

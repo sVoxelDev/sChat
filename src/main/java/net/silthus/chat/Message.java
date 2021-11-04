@@ -5,7 +5,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -13,7 +15,7 @@ import java.util.stream.Stream;
 @Value
 @EqualsAndHashCode(of = "id")
 @Builder(builderMethodName = "message", toBuilder = true)
-public class Message {
+public class Message implements Comparable<Message> {
 
     public static MessageBuilder message() {
         return new MessageBuilder(Format.defaultFormat());
@@ -32,6 +34,7 @@ public class Message {
     }
 
     UUID id = UUID.randomUUID();
+    Instant timestamp = Instant.now();
     Message parent;
     @Builder.Default
     ChatSource source = ChatSource.nil();
@@ -49,6 +52,11 @@ public class Message {
 
     public Component formatted() {
         return format.applyTo(this);
+    }
+
+    @Override
+    public int compareTo(@NotNull Message o) {
+        return getTimestamp().compareTo(o.getTimestamp());
     }
 
     public static class MessageBuilder {

@@ -8,7 +8,9 @@ import org.bukkit.ChatColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static net.kyori.adventure.text.Component.newline;
 import static net.silthus.chat.Constants.View.CHANNEL_DIVIDER;
@@ -31,7 +33,8 @@ public class TabbedChatLayoutTests extends TestBase {
 
     @Test
     void footer() {
-        Component footer = new TabbedChatLayout().footer();
+        Component footer = view.footer(chatter);
+        assertThat(footer).isEqualTo(view.channelTabs(chatter));
     }
 
     @Test
@@ -95,6 +98,14 @@ public class TabbedChatLayoutTests extends TestBase {
 
         Component component = view.renderMessages(List.of(message, message));
         assertThat(toText(component)).containsOnlyOnce("test");
+    }
+
+    @Test
+    void ordersMessages_byTimestamp() {
+        Collection<Message> messages = randomMessages(10);
+        String sortedMessages = messages.stream().sorted().map(this::toText).collect(Collectors.joining("\n"));
+        Component component = view.renderMessages(messages);
+        assertThat(toText(component)).isEqualTo(sortedMessages);
     }
 
     private String getStripedText(Component component) {
