@@ -8,7 +8,6 @@ import com.google.common.base.Strings;
 import kr.entree.spigradle.annotations.PluginMain;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.silthus.chat.commands.SChatCommands;
 import net.silthus.chat.config.PluginConfig;
 import net.silthus.chat.protocollib.ChatPacketQueue;
@@ -45,7 +44,6 @@ public class SChat extends JavaPlugin {
 
     private PaperCommandManager commandManager;
     private ProtocolManager protocolManager;
-    private BukkitAudiences audiences;
 
     private ChatPacketQueue chatPacketQueue;
 
@@ -68,7 +66,6 @@ public class SChat extends JavaPlugin {
         setupChatterManager();
         setupConsoleChatter();
 
-        setupAdventureTextLibrary();
         setupProtocolLib();
         setupCommands();
     }
@@ -97,10 +94,6 @@ public class SChat extends JavaPlugin {
 
     private void setupConsoleChatter() {
         getServer().getPluginManager().registerEvents(Console.init(getPluginConfig().console()), this);
-    }
-
-    private void setupAdventureTextLibrary() {
-        audiences = BukkitAudiences.create(this);
     }
 
     private void setupProtocolLib() {

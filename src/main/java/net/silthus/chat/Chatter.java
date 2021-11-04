@@ -70,13 +70,7 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
 
     @Override
     public void sendMessage(Message message) {
-        SChat.instance().getAudiences()
-                .player(getPlayer())
-                .sendMessage(
-                        getIdentity(message),
-                        appendMessageId(message),
-                        MessageType.CHAT
-                );
+        getPlayer().sendMessage(getIdentity(message), appendMessageId(message), MessageType.CHAT);
         addReceivedMessage(message);
     }
 

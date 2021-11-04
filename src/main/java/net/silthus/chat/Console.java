@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import net.silthus.chat.config.ConsoleConfig;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerCommandEvent;
@@ -38,9 +39,7 @@ public final class Console extends AbstractChatTarget implements ChatSource, Lis
 
     @Override
     public void sendMessage(Message message) {
-        SChat.instance()
-                .getAudiences().console()
-                .sendMessage(message.getText());
+        Bukkit.getConsoleSender().sendMessage(message.formatted());
         addReceivedMessage(message);
     }
 

@@ -4,7 +4,6 @@ import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import lombok.SneakyThrows;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.silthus.chat.config.ChannelConfig;
@@ -15,8 +14,6 @@ import org.bukkit.plugin.RegisteredListener;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
-import java.lang.reflect.Field;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -35,13 +32,9 @@ public abstract class TestBase {
 
     @AfterEach
     @SneakyThrows
-    @SuppressWarnings("unchecked")
     public void tearDown() {
         Bukkit.getScheduler().cancelTasks(plugin);
         MockBukkit.unmock();
-        Field instances = Class.forName("net.kyori.adventure.platform.bukkit.BukkitAudiencesImpl").getDeclaredField("INSTANCES");
-        instances.setAccessible(true);
-        ((Map<String, BukkitAudiences>) instances.get(null)).clear();
     }
 
     protected Stream<Listener> getRegisteredListeners() {

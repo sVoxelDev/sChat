@@ -2,7 +2,6 @@ package net.silthus.chat.protocollib;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import net.kyori.adventure.text.Component;
@@ -12,6 +11,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.silthus.chat.*;
 import net.silthus.chat.layout.TabbedChatLayout;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class ChatPacketQueue extends PacketAdapter {
@@ -50,13 +50,28 @@ public class ChatPacketQueue extends PacketAdapter {
         return queuedMessages.remove(UUID.fromString(id));
     }
 
+    // TODO: cleanup
     @Override
     public void onPacketSending(PacketEvent event) {
         if (event.getPacketType() != PacketType.Play.Server.CHAT) return;
 
-        PacketContainer packet = event.getPacket();
-        WrappedChatComponent chat = packet.getChatComponents().read(0);
-        Component messageText = GsonComponentSerializer.gson().deserialize(chat.getJson());
+        WrapperPlayServerChat packet = new WrapperPlayServerChat(event.getPacket());
+        WrappedChatComponent chat = packet.getMessage();
+        Component messageText;
+        if (chat == null) {
+            try {
+                Object handle = event.getPacket().getHandle();
+                Class<?> packetClass = handle.getClass();
+                Field field = packetClass.getDeclaredField("adventure$message");
+                field.setAccessible(true);
+                messageText = (Component) field.get(handle);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+                return;
+            }
+        } else {
+            messageText = GsonComponentSerializer.gson().deserialize(chat.getJson());
+        }
 
         Message message = messageText.children().stream()
                 .filter(component -> component instanceof StorageNBTComponent)
@@ -79,9 +94,21 @@ public class ChatPacketQueue extends PacketAdapter {
             render = TabbedChatLayout.TABBED.render(chatter, message);
         }
 
-        String json = GsonComponentSerializer.gson().serialize(render);
-        chat.setJson(json);
-        packet.getChatComponents().write(0, chat);
-        event.setPacket(packet);
+        if (chat == null) {
+            try {
+                Object handle = event.getPacket().getHandle();
+                Class<?> packetClass = handle.getClass();
+                Field field = packetClass.getDeclaredField("adventure$message");
+                field.setAccessible(true);
+                field.set(handle, render);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        } else {
+            String json = GsonComponentSerializer.gson().serialize(render);
+            chat.setJson(json);
+            packet.setMessage(WrappedChatComponent.fromJson(json));
+            event.setPacket(packet.getHandle());
+        }
     }
 }

@@ -59,7 +59,8 @@ repositories {
 }
 
 dependencies {
-    implementation spigot(mcVersion)
+    implementation "io.papermc.paper:paper-api:${mcVersion}-R0.1-SNAPSHOT"
+//    implementation "org.spigotmc:spigot:${mcVersion}-R0.1-SNAPSHOT"
 
     //Add dependencies here
     implementation 'net.md-5:bungeecord-chat:1.16-R0.4'
@@ -68,9 +69,9 @@ dependencies {
 
     implementation "com.github.MilkBowl:VaultAPI:1.7.1"
 
-    implementation 'net.kyori:adventure-api:4.9.2'
+//    implementation 'net.kyori:adventure-api:4.9.2'
     implementation 'net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT'
-    implementation 'net.kyori:adventure-platform-bukkit:4.0.0'
+//    implementation 'net.kyori:adventure-platform-bukkit:4.0.0'
 
     implementation 'com.comphenix.protocol:ProtocolLib:4.7.0'
 
@@ -90,7 +91,7 @@ shadowJar {
     }
     relocate 'co.aikar.commands', "${packageName}.acf"
     relocate 'co.aikar.locales', "${packageName}.locales"
-    relocate 'net.kyori', "${pluginName}.text"
+    relocate 'net.kyori.adventure.text.minimessage', "${pluginName}.text.minimessage"
 }
 
 tasks.build.dependsOn(shadowJar)
