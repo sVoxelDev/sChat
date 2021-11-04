@@ -12,7 +12,7 @@ import java.util.function.Function;
 public final class Constants {
 
     public static final String PLUGIN_NAME = "sChat";
-    public static final Key NBT_CHAT_TARGET_KEY = Key.key("schat:target");
+    public static final Key NBT_MESSAGE_ID = Key.key("schat:messageid");
 
     public static class Targets {
 

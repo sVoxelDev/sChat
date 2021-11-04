@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.silthus.chat.commands.SChatCommands;
 import net.silthus.chat.config.PluginConfig;
-import net.silthus.chat.protocollib.ChatPacketListener;
+import net.silthus.chat.protocollib.ChatPacketQueue;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -47,7 +47,7 @@ public class SChat extends JavaPlugin {
     private ProtocolManager protocolManager;
     private BukkitAudiences audiences;
 
-    private ChatPacketListener chatPacketListener;
+    private ChatPacketQueue chatPacketQueue;
 
     public SChat() {
         instance = this;
@@ -106,8 +106,8 @@ public class SChat extends JavaPlugin {
     private void setupProtocolLib() {
         if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
             protocolManager = ProtocolLibrary.getProtocolManager();
-            chatPacketListener = new ChatPacketListener(this);
-            protocolManager.addPacketListener(chatPacketListener);
+            chatPacketQueue = new ChatPacketQueue(this);
+            protocolManager.addPacketListener(chatPacketQueue);
             getLogger().info("Enabled ProtocolLib handler.");
         }
     }

@@ -5,10 +5,7 @@ import lombok.NonNull;
 import lombok.Value;
 import net.kyori.adventure.text.Component;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,6 +25,7 @@ public class Message {
         return new MessageBuilder(Format.defaultFormat()).text(message).source(source);
     }
 
+    UUID id = UUID.randomUUID();
     Message parent;
     @Builder.Default
     ChatSource source = ChatSource.nil();

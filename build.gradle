@@ -35,7 +35,8 @@ spigot {
     apiVersion = project.property("apiVersion")
     load = STARTUP
     //    depends = ['']
-    softDepends = ['ProtocolLib']
+    // softDepends = ['ProtocolLib']
+    depends = ['ProtocolLib']
 }
 
 compileJava {
@@ -48,6 +49,7 @@ compileJava {
 archivesBaseName = project.property("pluginName")
 
 repositories {
+    mavenLocal()
     mavenCentral()
     spigot()
     maven { url = 'https://repo.aikar.co/content/groups/aikar/' }

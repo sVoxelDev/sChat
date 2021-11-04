@@ -74,7 +74,7 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
                 .player(getPlayer())
                 .sendMessage(
                         getIdentity(message),
-                        appendSourceMetadataToMessage(message),
+                        appendMessageId(message),
                         MessageType.CHAT
                 );
         addReceivedMessage(message);
@@ -88,13 +88,12 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         }
     }
 
-    private TextComponent appendSourceMetadataToMessage(Message message) {
+    private TextComponent appendMessageId(Message message) {
         return Component.text()
                 .append(message.formatted())
-                // TODO: use other metadata mechanism
-//                .append(Component.storageNBT()
-//                        .nbtPath(message.getTargets().getIdentifier())
-//                        .storage(Constants.NBT_CHAT_TARGET_KEY))
+                .append(Component.storageNBT()
+                        .nbtPath(message.getId().toString())
+                        .storage(Constants.NBT_MESSAGE_ID))
                 .build();
     }
 
