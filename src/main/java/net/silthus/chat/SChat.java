@@ -29,9 +29,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import net.milkbowl.vault.chat.Chat;
 import net.silthus.chat.commands.SChatCommands;
 import net.silthus.chat.config.PluginConfig;
-import net.silthus.chat.protocollib.ChatPacketQueue;
+import net.silthus.chat.integrations.protocollib.ChatPacketQueue;
+import net.silthus.chat.integrations.vault.VaultProvider;
 import net.silthus.chat.targets.Channel;
 import net.silthus.chat.targets.Chatter;
 import net.silthus.chat.targets.Console;
@@ -45,10 +47,7 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -68,6 +67,8 @@ public final class SChat extends JavaPlugin {
 
     private PaperCommandManager commandManager;
     private ProtocolManager protocolManager;
+    @Setter(AccessLevel.PACKAGE)
+    private VaultProvider vaultProvider;
 
     @Setter(AccessLevel.PACKAGE)
     private ChatPacketQueue chatPacketQueue;
@@ -97,6 +98,7 @@ public final class SChat extends JavaPlugin {
         setupConsoleChatter();
 
         setupProtocolLib();
+        setupVaultIntegration();
         setupCommands();
     }
 
@@ -138,11 +140,19 @@ public final class SChat extends JavaPlugin {
     }
 
     private void setupProtocolLib() {
-        if (Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) {
-            protocolManager = ProtocolLibrary.getProtocolManager();
-            chatPacketQueue = new ChatPacketQueue(this);
-            protocolManager.addPacketListener(chatPacketQueue);
-            getLogger().info("Enabled ProtocolLib handler.");
+        if (!Bukkit.getPluginManager().isPluginEnabled("ProtocolLib")) return;
+
+        protocolManager = ProtocolLibrary.getProtocolManager();
+        chatPacketQueue = new ChatPacketQueue(this);
+        protocolManager.addPacketListener(chatPacketQueue);
+        getLogger().info("Enabled ProtocolLib handler.");
+    }
+
+    private void setupVaultIntegration() {
+        if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
+            vaultProvider = new VaultProvider(Objects.requireNonNull(getServer().getServicesManager().getRegistration(Chat.class)).getProvider());
+        } else {
+            vaultProvider = new VaultProvider();
         }
     }
 

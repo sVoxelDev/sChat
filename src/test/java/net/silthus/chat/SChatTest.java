@@ -69,7 +69,7 @@ class SChatTest extends TestBase {
                 ).contains(
                         "global",
                         Component.text("Global"),
-                        "&6[&aGlobal&6]&ePlayer0&7: &atest"
+                        "&6[&aGlobal&6]&7[ADMIN]&ePlayer0[!]&7: test"
                 );
     }
 

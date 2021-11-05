@@ -20,7 +20,6 @@
 package net.silthus.chat;
 
 import lombok.NonNull;
-import net.kyori.adventure.text.Component;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.targets.Channel;
 import net.silthus.chat.targets.Chatter;
@@ -30,7 +29,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Collection;
 
-public interface ChatTarget {
+public interface ChatTarget extends Identity {
 
     static Chatter player(Player player) {
         return Chatter.of(player);
@@ -55,10 +54,6 @@ public interface ChatTarget {
     default Message sendMessage(String message) {
         return Message.message(message).to(this).send();
     }
-
-    String getIdentifier();
-
-    Component getName();
 
     void sendMessage(Message message);
 

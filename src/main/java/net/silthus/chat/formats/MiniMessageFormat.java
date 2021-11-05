@@ -26,6 +26,7 @@ import net.kyori.adventure.text.minimessage.Template;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Format;
 import net.silthus.chat.Message;
+import net.silthus.chat.SChat;
 
 import static net.kyori.adventure.text.minimessage.template.TemplateResolver.templates;
 
@@ -45,9 +46,11 @@ public class MiniMessageFormat implements Format {
     @Override
     public Component applyTo(Message message) {
         return MiniMessage.miniMessage().deserialize(format, templates(
-                messageTemplate(message),
+                channelTemplate(message),
+                vaultPrefixTemplate(message),
                 senderTemplate(message),
-                channelTemplate(message)
+                vaultSuffixTemplate(message),
+                messageTemplate(message)
         ));
     }
 
@@ -64,5 +67,13 @@ public class MiniMessageFormat implements Format {
             return Template.template("channel_name", message.getConversation().getName());
         }
         return Template.template("channel_name", Component.empty());
+    }
+
+    private Template vaultPrefixTemplate(Message message) {
+        return Template.template("sender_vault_prefix", SChat.instance().getVaultProvider().getPrefix(message.getSource()));
+    }
+
+    private Template vaultSuffixTemplate(Message message) {
+        return Template.template("sender_vault_suffix", SChat.instance().getVaultProvider().getSuffix(message.getSource()));
     }
 }

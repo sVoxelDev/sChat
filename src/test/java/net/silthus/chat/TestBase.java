@@ -25,8 +25,10 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.milkbowl.vault.chat.Chat;
 import net.silthus.chat.config.ChannelConfig;
-import net.silthus.chat.protocollib.ChatPacketQueue;
+import net.silthus.chat.integrations.protocollib.ChatPacketQueue;
+import net.silthus.chat.integrations.vault.VaultProvider;
 import net.silthus.chat.targets.Channel;
 import org.assertj.core.internal.bytebuddy.utility.RandomString;
 import org.bukkit.Bukkit;
@@ -44,6 +46,9 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public abstract class TestBase {
 
@@ -55,6 +60,10 @@ public abstract class TestBase {
         server = MockBukkit.mock();
         plugin = MockBukkit.load(SChat.class);
         plugin.setChatPacketQueue(new ChatPacketQueue(plugin));
+        Chat chat = mock(Chat.class);
+        when(chat.getPlayerPrefix(any())).thenReturn("&7[ADMIN]&a");
+        when(chat.getPlayerSuffix(any())).thenReturn("[!]&a");
+        plugin.setVaultProvider(new VaultProvider(chat));
     }
 
     @AfterEach

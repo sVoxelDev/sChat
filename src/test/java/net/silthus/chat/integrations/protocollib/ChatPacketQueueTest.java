@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.protocollib;
+package net.silthus.chat.integrations.protocollib;
 
 import com.google.gson.Gson;
 import net.kyori.adventure.text.Component;

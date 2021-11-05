@@ -24,10 +24,10 @@ import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.ClickEvent;
-import net.silthus.chat.ChatLayout;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
+import net.silthus.chat.MessageRenderer;
 import net.silthus.chat.targets.Chatter;
 
 import java.util.Collection;
@@ -41,7 +41,7 @@ import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
 import static net.silthus.chat.Constants.Commands.JOIN_CONVERSATION;
 import static net.silthus.chat.Constants.View.*;
 
-public class TabbedChatLayout implements ChatLayout {
+public class TabbedMessageRenderer implements MessageRenderer {
 
     @Override
     public Component render(Chatter chatter, Message... messages) {

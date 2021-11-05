@@ -20,14 +20,14 @@
 package net.silthus.chat;
 
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.layout.TabbedChatLayout;
+import net.silthus.chat.layout.TabbedMessageRenderer;
 import net.silthus.chat.targets.Chatter;
 
 import java.util.Collection;
 
-public interface ChatLayout {
+public interface MessageRenderer {
 
-    ChatLayout TABBED = new TabbedChatLayout();
+    MessageRenderer TABBED = new TabbedMessageRenderer();
 
     Component render(Chatter chatter, Message... messages);
 

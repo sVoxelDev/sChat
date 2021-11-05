@@ -25,7 +25,7 @@ import net.silthus.chat.targets.Channel;
 import net.silthus.chat.targets.Chatter;
 import org.bukkit.entity.Player;
 
-public interface ChatSource {
+public interface ChatSource extends Identity {
 
     static ChatSource player(Player player) {
         return Chatter.of(player);
@@ -49,14 +49,6 @@ public interface ChatSource {
 
     static ChatSource nil() {
         return new NilChatSource();
-    }
-
-    String getIdentifier();
-
-    Component getName();
-
-    default boolean isPlayer() {
-        return false;
     }
 
     default Message.MessageBuilder message(String message) {

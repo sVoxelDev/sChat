@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.protocollib;
+package net.silthus.chat.integrations.protocollib;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
@@ -31,7 +31,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Message;
 import net.silthus.chat.SChat;
-import net.silthus.chat.layout.TabbedChatLayout;
+import net.silthus.chat.layout.TabbedMessageRenderer;
 import net.silthus.chat.targets.Chatter;
 
 import java.lang.reflect.Field;
@@ -114,14 +114,14 @@ public class ChatPacketQueue extends PacketAdapter {
     }
 
     private Component renderSingleMessage(Chatter chatter, Message message) {
-        return TabbedChatLayout.TABBED.render(chatter, message);
+        return TabbedMessageRenderer.TABBED.render(chatter, message);
     }
 
     private Component renderChannelMessages(Chatter chatter, Message message) {
         Component render;
         ArrayList<Message> messages = new ArrayList<>(chatter.getActiveConversation().getReceivedMessages());
         messages.add(message);
-        render = TabbedChatLayout.TABBED.render(chatter, messages);
+        render = TabbedMessageRenderer.TABBED.render(chatter, messages);
         return render;
     }
 

@@ -4,7 +4,7 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
-import net.silthus.chat.layout.TabbedChatLayout;
+import net.silthus.chat.layout.TabbedMessageRenderer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -88,7 +88,7 @@ public class DirectConversationTests extends TestBase {
     void getName_formatsToOtherPlayer() {
         Message message = sendMessage();
 
-        TabbedChatLayout view = new TabbedChatLayout();
+        TabbedMessageRenderer view = new TabbedMessageRenderer();
 
         assertThat(toText(view.render(chatter1, message))).contains("Player1&8");
         assertThat(toText(view.render(chatter2, message))).contains("Player0&8");

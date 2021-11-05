@@ -40,9 +40,9 @@ import static net.kyori.adventure.text.Component.newline;
 import static net.silthus.chat.Constants.View.CHANNEL_DIVIDER;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TabbedChatLayoutTests extends TestBase {
+public class TabbedMessageRendererTests extends TestBase {
 
-    private TabbedChatLayout view;
+    private TabbedMessageRenderer view;
     private Chatter chatter;
 
     @Override
@@ -50,7 +50,7 @@ public class TabbedChatLayoutTests extends TestBase {
     public void setUp() {
         super.setUp();
 
-        view = new TabbedChatLayout();
+        view = new TabbedMessageRenderer();
         chatter = Chatter.of(server.addPlayer());
         chatter.setActiveConversation(ChatTarget.channel("test"));
     }

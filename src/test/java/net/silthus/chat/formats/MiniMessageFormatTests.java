@@ -60,8 +60,19 @@ public class MiniMessageFormatTests extends TestBase {
     }
 
     @Test
+        // requires a feature in the adventure lib to allow bleeding color codes
     void withVaultPrefix() {
-        
+        assertThat(toText("<sender_vault_prefix><sender_name>: <message>", Message.message(ChatSource.player(server.addPlayer()), "test").build()))
+                .isEqualTo("&7[ADMIN]&rPlayer0: test");
+//                .isEqualTo("&7[ADMIN]Player0: test");
+    }
+
+    @Test
+        // requires a feature in the adventure lib to allow bleeding color codes
+    void withVaultSuffix() {
+        assertThat(toText("<sender_name><sender_vault_suffix>: <message>", Message.message(ChatSource.player(server.addPlayer()), "test").build()))
+                .isEqualTo("Player0[!]: test");
+//                .isEqualTo("Player0[!]&a: test");
     }
 
     @Test
