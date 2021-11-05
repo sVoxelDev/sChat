@@ -19,6 +19,8 @@
 
 package net.silthus.chat;
 
+import lombok.NonNull;
+import net.kyori.adventure.text.Component;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.targets.Channel;
 import net.silthus.chat.targets.Console;
@@ -56,10 +58,19 @@ public interface ChatTarget {
 
     String getIdentifier();
 
+    Component getName();
+
     void sendMessage(Message message);
 
     Message getLastReceivedMessage();
 
     Collection<Message> getReceivedMessages();
 
+    Collection<Conversation> getConversations();
+
+    void subscribe(@NonNull Conversation conversation);
+
+    void unsubscribe(@NonNull Conversation conversation);
+
+    void setActiveConversation(Conversation conversation);
 }

@@ -22,9 +22,10 @@ package net.silthus.chat.layout;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.minimessage.Template;
 import net.silthus.chat.ChatLayout;
+import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
 import net.silthus.chat.targets.PlayerChatter;
@@ -52,7 +53,7 @@ public class TabbedChatLayout implements ChatLayout {
                 .build();
     }
 
-    public Component footer(PlayerChatter chatter) {
+    Component footer(PlayerChatter chatter) {
         return conversationTabs(chatter);
     }
 
@@ -106,7 +107,8 @@ public class TabbedChatLayout implements ChatLayout {
 
     private Component conversationName(PlayerChatter chatter, Conversation conversation, boolean isActive) {
         Component channelName = conversation.getName()
-                .replaceText(builder -> builder.match("<player_name>").replacement(chatter.getName()))
+                .replaceText(playerName(chatter))
+                .replaceText(conversationPartnerName(chatter, conversation))
                 .clickEvent(clickEvent(ClickEvent.Action.RUN_COMMAND, JOIN_CONVERSATION.apply(conversation)));
         if (isActive)
             channelName = channelName.color(ACTIVE_COLOR).decorate(ACTIVE_DECORATION);
@@ -115,7 +117,18 @@ public class TabbedChatLayout implements ChatLayout {
         return channelName;
     }
 
-    private Template playerName(PlayerChatter chatter) {
-        return Template.template("player_name", chatter.getName());
+    private TextReplacementConfig playerName(PlayerChatter chatter) {
+        return TextReplacementConfig.builder()
+                .match("<player_name>").replacement(chatter.getName()).build();
+    }
+
+    private TextReplacementConfig conversationPartnerName(PlayerChatter viewer, Conversation conversation) {
+        List<Component> names = conversation.getTargets().stream()
+                .filter(target -> !target.equals(viewer))
+                .map(ChatTarget::getName)
+                .collect(Collectors.toList());
+        return TextReplacementConfig.builder()
+                .match("<partner_name>").replacement(Component.join(JoinConfiguration.separator(Component.text(",")), names))
+                .build();
     }
 }

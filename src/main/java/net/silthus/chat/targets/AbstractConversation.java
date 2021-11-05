@@ -24,7 +24,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
-import net.silthus.chat.config.ChannelConfig;
+import net.silthus.chat.Format;
 
 import java.util.*;
 
@@ -33,11 +33,10 @@ import java.util.*;
 public abstract class AbstractConversation extends AbstractChatTarget implements Conversation {
 
     private final Set<ChatTarget> targets = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>()));
-    private final ChannelConfig config;
+    private Format format = Format.defaultFormat();
 
-    protected AbstractConversation(String identifier, ChannelConfig config) {
+    protected AbstractConversation(String identifier) {
         super(identifier);
-        this.config = config;
     }
 
     @Override
@@ -53,11 +52,6 @@ public abstract class AbstractConversation extends AbstractChatTarget implements
     @Override
     public void unsubscribe(@NonNull ChatTarget target) {
         this.targets.remove(target);
-    }
-
-    @Override
-    public ChannelConfig getConfig() {
-        return this.config;
     }
 
 }

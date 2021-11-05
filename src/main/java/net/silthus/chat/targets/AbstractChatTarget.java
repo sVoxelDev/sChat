@@ -21,12 +21,13 @@ package net.silthus.chat.targets;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import net.kyori.adventure.text.Component;
 import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.LinkedTransferQueue;
 
 @Data
@@ -35,6 +36,9 @@ public abstract class AbstractChatTarget implements ChatTarget {
 
     private final String identifier;
     private final Queue<Message> receivedMessages = new LinkedTransferQueue<>();
+    private final Set<Conversation> conversations = new HashSet<>();
+    private Conversation activeConversation;
+    private Component name;
 
     protected AbstractChatTarget(String identifier) {
         this.identifier = identifier.toLowerCase();
@@ -56,5 +60,35 @@ public abstract class AbstractChatTarget implements ChatTarget {
 
     public String getIdentifier() {
         return this.identifier;
+    }
+
+    public void setActiveConversation(Conversation conversation) {
+        this.activeConversation = conversation;
+        if (conversation != null)
+            subscribe(conversation);
+    }
+
+    public Conversation getActiveConversation() {
+        return this.activeConversation;
+    }
+
+    public Collection<Conversation> getConversations() {
+        return List.copyOf(conversations);
+    }
+
+    public void subscribe(@NonNull Conversation conversation) {
+        conversation.subscribe(this);
+        conversations.add(conversation);
+    }
+
+    public void unsubscribe(@NonNull Conversation conversation) {
+        conversation.unsubscribe(this);
+        conversations.removeIf(existingConversation -> existingConversation.equals(conversation));
+    }
+
+    public Component getName() {
+        if (name != null)
+            return name;
+        return Component.text(getIdentifier());
     }
 }

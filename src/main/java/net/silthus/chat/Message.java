@@ -154,7 +154,7 @@ public class Message implements Comparable<Message> {
         }
 
         public Message build() {
-            Format format = conversation != null ? conversation.getConfig().format() : defaultFormat;
+            Format format = conversation != null ? conversation.getFormat() : defaultFormat;
             if (format$set) format = format$value;
             ChatSource source = source$set ? source$value : $default$source();
             Component text = text$set ? text$value : $default$text();

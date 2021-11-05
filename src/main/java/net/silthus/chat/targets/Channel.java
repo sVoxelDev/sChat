@@ -42,18 +42,18 @@ public class Channel extends AbstractConversation implements ChatSource {
         return new Channel(identifier, config);
     }
 
+    private final ChannelConfig config;
+
     private Channel(String identifier) {
         this(identifier, ChannelConfig.defaults());
     }
 
     private Channel(String identifier, ChannelConfig config) {
-        super(identifier, config);
-    }
-
-    public Component getName() {
-        if (getConfig().name() != null)
-            return Component.text(getConfig().name());
-        return Component.text(getIdentifier());
+        super(identifier);
+        this.config = config;
+        if (config.name() != null)
+            setName(Component.text(config.name()));
+        setFormat(config.format());
     }
 
     public String getPermission() {

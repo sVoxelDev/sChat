@@ -22,7 +22,6 @@ package net.silthus.chat.targets;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NonNull;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
@@ -33,15 +32,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-import java.util.*;
+import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(of = "player", callSuper = false)
 public class PlayerChatter extends AbstractChatTarget implements Listener, Chatter {
 
     private final Player player;
-    private Conversation activeConversation;
-    private final Set<Conversation> conversations = new HashSet<>();
 
     public PlayerChatter(Player player) {
         super(player.getUniqueId().toString());
@@ -66,30 +63,6 @@ public class PlayerChatter extends AbstractChatTarget implements Listener, Chatt
     @Override
     public boolean isPlayer() {
         return true;
-    }
-
-    @Override
-    public void setActiveConversation(Conversation conversation) {
-        this.activeConversation = conversation;
-        if (conversation != null)
-            subscribe(conversation);
-    }
-
-    @Override
-    public Collection<Conversation> getConversations() {
-        return List.copyOf(conversations);
-    }
-
-    @Override
-    public void subscribe(@NonNull Conversation conversation) {
-        conversation.subscribe(this);
-        conversations.add(conversation);
-    }
-
-    @Override
-    public void unsubscribe(@NonNull Conversation conversation) {
-        conversation.unsubscribe(this);
-        conversations.removeIf(existingConversation -> existingConversation.equals(conversation));
     }
 
     public boolean canJoin(Channel channel) {
