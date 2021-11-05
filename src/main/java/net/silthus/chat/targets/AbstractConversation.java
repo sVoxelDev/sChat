@@ -45,12 +45,12 @@ public abstract class AbstractConversation extends AbstractChatTarget implements
     }
 
     @Override
-    public void subscribe(@NonNull ChatTarget target) {
+    public void addTarget(@NonNull ChatTarget target) {
         this.targets.add(target);
     }
 
     @Override
-    public void unsubscribe(@NonNull ChatTarget target) {
+    public void removeTarget(@NonNull ChatTarget target) {
         this.targets.remove(target);
     }
 

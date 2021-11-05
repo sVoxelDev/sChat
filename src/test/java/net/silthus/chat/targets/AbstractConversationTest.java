@@ -20,6 +20,6 @@ class AbstractConversationTest extends TestBase {
 
     @Test
     void subscribe_returnsSubscription() {
-        conversation.subscribe(ChatTarget.player(server.addPlayer()));
+        conversation.addTarget(ChatTarget.player(server.addPlayer()));
     }
 }

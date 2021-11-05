@@ -21,15 +21,24 @@ package net.silthus.chat;
 
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.config.ChannelConfig;
+import net.silthus.chat.targets.Channel;
 import net.silthus.chat.targets.DirectConversation;
 
 import java.util.Collection;
 
 public interface Conversation extends ChatTarget {
 
-    static Conversation direct(Chatter chatter1, Chatter chatter2) {
-        return new DirectConversation(chatter1, chatter2);
+    static Conversation direct(ChatTarget target1, ChatTarget target2) {
+        return new DirectConversation(target1, target2);
+    }
+
+    static Channel channel(String identifier) {
+        return Channel.channel(identifier);
+    }
+
+    static Channel channel(String identifier, ChannelConfig config) {
+        return Channel.channel(identifier, config);
     }
 
     Component getName();
@@ -42,7 +51,7 @@ public interface Conversation extends ChatTarget {
 
     Collection<ChatTarget> getTargets();
 
-    void subscribe(@NonNull ChatTarget target);
+    void addTarget(@NonNull ChatTarget target);
 
-    void unsubscribe(@NonNull ChatTarget target);
+    void removeTarget(@NonNull ChatTarget target);
 }

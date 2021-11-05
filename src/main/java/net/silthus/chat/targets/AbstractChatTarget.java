@@ -77,12 +77,12 @@ public abstract class AbstractChatTarget implements ChatTarget {
     }
 
     public void subscribe(@NonNull Conversation conversation) {
-        conversation.subscribe(this);
+        conversation.addTarget(this);
         conversations.add(conversation);
     }
 
     public void unsubscribe(@NonNull Conversation conversation) {
-        conversation.unsubscribe(this);
+        conversation.removeTarget(this);
         conversations.removeIf(existingConversation -> existingConversation.equals(conversation));
     }
 

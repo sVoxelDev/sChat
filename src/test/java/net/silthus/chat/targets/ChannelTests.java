@@ -93,7 +93,7 @@ public class ChannelTests extends TestBase {
     @Test
     void join_addsPlayerToChannelTargets() {
         Chatter player = Chatter.of(server.addPlayer());
-        channel.subscribe(player);
+        channel.addTarget(player);
 
         assertThat(channel.getTargets())
                 .contains(player);
@@ -102,8 +102,8 @@ public class ChannelTests extends TestBase {
     @Test
     void join_canOnlyJoinChannelOnce() {
         Chatter player = Chatter.of(server.addPlayer());
-        channel.subscribe(player);
-        channel.subscribe(player);
+        channel.addTarget(player);
+        channel.addTarget(player);
 
         assertThat(channel.getTargets())
                 .hasSize(1);
@@ -120,10 +120,10 @@ public class ChannelTests extends TestBase {
     @Test
     void leave_removesChatTarget_fromChannelTargets() {
         Chatter player = Chatter.of(server.addPlayer());
-        channel.subscribe(player);
+        channel.addTarget(player);
         assertThat(channel.getTargets()).contains(player);
 
-        channel.unsubscribe(player);
+        channel.removeTarget(player);
 
         assertThat(channel.getTargets()).isEmpty();
     }
@@ -132,8 +132,8 @@ public class ChannelTests extends TestBase {
     void leave_doesNothingIfPlayerIsNotJoined() {
 
         Chatter player = Chatter.of(server.addPlayer());
-        channel.subscribe(player);
-        assertThatCode(() -> channel.unsubscribe(Chatter.of(server.addPlayer())))
+        channel.addTarget(player);
+        assertThatCode(() -> channel.removeTarget(Chatter.of(server.addPlayer())))
                 .doesNotThrowAnyException();
         assertThat(channel.getTargets()).contains(player);
     }
@@ -161,10 +161,10 @@ public class ChannelTests extends TestBase {
 
         PlayerMock player0 = server.addPlayer();
         Chatter chatter0 = Chatter.of(player0);
-        channel.subscribe(chatter0);
+        channel.addTarget(chatter0);
         PlayerMock player1 = server.addPlayer();
         Chatter chatter1 = Chatter.of(player1);
-        channel.subscribe(chatter1);
+        channel.addTarget(chatter1);
         PlayerMock player2 = server.addPlayer();
 
         chatter0.message("test").to(channel).send();
@@ -196,7 +196,7 @@ public class ChannelTests extends TestBase {
         try {
             PlayerMock player = server.addPlayer();
             Chatter chatter = Chatter.of(player);
-            channel.subscribe(chatter);
+            channel.addTarget(chatter);
 
             ChatSource.player(server.addPlayer())
                     .message("test")
@@ -249,7 +249,7 @@ public class ChannelTests extends TestBase {
 
         PlayerMock player = server.addPlayer();
         Chatter chatter = Chatter.of(player);
-        channel.subscribe(chatter);
+        channel.addTarget(chatter);
 
         source1.message("test").to(channel).send();
         source2.message("foobar").to(channel).send();
@@ -269,7 +269,7 @@ public class ChannelTests extends TestBase {
     void sendMessage_setsTargetToChannel() {
 
         Chatter chatter = Chatter.of(server.addPlayer());
-        channel.subscribe(chatter);
+        channel.addTarget(chatter);
 
         ChatSource.player(server.addPlayer())
                 .message("test")

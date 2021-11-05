@@ -1,15 +1,16 @@
 package net.silthus.chat.targets;
 
 import net.kyori.adventure.text.Component;
+import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Message;
 
 public class DirectConversation extends AbstractConversation {
 
-    public DirectConversation(Chatter chatter1, Chatter chatter2) {
-        super(chatter1.getIdentifier() + "#" + chatter2.getIdentifier());
+    public DirectConversation(ChatTarget target1, ChatTarget target2) {
+        super(target1.getIdentifier() + "#" + target2.getIdentifier());
         setName(Component.text("<partner_name>"));
-        subscribe(chatter1);
-        subscribe(chatter2);
+        addTarget(target1);
+        addTarget(target2);
     }
 
     @Override
