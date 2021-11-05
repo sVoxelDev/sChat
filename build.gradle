@@ -8,6 +8,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.0'
     id 'kr.entree.spigradle' version '2.2.4'
     id 'io.freefair.lombok' version '6.2.0'
+    id 'org.cadixdev.licenser' version '0.6.1'
     id 'java'
     id 'jacoco'
     id 'idea'
@@ -37,6 +38,17 @@ spigot {
     //    depends = ['']
     // softDepends = ['ProtocolLib']
     depends = ['ProtocolLib']
+    permissions {
+        'schat.player' {
+            description 'Contains all basic player permissions for using sChat.'
+            defaults 'true'
+            children = [
+                    'schat.player.channel': true,
+                    'schat.player.channel.join': true,
+                    'schat.player.channel.quickmessage': true
+            ]
+        }
+    }
 }
 
 compileJava {
@@ -101,6 +113,11 @@ test {
 processResources {
     project.properties.put("version", this.version)
     expand project.properties
+}
+
+license {
+    header = project.file('HEADER.txt')
+    include '**/*.java'
 }
 
 defaultTasks 'build'

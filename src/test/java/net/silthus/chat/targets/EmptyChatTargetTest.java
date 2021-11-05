@@ -17,31 +17,37 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.config;
+package net.silthus.chat.targets;
 
-import net.silthus.chat.TestBase;
-import org.bukkit.configuration.file.YamlConfiguration;
+import net.kyori.adventure.text.Component;
+import net.silthus.chat.ChatTarget;
+import net.silthus.chat.config.ChannelConfig;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-
+import static net.silthus.chat.Constants.Targets.EMPTY;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class PluginConfigTest extends TestBase {
+class EmptyChatTargetTest {
 
     @Test
     void create() {
-        YamlConfiguration file = YamlConfiguration.loadConfiguration(new File("src/main/resources/config.yml"));
-        PluginConfig config = PluginConfig.fromConfig(file);
+        ChatTarget target = ChatTarget.nil();
+        assertThat(target)
+                .extracting(ChatTarget::getIdentifier)
+                .isEqualTo(EMPTY);
+    }
 
-        assertThat(config.channels())
-                .hasSizeGreaterThanOrEqualTo(1)
-                .containsKey("global");
-
-        ConsoleConfig consoleConfig = config.console();
-        assertThat(consoleConfig)
+    @Test
+    void channel_fromConfig() {
+        Channel channel = ChatTarget.channel("test", ChannelConfig.defaults().name("Test 1"));
+        assertThat(channel)
                 .isNotNull()
-                .extracting(ConsoleConfig::defaultChannel)
-                .isEqualTo("global");
+                .extracting(
+                        Channel::getIdentifier,
+                        Channel::getName
+                ).contains(
+                        "test",
+                        Component.text("Test 1")
+                );
     }
 }

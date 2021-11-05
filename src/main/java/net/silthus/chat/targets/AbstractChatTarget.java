@@ -17,11 +17,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat;
+package net.silthus.chat.targets;
 
-public abstract class SChatException extends Exception {
+import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Message;
 
-    public SChatException(String message) {
-        super(message);
+import java.util.Collection;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedTransferQueue;
+
+public abstract class AbstractChatTarget implements ChatTarget {
+
+    private final Queue<Message> receivedMessages = new LinkedTransferQueue<>();
+
+    @Override
+    public Message getLastReceivedMessage() {
+        return receivedMessages.peek();
+    }
+
+    @Override
+    public Collection<Message> getReceivedMessages() {
+        return List.copyOf(receivedMessages);
+    }
+
+    protected void addReceivedMessage(Message lastMessage) {
+        this.receivedMessages.add(lastMessage);
     }
 }

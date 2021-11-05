@@ -19,9 +19,15 @@
 
 package net.silthus.chat;
 
-public abstract class SChatException extends Exception {
+import lombok.NonNull;
 
-    public SChatException(String message) {
-        super(message);
-    }
+import java.util.Collection;
+
+public interface Conversation extends ChatTarget {
+
+    Collection<ChatTarget> getTargets();
+
+    void addTarget(@NonNull ChatTarget target);
+
+    void removeTarget(@NonNull ChatTarget target);
 }

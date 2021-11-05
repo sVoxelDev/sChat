@@ -1,3 +1,22 @@
+/*
+ * sChat, a Supercharged Minecraft Chat Plugin
+ * Copyright (C) Silthus <https://www.github.com/silthus>
+ * Copyright (C) sChat team and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.silthus.chat;
 
 import lombok.NonNull;
@@ -6,6 +25,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.md_5.bungee.api.ChatColor;
+import net.silthus.chat.targets.Channel;
 
 import java.util.function.Function;
 
@@ -14,10 +34,10 @@ public final class Constants {
     public static final String PLUGIN_NAME = "sChat";
     public static final Key NBT_MESSAGE_ID = Key.key("schat:messageid");
 
-    public static final String PERMISSION_PLAYER_COMMANDS = "schat.player.cmd";
-    public static final String PERMISSION_PLAYER_CHANNEL_COMMANDS = "schat.player.cmd.channel";
-    public static final String PERMISSION_PLAYER_CHANNEL_JOIN = "schat.player.cmd.channel.join";
-    public static final String PERMISSION_PLAYER_CHANNEL_QUICKMESSAGE = "schat.player.cmd.channel.quickmessage";
+    public static final String PERMISSION_PLAYER_COMMANDS = "schat.player";
+    public static final String PERMISSION_PLAYER_CHANNEL_COMMANDS = "schat.player.channel";
+    public static final String PERMISSION_PLAYER_CHANNEL_JOIN = "schat.player.channel.join";
+    public static final String PERMISSION_PLAYER_CHANNEL_QUICKMESSAGE = "schat.player.channel.quickmessage";
 
     public static class Targets {
 
@@ -31,13 +51,14 @@ public final class Constants {
         public static final String BASE_PERMISSION = PLUGIN_NAME.toLowerCase();
 
         public static final String CHANNEL_PERMISSION = BASE_PERMISSION + ".channel";
-        public static final String AUTO_JOIN_CHANNE_SUFFIX = ".autojoin";
+        public static final String AUTO_JOIN_CHANNEL_SUFFIX = ".autojoin";
+
         public static String getChannelPermission(@NonNull Channel channel) {
             return (CHANNEL_PERMISSION + "." + channel.getIdentifier()).toLowerCase();
         }
 
         public static String getAutoJoinPermission(@NonNull Channel channel) {
-            return getChannelPermission(channel) + AUTO_JOIN_CHANNE_SUFFIX;
+            return getChannelPermission(channel) + AUTO_JOIN_CHANNEL_SUFFIX;
         }
     }
 

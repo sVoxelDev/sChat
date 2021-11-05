@@ -1,12 +1,33 @@
+/*
+ * sChat, a Supercharged Minecraft Chat Plugin
+ * Copyright (C) Silthus <https://www.github.com/silthus>
+ * Copyright (C) sChat team and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.silthus.chat.layout;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
-import net.silthus.chat.*;
+import net.silthus.chat.ChatLayout;
+import net.silthus.chat.Message;
+import net.silthus.chat.targets.Channel;
+import net.silthus.chat.targets.Chatter;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,7 +37,6 @@ import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
-import static net.kyori.adventure.text.minimessage.template.TemplateResolver.templates;
 import static net.silthus.chat.Constants.Commands.JOIN_CHANNEL;
 import static net.silthus.chat.Constants.View.*;
 
@@ -42,8 +62,8 @@ public class TabbedChatLayout implements ChatLayout {
         }
 
         TextComponent.Builder builder = text().append(text(CHANNEL_DIVIDER + " ").color(FRAME_COLOR));
-        for (ChannelSubscription subscription : chatter.getSubscriptions()) {
-            builder.append(channel(chatter, subscription.getChannel()));
+        for (Channel.Subscription subscription : chatter.getSubscriptions()) {
+            builder.append(channel(chatter, subscription.channel()));
         }
         return builder.build();
     }
@@ -85,9 +105,9 @@ public class TabbedChatLayout implements ChatLayout {
     }
 
     private Component channelName(Chatter chatter, Channel channel, boolean isActive) {
-        Component channelName = MiniMessage.miniMessage().deserialize(channel.getName(), templates(
-                playerName(chatter)
-        )).clickEvent(clickEvent(ClickEvent.Action.RUN_COMMAND, JOIN_CHANNEL.apply(channel)));
+        Component channelName = channel.getName()
+                .replaceText(builder -> builder.match("<player_name>").replacement(chatter.getName()))
+                .clickEvent(clickEvent(ClickEvent.Action.RUN_COMMAND, JOIN_CHANNEL.apply(channel)));
         if (isActive)
             channelName = channelName.color(ACTIVE_COLOR).decorate(ACTIVE_DECORATION);
         else

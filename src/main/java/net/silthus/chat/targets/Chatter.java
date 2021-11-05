@@ -1,17 +1,38 @@
-package net.silthus.chat;
+/*
+ * sChat, a Supercharged Minecraft Chat Plugin
+ * Copyright (C) Silthus <https://www.github.com/silthus>
+ * Copyright (C) sChat team and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 
+package net.silthus.chat.targets;
+
+import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.silthus.chat.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-import java.util.UUID;
+import java.util.*;
 
 @Data
 @EqualsAndHashCode(of = "player", callSuper = false)
@@ -21,14 +42,11 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         return SChat.instance().getChatterManager().registerChatter(player);
     }
 
-    static Chatter create(Player player) {
-        return new Chatter(player);
-    }
-
     private final Player player;
     private Channel activeChannel;
+    private final Set<Channel.Subscription> subscriptions = new HashSet<>();
 
-    Chatter(Player player) {
+    public Chatter(Player player) {
         this.player = player;
     }
 
@@ -42,8 +60,8 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     }
 
     @Override
-    public String getName() {
-        return getPlayer().getDisplayName();
+    public Component getName() {
+        return getPlayer().displayName();
     }
 
     @Override
@@ -57,8 +75,24 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
             subscribe(activeChannel);
     }
 
+    public Collection<Channel.Subscription> getSubscriptions() {
+        return List.copyOf(subscriptions);
+    }
+
+    public Channel.Subscription subscribe(@NonNull Channel channel) {
+        channel.addTarget(this);
+        Channel.Subscription subscription = new Channel.Subscription(channel, this);
+        subscriptions.add(subscription);
+        return subscription;
+    }
+
+    public void unsubscribe(@NonNull Channel channel) {
+        channel.removeTarget(this);
+        subscriptions.removeIf(subscription -> subscription.channel().equals(channel));
+    }
+
     public boolean canJoin(Channel channel) {
-        return channel.canJoin(getPlayer());
+        return channel.canJoin(this);
     }
 
     public void join(Channel channel) throws AccessDeniedException {
@@ -92,24 +126,26 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
+    public void onPlayerChat(AsyncChatEvent event) {
         if (isNotApplicable(event)) return;
 
-        Message.message(this, event.getMessage())
+        Message.message()
+                .from(this)
+                .text(event.message())
                 .to(getActiveChannel())
                 .send();
         event.setCancelled(true);
     }
 
-    private boolean isNotApplicable(AsyncPlayerChatEvent event) {
+    private boolean isNotApplicable(AsyncChatEvent event) {
         return isNotSamePlayer(event) || noActiveChannel(event);
     }
 
-    private boolean isNotSamePlayer(AsyncPlayerChatEvent event) {
+    private boolean isNotSamePlayer(AsyncChatEvent event) {
         return !event.getPlayer().equals(getPlayer());
     }
 
-    private boolean noActiveChannel(AsyncPlayerChatEvent event) {
+    private boolean noActiveChannel(AsyncChatEvent event) {
         if (getActiveChannel() != null) return false;
         event.getPlayer().sendMessage(Constants.Errors.NO_ACTIVE_CHANNEL);
         event.setCancelled(true);

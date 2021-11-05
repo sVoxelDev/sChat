@@ -1,3 +1,22 @@
+/*
+ * sChat, a Supercharged Minecraft Chat Plugin
+ * Copyright (C) Silthus <https://www.github.com/silthus>
+ * Copyright (C) sChat team and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.silthus.chat.commands;
 
 import co.aikar.commands.BaseCommand;
@@ -5,7 +24,12 @@ import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.MessageType;
 import co.aikar.commands.annotation.*;
 import co.aikar.locales.MessageKey;
-import net.silthus.chat.*;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.silthus.chat.AccessDeniedException;
+import net.silthus.chat.Message;
+import net.silthus.chat.SChat;
+import net.silthus.chat.targets.Channel;
+import net.silthus.chat.targets.Chatter;
 
 import static net.silthus.chat.Constants.Language.*;
 import static net.silthus.chat.Constants.*;
@@ -36,14 +60,14 @@ public class SChatCommands extends BaseCommand {
         public void join(@Flags("self") Chatter chatter, Channel channel) {
             try {
                 chatter.join(channel);
-                success(JOINED_CHANNEL, "{channel}", channel.getName());
+                success(JOINED_CHANNEL, "{channel}", getChannelName(channel));
             } catch (AccessDeniedException e) {
-                error(ACCESS_TO_CHANNEL_DENIED, "{channel}", channel.getName());
-                throw new ConditionFailedException(key(ACCESS_TO_CHANNEL_DENIED), "{channel}", channel.getName());
+                error(ACCESS_TO_CHANNEL_DENIED, "{channel}", getChannelName(channel));
+                throw new ConditionFailedException(key(ACCESS_TO_CHANNEL_DENIED), "{channel}", getChannelName(channel));
             }
         }
 
-        @Subcommand("message|msg")
+        @Subcommand("message|msg|qm")
         @CommandAlias("ch")
         @CommandCompletion("@channels *")
         @CommandPermission(PERMISSION_PLAYER_CHANNEL_QUICKMESSAGE)
@@ -51,10 +75,14 @@ public class SChatCommands extends BaseCommand {
             if (channel.canSendMessage(chatter)) {
                 Message.message(chatter, message).to(channel).send();
             } else {
-                error(SEND_TO_CHANNEL_DENIED, "{channel}", channel.getName());
-                throw new ConditionFailedException(key(SEND_TO_CHANNEL_DENIED), "{channel}", channel.getName());
+                error(SEND_TO_CHANNEL_DENIED, "{channel}", getChannelName(channel));
+                throw new ConditionFailedException(key(SEND_TO_CHANNEL_DENIED), "{channel}", getChannelName(channel));
             }
         }
+    }
+
+    private String getChannelName(Channel channel) {
+        return LegacyComponentSerializer.legacySection().serialize(channel.getName());
     }
 
     private void success(String key, String... replacements) {

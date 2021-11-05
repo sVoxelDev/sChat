@@ -1,3 +1,22 @@
+/*
+ * sChat, a Supercharged Minecraft Chat Plugin
+ * Copyright (C) Silthus <https://www.github.com/silthus>
+ * Copyright (C) sChat team and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.silthus.chat;
 
 import co.aikar.commands.InvalidCommandArgument;
@@ -13,6 +32,9 @@ import lombok.experimental.Accessors;
 import net.silthus.chat.commands.SChatCommands;
 import net.silthus.chat.config.PluginConfig;
 import net.silthus.chat.protocollib.ChatPacketQueue;
+import net.silthus.chat.targets.Channel;
+import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.targets.Console;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -31,7 +53,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @PluginMain
-public class SChat extends JavaPlugin {
+public final class SChat extends JavaPlugin {
 
     @Getter
     @Accessors(fluent = true)
@@ -94,6 +116,7 @@ public class SChat extends JavaPlugin {
 
     private void setupAndLoadConfigs() {
         saveDefaultConfig();
+        saveResource("config.defaults.yml", true);
         saveResource("lang_en.yaml", false);
         pluginConfig = PluginConfig.fromConfig(getConfig());
     }
@@ -175,12 +198,13 @@ public class SChat extends JavaPlugin {
     private void registerChannelCompletion(PaperCommandManager commandManager) {
         commandManager.getCommandCompletions().registerAsyncCompletion("channels", context ->
                 getChannelRegistry().getChannels().stream()
-                .map(Channel::getIdentifier)
-                .collect(Collectors.toSet()));
+                        .map(Channel::getIdentifier)
+                        .collect(Collectors.toSet()));
     }
 
     private void loadCommandLocales(PaperCommandManager commandManager) {
         try {
+            commandManager.getLocales().setDefaultLocale(Locale.ENGLISH);
             commandManager.getLocales().loadYamlLanguageFile("lang_en.yaml", Locale.ENGLISH);
         } catch (IOException | InvalidConfigurationException e) {
             getLogger().severe("Failed to load language config: " + e.getMessage());
@@ -201,8 +225,7 @@ public class SChat extends JavaPlugin {
                     .filter(e -> e instanceof Player)
                     .map(e -> ((Player) e))
                     .collect(Collectors.toList());
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             e.printStackTrace();
             throw new InvalidCommandArgument(String.format("Error parsing selector '%s' for %s! See console for more details",
                     playerIdentifier, sender.getName()));
@@ -213,7 +236,7 @@ public class SChat extends JavaPlugin {
         }
         if (matchedPlayers.size() > 1) {
             throw new InvalidCommandArgument(String.format("Error parsing selector '%s' for %s. ambiguous result (more than one player matched) - %s",
-                    playerIdentifier, sender.getName(), matchedPlayers.toString()));
+                    playerIdentifier, sender.getName(), matchedPlayers));
         }
 
         return matchedPlayers.get(0);

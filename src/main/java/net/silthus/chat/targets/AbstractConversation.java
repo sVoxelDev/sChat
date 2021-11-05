@@ -17,11 +17,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat;
+package net.silthus.chat.targets;
 
-public abstract class SChatException extends Exception {
+import lombok.NonNull;
+import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Conversation;
 
-    public SChatException(String message) {
-        super(message);
+import java.util.*;
+
+public abstract class AbstractConversation extends AbstractChatTarget implements Conversation {
+
+    private final Set<ChatTarget> targets = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>()));
+
+    @Override
+    public Collection<ChatTarget> getTargets() {
+        return List.copyOf(targets);
+    }
+
+    @Override
+    public void addTarget(@NonNull ChatTarget target) {
+        this.targets.add(target);
+    }
+
+    @Override
+    public void removeTarget(@NonNull ChatTarget target) {
+        this.targets.remove(target);
     }
 }

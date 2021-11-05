@@ -1,6 +1,28 @@
+/*
+ * sChat, a Supercharged Minecraft Chat Plugin
+ * Copyright (C) Silthus <https://www.github.com/silthus>
+ * Copyright (C) sChat team and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.silthus.chat;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
+import net.kyori.adventure.text.Component;
+import net.silthus.chat.targets.Channel;
+import net.silthus.chat.targets.Chatter;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +57,7 @@ public class ChatterManagerTests extends TestBase {
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void getChatters_isImmutable() {
         assertThatExceptionOfType(UnsupportedOperationException.class)
                 .isThrownBy(() -> manager.getChatters().add(Chatter.of(server.addPlayer())));
@@ -198,7 +221,7 @@ public class ChatterManagerTests extends TestBase {
             PlayerMock player = server.addPlayer();
             Chatter chatter = manager.getOrCreateChatter(player);
             assertThat(chatter.getSubscriptions())
-                    .extracting(ChannelSubscription::getChannel)
+                    .extracting(Channel.Subscription::channel)
                     .doesNotContain(channel);
         }
 
@@ -232,7 +255,7 @@ public class ChatterManagerTests extends TestBase {
             PlayerMock player = server.addPlayer();
             assertThat(manager.getChatters()).hasSize(1);
 
-            listener.onQuit(new PlayerQuitEvent(player, "bye"));
+            quit(player);
             assertThat(manager.getChatters()).isEmpty();
             assertThat(getRegisteredListeners())
                     .doesNotContain(Chatter.of(player));
@@ -243,10 +266,14 @@ public class ChatterManagerTests extends TestBase {
 
             PlayerMock player = new PlayerMock(server, "test");
 
-            listener.onQuit(new PlayerQuitEvent(player, "bye"));
+            quit(player);
             assertThat(manager.getChatters()).isEmpty();
             assertThat(getRegisteredListeners())
                     .doesNotContain(Chatter.of(player));
+        }
+
+        private void quit(PlayerMock player) {
+            listener.onQuit(new PlayerQuitEvent(player, Component.empty(), null));
         }
     }
 }

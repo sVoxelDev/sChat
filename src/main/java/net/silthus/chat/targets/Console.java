@@ -1,8 +1,29 @@
-package net.silthus.chat;
+/*
+ * sChat, a Supercharged Minecraft Chat Plugin
+ * Copyright (C) Silthus <https://www.github.com/silthus>
+ * Copyright (C) sChat team and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package net.silthus.chat.targets;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import net.kyori.adventure.text.Component;
+import net.silthus.chat.*;
 import net.silthus.chat.config.ConsoleConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -13,7 +34,7 @@ import org.bukkit.event.server.ServerCommandEvent;
 @EqualsAndHashCode(of = {"identifier"}, callSuper = false)
 public final class Console extends AbstractChatTarget implements ChatSource, Listener {
 
-    static Console instance;
+    public static Console instance;
 
     public static Console console() {
         if (instance == null)
@@ -21,7 +42,7 @@ public final class Console extends AbstractChatTarget implements ChatSource, Lis
         return instance;
     }
 
-    static Console init(@NonNull ConsoleConfig config) {
+    public static Console init(@NonNull ConsoleConfig config) {
         if (instance != null)
             throw new UnsupportedOperationException("The console chat target is already initialized. Can only initialize once!");
         instance = new Console(config);
@@ -31,10 +52,13 @@ public final class Console extends AbstractChatTarget implements ChatSource, Lis
     private final String identifier = Constants.Targets.CONSOLE;
     private ChatTarget target;
 
-    private String name = "Console";
-
     private Console(ConsoleConfig config) {
         this.target = SChat.instance().getChannelRegistry().get(config.defaultChannel()).orElse(null);
+    }
+
+    @Override
+    public Component getName() {
+        return Bukkit.getConsoleSender().name();
     }
 
     @Override

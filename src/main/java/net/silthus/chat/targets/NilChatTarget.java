@@ -17,11 +17,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat;
+package net.silthus.chat.targets;
 
-public abstract class SChatException extends Exception {
+import lombok.EqualsAndHashCode;
+import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Constants;
+import net.silthus.chat.Message;
 
-    public SChatException(String message) {
-        super(message);
+@EqualsAndHashCode(of = {"identifier"}, callSuper = false)
+public final class NilChatTarget extends AbstractChatTarget implements ChatTarget {
+
+    private final String identifier = Constants.Targets.EMPTY;
+
+    @Override
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    @Override
+    public void sendMessage(Message message) {
+        addReceivedMessage(message);
     }
 }

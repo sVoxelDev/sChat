@@ -1,10 +1,31 @@
-package net.silthus.chat;
+/*
+ * sChat, a Supercharged Minecraft Chat Plugin
+ * Copyright (C) Silthus <https://www.github.com/silthus>
+ * Copyright (C) sChat team and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package net.silthus.chat.targets;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.Component;
+import net.silthus.chat.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -40,7 +61,7 @@ public class ChatterTests extends TestBase {
                 .isInstanceOf(Listener.class)
                 .extracting(
                         Chatter::getIdentifier,
-                        Chatter::getName,
+                        c -> toText(c.getName()),
                         ChatTarget::getIdentifier
                 ).contains(
                         player.getUniqueId().toString(),
@@ -143,7 +164,7 @@ public class ChatterTests extends TestBase {
 
         assertThat(channel.getTargets()).contains(chatter);
         assertThat(chatter.getSubscriptions())
-                .contains(new ChannelSubscription(channel, chatter));
+                .contains(new Channel.Subscription(channel, chatter));
     }
 
     @Test
@@ -153,7 +174,7 @@ public class ChatterTests extends TestBase {
         chatter.subscribe(channel);
 
         assertThat(channel.getTargets()).hasSize(1);
-        assertThat(chatter.getSubscriptions()).containsOnlyOnce(new ChannelSubscription(channel, chatter));
+        assertThat(chatter.getSubscriptions()).containsOnlyOnce(new Channel.Subscription(channel, chatter));
     }
 
     @Test
@@ -196,10 +217,10 @@ public class ChatterTests extends TestBase {
 
         Channel channel = ChatTarget.channel("test");
         chatter.subscribe(channel);
-        assertThat(chatter.getSubscriptions()).contains(new ChannelSubscription(channel, chatter));
+        assertThat(chatter.getSubscriptions()).contains(new Channel.Subscription(channel, chatter));
 
         chatter.unsubscribe(channel);
-        assertThat(chatter.getSubscriptions()).doesNotContain(new ChannelSubscription(channel, chatter));
+        assertThat(chatter.getSubscriptions()).doesNotContain(new Channel.Subscription(channel, chatter));
     }
 
     @Test
@@ -217,7 +238,7 @@ public class ChatterTests extends TestBase {
 
         Channel channel = ChatTarget.channel("test");
         chatter.join(channel);
-        assertThat(chatter.getSubscriptions()).contains(new ChannelSubscription(channel, chatter));
+        assertThat(chatter.getSubscriptions()).contains(new Channel.Subscription(channel, chatter));
         assertThat(channel.getTargets()).contains(chatter);
         assertThat(chatter.getActiveChannel()).isSameAs(channel);
     }
@@ -243,12 +264,12 @@ public class ChatterTests extends TestBase {
     void subscribe_returnsSubscription() {
 
         Channel channel = Channel.channel("test");
-        ChannelSubscription subscription = chatter.subscribe(channel);
+        Channel.Subscription subscription = chatter.subscribe(channel);
 
         assertThat(subscription)
                 .extracting(
-                        ChannelSubscription::getChannel,
-                        ChannelSubscription::getTarget
+                        Channel.Subscription::channel,
+                        Channel.Subscription::target
                 ).contains(
                         channel,
                         chatter
@@ -259,20 +280,20 @@ public class ChatterTests extends TestBase {
     @DisplayName("with player chatting")
     class PlayerChatEvent {
 
-        private ArgumentCaptor<AsyncPlayerChatEvent> eventCaptor;
+        private ArgumentCaptor<AsyncChatEvent> eventCaptor;
 
         @BeforeEach
         public void setUp() {
             Bukkit.getPluginManager().registerEvents(chatter, plugin);
-            eventCaptor = ArgumentCaptor.forClass(AsyncPlayerChatEvent.class);
+            eventCaptor = ArgumentCaptor.forClass(AsyncChatEvent.class);
         }
 
         @Test
         void onChat_catchesChatEvent() {
 
-            AsyncPlayerChatEvent event = chat("Hello!");
+            AsyncChatEvent event = chat("Hello!");
 
-            assertThat(event.getMessage()).isEqualTo("Hello!");
+            assertThat(event.message()).isEqualTo(Component.text("Hello!"));
         }
 
         @Test
@@ -280,7 +301,7 @@ public class ChatterTests extends TestBase {
 
             Channel channel = ChatTarget.channel("test");
             chatter.setActiveChannel(channel);
-            AsyncPlayerChatEvent event = chat("Hi");
+            AsyncChatEvent event = chat("Hi");
 
             assertThat(channel.getLastReceivedMessage())
                     .isNotNull()
@@ -292,7 +313,7 @@ public class ChatterTests extends TestBase {
         @Test
         void onChat_withNoActiveChannel_sendsPlayerAnErrorMessage() {
 
-            AsyncPlayerChatEvent event = chat("Hi");
+            AsyncChatEvent event = chat("Hi");
 
             assertThat(player.nextMessage())
                     .isEqualTo(Constants.Errors.NO_ACTIVE_CHANNEL);
@@ -307,18 +328,18 @@ public class ChatterTests extends TestBase {
             chatter.setActiveChannel(channel);
 
             PlayerMock player2 = new PlayerMock(server, "test");
-            AsyncPlayerChatEvent event = chat(player2, "hi");
+            AsyncChatEvent event = chat(player2, "hi");
 
             assertThat(event.isCancelled()).isFalse();
             assertThat(player2.nextMessage()).isNull();
             assertThat(channel.getLastReceivedMessage()).isNull();
         }
 
-        private AsyncPlayerChatEvent chat(String message) {
+        private AsyncChatEvent chat(String message) {
             return chat(player, message);
         }
 
-        private AsyncPlayerChatEvent chat(Player player, String message) {
+        private AsyncChatEvent chat(Player player, String message) {
             player.chat(message);
             server.getScheduler().waitAsyncEventsFinished();
             verify(chatter, atLeastOnce()).onPlayerChat(eventCaptor.capture());
