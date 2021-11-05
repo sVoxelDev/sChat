@@ -92,8 +92,8 @@ public class ChannelTests extends TestBase {
 
     @Test
     void join_addsPlayerToChannelTargets() {
-        Chatter player = Chatter.of(server.addPlayer());
-        channel.addTarget(player);
+        PlayerChatter player = Chatter.of(server.addPlayer());
+        channel.subscribe(player);
 
         assertThat(channel.getTargets())
                 .contains(player);
@@ -101,9 +101,9 @@ public class ChannelTests extends TestBase {
 
     @Test
     void join_canOnlyJoinChannelOnce() {
-        Chatter player = Chatter.of(server.addPlayer());
-        channel.addTarget(player);
-        channel.addTarget(player);
+        PlayerChatter player = Chatter.of(server.addPlayer());
+        channel.subscribe(player);
+        channel.subscribe(player);
 
         assertThat(channel.getTargets())
                 .hasSize(1);
@@ -114,16 +114,16 @@ public class ChannelTests extends TestBase {
     void join_throwsNullPointer_ifPlayerIsNull() {
 
         assertThatExceptionOfType(NullPointerException.class)
-                .isThrownBy(() -> channel.addTarget(null));
+                .isThrownBy(() -> channel.subscribe(null));
     }
 
     @Test
     void leave_removesChatTarget_fromChannelTargets() {
-        Chatter player = Chatter.of(server.addPlayer());
-        channel.addTarget(player);
+        PlayerChatter player = Chatter.of(server.addPlayer());
+        channel.subscribe(player);
         assertThat(channel.getTargets()).contains(player);
 
-        channel.removeTarget(player);
+        channel.unsubscribe(player);
 
         assertThat(channel.getTargets()).isEmpty();
     }
@@ -131,9 +131,9 @@ public class ChannelTests extends TestBase {
     @Test
     void leave_doesNothingIfPlayerIsNotJoined() {
 
-        Chatter player = Chatter.of(server.addPlayer());
-        channel.addTarget(player);
-        assertThatCode(() -> channel.removeTarget(Chatter.of(server.addPlayer())))
+        PlayerChatter player = Chatter.of(server.addPlayer());
+        channel.subscribe(player);
+        assertThatCode(() -> channel.unsubscribe(Chatter.of(server.addPlayer())))
                 .doesNotThrowAnyException();
         assertThat(channel.getTargets()).contains(player);
     }
@@ -143,7 +143,7 @@ public class ChannelTests extends TestBase {
     void leave_throwsNullPointer_ifPlayerIsNull() {
 
         assertThatExceptionOfType(NullPointerException.class)
-                .isThrownBy(() -> channel.removeTarget(null));
+                .isThrownBy(() -> channel.unsubscribe(null));
     }
 
     @Test
@@ -160,11 +160,11 @@ public class ChannelTests extends TestBase {
     void sendMessage_sendsMessageToAllJoinedTargets() {
 
         PlayerMock player0 = server.addPlayer();
-        Chatter chatter0 = Chatter.of(player0);
-        channel.addTarget(chatter0);
+        PlayerChatter chatter0 = Chatter.of(player0);
+        channel.subscribe(chatter0);
         PlayerMock player1 = server.addPlayer();
-        Chatter chatter1 = Chatter.of(player1);
-        channel.addTarget(chatter1);
+        PlayerChatter chatter1 = Chatter.of(player1);
+        channel.subscribe(chatter1);
         PlayerMock player2 = server.addPlayer();
 
         chatter0.message("test").to(channel).send();
@@ -178,7 +178,7 @@ public class ChannelTests extends TestBase {
     void sendFormattedMessage_doesNotFormatAgain() {
 
         PlayerMock player = server.addPlayer();
-        Chatter chatter = Chatter.of(player);
+        PlayerChatter chatter = Chatter.of(player);
         chatter.subscribe(channel);
 
         ChatSource.player(server.addPlayer())
@@ -195,8 +195,8 @@ public class ChannelTests extends TestBase {
 
         try {
             PlayerMock player = server.addPlayer();
-            Chatter chatter = Chatter.of(player);
-            channel.addTarget(chatter);
+            PlayerChatter chatter = Chatter.of(player);
+            channel.subscribe(chatter);
 
             ChatSource.player(server.addPlayer())
                     .message("test")
@@ -248,8 +248,8 @@ public class ChannelTests extends TestBase {
         ChatSource source2 = ChatSource.player(server.addPlayer());
 
         PlayerMock player = server.addPlayer();
-        Chatter chatter = Chatter.of(player);
-        channel.addTarget(chatter);
+        PlayerChatter chatter = Chatter.of(player);
+        channel.subscribe(chatter);
 
         source1.message("test").to(channel).send();
         source2.message("foobar").to(channel).send();
@@ -268,8 +268,8 @@ public class ChannelTests extends TestBase {
     @Test
     void sendMessage_setsTargetToChannel() {
 
-        Chatter chatter = Chatter.of(server.addPlayer());
-        channel.addTarget(chatter);
+        PlayerChatter chatter = Chatter.of(server.addPlayer());
+        channel.subscribe(chatter);
 
         ChatSource.player(server.addPlayer())
                 .message("test")
@@ -278,14 +278,14 @@ public class ChannelTests extends TestBase {
 
         assertThat(chatter.getLastReceivedMessage())
                 .isNotNull()
-                .extracting(Message::getChannel)
+                .extracting(Message::getConversation)
                 .isSameAs(channel);
     }
 
     @Test
     void subscribedTarget_isRemoved_onUnregister() {
         PlayerMock player = server.addPlayer();
-        Chatter chatter = Chatter.of(player);
+        PlayerChatter chatter = Chatter.of(player);
         chatter.subscribe(channel);
 
         assertThat(channel.getTargets()).contains(chatter);

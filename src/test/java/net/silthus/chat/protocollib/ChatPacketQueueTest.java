@@ -22,9 +22,10 @@ package net.silthus.chat.protocollib;
 import com.google.gson.Gson;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.silthus.chat.Chatter;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
-import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.targets.PlayerChatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 class ChatPacketQueueTest extends TestBase {
 
     private ChatPacketQueue listener;
-    private Chatter chatter;
+    private PlayerChatter chatter;
 
     @Override
     @BeforeEach

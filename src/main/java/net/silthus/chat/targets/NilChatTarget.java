@@ -24,14 +24,11 @@ import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Message;
 
-@EqualsAndHashCode(of = {"identifier"}, callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public final class NilChatTarget extends AbstractChatTarget implements ChatTarget {
 
-    private final String identifier = Constants.Targets.EMPTY;
-
-    @Override
-    public String getIdentifier() {
-        return identifier;
+    public NilChatTarget() {
+        super(Constants.Targets.EMPTY);
     }
 
     @Override

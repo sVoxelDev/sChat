@@ -81,6 +81,10 @@ public abstract class TestBase {
         return createChannel("test", cfg);
     }
 
+    protected Channel createChannel(String identifier) {
+        return createChannel(identifier, config -> config);
+    }
+
     protected Channel createChannel(String identifier, Function<ChannelConfig, ChannelConfig> cfg) {
         return cfg.apply(ChannelConfig.defaults()).toChannel(identifier);
     }

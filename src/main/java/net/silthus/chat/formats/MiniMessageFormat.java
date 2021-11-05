@@ -60,8 +60,8 @@ public class MiniMessageFormat implements Format {
     }
 
     private Template channelTemplate(Message message) {
-        if (message.getChannel() != null) {
-            return Template.template("channel_name", message.getChannel().getName());
+        if (message.getConversation() != null) {
+            return Template.template("channel_name", message.getConversation().getName());
         }
         return Template.template("channel_name", Component.empty());
     }

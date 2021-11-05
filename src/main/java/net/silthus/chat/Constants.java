@@ -93,6 +93,6 @@ public final class Constants {
     }
 
     public static class Commands {
-        public static final Function<Channel, String> JOIN_CHANNEL = channel -> "/schat channel join " + channel.getIdentifier();
+        public static final Function<Conversation, String> JOIN_CONVERSATION = conversation -> "/schat channel join " + conversation.getIdentifier();
     }
 }

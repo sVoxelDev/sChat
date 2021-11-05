@@ -36,10 +36,10 @@ import static net.silthus.chat.Message.message;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class ChatterTests extends TestBase {
+public class PlayerChatterTests extends TestBase {
     private PlayerMock player;
 
-    private Chatter chatter;
+    private PlayerChatter chatter;
 
     @Override
     @BeforeEach
@@ -60,7 +60,7 @@ public class ChatterTests extends TestBase {
         assertThat(chatter)
                 .isInstanceOf(Listener.class)
                 .extracting(
-                        Chatter::getIdentifier,
+                        PlayerChatter::getIdentifier,
                         c -> toText(c.getName()),
                         ChatTarget::getIdentifier
                 ).contains(
@@ -80,11 +80,11 @@ public class ChatterTests extends TestBase {
     @Test
     void of_usesGlobalChatterCache() {
         PlayerMock player = server.addPlayer();
-        Chatter chatter = Chatter.of(player);
+        PlayerChatter chatter = Chatter.of(player);
         Message message = message("test").send();
         chatter.addReceivedMessage(message);
 
-        Chatter newChatter = Chatter.of(player);
+        PlayerChatter newChatter = Chatter.of(player);
         assertThat(newChatter).isSameAs(chatter);
         assertThat(newChatter.getLastReceivedMessage()).isEqualTo(message);
     }
@@ -94,8 +94,8 @@ public class ChatterTests extends TestBase {
 
         PlayerMock player = server.addPlayer();
 
-        Chatter chatter0 = Chatter.of(player);
-        Chatter chatter1 = Chatter.of(player);
+        PlayerChatter chatter0 = Chatter.of(player);
+        PlayerChatter chatter1 = Chatter.of(player);
 
         assertThat(chatter0).isEqualTo(chatter1);
     }
@@ -127,7 +127,7 @@ public class ChatterTests extends TestBase {
 
     @Test
     void getActiveChannel() {
-        Channel channel = chatter.getActiveChannel();
+        Conversation channel = chatter.getActiveConversation();
 
         assertThat(channel).isNull();
     }
@@ -135,9 +135,9 @@ public class ChatterTests extends TestBase {
     @Test
     void setActiveChannel_setsChannel() {
         Channel channel = ChatTarget.channel("test");
-        chatter.setActiveChannel(channel);
+        chatter.setActiveConversation(channel);
 
-        assertThat(chatter.getActiveChannel())
+        assertThat(chatter.getActiveConversation())
                 .isEqualTo(channel);
     }
 
@@ -145,16 +145,16 @@ public class ChatterTests extends TestBase {
     void setActiveChannel_addsPlayerAsTargetToChannel() {
         Channel channel = ChatTarget.channel("test");
         assertThat(channel.getTargets()).isEmpty();
-        chatter.setActiveChannel(channel);
+        chatter.setActiveConversation(channel);
         assertThat(channel.getTargets()).contains(chatter);
     }
 
     @Test
     void setActiveChannel_toNull() {
         Channel channel = ChatTarget.channel("test");
-        chatter.setActiveChannel(channel);
-        chatter.setActiveChannel(null);
-        assertThat(chatter.getActiveChannel()).isNull();
+        chatter.setActiveConversation(channel);
+        chatter.setActiveConversation(null);
+        assertThat(chatter.getActiveConversation()).isNull();
     }
 
     @Test
@@ -163,8 +163,8 @@ public class ChatterTests extends TestBase {
         chatter.subscribe(channel);
 
         assertThat(channel.getTargets()).contains(chatter);
-        assertThat(chatter.getSubscriptions())
-                .contains(new Channel.Subscription(channel, chatter));
+        assertThat(chatter.getConversations())
+                .contains(channel);
     }
 
     @Test
@@ -174,7 +174,7 @@ public class ChatterTests extends TestBase {
         chatter.subscribe(channel);
 
         assertThat(channel.getTargets()).hasSize(1);
-        assertThat(chatter.getSubscriptions()).containsOnlyOnce(new Channel.Subscription(channel, chatter));
+        assertThat(chatter.getConversations()).containsOnlyOnce(channel);
     }
 
     @Test
@@ -217,10 +217,10 @@ public class ChatterTests extends TestBase {
 
         Channel channel = ChatTarget.channel("test");
         chatter.subscribe(channel);
-        assertThat(chatter.getSubscriptions()).contains(new Channel.Subscription(channel, chatter));
+        assertThat(chatter.getConversations()).contains(channel);
 
         chatter.unsubscribe(channel);
-        assertThat(chatter.getSubscriptions()).doesNotContain(new Channel.Subscription(channel, chatter));
+        assertThat(chatter.getConversations()).doesNotContain(channel);
     }
 
     @Test
@@ -238,9 +238,9 @@ public class ChatterTests extends TestBase {
 
         Channel channel = ChatTarget.channel("test");
         chatter.join(channel);
-        assertThat(chatter.getSubscriptions()).contains(new Channel.Subscription(channel, chatter));
+        assertThat(chatter.getConversations()).contains(channel);
         assertThat(channel.getTargets()).contains(chatter);
-        assertThat(chatter.getActiveChannel()).isSameAs(channel);
+        assertThat(chatter.getActiveConversation()).isSameAs(channel);
     }
 
     @Test
@@ -260,20 +260,30 @@ public class ChatterTests extends TestBase {
         assertThat(chatter.canJoin(createChannel("foobar", cfg -> cfg.protect(true)))).isFalse();
     }
 
-    @Test
-    void subscribe_returnsSubscription() {
+    @Nested
+    @DisplayName("direct messaging")
+    class DirectMessages {
 
-        Channel channel = Channel.channel("test");
-        Channel.Subscription subscription = chatter.subscribe(channel);
+        private PlayerChatter sender;
+        private PlayerMock sendingPlayer;
+        private PlayerChatter receiver;
+        private PlayerMock receivingPlayer;
 
-        assertThat(subscription)
-                .extracting(
-                        Channel.Subscription::channel,
-                        Channel.Subscription::target
-                ).contains(
-                        channel,
-                        chatter
-                );
+        @BeforeEach
+        void setUp() {
+            sendingPlayer = server.addPlayer();
+            sender = Chatter.of(sendingPlayer);
+            receivingPlayer = server.addPlayer();
+            receiver = Chatter.of(receivingPlayer);
+        }
+
+        @Test
+        void directMessage_isReceivedByOtherPlayer() {
+            Message message = sender.message("Hi player!").to(receiver).send();
+
+            assertThat(receiver.getLastReceivedMessage()).isEqualTo(message);
+            assertThat(receivingPlayer.nextMessage()).isEqualTo("Player1: Hi player!");
+        }
     }
 
     @Nested
@@ -300,12 +310,12 @@ public class ChatterTests extends TestBase {
         void onChat_forwardsMessageToActiveChannel() {
 
             Channel channel = ChatTarget.channel("test");
-            chatter.setActiveChannel(channel);
+            chatter.setActiveConversation(channel);
             AsyncChatEvent event = chat("Hi");
 
             assertThat(channel.getLastReceivedMessage())
                     .isNotNull()
-                    .extracting(ChatterTests.this::toText)
+                    .extracting(PlayerChatterTests.this::toText)
                     .isEqualTo("&6[&atest&6]&ePlayer0&7: &aHi");
             assertThat(event.isCancelled()).isTrue();
         }
@@ -325,7 +335,7 @@ public class ChatterTests extends TestBase {
         void onChat_onlyReactsToChatter() {
 
             Channel channel = ChatTarget.channel("test");
-            chatter.setActiveChannel(channel);
+            chatter.setActiveConversation(channel);
 
             PlayerMock player2 = new PlayerMock(server, "test");
             AsyncChatEvent event = chat(player2, "hi");

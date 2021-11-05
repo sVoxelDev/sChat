@@ -24,7 +24,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.targets.Channel;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
@@ -62,7 +61,8 @@ public class Message implements Comparable<Message> {
     Component text = Component.empty();
     @Builder.Default
     Format format = Format.noFormat();
-    Channel channel;
+    Type type;
+    Conversation conversation;
     @Builder.Default
     Collection<ChatTarget> targets = new HashSet<>();
 
@@ -72,6 +72,19 @@ public class Message implements Comparable<Message> {
 
     public Component formatted() {
         return format.applyTo(this);
+    }
+
+    public Type getType() {
+        if (type != null) return type;
+        if (conversation != null)
+            return Type.CHANNEL;
+        if (source != null && getTargets().size() == 1)
+            return Type.DIRECT;
+        if (source == null)
+            return Type.SYSTEM;
+        if (getTargets().size() > 0)
+            return Type.BROADCAST;
+        return Type.DEFAULT;
     }
 
     @Override
@@ -95,8 +108,8 @@ public class Message implements Comparable<Message> {
             return source(source);
         }
 
-        public MessageBuilder to(@NonNull Channel channel) {
-            return channel(channel).to((ChatTarget) channel);
+        public MessageBuilder to(@NonNull Conversation conversation) {
+            return conversation(conversation).to((ChatTarget) conversation);
         }
 
         public MessageBuilder to(@NonNull ChatTarget... targets) {
@@ -108,6 +121,11 @@ public class Message implements Comparable<Message> {
             if (this.targets$set)
                 chatTargets.addAll(this.targets$value);
             return targets(chatTargets);
+        }
+
+        public MessageBuilder conversation(Conversation conversation) {
+            this.conversation = conversation;
+            return type(Type.CHANNEL);
         }
 
         public MessageBuilder text(@NonNull Component component) {
@@ -136,13 +154,13 @@ public class Message implements Comparable<Message> {
         }
 
         public Message build() {
-            Format format = channel != null ? channel.getConfig().format() : defaultFormat;
+            Format format = conversation != null ? conversation.getConfig().format() : defaultFormat;
             if (format$set) format = format$value;
             ChatSource source = source$set ? source$value : $default$source();
             Component text = text$set ? text$value : $default$text();
             Collection<ChatTarget> targets = targets$set ? targets$value : $default$targets();
 
-            return new Message(parent, source, text, format, channel, targets);
+            return new Message(parent, source, text, format, type, conversation, targets);
         }
 
         public Message send() {
@@ -150,5 +168,15 @@ public class Message implements Comparable<Message> {
             message.getTargets().forEach(target -> target.sendMessage(message));
             return message;
         }
+
+    }
+
+    public enum Type {
+        SYSTEM,
+        DIRECT,
+        CHANNEL,
+        BROADCAST;
+
+        public static Type DEFAULT = SYSTEM;
     }
 }

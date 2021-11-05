@@ -21,16 +21,16 @@ package net.silthus.chat;
 
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.targets.Channel;
-import net.silthus.chat.targets.Chatter;
 import net.silthus.chat.targets.Console;
 import net.silthus.chat.targets.NilChatTarget;
+import net.silthus.chat.targets.PlayerChatter;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
 
 public interface ChatTarget {
 
-    static Chatter player(Player player) {
+    static PlayerChatter player(Player player) {
         return Chatter.of(player);
     }
 

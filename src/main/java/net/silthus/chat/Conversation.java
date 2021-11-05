@@ -20,14 +20,24 @@
 package net.silthus.chat;
 
 import lombok.NonNull;
+import net.kyori.adventure.text.Component;
+import net.silthus.chat.targets.PlayerChatter;
 
 import java.util.Collection;
 
 public interface Conversation extends ChatTarget {
 
+    static Conversation direct(PlayerChatter chatter1, PlayerChatter chatter2) {
+        return null;
+    }
+
+    Component getName();
+
     Collection<ChatTarget> getTargets();
 
-    void addTarget(@NonNull ChatTarget target);
+    void subscribe(@NonNull ChatTarget target);
 
-    void removeTarget(@NonNull ChatTarget target);
+    void unsubscribe(@NonNull ChatTarget target);
+
+    net.silthus.chat.config.ChannelConfig getConfig();
 }

@@ -21,7 +21,7 @@ package net.silthus.chat;
 
 import lombok.NonNull;
 import lombok.extern.java.Log;
-import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.targets.PlayerChatter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -36,7 +36,7 @@ import java.util.*;
 public final class ChatterManager {
 
     private final SChat plugin;
-    private final Map<String, Chatter> chatters = Collections.synchronizedMap(new HashMap<>());
+    private final Map<String, PlayerChatter> chatters = Collections.synchronizedMap(new HashMap<>());
 
     final PlayerListener playerListener;
 
@@ -46,60 +46,60 @@ public final class ChatterManager {
         plugin.getServer().getPluginManager().registerEvents(playerListener, plugin);
     }
 
-    public Collection<Chatter> getChatters() {
+    public Collection<PlayerChatter> getChatters() {
         return List.copyOf(chatters.values());
     }
 
-    public void autoJoinChannels(Chatter chatter) {
+    public void autoJoinChannels(PlayerChatter chatter) {
         plugin.getChannelRegistry().getChannels().stream()
                 .filter(channel -> channel.canAutoJoin(chatter))
                 .forEach(chatter::subscribe);
     }
 
-    public Chatter getOrCreateChatter(@NonNull Player player) {
+    public PlayerChatter getOrCreateChatter(@NonNull Player player) {
         if (chatters.containsKey(player.getUniqueId().toString()))
             return chatters.get(player.getUniqueId().toString());
-        return registerChatter(new Chatter(player));
+        return registerChatter(new PlayerChatter(player));
     }
 
-    public Chatter getChatter(UUID id) {
+    public PlayerChatter getChatter(UUID id) {
         return chatters.get(id.toString());
     }
 
-    public Optional<Chatter> getChatter(String playerName) {
+    public Optional<PlayerChatter> getChatter(String playerName) {
         return chatters.values().stream()
                 .filter(chatter -> chatter.getPlayer().getName().equalsIgnoreCase(playerName))
                 .findFirst();
     }
 
-    public Chatter registerChatter(@NonNull Player player) {
+    public PlayerChatter registerChatter(@NonNull Player player) {
         return getOrCreateChatter(player);
     }
 
-    public Chatter registerChatter(@NonNull Chatter chatter) {
+    public PlayerChatter registerChatter(@NonNull PlayerChatter chatter) {
         addChatterToCache(chatter);
         plugin.getServer().getPluginManager().registerEvents(chatter, plugin);
         return chatter;
     }
 
-    private void addChatterToCache(@NotNull Chatter chatter) {
+    private void addChatterToCache(@NotNull PlayerChatter chatter) {
         unregisterListener(chatters.put(chatter.getIdentifier(), chatter));
     }
 
     public void unregisterChatter(@NonNull Player player) {
-        Chatter chatter = chatters.remove(player.getUniqueId().toString());
+        PlayerChatter chatter = chatters.remove(player.getUniqueId().toString());
         unregisterListener(chatter);
         unsubscribeAll(chatter);
     }
 
-    private void unregisterListener(Chatter chatter) {
+    private void unregisterListener(PlayerChatter chatter) {
         if (chatter == null) return;
         HandlerList.unregisterAll(chatter);
     }
 
-    private void unsubscribeAll(Chatter chatter) {
+    private void unsubscribeAll(PlayerChatter chatter) {
         if (chatter == null) return;
-        chatter.getSubscriptions().forEach(channelSubscription -> chatter.unsubscribe(channelSubscription.channel()));
+        chatter.getConversations().forEach(chatter::unsubscribe);
     }
 
     class PlayerListener implements Listener {

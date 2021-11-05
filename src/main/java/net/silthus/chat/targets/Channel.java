@@ -21,7 +21,6 @@ package net.silthus.chat.targets;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import lombok.extern.java.Log;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.ChatSource;
@@ -32,8 +31,7 @@ import net.silthus.chat.config.ChannelConfig;
 
 @Log
 @Data
-@ToString(of = {"identifier", "config"})
-@EqualsAndHashCode(of = "identifier", callSuper = false)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class Channel extends AbstractConversation implements ChatSource {
 
     public static Channel channel(String identifier) {
@@ -44,16 +42,12 @@ public class Channel extends AbstractConversation implements ChatSource {
         return new Channel(identifier, config);
     }
 
-    private final String identifier;
-    private final ChannelConfig config;
-
     private Channel(String identifier) {
         this(identifier, ChannelConfig.defaults());
     }
 
     private Channel(String identifier, ChannelConfig config) {
-        this.identifier = identifier.toLowerCase();
-        this.config = config;
+        super(identifier, config);
     }
 
     public Component getName() {
@@ -70,18 +64,18 @@ public class Channel extends AbstractConversation implements ChatSource {
         return Constants.Permissions.getAutoJoinPermission(this);
     }
 
-    public boolean canJoin(Chatter chatter) {
+    public boolean canJoin(PlayerChatter chatter) {
         if (getConfig().protect()) {
             return chatter.getPlayer().hasPermission(getPermission());
         }
         return true;
     }
 
-    public boolean canSendMessage(Chatter chatter) {
+    public boolean canSendMessage(PlayerChatter chatter) {
         return canJoin(chatter);
     }
 
-    public boolean canAutoJoin(Chatter chatter) {
+    public boolean canAutoJoin(PlayerChatter chatter) {
         if (!canJoin(chatter)) return false;
         if (canJoin(chatter) && getConfig().autoJoin()) return true;
         return chatter.getPlayer().hasPermission(getAutoJoinPermission());
@@ -98,7 +92,7 @@ public class Channel extends AbstractConversation implements ChatSource {
         addReceivedMessage(message);
 
         Message.MessageBuilder channelMessage = message.copy()
-                .channel(this)
+                .conversation(this)
                 .targets(getTargets());
 
         if (getConfig().sendToConsole())

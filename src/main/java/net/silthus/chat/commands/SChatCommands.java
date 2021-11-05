@@ -29,7 +29,7 @@ import net.silthus.chat.AccessDeniedException;
 import net.silthus.chat.Message;
 import net.silthus.chat.SChat;
 import net.silthus.chat.targets.Channel;
-import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.targets.PlayerChatter;
 
 import static net.silthus.chat.Constants.Language.*;
 import static net.silthus.chat.Constants.*;
@@ -57,7 +57,7 @@ public class SChatCommands extends BaseCommand {
         @CommandAlias("join|ch")
         @CommandCompletion("@channels")
         @CommandPermission(PERMISSION_PLAYER_CHANNEL_JOIN)
-        public void join(@Flags("self") Chatter chatter, Channel channel) {
+        public void join(@Flags("self") PlayerChatter chatter, Channel channel) {
             try {
                 chatter.join(channel);
                 success(JOINED_CHANNEL, "{channel}", getChannelName(channel));
@@ -71,7 +71,7 @@ public class SChatCommands extends BaseCommand {
         @CommandAlias("ch")
         @CommandCompletion("@channels *")
         @CommandPermission(PERMISSION_PLAYER_CHANNEL_QUICKMESSAGE)
-        public void quickMessage(@Flags("self") Chatter chatter, Channel channel, String message) {
+        public void quickMessage(@Flags("self") PlayerChatter chatter, Channel channel, String message) {
             if (channel.canSendMessage(chatter)) {
                 Message.message(chatter, message).to(channel).send();
             } else {

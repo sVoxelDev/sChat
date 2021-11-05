@@ -25,9 +25,9 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.Template;
 import net.silthus.chat.ChatLayout;
+import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
-import net.silthus.chat.targets.Channel;
-import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.targets.PlayerChatter;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,13 +37,13 @@ import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
-import static net.silthus.chat.Constants.Commands.JOIN_CHANNEL;
+import static net.silthus.chat.Constants.Commands.JOIN_CONVERSATION;
 import static net.silthus.chat.Constants.View.*;
 
 public class TabbedChatLayout implements ChatLayout {
 
     @Override
-    public Component render(Chatter chatter, Message... messages) {
+    public Component render(PlayerChatter chatter, Message... messages) {
 
         return text().append(clearChat())
                 .append(renderMessages(List.of(messages)))
@@ -52,18 +52,18 @@ public class TabbedChatLayout implements ChatLayout {
                 .build();
     }
 
-    public Component footer(Chatter chatter) {
-        return channelTabs(chatter);
+    public Component footer(PlayerChatter chatter) {
+        return conversationTabs(chatter);
     }
 
-    Component channelTabs(Chatter chatter) {
-        if (chatter.getSubscriptions().isEmpty()) {
-            return noChannels();
+    Component conversationTabs(PlayerChatter chatter) {
+        if (chatter.getConversations().isEmpty()) {
+            return noConversations();
         }
 
         TextComponent.Builder builder = text().append(text(CHANNEL_DIVIDER + " ").color(FRAME_COLOR));
-        for (Channel.Subscription subscription : chatter.getSubscriptions()) {
-            builder.append(channel(chatter, subscription.channel()));
+        for (Conversation conversation : chatter.getConversations()) {
+            builder.append(conversation(chatter, conversation));
         }
         return builder.build();
     }
@@ -90,24 +90,24 @@ public class TabbedChatLayout implements ChatLayout {
         return builder.build();
     }
 
-    private TextComponent noChannels() {
+    private TextComponent noConversations() {
         return text(CHANNEL_DIVIDER + " ").color(FRAME_COLOR)
                 .append(text("No Channels selected. Use ").color(INFO_COLOR))
                 .append(text("/ch join <channel> ").color(COMMAND).clickEvent(suggestCommand("/ch join ")))
                 .append(text("to join a channel.").color(INFO_COLOR));
     }
 
-    private Component channel(Chatter chatter, Channel channel) {
-        boolean isActive = channel.equals(chatter.getActiveChannel());
-        return text().append(channelName(chatter, channel, isActive))
+    private Component conversation(PlayerChatter chatter, Conversation conversation) {
+        boolean isActive = conversation.equals(chatter.getActiveConversation());
+        return text().append(conversationName(chatter, conversation, isActive))
                 .append(text(" " + CHANNEL_DIVIDER + " ").color(FRAME_COLOR))
                 .build();
     }
 
-    private Component channelName(Chatter chatter, Channel channel, boolean isActive) {
-        Component channelName = channel.getName()
+    private Component conversationName(PlayerChatter chatter, Conversation conversation, boolean isActive) {
+        Component channelName = conversation.getName()
                 .replaceText(builder -> builder.match("<player_name>").replacement(chatter.getName()))
-                .clickEvent(clickEvent(ClickEvent.Action.RUN_COMMAND, JOIN_CHANNEL.apply(channel)));
+                .clickEvent(clickEvent(ClickEvent.Action.RUN_COMMAND, JOIN_CONVERSATION.apply(conversation)));
         if (isActive)
             channelName = channelName.color(ACTIVE_COLOR).decorate(ACTIVE_DECORATION);
         else
@@ -115,7 +115,7 @@ public class TabbedChatLayout implements ChatLayout {
         return channelName;
     }
 
-    private Template playerName(Chatter chatter) {
+    private Template playerName(PlayerChatter chatter) {
         return Template.template("player_name", chatter.getName());
     }
 }

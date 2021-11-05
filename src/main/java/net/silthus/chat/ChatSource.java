@@ -22,7 +22,6 @@ package net.silthus.chat;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.targets.Channel;
-import net.silthus.chat.targets.Chatter;
 import org.bukkit.entity.Player;
 
 public interface ChatSource {

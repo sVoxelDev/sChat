@@ -21,7 +21,7 @@ package net.silthus.chat;
 
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.layout.TabbedChatLayout;
-import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.targets.PlayerChatter;
 
 import java.util.Collection;
 
@@ -29,9 +29,9 @@ public interface ChatLayout {
 
     ChatLayout TABBED = new TabbedChatLayout();
 
-    Component render(Chatter chatter, Message... messages);
+    Component render(PlayerChatter chatter, Message... messages);
 
-    default Component render(Chatter chatter, Collection<Message> messages) {
+    default Component render(PlayerChatter chatter, Collection<Message> messages) {
         return render(chatter, messages.toArray(new Message[0]));
     }
 }

@@ -19,15 +19,26 @@
 
 package net.silthus.chat.targets;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
+import net.silthus.chat.config.ChannelConfig;
 
 import java.util.*;
 
+@Data
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public abstract class AbstractConversation extends AbstractChatTarget implements Conversation {
 
     private final Set<ChatTarget> targets = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>()));
+    private final ChannelConfig config;
+
+    protected AbstractConversation(String identifier, ChannelConfig config) {
+        super(identifier);
+        this.config = config;
+    }
 
     @Override
     public Collection<ChatTarget> getTargets() {
@@ -35,12 +46,18 @@ public abstract class AbstractConversation extends AbstractChatTarget implements
     }
 
     @Override
-    public void addTarget(@NonNull ChatTarget target) {
+    public void subscribe(@NonNull ChatTarget target) {
         this.targets.add(target);
     }
 
     @Override
-    public void removeTarget(@NonNull ChatTarget target) {
+    public void unsubscribe(@NonNull ChatTarget target) {
         this.targets.remove(target);
     }
+
+    @Override
+    public ChannelConfig getConfig() {
+        return this.config;
+    }
+
 }

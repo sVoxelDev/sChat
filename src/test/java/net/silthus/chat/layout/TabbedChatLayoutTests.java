@@ -22,12 +22,9 @@ package net.silthus.chat.layout;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Format;
-import net.silthus.chat.Message;
-import net.silthus.chat.TestBase;
+import net.silthus.chat.*;
 import net.silthus.chat.targets.Channel;
-import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.targets.PlayerChatter;
 import org.bukkit.ChatColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TabbedChatLayoutTests extends TestBase {
 
     private TabbedChatLayout view;
-    private Chatter chatter;
+    private PlayerChatter chatter;
 
     @Override
     @BeforeEach
@@ -52,13 +49,13 @@ public class TabbedChatLayoutTests extends TestBase {
 
         view = new TabbedChatLayout();
         chatter = Chatter.of(server.addPlayer());
-        chatter.setActiveChannel(ChatTarget.channel("test"));
+        chatter.setActiveConversation(ChatTarget.channel("test"));
     }
 
     @Test
     void footer() {
         Component footer = view.footer(chatter);
-        assertThat(footer).isEqualTo(view.channelTabs(chatter));
+        assertThat(footer).isEqualTo(view.conversationTabs(chatter));
     }
 
     @Test
@@ -73,10 +70,10 @@ public class TabbedChatLayoutTests extends TestBase {
     @Test
     void channels_renders_noChannelInfo() {
 
-        Chatter chatter = Chatter.of(new PlayerMock(server, "test"));
-        assertThat(chatter.getSubscriptions()).isEmpty();
+        PlayerChatter chatter = Chatter.of(new PlayerMock(server, "test"));
+        assertThat(chatter.getConversations()).isEmpty();
 
-        Component component = view.channelTabs(chatter);
+        Component component = view.conversationTabs(chatter);
         String text = getStripedText(component);
         assertThat(text).isEqualTo(CHANNEL_DIVIDER + " No Channels selected. Use /ch join <channel> to join a channel.");
     }
@@ -85,7 +82,7 @@ public class TabbedChatLayoutTests extends TestBase {
     void channels_renders_subscribedChannels() {
         addChannels();
 
-        String text = getStripedText(view.channelTabs(chatter));
+        String text = getStripedText(view.conversationTabs(chatter));
         assertThat(text)
                 .contains(CHANNEL_DIVIDER + " test " + CHANNEL_DIVIDER)
                 .contains(CHANNEL_DIVIDER + " foobar " + CHANNEL_DIVIDER);
@@ -94,9 +91,9 @@ public class TabbedChatLayoutTests extends TestBase {
     @Test
     void channels_renders_activeChannelUnderlined() {
         addChannels();
-        chatter.setActiveChannel(ChatTarget.channel("active"));
+        chatter.setActiveConversation(ChatTarget.channel("active"));
 
-        String text = getText(view.channelTabs(chatter));
+        String text = getText(view.conversationTabs(chatter));
         assertThat(text)
                 .contains(ChatColor.GREEN + "" + ChatColor.UNDERLINE + "active")
                 .doesNotContain(ChatColor.GREEN + "" + ChatColor.UNDERLINE + "test")
@@ -108,9 +105,9 @@ public class TabbedChatLayoutTests extends TestBase {
 
         Channel channel = createChannel("foo", config -> config.name("<player_name>"));
         chatter.subscribe(channel);
-        chatter.setActiveChannel(channel);
+        chatter.setActiveConversation(channel);
 
-        String text = getText(view.channelTabs(chatter));
+        String text = getText(view.conversationTabs(chatter));
 
         assertThat(text).contains(toText(chatter.getName()));
     }

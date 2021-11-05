@@ -74,7 +74,7 @@ class MessageTest extends TestBase {
         Channel channel = Channel.channel("test");
         Message message = Message.message("hi").to(channel).build();
 
-        assertThat(message.getChannel())
+        assertThat(message.getConversation())
                 .isNotNull().isEqualTo(channel);
         assertThat(message.getTargets())
                 .contains(channel);
@@ -88,7 +88,6 @@ class MessageTest extends TestBase {
 
     @Test
     void message_withSource_usesDefaultFormat() {
-
         Message message = Message.message(ChatSource.named("test"), "Hi there!").build();
 
         assertThat(toText(message)).isEqualTo("test: Hi there!");
@@ -96,7 +95,6 @@ class MessageTest extends TestBase {
 
     @Test
     void format_overrides_channelFormat() {
-
         Message message = ChatSource.named("test")
                 .message("Hi")
                 .to(Channel.channel("channel"))
@@ -109,7 +107,6 @@ class MessageTest extends TestBase {
 
     @Test
     void format_usesChannelFormat_ifNotSet() {
-
         Message message = ChatSource.named("test")
                 .message("Hi")
                 .to(Channel.channel("channel"))
@@ -121,7 +118,6 @@ class MessageTest extends TestBase {
 
     @Test
     void format_noFormat_noChannel_usesDefaultFormat() {
-
         Message message = ChatSource.named("test")
                 .message("Hi")
                 .build();
@@ -153,5 +149,39 @@ class MessageTest extends TestBase {
         Message copy = message.copy().build();
 
         assertThat(message).isNotEqualTo(copy);
+    }
+
+    @Test
+    void type_isChannel() {
+        Channel channel = Channel.channel("test");
+        Message message = Message.message("test").conversation(channel).build();
+        assertThat(message.getType()).isEqualTo(Message.Type.CHANNEL);
+
+        Message test = Message.message("test").to(channel).build();
+        assertThat(test.getType()).isEqualTo(Message.Type.CHANNEL);
+    }
+
+    @Test
+    void type_isDefault_direct() {
+        Message message = Message.message("test").build();
+
+        assertThat(message.getType()).isEqualTo(Message.Type.SYSTEM);
+    }
+
+    @Test
+    void type_isDrect_withSourceAndTarget() {
+        Message message = Message.message("test")
+                .from(ChatSource.player(server.addPlayer()))
+                .to(ChatTarget.player(server.addPlayer()))
+                .build();
+
+        assertThat(message.getType()).isEqualTo(Message.Type.DIRECT);
+    }
+
+    @Test
+    void type_isBroadcast_multipleTargets() {
+        Message message = Message.message("test").to(ChatTarget.console(), ChatTarget.player(server.addPlayer())).build();
+
+        assertThat(message.getType()).isEqualTo(Message.Type.BROADCAST);
     }
 }

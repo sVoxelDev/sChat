@@ -31,7 +31,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerCommandEvent;
 
 @Data
-@EqualsAndHashCode(of = {"identifier"}, callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public final class Console extends AbstractChatTarget implements ChatSource, Listener {
 
     public static Console instance;
@@ -49,10 +49,10 @@ public final class Console extends AbstractChatTarget implements ChatSource, Lis
         return instance;
     }
 
-    private final String identifier = Constants.Targets.CONSOLE;
     private ChatTarget target;
 
     private Console(ConsoleConfig config) {
+        super(Constants.Targets.CONSOLE);
         this.target = SChat.instance().getChannelRegistry().get(config.defaultChannel()).orElse(null);
     }
 

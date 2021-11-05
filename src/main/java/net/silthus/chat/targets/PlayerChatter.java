@@ -23,6 +23,7 @@ import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -36,20 +37,18 @@ import java.util.*;
 
 @Data
 @EqualsAndHashCode(of = "player", callSuper = false)
-public class Chatter extends AbstractChatTarget implements Listener, ChatSource, ChatTarget {
-
-    public static Chatter of(Player player) {
-        return SChat.instance().getChatterManager().registerChatter(player);
-    }
+public class PlayerChatter extends AbstractChatTarget implements Listener, Chatter {
 
     private final Player player;
-    private Channel activeChannel;
-    private final Set<Channel.Subscription> subscriptions = new HashSet<>();
+    private Conversation activeConversation;
+    private final Set<Conversation> conversations = new HashSet<>();
 
-    public Chatter(Player player) {
+    public PlayerChatter(Player player) {
+        super(player.getUniqueId().toString());
         this.player = player;
     }
 
+    @Override
     public UUID getUniqueId() {
         return getPlayer().getUniqueId();
     }
@@ -69,26 +68,28 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         return true;
     }
 
-    public void setActiveChannel(Channel activeChannel) {
-        this.activeChannel = activeChannel;
-        if (activeChannel != null)
-            subscribe(activeChannel);
+    @Override
+    public void setActiveConversation(Conversation conversation) {
+        this.activeConversation = conversation;
+        if (conversation != null)
+            subscribe(conversation);
     }
 
-    public Collection<Channel.Subscription> getSubscriptions() {
-        return List.copyOf(subscriptions);
+    @Override
+    public Collection<Conversation> getConversations() {
+        return List.copyOf(conversations);
     }
 
-    public Channel.Subscription subscribe(@NonNull Channel channel) {
-        channel.addTarget(this);
-        Channel.Subscription subscription = new Channel.Subscription(channel, this);
-        subscriptions.add(subscription);
-        return subscription;
+    @Override
+    public void subscribe(@NonNull Conversation conversation) {
+        conversation.subscribe(this);
+        conversations.add(conversation);
     }
 
-    public void unsubscribe(@NonNull Channel channel) {
-        channel.removeTarget(this);
-        subscriptions.removeIf(subscription -> subscription.channel().equals(channel));
+    @Override
+    public void unsubscribe(@NonNull Conversation conversation) {
+        conversation.unsubscribe(this);
+        conversations.removeIf(existingConversation -> existingConversation.equals(conversation));
     }
 
     public boolean canJoin(Channel channel) {
@@ -98,13 +99,13 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     public void join(Channel channel) throws AccessDeniedException {
         if (!canJoin(channel))
             throw new AccessDeniedException("You don't have permission to join the channel: " + channel.getIdentifier());
-        setActiveChannel(channel);
+        setActiveConversation(channel);
     }
 
     @Override
     public void sendMessage(Message message) {
         SChat.instance().getChatPacketQueue().queueMessage(message);
-        getPlayer().sendMessage(getIdentity(message), appendMessageId(message));
+        getPlayer().sendMessage(getIdentity(message), appendMessageId(message), MessageType.CHAT);
         addReceivedMessage(message);
     }
 
@@ -132,7 +133,7 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         Message.message()
                 .from(this)
                 .text(event.message())
-                .to(getActiveChannel())
+                .to(getActiveConversation())
                 .send();
         event.setCancelled(true);
     }
@@ -146,7 +147,7 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     }
 
     private boolean noActiveChannel(AsyncChatEvent event) {
-        if (getActiveChannel() != null) return false;
+        if (getActiveConversation() != null) return false;
         event.getPlayer().sendMessage(Constants.Errors.NO_ACTIVE_CHANNEL);
         event.setCancelled(true);
         return true;

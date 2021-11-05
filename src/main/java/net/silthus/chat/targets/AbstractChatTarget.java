@@ -19,6 +19,8 @@
 
 package net.silthus.chat.targets;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Message;
 
@@ -27,9 +29,16 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedTransferQueue;
 
+@Data
+@EqualsAndHashCode(of = {"identifier"})
 public abstract class AbstractChatTarget implements ChatTarget {
 
+    private final String identifier;
     private final Queue<Message> receivedMessages = new LinkedTransferQueue<>();
+
+    protected AbstractChatTarget(String identifier) {
+        this.identifier = identifier.toLowerCase();
+    }
 
     @Override
     public Message getLastReceivedMessage() {
@@ -43,5 +52,9 @@ public abstract class AbstractChatTarget implements ChatTarget {
 
     protected void addReceivedMessage(Message lastMessage) {
         this.receivedMessages.add(lastMessage);
+    }
+
+    public String getIdentifier() {
+        return this.identifier;
     }
 }

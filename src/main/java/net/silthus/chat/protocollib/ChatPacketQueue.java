@@ -28,11 +28,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.NBTComponent;
 import net.kyori.adventure.text.StorageNBTComponent;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.silthus.chat.Chatter;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Message;
 import net.silthus.chat.SChat;
 import net.silthus.chat.layout.TabbedChatLayout;
-import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.targets.PlayerChatter;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -84,16 +85,11 @@ public class ChatPacketQueue extends PacketAdapter {
 
         if (messageText == null) return;
 
-        Optional<Message> optionalMessage = getQueuedMessage(messageText);
+        Message message = getQueuedMessage(messageText)
+                .orElse(Message.message(messageText).build());
 
-        Chatter chatter = Chatter.of(event.getPlayer());
-        if (optionalMessage.isEmpty()) {
-            chatter.sendMessage(Message.message(messageText).build());
-            event.setCancelled(true);
-            return;
-        }
-
-        Component render = renderMessage(chatter, optionalMessage.get());
+        PlayerChatter chatter = Chatter.of(event.getPlayer());
+        Component render = renderMessage(chatter, message);
         if (chat == null) {
             setPaperMessage(event, render);
         } else {
@@ -112,19 +108,19 @@ public class ChatPacketQueue extends PacketAdapter {
                 .findFirst();
     }
 
-    private Component renderMessage(Chatter chatter, Message message) {
-        if (chatter.getActiveChannel() == null)
+    private Component renderMessage(PlayerChatter chatter, Message message) {
+        if (chatter.getActiveConversation() == null)
             return renderSingleMessage(chatter, message);
         return renderChannelMessages(chatter, message);
     }
 
-    private Component renderSingleMessage(Chatter chatter, Message message) {
+    private Component renderSingleMessage(PlayerChatter chatter, Message message) {
         return TabbedChatLayout.TABBED.render(chatter, message);
     }
 
-    private Component renderChannelMessages(Chatter chatter, Message message) {
+    private Component renderChannelMessages(PlayerChatter chatter, Message message) {
         Component render;
-        ArrayList<Message> messages = new ArrayList<>(chatter.getActiveChannel().getReceivedMessages());
+        ArrayList<Message> messages = new ArrayList<>(chatter.getActiveConversation().getReceivedMessages());
         messages.add(message);
         render = TabbedChatLayout.TABBED.render(chatter, messages);
         return render;
