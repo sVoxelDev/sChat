@@ -64,18 +64,18 @@ public class Channel extends AbstractConversation implements ChatSource {
         return Constants.Permissions.getAutoJoinPermission(this);
     }
 
-    public boolean canJoin(PlayerChatter chatter) {
+    public boolean canJoin(Chatter chatter) {
         if (getConfig().protect()) {
             return chatter.getPlayer().hasPermission(getPermission());
         }
         return true;
     }
 
-    public boolean canSendMessage(PlayerChatter chatter) {
+    public boolean canSendMessage(Chatter chatter) {
         return canJoin(chatter);
     }
 
-    public boolean canAutoJoin(PlayerChatter chatter) {
+    public boolean canAutoJoin(Chatter chatter) {
         if (!canJoin(chatter)) return false;
         if (canJoin(chatter) && getConfig().autoJoin()) return true;
         return chatter.getPlayer().hasPermission(getAutoJoinPermission());

@@ -36,16 +36,19 @@ import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(of = "player", callSuper = false)
-public class PlayerChatter extends AbstractChatTarget implements Listener, Chatter {
+public class Chatter extends AbstractChatTarget implements Listener, ChatSource, ChatTarget {
 
     private final Player player;
 
-    public PlayerChatter(Player player) {
+    public Chatter(Player player) {
         super(player.getUniqueId().toString());
         this.player = player;
     }
 
-    @Override
+    public static Chatter of(Player player) {
+        return SChat.instance().getChatterManager().registerChatter(player);
+    }
+
     public UUID getUniqueId() {
         return getPlayer().getUniqueId();
     }

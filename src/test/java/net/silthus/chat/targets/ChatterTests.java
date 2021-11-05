@@ -36,10 +36,10 @@ import static net.silthus.chat.Message.message;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class PlayerChatterTests extends TestBase {
+public class ChatterTests extends TestBase {
     private PlayerMock player;
 
-    private PlayerChatter chatter;
+    private Chatter chatter;
 
     @Override
     @BeforeEach
@@ -60,7 +60,7 @@ public class PlayerChatterTests extends TestBase {
         assertThat(chatter)
                 .isInstanceOf(Listener.class)
                 .extracting(
-                        PlayerChatter::getIdentifier,
+                        Chatter::getIdentifier,
                         c -> toText(c.getName()),
                         ChatTarget::getIdentifier
                 ).contains(
@@ -80,11 +80,11 @@ public class PlayerChatterTests extends TestBase {
     @Test
     void of_usesGlobalChatterCache() {
         PlayerMock player = server.addPlayer();
-        PlayerChatter chatter = Chatter.of(player);
+        Chatter chatter = Chatter.of(player);
         Message message = message("test").send();
         chatter.addReceivedMessage(message);
 
-        PlayerChatter newChatter = Chatter.of(player);
+        Chatter newChatter = Chatter.of(player);
         assertThat(newChatter).isSameAs(chatter);
         assertThat(newChatter.getLastReceivedMessage()).isEqualTo(message);
     }
@@ -94,8 +94,8 @@ public class PlayerChatterTests extends TestBase {
 
         PlayerMock player = server.addPlayer();
 
-        PlayerChatter chatter0 = Chatter.of(player);
-        PlayerChatter chatter1 = Chatter.of(player);
+        Chatter chatter0 = Chatter.of(player);
+        Chatter chatter1 = Chatter.of(player);
 
         assertThat(chatter0).isEqualTo(chatter1);
     }
@@ -264,9 +264,9 @@ public class PlayerChatterTests extends TestBase {
     @DisplayName("direct messaging")
     class DirectMessages {
 
-        private PlayerChatter sender;
+        private Chatter sender;
         private PlayerMock sendingPlayer;
-        private PlayerChatter receiver;
+        private Chatter receiver;
         private PlayerMock receivingPlayer;
 
         @BeforeEach
@@ -315,7 +315,7 @@ public class PlayerChatterTests extends TestBase {
 
             assertThat(channel.getLastReceivedMessage())
                     .isNotNull()
-                    .extracting(PlayerChatterTests.this::toText)
+                    .extracting(ChatterTests.this::toText)
                     .isEqualTo("&6[&atest&6]&ePlayer0&7: &aHi");
             assertThat(event.isCancelled()).isTrue();
         }

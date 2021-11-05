@@ -28,12 +28,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.NBTComponent;
 import net.kyori.adventure.text.StorageNBTComponent;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
-import net.silthus.chat.Chatter;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Message;
 import net.silthus.chat.SChat;
 import net.silthus.chat.layout.TabbedChatLayout;
-import net.silthus.chat.targets.PlayerChatter;
+import net.silthus.chat.targets.Chatter;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -88,7 +87,7 @@ public class ChatPacketQueue extends PacketAdapter {
         Message message = getQueuedMessage(messageText)
                 .orElse(Message.message(messageText).build());
 
-        PlayerChatter chatter = Chatter.of(event.getPlayer());
+        Chatter chatter = Chatter.of(event.getPlayer());
         Component render = renderMessage(chatter, message);
         if (chat == null) {
             setPaperMessage(event, render);
@@ -108,17 +107,17 @@ public class ChatPacketQueue extends PacketAdapter {
                 .findFirst();
     }
 
-    private Component renderMessage(PlayerChatter chatter, Message message) {
+    private Component renderMessage(Chatter chatter, Message message) {
         if (chatter.getActiveConversation() == null)
             return renderSingleMessage(chatter, message);
         return renderChannelMessages(chatter, message);
     }
 
-    private Component renderSingleMessage(PlayerChatter chatter, Message message) {
+    private Component renderSingleMessage(Chatter chatter, Message message) {
         return TabbedChatLayout.TABBED.render(chatter, message);
     }
 
-    private Component renderChannelMessages(PlayerChatter chatter, Message message) {
+    private Component renderChannelMessages(Chatter chatter, Message message) {
         Component render;
         ArrayList<Message> messages = new ArrayList<>(chatter.getActiveConversation().getReceivedMessages());
         messages.add(message);

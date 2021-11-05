@@ -1,7 +1,6 @@
 package net.silthus.chat.targets;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import net.silthus.chat.Chatter;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
@@ -14,9 +13,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DirectConversationTests extends TestBase {
 
     PlayerMock player1;
-    PlayerChatter chatter1;
+    Chatter chatter1;
     PlayerMock player2;
-    PlayerChatter chatter2;
+    Chatter chatter2;
     Conversation conversation;
 
     @Override

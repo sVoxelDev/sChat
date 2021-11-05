@@ -92,7 +92,7 @@ public class ChannelTests extends TestBase {
 
     @Test
     void join_addsPlayerToChannelTargets() {
-        PlayerChatter player = Chatter.of(server.addPlayer());
+        Chatter player = Chatter.of(server.addPlayer());
         channel.subscribe(player);
 
         assertThat(channel.getTargets())
@@ -101,7 +101,7 @@ public class ChannelTests extends TestBase {
 
     @Test
     void join_canOnlyJoinChannelOnce() {
-        PlayerChatter player = Chatter.of(server.addPlayer());
+        Chatter player = Chatter.of(server.addPlayer());
         channel.subscribe(player);
         channel.subscribe(player);
 
@@ -119,7 +119,7 @@ public class ChannelTests extends TestBase {
 
     @Test
     void leave_removesChatTarget_fromChannelTargets() {
-        PlayerChatter player = Chatter.of(server.addPlayer());
+        Chatter player = Chatter.of(server.addPlayer());
         channel.subscribe(player);
         assertThat(channel.getTargets()).contains(player);
 
@@ -131,7 +131,7 @@ public class ChannelTests extends TestBase {
     @Test
     void leave_doesNothingIfPlayerIsNotJoined() {
 
-        PlayerChatter player = Chatter.of(server.addPlayer());
+        Chatter player = Chatter.of(server.addPlayer());
         channel.subscribe(player);
         assertThatCode(() -> channel.unsubscribe(Chatter.of(server.addPlayer())))
                 .doesNotThrowAnyException();
@@ -160,10 +160,10 @@ public class ChannelTests extends TestBase {
     void sendMessage_sendsMessageToAllJoinedTargets() {
 
         PlayerMock player0 = server.addPlayer();
-        PlayerChatter chatter0 = Chatter.of(player0);
+        Chatter chatter0 = Chatter.of(player0);
         channel.subscribe(chatter0);
         PlayerMock player1 = server.addPlayer();
-        PlayerChatter chatter1 = Chatter.of(player1);
+        Chatter chatter1 = Chatter.of(player1);
         channel.subscribe(chatter1);
         PlayerMock player2 = server.addPlayer();
 
@@ -178,7 +178,7 @@ public class ChannelTests extends TestBase {
     void sendFormattedMessage_doesNotFormatAgain() {
 
         PlayerMock player = server.addPlayer();
-        PlayerChatter chatter = Chatter.of(player);
+        Chatter chatter = Chatter.of(player);
         chatter.subscribe(channel);
 
         ChatSource.player(server.addPlayer())
@@ -195,7 +195,7 @@ public class ChannelTests extends TestBase {
 
         try {
             PlayerMock player = server.addPlayer();
-            PlayerChatter chatter = Chatter.of(player);
+            Chatter chatter = Chatter.of(player);
             channel.subscribe(chatter);
 
             ChatSource.player(server.addPlayer())
@@ -248,7 +248,7 @@ public class ChannelTests extends TestBase {
         ChatSource source2 = ChatSource.player(server.addPlayer());
 
         PlayerMock player = server.addPlayer();
-        PlayerChatter chatter = Chatter.of(player);
+        Chatter chatter = Chatter.of(player);
         channel.subscribe(chatter);
 
         source1.message("test").to(channel).send();
@@ -268,7 +268,7 @@ public class ChannelTests extends TestBase {
     @Test
     void sendMessage_setsTargetToChannel() {
 
-        PlayerChatter chatter = Chatter.of(server.addPlayer());
+        Chatter chatter = Chatter.of(server.addPlayer());
         channel.subscribe(chatter);
 
         ChatSource.player(server.addPlayer())
@@ -285,7 +285,7 @@ public class ChannelTests extends TestBase {
     @Test
     void subscribedTarget_isRemoved_onUnregister() {
         PlayerMock player = server.addPlayer();
-        PlayerChatter chatter = Chatter.of(player);
+        Chatter chatter = Chatter.of(player);
         chatter.subscribe(channel);
 
         assertThat(channel.getTargets()).contains(chatter);

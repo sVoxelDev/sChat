@@ -22,9 +22,12 @@ package net.silthus.chat.layout;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.silthus.chat.*;
+import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Format;
+import net.silthus.chat.Message;
+import net.silthus.chat.TestBase;
 import net.silthus.chat.targets.Channel;
-import net.silthus.chat.targets.PlayerChatter;
+import net.silthus.chat.targets.Chatter;
 import org.bukkit.ChatColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +43,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TabbedChatLayoutTests extends TestBase {
 
     private TabbedChatLayout view;
-    private PlayerChatter chatter;
+    private Chatter chatter;
 
     @Override
     @BeforeEach
@@ -70,7 +73,7 @@ public class TabbedChatLayoutTests extends TestBase {
     @Test
     void channels_renders_noChannelInfo() {
 
-        PlayerChatter chatter = Chatter.of(new PlayerMock(server, "test"));
+        Chatter chatter = Chatter.of(new PlayerMock(server, "test"));
         assertThat(chatter.getConversations()).isEmpty();
 
         Component component = view.conversationTabs(chatter);

@@ -1,7 +1,6 @@
 package net.silthus.chat.targets;
 
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.Chatter;
 import net.silthus.chat.Message;
 
 public class DirectConversation extends AbstractConversation {

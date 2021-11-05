@@ -33,8 +33,8 @@ import net.silthus.chat.commands.SChatCommands;
 import net.silthus.chat.config.PluginConfig;
 import net.silthus.chat.protocollib.ChatPacketQueue;
 import net.silthus.chat.targets.Channel;
+import net.silthus.chat.targets.Chatter;
 import net.silthus.chat.targets.Console;
-import net.silthus.chat.targets.PlayerChatter;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -165,7 +165,7 @@ public final class SChat extends JavaPlugin {
     }
 
     private void registerChatterContext(PaperCommandManager commandManager) {
-        commandManager.getCommandContexts().registerIssuerAwareContext(PlayerChatter.class, context -> {
+        commandManager.getCommandContexts().registerIssuerAwareContext(Chatter.class, context -> {
             if (context.hasFlag("self")) {
                 return Chatter.of(context.getPlayer());
             }
@@ -181,7 +181,7 @@ public final class SChat extends JavaPlugin {
                 try {
                     return getChatterManager().getChatter(UUID.fromString(arg));
                 } catch (Exception e) {
-                    Optional<PlayerChatter> chatter = getChatterManager().getChatter(arg);
+                    Optional<Chatter> chatter = getChatterManager().getChatter(arg);
                     if (chatter.isPresent()) return chatter.get();
                     player = Bukkit.getPlayerExact(arg);
                 }

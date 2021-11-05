@@ -22,7 +22,7 @@ package net.silthus.chat;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.targets.Channel;
-import net.silthus.chat.targets.PlayerChatter;
+import net.silthus.chat.targets.Chatter;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,10 +66,10 @@ public class ChatterManagerTests extends TestBase {
     @Test
     void getChatter_createsChatterOnTheFly() {
         PlayerMock player = new PlayerMock(server, "test");
-        PlayerChatter chatter = manager.getOrCreateChatter(player);
+        Chatter chatter = manager.getOrCreateChatter(player);
         assertThat(chatter)
                 .isNotNull()
-                .extracting(PlayerChatter::getIdentifier)
+                .extracting(Chatter::getIdentifier)
                 .isEqualTo(player.getUniqueId().toString());
         assertThat(getRegisteredListeners()).contains(chatter);
     }
@@ -79,12 +79,12 @@ public class ChatterManagerTests extends TestBase {
         PlayerMock player = addChatter();
         assertThat(manager.getChatters()).hasSize(1);
 
-        PlayerChatter chatter = manager.getOrCreateChatter(player);
+        Chatter chatter = manager.getOrCreateChatter(player);
 
         assertThat(manager.getChatters()).hasSize(1);
         assertThat(chatter)
                 .isNotNull()
-                .extracting(PlayerChatter::getIdentifier)
+                .extracting(Chatter::getIdentifier)
                 .isEqualTo(player.getUniqueId().toString());
     }
 
@@ -101,7 +101,7 @@ public class ChatterManagerTests extends TestBase {
 
         assertThat(manager.getChatter(player.getUniqueId()))
                 .isNotNull()
-                .extracting(PlayerChatter::getIdentifier)
+                .extracting(Chatter::getIdentifier)
                 .isEqualTo(player.getUniqueId().toString());
     }
 
@@ -111,14 +111,14 @@ public class ChatterManagerTests extends TestBase {
 
         assertThat(manager.getChatter(player.getName()))
                 .isPresent()
-                .get().extracting(PlayerChatter::getIdentifier)
+                .get().extracting(Chatter::getIdentifier)
                 .isEqualTo(player.getUniqueId().toString());
     }
 
     @Test
     void registerChatter_addsPlayerToChatterCache() {
 
-        PlayerChatter chatter = registerChatter();
+        Chatter chatter = registerChatter();
 
         assertThat(manager.getChatters())
                 .hasSize(1)
@@ -128,7 +128,7 @@ public class ChatterManagerTests extends TestBase {
     @Test
     void registerChatter_registersChatListeners() {
 
-        PlayerChatter chatter = manager.registerChatter(new PlayerMock(server, "test"));
+        Chatter chatter = manager.registerChatter(new PlayerMock(server, "test"));
 
         assertThat(getRegisteredListeners()).contains(chatter);
     }
@@ -136,7 +136,7 @@ public class ChatterManagerTests extends TestBase {
     @Test
     void unregisterChatter_removesChatterFromCache() {
 
-        PlayerChatter chatter = registerChatter();
+        Chatter chatter = registerChatter();
 
         manager.unregisterChatter(chatter.getPlayer());
         assertThat(manager.getChatters()).isEmpty();
@@ -145,7 +145,7 @@ public class ChatterManagerTests extends TestBase {
     @Test
     void unregisterChatter_removesChatterFromListeners() {
 
-        PlayerChatter chatter = registerChatter();
+        Chatter chatter = registerChatter();
         assertThat(getRegisteredListeners()).contains(chatter);
 
         manager.unregisterChatter(chatter.getPlayer());
@@ -155,7 +155,7 @@ public class ChatterManagerTests extends TestBase {
     @Test
     void unregisterChatter_unsubscribesChannels() {
 
-        PlayerChatter chatter = registerChatter();
+        Chatter chatter = registerChatter();
         Channel channel = ChatTarget.channel("test");
         chatter.subscribe(channel);
 
@@ -164,7 +164,7 @@ public class ChatterManagerTests extends TestBase {
         assertThat(chatter.getConversations()).isEmpty();
     }
 
-    private PlayerChatter registerChatter() {
+    private Chatter registerChatter() {
         PlayerMock player = new PlayerMock(server, "test");
         return manager.registerChatter(player);
     }
@@ -190,7 +190,7 @@ public class ChatterManagerTests extends TestBase {
         @Test
         void playerIsAddedToChatters_onJoin() {
 
-            PlayerChatter chatter = Chatter.of(server.addPlayer());
+            Chatter chatter = Chatter.of(server.addPlayer());
 
             assertThat(manager.getChatters())
                     .hasSize(1)
@@ -219,7 +219,7 @@ public class ChatterManagerTests extends TestBase {
             plugin.getChannelRegistry().add(channel);
 
             PlayerMock player = server.addPlayer();
-            PlayerChatter chatter = manager.getOrCreateChatter(player);
+            Chatter chatter = manager.getOrCreateChatter(player);
             assertThat(chatter.getConversations())
                     .doesNotContain(channel);
         }
@@ -244,7 +244,7 @@ public class ChatterManagerTests extends TestBase {
             Channel channel = createChannel(config -> config.autoJoin(true));
             plugin.getChannelRegistry().add(channel);
 
-            PlayerChatter chatter = Chatter.of(server.addPlayer());
+            Chatter chatter = Chatter.of(server.addPlayer());
             assertThat(channel.getTargets()).contains(chatter);
         }
 

@@ -28,7 +28,7 @@ import net.silthus.chat.ChatLayout;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
-import net.silthus.chat.targets.PlayerChatter;
+import net.silthus.chat.targets.Chatter;
 
 import java.util.Collection;
 import java.util.List;
@@ -44,7 +44,7 @@ import static net.silthus.chat.Constants.View.*;
 public class TabbedChatLayout implements ChatLayout {
 
     @Override
-    public Component render(PlayerChatter chatter, Message... messages) {
+    public Component render(Chatter chatter, Message... messages) {
 
         return text().append(clearChat())
                 .append(renderMessages(List.of(messages)))
@@ -53,11 +53,11 @@ public class TabbedChatLayout implements ChatLayout {
                 .build();
     }
 
-    Component footer(PlayerChatter chatter) {
+    Component footer(Chatter chatter) {
         return conversationTabs(chatter);
     }
 
-    Component conversationTabs(PlayerChatter chatter) {
+    Component conversationTabs(Chatter chatter) {
         if (chatter.getConversations().isEmpty()) {
             return noConversations();
         }
@@ -98,14 +98,14 @@ public class TabbedChatLayout implements ChatLayout {
                 .append(text("to join a channel.").color(INFO_COLOR));
     }
 
-    private Component conversation(PlayerChatter chatter, Conversation conversation) {
+    private Component conversation(Chatter chatter, Conversation conversation) {
         boolean isActive = conversation.equals(chatter.getActiveConversation());
         return text().append(conversationName(chatter, conversation, isActive))
                 .append(text(" " + CHANNEL_DIVIDER + " ").color(FRAME_COLOR))
                 .build();
     }
 
-    private Component conversationName(PlayerChatter chatter, Conversation conversation, boolean isActive) {
+    private Component conversationName(Chatter chatter, Conversation conversation, boolean isActive) {
         Component channelName = conversation.getName()
                 .replaceText(playerName(chatter))
                 .replaceText(conversationPartnerName(chatter, conversation))
@@ -117,12 +117,12 @@ public class TabbedChatLayout implements ChatLayout {
         return channelName;
     }
 
-    private TextReplacementConfig playerName(PlayerChatter chatter) {
+    private TextReplacementConfig playerName(Chatter chatter) {
         return TextReplacementConfig.builder()
                 .match("<player_name>").replacement(chatter.getName()).build();
     }
 
-    private TextReplacementConfig conversationPartnerName(PlayerChatter viewer, Conversation conversation) {
+    private TextReplacementConfig conversationPartnerName(Chatter viewer, Conversation conversation) {
         List<Component> names = conversation.getTargets().stream()
                 .filter(target -> !target.equals(viewer))
                 .map(ChatTarget::getName)
