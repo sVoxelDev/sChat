@@ -35,9 +35,8 @@ spigot {
     authors = [project.property("author")]
     apiVersion = project.property("apiVersion")
     load = STARTUP
-    //    depends = ['']
-    // softDepends = ['ProtocolLib']
     depends = ['ProtocolLib']
+    softDepends = ['Vault']
     permissions {
         'schat.player' {
             description 'Contains all basic player permissions for using sChat.'

@@ -85,6 +85,11 @@ public final class SChat extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if (!isTesting() && isNotPaperMC()) {
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         setupAndLoadConfigs();
 
         setupAndLoadChannels();
@@ -93,25 +98,23 @@ public final class SChat extends JavaPlugin {
 
         setupProtocolLib();
         setupCommands();
-//
-//        boolean isPapermc = false;
-//        try {
-//            Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData");
-//            isPapermc = true;
-//        } catch (ClassNotFoundException e) {
-//            Bukkit.getLogger().info("Not paper");
-//        }
-//
-//        if (isPapermc) {
-//            Bukkit.getLogger().info("Got paper");
-//        }
+    }
+
+    private boolean isNotPaperMC() {
+        try {
+            Class.forName("io.papermc.paper.event.player.AsyncChatEvent");
+            return false;
+        } catch (ClassNotFoundException e) {
+            getLogger().severe("Server not running PaperMC, but it is required by this plugin. Disabling...");
+            return true;
+        }
     }
 
     @Override
     public void onDisable() {
 
         Console.instance = null;
-        commandManager.unregisterCommands();
+        if (commandManager != null) commandManager.unregisterCommands();
     }
 
     private void setupAndLoadConfigs() {

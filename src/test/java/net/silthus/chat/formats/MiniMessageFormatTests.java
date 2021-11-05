@@ -60,6 +60,11 @@ public class MiniMessageFormatTests extends TestBase {
     }
 
     @Test
+    void withVaultPrefix() {
+        
+    }
+
+    @Test
     void withoutMessageTag_appendsMessageTag() {
         MiniMessageFormat format = new MiniMessageFormat("source: ");
         String text = toText(format.applyTo(Message.message("test").build()));
