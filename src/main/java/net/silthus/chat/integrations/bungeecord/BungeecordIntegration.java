@@ -17,22 +17,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat;
+package net.silthus.chat.integrations.bungeecord;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import net.kyori.adventure.text.Component;
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteStreams;
+import net.silthus.chat.SChat;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.jetbrains.annotations.NotNull;
 
-@Data
-@AllArgsConstructor
-@EqualsAndHashCode(of = {"identifier"})
-public class NamedChatSource implements ChatSource {
+@SuppressWarnings("UnstableApiUsage")
+public class BungeecordIntegration implements PluginMessageListener {
 
-    private final String identifier;
-    private Component name;
+    private final SChat plugin;
 
-    NamedChatSource(String identifier) {
-        this(identifier, Component.text(identifier));
+    public BungeecordIntegration(SChat plugin) {
+        this.plugin = plugin;
+    }
+
+    @Override
+    public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte[] message) {
+        ByteArrayDataInput dataInput = ByteStreams.newDataInput(message);
     }
 }

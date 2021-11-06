@@ -19,9 +19,8 @@
 
 package net.silthus.chat.targets;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.extern.java.Log;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.ChatSource;
 import net.silthus.chat.ChatTarget;
@@ -29,8 +28,7 @@ import net.silthus.chat.Constants;
 import net.silthus.chat.Message;
 import net.silthus.chat.config.ChannelConfig;
 
-@Log
-@Data
+@Getter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class Channel extends AbstractConversation implements ChatSource {
 

@@ -23,6 +23,7 @@ import net.kyori.adventure.text.Component;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.targets.Channel;
 import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.targets.Console;
 import org.bukkit.entity.Player;
 
 public interface ChatSource extends Identity {
@@ -35,8 +36,8 @@ public interface ChatSource extends Identity {
         return new NamedChatSource(identifier);
     }
 
-    static ChatSource named(String identifier, String displayName) {
-        return new NamedChatSource(identifier, Component.text(displayName));
+    static ChatSource named(String identifier, Component displayName) {
+        return new NamedChatSource(identifier, displayName);
     }
 
     static Channel channel(String identifier) {
@@ -49,6 +50,10 @@ public interface ChatSource extends Identity {
 
     static ChatSource nil() {
         return new NilChatSource();
+    }
+
+    static Console console() {
+        return Console.console();
     }
 
     default Message.MessageBuilder message(String message) {

@@ -17,22 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat;
+package net.silthus.chat.integrations.bungeecord;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import net.kyori.adventure.text.Component;
+import net.silthus.chat.TestBase;
+import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.junit.jupiter.api.Test;
 
-@Data
-@AllArgsConstructor
-@EqualsAndHashCode(of = {"identifier"})
-public class NamedChatSource implements ChatSource {
+import static org.assertj.core.api.Assertions.assertThat;
 
-    private final String identifier;
-    private Component name;
+public class BungeecordIntegrationTests extends TestBase {
 
-    NamedChatSource(String identifier) {
-        this(identifier, Component.text(identifier));
+    @Test
+    void create() {
+        BungeecordIntegration bungee = new BungeecordIntegration(plugin);
+        assertThat(bungee)
+                .isInstanceOf(PluginMessageListener.class);
     }
 }

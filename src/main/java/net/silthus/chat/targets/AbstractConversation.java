@@ -19,16 +19,18 @@
 
 package net.silthus.chat.targets;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.Format;
 
 import java.util.*;
 
-@Data
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public abstract class AbstractConversation extends AbstractChatTarget implements Conversation {
 

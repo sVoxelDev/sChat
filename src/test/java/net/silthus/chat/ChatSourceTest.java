@@ -19,6 +19,7 @@
 
 package net.silthus.chat;
 
+import net.kyori.adventure.text.Component;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,7 +34,7 @@ class ChatSourceTest extends TestBase {
 
     @Test
     void of_identifier_withDisplayName() {
-        ChatSource source = ChatSource.named("test", "Test Source");
+        ChatSource source = ChatSource.named("test", Component.text("Test Source"));
         assertIdAndName(source, "test", "Test Source");
     }
 

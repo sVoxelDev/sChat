@@ -20,8 +20,8 @@
 package net.silthus.chat.targets;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
@@ -34,7 +34,7 @@ import org.bukkit.event.Listener;
 
 import java.util.UUID;
 
-@Data
+@Getter
 @EqualsAndHashCode(of = "player", callSuper = false)
 public class Chatter extends AbstractChatTarget implements Listener, ChatSource, ChatTarget {
 
@@ -115,14 +115,14 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     }
 
     private boolean isNotApplicable(AsyncChatEvent event) {
-        return isNotSamePlayer(event) || noActiveChannel(event);
+        return isNotSamePlayer(event) || noActiveConversation(event);
     }
 
     private boolean isNotSamePlayer(AsyncChatEvent event) {
         return !event.getPlayer().equals(getPlayer());
     }
 
-    private boolean noActiveChannel(AsyncChatEvent event) {
+    private boolean noActiveConversation(AsyncChatEvent event) {
         if (getActiveConversation() != null) return false;
         event.getPlayer().sendMessage(Constants.Errors.NO_ACTIVE_CHANNEL);
         event.setCancelled(true);
