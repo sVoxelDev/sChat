@@ -21,35 +21,47 @@ package net.silthus.chat;
 
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.config.ChannelConfig;
-import net.silthus.chat.targets.Channel;
-import net.silthus.chat.targets.Chatter;
-import net.silthus.chat.targets.Console;
+import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.identities.*;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 public interface ChatSource extends Identity {
+
+    ChatSource NIL_SOURCE = new NilChatSource();
 
     static ChatSource player(Player player) {
         return Chatter.of(player);
     }
 
-    static ChatSource named(String identifier) {
-        return new NamedChatSource(identifier);
+    static ChatSource offlinePlayer(OfflinePlayer player) {
+        return new OfflineChatter(player.getUniqueId(), player.getName());
     }
 
-    static ChatSource named(String identifier, Component displayName) {
-        return new NamedChatSource(identifier, displayName);
+    static ChatSource named(String name) {
+        return new NamedChatSource(name);
     }
 
-    static Channel channel(String identifier) {
-        return Channel.channel(identifier);
+    static ChatSource named(String name, Component displayName) {
+        return new NamedChatSource(name, displayName);
     }
 
-    static Channel channel(String identifier, ChannelConfig config) {
-        return Channel.channel(identifier, config);
+    static ChatSource named(UUID id, String name, Component displayName) {
+        return new NamedChatSource(id, name, displayName);
+    }
+
+    static Channel channel(String name) {
+        return Channel.channel(name);
+    }
+
+    static Channel channel(String name, ChannelConfig config) {
+        return Channel.channel(name, config);
     }
 
     static ChatSource nil() {
-        return new NilChatSource();
+        return NIL_SOURCE;
     }
 
     static Console console() {

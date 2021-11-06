@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.targets;
+package net.silthus.chat.conversations;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -26,6 +26,7 @@ import lombok.Setter;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.Format;
+import net.silthus.chat.identities.AbstractChatTarget;
 
 import java.util.*;
 
@@ -37,8 +38,8 @@ public abstract class AbstractConversation extends AbstractChatTarget implements
     private final Set<ChatTarget> targets = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>()));
     private Format format = Format.defaultFormat();
 
-    protected AbstractConversation(String identifier) {
-        super(identifier);
+    protected AbstractConversation(String name) {
+        super(name);
     }
 
     @Override

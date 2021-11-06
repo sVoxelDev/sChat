@@ -17,12 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.targets;
+package net.silthus.chat.identities;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
 import net.silthus.chat.config.ChannelConfig;
+import net.silthus.chat.conversations.Channel;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,30 +45,36 @@ public class ChannelTests extends TestBase {
 
     @Test
     void create() {
-
         assertThat(channel)
                 .isInstanceOf(ChatTarget.class);
         assertThat(channel)
                 .extracting(
-                        Channel::getIdentifier,
+                        Channel::getName,
                         Channel::getPermission
                 ).contains(
                         "test",
                         Constants.Permissions.CHANNEL_PERMISSION + ".test"
                 );
-        assertThat(channel.getName())
+        assertThat(channel.getDisplayName())
                 .isEqualTo(Component.text("test"));
         assertThat(channel.getConfig())
                 .extracting(ChannelConfig::name)
                 .isEqualTo(null);
         assertThat(channel.getConfig().format())
                 .isNotNull();
+        assertThat(plugin.getChannelRegistry().getChannels()).contains(channel);
+    }
+
+    @Test
+    void create_withConfig_isRegistered() {
+        Channel channel = Channel.channel("test", ChannelConfig.builder().protect(true).autoJoin(false).build());
+        assertThat(plugin.getChannelRegistry().getChannels()).contains(channel);
     }
 
     @Test
     void create_lowerCasesIdentifier() {
         Channel channel = ChatTarget.channel("TEsT");
-        assertThat(channel.getIdentifier()).isEqualTo("test");
+        assertThat(channel.getName()).isEqualTo("test");
     }
 
     @Test
@@ -207,7 +214,7 @@ public class ChannelTests extends TestBase {
                     .isNotNull()
                     .extracting(
                             this::toText,
-                            m -> m.getSource().getName()
+                            m -> m.getSource().getDisplayName()
                     ).contains(
                             "&6[&atest&6]&ePlayer1&7: &atest",
                             Component.text("Player1")
@@ -381,31 +388,23 @@ public class ChannelTests extends TestBase {
             cfg.set("name", "Test");
             cfg.set("format", "<green><message>");
             cfg.set("console", true);
+            cfg.set("protect", true);
+            cfg.set("auto_join", true);
 
-            Channel channel = Channel.channel("test", ChannelConfig.of(cfg));
+            Channel channel = Channel.channel("config-test", ChannelConfig.of(cfg));
 
-            assertThat(channel.getName()).isEqualTo(Component.text("Test"));
-            assertThat(channel.getConfig().format()).isNotNull();
-            assertThat(channel.getConfig().sendToConsole()).isTrue();
-        }
-    }
-
-    @Nested
-    class Subscriptions {
-        @Test
-        void create() {
-            Channel channel = ChatSource.channel("test");
-            ChatTarget target = ChatTarget.player(server.addPlayer());
-
-            Channel.Subscription subscription = new Channel.Subscription(channel, target);
-
-            assertThat(subscription)
+            assertThat(channel.getDisplayName()).isEqualTo(Component.text("Test"));
+            assertThat(channel.getConfig())
                     .extracting(
-                            Channel.Subscription::channel,
-                            Channel.Subscription::target
+                            ChannelConfig::format,
+                            ChannelConfig::sendToConsole,
+                            ChannelConfig::protect,
+                            ChannelConfig::autoJoin
                     ).contains(
-                            channel,
-                            target
+                            Format.miniMessage("<green><message>"),
+                            true,
+                            true,
+                            true
                     );
         }
     }

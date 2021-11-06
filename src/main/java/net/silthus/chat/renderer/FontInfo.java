@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.layout;
+package net.silthus.chat.renderer;
 
 public enum FontInfo {
 

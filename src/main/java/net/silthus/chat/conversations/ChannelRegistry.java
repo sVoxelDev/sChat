@@ -17,13 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat;
+package net.silthus.chat.conversations;
 
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.java.Log;
+import net.silthus.chat.Constants;
+import net.silthus.chat.SChat;
+import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.config.PluginConfig;
-import net.silthus.chat.targets.Channel;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -47,6 +49,14 @@ public final class ChannelRegistry implements Iterable<Channel> {
     public Optional<Channel> get(String identifier) {
         if (identifier == null) return Optional.empty();
         return Optional.ofNullable(channels.get(identifier.toLowerCase()));
+    }
+
+    public Channel getOrCreate(@NonNull String identifier) {
+        return channels.computeIfAbsent(identifier.toLowerCase(), Channel::new);
+    }
+
+    public Channel getOrCreate(@NonNull String identifier, ChannelConfig config) {
+        return channels.computeIfAbsent(identifier.toLowerCase(), s -> new Channel(s, config));
     }
 
     public int size() {
@@ -74,11 +84,11 @@ public final class ChannelRegistry implements Iterable<Channel> {
     }
 
     public void add(@NonNull Channel channel) {
-        this.channels.put(channel.getIdentifier(), channel);
+        this.channels.put(channel.getName(), channel);
     }
 
     public boolean remove(@NonNull Channel channel) {
-        return this.channels.remove(channel.getIdentifier(), channel);
+        return this.channels.remove(channel.getName(), channel);
     }
 
     public Channel remove(String identifier) {

@@ -21,10 +21,10 @@ package net.silthus.chat;
 
 import lombok.NonNull;
 import net.silthus.chat.config.ChannelConfig;
-import net.silthus.chat.targets.Channel;
-import net.silthus.chat.targets.Chatter;
-import net.silthus.chat.targets.Console;
-import net.silthus.chat.targets.NilChatTarget;
+import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.Console;
+import net.silthus.chat.identities.NilChatTarget;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;

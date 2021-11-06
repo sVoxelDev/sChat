@@ -17,13 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.targets;
+package net.silthus.chat.identities;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
-import net.silthus.chat.layout.TabbedMessageRenderer;
+import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.conversations.DirectConversation;
+import net.silthus.chat.renderer.TabbedMessageRenderer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

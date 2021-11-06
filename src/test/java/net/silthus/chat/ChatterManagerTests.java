@@ -21,8 +21,8 @@ package net.silthus.chat;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.targets.Channel;
-import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.identities.Chatter;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,10 +67,7 @@ public class ChatterManagerTests extends TestBase {
     void getChatter_createsChatterOnTheFly() {
         PlayerMock player = new PlayerMock(server, "test");
         Chatter chatter = manager.getOrCreateChatter(player);
-        assertThat(chatter)
-                .isNotNull()
-                .extracting(Chatter::getIdentifier)
-                .isEqualTo(player.getUniqueId().toString());
+        assertChatterIsPlayer(player, chatter);
         assertThat(getRegisteredListeners()).contains(chatter);
     }
 
@@ -82,10 +79,19 @@ public class ChatterManagerTests extends TestBase {
         Chatter chatter = manager.getOrCreateChatter(player);
 
         assertThat(manager.getChatters()).hasSize(1);
+        assertChatterIsPlayer(player, chatter);
+    }
+
+    private void assertChatterIsPlayer(PlayerMock player, Chatter chatter) {
         assertThat(chatter)
                 .isNotNull()
-                .extracting(Chatter::getIdentifier)
-                .isEqualTo(player.getUniqueId().toString());
+                .extracting(
+                        Identity::getUniqueId,
+                        Identity::getName
+                ).contains(
+                        player.getUniqueId(),
+                        player.getName()
+                );
     }
 
     @NotNull
@@ -99,10 +105,7 @@ public class ChatterManagerTests extends TestBase {
     void getChatter_byId() {
         PlayerMock player = addChatter();
 
-        assertThat(manager.getChatter(player.getUniqueId()))
-                .isNotNull()
-                .extracting(Chatter::getIdentifier)
-                .isEqualTo(player.getUniqueId().toString());
+        assertChatterIsPlayer(player, manager.getChatter(player.getUniqueId()));
     }
 
     @Test
@@ -111,8 +114,13 @@ public class ChatterManagerTests extends TestBase {
 
         assertThat(manager.getChatter(player.getName()))
                 .isPresent()
-                .get().extracting(Chatter::getIdentifier)
-                .isEqualTo(player.getUniqueId().toString());
+                .get().extracting(
+                        Identity::getUniqueId,
+                        Identity::getName
+                ).contains(
+                        player.getUniqueId(),
+                        player.getName()
+                );
     }
 
     @Test

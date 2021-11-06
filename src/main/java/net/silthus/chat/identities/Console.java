@@ -17,12 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.targets;
+package net.silthus.chat.identities;
 
-import lombok.Data;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NonNull;
-import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
 import net.silthus.chat.config.ConsoleConfig;
 import org.bukkit.Bukkit;
@@ -30,8 +30,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerCommandEvent;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public final class Console extends AbstractChatTarget implements ChatSource, Listener {
 
     public static Console instance;
@@ -49,16 +48,13 @@ public final class Console extends AbstractChatTarget implements ChatSource, Lis
         return instance;
     }
 
-    private ChatTarget target;
+    @Getter(AccessLevel.PACKAGE)
+    private final ChatTarget target;
 
     private Console(ConsoleConfig config) {
         super(Constants.Targets.CONSOLE);
+        setDisplayName(Bukkit.getConsoleSender().name());
         this.target = SChat.instance().getChannelRegistry().get(config.defaultChannel()).orElse(null);
-    }
-
-    @Override
-    public Component getName() {
-        return Bukkit.getConsoleSender().name();
     }
 
     @Override

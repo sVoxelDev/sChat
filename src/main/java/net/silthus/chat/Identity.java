@@ -22,11 +22,17 @@ package net.silthus.chat;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 public interface Identity {
 
-    String getIdentifier();
+    UUID getUniqueId();
 
-    Component getName();
+    String getName();
+
+    Component getDisplayName();
+
+    void setDisplayName(Component component);
 
     default boolean isPlayer() {
         return false;

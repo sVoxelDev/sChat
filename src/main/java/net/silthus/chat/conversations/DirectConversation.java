@@ -17,37 +17,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.targets;
+package net.silthus.chat.conversations;
 
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.ChatTarget;
-import net.silthus.chat.config.ChannelConfig;
-import org.junit.jupiter.api.Test;
+import net.silthus.chat.Message;
 
-import static net.silthus.chat.Constants.Targets.EMPTY;
-import static org.assertj.core.api.Assertions.assertThat;
+public class DirectConversation extends AbstractConversation {
 
-class EmptyChatTargetTest {
-
-    @Test
-    void create() {
-        ChatTarget target = ChatTarget.nil();
-        assertThat(target)
-                .extracting(ChatTarget::getIdentifier)
-                .isEqualTo(EMPTY);
+    public DirectConversation(ChatTarget target1, ChatTarget target2) {
+        super(target1.getName() + "#" + target2.getName());
+        setDisplayName(Component.text("<partner_name>"));
+        addTarget(target1);
+        addTarget(target2);
     }
 
-    @Test
-    void channel_fromConfig() {
-        Channel channel = ChatTarget.channel("test", ChannelConfig.defaults().name("Test 1"));
-        assertThat(channel)
-                .isNotNull()
-                .extracting(
-                        Channel::getIdentifier,
-                        Channel::getName
-                ).contains(
-                        "test",
-                        Component.text("Test 1")
-                );
+    @Override
+    public void sendMessage(Message message) {
+        addReceivedMessage(message);
+        getTargets().stream()
+                .filter(target -> !target.getConversations().contains(this))
+                .forEach(target -> target.setActiveConversation(this));
+        message.copy()
+                .conversation(this)
+                .targets(getTargets())
+                .send();
     }
 }

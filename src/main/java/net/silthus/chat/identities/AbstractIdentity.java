@@ -17,30 +17,39 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.targets;
+package net.silthus.chat.identities;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Message;
+import net.silthus.chat.Identity;
 
-public class DirectConversation extends AbstractConversation {
+import java.util.UUID;
 
-    public DirectConversation(ChatTarget target1, ChatTarget target2) {
-        super(target1.getIdentifier() + "#" + target2.getIdentifier());
-        setName(Component.text("<partner_name>"));
-        addTarget(target1);
-        addTarget(target2);
+@Data
+@EqualsAndHashCode(of = {"uniqueId"})
+public abstract class AbstractIdentity implements Identity {
+
+    private final UUID uniqueId;
+    private final String name;
+    private Component displayName;
+
+    protected AbstractIdentity(UUID id, String name) {
+        this.uniqueId = id;
+        this.name = name;
     }
 
-    @Override
-    public void sendMessage(Message message) {
-        addReceivedMessage(message);
-        getTargets().stream()
-                .filter(target -> !target.getConversations().contains(this))
-                .forEach(target -> target.setActiveConversation(this));
-        message.copy()
-                .conversation(this)
-                .targets(getTargets())
-                .send();
+    protected AbstractIdentity(String name) {
+        this(UUID.randomUUID(), name);
+    }
+
+    public Component getDisplayName() {
+        if (displayName != null)
+            return displayName;
+        return Component.text(getName());
+    }
+
+    public void setDisplayName(Component name) {
+        this.displayName = name;
     }
 }

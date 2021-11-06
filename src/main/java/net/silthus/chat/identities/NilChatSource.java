@@ -17,28 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.targets;
+package net.silthus.chat.identities;
 
-import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Conversation;
-import net.silthus.chat.TestBase;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import lombok.EqualsAndHashCode;
+import net.silthus.chat.ChatSource;
 
-class AbstractConversationTest extends TestBase {
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+public final class NilChatSource extends AbstractIdentity implements ChatSource {
 
-    private Conversation conversation;
-
-    @Override
-    @BeforeEach
-    public void setUp() {
-        super.setUp();
-
-        conversation = createChannel("testing");
-    }
-
-    @Test
-    void subscribe_returnsSubscription() {
-        conversation.addTarget(ChatTarget.player(server.addPlayer()));
+    public NilChatSource() {
+        super("");
     }
 }

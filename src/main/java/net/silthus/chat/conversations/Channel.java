@@ -17,40 +17,42 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.targets;
+package net.silthus.chat.conversations;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.ChatSource;
-import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Message;
+import net.silthus.chat.SChat;
 import net.silthus.chat.config.ChannelConfig;
+import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.Console;
 
 @Getter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class Channel extends AbstractConversation implements ChatSource {
 
     public static Channel channel(String identifier) {
-        return new Channel(identifier);
+        return SChat.instance().getChannelRegistry().getOrCreate(identifier);
     }
 
     public static Channel channel(String identifier, ChannelConfig config) {
-        return new Channel(identifier, config);
+        return SChat.instance().getChannelRegistry().getOrCreate(identifier, config);
     }
 
     private final ChannelConfig config;
 
-    private Channel(String identifier) {
+    Channel(String identifier) {
         this(identifier, ChannelConfig.defaults());
     }
 
-    private Channel(String identifier, ChannelConfig config) {
+    Channel(String identifier, ChannelConfig config) {
         super(identifier);
         this.config = config;
         if (config.name() != null)
-            setName(Component.text(config.name()));
+            setDisplayName(Component.text(config.name()));
         setFormat(config.format());
     }
 
@@ -96,10 +98,6 @@ public class Channel extends AbstractConversation implements ChatSource {
         if (getConfig().sendToConsole())
             channelMessage.to(Console.console());
 
-        channelMessage.send();
-    }
-
-    public record Subscription(Channel channel, ChatTarget target) {
-
+        SChat.instance().getBungeecord().sendServerMessage(channelMessage.send());
     }
 }

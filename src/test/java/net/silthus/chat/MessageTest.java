@@ -19,7 +19,7 @@
 
 package net.silthus.chat;
 
-import net.silthus.chat.targets.Channel;
+import net.silthus.chat.conversations.Channel;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;

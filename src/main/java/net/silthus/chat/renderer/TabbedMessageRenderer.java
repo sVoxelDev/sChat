@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.layout;
+package net.silthus.chat.renderer;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
@@ -28,7 +28,7 @@ import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
 import net.silthus.chat.MessageRenderer;
-import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.identities.Chatter;
 
 import java.util.Collection;
 import java.util.List;
@@ -106,7 +106,7 @@ public class TabbedMessageRenderer implements MessageRenderer {
     }
 
     private Component conversationName(Chatter chatter, Conversation conversation, boolean isActive) {
-        Component channelName = conversation.getName()
+        Component channelName = conversation.getDisplayName()
                 .replaceText(playerName(chatter))
                 .replaceText(conversationPartnerName(chatter, conversation))
                 .clickEvent(clickEvent(ClickEvent.Action.RUN_COMMAND, JOIN_CONVERSATION.apply(conversation)));
@@ -119,13 +119,13 @@ public class TabbedMessageRenderer implements MessageRenderer {
 
     private TextReplacementConfig playerName(Chatter chatter) {
         return TextReplacementConfig.builder()
-                .match("<player_name>").replacement(chatter.getName()).build();
+                .match("<player_name>").replacement(chatter.getDisplayName()).build();
     }
 
     private TextReplacementConfig conversationPartnerName(Chatter viewer, Conversation conversation) {
         List<Component> names = conversation.getTargets().stream()
                 .filter(target -> !target.equals(viewer))
-                .map(ChatTarget::getName)
+                .map(ChatTarget::getDisplayName)
                 .collect(Collectors.toList());
         return TextReplacementConfig.builder()
                 .match("<partner_name>").replacement(Component.join(JoinConfiguration.separator(Component.text(",")), names))

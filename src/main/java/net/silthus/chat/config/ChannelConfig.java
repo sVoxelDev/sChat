@@ -19,18 +19,23 @@
 
 package net.silthus.chat.config;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Format;
-import net.silthus.chat.targets.Channel;
+import net.silthus.chat.conversations.Channel;
 import org.bukkit.configuration.ConfigurationSection;
 
 @Log
 @Data
+@Builder
 @Accessors(fluent = true)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ChannelConfig {
 
     public static ChannelConfig of(ConfigurationSection config) {
@@ -38,13 +43,17 @@ public class ChannelConfig {
     }
 
     public static ChannelConfig defaults() {
-        return new ChannelConfig();
+        return ChannelConfig.builder().build();
     }
 
     private String name;
+    @Builder.Default
     private boolean protect = false;
+    @Builder.Default
     private boolean sendToConsole = true;
-    private boolean autoJoin = true;
+    @Builder.Default
+    private boolean autoJoin = false;
+    @Builder.Default
     private Format format = Format.channelFormat();
 
     private ChannelConfig(ConfigurationSection config) {
@@ -54,8 +63,6 @@ public class ChannelConfig {
         this.autoJoin = config.getBoolean("auto_join", autoJoin);
         this.format = Format.miniMessage(config.getString("format", Constants.Formatting.DEFAULT_CHANNEL_FORMAT));
     }
-
-    private ChannelConfig() {}
 
     public Channel toChannel(String identifier) {
         return ChatTarget.channel(identifier, this);

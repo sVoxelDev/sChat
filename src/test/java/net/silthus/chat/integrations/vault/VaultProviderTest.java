@@ -25,11 +25,15 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.milkbowl.vault.chat.Chat;
 import net.silthus.chat.ChatSource;
 import net.silthus.chat.TestBase;
-import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.identities.Chatter;
+import org.bukkit.Bukkit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -97,5 +101,19 @@ class VaultProviderTest extends TestBase {
     void getSuffix_noVault_returnsEmpty() {
         provider = new VaultProvider();
         assertThat(provider.getSuffix(Chatter.of(server.addPlayer()))).isEqualTo(Component.empty());
+    }
+
+    @Test
+    void offline_usesOfflinePlayerToGetPrefix() {
+        when(chat.getPlayerPrefix(anyString(), anyString())).thenReturn("[PLAYER]");
+        Component prefix = provider.getPrefix(ChatSource.offlinePlayer(Bukkit.getOfflinePlayer(UUID.randomUUID())));
+        assertThat(toText(prefix)).isEqualTo("[PLAYER]");
+    }
+
+    @Test
+    void offline_usesOfflinePlayerToGetSuffix() {
+        when(chat.getPlayerSuffix(anyString(), anyString())).thenReturn("[!]");
+        Component suffix = provider.getSuffix(ChatSource.offlinePlayer(Bukkit.getOfflinePlayer(UUID.randomUUID())));
+        assertThat(toText(suffix)).isEqualTo("[!]");
     }
 }

@@ -17,21 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat;
+package net.silthus.chat.identities;
 
-import net.kyori.adventure.text.Component;
-import net.silthus.chat.identities.Chatter;
-import net.silthus.chat.renderer.TabbedMessageRenderer;
+import net.silthus.chat.ChatSource;
 
-import java.util.Collection;
+import java.util.UUID;
 
-public interface MessageRenderer {
+public final class OfflineChatter extends AbstractIdentity implements ChatSource {
 
-    MessageRenderer TABBED = new TabbedMessageRenderer();
+    public OfflineChatter(UUID id, String name) {
+        super(id, name);
+    }
 
-    Component render(Chatter chatter, Message... messages);
-
-    default Component render(Chatter chatter, Collection<Message> messages) {
-        return render(chatter, messages.toArray(new Message[0]));
+    @Override
+    public boolean isPlayer() {
+        return true;
     }
 }

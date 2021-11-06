@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.layout;
+package net.silthus.chat.renderer;
 
 import org.assertj.core.api.Assertions;
 import org.bukkit.ChatColor;

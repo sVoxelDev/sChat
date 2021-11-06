@@ -17,14 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat;
+package net.silthus.chat.identities;
 
 import lombok.EqualsAndHashCode;
+import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Constants;
+import net.silthus.chat.Message;
 
 @EqualsAndHashCode(callSuper = true)
-final class NilChatSource extends NamedChatSource {
+public final class NilChatTarget extends AbstractChatTarget implements ChatTarget {
 
-    NilChatSource() {
-        super("");
+    public NilChatTarget() {
+        super(Constants.Targets.EMPTY);
+    }
+
+    @Override
+    public void sendMessage(Message message) {
+        addReceivedMessage(message);
     }
 }

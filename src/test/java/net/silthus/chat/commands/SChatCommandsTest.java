@@ -24,8 +24,8 @@ import net.md_5.bungee.api.ChatColor;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Constants;
 import net.silthus.chat.TestBase;
-import net.silthus.chat.targets.Channel;
-import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.identities.Chatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -65,7 +65,7 @@ class SChatCommandsTest extends TestBase {
 
         @Test
         void join_withoutPermission_fails() {
-            Channel channel = createChannel(cfg -> cfg.protect(true));
+            Channel channel = createChannel("test", cfg -> cfg.protect(true));
             plugin.getChannelRegistry().add(channel);
 
             assertThat(player.performCommand("ch test")).isTrue();
@@ -85,7 +85,7 @@ class SChatCommandsTest extends TestBase {
 
         @Test
         void quickMessage_noPermission_fails() {
-            Channel channel = createChannel(config -> config.protect(true));
+            Channel channel = createChannel("test", config -> config.protect(true));
             plugin.getChannelRegistry().add(channel);
 
             assertThat(player.performCommand("ch test Hey how are you?")).isTrue();

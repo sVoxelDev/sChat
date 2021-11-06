@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.targets;
+package net.silthus.chat.identities;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.EqualsAndHashCode;
@@ -27,6 +27,7 @@ import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.chat.*;
+import net.silthus.chat.conversations.Channel;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -41,26 +42,13 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     private final Player player;
 
     public Chatter(Player player) {
-        super(player.getUniqueId().toString());
+        super(player.getUniqueId(), player.getName());
+        setDisplayName(player.displayName());
         this.player = player;
     }
 
     public static Chatter of(Player player) {
         return SChat.instance().getChatterManager().registerChatter(player);
-    }
-
-    public UUID getUniqueId() {
-        return getPlayer().getUniqueId();
-    }
-
-    @Override
-    public String getIdentifier() {
-        return getUniqueId().toString();
-    }
-
-    @Override
-    public Component getName() {
-        return getPlayer().displayName();
     }
 
     @Override
@@ -74,7 +62,7 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
 
     public void join(Channel channel) throws AccessDeniedException {
         if (!canJoin(channel))
-            throw new AccessDeniedException("You don't have permission to join the channel: " + channel.getIdentifier());
+            throw new AccessDeniedException("You don't have permission to join the channel: " + channel.getName());
         setActiveConversation(channel);
     }
 
@@ -87,7 +75,7 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
 
     private Identity getIdentity(Message message) {
         try {
-            return message.getSource() != null ? Identity.identity(UUID.fromString(message.getSource().getIdentifier())) : Identity.nil();
+            return message.getSource() != null ? Identity.identity(UUID.fromString(message.getSource().getName())) : Identity.nil();
         } catch (IllegalArgumentException e) {
             return Identity.nil();
         }

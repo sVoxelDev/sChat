@@ -23,6 +23,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.milkbowl.vault.chat.Chat;
 import net.silthus.chat.Identity;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class VaultProvider {
@@ -41,7 +42,11 @@ public class VaultProvider {
         if (chat == null || !identity.isPlayer())
             return Component.empty();
 
-        String prefix = chat.getPlayerPrefix(identity.getPlayer());
+        Player player = identity.getPlayer();
+        if (player == null)
+            return validateAndDeserialize(chat.getPlayerPrefix("world", identity.getName()));
+
+        String prefix = chat.getPlayerPrefix(player);
         return validateAndDeserialize(prefix);
     }
 
@@ -49,7 +54,11 @@ public class VaultProvider {
         if (chat == null || !identity.isPlayer())
             return Component.empty();
 
-        String suffix = chat.getPlayerSuffix(identity.getPlayer());
+        Player player = identity.getPlayer();
+        if (player == null)
+            return validateAndDeserialize(chat.getPlayerSuffix("world", identity.getName()));
+
+        String suffix = chat.getPlayerSuffix(player);
         return validateAndDeserialize(suffix);
     }
 

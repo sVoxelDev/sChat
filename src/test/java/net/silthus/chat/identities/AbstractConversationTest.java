@@ -17,22 +17,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat;
+package net.silthus.chat.identities;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import net.kyori.adventure.text.Component;
+import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Conversation;
+import net.silthus.chat.TestBase;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-@Data
-@AllArgsConstructor
-@EqualsAndHashCode(of = {"identifier"})
-public class NamedChatSource implements ChatSource {
+class AbstractConversationTest extends TestBase {
 
-    private final String identifier;
-    private Component name;
+    private Conversation conversation;
 
-    NamedChatSource(String identifier) {
-        this(identifier, Component.text(identifier));
+    @Override
+    @BeforeEach
+    public void setUp() {
+        super.setUp();
+
+        conversation = createChannel("testing");
+    }
+
+    @Test
+    void subscribe_returnsSubscription() {
+        conversation.addTarget(ChatTarget.player(server.addPlayer()));
     }
 }

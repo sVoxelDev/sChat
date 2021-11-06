@@ -21,7 +21,7 @@ package net.silthus.chat;
 
 import lombok.NonNull;
 import lombok.extern.java.Log;
-import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.identities.Chatter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -36,7 +36,7 @@ import java.util.*;
 public final class ChatterManager {
 
     private final SChat plugin;
-    private final Map<String, Chatter> chatters = Collections.synchronizedMap(new HashMap<>());
+    private final Map<UUID, Chatter> chatters = Collections.synchronizedMap(new HashMap<>());
 
     final PlayerListener playerListener;
 
@@ -57,18 +57,18 @@ public final class ChatterManager {
     }
 
     public Chatter getOrCreateChatter(@NonNull Player player) {
-        if (chatters.containsKey(player.getUniqueId().toString()))
-            return chatters.get(player.getUniqueId().toString());
+        if (chatters.containsKey(player.getUniqueId()))
+            return chatters.get(player.getUniqueId());
         return registerChatter(new Chatter(player));
     }
 
     public Chatter getChatter(UUID id) {
-        return chatters.get(id.toString());
+        return chatters.get(id);
     }
 
-    public Optional<Chatter> getChatter(String playerName) {
+    public Optional<Chatter> getChatter(String name) {
         return chatters.values().stream()
-                .filter(chatter -> chatter.getPlayer().getName().equalsIgnoreCase(playerName))
+                .filter(chatter -> chatter.getName().equalsIgnoreCase(name))
                 .findFirst();
     }
 
@@ -83,11 +83,11 @@ public final class ChatterManager {
     }
 
     private void addChatterToCache(@NotNull Chatter chatter) {
-        unregisterListener(chatters.put(chatter.getIdentifier(), chatter));
+        unregisterListener(chatters.put(chatter.getUniqueId(), chatter));
     }
 
     public void unregisterChatter(@NonNull Player player) {
-        Chatter chatter = chatters.remove(player.getUniqueId().toString());
+        Chatter chatter = chatters.remove(player.getUniqueId());
         unregisterListener(chatter);
         unsubscribeAll(chatter);
     }
@@ -103,7 +103,6 @@ public final class ChatterManager {
     }
 
     class PlayerListener implements Listener {
-
 
         @EventHandler(ignoreCancelled = true)
         public void onJoin(PlayerJoinEvent event) {

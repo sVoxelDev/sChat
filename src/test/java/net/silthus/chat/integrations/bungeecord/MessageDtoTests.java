@@ -25,7 +25,7 @@ import net.silthus.chat.ChatSource;
 import net.silthus.chat.Identity;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
-import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.identities.Chatter;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,13 +40,14 @@ public class MessageDtoTests extends TestBase {
         assertThat(serialized(message))
                 .extracting(
                         MessageDto::message,
+                        msg -> msg.sender().uniqueId(),
                         msg -> msg.sender().name(),
-                        msg -> msg.sender().identifier(),
+                        msg -> msg.sender().displayName(),
                         msg -> msg.sender().type()
                 ).contains(
+                        player.getUniqueId(),
                         "{\"text\":\"test\"}",
                         "{\"text\":\"Player0\"}",
-                        player.getUniqueId().toString(),
                         MessageDto.Sender.Type.PLAYER
                 );
     }
@@ -56,6 +57,7 @@ public class MessageDtoTests extends TestBase {
         PlayerMock player = server.addPlayer();
         MessageDto dto = new MessageDto(Message.message("Hi").from(ChatSource.player(player)).build());
         Message message = dto.toMessage();
+
         assertThat(toText(message)).isEqualTo("Player0: Hi");
         assertThat(message.getSource())
                 .isInstanceOf(Chatter.class)
@@ -65,6 +67,26 @@ public class MessageDtoTests extends TestBase {
                 ).contains(
                         true,
                         player
+                );
+    }
+
+    @Test
+    void toMessage_offlinePlayer_usesNamedSource() {
+        PlayerMock player = new PlayerMock(server, "Test");
+        MessageDto dto = new MessageDto(Message.message("Hi").from(ChatSource.player(player)).build());
+        Message message = dto.toMessage();
+
+        assertThat(toText(message)).isEqualTo("Test: Hi");
+        assertThat(message.getSource())
+                .isNotNull()
+                .extracting(
+                        Identity::getUniqueId,
+                        Identity::getName,
+                        Identity::getDisplayName
+                ).contains(
+                        player.getUniqueId(),
+                        player.getName(),
+                        player.displayName()
                 );
     }
 

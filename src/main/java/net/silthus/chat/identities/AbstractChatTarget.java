@@ -17,12 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.targets;
+package net.silthus.chat.identities;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NonNull;
-import net.kyori.adventure.text.Component;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
@@ -30,18 +29,20 @@ import net.silthus.chat.Message;
 import java.util.*;
 import java.util.concurrent.LinkedTransferQueue;
 
-@Data
-@EqualsAndHashCode(of = {"identifier"})
-public abstract class AbstractChatTarget implements ChatTarget {
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+public abstract class AbstractChatTarget extends AbstractIdentity implements ChatTarget {
 
-    private final String identifier;
     private final Queue<Message> receivedMessages = new LinkedTransferQueue<>();
     private final Set<Conversation> conversations = new HashSet<>();
+    @Getter
     private Conversation activeConversation;
-    private Component name;
 
-    protected AbstractChatTarget(String identifier) {
-        this.identifier = identifier.toLowerCase();
+    protected AbstractChatTarget(UUID id, String name) {
+        super(id, name);
+    }
+
+    protected AbstractChatTarget(String name) {
+        super(name);
     }
 
     @Override
@@ -58,18 +59,10 @@ public abstract class AbstractChatTarget implements ChatTarget {
         this.receivedMessages.add(lastMessage);
     }
 
-    public String getIdentifier() {
-        return this.identifier;
-    }
-
     public void setActiveConversation(Conversation conversation) {
         this.activeConversation = conversation;
         if (conversation != null)
             subscribe(conversation);
-    }
-
-    public Conversation getActiveConversation() {
-        return this.activeConversation;
     }
 
     public Collection<Conversation> getConversations() {
@@ -86,9 +79,4 @@ public abstract class AbstractChatTarget implements ChatTarget {
         conversations.removeIf(existingConversation -> existingConversation.equals(conversation));
     }
 
-    public Component getName() {
-        if (name != null)
-            return name;
-        return Component.text(getIdentifier());
-    }
 }

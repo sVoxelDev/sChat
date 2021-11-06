@@ -31,8 +31,8 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Message;
 import net.silthus.chat.SChat;
-import net.silthus.chat.layout.TabbedMessageRenderer;
-import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.renderer.TabbedMessageRenderer;
 
 import java.lang.reflect.Field;
 import java.util.*;

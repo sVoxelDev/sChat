@@ -28,8 +28,8 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.silthus.chat.AccessDeniedException;
 import net.silthus.chat.Message;
 import net.silthus.chat.SChat;
-import net.silthus.chat.targets.Channel;
-import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.identities.Chatter;
 
 import static net.silthus.chat.Constants.Language.*;
 import static net.silthus.chat.Constants.*;
@@ -82,7 +82,7 @@ public class SChatCommands extends BaseCommand {
     }
 
     private String getChannelName(Channel channel) {
-        return LegacyComponentSerializer.legacySection().serialize(channel.getName());
+        return LegacyComponentSerializer.legacySection().serialize(channel.getDisplayName());
     }
 
     private void success(String key, String... replacements) {

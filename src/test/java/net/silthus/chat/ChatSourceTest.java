@@ -52,8 +52,8 @@ class ChatSourceTest extends TestBase {
         assertThat(source)
                 .isNotNull()
                 .extracting(
-                        ChatSource::getIdentifier,
-                        c -> toText(c.getName())
+                        ChatSource::getName,
+                        c -> toText(c.getDisplayName())
                 ).contains(
                         id,
                         name

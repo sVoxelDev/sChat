@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.layout;
+package net.silthus.chat.renderer;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
@@ -26,8 +26,8 @@ import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Format;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
-import net.silthus.chat.targets.Channel;
-import net.silthus.chat.targets.Chatter;
+import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.identities.Chatter;
 import org.bukkit.ChatColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -112,7 +112,7 @@ public class TabbedMessageRendererTests extends TestBase {
 
         String text = getText(view.conversationTabs(chatter));
 
-        assertThat(text).contains(toText(chatter.getName()));
+        assertThat(text).contains(toText(chatter.getDisplayName()));
     }
 
     @Test

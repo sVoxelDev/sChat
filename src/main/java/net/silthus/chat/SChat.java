@@ -32,11 +32,13 @@ import lombok.experimental.Accessors;
 import net.milkbowl.vault.chat.Chat;
 import net.silthus.chat.commands.SChatCommands;
 import net.silthus.chat.config.PluginConfig;
+import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.conversations.ChannelRegistry;
+import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.Console;
+import net.silthus.chat.integrations.bungeecord.BungeecordIntegration;
 import net.silthus.chat.integrations.protocollib.ChatPacketQueue;
 import net.silthus.chat.integrations.vault.VaultProvider;
-import net.silthus.chat.targets.Channel;
-import net.silthus.chat.targets.Chatter;
-import net.silthus.chat.targets.Console;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -72,6 +74,7 @@ public final class SChat extends JavaPlugin {
 
     @Setter(AccessLevel.PACKAGE)
     private ChatPacketQueue chatPacketQueue;
+    private BungeecordIntegration bungeecord;
 
     public SChat() {
         instance = this;
@@ -99,6 +102,7 @@ public final class SChat extends JavaPlugin {
 
         setupProtocolLib();
         setupVaultIntegration();
+        setupBungeecordIntegration();
         setupCommands();
     }
 
@@ -156,6 +160,10 @@ public final class SChat extends JavaPlugin {
         }
     }
 
+    private void setupBungeecordIntegration() {
+        this.bungeecord = new BungeecordIntegration(this);
+    }
+
     private void setupCommands() {
         commandManager = new PaperCommandManager(this);
 
@@ -211,7 +219,7 @@ public final class SChat extends JavaPlugin {
     private void registerChannelCompletion(PaperCommandManager commandManager) {
         commandManager.getCommandCompletions().registerAsyncCompletion("channels", context ->
                 getChannelRegistry().getChannels().stream()
-                        .map(Channel::getIdentifier)
+                        .map(Channel::getName)
                         .collect(Collectors.toSet()));
     }
 

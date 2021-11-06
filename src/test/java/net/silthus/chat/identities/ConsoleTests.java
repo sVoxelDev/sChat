@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.targets;
+package net.silthus.chat.identities;
 
 import be.seeseemelk.mockbukkit.command.ConsoleCommandSenderMock;
 import net.silthus.chat.*;
@@ -71,7 +71,7 @@ public class ConsoleTests {
             assertThat(target).isNotNull()
                     .isInstanceOf(ChatTarget.class)
                     .isInstanceOf(ChatSource.class)
-                    .extracting(ChatTarget::getIdentifier)
+                    .extracting(ChatTarget::getName)
                     .isEqualTo(Constants.Targets.CONSOLE);
 
             assertThat(Console.console()).isSameAs(target);

@@ -20,10 +20,9 @@
 package net.silthus.chat;
 
 import lombok.NonNull;
-import net.kyori.adventure.text.Component;
 import net.silthus.chat.config.ChannelConfig;
-import net.silthus.chat.targets.Channel;
-import net.silthus.chat.targets.DirectConversation;
+import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.conversations.DirectConversation;
 
 import java.util.Collection;
 
@@ -40,10 +39,6 @@ public interface Conversation extends ChatTarget {
     static Channel channel(String identifier, ChannelConfig config) {
         return Channel.channel(identifier, config);
     }
-
-    Component getName();
-
-    void setName(Component component);
 
     Format getFormat();
 

@@ -21,7 +21,7 @@ package net.silthus.chat;
 
 import co.aikar.commands.BukkitCommandManager;
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.targets.Channel;
+import net.silthus.chat.conversations.Channel;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -58,13 +58,13 @@ class SChatTest extends TestBase {
         assertThat(plugin.getChannelRegistry().getChannels())
                 .hasSizeGreaterThanOrEqualTo(1);
         Optional<Channel> channel = plugin.getChannelRegistry().getChannels().stream()
-                .filter(c -> c.getIdentifier().equals("global"))
+                .filter(c -> c.getName().equals("global"))
                 .findFirst();
         assertThat(channel)
                 .isPresent().get()
                 .extracting(
-                        Channel::getIdentifier,
                         Channel::getName,
+                        Channel::getDisplayName,
                         c -> toText(c.getConfig().format().applyTo(Message.message(ChatSource.player(server.addPlayer()), "test").to(c).build()))
                 ).contains(
                         "global",

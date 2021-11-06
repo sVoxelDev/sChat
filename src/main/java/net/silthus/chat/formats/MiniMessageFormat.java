@@ -19,6 +19,7 @@
 
 package net.silthus.chat.formats;
 
+import lombok.EqualsAndHashCode;
 import lombok.extern.java.Log;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -31,6 +32,7 @@ import net.silthus.chat.SChat;
 import static net.kyori.adventure.text.minimessage.template.TemplateResolver.templates;
 
 @Log(topic = Constants.PLUGIN_NAME)
+@EqualsAndHashCode(of = {"format"})
 public class MiniMessageFormat implements Format {
 
     private final String format;
@@ -59,12 +61,12 @@ public class MiniMessageFormat implements Format {
     }
 
     private Template senderTemplate(Message message) {
-        return Template.template("sender_name", message.getSource().getName());
+        return Template.template("sender_name", message.getSource().getDisplayName());
     }
 
     private Template channelTemplate(Message message) {
         if (message.getConversation() != null) {
-            return Template.template("channel_name", message.getConversation().getName());
+            return Template.template("channel_name", message.getConversation().getDisplayName());
         }
         return Template.template("channel_name", Component.empty());
     }

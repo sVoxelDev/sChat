@@ -21,7 +21,8 @@ package net.silthus.chat;
 
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.config.PluginConfig;
-import net.silthus.chat.targets.Channel;
+import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.conversations.ChannelRegistry;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -75,8 +76,8 @@ public class ChannelRegistryTests extends TestBase {
         assertThat(registry.getChannels())
                 .contains(channel)
                 .extracting(
-                        Channel::getIdentifier,
-                        c -> toText(c.getName())
+                        Channel::getName,
+                        c -> toText(c.getDisplayName())
                 ).contains(tuple(
                         "foo",
                         "Test"
@@ -88,7 +89,7 @@ public class ChannelRegistryTests extends TestBase {
         addChannel("FOO");
         assertThat(registry.getChannels())
                 .first()
-                .extracting(Channel::getIdentifier)
+                .extracting(Channel::getName)
                 .isEqualTo("foo");
     }
 
@@ -203,8 +204,8 @@ public class ChannelRegistryTests extends TestBase {
         assertThat(registry.get("foo"))
                 .isPresent().get()
                 .extracting(
-                        Channel::getIdentifier,
-                        Channel::getName
+                        Channel::getName,
+                        Channel::getDisplayName
                 ).contains(
                         "foo",
                         "foo"
@@ -217,7 +218,7 @@ public class ChannelRegistryTests extends TestBase {
         addChannel("foo");
         assertThat(registry.get("FoO"))
                 .isPresent().get()
-                .extracting(Channel::getIdentifier)
+                .extracting(Channel::getName)
                 .isEqualTo("foo");
     }
 

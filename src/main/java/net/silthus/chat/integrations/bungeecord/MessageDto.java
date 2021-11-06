@@ -25,12 +25,13 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.silthus.chat.ChatSource;
 import net.silthus.chat.Message;
-import net.silthus.chat.NamedChatSource;
+import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.Console;
+import net.silthus.chat.identities.NamedChatSource;
 import net.silthus.chat.integrations.bungeecord.MessageDto.Sender.Type;
-import net.silthus.chat.targets.Channel;
-import net.silthus.chat.targets.Chatter;
-import net.silthus.chat.targets.Console;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
@@ -48,8 +49,9 @@ public class MessageDto {
 
     public MessageDto sender(ChatSource source) {
         this.sender = new Sender()
-                .identifier(source.getIdentifier())
-                .name(serialize(source.getName()))
+                .uniqueId(source.getUniqueId())
+                .name(source.getName())
+                .displayName(serialize(source.getDisplayName()))
                 .type(Type.fromChatSource(source));
         return this;
     }
@@ -65,16 +67,22 @@ public class MessageDto {
     @Accessors(fluent = true)
     static class Sender {
 
-        private String identifier;
+        private UUID uniqueId;
         private String name;
+        private String displayName;
         private Type type = Type.NIL;
 
         ChatSource asSource() {
             return switch (type) {
-                case PLAYER -> ChatSource.player(Bukkit.getPlayer(UUID.fromString(identifier)));
-                case CHANNEL -> ChatSource.channel(identifier);
+                case PLAYER -> {
+                    Player player = Bukkit.getPlayer(uniqueId);
+                    if (player == null)
+                        yield ChatSource.named(uniqueId, name, deserialize(name));
+                    yield ChatSource.player(player);
+                }
+                case CHANNEL -> ChatSource.channel(name);
                 case CONSOLE -> ChatSource.console();
-                case NAMED -> ChatSource.named(identifier, deserialize(name));
+                case NAMED -> ChatSource.named(name, deserialize(name));
                 default -> ChatSource.nil();
             };
         }

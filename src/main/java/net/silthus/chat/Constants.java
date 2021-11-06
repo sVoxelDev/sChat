@@ -25,7 +25,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.md_5.bungee.api.ChatColor;
-import net.silthus.chat.targets.Channel;
+import net.silthus.chat.conversations.Channel;
 
 import java.util.function.Function;
 
@@ -33,6 +33,8 @@ public final class Constants {
 
     public static final String PLUGIN_NAME = "sChat";
     public static final Key NBT_MESSAGE_ID = Key.key("schat:messageid");
+    public static final String BUNGEECORD_CHANNEL = "BungeeCord";
+    public static final String SCHAT_MESSAGES_CHANNEL = "schat:messages";
 
     public static final String PERMISSION_PLAYER_COMMANDS = "schat.player";
     public static final String PERMISSION_PLAYER_CHANNEL_COMMANDS = "schat.player.channel";
@@ -54,7 +56,7 @@ public final class Constants {
         public static final String AUTO_JOIN_CHANNEL_SUFFIX = ".autojoin";
 
         public static String getChannelPermission(@NonNull Channel channel) {
-            return (CHANNEL_PERMISSION + "." + channel.getIdentifier()).toLowerCase();
+            return (CHANNEL_PERMISSION + "." + channel.getName()).toLowerCase();
         }
 
         public static String getAutoJoinPermission(@NonNull Channel channel) {
@@ -93,6 +95,6 @@ public final class Constants {
     }
 
     public static class Commands {
-        public static final Function<Conversation, String> JOIN_CONVERSATION = conversation -> "/schat channel join " + conversation.getIdentifier();
+        public static final Function<Conversation, String> JOIN_CONVERSATION = conversation -> "/schat channel join " + conversation.getName();
     }
 }

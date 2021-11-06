@@ -17,22 +17,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.targets;
+package net.silthus.chat.identities;
 
 import lombok.EqualsAndHashCode;
-import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Constants;
-import net.silthus.chat.Message;
+import net.kyori.adventure.text.Component;
+import net.silthus.chat.ChatSource;
 
-@EqualsAndHashCode(callSuper = true)
-public final class NilChatTarget extends AbstractChatTarget implements ChatTarget {
+import java.util.UUID;
 
-    public NilChatTarget() {
-        super(Constants.Targets.EMPTY);
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+public final class NamedChatSource extends AbstractIdentity implements ChatSource {
+
+    public NamedChatSource(String identifier) {
+        super(identifier);
     }
 
-    @Override
-    public void sendMessage(Message message) {
-        addReceivedMessage(message);
+    public NamedChatSource(String identifier, Component displayName) {
+        super(identifier);
+        setDisplayName(displayName);
+    }
+
+    public NamedChatSource(UUID id, String name, Component displayName) {
+        super(id, name);
+        setDisplayName(displayName);
     }
 }

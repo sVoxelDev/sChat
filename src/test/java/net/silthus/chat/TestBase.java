@@ -27,9 +27,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.milkbowl.vault.chat.Chat;
 import net.silthus.chat.config.ChannelConfig;
+import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.integrations.protocollib.ChatPacketQueue;
 import net.silthus.chat.integrations.vault.VaultProvider;
-import net.silthus.chat.targets.Channel;
+import org.apache.commons.lang.RandomStringUtils;
 import org.assertj.core.internal.bytebuddy.utility.RandomString;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
@@ -87,7 +88,7 @@ public abstract class TestBase {
     }
 
     protected Channel createChannel(Function<ChannelConfig, ChannelConfig> cfg) {
-        return createChannel("test", cfg);
+        return createChannel(RandomStringUtils.randomAlphabetic(10), cfg);
     }
 
     protected Channel createChannel(String identifier) {

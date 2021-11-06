@@ -17,12 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.targets;
+package net.silthus.chat.identities;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
+import net.silthus.chat.conversations.Channel;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -60,13 +61,13 @@ public class ChatterTests extends TestBase {
         assertThat(chatter)
                 .isInstanceOf(Listener.class)
                 .extracting(
-                        Chatter::getIdentifier,
-                        c -> toText(c.getName()),
-                        ChatTarget::getIdentifier
+                        Identity::getUniqueId,
+                        Chatter::getName,
+                        c -> toText(c.getDisplayName())
                 ).contains(
-                        player.getUniqueId().toString(),
-                        player.getDisplayName(),
-                        player.getUniqueId().toString()
+                        player.getUniqueId(),
+                        player.getName(),
+                        player.getDisplayName()
                 );
     }
 

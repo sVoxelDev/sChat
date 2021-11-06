@@ -23,7 +23,7 @@ import net.kyori.adventure.text.Component;
 import net.silthus.chat.ChatSource;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
-import net.silthus.chat.targets.Channel;
+import net.silthus.chat.conversations.Channel;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.Test;
 
@@ -58,8 +58,8 @@ class ChannelConfigTest extends TestBase {
                 .toChannel("test");
         assertThat(channel)
                 .extracting(
-                        Channel::getIdentifier,
-                        c -> toText(c.getName())
+                        Channel::getName,
+                        c -> toText(c.getDisplayName())
                 ).contains(
                         "test",
                         "Test 1"
