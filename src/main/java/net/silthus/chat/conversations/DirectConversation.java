@@ -38,9 +38,6 @@ public class DirectConversation extends AbstractConversation {
         getTargets().stream()
                 .filter(target -> !target.getConversations().contains(this))
                 .forEach(target -> target.setActiveConversation(this));
-        message.copy()
-                .conversation(this)
-                .targets(getTargets())
-                .send();
+        getTargets().forEach(target -> target.sendMessage(message));
     }
 }

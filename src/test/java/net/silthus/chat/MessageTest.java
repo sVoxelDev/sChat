@@ -49,17 +49,6 @@ class MessageTest extends TestBase {
     }
 
     @Test
-    void copy_setsParentMessage() {
-
-        Message parent = Message.message("test").build();
-        Message message = parent.copy().text("hi").build();
-
-        assertThat(message.getParent())
-                .isNotNull()
-                .isSameAs(parent);
-    }
-
-    @Test
     void send_sendsMessageToTarget() {
 
         ChatTarget target = ChatTarget.nil();

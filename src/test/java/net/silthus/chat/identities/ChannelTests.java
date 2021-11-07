@@ -31,6 +31,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class ChannelTests extends TestBase {
 
@@ -205,18 +208,17 @@ public class ChannelTests extends TestBase {
             Chatter chatter = Chatter.of(player);
             channel.addTarget(chatter);
 
-            ChatSource.player(server.addPlayer())
+            Message message = ChatSource.player(server.addPlayer())
                     .message("test")
                     .to(channel)
                     .send();
 
             assertThat(channel.getLastReceivedMessage())
                     .isNotNull()
+                    .isEqualTo(message)
                     .extracting(
-                            this::toText,
                             m -> m.getSource().getDisplayName()
-                    ).contains(
-                            "&6[&atest&6]&ePlayer1[!]&7: test",
+                    ).isEqualTo(
                             Component.text("Player1")
                     );
         } catch (Exception e) {
@@ -231,24 +233,7 @@ public class ChannelTests extends TestBase {
 
         assertThat(channel.getLastReceivedMessage())
                 .isNotNull()
-                .extracting(Message::getParent)
-                .isNotNull()
                 .isEqualTo(message);
-    }
-
-    @Test
-    void sendMessage_storesSentMessageWithActualTargets() {
-        Channel channel = createChannel(config -> config.name("Test Chan").sendToConsole(false));
-        Chatter chatter1 = Chatter.of(server.addPlayer());
-        chatter1.subscribe(channel);
-        Chatter chatter2 = Chatter.of(server.addPlayer());
-        chatter2.subscribe(channel);
-        assertThat(channel.getTargets()).hasSize(2);
-
-        Message.message("Hi").to(channel).send();
-        assertThat(channel.getLastReceivedMessage().getTargets())
-                .hasSize(2)
-                .contains(chatter1, chatter2);
     }
 
     @Test
@@ -380,7 +365,7 @@ public class ChannelTests extends TestBase {
         Channel channel = createChannel(config -> config.sendToConsole(true));
 
         Message message = channel.sendMessage("test");
-        assertThat(Console.console().getLastReceivedMessage().getParent())
+        assertThat(Console.console().getLastReceivedMessage())
                 .isNotNull()
                 .isEqualTo(message);
     }
@@ -392,6 +377,31 @@ public class ChannelTests extends TestBase {
         channel.sendMessage("test");
         assertThat(Console.console().getLastReceivedMessage())
                 .isNull();
+    }
+
+    @Test
+    void message_sendGlobal_if_configured() {
+        Channel channel = createChannel(config -> config.global(true));
+
+        Message message = channel.sendMessage("test");
+        verify(plugin.getBungeecord()).sendServerMessage(message);
+    }
+
+    @Test
+    void message_notGlobal_isNotSent_toPluginChannel() {
+        Channel channel = createChannel(config -> config.global(false));
+
+        channel.sendMessage("test");
+        verify(plugin.getBungeecord(), never()).sendServerMessage(any());
+    }
+
+    @Test
+    void sendMessage_doesNotProcessSameMessageTwice() {
+        Channel channel = createChannel(config -> config.global(true));
+        Message message = channel.sendMessage("test");
+        channel.sendMessage(message);
+
+        verify(plugin.getBungeecord()).sendServerMessage(any());
     }
 
     @Nested

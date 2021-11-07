@@ -54,6 +54,8 @@ public class ChannelConfig {
     @Builder.Default
     private boolean autoJoin = false;
     @Builder.Default
+    private boolean global = true;
+    @Builder.Default
     private Format format = Format.channelFormat();
 
     ChannelConfig.ChannelConfigBuilder withConfig(ConfigurationSection config) {
@@ -63,6 +65,7 @@ public class ChannelConfig {
                 .protect(config.getBoolean("protect", protect))
                 .sendToConsole(config.getBoolean("console", sendToConsole))
                 .autoJoin(config.getBoolean("auto_join", autoJoin))
+                .global(config.getBoolean("global", global))
                 .format(config.isSet("format") ? Format.miniMessage(config.getString("format")) : format);
     }
 

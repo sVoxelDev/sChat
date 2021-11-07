@@ -43,12 +43,14 @@ import java.util.stream.Collectors;
 @Accessors(fluent = true)
 public class MessageDto {
 
+    private UUID id;
     private String message;
     private Identity sender;
     private Identity conversation;
     private List<Identity> targets = new ArrayList<>();
 
     public MessageDto(Message message) {
+        this.id = message.getId();
         this.message = serialize(message.formatted());
         sender(toIdentityDto(message.getSource()));
         conversation(toIdentityDto(message.getConversation()));
@@ -66,6 +68,7 @@ public class MessageDto {
 
     public Message toMessage() {
         return Message.message()
+                .id(id)
                 .text(deserialize(message()))
                 .from(sender != null ? sender.asChatIdentity() : ChatSource.nil())
                 .conversation(conversation != null ? conversation.asChatIdentity() : null)

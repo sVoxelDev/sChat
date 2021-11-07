@@ -1,8 +1,11 @@
+# Define your personal defaults for the various configs in this section.
+# Not setting a value in the actual config section will use these defaults.
 defaults:
   channel:
     protect: false
     auto_join: false
     console: true
+    global: true
     format: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset><yellow><sender_vault_prefix><sender_name><sender_vault_suffix><gray>: <gray><message>'
 # You can fine tune the behaviour of the console chat in this section.
 console:
@@ -19,14 +22,17 @@ channels:
     # It is also accessible via the PlaceholderAPI under {schat.channel_name} tag.
     # default: <channel_id>
     name: Global
-    # Set to 'true' to require a permission to join the channel.
+    # Set 'true' to require a permission to join the channel.
     # The permission is: 'schat.channel.<id>', e.g. 'schat.channel.global'
     # default: false
     protect: false
-    # Set to 'true' to automatically let every player that has the permission join this channel.
+    # Set 'true' to automatically let every player that has the permission join this channel.
     # This is useful for global channels that everyone should have.
     # default: false
     auto_join: true
+    # Set 'true' to enable chatting across all servers in this channel.
+    # default: true
+    global: true
     # Sends all chat messages in this channel to the console as well.
     # Set false to not send messages in this channel to the console.
     # default: true

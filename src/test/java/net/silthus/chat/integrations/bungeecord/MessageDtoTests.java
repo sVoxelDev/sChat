@@ -39,12 +39,14 @@ public class MessageDtoTests extends TestBase {
 
         assertThat(serialized(message))
                 .extracting(
+                        MessageDto::id,
                         MessageDto::message,
                         msg -> msg.sender().uniqueId(),
                         msg -> msg.sender().name(),
                         msg -> msg.sender().displayName(),
                         msg -> msg.sender().type()
                 ).contains(
+                        message.getId(),
                         "{\"text\":\"test\"}",
                         player.getUniqueId(),
                         "{\"text\":\"test\"}",
@@ -56,9 +58,11 @@ public class MessageDtoTests extends TestBase {
     @Test
     void toMessage_createsMessageFromDto() {
         PlayerMock player = server.addPlayer();
-        MessageDto dto = new MessageDto(Message.message("Hi").from(ChatSource.player(player)).build());
+        Message originalMessage = Message.message("Hi").from(ChatSource.player(player)).build();
+        MessageDto dto = new MessageDto(originalMessage);
         Message message = dto.toMessage();
 
+        assertThat(message.getId()).isEqualTo(originalMessage.getId());
         assertThat(toText(message)).isEqualTo("Player0: Hi");
         assertThat(message.getSource())
                 .isInstanceOf(Chatter.class)

@@ -41,6 +41,7 @@ class ChannelConfigTest extends TestBase {
         cfg.set("protect", true);
         cfg.set("console", false);
         cfg.set("auto_join", false);
+        cfg.set("global", false);
 
         ChannelConfig expected = ChannelConfig.builder()
                 .name("Test")
@@ -48,6 +49,7 @@ class ChannelConfigTest extends TestBase {
                 .protect(true)
                 .sendToConsole(false)
                 .autoJoin(false)
+                .global(false)
                 .build();
         ChannelConfig config = ChannelConfig.of(cfg);
         assertThat(config).isEqualTo(expected);

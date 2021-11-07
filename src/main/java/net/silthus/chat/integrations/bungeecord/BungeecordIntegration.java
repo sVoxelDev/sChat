@@ -63,7 +63,8 @@ public class BungeecordIntegration implements PluginMessageListener {
 
             String json = ByteStreams.newDataInput(bytes).readUTF();
             MessageDto dto = gson.fromJson(json, MessageDto.class);
-            Message message = dto.toMessage().copy().send();
+            Message message = dto.toMessage();
+            message.getTargets().forEach(target -> target.sendMessage(message));
         }
     }
 

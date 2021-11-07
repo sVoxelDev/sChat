@@ -21,7 +21,6 @@ package net.silthus.chat.identities;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import io.papermc.paper.event.player.AsyncChatEvent;
-import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
 import org.bukkit.Bukkit;
@@ -33,6 +32,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import static net.kyori.adventure.text.Component.text;
 import static net.silthus.chat.Message.message;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -128,6 +128,7 @@ public class ChatterTests extends TestBase {
 
     @Test
     void getActiveChannel() {
+        Chatter chatter = ChatTarget.player(new PlayerMock(server, "test"));
         Conversation channel = chatter.getActiveConversation();
 
         assertThat(channel).isNull();
@@ -187,13 +188,12 @@ public class ChatterTests extends TestBase {
 
         assertThat(chatter.getLastReceivedMessage())
                 .isNotNull()
+                .isEqualTo(message)
                 .extracting(
-                        Message::getParent,
-                        this::toText,
+                        Message::getText,
                         Message::getSource
                 ).contains(
-                        message,
-                        "&6[&atest&6]&7: test",
+                        text("test"),
                         ChatSource.nil()
                 );
     }
@@ -304,7 +304,7 @@ public class ChatterTests extends TestBase {
 
             AsyncChatEvent event = chat("Hello!");
 
-            assertThat(event.message()).isEqualTo(Component.text("Hello!"));
+            assertThat(event.message()).isEqualTo(text("Hello!"));
         }
 
         @Test
@@ -316,14 +316,15 @@ public class ChatterTests extends TestBase {
 
             assertThat(channel.getLastReceivedMessage())
                     .isNotNull()
-                    .extracting(ChatterTests.this::toText)
-                    .isEqualTo("&6[&atest&6]&ePlayer0[!]&7: Hi");
+                    .extracting(Message::getText)
+                    .isEqualTo(text("Hi"));
             assertThat(event.isCancelled()).isTrue();
         }
 
         @Test
         void onChat_withNoActiveChannel_sendsPlayerAnErrorMessage() {
 
+            chatter.setActiveConversation(null);
             AsyncChatEvent event = chat("Hi");
 
             assertThat(player.nextMessage())

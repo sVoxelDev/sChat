@@ -52,9 +52,9 @@ public class Message implements Comparable<Message> {
         return new MessageBuilder(Format.defaultFormat()).text(message).source(source);
     }
 
+    @Builder.Default
     UUID id = UUID.randomUUID();
     Instant timestamp = Instant.now();
-    Message parent;
     @Builder.Default
     ChatSource source = ChatSource.nil();
     @Builder.Default
@@ -67,7 +67,7 @@ public class Message implements Comparable<Message> {
     Collection<ChatTarget> targets = new HashSet<>();
 
     public MessageBuilder copy() {
-        return toBuilder().parent(this);
+        return toBuilder().id(UUID.randomUUID());
     }
 
     public Component formatted() {
@@ -148,19 +148,15 @@ public class Message implements Comparable<Message> {
             return this;
         }
 
-        private MessageBuilder parent(Message message) {
-            this.parent = message;
-            return this;
-        }
-
         public Message build() {
+            UUID id = id$set ? id$value : $default$id();
             Format format = conversation != null ? conversation.getFormat() : defaultFormat;
             if (format$set) format = format$value;
             ChatSource source = source$set ? source$value : $default$source();
             Component text = text$set ? text$value : $default$text();
             Collection<ChatTarget> targets = targets$set ? targets$value : $default$targets();
 
-            return new Message(parent, source, text, format, type, conversation, targets);
+            return new Message(id, source, text, format, type, conversation, targets);
         }
 
         public Message send() {

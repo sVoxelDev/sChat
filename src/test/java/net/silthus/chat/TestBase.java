@@ -28,6 +28,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.milkbowl.vault.chat.Chat;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.integrations.bungeecord.BungeecordIntegration;
 import net.silthus.chat.integrations.protocollib.ChatPacketQueue;
 import net.silthus.chat.integrations.vault.VaultProvider;
 import org.apache.commons.lang.RandomStringUtils;
@@ -65,6 +66,7 @@ public abstract class TestBase {
         when(chat.getPlayerPrefix(any())).thenReturn("&7[ADMIN]&a");
         when(chat.getPlayerSuffix(any())).thenReturn("[!]&a");
         plugin.setVaultProvider(new VaultProvider(chat));
+        plugin.setBungeecord(mock(BungeecordIntegration.class));
     }
 
     @AfterEach

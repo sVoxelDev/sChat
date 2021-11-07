@@ -76,6 +76,7 @@ public final class SChat extends JavaPlugin {
 
     @Setter(AccessLevel.PACKAGE)
     private ChatPacketQueue chatPacketQueue;
+    @Setter(AccessLevel.PACKAGE)
     private BungeecordIntegration bungeecord;
 
     public SChat() {
