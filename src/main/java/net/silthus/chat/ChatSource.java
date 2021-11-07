@@ -32,7 +32,7 @@ public interface ChatSource extends Identity {
 
     ChatSource NIL_SOURCE = new NilChatSource();
 
-    static ChatSource player(Player player) {
+    static Chatter player(Player player) {
         return Chatter.of(player);
     }
 

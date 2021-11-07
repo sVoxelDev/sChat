@@ -26,6 +26,7 @@ import co.aikar.commands.annotation.*;
 import co.aikar.locales.MessageKey;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.silthus.chat.AccessDeniedException;
+import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
 import net.silthus.chat.SChat;
 import net.silthus.chat.conversations.Channel;
@@ -89,7 +90,7 @@ public class SChatCommands extends BaseCommand {
         @CommandAlias("m|tell|msg|message|w|dm")
         @CommandCompletion("@chatters *")
         public void directMessage(@Flags("self") Chatter source, Chatter target, String message) {
-            source.message(message).to(target).send();
+            Conversation.direct(source, target).sendMessage(Message.message(source, message).build());
         }
     }
 

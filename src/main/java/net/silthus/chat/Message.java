@@ -160,6 +160,9 @@ public class Message implements Comparable<Message> {
         }
 
         public Message send() {
+            if (conversation == null && source$value instanceof ChatTarget && (targets$set && targets$value.size() > 0)) {
+                to(Conversation.direct((ChatTarget) source$value, targets$value.stream().findFirst().get()));
+            }
             Message message = build();
             message.getTargets().forEach(target -> target.sendMessage(message));
             return message;

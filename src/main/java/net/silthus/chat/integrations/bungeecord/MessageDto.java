@@ -51,7 +51,7 @@ public class MessageDto {
 
     public MessageDto(Message message) {
         this.id = message.getId();
-        this.message = serialize(message.formatted());
+        this.message = serialize(message.getText());
         sender(toIdentityDto(message.getSource()));
         conversation(toIdentityDto(message.getConversation()));
         targets(message.getTargets().stream().map(this::toIdentityDto).collect(Collectors.toList()));

@@ -22,6 +22,7 @@ package net.silthus.chat.integrations.bungeecord;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import com.google.gson.Gson;
 import net.silthus.chat.ChatSource;
+import net.silthus.chat.Format;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
@@ -80,7 +81,7 @@ public class MessageDtoTests extends TestBase {
     @Test
     void toMessage_withChannel_serializesChannel() {
         PlayerMock player = server.addPlayer();
-        Channel channel = Channel.channel("test");
+        Channel channel = createChannel("test", config -> config.format(Format.format("[<channel_name>]<sender_name>: <message>")));
         MessageDto dto = new MessageDto(Message.message("Hi")
                 .from(ChatSource.player(player))
                 .to(channel)
@@ -91,6 +92,7 @@ public class MessageDtoTests extends TestBase {
                 .isNotNull()
                 .isEqualTo(channel);
         assertThat(message.getTargets()).contains(channel);
+        assertThat(toText(message)).isEqualTo("[test]Player0: Hi");
     }
 
     @Test

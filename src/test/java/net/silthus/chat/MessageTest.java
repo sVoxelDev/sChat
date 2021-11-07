@@ -20,6 +20,8 @@
 package net.silthus.chat;
 
 import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.conversations.DirectConversation;
+import net.silthus.chat.identities.Chatter;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -172,5 +174,21 @@ class MessageTest extends TestBase {
         Message message = Message.message("test").to(ChatTarget.console(), ChatTarget.player(server.addPlayer())).build();
 
         assertThat(message.getType()).isEqualTo(Message.Type.BROADCAST);
+    }
+
+    @Test
+    void send_oneSource_oneTarget_noChannel_createsDirectConversation() {
+        Chatter source = ChatSource.player(server.addPlayer());
+        Chatter target = ChatTarget.player(server.addPlayer());
+        Message message = Message.message("Hi").from(source).to(target).send();
+
+        assertThat(message.getConversation())
+                .isNotNull()
+                .isInstanceOf(DirectConversation.class)
+                .extracting(ChatTarget::getLastReceivedMessage)
+                .isNotNull()
+                .isEqualTo(message);
+        assertThat(source.getActiveConversation()).isNotNull().isInstanceOf(DirectConversation.class);
+        assertThat(target.getActiveConversation()).isNotNull().isInstanceOf(DirectConversation.class);
     }
 }

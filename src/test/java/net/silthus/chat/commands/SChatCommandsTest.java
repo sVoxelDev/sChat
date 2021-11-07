@@ -23,13 +23,16 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.md_5.bungee.api.ChatColor;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Constants;
+import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.conversations.DirectConversation;
 import net.silthus.chat.identities.Chatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class SChatCommandsTest extends TestBase {
@@ -92,5 +95,37 @@ class SChatCommandsTest extends TestBase {
             assertThat(channel.getLastReceivedMessage()).isNull();
             assertThat(player.nextMessage()).contains(ChatColor.RED + "You don't have permission to send messages to the 'test' channel.");
         }
+    }
+
+    @Nested
+    class DirectMessages {
+        @Test
+        void directMessage_sendsMessageToBothPlayers() {
+            PlayerMock player1 = server.addPlayer();
+            player.performCommand("dm Player1 Hey whats up?");
+
+            assertLastMessage(player, "Hey whats up?");
+            assertLastMessage(player1, "Hey whats up?");
+        }
+
+        @Test
+        void directMessage_opensDirectConversation() {
+            PlayerMock player1 = server.addPlayer();
+            player.performCommand("dm Player1 Hi");
+
+            assertThat(Chatter.of(player).getActiveConversation())
+                    .isNotNull()
+                    .isInstanceOf(DirectConversation.class)
+                    .extracting(ChatTarget::getLastReceivedMessage)
+                    .extracting(Message::getText)
+                    .isEqualTo(text("Hi"));
+        }
+    }
+
+    private void assertLastMessage(PlayerMock player, String message) {
+        assertThat(Chatter.of(player).getLastReceivedMessage())
+                .isNotNull()
+                .extracting(Message::getText)
+                .isEqualTo(text(message));
     }
 }
