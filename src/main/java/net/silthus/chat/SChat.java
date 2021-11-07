@@ -34,6 +34,7 @@ import net.silthus.chat.commands.SChatCommands;
 import net.silthus.chat.config.PluginConfig;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.ChannelRegistry;
+import net.silthus.chat.identities.AbstractIdentity;
 import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.Console;
 import net.silthus.chat.integrations.bungeecord.BungeecordIntegration;
@@ -43,6 +44,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
@@ -121,6 +123,11 @@ public final class SChat extends JavaPlugin {
 
         Console.instance = null;
         if (commandManager != null) commandManager.unregisterCommands();
+        if (chatterManager != null) chatterManager.unregisterAllChatters();
+        if (bungeecord != null) tearDownBungeecord();
+        if (channelRegistry != null) channelRegistry.clear();
+
+        HandlerList.unregisterAll(this);
     }
 
     private void setupAndLoadConfigs() {
@@ -162,6 +169,18 @@ public final class SChat extends JavaPlugin {
 
     private void setupBungeecordIntegration() {
         this.bungeecord = new BungeecordIntegration(this);
+        if (!isTesting()) {
+            this.getServer().getMessenger().registerOutgoingPluginChannel(this, Constants.BUNGEECORD_CHANNEL);
+            this.getServer().getMessenger().registerIncomingPluginChannel(this, Constants.BUNGEECORD_CHANNEL, bungeecord);
+        }
+    }
+
+    private void tearDownBungeecord() {
+        if (!isTesting()) {
+            this.getServer().getMessenger().unregisterOutgoingPluginChannel(this, Constants.BUNGEECORD_CHANNEL);
+            this.getServer().getMessenger().unregisterIncomingPluginChannel(this, Constants.BUNGEECORD_CHANNEL, bungeecord);
+        }
+        this.bungeecord = null;
     }
 
     private void setupCommands() {
@@ -171,6 +190,7 @@ public final class SChat extends JavaPlugin {
         registerChannelContext(commandManager);
 
         registerChannelCompletion(commandManager);
+        registerChatterCompletion(commandManager);
 
         loadCommandLocales(commandManager);
 
@@ -220,6 +240,13 @@ public final class SChat extends JavaPlugin {
         commandManager.getCommandCompletions().registerAsyncCompletion("channels", context ->
                 getChannelRegistry().getChannels().stream()
                         .map(Channel::getName)
+                        .collect(Collectors.toSet()));
+    }
+
+    private void registerChatterCompletion(PaperCommandManager commandManager) {
+        commandManager.getCommandCompletions().registerAsyncCompletion("chatters", context ->
+                getChatterManager().getChatters().stream()
+                        .map(AbstractIdentity::getName)
                         .collect(Collectors.toSet()));
     }
 

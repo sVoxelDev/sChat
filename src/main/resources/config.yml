@@ -17,6 +17,8 @@ channels:
     # The permission is: 'schat.channel.<id>', e.g. 'schat.channel.global'
     # default: false
     protected: false
+    #
+    auto_join: false
     # Sends all chat messages in this channel to the console as well.
     # Set false to not send messages in this channel to the console.
     # default: true

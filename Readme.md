@@ -27,6 +27,7 @@ For example: clicking on a channel will set the channel as active.
 | `schat.player.channel` | Allows the player to use the `/channel *` commands. |
 | `schat.player.channel.join` | Allows the player to join channels. This can be further restricted with individual channel permissions. |
 | `schat.player.channel.quickmessage` | Enables the player to send quick messages (`/ch <channel> <message>`) to channels he is allowed to write in. |
+| `schat.player.directmessage` | Allows the player to send direct messages (`/dm <player> <message>`) to other players. |
 
 ### Channel Permissions
 

@@ -68,7 +68,7 @@ public class SChatCommands extends BaseCommand {
         }
 
         @Subcommand("message|msg|qm")
-        @CommandAlias("ch")
+        @CommandAlias("ch|qmc")
         @CommandCompletion("@channels *")
         @CommandPermission(PERMISSION_PLAYER_CHANNEL_QUICKMESSAGE)
         public void quickMessage(@Flags("self") Chatter chatter, Channel channel, String message) {
@@ -78,6 +78,18 @@ public class SChatCommands extends BaseCommand {
                 error(SEND_TO_CHANNEL_DENIED, "{channel}", getChannelName(channel));
                 throw new ConditionFailedException(key(SEND_TO_CHANNEL_DENIED), "{channel}", getChannelName(channel));
             }
+        }
+    }
+
+    @Subcommand("directmessage")
+    @CommandPermission(PERMISSION_PLAYER_DIRECT_MESSAGE)
+    public class DirectMessageCommands extends BaseCommand {
+
+        @Subcommand("send")
+        @CommandAlias("m|tell|msg|message|w|dm")
+        @CommandCompletion("@chatters *")
+        public void directMessage(@Flags("self") Chatter source, Chatter target, String message) {
+            source.message(message).to(target).send();
         }
     }
 

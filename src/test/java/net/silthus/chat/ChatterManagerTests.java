@@ -172,6 +172,15 @@ public class ChatterManagerTests extends TestBase {
         assertThat(chatter.getConversations()).isEmpty();
     }
 
+    @Test
+    void unregisterAllChatters_unsubscribesAll() {
+        server.setPlayers(3);
+        assertThat(manager.getChatters()).hasSize(3);
+
+        manager.unregisterAllChatters();
+        assertThat(manager.getChatters()).isEmpty();
+    }
+
     private Chatter registerChatter() {
         PlayerMock player = new PlayerMock(server, "test");
         return manager.registerChatter(player);
@@ -217,7 +226,9 @@ public class ChatterManagerTests extends TestBase {
             assertThat(channel.getTargets()).isEmpty();
 
             server.addPlayer(player);
-            assertThat(channel.getTargets()).contains(Chatter.of(player));
+            Chatter chatter = Chatter.of(player);
+            assertThat(channel.getTargets()).contains(chatter);
+            assertThat(chatter.getActiveConversation()).isNotNull();
         }
 
         @Test

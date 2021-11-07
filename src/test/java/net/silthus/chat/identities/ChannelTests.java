@@ -231,7 +231,26 @@ public class ChannelTests extends TestBase {
 
         assertThat(channel.getLastReceivedMessage())
                 .isNotNull()
+                .extracting(Message::getParent)
+                .isNotNull()
                 .isEqualTo(message);
+    }
+
+    @Test
+    void sendMessage_storesSentMessageWithActualTargets() {
+        Channel channel = createChannel(config -> config.name("Test Chan"));
+        Chatter chatter1 = Chatter.of(server.addPlayer());
+        chatter1.subscribe(channel);
+        Chatter chatter2 = Chatter.of(server.addPlayer());
+        chatter2.subscribe(channel);
+        assertThat(channel.getTargets()).hasSize(2);
+
+        Message.message("Hi").to(channel).send();
+        assertThat(channel.getLastReceivedMessage())
+                .extracting(Message::getTargets)
+                .asList()
+                .hasSize(2)
+                .contains(chatter1, chatter2);
     }
 
     @Test

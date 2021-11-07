@@ -40,6 +40,7 @@ public final class Constants {
     public static final String PERMISSION_PLAYER_CHANNEL_COMMANDS = "schat.player.channel";
     public static final String PERMISSION_PLAYER_CHANNEL_JOIN = "schat.player.channel.join";
     public static final String PERMISSION_PLAYER_CHANNEL_QUICKMESSAGE = "schat.player.channel.quickmessage";
+    public static final String PERMISSION_PLAYER_DIRECT_MESSAGE = "schat.player.directmessage";
 
     public static class Targets {
 

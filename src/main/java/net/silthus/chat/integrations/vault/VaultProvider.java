@@ -26,6 +26,7 @@ import net.silthus.chat.Identity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("deprecation")
 public class VaultProvider {
 
     private final Chat chat;

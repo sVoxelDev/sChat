@@ -72,8 +72,12 @@ public final class ChannelRegistry implements Iterable<Channel> {
         return channels.containsValue(channel);
     }
 
-    public void load(@NonNull PluginConfig config) {
+    public void clear() {
         channels.clear();
+    }
+
+    public void load(@NonNull PluginConfig config) {
+        clear();
         loadChannels(config);
     }
 

@@ -89,15 +89,16 @@ public class Channel extends AbstractConversation implements ChatSource {
 
     @Override
     public void sendMessage(Message message) {
-        addReceivedMessage(message);
 
         Message.MessageBuilder channelMessage = message.copy()
                 .conversation(this)
                 .targets(getTargets());
 
-        if (getConfig().sendToConsole())
+        if (getConfig().sendToConsole()) {
             channelMessage.to(Console.console());
+        }
 
-        SChat.instance().getBungeecord().sendServerMessage(channelMessage.send());
+        SChat.instance().getBungeecord().sendServerMessage(message);
+        addReceivedMessage(channelMessage.send());
     }
 }

@@ -53,7 +53,7 @@ public final class ChatterManager {
     public void autoJoinChannels(Chatter chatter) {
         plugin.getChannelRegistry().getChannels().stream()
                 .filter(channel -> channel.canAutoJoin(chatter))
-                .forEach(chatter::subscribe);
+                .forEach(chatter::setActiveConversation);
     }
 
     public Chatter getOrCreateChatter(@NonNull Player player) {
@@ -86,10 +86,19 @@ public final class ChatterManager {
         unregisterListener(chatters.put(chatter.getUniqueId(), chatter));
     }
 
-    public void unregisterChatter(@NonNull Player player) {
-        Chatter chatter = chatters.remove(player.getUniqueId());
+    public void unregisterAllChatters() {
+        getChatters().forEach(this::unregisterChatter);
+    }
+
+    public void unregisterChatter(Chatter chatter) {
+        if (chatter == null) return;
+        chatters.remove(chatter.getUniqueId());
         unregisterListener(chatter);
         unsubscribeAll(chatter);
+    }
+
+    public void unregisterChatter(@NonNull Player player) {
+        unregisterChatter(chatters.remove(player.getUniqueId()));
     }
 
     private void unregisterListener(Chatter chatter) {

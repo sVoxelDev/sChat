@@ -42,6 +42,8 @@ public class BungeecordIntegration implements PluginMessageListener {
     private final SChat plugin;
     private final Gson gson = new Gson();
 
+    // TODO: synchronize chatters across servers using offline chatter
+    // TODO: send channels/conversations across servers
     public BungeecordIntegration(SChat plugin) {
         this.plugin = plugin;
     }
