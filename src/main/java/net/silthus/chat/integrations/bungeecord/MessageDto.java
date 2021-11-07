@@ -24,84 +24,95 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.silthus.chat.ChatSource;
+import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
-import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.Console;
 import net.silthus.chat.identities.NamedChatSource;
-import net.silthus.chat.integrations.bungeecord.MessageDto.Sender.Type;
+import net.silthus.chat.integrations.bungeecord.MessageDto.Identity.Type;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Data
 @Accessors(fluent = true)
 public class MessageDto {
 
     private String message;
-    private Sender sender;
+    private Identity sender;
+    private Identity conversation;
+    private List<Identity> targets = new ArrayList<>();
 
     public MessageDto(Message message) {
         this.message = serialize(message.formatted());
-        sender(message.getSource());
+        sender(toIdentityDto(message.getSource()));
+        conversation(toIdentityDto(message.getConversation()));
+        targets(message.getTargets().stream().map(this::toIdentityDto).collect(Collectors.toList()));
     }
 
-    public MessageDto sender(ChatSource source) {
-        this.sender = new Sender()
-                .uniqueId(source.getUniqueId())
-                .name(source.getName())
-                .displayName(serialize(source.getDisplayName()))
-                .type(Type.fromChatSource(source));
-        return this;
+    private Identity toIdentityDto(net.silthus.chat.Identity identity) {
+        if (identity == null) return null;
+        return new Identity()
+                .uniqueId(identity.getUniqueId())
+                .name(identity.getName())
+                .displayName(serialize(identity.getDisplayName()))
+                .type(Type.fromChatIdentity(identity));
     }
 
     public Message toMessage() {
         return Message.message()
                 .text(deserialize(message()))
-                .from(sender.asSource())
+                .from(sender != null ? sender.asChatIdentity() : ChatSource.nil())
+                .conversation(conversation != null ? conversation.asChatIdentity() : null)
+                .to(targets.stream().map(identity -> (ChatTarget) identity.asChatIdentity()).collect(Collectors.toList()))
                 .build();
     }
 
     @Data
     @Accessors(fluent = true)
-    static class Sender {
+    static class Identity {
 
-        private UUID uniqueId;
-        private String name;
-        private String displayName;
+        private UUID uniqueId = UUID.randomUUID();
+        private String name = "";
+        private String displayName = "";
         private Type type = Type.NIL;
 
-        ChatSource asSource() {
-            return switch (type) {
+        @SuppressWarnings("unchecked")
+        <T extends net.silthus.chat.Identity> T asChatIdentity() {
+            return (T) switch (type) {
                 case PLAYER -> {
                     Player player = Bukkit.getPlayer(uniqueId);
                     if (player == null)
                         yield ChatSource.named(uniqueId, name, deserialize(name));
                     yield ChatSource.player(player);
                 }
-                case CHANNEL -> ChatSource.channel(name);
+                case CONVERSATION -> ChatSource.channel(name);
                 case CONSOLE -> ChatSource.console();
-                case NAMED -> ChatSource.named(name, deserialize(name));
+                case NAMED -> ChatSource.named(uniqueId, name, deserialize(name));
                 default -> ChatSource.nil();
             };
         }
 
         enum Type {
             PLAYER,
-            CHANNEL,
+            CONVERSATION,
             CONSOLE,
             NAMED,
             NIL;
 
-            static Type fromChatSource(ChatSource source) {
-                if (source instanceof Chatter) {
+            static Type fromChatIdentity(net.silthus.chat.Identity identity) {
+                if (identity instanceof Chatter) {
                     return Type.PLAYER;
-                } else if (source instanceof Channel) {
-                    return Type.CHANNEL;
-                } else if (source instanceof Console) {
+                } else if (identity instanceof Conversation) {
+                    return Type.CONVERSATION;
+                } else if (identity instanceof Console) {
                     return Type.CONSOLE;
-                } else if (source instanceof NamedChatSource) {
+                } else if (identity instanceof NamedChatSource) {
                     return Type.NAMED;
                 }
                 return Type.NIL;

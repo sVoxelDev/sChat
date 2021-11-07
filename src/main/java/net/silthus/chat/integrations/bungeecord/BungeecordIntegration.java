@@ -62,9 +62,6 @@ public class BungeecordIntegration implements PluginMessageListener {
             in.readFully(bytes);
 
             String json = ByteStreams.newDataInput(bytes).readUTF();
-            // TODO: remove debug print
-            log.info("Got plugin channel message:");
-            log.info(json);
             MessageDto dto = gson.fromJson(json, MessageDto.class);
             Message message = dto.toMessage().copy().send();
         }
@@ -80,10 +77,7 @@ public class BungeecordIntegration implements PluginMessageListener {
                     out.writeUTF(SCHAT_MESSAGES_CHANNEL);
 
                     ByteArrayDataOutput dtoOut = ByteStreams.newDataOutput();
-                    // TODO: remove debug print
                     String json = gson.toJson(new MessageDto(message));
-                    log.info("Sending plugin channel message:");
-                    log.info(json);
                     dtoOut.writeUTF(json);
 
                     byte[] bytes = dtoOut.toByteArray();

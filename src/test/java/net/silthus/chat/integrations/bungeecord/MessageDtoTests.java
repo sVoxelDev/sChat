@@ -22,9 +22,9 @@ package net.silthus.chat.integrations.bungeecord;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import com.google.gson.Gson;
 import net.silthus.chat.ChatSource;
-import net.silthus.chat.Identity;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
+import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.identities.Chatter;
 import org.junit.jupiter.api.Test;
 
@@ -45,10 +45,11 @@ public class MessageDtoTests extends TestBase {
                         msg -> msg.sender().displayName(),
                         msg -> msg.sender().type()
                 ).contains(
+                        "{\"text\":\"test\"}",
                         player.getUniqueId(),
                         "{\"text\":\"test\"}",
                         "{\"text\":\"Player0\"}",
-                        MessageDto.Sender.Type.PLAYER
+                        MessageDto.Identity.Type.PLAYER
                 );
     }
 
@@ -62,12 +63,30 @@ public class MessageDtoTests extends TestBase {
         assertThat(message.getSource())
                 .isInstanceOf(Chatter.class)
                 .extracting(
-                        Identity::isPlayer,
-                        Identity::getPlayer
+                        net.silthus.chat.Identity::isPlayer,
+                        net.silthus.chat.Identity::getPlayer
                 ).contains(
                         true,
                         player
                 );
+        assertThat(message.getTargets()).isEmpty();
+        assertThat(message.getConversation()).isNull();
+    }
+
+    @Test
+    void toMessage_withChannel_serializesChannel() {
+        PlayerMock player = server.addPlayer();
+        Channel channel = Channel.channel("test");
+        MessageDto dto = new MessageDto(Message.message("Hi")
+                .from(ChatSource.player(player))
+                .to(channel)
+                .build());
+        Message message = dto.toMessage();
+
+        assertThat(message.getConversation())
+                .isNotNull()
+                .isEqualTo(channel);
+        assertThat(message.getTargets()).contains(channel);
     }
 
     @Test
@@ -80,9 +99,9 @@ public class MessageDtoTests extends TestBase {
         assertThat(message.getSource())
                 .isNotNull()
                 .extracting(
-                        Identity::getUniqueId,
-                        Identity::getName,
-                        Identity::getDisplayName
+                        net.silthus.chat.Identity::getUniqueId,
+                        net.silthus.chat.Identity::getName,
+                        net.silthus.chat.Identity::getDisplayName
                 ).contains(
                         player.getUniqueId(),
                         player.getName(),
