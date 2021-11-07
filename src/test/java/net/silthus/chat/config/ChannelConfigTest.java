@@ -21,6 +21,7 @@ package net.silthus.chat.config;
 
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.ChatSource;
+import net.silthus.chat.Format;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
@@ -41,13 +42,15 @@ class ChannelConfigTest extends TestBase {
         cfg.set("console", false);
         cfg.set("auto_join", false);
 
+        ChannelConfig expected = ChannelConfig.builder()
+                .name("Test")
+                .format(Format.format("<message>"))
+                .protect(true)
+                .sendToConsole(false)
+                .autoJoin(false)
+                .build();
         ChannelConfig config = ChannelConfig.of(cfg);
-
-        assertThat(config.name()).isEqualTo("Test");
-        assertThat(config.format()).isNotNull();
-        assertThat(config.protect()).isTrue();
-        assertThat(config.sendToConsole()).isFalse();
-        assertThat(config.autoJoin()).isFalse();
+        assertThat(config).isEqualTo(expected);
     }
 
     @Test
@@ -79,6 +82,6 @@ class ChannelConfigTest extends TestBase {
                 .formatted();
 
         assertThat(config.format()).isNotNull();
-        assertThat(toText(component)).isEqualTo("&6[&atest&6]&esource&7: &atest");
+        assertThat(toText(component)).isEqualTo("&6[&atest&6]&esource&7: test");
     }
 }

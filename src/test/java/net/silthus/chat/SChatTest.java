@@ -77,7 +77,7 @@ class SChatTest extends TestBase {
     void writes_defaultConfig() {
 
         File config = new File(plugin.getDataFolder(), "config.yml");
-        File defaultConfig = new File(plugin.getDataFolder(), "config.defaults.yml");
+        File defaultConfig = new File(plugin.getDataFolder(), "config.default.yml");
 
         assertThat(config).exists();
         assertThat(defaultConfig).exists();

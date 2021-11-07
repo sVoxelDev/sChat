@@ -20,42 +20,65 @@
 package net.silthus.chat.config;
 
 import lombok.Data;
+import lombok.NonNull;
 import lombok.experimental.Accessors;
+import lombok.extern.java.Log;
+import net.silthus.chat.Constants;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
+
+import static java.util.Objects.requireNonNullElseGet;
+import static java.util.stream.Collectors.toMap;
 
 @Data
 @Accessors(fluent = true)
+@Log(topic = Constants.PLUGIN_NAME)
 public class PluginConfig {
 
     public static PluginConfig fromConfig(ConfigurationSection config) {
         return new PluginConfig(config);
     }
 
-    private ConsoleConfig console;
-    private Map<String, ChannelConfig> channels = new HashMap<>();
+    private final Defaults defaults;
+    private final ConsoleConfig console;
+    private final Map<String, ChannelConfig> channels;
 
-    private PluginConfig(ConfigurationSection config) {
-        loadConsoleConfig(config);
-        loadChannels(config);
+    private PluginConfig(@NonNull ConfigurationSection config) {
+        this.defaults = loadDefaults(config.getConfigurationSection("defaults"));
+        this.console = loadConsoleConfig(config.getConfigurationSection("console"));
+        this.channels = loadChannels(config.getConfigurationSection("channels"));
     }
 
-    private void loadConsoleConfig(ConfigurationSection config) {
-        this.console = new ConsoleConfig(Objects.requireNonNullElseGet(
-                config.getConfigurationSection("console"),
-                () -> config.createSection("console")
-        ));
-    }
-
-    private void loadChannels(ConfigurationSection config) {
-        ConfigurationSection channels = config.getConfigurationSection("channels");
-        if (channels != null) {
-            for (String key : channels.getKeys(false)) {
-                this.channels.put(key, ChannelConfig.of(channels.getConfigurationSection(key)));
-            }
+    private Defaults loadDefaults(ConfigurationSection config) {
+        if (config == null) {
+            log.warning("No 'defaults' section found inside your config.yml! Make sure your config is up-to-date with the config.default.yml.");
+            return new Defaults(ChannelConfig.defaults());
         }
+        return new Defaults(ChannelConfig.of(requireNonNullElseGet(config.getConfigurationSection("channel"), () -> config.createSection("channel"))));
+    }
+
+    private ConsoleConfig loadConsoleConfig(ConfigurationSection config) {
+        if (config == null) {
+            log.warning("No 'console' section found inside your config.yml! Make sure your config is up-to-date with the config.default.yml.");
+            return new ConsoleConfig();
+        }
+        return new ConsoleConfig(config);
+    }
+
+    private Map<String, ChannelConfig> loadChannels(ConfigurationSection config) {
+        if (config == null) {
+            log.warning("No 'channels' section found inside your config.yml! Make sure your config is up-to-date with the config.default.yml.");
+            return new HashMap<>();
+        }
+        return config.getKeys(false).stream()
+                .collect(toMap(
+                        key -> key,
+                        key -> defaults.channel.withConfig(config.getConfigurationSection(key)).build()
+                ));
+    }
+
+    public record Defaults(ChannelConfig channel) {
     }
 }

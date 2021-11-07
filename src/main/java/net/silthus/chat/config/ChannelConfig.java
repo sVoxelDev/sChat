@@ -19,27 +19,27 @@
 
 package net.silthus.chat.config;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
 import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Constants;
 import net.silthus.chat.Format;
 import net.silthus.chat.conversations.Channel;
 import org.bukkit.configuration.ConfigurationSection;
 
 @Log
 @Data
-@Builder
+@Builder(toBuilder = true)
 @Accessors(fluent = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ChannelConfig {
 
-    public static ChannelConfig of(ConfigurationSection config) {
-        return new ChannelConfig(config);
+    public static ChannelConfig of(@NonNull ConfigurationSection config) {
+        return ChannelConfig.builder().build().withConfig(config).build();
+    }
+
+    public static ChannelConfig of(ConfigurationSection config, ChannelConfig defaults) {
+        return defaults.withConfig(config).build();
     }
 
     public static ChannelConfig defaults() {
@@ -56,12 +56,14 @@ public class ChannelConfig {
     @Builder.Default
     private Format format = Format.channelFormat();
 
-    private ChannelConfig(ConfigurationSection config) {
-        this.name = config.getString("name");
-        this.protect = config.getBoolean("protect", protect);
-        this.sendToConsole = config.getBoolean("console", sendToConsole);
-        this.autoJoin = config.getBoolean("auto_join", autoJoin);
-        this.format = Format.miniMessage(config.getString("format", Constants.Formatting.DEFAULT_CHANNEL_FORMAT));
+    ChannelConfig.ChannelConfigBuilder withConfig(ConfigurationSection config) {
+        if (config == null) return toBuilder();
+        return toBuilder()
+                .name(config.getString("name", name))
+                .protect(config.getBoolean("protect", protect))
+                .sendToConsole(config.getBoolean("console", sendToConsole))
+                .autoJoin(config.getBoolean("auto_join", autoJoin))
+                .format(config.isSet("format") ? Format.miniMessage(config.getString("format")) : format);
     }
 
     public Channel toChannel(String identifier) {

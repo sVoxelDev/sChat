@@ -132,7 +132,7 @@ public final class SChat extends JavaPlugin {
 
     private void setupAndLoadConfigs() {
         saveDefaultConfig();
-        saveResource("config.defaults.yml", true);
+        saveResource("config.default.yml", true);
         saveResource("lang_en.yaml", false);
         pluginConfig = PluginConfig.fromConfig(getConfig());
     }

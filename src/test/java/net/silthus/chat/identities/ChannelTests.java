@@ -216,7 +216,7 @@ public class ChannelTests extends TestBase {
                             this::toText,
                             m -> m.getSource().getDisplayName()
                     ).contains(
-                            "&6[&atest&6]&ePlayer1&7: &atest",
+                            "&6[&atest&6]&ePlayer1[!]&7: test",
                             Component.text("Player1")
                     );
         } catch (Exception e) {

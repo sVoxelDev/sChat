@@ -20,6 +20,7 @@
 package net.silthus.chat.config;
 
 import net.silthus.chat.TestBase;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.Test;
 
@@ -43,5 +44,13 @@ class PluginConfigTest extends TestBase {
                 .isNotNull()
                 .extracting(ConsoleConfig::defaultChannel)
                 .isEqualTo("global");
+    }
+
+    @Test
+        // adjust the 'config.yml' defaults... values or the default properties in the config object if this test fails
+    void defaultValues() {
+        PluginConfig config = plugin.getPluginConfig();
+        assertThat(config.defaults().channel())
+                .isEqualTo(ChannelConfig.of(new MemoryConfiguration()));
     }
 }

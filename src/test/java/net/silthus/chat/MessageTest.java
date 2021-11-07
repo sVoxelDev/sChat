@@ -113,7 +113,7 @@ class MessageTest extends TestBase {
                 .build();
         String text = toText(message);
 
-        assertThat(text).isEqualTo("&6[&achannel&6]&etest&7: &aHi");
+        assertThat(text).isEqualTo("&6[&achannel&6]&etest&7: Hi");
     }
 
     @Test

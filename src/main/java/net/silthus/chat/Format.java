@@ -40,5 +40,9 @@ public interface Format {
         return new MiniMessageFormat(format);
     }
 
+    static Format format(String format) {
+        return miniMessage(format);
+    }
+
     Component applyTo(Message message);
 }

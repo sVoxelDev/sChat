@@ -20,17 +20,19 @@
 package net.silthus.chat.config;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
 import org.bukkit.configuration.ConfigurationSection;
 
 @Data
+@NoArgsConstructor
 @Accessors(fluent = true)
 public class ConsoleConfig {
 
-    private String defaultChannel;
+    private String defaultChannel = "global";
 
     ConsoleConfig(@NonNull ConfigurationSection config) {
-        this.defaultChannel = config.getString("default_channel");
+        this.defaultChannel = config.getString("default_channel", defaultChannel);
     }
 }

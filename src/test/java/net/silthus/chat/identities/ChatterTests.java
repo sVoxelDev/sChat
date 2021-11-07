@@ -193,7 +193,7 @@ public class ChatterTests extends TestBase {
                         Message::getSource
                 ).contains(
                         message,
-                        "&6[&atest&6]&7: &atest",
+                        "&6[&atest&6]&7: test",
                         ChatSource.nil()
                 );
     }
@@ -317,7 +317,7 @@ public class ChatterTests extends TestBase {
             assertThat(channel.getLastReceivedMessage())
                     .isNotNull()
                     .extracting(ChatterTests.this::toText)
-                    .isEqualTo("&6[&atest&6]&ePlayer0&7: &aHi");
+                    .isEqualTo("&6[&atest&6]&ePlayer0[!]&7: Hi");
             assertThat(event.isCancelled()).isTrue();
         }
 

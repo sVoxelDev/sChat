@@ -80,7 +80,7 @@ class SChatCommandsTest extends TestBase {
 
             assertThat(player.performCommand("ch test Hey how are you?")).isTrue();
             assertThat(channel.getLastReceivedMessage()).isNotNull();
-            assertThat(toText(channel.getLastReceivedMessage())).contains("Player0&7: &aHey how are you?");
+            assertThat(toText(channel.getLastReceivedMessage())).contains("Player0[!]&7: Hey how are you?");
         }
 
         @Test
