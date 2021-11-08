@@ -90,6 +90,7 @@ public abstract class TestBase {
                 plugin.getBungeecord().onPluginMessageReceived(invocation.getArgument(1), messageChannelSender, out.toByteArray());
             } else if (messageType.equals("PlayerList")) {
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();
+                out.writeUTF("PlayerList");
                 out.writeUTF("ALL");
                 out.writeUTF("Player1,Player2,Player3");
                 plugin.getBungeecord().onPluginMessageReceived(invocation.getArgument(1), messageChannelSender, out.toByteArray());

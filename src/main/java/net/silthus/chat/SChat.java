@@ -201,7 +201,7 @@ public final class SChat extends JavaPlugin {
     private void registerChannelContext(PaperCommandManager commandManager) {
         commandManager.getCommandContexts().registerContext(Channel.class, context -> {
             String channelIdentifier = context.popFirstArg();
-            return getChannelRegistry().get(channelIdentifier)
+            return getChannelRegistry().find(channelIdentifier)
                     .orElseThrow(() -> new InvalidCommandArgument("The channel '" + channelIdentifier + "' does not exist."));
         });
     }

@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -195,13 +196,13 @@ public class ChannelRegistryTests extends TestBase {
 
     @Test
     void getChannel_returnsEmpty() {
-        assertThat(registry.get("foo")).isEmpty();
+        assertThat(registry.find("foo")).isEmpty();
     }
 
     @Test
     void getChannel_findsChannelByIdentifier() {
         addChannel("foo");
-        assertThat(registry.get("foo"))
+        assertThat(registry.find("foo"))
                 .isPresent().get()
                 .extracting(
                         Channel::getName,
@@ -216,20 +217,54 @@ public class ChannelRegistryTests extends TestBase {
     void getChannel_withUpperCase_findsChannel() {
 
         addChannel("foo");
-        assertThat(registry.get("FoO"))
+        assertThat(registry.find("FoO"))
                 .isPresent().get()
                 .extracting(Channel::getName)
                 .isEqualTo("foo");
     }
 
     @Test
+    void getChannel_withName_findsChannel() {
+        Channel channel = createChannel("test", config -> config.name("MyChannel"));
+        registry.add(channel);
+
+        assertThat(registry.find("MyChannel"))
+                .isPresent().get()
+                .isEqualTo(channel);
+    }
+
+    @Test
     void getChannel_withNullIdentifier_returnsEmpty() {
-        assertThat(registry.get(null))
+        assertThat(registry.find(null))
                 .isEmpty();
     }
 
-    private void addChannel(String identifier) {
-        registry.add(ChatTarget.channel(identifier));
+    @Test
+    void findChannel_withId_returnsChannel() {
+        Channel channel = addChannel("test123");
+        assertThat(registry.find(channel.getUniqueId().toString()))
+                .isPresent().get()
+                .isEqualTo(channel);
+    }
+
+    @Test
+    void getChannel_byId_returnsNull_ifNotFound() {
+        Channel channel = registry.get(UUID.randomUUID());
+        assertThat(channel).isNull();
+    }
+
+    @Test
+    void getChannel_byId_returnsChannel() {
+        Channel channel = addChannel("test");
+        assertThat(registry.get(channel.getUniqueId()))
+                .isNotNull()
+                .isEqualTo(channel);
+    }
+
+    private Channel addChannel(String identifier) {
+        Channel channel = ChatTarget.channel(identifier);
+        registry.add(channel);
+        return channel;
     }
 
     @Nested

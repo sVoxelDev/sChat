@@ -90,7 +90,7 @@ public class BungeecordIntegration implements PluginMessageListener {
 
     private void processGlobalPlayerListChannel(ByteArrayDataInput in) {
         String server = in.readUTF(); // The name of the server you got the player list of, as given in args.
-        String[] playerList = in.readUTF().split(", ");
+        String[] playerList = in.readUTF().split(",");
         playerListCallbacks.forEach(consumer -> consumer.accept(playerList));
         playerListCallbacks.clear();
     }

@@ -58,7 +58,6 @@ class SChatCommandsTest extends TestBase {
         @Test
         void join_JoinsPlayerToChannel() {
             Channel channel = ChatTarget.channel("test");
-            plugin.getChannelRegistry().add(channel);
 
             player.addAttachment(plugin, channel.getPermission(), true);
 
@@ -70,7 +69,6 @@ class SChatCommandsTest extends TestBase {
         @Test
         void join_withoutPermission_fails() {
             Channel channel = createChannel("test", cfg -> cfg.protect(true));
-            plugin.getChannelRegistry().add(channel);
 
             assertThat(player.performCommand("ch test")).isTrue();
             assertThat(channel.getTargets()).isEmpty();
@@ -80,7 +78,6 @@ class SChatCommandsTest extends TestBase {
         @Test
         void quickMessage_sendsMessageToChannel() {
             Channel channel = ChatTarget.channel("test");
-            plugin.getChannelRegistry().add(channel);
 
             assertThat(player.performCommand("ch test Hey how are you?")).isTrue();
             assertThat(channel.getLastReceivedMessage()).isNotNull();
@@ -90,11 +87,21 @@ class SChatCommandsTest extends TestBase {
         @Test
         void quickMessage_noPermission_fails() {
             Channel channel = createChannel("test", config -> config.protect(true));
-            plugin.getChannelRegistry().add(channel);
 
             assertThat(player.performCommand("ch test Hey how are you?")).isTrue();
             assertThat(channel.getLastReceivedMessage()).isNull();
             assertThat(player.nextMessage()).contains(ChatColor.RED + "You don't have permission to send messages to the 'test' channel.");
+        }
+
+        @Test
+        void clickOnChannel_joinsChannel() {
+            Channel channel = createChannel("test");
+            String command = Constants.Commands.JOIN_CONVERSATION.apply(channel).replaceFirst("/", "");
+            Chatter chatter = Chatter.of(player);
+            assertThat(chatter.getActiveConversation()).isNotEqualTo(channel);
+
+            assertThat(player.performCommand(command)).isTrue();
+            assertThat(chatter.getActiveConversation()).isEqualTo(channel);
         }
     }
 

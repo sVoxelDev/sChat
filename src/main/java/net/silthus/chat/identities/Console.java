@@ -54,7 +54,7 @@ public final class Console extends AbstractChatTarget implements ChatSource, Lis
     private Console(ConsoleConfig config) {
         super(Constants.Targets.CONSOLE);
         setDisplayName(Bukkit.getConsoleSender().name());
-        this.target = SChat.instance().getChannelRegistry().get(config.defaultChannel()).orElse(null);
+        this.target = SChat.instance().getChannelRegistry().find(config.defaultChannel()).orElse(null);
     }
 
     @Override

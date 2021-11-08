@@ -22,6 +22,7 @@ package net.silthus.chat.conversations;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.java.Log;
+import net.kyori.adventure.text.Component;
 import net.silthus.chat.Constants;
 import net.silthus.chat.SChat;
 import net.silthus.chat.config.ChannelConfig;
@@ -46,9 +47,26 @@ public final class ChannelRegistry implements Iterable<Channel> {
         return List.copyOf(channels.values());
     }
 
-    public Optional<Channel> get(String identifier) {
-        if (identifier == null) return Optional.empty();
-        return Optional.ofNullable(channels.get(identifier.toLowerCase()));
+    public Channel get(UUID id) {
+        return channels.values().stream()
+                .filter(channel -> channel.getUniqueId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Optional<Channel> find(String name) {
+        if (name == null) return Optional.empty();
+        return Optional.ofNullable(channels.get(name.toLowerCase()))
+                .or(() -> channels.values().stream()
+                        .filter(channel -> channel.getDisplayName().equals(Component.text(name)))
+                        .findFirst()
+                ).or(() -> {
+                    try {
+                        return Optional.ofNullable(get(UUID.fromString(name)));
+                    } catch (Exception ignored) {
+                        return Optional.empty();
+                    }
+                });
     }
 
     public Channel getOrCreate(@NonNull String identifier) {
