@@ -19,18 +19,60 @@
 
 package net.silthus.chat.integrations.bungeecord;
 
+import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Constants;
+import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
+import net.silthus.chat.identities.Chatter;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.function.Consumer;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 public class BungeecordIntegrationTests extends TestBase {
 
+    private BungeecordIntegration bungeecord;
+
+    @Override
+    @BeforeEach
+    public void setUp() {
+        super.setUp();
+
+        bungeecord = plugin.getBungeecord();
+    }
+
     @Test
-    void create() {
-        BungeecordIntegration bungee = new BungeecordIntegration(plugin);
-        assertThat(bungee)
-                .isInstanceOf(PluginMessageListener.class);
+    void sendGlobalChatMessage() {
+        assertThat(bungeecord).isInstanceOf(PluginMessageListener.class);
+        Chatter chatter = ChatTarget.player(server.addPlayer());
+
+        Message message = Message.message("test").to(chatter).build();
+        bungeecord.sendGlobalChatMessage(message);
+
+        verify(bungeecord).onPluginMessageReceived(eq(Constants.BUNGEECORD_CHANNEL), any(), any());
+        assertThat(chatter.getLastReceivedMessage()).isEqualTo(message);
+    }
+
+    @Test
+    void getGlobalPlayerList() {
+        Consumer<String[]> callback = spy(new Consumer<String[]>() {
+            @Override
+            public void accept(String[] strings) {
+                assertThat(strings).contains(
+                        "Player1",
+                        "Player2",
+                        "Player3"
+                );
+            }
+        });
+        bungeecord.getGlobalPlayerList(callback);
+        verify(callback).accept(any());
     }
 }

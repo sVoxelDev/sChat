@@ -384,7 +384,7 @@ public class ChannelTests extends TestBase {
         Channel channel = createChannel(config -> config.global(true));
 
         Message message = channel.sendMessage("test");
-        verify(plugin.getBungeecord()).sendServerMessage(message);
+        verify(plugin.getBungeecord()).sendGlobalChatMessage(message);
     }
 
     @Test
@@ -392,7 +392,7 @@ public class ChannelTests extends TestBase {
         Channel channel = createChannel(config -> config.global(false));
 
         channel.sendMessage("test");
-        verify(plugin.getBungeecord(), never()).sendServerMessage(any());
+        verify(plugin.getBungeecord(), never()).sendGlobalChatMessage(any());
     }
 
     @Test
@@ -401,7 +401,7 @@ public class ChannelTests extends TestBase {
         Message message = channel.sendMessage("test");
         channel.sendMessage(message);
 
-        verify(plugin.getBungeecord()).sendServerMessage(any());
+        verify(plugin.getBungeecord()).sendGlobalChatMessage(any());
     }
 
     @Nested

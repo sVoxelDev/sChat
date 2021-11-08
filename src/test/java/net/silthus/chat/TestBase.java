@@ -22,6 +22,9 @@ package net.silthus.chat;
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -49,9 +52,10 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
+@SuppressWarnings("UnstableApiUsage")
 public abstract class TestBase {
 
     protected ServerMock server;
@@ -66,7 +70,34 @@ public abstract class TestBase {
         when(chat.getPlayerPrefix(any())).thenReturn("&7[ADMIN]&a");
         when(chat.getPlayerSuffix(any())).thenReturn("[!]&a");
         plugin.setVaultProvider(new VaultProvider(chat));
-        plugin.setBungeecord(mock(BungeecordIntegration.class));
+        PlayerMock messageChannelSender = spy(new PlayerMock(server, "PluginMessageChannelSender"));
+        doAnswer(invocation -> {
+            byte[] message = invocation.getArgument(2);
+            ByteArrayDataInput in = ByteStreams.newDataInput(message);
+            String messageType = in.readUTF();
+            if (messageType.equals("Forward")) {
+                in.readUTF();
+                String channel = in.readUTF();
+                ByteArrayDataOutput out = ByteStreams.newDataOutput();
+                if (channel.equals(Constants.SCHAT_MESSAGES_CHANNEL)) {
+                    out.writeUTF(channel);
+                    short len = in.readShort();
+                    byte[] bytes = new byte[len];
+                    in.readFully(bytes);
+                    out.writeShort(len);
+                    out.write(bytes);
+                }
+                plugin.getBungeecord().onPluginMessageReceived(invocation.getArgument(1), messageChannelSender, out.toByteArray());
+            } else if (messageType.equals("PlayerList")) {
+                ByteArrayDataOutput out = ByteStreams.newDataOutput();
+                out.writeUTF("ALL");
+                out.writeUTF("Player1,Player2,Player3");
+                plugin.getBungeecord().onPluginMessageReceived(invocation.getArgument(1), messageChannelSender, out.toByteArray());
+            }
+            return invocation;
+        }).when(messageChannelSender).sendPluginMessage(eq(plugin), anyString(), any());
+        plugin.setBungeecord(spy(new BungeecordIntegration(plugin, () -> messageChannelSender)));
+
     }
 
     @AfterEach

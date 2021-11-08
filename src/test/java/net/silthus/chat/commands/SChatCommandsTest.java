@@ -49,6 +49,7 @@ class SChatCommandsTest extends TestBase {
         player.addAttachment(plugin, Constants.PERMISSION_PLAYER_CHANNEL_COMMANDS, true);
         player.addAttachment(plugin, Constants.PERMISSION_PLAYER_CHANNEL_JOIN, true);
         player.addAttachment(plugin, Constants.PERMISSION_PLAYER_CHANNEL_QUICKMESSAGE, true);
+        player.addAttachment(plugin, Constants.PERMISSION_PLAYER_DIRECT_MESSAGE, true);
     }
 
     @Nested
@@ -102,7 +103,7 @@ class SChatCommandsTest extends TestBase {
         @Test
         void directMessage_sendsMessageToBothPlayers() {
             PlayerMock player1 = server.addPlayer();
-            player.performCommand("dm Player1 Hey whats up?");
+            player.performCommand("tell Player1 Hey whats up?");
 
             assertLastMessage(player, "Hey whats up?");
             assertLastMessage(player1, "Hey whats up?");

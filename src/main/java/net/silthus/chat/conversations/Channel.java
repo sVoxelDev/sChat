@@ -90,13 +90,12 @@ public class Channel extends AbstractConversation implements ChatSource {
     @Override
     public void sendMessage(Message message) {
         if (getReceivedMessages().contains(message)) return;
+        addReceivedMessage(message);
 
         getTargets().forEach(target -> target.sendMessage(message));
         if (getConfig().sendToConsole())
             Console.console().sendMessage(message);
         if (getConfig().global())
-            SChat.instance().getBungeecord().sendServerMessage(message);
-
-        addReceivedMessage(message);
+            SChat.instance().getBungeecord().sendGlobalChatMessage(message);
     }
 }
