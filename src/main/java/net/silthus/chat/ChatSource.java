@@ -22,9 +22,11 @@ package net.silthus.chat;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.identities.*;
+import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.Console;
+import net.silthus.chat.identities.NamedChatSource;
+import net.silthus.chat.identities.NilChatSource;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
@@ -32,12 +34,8 @@ public interface ChatSource extends Identity {
 
     ChatSource NIL_SOURCE = new NilChatSource();
 
-    static Chatter player(Player player) {
+    static Chatter player(OfflinePlayer player) {
         return Chatter.of(player);
-    }
-
-    static ChatSource offlinePlayer(OfflinePlayer player) {
-        return new OfflineChatter(player.getUniqueId(), player.getName());
     }
 
     static ChatSource named(String name) {

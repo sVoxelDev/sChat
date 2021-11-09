@@ -38,16 +38,6 @@ class ChatSourceTest extends TestBase {
         assertIdAndName(source, "test", "Test Source");
     }
 
-    @Test
-    void isPlayer_returnsFalse() {
-        assertThat(ChatSource.named("test").isPlayer()).isFalse();
-    }
-
-    @Test
-    void isPlayer_ofPlayer_returnsTrue() {
-        assertThat(ChatSource.player(server.addPlayer()).isPlayer()).isTrue();
-    }
-
     private void assertIdAndName(ChatSource source, String id, String name) {
         assertThat(source)
                 .isNotNull()

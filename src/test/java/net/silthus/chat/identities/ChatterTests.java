@@ -24,6 +24,7 @@ import io.papermc.paper.event.player.AsyncChatEvent;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +32,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+
+import java.util.UUID;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.silthus.chat.Message.message;
@@ -259,6 +262,29 @@ public class ChatterTests extends TestBase {
     @Test
     void canJoin_isFalse_ifPlayerHasNoPermission() {
         assertThat(chatter.canJoin(createChannel("foobar", cfg -> cfg.protect(true)))).isFalse();
+    }
+
+    @Test
+    void sendMessage_doesNotSendDuplicateMessage() {
+        Message message = message("hi").format(Format.noFormat()).build();
+        chatter.sendMessage(message);
+        assertThat(player.nextMessage()).isEqualTo("hi");
+        chatter.sendMessage(message);
+        assertThat(player.nextMessage()).isNull();
+        verify(plugin.getChatPacketQueue()).queueMessage(message);
+    }
+
+    @Test
+    void sendGlobalMessage_ifChatterIsOffline() {
+        Message message = message("hi").format(Format.noFormat()).build();
+        OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.randomUUID());
+        Chatter chatter = Chatter.of(player);
+        chatter.sendMessage(message);
+
+        assertThat(chatter.getLastReceivedMessage())
+                .isNotNull().isEqualTo(message);
+        verify(plugin.getChatPacketQueue(), never()).queueMessage(any());
+        verify(plugin.getBungeecord()).sendGlobalChatMessage(message);
     }
 
     @Nested

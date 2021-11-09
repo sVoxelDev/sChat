@@ -28,9 +28,4 @@ public final class OfflineChatter extends AbstractIdentity implements ChatSource
     public OfflineChatter(UUID id, String name) {
         super(id, name);
     }
-
-    @Override
-    public boolean isPlayer() {
-        return true;
-    }
 }

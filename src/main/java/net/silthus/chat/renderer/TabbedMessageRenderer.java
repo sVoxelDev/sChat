@@ -45,7 +45,6 @@ public class TabbedMessageRenderer implements MessageRenderer {
 
     @Override
     public Component render(Chatter chatter, Message... messages) {
-
         return text().append(clearChat())
                 .append(renderMessages(List.of(messages)))
                 .append(newline())

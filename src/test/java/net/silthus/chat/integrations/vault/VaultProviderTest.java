@@ -37,6 +37,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("deprecation")
 class VaultProviderTest extends TestBase {
 
     private VaultProvider provider;
@@ -106,14 +107,14 @@ class VaultProviderTest extends TestBase {
     @Test
     void offline_usesOfflinePlayerToGetPrefix() {
         when(chat.getPlayerPrefix(anyString(), anyString())).thenReturn("[PLAYER]");
-        Component prefix = provider.getPrefix(ChatSource.offlinePlayer(Bukkit.getOfflinePlayer(UUID.randomUUID())));
+        Component prefix = provider.getPrefix(ChatSource.player(Bukkit.getOfflinePlayer(UUID.randomUUID())));
         assertThat(toText(prefix)).isEqualTo("[PLAYER]");
     }
 
     @Test
     void offline_usesOfflinePlayerToGetSuffix() {
         when(chat.getPlayerSuffix(anyString(), anyString())).thenReturn("[!]");
-        Component suffix = provider.getSuffix(ChatSource.offlinePlayer(Bukkit.getOfflinePlayer(UUID.randomUUID())));
+        Component suffix = provider.getSuffix(ChatSource.player(Bukkit.getOfflinePlayer(UUID.randomUUID())));
         assertThat(toText(suffix)).isEqualTo("[!]");
     }
 }

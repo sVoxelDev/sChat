@@ -21,10 +21,7 @@ package net.silthus.chat.integrations.bungeecord;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import com.google.gson.Gson;
-import net.silthus.chat.ChatSource;
-import net.silthus.chat.Format;
-import net.silthus.chat.Message;
-import net.silthus.chat.TestBase;
+import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.identities.Chatter;
 import org.junit.jupiter.api.Test;
@@ -67,13 +64,7 @@ public class MessageDtoTests extends TestBase {
         assertThat(toText(message)).isEqualTo("Player0: Hi");
         assertThat(message.getSource())
                 .isInstanceOf(Chatter.class)
-                .extracting(
-                        net.silthus.chat.Identity::isPlayer,
-                        net.silthus.chat.Identity::getPlayer
-                ).contains(
-                        true,
-                        player
-                );
+                .extracting(Identity::getUniqueId).isEqualTo(player.getUniqueId());
         assertThat(message.getTargets()).isEmpty();
         assertThat(message.getConversation()).isNull();
     }

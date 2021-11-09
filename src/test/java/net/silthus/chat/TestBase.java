@@ -65,11 +65,20 @@ public abstract class TestBase {
     public void setUp() {
         server = MockBukkit.mock();
         plugin = MockBukkit.load(SChat.class);
-        plugin.setChatPacketQueue(new ChatPacketQueue(plugin));
+        plugin.setChatPacketQueue(spy(new ChatPacketQueue(plugin)));
+        setupVaultMock();
+        setupBungeecordMock();
+
+    }
+
+    private void setupVaultMock() {
         Chat chat = mock(Chat.class);
         when(chat.getPlayerPrefix(any())).thenReturn("&7[ADMIN]&a");
         when(chat.getPlayerSuffix(any())).thenReturn("[!]&a");
         plugin.setVaultProvider(new VaultProvider(chat));
+    }
+
+    private void setupBungeecordMock() {
         PlayerMock messageChannelSender = spy(new PlayerMock(server, "PluginMessageChannelSender"));
         doAnswer(invocation -> {
             byte[] message = invocation.getArgument(2);
@@ -98,7 +107,6 @@ public abstract class TestBase {
             return invocation;
         }).when(messageChannelSender).sendPluginMessage(eq(plugin), anyString(), any());
         plugin.setBungeecord(spy(new BungeecordIntegration(plugin, () -> messageChannelSender)));
-
     }
 
     @AfterEach

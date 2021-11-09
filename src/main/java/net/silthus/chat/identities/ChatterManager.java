@@ -17,11 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat;
+package net.silthus.chat.identities;
 
 import lombok.NonNull;
 import lombok.extern.java.Log;
-import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.Constants;
+import net.silthus.chat.SChat;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -56,7 +58,7 @@ public final class ChatterManager {
                 .forEach(chatter::setActiveConversation);
     }
 
-    public Chatter getOrCreateChatter(@NonNull Player player) {
+    public Chatter getOrCreateChatter(@NonNull OfflinePlayer player) {
         if (chatters.containsKey(player.getUniqueId()))
             return chatters.get(player.getUniqueId());
         return registerChatter(new Chatter(player));
@@ -72,7 +74,7 @@ public final class ChatterManager {
                 .findFirst();
     }
 
-    public Chatter registerChatter(@NonNull Player player) {
+    public Chatter registerChatter(@NonNull OfflinePlayer player) {
         return getOrCreateChatter(player);
     }
 

@@ -29,6 +29,8 @@ import net.silthus.chat.SChat;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.Console;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 @Getter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
@@ -66,7 +68,8 @@ public class Channel extends AbstractConversation implements ChatSource {
 
     public boolean canJoin(Chatter chatter) {
         if (getConfig().protect()) {
-            return chatter.getPlayer().hasPermission(getPermission());
+            Player player = Bukkit.getPlayer(chatter.getUniqueId());
+            return player != null && player.hasPermission(getPermission());
         }
         return true;
     }
@@ -78,7 +81,8 @@ public class Channel extends AbstractConversation implements ChatSource {
     public boolean canAutoJoin(Chatter chatter) {
         if (!canJoin(chatter)) return false;
         if (canJoin(chatter) && getConfig().autoJoin()) return true;
-        return chatter.getPlayer().hasPermission(getAutoJoinPermission());
+        Player player = Bukkit.getPlayer(chatter.getUniqueId());
+        return player != null && player.hasPermission(getAutoJoinPermission());
     }
 
     @Override

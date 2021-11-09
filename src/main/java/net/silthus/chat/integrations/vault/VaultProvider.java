@@ -23,10 +23,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.milkbowl.vault.chat.Chat;
 import net.silthus.chat.Identity;
+import net.silthus.chat.identities.Chatter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation", "ConstantConditions"})
 public class VaultProvider {
 
     private final Chat chat;
@@ -40,10 +42,10 @@ public class VaultProvider {
     }
 
     public Component getPrefix(Identity identity) {
-        if (chat == null || !identity.isPlayer())
+        if (isInvalidIdentity(identity))
             return Component.empty();
 
-        Player player = identity.getPlayer();
+        Player player = Bukkit.getPlayer(identity.getUniqueId());
         if (player == null)
             return validateAndDeserialize(chat.getPlayerPrefix("world", identity.getName()));
 
@@ -52,10 +54,10 @@ public class VaultProvider {
     }
 
     public Component getSuffix(Identity identity) {
-        if (chat == null || !identity.isPlayer())
+        if (isInvalidIdentity(identity))
             return Component.empty();
 
-        Player player = identity.getPlayer();
+        Player player = Bukkit.getPlayer(identity.getUniqueId());
         if (player == null)
             return validateAndDeserialize(chat.getPlayerSuffix("world", identity.getName()));
 
@@ -69,5 +71,9 @@ public class VaultProvider {
             return Component.empty();
 
         return LegacyComponentSerializer.legacyAmpersand().deserialize(prefix);
+    }
+
+    private boolean isInvalidIdentity(Identity identity) {
+        return chat == null || !(identity instanceof Chatter);
     }
 }

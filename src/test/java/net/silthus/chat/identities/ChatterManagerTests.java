@@ -17,12 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat;
+package net.silthus.chat.identities;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
+import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Constants;
+import net.silthus.chat.Identity;
+import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.identities.Chatter;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -146,7 +149,7 @@ public class ChatterManagerTests extends TestBase {
 
         Chatter chatter = registerChatter();
 
-        manager.unregisterChatter(chatter.getPlayer());
+        manager.unregisterChatter(chatter);
         assertThat(manager.getChatters()).isEmpty();
     }
 
@@ -156,7 +159,7 @@ public class ChatterManagerTests extends TestBase {
         Chatter chatter = registerChatter();
         assertThat(getRegisteredListeners()).contains(chatter);
 
-        manager.unregisterChatter(chatter.getPlayer());
+        manager.unregisterChatter(chatter);
         assertThat(getRegisteredListeners()).doesNotContain(chatter);
     }
 
@@ -167,7 +170,7 @@ public class ChatterManagerTests extends TestBase {
         Channel channel = ChatTarget.channel("test");
         chatter.subscribe(channel);
 
-        manager.unregisterChatter(chatter.getPlayer());
+        manager.unregisterChatter(chatter);
         assertThat(channel.getTargets()).isEmpty();
         assertThat(chatter.getConversations()).isEmpty();
     }

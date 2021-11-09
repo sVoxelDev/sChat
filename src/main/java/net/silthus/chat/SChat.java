@@ -36,6 +36,7 @@ import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.ChannelRegistry;
 import net.silthus.chat.identities.AbstractIdentity;
 import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.ChatterManager;
 import net.silthus.chat.identities.Console;
 import net.silthus.chat.integrations.bungeecord.BungeecordIntegration;
 import net.silthus.chat.integrations.protocollib.ChatPacketQueue;

@@ -28,32 +28,34 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Getter
-@EqualsAndHashCode(of = "player", callSuper = false)
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class Chatter extends AbstractChatTarget implements Listener, ChatSource, ChatTarget {
 
-    private final Player player;
-
-    public Chatter(Player player) {
-        super(player.getUniqueId(), player.getName());
-        setDisplayName(player.displayName());
-        this.player = player;
-    }
-
-    public static Chatter of(Player player) {
+    public static Chatter of(OfflinePlayer player) {
         return SChat.instance().getChatterManager().registerChatter(player);
     }
 
-    @Override
-    public boolean isPlayer() {
-        return true;
+    Chatter(OfflinePlayer player) {
+        super(player.getUniqueId(), player.getName());
+        if (player.isOnline()) {
+            setDisplayName(Objects.requireNonNull(player.getPlayer()).displayName());
+        }
+    }
+
+    public Optional<Player> getPlayer() {
+        return Optional.ofNullable(Bukkit.getPlayer(getUniqueId()));
     }
 
     public boolean canJoin(Channel channel) {
@@ -68,9 +70,16 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
 
     @Override
     public void sendMessage(Message message) {
-        SChat.instance().getChatPacketQueue().queueMessage(message);
-        getPlayer().sendMessage(getIdentity(message), appendMessageId(message), MessageType.CHAT);
+        if (getReceivedMessages().contains(message)) return;
         addReceivedMessage(message);
+
+        getPlayer().ifPresentOrElse(
+                player -> {
+                    SChat.instance().getChatPacketQueue().queueMessage(message);
+                    player.sendMessage(getIdentity(message), appendMessageId(message), MessageType.CHAT);
+                },
+                () -> SChat.instance().getBungeecord().sendGlobalChatMessage(message)
+        );
     }
 
     private Identity getIdentity(Message message) {
@@ -107,7 +116,8 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     }
 
     private boolean isNotSamePlayer(AsyncChatEvent event) {
-        return !event.getPlayer().equals(getPlayer());
+        return getPlayer().map(player -> !event.getPlayer().equals(player))
+                .orElse(true);
     }
 
     private boolean noActiveConversation(AsyncChatEvent event) {

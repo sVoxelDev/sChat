@@ -25,13 +25,13 @@ import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.Console;
 import net.silthus.chat.identities.NilChatTarget;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 import java.util.Collection;
 
 public interface ChatTarget extends Identity {
 
-    static Chatter player(Player player) {
+    static Chatter player(OfflinePlayer player) {
         return Chatter.of(player);
     }
 
