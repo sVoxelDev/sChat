@@ -44,7 +44,7 @@ import java.util.UUID;
 public class Chatter extends AbstractChatTarget implements Listener, ChatSource, ChatTarget {
 
     public static Chatter of(OfflinePlayer player) {
-        return SChat.instance().getChatterManager().registerChatter(player);
+        return SChat.instance().getChatterManager().getOrCreateChatter(player);
     }
 
     Chatter(OfflinePlayer player) {

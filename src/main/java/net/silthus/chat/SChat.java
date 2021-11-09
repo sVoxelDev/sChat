@@ -125,7 +125,7 @@ public final class SChat extends JavaPlugin {
 
         Console.instance = null;
         if (commandManager != null) commandManager.unregisterCommands();
-        if (chatterManager != null) chatterManager.unregisterAllChatters();
+        if (chatterManager != null) chatterManager.removeAllChatters();
         if (bungeecord != null) tearDownBungeecord();
         if (channelRegistry != null) channelRegistry.clear();
 

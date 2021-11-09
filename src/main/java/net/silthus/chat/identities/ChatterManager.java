@@ -29,8 +29,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -58,6 +56,10 @@ public final class ChatterManager {
                 .forEach(chatter::setActiveConversation);
     }
 
+    public Chatter registerChatter(@NonNull OfflinePlayer player) {
+        return getOrCreateChatter(player);
+    }
+
     public Chatter getOrCreateChatter(@NonNull OfflinePlayer player) {
         if (chatters.containsKey(player.getUniqueId()))
             return chatters.get(player.getUniqueId());
@@ -74,55 +76,34 @@ public final class ChatterManager {
                 .findFirst();
     }
 
-    public Chatter registerChatter(@NonNull OfflinePlayer player) {
-        return getOrCreateChatter(player);
+    public void removeAllChatters() {
+        List.copyOf(chatters.values())
+                .forEach(this::removeChatter);
     }
 
-    public Chatter registerChatter(@NonNull Chatter chatter) {
-        addChatterToCache(chatter);
-        plugin.getServer().getPluginManager().registerEvents(chatter, plugin);
-        return chatter;
+    public void removeChatter(@NonNull Player player) {
+        removeChatter(chatters.remove(player.getUniqueId()));
     }
 
-    private void addChatterToCache(@NotNull Chatter chatter) {
-        unregisterListener(chatters.put(chatter.getUniqueId(), chatter));
-    }
-
-    public void unregisterAllChatters() {
-        getChatters().forEach(this::unregisterChatter);
-    }
-
-    public void unregisterChatter(Chatter chatter) {
+    public void removeChatter(Chatter chatter) {
         if (chatter == null) return;
         chatters.remove(chatter.getUniqueId());
-        unregisterListener(chatter);
-        unsubscribeAll(chatter);
-    }
-
-    public void unregisterChatter(@NonNull Player player) {
-        unregisterChatter(chatters.remove(player.getUniqueId()));
-    }
-
-    private void unregisterListener(Chatter chatter) {
-        if (chatter == null) return;
         HandlerList.unregisterAll(chatter);
+        chatter.getConversations().forEach(chatter::unsubscribe);
     }
 
-    private void unsubscribeAll(Chatter chatter) {
-        if (chatter == null) return;
-        chatter.getConversations().forEach(chatter::unsubscribe);
+    Chatter registerChatter(@NonNull Chatter chatter) {
+        if (chatters.containsKey(chatter.getUniqueId())) return getChatter(chatter.getUniqueId());
+        chatters.put(chatter.getUniqueId(), chatter);
+        plugin.getServer().getPluginManager().registerEvents(chatter, plugin);
+        return chatter;
     }
 
     class PlayerListener implements Listener {
 
         @EventHandler(ignoreCancelled = true)
         public void onJoin(PlayerJoinEvent event) {
-            autoJoinChannels(registerChatter(event.getPlayer()));
-        }
-
-        @EventHandler(ignoreCancelled = true)
-        public void onQuit(PlayerQuitEvent event) {
-            unregisterChatter(event.getPlayer());
+            autoJoinChannels(getOrCreateChatter(event.getPlayer()));
         }
     }
 }

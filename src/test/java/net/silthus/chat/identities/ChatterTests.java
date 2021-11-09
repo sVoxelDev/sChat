@@ -42,7 +42,6 @@ import static org.mockito.Mockito.*;
 
 public class ChatterTests extends TestBase {
     private PlayerMock player;
-
     private Chatter chatter;
 
     @Override
@@ -50,9 +49,10 @@ public class ChatterTests extends TestBase {
     public void setUp() {
         super.setUp();
 
-        player = server.addPlayer();
+        player = new PlayerMock(server, "Test");
         player.addAttachment(plugin, Constants.Permissions.getChannelPermission(ChatTarget.channel("test")), true);
-        chatter = plugin.getChatterManager().registerChatter(spy(Chatter.of(player)));
+        chatter = plugin.getChatterManager().registerChatter(spy(new Chatter(player)));
+        server.addPlayer(player);
     }
 
     private void sendMessage(Player source, String message) {
@@ -115,7 +115,7 @@ public class ChatterTests extends TestBase {
     void sendMessage_formatsTheMessageIfNotFormatted() {
         sendMessage(server.addPlayer(), "Hi");
 
-        assertReceivedMessage(player, "Player1: Hi");
+        assertReceivedMessage(player, "Player0: Hi");
     }
 
     @Test
@@ -126,7 +126,7 @@ public class ChatterTests extends TestBase {
         assertThat(chatter.getLastReceivedMessage())
                 .isNotNull()
                 .extracting(this::toText)
-                .isEqualTo("Player1: Hi there");
+                .isEqualTo("Player0: Hi there");
     }
 
     @Test
@@ -309,7 +309,7 @@ public class ChatterTests extends TestBase {
             Message message = sender.message("Hi player!").to(receiver).send();
 
             assertThat(receiver.getLastReceivedMessage()).isEqualTo(message);
-            assertThat(receivingPlayer.nextMessage()).isEqualTo("Player1: Hi player!");
+            assertThat(receivingPlayer.nextMessage()).isEqualTo("Player0: Hi player!");
         }
     }
 

@@ -292,13 +292,13 @@ public class ChannelTests extends TestBase {
     }
 
     @Test
-    void subscribedTarget_isRemoved_onUnregister() {
+    void subscribedTarget_isRemoved_onRemoveChatter() {
         PlayerMock player = server.addPlayer();
         Chatter chatter = Chatter.of(player);
         chatter.subscribe(channel);
 
         assertThat(channel.getTargets()).contains(chatter);
-        plugin.getChatterManager().unregisterChatter(player);
+        plugin.getChatterManager().removeChatter(player);
         assertThat(channel.getTargets()).isEmpty();
     }
 
