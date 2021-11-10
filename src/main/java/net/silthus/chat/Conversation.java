@@ -22,6 +22,7 @@ package net.silthus.chat;
 import lombok.NonNull;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.conversations.ConversationManager;
 import net.silthus.chat.conversations.DirectConversation;
 
 import java.util.Collection;
@@ -29,7 +30,9 @@ import java.util.Collection;
 public interface Conversation extends ChatTarget {
 
     static Conversation direct(ChatTarget target1, ChatTarget target2) {
-        return new DirectConversation(target1, target2);
+        ConversationManager conversationManager = SChat.instance().getConversationManager();
+        return conversationManager.getDirectConversation(target1, target2)
+                .orElseGet(() -> conversationManager.registerConversation(new DirectConversation(target1, target2)));
     }
 
     static Channel channel(String identifier) {

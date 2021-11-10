@@ -17,12 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat;
+package net.silthus.chat.conversations;
 
+import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Format;
+import net.silthus.chat.TestBase;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.config.PluginConfig;
-import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.conversations.ChannelRegistry;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

@@ -34,6 +34,7 @@ import net.silthus.chat.commands.SChatCommands;
 import net.silthus.chat.config.PluginConfig;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.ChannelRegistry;
+import net.silthus.chat.conversations.ConversationManager;
 import net.silthus.chat.identities.AbstractIdentity;
 import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.ChatterManager;
@@ -69,6 +70,7 @@ public final class SChat extends JavaPlugin {
 
     private ChannelRegistry channelRegistry;
     private ChatterManager chatterManager;
+    private ConversationManager conversationManager;
 
     private PaperCommandManager commandManager;
     private ProtocolManager protocolManager;
@@ -102,6 +104,7 @@ public final class SChat extends JavaPlugin {
 
         setupAndLoadChannels();
         setupChatterManager();
+        setupConversationManager();
         setupConsoleChatter();
 
         setupProtocolLib();
@@ -146,6 +149,10 @@ public final class SChat extends JavaPlugin {
 
     private void setupChatterManager() {
         chatterManager = new ChatterManager(this);
+    }
+
+    private void setupConversationManager() {
+        conversationManager = new ConversationManager(this);
     }
 
     private void setupConsoleChatter() {
