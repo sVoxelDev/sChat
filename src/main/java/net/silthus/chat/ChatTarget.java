@@ -24,19 +24,21 @@ import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.Console;
-import net.silthus.chat.identities.NilChatTarget;
+import net.silthus.chat.identities.NilChatIdentity;
 import org.bukkit.OfflinePlayer;
 
 import java.util.Collection;
 
 public interface ChatTarget extends Identity {
 
+    ChatTarget NIL = new NilChatIdentity();
+
     static Chatter player(OfflinePlayer player) {
         return Chatter.of(player);
     }
 
     static ChatTarget nil() {
-        return new NilChatTarget();
+        return NIL;
     }
 
     static Channel channel(String identifier) {

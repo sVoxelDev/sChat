@@ -17,15 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.identities;
+package net.silthus.chat.integrations.bungeecord;
 
-import lombok.EqualsAndHashCode;
-import net.silthus.chat.ChatSource;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public final class NilChatSource extends AbstractIdentity implements ChatSource {
+final class BungeeHelper {
 
-    public NilChatSource() {
-        super("");
+
+    public static String serialize(Component component) {
+        return GsonComponentSerializer.gson().serialize(component);
+    }
+
+    public static Component deserialize(String message) {
+        return GsonComponentSerializer.gson().deserialize(message);
     }
 }

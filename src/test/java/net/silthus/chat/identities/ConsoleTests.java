@@ -22,12 +22,14 @@ package net.silthus.chat.identities;
 import be.seeseemelk.mockbukkit.command.ConsoleCommandSenderMock;
 import net.silthus.chat.*;
 import net.silthus.chat.config.ConsoleConfig;
+import org.bukkit.ChatColor;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
@@ -107,11 +109,11 @@ public class ConsoleTests {
             console.onConsoleChat(new ServerCommandEvent(server.getConsoleSender(), "Hi there!"));
             assertThat(console.getTarget().getLastReceivedMessage())
                     .isNotNull()
-                    .extracting(this::toText)
-                    .isEqualTo("CONSOLE: Hi there!");
-            assertThat(((ConsoleCommandSenderMock) server.getConsoleSender()).nextMessage())
+                    .extracting(Message::getText)
+                    .isEqualTo(text("Hi there!"));
+            assertThat(ChatColor.stripColor(((ConsoleCommandSenderMock) server.getConsoleSender()).nextMessage()))
                     .isNotNull()
-                    .contains("Hi there!");
+                    .contains("[Global]CONSOLE: Hi there!");
         }
 
         @Test

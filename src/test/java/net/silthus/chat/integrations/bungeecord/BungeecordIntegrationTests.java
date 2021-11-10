@@ -28,12 +28,9 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.function.Consumer;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 public class BungeecordIntegrationTests extends TestBase {
@@ -58,21 +55,5 @@ public class BungeecordIntegrationTests extends TestBase {
 
         verify(bungeecord).onPluginMessageReceived(eq(Constants.BUNGEECORD_CHANNEL), any(), any());
         assertThat(chatter.getLastReceivedMessage()).isEqualTo(message);
-    }
-
-    @Test
-    void getGlobalPlayerList() {
-        Consumer<String[]> callback = spy(new Consumer<String[]>() {
-            @Override
-            public void accept(String[] strings) {
-                assertThat(strings).contains(
-                        "Player1",
-                        "Player2",
-                        "Player3"
-                );
-            }
-        });
-        bungeecord.getGlobalPlayerList(callback);
-        verify(callback).accept(any());
     }
 }

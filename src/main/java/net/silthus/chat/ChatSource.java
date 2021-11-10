@@ -25,14 +25,14 @@ import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.Console;
 import net.silthus.chat.identities.NamedChatSource;
-import net.silthus.chat.identities.NilChatSource;
+import net.silthus.chat.identities.NilChatIdentity;
 import org.bukkit.OfflinePlayer;
 
 import java.util.UUID;
 
 public interface ChatSource extends Identity {
 
-    ChatSource NIL_SOURCE = new NilChatSource();
+    ChatSource NIL = new NilChatIdentity();
 
     static Chatter player(OfflinePlayer player) {
         return Chatter.of(player);
@@ -59,7 +59,7 @@ public interface ChatSource extends Identity {
     }
 
     static ChatSource nil() {
-        return NIL_SOURCE;
+        return NIL;
     }
 
     static Console console() {

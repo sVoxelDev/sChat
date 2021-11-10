@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.verify;
 
 public class ChatterManagerTests extends TestBase {
 
@@ -266,6 +267,12 @@ public class ChatterManagerTests extends TestBase {
 
             Chatter chatter = Chatter.of(server.addPlayer());
             assertThat(channel.getTargets()).contains(chatter);
+        }
+
+        @Test
+        void onJoin_synchronizesChatter_withOtherServers() {
+            Chatter chatter = Chatter.of(server.addPlayer());
+            verify(plugin.getBungeecord()).synchronizeChatter(chatter);
         }
     }
 }

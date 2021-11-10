@@ -49,7 +49,7 @@ public class MessageDtoTests extends TestBase {
                         player.getUniqueId(),
                         "{\"text\":\"test\"}",
                         "{\"text\":\"Player0\"}",
-                        MessageDto.Identity.Type.PLAYER
+                        IdentityDto.Type.CHATTER
                 );
     }
 

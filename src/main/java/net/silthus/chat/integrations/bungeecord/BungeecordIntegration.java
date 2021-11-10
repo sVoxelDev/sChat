@@ -27,18 +27,16 @@ import lombok.extern.java.Log;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Message;
 import net.silthus.chat.SChat;
+import net.silthus.chat.identities.Chatter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static net.silthus.chat.Constants.*;
+import static net.silthus.chat.Constants.BUNGEECORD_CHANNEL;
+import static net.silthus.chat.Constants.SCHAT_MESSAGES_CHANNEL;
 
 @Log(topic = Constants.PLUGIN_NAME)
 @SuppressWarnings("UnstableApiUsage")
@@ -47,7 +45,6 @@ public class BungeecordIntegration implements PluginMessageListener {
 
     private final Supplier<Player> playerSupplier;
     private final Gson gson = new Gson();
-    private final List<Consumer<String[]>> playerListCallbacks = Collections.synchronizedList(new ArrayList<>());
 
     public BungeecordIntegration(SChat plugin, Supplier<Player> playerSupplier) {
         this.plugin = plugin;
@@ -63,9 +60,8 @@ public class BungeecordIntegration implements PluginMessageListener {
         sendPluginMessage(forwardToAllServers(SCHAT_MESSAGES_CHANNEL), json);
     }
 
-    public void getGlobalPlayerList(Consumer<String[]> callback) {
-        playerListCallbacks.add(callback);
-        sendPluginMessage(globalPlayerList());
+    public void synchronizeChatter(Chatter chatter) {
+
     }
 
     @Override
@@ -79,20 +75,12 @@ public class BungeecordIntegration implements PluginMessageListener {
 
         switch (subChannel) {
             case SCHAT_MESSAGES_CHANNEL -> processGlobalMessageChannel(in);
-            case GLOBAL_PLAYERLIST_CHANNEL -> processGlobalPlayerListChannel(in);
         }
     }
 
     private void processGlobalMessageChannel(ByteArrayDataInput in) {
         Message message = gson.fromJson(getJsonData(in), MessageDto.class).toMessage();
         message.getTargets().forEach(target -> target.sendMessage(message));
-    }
-
-    private void processGlobalPlayerListChannel(ByteArrayDataInput in) {
-        String server = in.readUTF(); // The name of the server you got the player list of, as given in args.
-        String[] playerList = in.readUTF().split(",");
-        playerListCallbacks.forEach(consumer -> consumer.accept(playerList));
-        playerListCallbacks.clear();
     }
 
     private void sendPluginMessage(ByteArrayDataOutput out) {
@@ -103,13 +91,6 @@ public class BungeecordIntegration implements PluginMessageListener {
 
     private void sendPluginMessage(ByteArrayDataOutput out, String json) {
         sendPluginMessage(writeJsonDataToStream(out, json));
-    }
-
-    private ByteArrayDataOutput globalPlayerList() {
-        ByteArrayDataOutput out = ByteStreams.newDataOutput();
-        out.writeUTF("PlayerList");
-        out.writeUTF("ALL");
-        return out;
     }
 
     private ByteArrayDataOutput forwardToAllServers(String channel) {

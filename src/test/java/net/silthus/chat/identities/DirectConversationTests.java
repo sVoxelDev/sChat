@@ -106,6 +106,18 @@ public class DirectConversationTests extends TestBase {
     }
 
     @Test
+    void send_reuses_existingDirectConversation() {
+        sendMessage();
+
+        Message message = chatter2.message("hi").to(chatter1).send();
+
+        assertThat(message.getConversation())
+                .isNotNull()
+                .isEqualTo(conversation);
+        assertThat(conversation.getLastReceivedMessage()).isEqualTo(message);
+    }
+
+    @Test
     void getName_formatsToOtherPlayer() {
         Message message = sendMessage();
 
@@ -113,6 +125,12 @@ public class DirectConversationTests extends TestBase {
 
         assertThat(toText(view.render(chatter1, message))).contains("Player1&8");
         assertThat(toText(view.render(chatter2, message))).contains("Player0&8");
+    }
+
+    @Test
+    void equalsBasedOnTargetAndSource() {
+        Conversation secondConversation = Conversation.direct(chatter2, chatter1);
+        assertThat(conversation).isEqualTo(secondConversation);
     }
 
     private Message sendMessage() {

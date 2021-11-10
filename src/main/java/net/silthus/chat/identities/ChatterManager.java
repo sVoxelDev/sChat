@@ -96,6 +96,7 @@ public final class ChatterManager {
         if (chatters.containsKey(chatter.getUniqueId())) return getChatter(chatter.getUniqueId());
         chatters.put(chatter.getUniqueId(), chatter);
         plugin.getServer().getPluginManager().registerEvents(chatter, plugin);
+        plugin.getBungeecord().synchronizeChatter(chatter);
         return chatter;
     }
 
@@ -103,7 +104,7 @@ public final class ChatterManager {
 
         @EventHandler(ignoreCancelled = true)
         public void onJoin(PlayerJoinEvent event) {
-            autoJoinChannels(getOrCreateChatter(event.getPlayer()));
+            autoJoinChannels(registerChatter(event.getPlayer()));
         }
     }
 }

@@ -20,14 +20,15 @@
 package net.silthus.chat.identities;
 
 import lombok.EqualsAndHashCode;
+import net.silthus.chat.ChatSource;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Message;
 
 @EqualsAndHashCode(callSuper = true)
-public final class NilChatTarget extends AbstractChatTarget implements ChatTarget {
+public final class NilChatIdentity extends AbstractChatTarget implements ChatTarget, ChatSource {
 
-    public NilChatTarget() {
+    public NilChatIdentity() {
         super(Constants.Targets.EMPTY);
     }
 

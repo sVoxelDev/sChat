@@ -67,6 +67,8 @@ public final class Console extends AbstractChatTarget implements ChatSource, Lis
     public void onConsoleChat(ServerCommandEvent event) {
         if (event.getCommand().startsWith("/")) return;
 
-        sendMessage(message(event.getCommand()).to(getTarget()).send());
+        message(event.getCommand())
+                .to(getTarget(), this)
+                .send();
     }
 }

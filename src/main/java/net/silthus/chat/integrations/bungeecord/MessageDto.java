@@ -21,18 +21,10 @@ package net.silthus.chat.integrations.bungeecord;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.silthus.chat.ChatSource;
 import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
-import net.silthus.chat.identities.Chatter;
-import net.silthus.chat.identities.Console;
-import net.silthus.chat.identities.NamedChatSource;
-import net.silthus.chat.integrations.bungeecord.MessageDto.Identity.Type;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import net.silthus.chat.integrations.bungeecord.IdentityDto.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,90 +37,34 @@ public class MessageDto {
 
     private UUID id;
     private String message;
-    private Identity sender;
-    private Identity conversation;
-    private List<Identity> targets = new ArrayList<>();
+    private IdentityDto sender;
+    private IdentityDto conversation;
+    private List<IdentityDto> targets = new ArrayList<>();
 
     public MessageDto(Message message) {
         this.id = message.getId();
-        this.message = serialize(message.getText());
+        this.message = BungeeHelper.serialize(message.getText());
         sender(toIdentityDto(message.getSource()));
         conversation(toIdentityDto(message.getConversation()));
         targets(message.getTargets().stream().map(this::toIdentityDto).collect(Collectors.toList()));
     }
 
-    private Identity toIdentityDto(net.silthus.chat.Identity identity) {
+    private IdentityDto toIdentityDto(net.silthus.chat.Identity identity) {
         if (identity == null) return null;
-        return new Identity()
+        return new IdentityDto()
                 .uniqueId(identity.getUniqueId())
                 .name(identity.getName())
-                .displayName(serialize(identity.getDisplayName()))
+                .displayName(BungeeHelper.serialize(identity.getDisplayName()))
                 .type(Type.fromChatIdentity(identity));
     }
 
     public Message toMessage() {
         return Message.message()
                 .id(id)
-                .text(deserialize(message()))
+                .text(BungeeHelper.deserialize(message()))
                 .from(sender != null ? sender.asChatIdentity() : ChatSource.nil())
                 .conversation(conversation != null ? conversation.asChatIdentity() : null)
                 .to(targets.stream().map(identity -> (ChatTarget) identity.asChatIdentity()).collect(Collectors.toList()))
                 .build();
-    }
-
-    @Data
-    @Accessors(fluent = true)
-    static class Identity {
-
-        private UUID uniqueId = UUID.randomUUID();
-        private String name = "";
-        private String displayName = "";
-        private Type type = Type.NIL;
-
-        @SuppressWarnings("unchecked")
-        <T extends net.silthus.chat.Identity> T asChatIdentity() {
-            return (T) switch (type) {
-                case PLAYER -> {
-                    Player player = Bukkit.getPlayer(uniqueId);
-                    if (player == null)
-                        yield ChatSource.named(uniqueId, name, deserialize(name));
-                    yield ChatSource.player(player);
-                }
-                case CONVERSATION -> ChatSource.channel(name);
-                case CONSOLE -> ChatSource.console();
-                case NAMED -> ChatSource.named(uniqueId, name, deserialize(name));
-                default -> ChatSource.nil();
-            };
-        }
-
-        enum Type {
-            PLAYER,
-            CONVERSATION,
-            CONSOLE,
-            NAMED,
-            NIL;
-
-            static Type fromChatIdentity(net.silthus.chat.Identity identity) {
-                if (identity instanceof Chatter) {
-                    return Type.PLAYER;
-                } else if (identity instanceof Conversation) {
-                    return Type.CONVERSATION;
-                } else if (identity instanceof Console) {
-                    return Type.CONSOLE;
-                } else if (identity instanceof NamedChatSource) {
-                    return Type.NAMED;
-                }
-                return Type.NIL;
-            }
-
-        }
-    }
-
-    private static String serialize(Component component) {
-        return GsonComponentSerializer.gson().serialize(component);
-    }
-
-    private static Component deserialize(String message) {
-        return GsonComponentSerializer.gson().deserialize(message);
     }
 }

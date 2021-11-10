@@ -23,10 +23,12 @@ import net.kyori.adventure.text.Component;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Message;
 
+import java.util.Objects;
+
 public class DirectConversation extends AbstractConversation {
 
     public DirectConversation(ChatTarget target1, ChatTarget target2) {
-        super(target1.getName() + "#" + target2.getName());
+        super(target1.getName() + "<->" + target2.getName());
         setDisplayName(Component.text("<partner_name>"));
         addTarget(target1);
         addTarget(target2);
@@ -39,5 +41,17 @@ public class DirectConversation extends AbstractConversation {
                 .filter(target -> !target.getConversations().contains(this))
                 .forEach(target -> target.setActiveConversation(this));
         getTargets().forEach(target -> target.sendMessage(message));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DirectConversation that)) return false;
+        return getTargets().equals(that.getTargets());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getTargets());
     }
 }

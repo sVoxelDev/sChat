@@ -24,12 +24,12 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
 import net.kyori.adventure.text.Component;
+import net.silthus.chat.identities.Chatter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Value
 @EqualsAndHashCode(of = "id")
@@ -108,12 +108,21 @@ public class Message implements Comparable<Message> {
             return source(source);
         }
 
-        public MessageBuilder to(@NonNull Conversation conversation) {
+        public MessageBuilder to(Conversation conversation) {
+            if (conversation == null) return this;
             return conversation(conversation).to((ChatTarget) conversation);
         }
 
         public MessageBuilder to(@NonNull ChatTarget... targets) {
-            return targets(Stream.concat(targets$set ? targets$value.stream() : Stream.empty(), Arrays.stream(targets)).collect(Collectors.toSet()));
+            ArrayList<ChatTarget> targetList = new ArrayList<>();
+            if (targets$set) targetList.addAll(targets$value);
+            for (ChatTarget target : targets) {
+                if (target instanceof Conversation)
+                    conversation((Conversation) target);
+                targetList.add(target);
+
+            }
+            return targets(targetList);
         }
 
         public MessageBuilder to(@NonNull Collection<ChatTarget> targets) {
@@ -160,14 +169,37 @@ public class Message implements Comparable<Message> {
         }
 
         public Message send() {
-            if (conversation == null && source$value instanceof ChatTarget && (targets$set && targets$value.size() > 0)) {
-                to(Conversation.direct((ChatTarget) source$value, targets$value.stream().findFirst().get()));
+            if (sourceIsChatTarget() && chatterTargeted()) {
+                to(createDirectConversation((ChatTarget) source$value, firstTargetOrNull()));
             }
             Message message = build();
             message.getTargets().forEach(target -> target.sendMessage(message));
             return message;
         }
 
+        @Nullable
+        private ChatTarget firstTargetOrNull() {
+            return targets$value.stream().findFirst().orElse(null);
+        }
+
+        @Nullable
+        private Conversation createDirectConversation(ChatTarget source, ChatTarget target) {
+            if (source == null) return null;
+            if (target == null) return null;
+            return Conversation.direct(source, target);
+        }
+
+        private boolean sourceIsChatTarget() {
+            return source$value instanceof ChatTarget;
+        }
+
+        private boolean chatterTargeted() {
+            return conversation == null && targetsNotEmpty() && targets$value.stream().allMatch(target -> target instanceof Chatter);
+        }
+
+        private boolean targetsNotEmpty() {
+            return targets$set && targets$value.size() > 0;
+        }
     }
 
     public enum Type {

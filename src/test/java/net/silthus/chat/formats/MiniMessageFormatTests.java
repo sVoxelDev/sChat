@@ -47,7 +47,7 @@ public class MiniMessageFormatTests extends TestBase {
     @Test
     void withNullSource() {
         assertThat(toText("<sender_name>: <message>", Message.message("test").build()))
-                .isEqualTo(": test");
+                .isEqualTo("N/A: test");
     }
 
     @Test

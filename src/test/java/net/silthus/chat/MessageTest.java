@@ -191,4 +191,13 @@ class MessageTest extends TestBase {
         assertThat(source.getActiveConversation()).isNotNull().isInstanceOf(DirectConversation.class);
         assertThat(target.getActiveConversation()).isNotNull().isInstanceOf(DirectConversation.class);
     }
+
+    @Test
+    void send_toChannelTarget_doesNotCreateDirectConversation() {
+        ChatTarget channel = createChannel("test");
+        Message message = Message.message("test").from(Chatter.of(server.addPlayer())).to(channel).send();
+        assertThat(message.getConversation())
+                .isNotInstanceOf(DirectConversation.class)
+                .isEqualTo(channel);
+    }
 }

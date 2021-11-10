@@ -46,7 +46,7 @@ public final class Constants {
 
     public static class Targets {
 
-        public static final String EMPTY = "none";
+        public static final String EMPTY = "N/A";
         public static final String SYSTEM = "system";
         public static final String CONSOLE = "console";
     }
