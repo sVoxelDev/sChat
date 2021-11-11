@@ -39,7 +39,6 @@ import net.silthus.chat.identities.AbstractIdentity;
 import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.ChatterManager;
 import net.silthus.chat.identities.Console;
-import net.silthus.chat.integrations.bungeecord.BungeecordIntegration;
 import net.silthus.chat.integrations.protocollib.ChatPacketQueue;
 import net.silthus.chat.integrations.vault.VaultProvider;
 import org.bstats.bukkit.Metrics;
@@ -82,7 +81,7 @@ public final class SChat extends JavaPlugin {
     @Setter(AccessLevel.PACKAGE)
     private ChatPacketQueue chatPacketQueue;
     @Setter(AccessLevel.PACKAGE)
-    private BungeecordIntegration bungeecord;
+    private net.silthus.chat.integrations.bungeecord.BungeeCord bungeecord;
 
     public SChat() {
         instance = this;
@@ -186,17 +185,17 @@ public final class SChat extends JavaPlugin {
     }
 
     private void setupBungeecordIntegration() {
-        this.bungeecord = new BungeecordIntegration(this);
+        this.bungeecord = new net.silthus.chat.integrations.bungeecord.BungeeCord(this);
         if (!isTesting()) {
-            this.getServer().getMessenger().registerOutgoingPluginChannel(this, Constants.Bungeecord.BUNGEECORD_CHANNEL);
-            this.getServer().getMessenger().registerIncomingPluginChannel(this, Constants.Bungeecord.BUNGEECORD_CHANNEL, bungeecord);
+            this.getServer().getMessenger().registerOutgoingPluginChannel(this, Constants.BungeeCord.BUNGEECORD_CHANNEL);
+            this.getServer().getMessenger().registerIncomingPluginChannel(this, Constants.BungeeCord.BUNGEECORD_CHANNEL, bungeecord);
         }
     }
 
     private void tearDownBungeecord() {
         if (!isTesting()) {
-            this.getServer().getMessenger().unregisterOutgoingPluginChannel(this, Constants.Bungeecord.BUNGEECORD_CHANNEL);
-            this.getServer().getMessenger().unregisterIncomingPluginChannel(this, Constants.Bungeecord.BUNGEECORD_CHANNEL, bungeecord);
+            this.getServer().getMessenger().unregisterOutgoingPluginChannel(this, Constants.BungeeCord.BUNGEECORD_CHANNEL);
+            this.getServer().getMessenger().unregisterIncomingPluginChannel(this, Constants.BungeeCord.BUNGEECORD_CHANNEL, bungeecord);
         }
         this.bungeecord = null;
     }

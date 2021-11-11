@@ -22,15 +22,14 @@ package net.silthus.chat.conversations;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.ChatSource;
-import net.silthus.chat.Constants;
-import net.silthus.chat.Message;
-import net.silthus.chat.SChat;
+import net.silthus.chat.*;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.Console;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.Collection;
 
 @Getter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
@@ -87,7 +86,6 @@ public class Channel extends AbstractConversation implements ChatSource {
 
     @Override
     public Message sendMessage(String message) {
-
         return Message.message(message).to(this).send();
     }
 
@@ -96,10 +94,13 @@ public class Channel extends AbstractConversation implements ChatSource {
         if (getReceivedMessages().contains(message)) return;
         addReceivedMessage(message);
 
-        getTargets().forEach(target -> target.sendMessage(message));
         if (getConfig().sendToConsole())
-            Console.console().sendMessage(message);
-        if (getConfig().global())
-            SChat.instance().getBungeecord().sendGlobalChatMessage(message);
+            addTarget(Console.console());
+        getScopedTargets().forEach(target -> target.sendMessage(message));
+    }
+
+    private Collection<ChatTarget> getScopedTargets() {
+        if (getConfig().scope() == null) return getTargets();
+        return getConfig().scope().apply(this);
     }
 }

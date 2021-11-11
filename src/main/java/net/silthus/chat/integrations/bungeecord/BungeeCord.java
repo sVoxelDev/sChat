@@ -27,6 +27,7 @@ import lombok.extern.java.Log;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Message;
 import net.silthus.chat.SChat;
+import net.silthus.chat.identities.AbstractChatTarget;
 import net.silthus.chat.identities.Chatter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -35,26 +36,29 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-import static net.silthus.chat.Constants.Bungeecord.*;
+import static net.silthus.chat.Constants.BungeeCord.*;
 
 @Log(topic = Constants.PLUGIN_NAME)
 @SuppressWarnings("UnstableApiUsage")
-public class BungeecordIntegration implements PluginMessageListener {
+public class BungeeCord extends AbstractChatTarget implements PluginMessageListener {
+
     private final SChat plugin;
 
     private final Supplier<Player> playerSupplier;
     private final Gson gson = new Gson();
 
-    public BungeecordIntegration(SChat plugin, Supplier<Player> playerSupplier) {
+    public BungeeCord(SChat plugin, Supplier<Player> playerSupplier) {
+        super(BUNGEECORD_CHANNEL);
         this.plugin = plugin;
         this.playerSupplier = playerSupplier;
     }
 
-    public BungeecordIntegration(SChat plugin) {
+    public BungeeCord(SChat plugin) {
         this(plugin, () -> Bukkit.getOnlinePlayers().stream().findFirst().orElse(null));
     }
 
-    public void sendGlobalChatMessage(Message message) {
+    @Override
+    public void sendMessage(Message message) {
         String json = gson.toJson(new MessageDto(message));
         sendPluginMessage(forwardToAllServers(MESSAGES_CHANNEL), json);
     }

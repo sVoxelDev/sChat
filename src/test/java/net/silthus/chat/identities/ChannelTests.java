@@ -24,6 +24,7 @@ import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.scopes.GlobalScope;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -160,7 +161,7 @@ public class ChannelTests extends TestBase {
     void sendMessage_sendsMessageToNobody() {
 
         PlayerMock player = server.addPlayer();
-        ChatSource.player(player).message("test").to(channel).send();
+        ChatSource.player(player).message("test").to(createChannel("nousers", config -> config.sendToConsole(false))).send();
 
         assertThat(channel.getTargets()).isEmpty();
         assertThat(player.nextMessage()).isNull();
@@ -381,27 +382,27 @@ public class ChannelTests extends TestBase {
 
     @Test
     void message_sendGlobal_if_configured() {
-        Channel channel = createChannel(config -> config.global(true));
+        Channel channel = createChannel(config -> config.scope(new GlobalScope()));
 
         Message message = channel.sendMessage("test");
-        verify(plugin.getBungeecord()).sendGlobalChatMessage(message);
+        verify(plugin.getBungeecord()).sendMessage(message);
     }
 
     @Test
     void message_notGlobal_isNotSent_toPluginChannel() {
-        Channel channel = createChannel(config -> config.global(false));
+        Channel channel = createChannel("test");
 
         channel.sendMessage("test");
-        verify(plugin.getBungeecord(), never()).sendGlobalChatMessage(any());
+        verify(plugin.getBungeecord(), never()).sendMessage(any(Message.class));
     }
 
     @Test
     void sendMessage_doesNotProcessSameMessageTwice() {
-        Channel channel = createChannel(config -> config.global(true));
+        Channel channel = createChannel(config -> config.scope(new GlobalScope()));
         Message message = channel.sendMessage("test");
         channel.sendMessage(message);
 
-        verify(plugin.getBungeecord()).sendGlobalChatMessage(any());
+        verify(plugin.getBungeecord()).sendMessage(any(Message.class));
     }
 
     @Nested

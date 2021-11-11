@@ -25,6 +25,7 @@ import net.silthus.chat.Format;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.scopes.GlobalScope;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +42,7 @@ class ChannelConfigTest extends TestBase {
         cfg.set("protect", true);
         cfg.set("console", false);
         cfg.set("auto_join", false);
-        cfg.set("global", false);
+        cfg.set("scope", "global");
 
         ChannelConfig expected = ChannelConfig.builder()
                 .name("Test")
@@ -49,7 +50,7 @@ class ChannelConfigTest extends TestBase {
                 .protect(true)
                 .sendToConsole(false)
                 .autoJoin(false)
-                .global(false)
+                .scope(new GlobalScope())
                 .build();
         ChannelConfig config = ChannelConfig.of(cfg);
         assertThat(config).isEqualTo(expected);

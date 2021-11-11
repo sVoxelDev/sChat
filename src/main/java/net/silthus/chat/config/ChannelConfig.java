@@ -24,8 +24,12 @@ import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Format;
+import net.silthus.chat.Scope;
+import net.silthus.chat.Scopes;
 import net.silthus.chat.conversations.Channel;
 import org.bukkit.configuration.ConfigurationSection;
+
+import static net.silthus.chat.Constants.Scopes.SERVER;
 
 @Log
 @Data
@@ -54,7 +58,7 @@ public class ChannelConfig {
     @Builder.Default
     private boolean autoJoin = false;
     @Builder.Default
-    private boolean global = true;
+    private Scope scope = Scopes.server();
     @Builder.Default
     private Format format = Format.channelFormat();
 
@@ -65,7 +69,7 @@ public class ChannelConfig {
                 .protect(config.getBoolean("protect", protect))
                 .sendToConsole(config.getBoolean("console", sendToConsole))
                 .autoJoin(config.getBoolean("auto_join", autoJoin))
-                .global(config.getBoolean("global", global))
+                .scope(Scopes.scope(config.getString("scope", SERVER)))
                 .format(config.isSet("format") ? Format.miniMessage(config.getString("format")) : format);
     }
 

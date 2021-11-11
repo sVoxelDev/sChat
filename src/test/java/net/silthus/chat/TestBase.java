@@ -32,7 +32,7 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.milkbowl.vault.chat.Chat;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.integrations.bungeecord.BungeecordIntegration;
+import net.silthus.chat.integrations.bungeecord.BungeeCord;
 import net.silthus.chat.integrations.protocollib.ChatPacketQueue;
 import net.silthus.chat.integrations.vault.VaultProvider;
 import org.apache.commons.lang.RandomStringUtils;
@@ -101,7 +101,7 @@ public abstract class TestBase {
             }
             return invocation;
         }).when(messageChannelSender).sendPluginMessage(eq(plugin), anyString(), any());
-        plugin.setBungeecord(spy(new BungeecordIntegration(plugin, () -> messageChannelSender)));
+        plugin.setBungeecord(spy(new BungeeCord(plugin, () -> messageChannelSender)));
     }
 
     @AfterEach

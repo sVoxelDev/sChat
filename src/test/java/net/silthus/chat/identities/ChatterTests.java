@@ -350,7 +350,7 @@ public class ChatterTests extends TestBase {
 
         assertThat(chatter.getLastReceivedMessage())
                 .isNotNull().isEqualTo(message);
-        verify(plugin.getBungeecord()).sendGlobalChatMessage(message);
+        verify(plugin.getBungeecord()).sendMessage(message);
     }
 
     @Nested

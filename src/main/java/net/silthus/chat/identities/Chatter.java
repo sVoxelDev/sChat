@@ -77,7 +77,7 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
 
         getPlayer().ifPresentOrElse(
                 player -> player.sendMessage(getIdentity(message), renderMessage(message), MessageType.CHAT),
-                () -> SChat.instance().getBungeecord().sendGlobalChatMessage(message)
+                () -> SChat.instance().getBungeecord().sendMessage(message)
         );
     }
 

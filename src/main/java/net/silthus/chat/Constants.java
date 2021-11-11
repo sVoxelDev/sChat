@@ -100,10 +100,16 @@ public final class Constants {
         public static final Function<Conversation, String> JOIN_CONVERSATION = conversation -> "/schat channel join " + conversation.getUniqueId();
     }
 
-    public static class Bungeecord {
+    public static class BungeeCord {
 
         public static final String BUNGEECORD_CHANNEL = "BungeeCord";
         public static final String MESSAGES_CHANNEL = "schat:messages";
         public static final String CHATTER_CHANNEL = "schat:chatter";
+    }
+
+    public static class Scopes {
+
+        public static final String SERVER = "server";
+        public static final String GLOBAL = "global";
     }
 }

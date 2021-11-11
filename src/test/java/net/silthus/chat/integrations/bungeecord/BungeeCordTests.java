@@ -28,16 +28,16 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.chat.Constants.Bungeecord.BUNGEECORD_CHANNEL;
+import static net.silthus.chat.Constants.BungeeCord.BUNGEECORD_CHANNEL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
-public class BungeecordIntegrationTests extends TestBase {
+public class BungeeCordTests extends TestBase {
 
-    private BungeecordIntegration bungeecord;
+    private BungeeCord bungeecord;
 
     @Override
     @BeforeEach
@@ -53,7 +53,7 @@ public class BungeecordIntegrationTests extends TestBase {
         Chatter chatter = ChatTarget.player(server.addPlayer());
 
         Message message = Message.message("test").to(chatter).build();
-        bungeecord.sendGlobalChatMessage(message);
+        bungeecord.sendMessage(message);
 
         verify(bungeecord, atLeastOnce()).onPluginMessageReceived(eq(BUNGEECORD_CHANNEL), any(), any());
         assertThat(chatter.getLastReceivedMessage()).isEqualTo(message);
