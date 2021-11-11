@@ -20,17 +20,19 @@
 package net.silthus.chat.integrations.bungeecord;
 
 import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Constants;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.ChatterManager;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static net.silthus.chat.Constants.Bungeecord.BUNGEECORD_CHANNEL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
 public class BungeecordIntegrationTests extends TestBase {
@@ -53,7 +55,22 @@ public class BungeecordIntegrationTests extends TestBase {
         Message message = Message.message("test").to(chatter).build();
         bungeecord.sendGlobalChatMessage(message);
 
-        verify(bungeecord).onPluginMessageReceived(eq(Constants.BUNGEECORD_CHANNEL), any(), any());
+        verify(bungeecord, atLeastOnce()).onPluginMessageReceived(eq(BUNGEECORD_CHANNEL), any(), any());
         assertThat(chatter.getLastReceivedMessage()).isEqualTo(message);
+    }
+
+    @Test
+    void synchronizeChatter() {
+        ChatterManager chatterManager = plugin.getChatterManager();
+
+        Chatter chatter = Chatter.of(server.addPlayer());
+        chatterManager.removeChatter(chatter);
+        assertThat(chatterManager.getChatter(chatter.getUniqueId())).isNull();
+
+        bungeecord.synchronizeChatter(chatter);
+
+        verify(bungeecord, atLeastOnce()).onPluginMessageReceived(eq(BUNGEECORD_CHANNEL), any(), any());
+        assertThat(chatterManager.getChatter(chatter.getUniqueId()))
+                .isNotNull().isEqualTo(chatter);
     }
 }

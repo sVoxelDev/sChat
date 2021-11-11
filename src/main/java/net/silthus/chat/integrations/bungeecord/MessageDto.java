@@ -23,8 +23,8 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import net.silthus.chat.ChatSource;
 import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Identity;
 import net.silthus.chat.Message;
-import net.silthus.chat.integrations.bungeecord.IdentityDto.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,13 +49,9 @@ public class MessageDto {
         targets(message.getTargets().stream().map(this::toIdentityDto).collect(Collectors.toList()));
     }
 
-    private IdentityDto toIdentityDto(net.silthus.chat.Identity identity) {
+    private IdentityDto toIdentityDto(Identity identity) {
         if (identity == null) return null;
-        return new IdentityDto()
-                .uniqueId(identity.getUniqueId())
-                .name(identity.getName())
-                .displayName(BungeeHelper.serialize(identity.getDisplayName()))
-                .type(Type.fromChatIdentity(identity));
+        return new IdentityDto(identity);
     }
 
     public Message toMessage() {

@@ -114,6 +114,7 @@ public class DirectConversationTests extends TestBase {
         assertThat(message.getConversation())
                 .isNotNull()
                 .isEqualTo(conversation);
+        assertThat(conversation.getReceivedMessages()).hasSize(2);
         assertThat(conversation.getLastReceivedMessage()).isEqualTo(message);
     }
 

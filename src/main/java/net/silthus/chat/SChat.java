@@ -179,15 +179,15 @@ public final class SChat extends JavaPlugin {
     private void setupBungeecordIntegration() {
         this.bungeecord = new BungeecordIntegration(this);
         if (!isTesting()) {
-            this.getServer().getMessenger().registerOutgoingPluginChannel(this, Constants.BUNGEECORD_CHANNEL);
-            this.getServer().getMessenger().registerIncomingPluginChannel(this, Constants.BUNGEECORD_CHANNEL, bungeecord);
+            this.getServer().getMessenger().registerOutgoingPluginChannel(this, Constants.Bungeecord.BUNGEECORD_CHANNEL);
+            this.getServer().getMessenger().registerIncomingPluginChannel(this, Constants.Bungeecord.BUNGEECORD_CHANNEL, bungeecord);
         }
     }
 
     private void tearDownBungeecord() {
         if (!isTesting()) {
-            this.getServer().getMessenger().unregisterOutgoingPluginChannel(this, Constants.BUNGEECORD_CHANNEL);
-            this.getServer().getMessenger().unregisterIncomingPluginChannel(this, Constants.BUNGEECORD_CHANNEL, bungeecord);
+            this.getServer().getMessenger().unregisterOutgoingPluginChannel(this, Constants.Bungeecord.BUNGEECORD_CHANNEL);
+            this.getServer().getMessenger().unregisterIncomingPluginChannel(this, Constants.Bungeecord.BUNGEECORD_CHANNEL, bungeecord);
         }
         this.bungeecord = null;
     }

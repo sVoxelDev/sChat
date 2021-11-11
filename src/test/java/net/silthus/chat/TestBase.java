@@ -88,14 +88,12 @@ public abstract class TestBase {
                 in.readUTF();
                 String channel = in.readUTF();
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();
-                if (channel.equals(Constants.SCHAT_MESSAGES_CHANNEL)) {
-                    out.writeUTF(channel);
-                    short len = in.readShort();
-                    byte[] bytes = new byte[len];
-                    in.readFully(bytes);
-                    out.writeShort(len);
-                    out.write(bytes);
-                }
+                out.writeUTF(channel);
+                short len = in.readShort();
+                byte[] bytes = new byte[len];
+                in.readFully(bytes);
+                out.writeShort(len);
+                out.write(bytes);
                 plugin.getBungeecord().onPluginMessageReceived(invocation.getArgument(1), messageChannelSender, out.toByteArray());
             }
             return invocation;

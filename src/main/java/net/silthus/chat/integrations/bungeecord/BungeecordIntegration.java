@@ -35,8 +35,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
-import static net.silthus.chat.Constants.BUNGEECORD_CHANNEL;
-import static net.silthus.chat.Constants.SCHAT_MESSAGES_CHANNEL;
+import static net.silthus.chat.Constants.Bungeecord.*;
 
 @Log(topic = Constants.PLUGIN_NAME)
 @SuppressWarnings("UnstableApiUsage")
@@ -57,11 +56,12 @@ public class BungeecordIntegration implements PluginMessageListener {
 
     public void sendGlobalChatMessage(Message message) {
         String json = gson.toJson(new MessageDto(message));
-        sendPluginMessage(forwardToAllServers(SCHAT_MESSAGES_CHANNEL), json);
+        sendPluginMessage(forwardToAllServers(MESSAGES_CHANNEL), json);
     }
 
     public void synchronizeChatter(Chatter chatter) {
-
+        String json = gson.toJson(new IdentityDto(chatter));
+        sendPluginMessage(forwardToAllServers(CHATTER_CHANNEL), json);
     }
 
     @Override
@@ -74,13 +74,18 @@ public class BungeecordIntegration implements PluginMessageListener {
         String subChannel = in.readUTF();
 
         switch (subChannel) {
-            case SCHAT_MESSAGES_CHANNEL -> processGlobalMessageChannel(in);
+            case MESSAGES_CHANNEL -> processGlobalMessageChannel(in);
+            case CHATTER_CHANNEL -> processChatterSynchronization(in);
         }
     }
 
     private void processGlobalMessageChannel(ByteArrayDataInput in) {
         Message message = gson.fromJson(getJsonData(in), MessageDto.class).toMessage();
         message.getTargets().forEach(target -> target.sendMessage(message));
+    }
+
+    private void processChatterSynchronization(ByteArrayDataInput in) {
+        gson.fromJson(getJsonData(in), IdentityDto.class).asChatIdentity();
     }
 
     private void sendPluginMessage(ByteArrayDataOutput out) {

@@ -33,10 +33,6 @@ public final class Constants {
 
     public static final String PLUGIN_NAME = "sChat";
     public static final Key NBT_MESSAGE_ID = Key.key("schat:messageid");
-    public static final String BUNGEECORD_CHANNEL = "BungeeCord";
-    public static final String GLOBAL_PLAYERLIST_CHANNEL = "PlayerList";
-    public static final String SCHAT_MESSAGES_CHANNEL = "schat:messages";
-    public static final String SCHAT_PLAYERLIST_CHANNEL = "schat:playerlist";
 
     public static final String PERMISSION_PLAYER_COMMANDS = "schat.player";
     public static final String PERMISSION_PLAYER_CHANNEL_COMMANDS = "schat.player.channel";
@@ -98,6 +94,14 @@ public final class Constants {
     }
 
     public static class Commands {
+
         public static final Function<Conversation, String> JOIN_CONVERSATION = conversation -> "/schat channel join " + conversation.getUniqueId();
+    }
+
+    public static class Bungeecord {
+
+        public static final String BUNGEECORD_CHANNEL = "BungeeCord";
+        public static final String MESSAGES_CHANNEL = "schat:messages";
+        public static final String CHATTER_CHANNEL = "schat:chatter";
     }
 }

@@ -55,8 +55,8 @@ public class ChatterTests extends TestBase {
         server.addPlayer(player);
     }
 
-    private void sendMessage(Player source, String message) {
-        ChatSource.player(source).message(message).to(chatter).send();
+    private Message sendMessage(Player source, String message) {
+        return ChatSource.player(source).message(message).to(chatter).send();
     }
 
     @Test
@@ -127,6 +127,17 @@ public class ChatterTests extends TestBase {
                 .isNotNull()
                 .extracting(this::toText)
                 .isEqualTo("Player0: Hi there");
+    }
+
+    @Test
+    void getLastReceivedMessage_returnsTheLatestMessage() {
+
+        PlayerMock sender = server.addPlayer();
+        sendMessage(sender, "Hey 1");
+        sendMessage(sender, "Hey 2");
+        Message message = sendMessage(sender, "Hey 3");
+
+        assertThat(chatter.getLastReceivedMessage()).isEqualTo(message);
     }
 
     @Test

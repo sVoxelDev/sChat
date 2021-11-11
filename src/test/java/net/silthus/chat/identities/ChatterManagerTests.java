@@ -43,7 +43,7 @@ public class ChatterManagerTests extends TestBase {
     public void setUp() {
         super.setUp();
 
-        manager = new ChatterManager(plugin);
+        manager = plugin.getChatterManager();
     }
 
     @Test

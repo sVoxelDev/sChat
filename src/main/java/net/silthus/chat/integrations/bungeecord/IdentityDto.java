@@ -38,10 +38,17 @@ import java.util.UUID;
 @Accessors(fluent = true)
 class IdentityDto {
 
-    private UUID uniqueId = UUID.randomUUID();
-    private String name = "";
-    private String displayName = "";
-    private Type type = Type.NIL;
+    private final UUID uniqueId;
+    private final String name;
+    private final String displayName;
+    private final Type type;
+
+    IdentityDto(Identity identity) {
+        this.uniqueId = identity.getUniqueId();
+        this.name = identity.getName();
+        this.displayName = BungeeHelper.serialize(identity.getDisplayName());
+        this.type = Type.fromChatIdentity(identity);
+    }
 
     @SuppressWarnings("unchecked")
     <T extends Identity> T asChatIdentity() {

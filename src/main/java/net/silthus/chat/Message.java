@@ -110,7 +110,7 @@ public class Message implements Comparable<Message> {
 
         public MessageBuilder to(Conversation conversation) {
             if (conversation == null) return this;
-            return conversation(conversation).to((ChatTarget) conversation);
+            return conversation(conversation).targets(conversation);
         }
 
         public MessageBuilder to(@NonNull ChatTarget... targets) {

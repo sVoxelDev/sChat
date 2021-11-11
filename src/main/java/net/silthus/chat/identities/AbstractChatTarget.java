@@ -27,12 +27,11 @@ import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
 
 import java.util.*;
-import java.util.concurrent.LinkedTransferQueue;
 
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public abstract class AbstractChatTarget extends AbstractIdentity implements ChatTarget {
 
-    private final Queue<Message> receivedMessages = new LinkedTransferQueue<>();
+    private final Stack<Message> receivedMessages = new Stack<>();
     private final Set<Conversation> conversations = new HashSet<>();
     @Getter
     private Conversation activeConversation;
@@ -47,6 +46,7 @@ public abstract class AbstractChatTarget extends AbstractIdentity implements Cha
 
     @Override
     public Message getLastReceivedMessage() {
+        if (receivedMessages.isEmpty()) return null;
         return receivedMessages.peek();
     }
 
@@ -56,7 +56,7 @@ public abstract class AbstractChatTarget extends AbstractIdentity implements Cha
     }
 
     protected void addReceivedMessage(Message lastMessage) {
-        this.receivedMessages.add(lastMessage);
+        this.receivedMessages.push(lastMessage);
     }
 
     public void setActiveConversation(Conversation conversation) {
