@@ -130,8 +130,67 @@ public class ChatterTests extends TestBase {
     }
 
     @Test
-    void getLastReceivedMessage_returnsTheLatestMessage() {
+    void sendMessage_appendsActiveChannelFooter() {
+        chatter.setActiveConversation(ChatTarget.channel("test"));
+        chatter.sendMessage(Message.message("test").build());
 
+        assertThat(cleaned(player.nextMessage())).contains("| test |");
+    }
+
+    @Test
+    void sendMessage_sendsAllPreviousChannelMessages() {
+        Channel channel = createChannel("test");
+        chatter.setActiveConversation(channel);
+        for (int i = 1; i < 5; i++) {
+            message(i + "").to(channel).send();
+        }
+
+        assertLastReceivedMessage(player, """
+                [test]N/A: 1
+                [test]N/A: 2
+                [test]N/A: 3
+                [test]N/A: 4
+                """);
+    }
+
+    @Test
+    void sendMessage_printsAllLastSystemMessages() throws InterruptedException {
+        Channel channel = createChannel("msgtest");
+        chatter.setActiveConversation(channel);
+        Message.message("system 1").to(chatter).send();
+        Thread.sleep(1L);
+        channel.sendMessage("channel 2");
+        Thread.sleep(1L);
+        Message.message("system 3").to(chatter).send();
+        Thread.sleep(1L);
+        Message.message("test").from(Chatter.of(server.addPlayer())).to(chatter).send();
+        Thread.sleep(1L);
+        chatter.setActiveConversation(channel);
+        Message.message("channel 4").from(Chatter.of(server.addPlayer())).to(channel).send();
+
+        assertLastReceivedMessage(player, """
+                system 1
+                [msgtest]N/A: channel 2
+                system 3
+                [msgtest][ADMIN]Player1[!]: channel 4
+                """);
+    }
+
+    @Test
+    void sendMessage_systemMessages_doNotRender_inPrivateMessages() {
+        PlayerMock sourcePlayer = server.addPlayer();
+        Chatter source = Chatter.of(sourcePlayer);
+        PlayerMock targetPlayer = server.addPlayer();
+        Chatter target = Chatter.of(targetPlayer);
+        source.sendMessage("system");
+        source.message("hi").to(target).send();
+
+        assertLastReceivedMessage(sourcePlayer, "Player0: hi");
+        assertLastReceivedMessage(targetPlayer, "Player0: hi");
+    }
+
+    @Test
+    void getLastReceivedMessage_returnsTheLatestMessage() {
         PlayerMock sender = server.addPlayer();
         sendMessage(sender, "Hey 1");
         sendMessage(sender, "Hey 2");
@@ -222,14 +281,12 @@ public class ChatterTests extends TestBase {
 
     @Test
     void unsubscribe_doesNothingIfNotSubscribed() {
-
         assertThatCode(() -> chatter.unsubscribe(ChatTarget.channel("test")))
                 .doesNotThrowAnyException();
     }
 
     @Test
     void unsubscribe_removesSubscription() {
-
         Channel channel = ChatTarget.channel("test");
         chatter.subscribe(channel);
         assertThat(chatter.getConversations()).contains(channel);
@@ -250,7 +307,6 @@ public class ChatterTests extends TestBase {
 
     @Test
     void join_subscribesAndSetsActiveChannel() throws AccessDeniedException {
-
         Channel channel = ChatTarget.channel("test");
         chatter.join(channel);
         assertThat(chatter.getConversations()).contains(channel);
@@ -260,7 +316,6 @@ public class ChatterTests extends TestBase {
 
     @Test
     void join_throwsIfPlayerCannotJoinChannel() {
-
         assertThatExceptionOfType(AccessDeniedException.class)
                 .isThrownBy(() -> chatter.join(createChannel("foo", cfg -> cfg.protect(true))));
     }
@@ -278,11 +333,12 @@ public class ChatterTests extends TestBase {
     @Test
     void sendMessage_doesNotSendDuplicateMessage() {
         Message message = message("hi").format(Format.noFormat()).build();
+
         chatter.sendMessage(message);
-        assertThat(player.nextMessage()).isEqualTo("hi");
+        assertReceivedMessage(player, "hi");
+
         chatter.sendMessage(message);
         assertThat(player.nextMessage()).isNull();
-        verify(plugin.getChatPacketQueue()).queueMessage(message);
     }
 
     @Test
@@ -294,7 +350,6 @@ public class ChatterTests extends TestBase {
 
         assertThat(chatter.getLastReceivedMessage())
                 .isNotNull().isEqualTo(message);
-        verify(plugin.getChatPacketQueue(), never()).queueMessage(any());
         verify(plugin.getBungeecord()).sendGlobalChatMessage(message);
     }
 
@@ -320,7 +375,7 @@ public class ChatterTests extends TestBase {
             Message message = sender.message("Hi player!").to(receiver).send();
 
             assertThat(receiver.getLastReceivedMessage()).isEqualTo(message);
-            assertThat(receivingPlayer.nextMessage()).isEqualTo("Player0: Hi player!");
+            assertReceivedMessage(receivingPlayer, "Player0: Hi player!");
         }
     }
 
@@ -338,7 +393,6 @@ public class ChatterTests extends TestBase {
 
         @Test
         void onChat_catchesChatEvent() {
-
             AsyncChatEvent event = chat("Hello!");
 
             assertThat(event.message()).isEqualTo(text("Hello!"));
@@ -346,7 +400,6 @@ public class ChatterTests extends TestBase {
 
         @Test
         void onChat_forwardsMessageToActiveChannel() {
-
             Channel channel = ChatTarget.channel("test");
             chatter.setActiveConversation(channel);
             AsyncChatEvent event = chat("Hi");
@@ -360,7 +413,6 @@ public class ChatterTests extends TestBase {
 
         @Test
         void onChat_withNoActiveChannel_sendsPlayerAnErrorMessage() {
-
             chatter.setActiveConversation(null);
             AsyncChatEvent event = chat("Hi");
 
@@ -372,7 +424,6 @@ public class ChatterTests extends TestBase {
 
         @Test
         void onChat_onlyReactsToChatter() {
-
             Channel channel = ChatTarget.channel("test");
             chatter.setActiveConversation(channel);
 

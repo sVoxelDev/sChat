@@ -25,23 +25,25 @@ import lombok.Getter;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.conversations.DirectConversation;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class Chatter extends AbstractChatTarget implements Listener, ChatSource, ChatTarget {
+
+    private static final MessageRenderer RENDERER = MessageRenderer.TABBED;
 
     public static Chatter of(OfflinePlayer player) {
         return SChat.instance().getChatterManager().getOrCreateChatter(player);
@@ -74,12 +76,45 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         addReceivedMessage(message);
 
         getPlayer().ifPresentOrElse(
-                player -> {
-                    SChat.instance().getChatPacketQueue().queueMessage(message);
-                    player.sendMessage(getIdentity(message), appendMessageId(message), MessageType.CHAT);
-                },
+                player -> player.sendMessage(getIdentity(message), renderMessage(message), MessageType.CHAT),
                 () -> SChat.instance().getBungeecord().sendGlobalChatMessage(message)
         );
+    }
+
+    @NotNull
+    private Component renderMessage(Message message) {
+        return appendMessageId(RENDERER.render(this, getMessagesToRender(message)));
+    }
+
+    @NotNull
+    private List<Message> getMessagesToRender(Message message) {
+        List<Message> messages = getConversationMessages();
+        messages.addAll(getSystemMessages());
+        messages.add(message);
+        return distinctAndSorted(messages);
+    }
+
+    private Collection<Message> getSystemMessages() {
+        if (getActiveConversation() instanceof DirectConversation) return new ArrayList<>();
+        return getReceivedMessages().stream()
+                .filter(msg -> msg.getType() == Message.Type.SYSTEM)
+                .collect(Collectors.toList());
+    }
+
+    @NotNull
+    private List<Message> getConversationMessages() {
+        List<Message> messages = new ArrayList<>();
+        if (getActiveConversation() != null) {
+            messages.addAll(getActiveConversation().getReceivedMessages());
+        }
+        return messages;
+    }
+
+    @NotNull
+    private List<Message> distinctAndSorted(List<Message> messages) {
+        return messages.stream()
+                .distinct()
+                .sorted().collect(Collectors.toList());
     }
 
     private Identity getIdentity(Message message) {
@@ -90,13 +125,10 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         }
     }
 
-    private TextComponent appendMessageId(Message message) {
-        return Component.text()
-                .append(message.formatted())
-                .append(Component.storageNBT()
-                        .nbtPath(message.getId().toString())
-                        .storage(Constants.NBT_MESSAGE_ID))
-                .build();
+    private Component appendMessageId(Component message) {
+        return message.append(Component.storageNBT()
+                .nbtPath(Constants.NBT_IS_SCHAT_MESSAGE.asString())
+                .storage(Constants.NBT_IS_SCHAT_MESSAGE));
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)

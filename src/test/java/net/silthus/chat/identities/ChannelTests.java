@@ -197,7 +197,7 @@ public class ChannelTests extends TestBase {
                 .format(Format.defaultFormat())
                 .send();
 
-        assertThat(player.nextMessage()).isEqualTo("Player1: test");
+        assertReceivedMessage(player, "Player1: test");
     }
 
     @Test

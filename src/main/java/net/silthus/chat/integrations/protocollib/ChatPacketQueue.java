@@ -25,53 +25,21 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import lombok.extern.java.Log;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.NBTComponent;
 import net.kyori.adventure.text.StorageNBTComponent;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Message;
 import net.silthus.chat.SChat;
 import net.silthus.chat.identities.Chatter;
-import net.silthus.chat.renderer.TabbedMessageRenderer;
 
 import java.lang.reflect.Field;
-import java.util.*;
 
 @Log(topic = Constants.PLUGIN_NAME)
 public class ChatPacketQueue extends PacketAdapter {
 
-    private final Map<UUID, Message> queuedMessages = Collections.synchronizedMap(new HashMap<>());
-
     public ChatPacketQueue(SChat plugin) {
         super(plugin, PacketType.Play.Server.CHAT);
         this.plugin = plugin;
-    }
-
-    public Collection<Message> getQueuedMessages() {
-        return List.copyOf(queuedMessages.values());
-    }
-
-    public UUID queueMessage(Message message) {
-        this.queuedMessages.put(message.getId(), message);
-        return message.getId();
-    }
-
-    public Message getQueuedMessage(UUID id) {
-        return queuedMessages.get(id);
-    }
-
-    public boolean hasMessage(String id) {
-        if (id == null) return false;
-        try {
-            return queuedMessages.containsKey(UUID.fromString(id));
-        } catch (IllegalArgumentException ignored) {
-            return false;
-        }
-    }
-
-    public Message removeMessage(String id) {
-        if (!hasMessage(id)) return null;
-        return queuedMessages.remove(UUID.fromString(id));
     }
 
     @Override
@@ -82,47 +50,18 @@ public class ChatPacketQueue extends PacketAdapter {
         WrappedChatComponent chat = packet.getMessage();
         Component messageText = getPacketMessageText(event, chat);
 
-        if (messageText == null) return;
-
-        Message message = getQueuedMessage(messageText)
-                .orElse(Message.message(messageText).build());
+        if (isIgnoredMessage(messageText)) return;
 
         Chatter chatter = Chatter.of(event.getPlayer());
-        Component render = renderMessage(chatter, message);
-        if (chat == null) {
-            setPaperMessage(event, render);
-        } else {
-            setLegacyMessage(event, packet, render);
-        }
+        Message.message(messageText).to(chatter).send();
     }
 
-    private Optional<Message> getQueuedMessage(Component messageText) {
+    private boolean isIgnoredMessage(Component messageText) {
+        if (messageText == null) return true;
         return messageText.children().stream()
                 .filter(component -> component instanceof StorageNBTComponent)
                 .map(component -> (StorageNBTComponent) component)
-                .filter(component -> component.storage().equals(Constants.NBT_MESSAGE_ID))
-                .map(NBTComponent::nbtPath)
-                .map(this::removeMessage)
-                .filter(Objects::nonNull)
-                .findFirst();
-    }
-
-    private Component renderMessage(Chatter chatter, Message message) {
-        if (chatter.getActiveConversation() == null)
-            return renderSingleMessage(chatter, message);
-        return renderChannelMessages(chatter, message);
-    }
-
-    private Component renderSingleMessage(Chatter chatter, Message message) {
-        return TabbedMessageRenderer.TABBED.render(chatter, message);
-    }
-
-    private Component renderChannelMessages(Chatter chatter, Message message) {
-        Component render;
-        ArrayList<Message> messages = new ArrayList<>(chatter.getActiveConversation().getReceivedMessages());
-        messages.add(message);
-        render = TabbedMessageRenderer.TABBED.render(chatter, messages);
-        return render;
+                .anyMatch(component -> component.storage().equals(Constants.NBT_IS_SCHAT_MESSAGE));
     }
 
     private Component getPacketMessageText(PacketEvent event, WrappedChatComponent chat) {
@@ -133,24 +72,6 @@ public class ChatPacketQueue extends PacketAdapter {
             messageText = getLegacyMessage(chat);
         }
         return messageText;
-    }
-
-    private void setLegacyMessage(PacketEvent event, WrapperPlayServerChat packet, Component render) {
-        String json = GsonComponentSerializer.gson().serialize(render);
-        packet.setMessage(WrappedChatComponent.fromJson(json));
-        event.setPacket(packet.getHandle());
-    }
-
-    private void setPaperMessage(PacketEvent event, Component render) {
-        try {
-            Object handle = event.getPacket().getHandle();
-            Class<?> packetClass = handle.getClass();
-            Field field = packetClass.getDeclaredField("adventure$message");
-            field.setAccessible(true);
-            field.set(handle, render);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
     }
 
     private Component getLegacyMessage(WrappedChatComponent chat) {

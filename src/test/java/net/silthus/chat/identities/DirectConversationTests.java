@@ -72,8 +72,8 @@ public class DirectConversationTests extends TestBase {
         assertThat(chatter1.getLastReceivedMessage()).isEqualTo(message);
         assertThat(chatter2.getLastReceivedMessage()).isEqualTo(message);
 
-        assertThat(player1.nextMessage()).isEqualTo("Player0: hi");
-        assertThat(player2.nextMessage()).isEqualTo("Player0: hi");
+        assertReceivedMessage(player1, "Player0: hi");
+        assertReceivedMessage(player2, "Player0: hi");
     }
 
     @Test

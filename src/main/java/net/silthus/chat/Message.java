@@ -77,14 +77,15 @@ public class Message implements Comparable<Message> {
     public Type getType() {
         if (type != null) return type;
         if (conversation != null)
-            return Type.CHANNEL;
-        if (source != null && getTargets().size() == 1)
-            return Type.DIRECT;
-        if (source == null)
+            return Type.CONVERSATION;
+        if (source == ChatSource.NIL)
             return Type.SYSTEM;
-        if (getTargets().size() > 0)
-            return Type.BROADCAST;
         return Type.DEFAULT;
+    }
+
+    public Message send() {
+        getTargets().forEach(target -> target.sendMessage(this));
+        return this;
     }
 
     @Override
@@ -134,7 +135,7 @@ public class Message implements Comparable<Message> {
 
         public MessageBuilder conversation(Conversation conversation) {
             this.conversation = conversation;
-            return type(Type.CHANNEL);
+            return type(Type.CONVERSATION);
         }
 
         public MessageBuilder text(@NonNull Component component) {
@@ -158,6 +159,8 @@ public class Message implements Comparable<Message> {
         }
 
         public Message build() {
+            checkForDirectConversation();
+
             UUID id = id$set ? id$value : $default$id();
             Format format = conversation != null ? conversation.getFormat() : defaultFormat;
             if (format$set) format = format$value;
@@ -169,12 +172,13 @@ public class Message implements Comparable<Message> {
         }
 
         public Message send() {
+            return build().send();
+        }
+
+        private void checkForDirectConversation() {
             if (sourceIsChatTarget() && chatterTargeted()) {
                 to(createDirectConversation((ChatTarget) source$value, firstTargetOrNull()));
             }
-            Message message = build();
-            message.getTargets().forEach(target -> target.sendMessage(message));
-            return message;
         }
 
         @Nullable
@@ -204,9 +208,7 @@ public class Message implements Comparable<Message> {
 
     public enum Type {
         SYSTEM,
-        DIRECT,
-        CHANNEL,
-        BROADCAST;
+        CONVERSATION;
 
         public static Type DEFAULT = SYSTEM;
     }

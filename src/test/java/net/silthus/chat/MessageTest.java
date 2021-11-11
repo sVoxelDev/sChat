@@ -143,37 +143,36 @@ class MessageTest extends TestBase {
     }
 
     @Test
-    void type_isChannel() {
+    void type_isConversation() {
         Channel channel = Channel.channel("test");
         Message message = Message.message("test").conversation(channel).build();
-        assertThat(message.getType()).isEqualTo(Message.Type.CHANNEL);
+        assertThat(message.getType()).isEqualTo(Message.Type.CONVERSATION);
 
         Message test = Message.message("test").to(channel).build();
-        assertThat(test.getType()).isEqualTo(Message.Type.CHANNEL);
+        assertThat(test.getType()).isEqualTo(Message.Type.CONVERSATION);
     }
 
     @Test
-    void type_isDefault_direct() {
+    void type_isConversation_withDirectConversation() {
+        Chatter source = Chatter.of(server.addPlayer());
+        Chatter target = Chatter.of(server.addPlayer());
+        Message message = source.message("test").to(target).build();
+
+        assertThat(message.getType()).isEqualTo(Message.Type.CONVERSATION);
+    }
+
+    @Test
+    void type_isDefault_system() {
         Message message = Message.message("test").build();
 
         assertThat(message.getType()).isEqualTo(Message.Type.SYSTEM);
     }
 
     @Test
-    void type_isDrect_withSourceAndTarget() {
-        Message message = Message.message("test")
-                .from(ChatSource.player(server.addPlayer()))
-                .to(ChatTarget.player(server.addPlayer()))
-                .build();
+    void type_isSystem_withNoSource() {
+        Message message = Message.message("test").build();
 
-        assertThat(message.getType()).isEqualTo(Message.Type.DIRECT);
-    }
-
-    @Test
-    void type_isBroadcast_multipleTargets() {
-        Message message = Message.message("test").to(ChatTarget.console(), ChatTarget.player(server.addPlayer())).build();
-
-        assertThat(message.getType()).isEqualTo(Message.Type.BROADCAST);
+        assertThat(message.getType()).isEqualTo(Message.Type.SYSTEM);
     }
 
     @Test

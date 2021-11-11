@@ -25,6 +25,7 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -37,9 +38,11 @@ import net.silthus.chat.integrations.vault.VaultProvider;
 import org.apache.commons.lang.RandomStringUtils;
 import org.assertj.core.internal.bytebuddy.utility.RandomString;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredListener;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -118,7 +121,17 @@ public abstract class TestBase {
     }
 
     protected void assertReceivedMessage(PlayerMock player, String message) {
-        assertThat(player.nextMessage()).isEqualTo(message);
+        assertThat(cleaned(player.nextMessage())).startsWith(message);
+    }
+
+    protected void assertLastReceivedMessage(PlayerMock player, String message) {
+        String nextMessage;
+        String lastMessage = null;
+        while ((nextMessage = player.nextMessage()) != null) {
+            lastMessage = nextMessage;
+        }
+        assertThat(lastMessage).isNotNull();
+        assertThat(cleaned(lastMessage)).startsWith(message);
     }
 
     protected Channel createChannel(Function<ChannelConfig, ChannelConfig> cfg) {
@@ -156,4 +169,8 @@ public abstract class TestBase {
         return list;
     }
 
+    @Nullable
+    protected String cleaned(@NonNull String message) {
+        return ChatColor.stripColor(message.stripLeading());
+    }
 }

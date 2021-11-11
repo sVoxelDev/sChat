@@ -34,6 +34,7 @@ public final class Constants {
     public static final String PLUGIN_NAME = "sChat";
     public static final int BSTATS_ID = 13304;
     public static final Key NBT_MESSAGE_ID = Key.key("schat:messageid");
+    public static final Key NBT_IS_SCHAT_MESSAGE = Key.key("schat:message");
 
     public static final String PERMISSION_PLAYER_COMMANDS = "schat.player";
     public static final String PERMISSION_PLAYER_CHANNEL_COMMANDS = "schat.player.channel";
@@ -91,7 +92,7 @@ public final class Constants {
         public static final TextColor INACTIVE_COLOR = NamedTextColor.GRAY;
         public static final TextDecoration ACTIVE_DECORATION = TextDecoration.UNDERLINED;
 
-        public static final String CHANNEL_DIVIDER = "│";
+        public static final String CHANNEL_DIVIDER = "|";
     }
 
     public static class Commands {

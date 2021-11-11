@@ -69,16 +69,15 @@ public class TabbedMessageRenderer implements MessageRenderer {
     }
 
     Component renderMessages(Collection<Message> messages) {
-        List<Component> components = messages.stream()
-                .distinct()
-                .sorted()
-                .map(Message::formatted)
-                .collect(Collectors.toList());
         return Component.join(
                 JoinConfiguration.builder()
                         .separator(newline())
                         .build(),
-                components
+                messages.stream()
+                        .distinct()
+                        .sorted()
+                        .map(Message::formatted)
+                        .collect(Collectors.toList())
         );
     }
 
