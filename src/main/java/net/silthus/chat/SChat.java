@@ -42,6 +42,7 @@ import net.silthus.chat.identities.Console;
 import net.silthus.chat.integrations.bungeecord.BungeecordIntegration;
 import net.silthus.chat.integrations.protocollib.ChatPacketQueue;
 import net.silthus.chat.integrations.vault.VaultProvider;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -67,6 +68,7 @@ public final class SChat extends JavaPlugin {
     private static boolean testing = false;
 
     private PluginConfig pluginConfig;
+    private Metrics metrics;
 
     private ChannelRegistry channelRegistry;
     private ChatterManager chatterManager;
@@ -101,6 +103,8 @@ public final class SChat extends JavaPlugin {
         }
 
         setupAndLoadConfigs();
+
+        setupBStats();
 
         setupAndLoadChannels();
         setupChatterManager();
@@ -140,6 +144,11 @@ public final class SChat extends JavaPlugin {
         saveResource("config.default.yml", true);
         saveResource("lang_en.yaml", false);
         pluginConfig = PluginConfig.fromConfig(getConfig());
+    }
+
+    private void setupBStats() {
+        if (isTesting()) return;
+        metrics = new Metrics(this, Constants.BSTATS_ID);
     }
 
     private void setupAndLoadChannels() {

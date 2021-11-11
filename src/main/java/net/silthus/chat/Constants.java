@@ -32,6 +32,7 @@ import java.util.function.Function;
 public final class Constants {
 
     public static final String PLUGIN_NAME = "sChat";
+    public static final int BSTATS_ID = 13304;
     public static final Key NBT_MESSAGE_ID = Key.key("schat:messageid");
 
     public static final String PERMISSION_PLAYER_COMMANDS = "schat.player";
