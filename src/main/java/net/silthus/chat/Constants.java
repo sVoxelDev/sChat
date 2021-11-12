@@ -42,6 +42,7 @@ public final class Constants {
     public static final String PERMISSION_PLAYER_COMMANDS = "schat.player";
     public static final String PERMISSION_PLAYER_CHANNEL_COMMANDS = "schat.player.channel";
     public static final String PERMISSION_PLAYER_CHANNEL_JOIN = "schat.player.channel.join";
+    public static final String PERMISSION_PLAYER_CHANNEL_LEAVE = "schat.player.channel.leave";
     public static final String PERMISSION_PLAYER_CHANNEL_QUICKMESSAGE = "schat.player.channel.quickmessage";
     public static final String PERMISSION_PLAYER_DIRECT_MESSAGE = "schat.player.directmessage";
 
@@ -73,6 +74,7 @@ public final class Constants {
         public static final String ACCESS_TO_CHANNEL_DENIED = "access-to-channel-denied";
         public static final String SEND_TO_CHANNEL_DENIED = "send-to-channel-denied";
         public static final String JOINED_CHANNEL = "joined-channel";
+        public static final String LEAVE_CHANNEL = "leave-channel";
         public static final String INVALID_CONVERSATION = "invalid-conversation";
     }
 
@@ -103,6 +105,7 @@ public final class Constants {
     public static class Commands {
 
         public static final Function<Conversation, String> JOIN_CHANNEL = conversation -> "/schat channel join " + conversation.getUniqueId();
+        public static final Function<Conversation, String> LEAVE_CHANNEL = conversation -> "/schat channel leave " + conversation.getUniqueId();
         public static final Function<Conversation, String> JOIN_CONVERSATION = conversation -> "/schat conversations set-active " + conversation.getUniqueId();
     }
 

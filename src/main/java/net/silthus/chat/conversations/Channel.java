@@ -24,10 +24,7 @@ import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
 import net.silthus.chat.config.ChannelConfig;
-import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.Console;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import java.util.Collection;
 
@@ -63,25 +60,6 @@ public class Channel extends AbstractConversation implements ChatSource {
 
     public String getAutoJoinPermission() {
         return Constants.Permissions.getAutoJoinPermission(this);
-    }
-
-    public boolean canJoin(Chatter chatter) {
-        if (getConfig().protect()) {
-            Player player = Bukkit.getPlayer(chatter.getUniqueId());
-            return player != null && player.hasPermission(getPermission());
-        }
-        return true;
-    }
-
-    public boolean canSendMessage(Chatter chatter) {
-        return canJoin(chatter);
-    }
-
-    public boolean canAutoJoin(Chatter chatter) {
-        if (!canJoin(chatter)) return false;
-        if (canJoin(chatter) && getConfig().autoJoin()) return true;
-        Player player = Bukkit.getPlayer(chatter.getUniqueId());
-        return player != null && player.hasPermission(getAutoJoinPermission());
     }
 
     @Override

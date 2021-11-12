@@ -80,12 +80,21 @@ public class SChatCommands extends BaseCommand {
             }
         }
 
+        @Subcommand("leave")
+        @CommandAlias("leave|quit")
+        @CommandCompletion("@channels")
+        @CommandPermission(PERMISSION_PLAYER_CHANNEL_LEAVE)
+        public void leave(@Flags("self") Chatter chatter, Channel channel) {
+            chatter.unsubscribe(channel);
+            success(LEAVE_CHANNEL, "{channel}", getChannelName(channel));
+        }
+
         @Subcommand("message|msg|qm")
         @CommandAlias("ch|qmc")
         @CommandCompletion("@channels *")
         @CommandPermission(PERMISSION_PLAYER_CHANNEL_QUICKMESSAGE)
         public void quickMessage(@Flags("self") Chatter chatter, Channel channel, String message) {
-            if (channel.canSendMessage(chatter)) {
+            if (chatter.canSendMessage(channel)) {
                 Message.message(chatter, message).to(channel).send();
             } else {
                 error(SEND_TO_CHANNEL_DENIED, "{channel}", getChannelName(channel));

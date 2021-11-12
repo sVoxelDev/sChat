@@ -60,14 +60,41 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         return Optional.ofNullable(Bukkit.getPlayer(getUniqueId()));
     }
 
-    public boolean canJoin(Channel channel) {
-        return channel.canJoin(this);
-    }
-
     public void join(Channel channel) throws AccessDeniedException {
         if (!canJoin(channel))
             throw new AccessDeniedException("You don't have permission to join the channel: " + channel.getName());
         setActiveConversation(channel);
+    }
+
+    public boolean canJoin(Channel channel) {
+        if (channel.getConfig().protect()) {
+            Player player = Bukkit.getPlayer(getUniqueId());
+            return player != null && player.hasPermission(channel.getPermission());
+        }
+        return true;
+    }
+
+    public boolean canAutoJoin(Channel channel) {
+        if (!canJoin(channel)) return false;
+        if (canJoin(channel) && channel.getConfig().autoJoin()) return true;
+        Player player = Bukkit.getPlayer(getUniqueId());
+        return player != null && player.hasPermission(channel.getAutoJoinPermission());
+    }
+
+    public boolean canSendMessage(Channel channel) {
+        return canJoin(channel);
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    void onPlayerChat(AsyncChatEvent event) {
+        if (isNotApplicable(event)) return;
+
+        Message.message()
+                .from(this)
+                .text(event.message())
+                .to(getActiveConversation())
+                .send();
+        event.setCancelled(true);
     }
 
     @Override
@@ -129,18 +156,6 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         return message.append(Component.storageNBT()
                 .nbtPath(Constants.NBT_IS_SCHAT_MESSAGE.asString())
                 .storage(Constants.NBT_IS_SCHAT_MESSAGE));
-    }
-
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    public void onPlayerChat(AsyncChatEvent event) {
-        if (isNotApplicable(event)) return;
-
-        Message.message()
-                .from(this)
-                .text(event.message())
-                .to(getActiveConversation())
-                .send();
-        event.setCancelled(true);
     }
 
     private boolean isNotApplicable(AsyncChatEvent event) {

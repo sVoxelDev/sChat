@@ -45,6 +45,7 @@ class SChatCommandsTest extends TestBase {
         player.addAttachment(plugin, Constants.PERMISSION_PLAYER_COMMANDS, true);
         player.addAttachment(plugin, Constants.PERMISSION_PLAYER_CHANNEL_COMMANDS, true);
         player.addAttachment(plugin, Constants.PERMISSION_PLAYER_CHANNEL_JOIN, true);
+        player.addAttachment(plugin, Constants.PERMISSION_PLAYER_CHANNEL_LEAVE, true);
         player.addAttachment(plugin, Constants.PERMISSION_PLAYER_CHANNEL_QUICKMESSAGE, true);
         player.addAttachment(plugin, Constants.PERMISSION_PLAYER_DIRECT_MESSAGE, true);
     }
@@ -99,6 +100,19 @@ class SChatCommandsTest extends TestBase {
 
             assertThat(player.performCommand(command)).isTrue();
             assertThat(chatter.getActiveConversation()).isEqualTo(channel);
+        }
+
+        @Test
+        void leave_unsubscribesFromChannel() throws AccessDeniedException {
+            Channel channel = createChannel("test");
+            Chatter chatter = Chatter.of(player);
+            chatter.join(channel);
+            assertThat(chatter.getActiveConversation()).isEqualTo(channel);
+
+            assertThat(player.performCommand("leave test")).isTrue();
+            assertThat(chatter.getActiveConversation())
+                    .isNotNull().isNotEqualTo(channel);
+            assertThat(chatter.getConversations()).doesNotContain(channel);
         }
     }
 

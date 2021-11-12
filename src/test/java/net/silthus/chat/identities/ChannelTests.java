@@ -307,14 +307,14 @@ public class ChannelTests extends TestBase {
     void canJoin_unprotected_isTrue() {
         Channel channel = createChannel(c -> c.protect(false));
 
-        assertThat(channel.canJoin(Chatter.of(server.addPlayer()))).isTrue();
+        assertThat(Chatter.of(server.addPlayer()).canJoin(channel)).isTrue();
     }
 
     @Test
     void canJoin_protected_withoutPermission_isFalse() {
         Channel channel = createChannel(c -> c.protect(true));
 
-        assertThat(channel.canJoin(Chatter.of(server.addPlayer()))).isFalse();
+        assertThat(Chatter.of(server.addPlayer()).canJoin(channel)).isFalse();
     }
 
     @Test
@@ -324,14 +324,14 @@ public class ChannelTests extends TestBase {
         PlayerMock player = server.addPlayer();
         player.addAttachment(plugin, channel.getPermission(), true);
 
-        assertThat(channel.canJoin(Chatter.of(player))).isTrue();
+        assertThat(Chatter.of(player).canJoin(channel)).isTrue();
     }
 
     @Test
     void canAutoJoin_true_ifConfigured() {
 
         Channel channel = createChannel(config -> config.autoJoin(true));
-        assertThat(channel.canAutoJoin(Chatter.of(server.addPlayer()))).isTrue();
+        assertThat(Chatter.of(server.addPlayer()).canAutoJoin(channel)).isTrue();
     }
 
     @Test
@@ -340,14 +340,14 @@ public class ChannelTests extends TestBase {
         PlayerMock player = server.addPlayer();
         player.addAttachment(plugin, channel.getAutoJoinPermission(), true);
 
-        assertThat(channel.canAutoJoin(Chatter.of(player))).isTrue();
+        assertThat(Chatter.of(player).canAutoJoin(channel)).isTrue();
     }
 
     @Test
     void canAutoJoin_protectedChannel_noPermission_isFalse() {
         Channel channel = createChannel(config -> config.autoJoin(true).protect(true));
 
-        assertThat(channel.canAutoJoin(Chatter.of(server.addPlayer()))).isFalse();
+        assertThat(Chatter.of(server.addPlayer()).canAutoJoin(channel)).isFalse();
     }
 
     @Test
@@ -358,7 +358,7 @@ public class ChannelTests extends TestBase {
         player.addAttachment(plugin, channel.getPermission(), true);
         player.addAttachment(plugin, channel.getAutoJoinPermission(), true);
 
-        assertThat(channel.canAutoJoin(Chatter.of(player))).isTrue();
+        assertThat(Chatter.of(player).canAutoJoin(channel)).isTrue();
     }
 
     @Test
@@ -403,6 +403,18 @@ public class ChannelTests extends TestBase {
         channel.sendMessage(message);
 
         verify(plugin.getBungeecord()).sendMessage(any(Message.class));
+    }
+
+    @Test
+    void unsubscribe_removesActiveConversation() {
+        Channel channel = createChannel(config -> config);
+        Chatter chatter = Chatter.of(server.addPlayer());
+        chatter.setActiveConversation(channel);
+
+        chatter.unsubscribe(channel);
+        assertThat(chatter.getConversations()).doesNotContain(channel);
+        assertThat(chatter.getActiveConversation())
+                .isNotNull().isNotEqualTo(channel);
     }
 
     @Nested

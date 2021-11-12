@@ -66,7 +66,7 @@ public abstract class AbstractChatTarget extends AbstractIdentity implements Cha
     }
 
     public Collection<Conversation> getConversations() {
-        return List.copyOf(conversations);
+        return conversations.stream().sorted().toList();
     }
 
     public void subscribe(@NonNull Conversation conversation) {
@@ -77,6 +77,8 @@ public abstract class AbstractChatTarget extends AbstractIdentity implements Cha
     public void unsubscribe(@NonNull Conversation conversation) {
         conversation.removeTarget(this);
         conversations.removeIf(existingConversation -> existingConversation.equals(conversation));
+        if (conversation.equals(activeConversation))
+            setActiveConversation(getConversations().stream().findFirst().orElse(null));
     }
 
 }

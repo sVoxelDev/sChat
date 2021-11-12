@@ -52,7 +52,7 @@ public final class ChatterManager {
 
     public void autoJoinChannels(Chatter chatter) {
         plugin.getChannelRegistry().getChannels().stream()
-                .filter(channel -> channel.canAutoJoin(chatter))
+                .filter(chatter::canAutoJoin)
                 .forEach(chatter::setActiveConversation);
     }
 
