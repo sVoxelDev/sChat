@@ -21,6 +21,7 @@ package net.silthus.chat;
 
 import lombok.extern.java.Log;
 import net.silthus.chat.scopes.GlobalScope;
+import net.silthus.chat.scopes.LocalScope;
 import net.silthus.chat.scopes.ServerScope;
 import net.silthus.chat.scopes.WorldScope;
 import net.silthus.configmapper.bukkit.BukkitConfigMap;
@@ -45,6 +46,7 @@ public final class Scopes {
         register(GlobalScope.class);
         register(ServerScope.class);
         register(WorldScope.class);
+        register(LocalScope.class);
     }
 
     public static Scope server() {

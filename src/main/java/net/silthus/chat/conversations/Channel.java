@@ -96,11 +96,11 @@ public class Channel extends AbstractConversation implements ChatSource {
 
         if (getConfig().sendToConsole())
             addTarget(Console.console());
-        getScopedTargets().forEach(target -> target.sendMessage(message));
+        getScopedTargets(message).forEach(target -> target.sendMessage(message));
     }
 
-    private Collection<ChatTarget> getScopedTargets() {
+    private Collection<ChatTarget> getScopedTargets(Message message) {
         if (getConfig().scope() == null) return getTargets();
-        return getConfig().scope().apply(this);
+        return getConfig().scope().apply(this, message);
     }
 }

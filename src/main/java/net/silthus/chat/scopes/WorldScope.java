@@ -20,6 +20,7 @@
 package net.silthus.chat.scopes;
 
 import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Message;
 import net.silthus.chat.Scope;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.configmapper.ConfigOption;
@@ -40,7 +41,7 @@ public final class WorldScope implements Scope {
     List<String> worlds;
 
     @Override
-    public Collection<ChatTarget> apply(Channel channel) {
+    public Collection<ChatTarget> apply(Channel channel, Message message) {
         return channel.getTargets().stream()
                 .filter(this::isNoPlayerOrInWorld)
                 .collect(Collectors.toList());

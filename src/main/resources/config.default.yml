@@ -1,11 +1,17 @@
 # Define your personal defaults for the various configs in this section.
 # Not setting a value in the actual config section will use these defaults.
+# For example: the trade channel below will inherit all the configs from this defaults config.
 defaults:
   channel:
     protect: false
     auto_join: false
     console: true
-    global: true
+    scope: server
+    worlds:
+      - world
+      - world_nether
+      - world_the_end
+    range: 100
     format: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset><yellow><sender_vault_prefix><sender_name><sender_vault_suffix><gray>: <gray><message>'
 # You can fine tune the behaviour of the console chat in this section.
 console:
@@ -22,6 +28,22 @@ channels:
     # It is also accessible via the PlaceholderAPI under {schat.channel_name} tag.
     # default: <channel_id>
     name: Global
+    # The scope of the channel defines what players receive the messages.
+    # The following scopes exist:
+    #   - global: the message is sent to all players on all servers
+    #   - server: the message is sent to all players on the server of the sender
+    #   - world:  the message is sent only to players in the defined list of worlds.
+    #             Use the 'worlds' config option to define a list of worlds this channel sends messages to.
+    #   - local:  the message is only sent to players inside the defined 'range' of the message sender.
+    #             Use the 'range' config option to set the range of the message.
+    scope: global
+    # The worlds option is only applicable if the scope is set to 'world'.
+    # worlds:
+    # - world
+    # - world_nether
+    # The range option is only applicable of the scope is set to 'local'.
+    # default: 100
+    # range: 100
     # Set 'true' to require a permission to join the channel.
     # The permission is: 'schat.channel.<id>', e.g. 'schat.channel.global'
     # default: false
@@ -30,9 +52,6 @@ channels:
     # This is useful for global channels that everyone should have.
     # default: false
     auto_join: true
-    # Set 'true' to enable chatting across all servers in this channel.
-    # default: true
-    global: true
     # Sends all chat messages in this channel to the console as well.
     # Set false to not send messages in this channel to the console.
     # default: true

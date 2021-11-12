@@ -20,6 +20,7 @@
 package net.silthus.chat.scopes;
 
 import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,14 +44,14 @@ public final class GlobalScopeTests extends TestBase {
     void doesNotFilterTargets() {
         Channel channel = createChannel("test");
         channel.addTarget(ChatTarget.console());
-        assertThat(scope.apply(channel)).contains(ChatTarget.console());
+        assertThat(scope.apply(channel, Message.message("hi").build())).contains(ChatTarget.console());
     }
 
     @Test
     void addsBungeeCordTarget() {
         Channel channel = createChannel("test");
         channel.addTarget(ChatTarget.console());
-        assertThat(scope.apply(channel))
+        assertThat(scope.apply(channel, Message.message("hi").build()))
                 .contains(plugin.getBungeecord());
     }
 }

@@ -79,7 +79,7 @@ class ScopesTest {
         private List<String> worlds = new ArrayList<>();
 
         @Override
-        public Collection<ChatTarget> apply(Channel channel) {
+        public Collection<ChatTarget> apply(Channel channel, Message message) {
             return new ArrayList<>();
         }
     }
@@ -87,7 +87,7 @@ class ScopesTest {
     static class NotAnnotatedScope implements Scope {
 
         @Override
-        public Collection<ChatTarget> apply(Channel channel) {
+        public Collection<ChatTarget> apply(Channel channel, Message message) {
             return new ArrayList<>();
         }
     }

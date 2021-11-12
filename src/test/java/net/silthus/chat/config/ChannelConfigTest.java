@@ -26,6 +26,7 @@ import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.scopes.GlobalScope;
+import net.silthus.chat.scopes.LocalScope;
 import net.silthus.chat.scopes.WorldScope;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.Test;
@@ -104,5 +105,18 @@ class ChannelConfigTest extends TestBase {
                 .isNotNull().isInstanceOf(WorldScope.class)
                 .extracting("worlds")
                 .isEqualTo(worlds);
+    }
+
+    @Test
+    void loadLocalScope_setsRange() {
+        MemoryConfiguration cfg = new MemoryConfiguration();
+        cfg.set("scope", "local");
+        cfg.set("range", 20);
+        ChannelConfig config = ChannelConfig.of(cfg);
+
+        assertThat(config.scope())
+                .isInstanceOf(LocalScope.class)
+                .extracting("range")
+                .isEqualTo(20);
     }
 }

@@ -22,6 +22,7 @@ package net.silthus.chat.scopes;
 import lombok.EqualsAndHashCode;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Constants;
+import net.silthus.chat.Message;
 import net.silthus.chat.Scope;
 import net.silthus.chat.conversations.Channel;
 
@@ -32,7 +33,7 @@ import java.util.Collection;
 public final class ServerScope implements Scope {
 
     @Override
-    public Collection<ChatTarget> apply(Channel channel) {
+    public Collection<ChatTarget> apply(Channel channel, Message message) {
         return channel.getTargets();
     }
 }

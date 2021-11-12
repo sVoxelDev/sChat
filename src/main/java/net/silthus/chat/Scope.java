@@ -29,7 +29,7 @@ import java.util.Collection;
 
 public interface Scope {
 
-    Collection<ChatTarget> apply(Channel channel);
+    Collection<ChatTarget> apply(Channel channel, Message message);
 
     @Target(ElementType.TYPE)
     @Retention(RetentionPolicy.RUNTIME)

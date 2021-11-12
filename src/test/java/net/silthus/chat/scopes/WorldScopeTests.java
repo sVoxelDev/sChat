@@ -22,10 +22,12 @@ package net.silthus.chat.scopes;
 import be.seeseemelk.mockbukkit.WorldMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Message;
 import net.silthus.chat.Scopes;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.Console;
 import net.silthus.configmapper.ConfigurationException;
 import org.bukkit.Location;
 import org.bukkit.configuration.MemoryConfiguration;
@@ -52,6 +54,7 @@ public class WorldScopeTests extends TestBase {
         super.setUp();
 
         channel = createChannel("test");
+        channel.addTarget(Console.console());
 
         someWorld = server.addSimpleWorld("some-world");
         otherWorld = server.addSimpleWorld("some-other");
@@ -81,10 +84,10 @@ public class WorldScopeTests extends TestBase {
         Chatter chatter2 = chatterInWorld(someWorld);
         Chatter chatter3 = chatterInWorld(otherWorld);
 
-        Collection<ChatTarget> targets = scope.apply(channel);
+        Collection<ChatTarget> targets = scope.apply(channel, Message.message("hi").build());
         assertThat(targets)
                 .doesNotContain(chatter3)
-                .contains(chatter1, chatter2);
+                .contains(chatter1, chatter2, Console.console());
     }
 
     private Chatter chatterInWorld(WorldMock world) {
