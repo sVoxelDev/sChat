@@ -25,6 +25,10 @@ import java.util.UUID;
 
 public interface Identity {
 
+    static Identity identity(UUID id, String name, Component displayName) {
+        return ChatSource.named(id, name, displayName);
+    }
+
     UUID getUniqueId();
 
     String getName();

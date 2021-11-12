@@ -22,6 +22,7 @@ package net.silthus.chat.identities;
 import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.silthus.chat.Constants;
+import net.silthus.chat.Identity;
 import net.silthus.chat.SChat;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -64,6 +65,12 @@ public final class ChatterManager {
         if (chatters.containsKey(player.getUniqueId()))
             return chatters.get(player.getUniqueId());
         return registerChatter(new Chatter(player));
+    }
+
+    public Chatter getOrCreateChatter(@NonNull Identity identity) {
+        if (chatters.containsKey(identity.getUniqueId()))
+            return chatters.get(identity.getUniqueId());
+        return registerChatter(new Chatter(identity));
     }
 
     public Chatter getChatter(UUID id) {

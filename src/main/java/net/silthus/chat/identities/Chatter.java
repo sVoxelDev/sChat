@@ -23,7 +23,6 @@ import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.kyori.adventure.audience.MessageType;
-import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
@@ -50,11 +49,20 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         return SChat.instance().getChatterManager().getOrCreateChatter(player);
     }
 
+    public static Chatter chatter(Identity identity) {
+        return SChat.instance().getChatterManager().getOrCreateChatter(identity);
+    }
+
     Chatter(OfflinePlayer player) {
         super(player.getUniqueId(), player.getName());
         if (player.isOnline()) {
             setDisplayName(Objects.requireNonNull(player.getPlayer()).displayName());
         }
+    }
+
+    Chatter(Identity identity) {
+        super(identity.getUniqueId(), identity.getName());
+        setDisplayName(identity.getDisplayName());
     }
 
     public Optional<Player> getPlayer() {
@@ -109,6 +117,12 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         );
     }
 
+    public void updateView() {
+        getPlayer().ifPresent(
+                player -> player.sendMessage(getIdentity(getLastReceivedMessage()), renderMessage(getLastReceivedMessage()), MessageType.CHAT)
+        );
+    }
+
     @NotNull
     private Component renderMessage(Message message) {
         return appendMessageId(RENDERER.render(new View(this, getMessagesToRender(message))));
@@ -118,7 +132,8 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     private List<Message> getMessagesToRender(Message message) {
         List<Message> messages = getConversationMessages();
         messages.addAll(getSystemMessages());
-        messages.add(message);
+        if (Objects.equals(message.getConversation(), getActiveConversation()))
+            messages.add(message);
         return distinctAndSorted(messages);
     }
 
@@ -145,11 +160,11 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
                 .sorted().collect(Collectors.toList());
     }
 
-    private Identity getIdentity(Message message) {
+    private net.kyori.adventure.identity.Identity getIdentity(Message message) {
         try {
-            return message.getSource() != null ? Identity.identity(UUID.fromString(message.getSource().getName())) : Identity.nil();
+            return message.getSource() != null ? net.kyori.adventure.identity.Identity.identity(UUID.fromString(message.getSource().getName())) : net.kyori.adventure.identity.Identity.nil();
         } catch (IllegalArgumentException e) {
-            return Identity.nil();
+            return net.kyori.adventure.identity.Identity.nil();
         }
     }
 

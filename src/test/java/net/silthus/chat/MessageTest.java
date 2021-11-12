@@ -38,7 +38,7 @@ class MessageTest extends TestBase {
 
         assertThat(message.getSource())
                 .isNotNull().isEqualTo(ChatSource.nil());
-        assertThat(toText(message)).isEqualTo("Hello");
+        assertThat(toCleanText(message)).isEqualTo("Hello");
         assertThat(message.getTargets()).isEmpty();
     }
 
@@ -74,14 +74,14 @@ class MessageTest extends TestBase {
     @Test
     void emptySource_usesDirectMessageFormat() {
         Message message = Message.message("test").build();
-        assertThat(toText(message)).isEqualTo("test");
+        assertThat(toCleanText(message)).isEqualTo("test");
     }
 
     @Test
     void message_withSource_usesDefaultFormat() {
         Message message = Message.message(ChatSource.named("test"), "Hi there!").build();
 
-        assertThat(toText(message)).isEqualTo("test: Hi there!");
+        assertThat(toCleanText(message)).isEqualTo("test: Hi there!");
     }
 
     @Test
@@ -91,7 +91,7 @@ class MessageTest extends TestBase {
                 .to(Channel.channel("channel"))
                 .format(Format.noFormat())
                 .build();
-        String text = toText(message);
+        String text = toCleanText(message);
 
         assertThat(text).isEqualTo("Hi");
     }
@@ -112,7 +112,7 @@ class MessageTest extends TestBase {
         Message message = ChatSource.named("test")
                 .message("Hi")
                 .build();
-        String text = toText(message);
+        String text = toCleanText(message);
 
         assertThat(text).isEqualTo("test: Hi");
     }

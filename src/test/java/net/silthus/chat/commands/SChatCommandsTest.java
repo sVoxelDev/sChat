@@ -173,6 +173,13 @@ class SChatCommandsTest extends TestBase {
             assertThat(target.getActiveConversation())
                     .isNotInstanceOf(DirectConversation.class);
         }
+
+        @Test
+        void directMessage_cannotSendToSelf() {
+            player.performCommand("dm Player0");
+
+            assertThat(cleaned(player.nextMessage())).isEqualTo("You can't send messages to yourself.");
+        }
     }
 
     private void assertLastMessage(PlayerMock player, String message) {

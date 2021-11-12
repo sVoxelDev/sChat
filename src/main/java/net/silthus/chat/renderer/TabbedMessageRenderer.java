@@ -24,6 +24,7 @@ import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
@@ -53,8 +54,11 @@ public final class TabbedMessageRenderer implements MessageRenderer {
     }
 
     Component footer(View view) {
-        return ChatUtil.centerText(empty(), FRAME_SPACER)
-                .append(newline())
+        return ChatUtil.wrapText(empty(),
+                        LEFT_FRAME.color(FRAME_COLOR),
+                        FRAME_SPACER.color(FRAME_COLOR).decorate(TextDecoration.STRIKETHROUGH),
+                        FRAME_SPACER.color(FRAME_COLOR).decorate(TextDecoration.STRIKETHROUGH)
+                ).append(newline())
                 .append(conversationTabs(view));
     }
 
@@ -97,7 +101,7 @@ public final class TabbedMessageRenderer implements MessageRenderer {
 
     private TextComponent noConversations() {
         return text().append(CHANNEL_DIVIDER.append(text(" ")).color(FRAME_COLOR))
-                .append(text("No Channels selected. Use ").color(INFO_COLOR))
+                .append(text("Use ").color(INFO_COLOR))
                 .append(text("/ch join <channel> ").color(COMMAND).clickEvent(suggestCommand("/ch join ")))
                 .append(text("to join a channel.").color(INFO_COLOR))
                 .build();
@@ -130,6 +134,7 @@ public final class TabbedMessageRenderer implements MessageRenderer {
     private TextReplacementConfig conversationPartnerName(Chatter viewer, Conversation conversation) {
         List<Component> names = conversation.getTargets().stream()
                 .filter(target -> !target.equals(viewer))
+                .filter(target -> target instanceof Chatter)
                 .map(ChatTarget::getDisplayName)
                 .collect(Collectors.toList());
         return TextReplacementConfig.builder()

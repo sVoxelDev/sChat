@@ -58,8 +58,8 @@ public class TabbedMessageRendererTests extends TestBase {
 
         assertThat(toText(footer).stripTrailing())
                 .isEqualTo("""
-                        ----------------------------------------------------
-                        &8| &7Global&8 | &a&ntest&8 |""");
+                        &8\u250C&m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500&r
+                        &8\u2502 &7Global&8 \u2502 &a&ntest&8 \u2502 &7Trade&8 \u2502""");
     }
 
     @Test
@@ -69,7 +69,7 @@ public class TabbedMessageRendererTests extends TestBase {
 
         assertThat(toText(footer).stripTrailing())
                 .isEqualTo("""
-                        &8| &7Global&8 | &a&ntest&8 |""");
+                        &8\u2502 &7Global&8 \u2502 &a&ntest&8 \u2502 &7Trade&8 \u2502""");
     }
 
     @Test
@@ -89,7 +89,7 @@ public class TabbedMessageRendererTests extends TestBase {
 
         Component component = view.conversationTabs(new View(chatter));
         String text = cleaned(toText(component));
-        assertThat(text).isEqualTo("&8| &7No Channels selected. Use &b/ch join <channel> &7to join a channel.");
+        assertThat(text).isEqualTo("&8\u2502 &7Use &b/ch join <channel> &7to join a channel.");
     }
 
     @Test
@@ -109,7 +109,7 @@ public class TabbedMessageRendererTests extends TestBase {
 
         String text = toText(view.conversationTabs(new View(chatter)));
         assertThat(text)
-                .isEqualTo("&8| &a&nactive&8 | &7foobar&8 | &7Global&8 | &7test&8 | ");
+                .isEqualTo("&8\u2502 &a&nactive&8 \u2502 &7foobar&8 \u2502 &7Global&8 \u2502 &7test&8 \u2502 &7Trade&8 \u2502 ");
     }
 
     @Test
@@ -136,9 +136,12 @@ public class TabbedMessageRendererTests extends TestBase {
     @Test
     void ordersMessages_byTimestamp() {
         Collection<Message> messages = randomMessages(10);
-        String sortedMessages = messages.stream().sorted().map(this::toText).collect(Collectors.joining("\n"));
+        String sortedMessages = messages.stream().sorted()
+                .map(this::toCleanText)
+                .collect(Collectors.joining("\n"));
+
         Component component = view.renderMessages(messages);
-        assertThat(toText(component)).isEqualTo(sortedMessages);
+        assertThat(toCleanText(component)).isEqualTo(sortedMessages);
     }
 
     private void addChannels() {

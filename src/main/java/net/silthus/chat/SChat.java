@@ -269,6 +269,7 @@ public final class SChat extends JavaPlugin {
         commandManager.getCommandCompletions().registerAsyncCompletion("chatters", context ->
                 getChatterManager().getChatters().stream()
                         .map(AbstractIdentity::getName)
+                        .filter(name -> !context.getSender().getName().equalsIgnoreCase(name))
                         .collect(Collectors.toSet()));
     }
 

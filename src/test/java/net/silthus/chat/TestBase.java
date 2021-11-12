@@ -154,6 +154,14 @@ public abstract class TestBase {
         return toText(message.formatted());
     }
 
+    protected String toCleanText(Component component) {
+        return cleaned(LegacyComponentSerializer.legacySection().serialize(component));
+    }
+
+    protected String toCleanText(Message message) {
+        return toCleanText(message.formatted());
+    }
+
     protected Message randomMessage() {
         return Message.message(RandomString.make() + "-" + Instant.now()).build();
     }

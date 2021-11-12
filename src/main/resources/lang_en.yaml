@@ -5,3 +5,4 @@ commands:
   joined-channel: "&7You joined the channel: &6{channel}&7."
   leave-channel: "&7You left the channel: &6{channel}&7."
   invalid-conversation: "The conversation you tried to join does not exist."
+  cannot-send-to-self: "You can't send messages to yourself."

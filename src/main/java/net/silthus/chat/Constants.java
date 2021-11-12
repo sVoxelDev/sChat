@@ -73,6 +73,7 @@ public final class Constants {
         public static final String ACF_BASE_KEY = "commands";
         public static final String ACCESS_TO_CHANNEL_DENIED = "access-to-channel-denied";
         public static final String SEND_TO_CHANNEL_DENIED = "send-to-channel-denied";
+        public static final String CANNOT_SEND_TO_SELF = "cannot-send-to-self";
         public static final String JOINED_CHANNEL = "joined-channel";
         public static final String LEAVE_CHANNEL = "leave-channel";
         public static final String INVALID_CONVERSATION = "invalid-conversation";
@@ -84,9 +85,10 @@ public final class Constants {
     }
 
     public static class Formatting {
+
         public static final String DEFAULT_CHANNEL_FORMAT = "<gold>[</gold><green><channel_name></green><gold>]</gold><reset><yellow><sender_vault_prefix><sender_name><sender_vault_suffix><gray>: <gray><message>";
-        public static final String DEFAULT_FORMAT = "<sender_name>: <message>";
-        public static final String NO_FORMAT = "<message>";
+        public static final String DEFAULT_FORMAT = "<yellow><sender_name><gray>: <gray><message>";
+        public static final String NO_FORMAT = "<gray><message>";
     }
 
     public static class View {
@@ -98,8 +100,10 @@ public final class Constants {
         public static final TextColor INACTIVE_COLOR = NamedTextColor.GRAY;
         public static final TextDecoration ACTIVE_DECORATION = TextDecoration.UNDERLINED;
 
-        public static final Component CHANNEL_DIVIDER = text("|");
-        public static final Component FRAME_SPACER = text("-");
+        public static final Component CHANNEL_DIVIDER = text("\u2502"); // │
+        public static final Component LEFT_FRAME = text("\u250C"); // ┌
+        public static final Component FRAME_SPACER = text("\u2500"); // ─
+        public static final Component RIGHT_FRAME = text("\u2510"); // ┐
     }
 
     public static class Commands {

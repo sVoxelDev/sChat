@@ -25,7 +25,7 @@ import net.silthus.chat.Message;
 
 import java.util.Objects;
 
-public class DirectConversation extends AbstractConversation {
+public final class DirectConversation extends AbstractConversation {
 
     public DirectConversation(ChatTarget target1, ChatTarget target2) {
         super(target1.getName() + "<->" + target2.getName());
@@ -36,7 +36,9 @@ public class DirectConversation extends AbstractConversation {
 
     @Override
     public void sendMessage(Message message) {
+        if (getReceivedMessages().contains(message)) return;
         addReceivedMessage(message);
+
         getTargets().stream()
                 .filter(target -> !target.getConversations().contains(this))
                 .forEach(target -> target.setActiveConversation(this));

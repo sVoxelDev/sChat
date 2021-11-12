@@ -43,17 +43,19 @@ public class PluginConfig {
 
     private final Defaults defaults;
     private final ConsoleConfig console;
+    private final PrivateChatConfig privateChat;
     private final Map<String, ChannelConfig> channels;
 
     private PluginConfig(@NonNull ConfigurationSection config) {
         this.defaults = loadDefaults(config.getConfigurationSection("defaults"));
         this.console = loadConsoleConfig(config.getConfigurationSection("console"));
+        this.privateChat = loadPrivateChatConfig(config.getConfigurationSection("private_chats"));
         this.channels = loadChannels(config.getConfigurationSection("channels"));
     }
 
     private Defaults loadDefaults(ConfigurationSection config) {
         if (config == null) {
-            log.warning("No 'defaults' section found inside your config.yml! Make sure your config is up-to-date with the config.default.yml.");
+            warnSectionNotDefined("defaults");
             return new Defaults(ChannelConfig.defaults());
         }
         return new Defaults(ChannelConfig.of(requireNonNullElseGet(config.getConfigurationSection("channel"), () -> config.createSection("channel"))));
@@ -61,15 +63,23 @@ public class PluginConfig {
 
     private ConsoleConfig loadConsoleConfig(ConfigurationSection config) {
         if (config == null) {
-            log.warning("No 'console' section found inside your config.yml! Make sure your config is up-to-date with the config.default.yml.");
+            warnSectionNotDefined("console");
             return new ConsoleConfig();
         }
         return new ConsoleConfig(config);
     }
 
+    private PrivateChatConfig loadPrivateChatConfig(ConfigurationSection config) {
+        if (config == null) {
+            warnSectionNotDefined("private_chats");
+            return new PrivateChatConfig();
+        }
+        return new PrivateChatConfig(config);
+    }
+
     private Map<String, ChannelConfig> loadChannels(ConfigurationSection config) {
         if (config == null) {
-            log.warning("No 'channels' section found inside your config.yml! Make sure your config is up-to-date with the config.default.yml.");
+            warnSectionNotDefined("channels");
             return new HashMap<>();
         }
         return config.getKeys(false).stream()
@@ -79,6 +89,11 @@ public class PluginConfig {
                 ));
     }
 
+    private void warnSectionNotDefined(String section) {
+        log.warning("No '" + section + "' section found inside your config.yml! Make sure your config is up-to-date with the config.default.yml.");
+    }
+
     public record Defaults(ChannelConfig channel) {
+
     }
 }

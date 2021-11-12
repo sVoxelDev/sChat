@@ -54,6 +54,7 @@ public class ChatPacketQueue extends PacketAdapter {
 
         Chatter chatter = Chatter.of(event.getPlayer());
         Message.message(messageText).to(chatter).send();
+        event.setCancelled(true);
     }
 
     private boolean isIgnoredMessage(Component messageText) {

@@ -31,6 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 
 public class DirectConversationTests extends TestBase {
 
@@ -120,13 +121,20 @@ public class DirectConversationTests extends TestBase {
     }
 
     @Test
+    void send_sendsMessageToBungee() {
+        Message message = sendMessage();
+
+        verify(plugin.getBungeecord()).sendMessage(message);
+    }
+
+    @Test
     void getName_formatsToOtherPlayer() {
         Message message = sendMessage();
 
         TabbedMessageRenderer view = new TabbedMessageRenderer();
 
-        assertThat(toText(view.render(new View(chatter1, message)))).contains("Player1&8");
-        assertThat(toText(view.render(new View(chatter2, message)))).contains("Player0&8");
+        assertThat(toCleanText(view.render(new View(chatter1, message)))).contains("\u2502 Player1 \u2502");
+        assertThat(toCleanText(view.render(new View(chatter2, message)))).contains("\u2502 Player0 \u2502");
     }
 
     @Test

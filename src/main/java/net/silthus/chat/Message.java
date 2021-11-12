@@ -36,6 +36,10 @@ import java.util.*;
 @Builder(builderMethodName = "message", toBuilder = true)
 public class Message implements Comparable<Message> {
 
+    public static Message empty() {
+        return Message.message(Component.empty()).build();
+    }
+
     public static MessageBuilder message() {
         return new MessageBuilder(Format.defaultFormat());
     }

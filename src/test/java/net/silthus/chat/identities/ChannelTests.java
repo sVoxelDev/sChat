@@ -172,16 +172,16 @@ public class ChannelTests extends TestBase {
 
         PlayerMock player0 = server.addPlayer();
         Chatter chatter0 = Chatter.of(player0);
-        channel.addTarget(chatter0);
+        chatter0.setActiveConversation(channel);
         PlayerMock player1 = server.addPlayer();
         Chatter chatter1 = Chatter.of(player1);
-        channel.addTarget(chatter1);
+        chatter1.setActiveConversation(channel);
         PlayerMock player2 = server.addPlayer();
 
         chatter0.message("test").to(channel).send();
 
-        assertThat(player0.nextMessage()).contains("test");
-        assertThat(player1.nextMessage()).contains("test");
+        assertThat(cleaned(player0.nextMessage())).contains("test");
+        assertThat(cleaned(player1.nextMessage())).contains("test");
         assertThat(player2.nextMessage()).isNull();
     }
 
@@ -190,7 +190,7 @@ public class ChannelTests extends TestBase {
 
         PlayerMock player = server.addPlayer();
         Chatter chatter = Chatter.of(player);
-        chatter.subscribe(channel);
+        chatter.setActiveConversation(channel);
 
         ChatSource.player(server.addPlayer())
                 .message("test")

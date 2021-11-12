@@ -75,6 +75,14 @@ public class ChatterTests extends TestBase {
     }
 
     @Test
+    void createFromIdentity() {
+        Chatter chatter = Chatter.chatter(Identity.identity(UUID.randomUUID(), "Test", text("Test")));
+
+        assertThat(plugin.getChatterManager().getChatters()).contains(chatter);
+        assertThat(chatter.getName()).isEqualTo("Test");
+    }
+
+    @Test
     void create_registersOnChatListener() {
 
         Bukkit.getPluginManager().registerEvents(chatter, plugin);
@@ -125,7 +133,7 @@ public class ChatterTests extends TestBase {
 
         assertThat(chatter.getLastReceivedMessage())
                 .isNotNull()
-                .extracting(this::toText)
+                .extracting(this::toCleanText)
                 .isEqualTo("Player0: Hi there");
     }
 
@@ -134,7 +142,7 @@ public class ChatterTests extends TestBase {
         chatter.setActiveConversation(ChatTarget.channel("test"));
         chatter.sendMessage(Message.message("test").build());
 
-        assertThat(cleaned(player.nextMessage())).contains("| test |");
+        assertThat(cleaned(player.nextMessage())).contains("\u2502 test \u2502");
     }
 
     @Test
@@ -151,6 +159,17 @@ public class ChatterTests extends TestBase {
                 [test]N/A: 3
                 [test]N/A: 4
                 """);
+    }
+
+    @Test
+    void sendMessage_isOnlyDisplayedIfChannelIsActive() {
+        Channel channel = createChannel("test");
+        Channel other = createChannel("other");
+        chatter.subscribe(other);
+        chatter.setActiveConversation(channel);
+
+        other.sendMessage("foobar");
+        assertThat(cleaned(player.nextMessage())).doesNotContain("foobar");
     }
 
     @Test

@@ -89,7 +89,7 @@ public class ConsoleTests {
 
             Message message = Message.message("Hi").to(console).send();
 
-            assertThat(((ConsoleCommandSenderMock) server.getConsoleSender()).nextMessage())
+            assertThat(cleaned(((ConsoleCommandSenderMock) server.getConsoleSender()).nextMessage()))
                     .isNotNull()
                     .isEqualTo("Hi");
             assertThat(console.getLastReceivedMessage())

@@ -23,8 +23,10 @@ import lombok.NonNull;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.SChat;
+import net.silthus.chat.identities.Chatter;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class ConversationManager {
 
@@ -49,13 +51,15 @@ public final class ConversationManager {
     public Conversation registerConversation(@NonNull Conversation conversation) {
         if (conversations.containsKey(conversation.getUniqueId()))
             return conversations.get(conversation.getUniqueId());
+        conversation.addTarget(plugin.getBungeecord());
         conversations.put(conversation.getUniqueId(), conversation);
         return conversation;
     }
 
     public Optional<Conversation> getDirectConversation(ChatTarget... targets) {
         return conversations.values().stream()
-                .filter(conversation -> new HashSet<>(conversation.getTargets()).equals(Set.of(targets)))
+                .filter(conversation -> conversation instanceof DirectConversation)
+                .filter(conversation -> conversation.getTargets().stream().filter(target -> target instanceof Chatter).collect(Collectors.toSet()).equals(Set.of(targets)))
                 .findFirst();
     }
 }

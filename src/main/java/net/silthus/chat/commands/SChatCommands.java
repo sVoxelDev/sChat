@@ -58,6 +58,7 @@ public class SChatCommands extends BaseCommand {
                 throw new ConditionFailedException(key(INVALID_CONVERSATION));
             }
             chatter.setActiveConversation(conversation);
+            chatter.updateView();
         }
     }
 
@@ -74,6 +75,7 @@ public class SChatCommands extends BaseCommand {
             try {
                 chatter.join(channel);
                 success(JOINED_CHANNEL, "{channel}", getChannelName(channel));
+                chatter.updateView();
             } catch (AccessDeniedException e) {
                 error(ACCESS_TO_CHANNEL_DENIED, "{channel}", getChannelName(channel));
                 throw new ConditionFailedException(key(ACCESS_TO_CHANNEL_DENIED), "{channel}", getChannelName(channel));
@@ -87,6 +89,7 @@ public class SChatCommands extends BaseCommand {
         public void leave(@Flags("self") Chatter chatter, Channel channel) {
             chatter.unsubscribe(channel);
             success(LEAVE_CHANNEL, "{channel}", getChannelName(channel));
+            chatter.updateView();
         }
 
         @Subcommand("message|msg|qm")
@@ -108,14 +111,17 @@ public class SChatCommands extends BaseCommand {
     public class DirectMessageCommands extends BaseCommand {
 
         @Subcommand("send")
-        @CommandAlias("m|tell|msg|message|w|dm")
+        @CommandAlias("m|tell|msg|message|w|dm|pm")
         @CommandCompletion("@chatters *")
         public void directMessage(@Flags("self") Chatter source, Chatter target, @Optional String message) {
-            Conversation conversation = Conversation.direct(source, target);
+            if (source.equals(target))
+                throw new ConditionFailedException(key(CANNOT_SEND_TO_SELF));
+
             if (message != null) {
-                conversation.sendMessage(Message.message(source, message).build());
+                source.message(message).to(target).send();
             } else {
-                source.setActiveConversation(conversation);
+                source.setActiveConversation(Conversation.direct(source, target));
+                source.updateView();
             }
         }
     }

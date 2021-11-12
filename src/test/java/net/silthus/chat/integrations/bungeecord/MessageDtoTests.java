@@ -61,7 +61,7 @@ public class MessageDtoTests extends TestBase {
         Message message = dto.toMessage();
 
         assertThat(message.getId()).isEqualTo(originalMessage.getId());
-        assertThat(toText(message)).isEqualTo("Player0: Hi");
+        assertThat(toCleanText(message)).isEqualTo("Player0: Hi");
         assertThat(message.getSource())
                 .isInstanceOf(Chatter.class)
                 .extracting(Identity::getUniqueId).isEqualTo(player.getUniqueId());
@@ -92,7 +92,7 @@ public class MessageDtoTests extends TestBase {
         MessageDto dto = new MessageDto(Message.message("Hi").from(ChatSource.player(player)).build());
         Message message = dto.toMessage();
 
-        assertThat(toText(message)).isEqualTo("Test: Hi");
+        assertThat(toCleanText(message)).isEqualTo("Test: Hi");
         assertThat(message.getSource())
                 .isNotNull()
                 .extracting(

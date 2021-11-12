@@ -17,6 +17,9 @@ defaults:
 console:
   # This is the channel the console will send chat messages to.
   default_channel: global
+private_chats:
+  # set false to only allow private chats on the active server
+  global: true
 # Define your list of channels here.
 channels:
   # The id of the channel must be unique across your server network.
@@ -70,6 +73,7 @@ channels:
     format: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset><yellow><sender_vault_prefix><sender_name><sender_vault_suffix><gray>: <gray><message>'
   trade:
     name: Trade
+    auto_join: true
   team:
     # Protecting a channel requires the "schat.channel.<id>" permission to join it.
     # For the team channel this would be "schat.channel.team".

@@ -21,9 +21,7 @@ package net.silthus.chat.integrations.bungeecord;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import net.silthus.chat.ChatSource;
-import net.silthus.chat.Conversation;
-import net.silthus.chat.Identity;
+import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.Console;
@@ -56,13 +54,14 @@ class IdentityDto {
             case CHATTER -> {
                 Player player = Bukkit.getPlayer(uniqueId);
                 if (player == null)
-                    yield ChatSource.named(uniqueId, name, BungeeHelper.deserialize(name));
-                yield ChatSource.player(player);
+                    yield Chatter.chatter(Identity.identity(uniqueId, name, BungeeHelper.deserialize(name)));
+                yield Chatter.of(player);
             }
-            case CHANNEL -> ChatSource.channel(name);
-            case CONSOLE -> ChatSource.console();
+            case CHANNEL -> ChatTarget.channel(name);
+            case CONVERSATION -> SChat.instance().getConversationManager().getConversation(uniqueId);
+            case CONSOLE -> ChatTarget.console();
             case NAMED -> ChatSource.named(uniqueId, name, BungeeHelper.deserialize(name));
-            default -> ChatSource.nil();
+            default -> ChatTarget.nil();
         };
     }
 

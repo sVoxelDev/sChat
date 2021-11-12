@@ -17,35 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.renderer;
+package net.silthus.chat.config;
 
-import lombok.NonNull;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import net.silthus.chat.Conversation;
-import net.silthus.chat.Message;
-import net.silthus.chat.identities.Chatter;
+import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.Collection;
-import java.util.List;
-
-@Value
+@Data
+@NoArgsConstructor
 @Accessors(fluent = true)
-public class View {
+public class PrivateChatConfig {
 
-    Chatter chatter;
-    List<Message> messages;
-    List<Conversation> conversations;
-    Conversation activeConversation;
+    private boolean global = true;
 
-    public View(@NonNull Chatter chatter, Message... messages) {
-        this(chatter, List.of(messages));
-    }
-
-    public View(@NonNull Chatter chatter, @NonNull Collection<Message> messages) {
-        this.chatter = chatter;
-        this.messages = messages.stream().sorted().distinct().toList();
-        this.conversations = chatter.getConversations().stream().sorted().toList();
-        this.activeConversation = chatter.getActiveConversation();
+    PrivateChatConfig(ConfigurationSection config) {
+        this.global = config.getBoolean("global", global);
     }
 }

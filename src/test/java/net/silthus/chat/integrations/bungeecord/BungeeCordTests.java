@@ -19,6 +19,7 @@
 
 package net.silthus.chat.integrations.bungeecord;
 
+import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
@@ -63,7 +64,8 @@ public class BungeeCordTests extends TestBase {
     void synchronizeChatter() {
         ChatterManager chatterManager = plugin.getChatterManager();
 
-        Chatter chatter = Chatter.of(server.addPlayer());
+        PlayerMock player = new PlayerMock(server, "test");
+        Chatter chatter = Chatter.of(player);
         chatterManager.removeChatter(chatter);
         assertThat(chatterManager.getChatter(chatter.getUniqueId())).isNull();
 
