@@ -69,7 +69,7 @@ public class ChannelConfig {
                 .protect(config.getBoolean("protect", protect))
                 .sendToConsole(config.getBoolean("console", sendToConsole))
                 .autoJoin(config.getBoolean("auto_join", autoJoin))
-                .scope(Scopes.scope(config.getString("scope", SERVER)))
+                .scope(Scopes.scope(config.getString("scope", SERVER), config))
                 .format(config.isSet("format") ? Format.miniMessage(config.getString("format")) : format);
     }
 

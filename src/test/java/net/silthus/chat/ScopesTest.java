@@ -20,42 +20,63 @@
 package net.silthus.chat;
 
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.scopes.GlobalScope;
+import net.silthus.configmapper.ConfigOption;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class ScopesTest {
 
     @Test
-    @SuppressWarnings("ConstantConditions")
-    void scopes_isImmutable() {
-        assertThatExceptionOfType(UnsupportedOperationException.class)
-                .isThrownBy(() -> Scopes.scopes().add(new GlobalScope()));
-    }
-
-    @Test
     void register_usesTaggedName() {
-        TestScope scope = new TestScope();
-        Scopes.register(scope);
+        Scopes.register(TestScope.class);
 
-        assertThat(Scopes.scope("foo")).isEqualTo(scope);
+        assertThat(Scopes.scope("foo"))
+                .isNotNull()
+                .isInstanceOf(TestScope.class);
     }
 
     @Test
     void register_noAnnotation_usesClassName() {
-        NotAnnotatedScope scope = new NotAnnotatedScope();
-        Scopes.register(scope);
+        Scopes.register(NotAnnotatedScope.class);
 
-        assertThat(Scopes.scope("not-annotated")).isEqualTo(scope);
+        assertThat(Scopes.scope("not-annotated"))
+                .isNotNull()
+                .isInstanceOf(NotAnnotatedScope.class);
+    }
+
+    @Test
+    void get_nonExisting_returnsNull() {
+        assertThat(Scopes.scope("foobar"))
+                .isNull();
+    }
+
+    @Test
+    void create_withConfig_isAppliedToScope() {
+        Scopes.register(TestScope.class);
+        MemoryConfiguration cfg = new MemoryConfiguration();
+        cfg.set("my_config", "test");
+        List<String> worlds = List.of("test", "world");
+        cfg.set("worlds", worlds);
+
+        Scope scope = Scopes.scope("foo", cfg);
+        assertThat(scope)
+                .extracting("myConfig", "worlds")
+                .contains("test", worlds);
     }
 
     @Scope.Name("foo")
     static class TestScope implements Scope {
+
+        @ConfigOption
+        private String myConfig;
+        @ConfigOption
+        private List<String> worlds = new ArrayList<>();
 
         @Override
         public Collection<ChatTarget> apply(Channel channel) {

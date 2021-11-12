@@ -22,14 +22,42 @@ package net.silthus.chat.scopes;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Scope;
 import net.silthus.chat.conversations.Channel;
+import net.silthus.configmapper.ConfigOption;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
-public class WorldScope implements Scope {
+@Scope.Name("world")
+public final class WorldScope implements Scope {
+
+    @ConfigOption(required = true)
+    List<String> worlds;
 
     @Override
     public Collection<ChatTarget> apply(Channel channel) {
-        return new ArrayList<>();
+        return channel.getTargets().stream()
+                .filter(this::isNoPlayerOrInWorld)
+                .collect(Collectors.toList());
+    }
+
+    private boolean isNoPlayerOrInWorld(ChatTarget target) {
+        Player player = Bukkit.getPlayer(target.getUniqueId());
+        if (player != null)
+            return getWorlds().contains(player.getWorld());
+        return true;
+    }
+
+    @NotNull
+    private List<World> getWorlds() {
+        return this.worlds.stream()
+                .map(Bukkit::getWorld)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }

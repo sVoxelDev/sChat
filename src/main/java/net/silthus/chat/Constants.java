@@ -111,5 +111,6 @@ public final class Constants {
 
         public static final String SERVER = "server";
         public static final String GLOBAL = "global";
+        public static final String WORLD = "world";
     }
 }

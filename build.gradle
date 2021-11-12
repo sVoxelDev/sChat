@@ -99,6 +99,7 @@ dependencies {
     implementation 'net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT'
 
     implementation 'org.bstats:bstats-bukkit:2.2.1'
+    implementation 'net.silthus.config-mapper:bukkit:1.6.1'
 
     //Test dependencies
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
@@ -114,11 +115,13 @@ shadowJar {
         include(dependency('co.aikar::'))
         include(dependency('net.kyori::'))
         include(dependency('org.bstats::'))
+        include(dependency('net.silthus.config-mapper::'))
     }
     relocate 'co.aikar.commands', "${packageName}.acf"
     relocate 'co.aikar.locales', "${packageName}.locales"
     relocate 'net.kyori.adventure.text.minimessage', "${packageName}.text.minimessage"
     relocate 'org.bstats', "${packageName}.bstats"
+    relocate 'net.silthus.configmapper', "${packageName}.configmapper"
 }
 
 tasks.build.dependsOn(shadowJar)

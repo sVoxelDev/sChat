@@ -26,8 +26,11 @@ import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.scopes.GlobalScope;
+import net.silthus.chat.scopes.WorldScope;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -86,5 +89,20 @@ class ChannelConfigTest extends TestBase {
 
         assertThat(config.format()).isNotNull();
         assertThat(toText(component)).isEqualTo("&6[&atest&6]&esource&7: test");
+    }
+
+    @Test
+    void loadWorldScope_withWorldsConfig() {
+
+        List<String> worlds = List.of("world", "world_nether");
+        MemoryConfiguration cfg = new MemoryConfiguration();
+        cfg.set("scope", "world");
+        cfg.set("worlds", worlds);
+        ChannelConfig config = ChannelConfig.of(cfg);
+
+        assertThat(config.scope())
+                .isNotNull().isInstanceOf(WorldScope.class)
+                .extracting("worlds")
+                .isEqualTo(worlds);
     }
 }

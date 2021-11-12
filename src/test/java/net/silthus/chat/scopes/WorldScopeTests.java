@@ -19,12 +19,79 @@
 
 package net.silthus.chat.scopes;
 
+import be.seeseemelk.mockbukkit.WorldMock;
+import be.seeseemelk.mockbukkit.entity.PlayerMock;
+import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Scopes;
+import net.silthus.chat.TestBase;
+import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.identities.Chatter;
+import net.silthus.configmapper.ConfigurationException;
+import org.bukkit.Location;
+import org.bukkit.configuration.MemoryConfiguration;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class WorldScopeTests {
+import java.util.Collection;
+import java.util.List;
+
+import static net.silthus.chat.Constants.Scopes.WORLD;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
+public class WorldScopeTests extends TestBase {
+
+    private Channel channel;
+    private WorldMock someWorld;
+    private WorldMock otherWorld;
+    private WorldScope scope;
+
+    @Override
+    @BeforeEach
+    public void setUp() {
+        super.setUp();
+
+        channel = createChannel("test");
+
+        someWorld = server.addSimpleWorld("some-world");
+        otherWorld = server.addSimpleWorld("some-other");
+
+        MemoryConfiguration config = new MemoryConfiguration();
+        config.set("worlds", List.of("world", "some-world"));
+
+        scope = (WorldScope) Scopes.scope(WORLD, config);
+    }
+
+    @Test
+    void worlds_isSet() {
+        assertThat(scope.worlds)
+                .isNotEmpty()
+                .contains("world", "some-world");
+    }
+
+    @Test
+    void newScope_withoutWorldsConfig_throws() {
+        assertThatExceptionOfType(ConfigurationException.class)
+                .isThrownBy(() -> Scopes.scope(WORLD));
+    }
 
     @Test
     void filtersPlayersByWorld() {
-        WorldScope scope = new WorldScope();
+        Chatter chatter1 = chatterInWorld(someWorld);
+        Chatter chatter2 = chatterInWorld(someWorld);
+        Chatter chatter3 = chatterInWorld(otherWorld);
+
+        Collection<ChatTarget> targets = scope.apply(channel);
+        assertThat(targets)
+                .doesNotContain(chatter3)
+                .contains(chatter1, chatter2);
+    }
+
+    private Chatter chatterInWorld(WorldMock world) {
+        PlayerMock player = server.addPlayer();
+        player.teleport(new Location(world, 1, 2, 3));
+        Chatter chatter = Chatter.of(player);
+        channel.addTarget(chatter);
+        return chatter;
     }
 }
