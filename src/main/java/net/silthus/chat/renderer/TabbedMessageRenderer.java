@@ -29,6 +29,7 @@ import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
 import net.silthus.chat.MessageRenderer;
 import net.silthus.chat.identities.Chatter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -40,14 +41,14 @@ import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
 import static net.silthus.chat.Constants.Commands.JOIN_CONVERSATION;
 import static net.silthus.chat.Constants.View.*;
 
-public class TabbedMessageRenderer implements MessageRenderer {
+public final class TabbedMessageRenderer implements MessageRenderer {
 
     @Override
-    public Component render(Chatter chatter, Message... messages) {
+    public Component render(View view) {
         return text().append(clearChat())
-                .append(renderMessages(List.of(messages)))
+                .append(renderMessages(List.of(view.messages())))
                 .append(newline())
-                .append(footer(chatter))
+                .append(footer(view.chatter()))
                 .build();
     }
 
@@ -74,11 +75,7 @@ public class TabbedMessageRenderer implements MessageRenderer {
                 JoinConfiguration.builder()
                         .separator(newline())
                         .build(),
-                messages.stream()
-                        .distinct()
-                        .sorted()
-                        .map(Message::formatted)
-                        .collect(Collectors.toList())
+                sortMessages(messages)
         );
     }
 
@@ -88,6 +85,15 @@ public class TabbedMessageRenderer implements MessageRenderer {
             builder.append(newline());
         }
         return builder.build();
+    }
+
+    @NotNull
+    private List<Component> sortMessages(Collection<Message> messages) {
+        return messages.stream()
+                .distinct()
+                .sorted()
+                .map(Message::formatted)
+                .collect(Collectors.toList());
     }
 
     private TextComponent noConversations() {

@@ -28,6 +28,7 @@ import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.DirectConversation;
+import net.silthus.chat.renderer.View;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -110,7 +111,7 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
 
     @NotNull
     private Component renderMessage(Message message) {
-        return appendMessageId(RENDERER.render(this, getMessagesToRender(message)));
+        return appendMessageId(RENDERER.render(new View(this, getMessagesToRender(message))));
     }
 
     @NotNull

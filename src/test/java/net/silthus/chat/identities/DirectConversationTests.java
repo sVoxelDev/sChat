@@ -26,6 +26,7 @@ import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.DirectConversation;
 import net.silthus.chat.renderer.TabbedMessageRenderer;
+import net.silthus.chat.renderer.View;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -124,8 +125,8 @@ public class DirectConversationTests extends TestBase {
 
         TabbedMessageRenderer view = new TabbedMessageRenderer();
 
-        assertThat(toText(view.render(chatter1, message))).contains("Player1&8");
-        assertThat(toText(view.render(chatter2, message))).contains("Player0&8");
+        assertThat(toText(view.render(new View(chatter1, message)))).contains("Player1&8");
+        assertThat(toText(view.render(new View(chatter2, message)))).contains("Player0&8");
     }
 
     @Test

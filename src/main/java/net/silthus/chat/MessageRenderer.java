@@ -20,18 +20,12 @@
 package net.silthus.chat;
 
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.renderer.TabbedMessageRenderer;
-
-import java.util.Collection;
+import net.silthus.chat.renderer.View;
 
 public interface MessageRenderer {
 
     MessageRenderer TABBED = new TabbedMessageRenderer();
 
-    Component render(Chatter chatter, Message... messages);
-
-    default Component render(Chatter chatter, Collection<Message> messages) {
-        return render(chatter, messages.toArray(new Message[0]));
-    }
+    Component render(View view);
 }
