@@ -46,26 +46,25 @@ public final class TabbedMessageRenderer implements MessageRenderer {
     @Override
     public Component render(View view) {
         return text().append(clearChat())
-                .append(renderMessages(List.of(view.messages())))
+                .append(renderMessages(view.messages()))
                 .append(newline())
-                .append(footer(view.chatter()))
+                .append(footer(view))
                 .build();
     }
 
-    Component footer(Chatter chatter) {
+    Component footer(View view) {
         return ChatUtil.centerText(empty(), FRAME_SPACER)
                 .append(newline())
-                .append(conversationTabs(chatter));
+                .append(conversationTabs(view));
     }
 
-    Component conversationTabs(Chatter chatter) {
-        if (chatter.getConversations().isEmpty())
+    Component conversationTabs(View view) {
+        if (view.conversations().isEmpty())
             return noConversations();
 
         TextComponent.Builder builder = text().append(CHANNEL_DIVIDER.append(text(" ")).color(FRAME_COLOR));
-        chatter.getConversations().stream()
-                .sorted()
-                .forEach(conversation -> builder.append(conversation(chatter, conversation)));
+        view.conversations()
+                .forEach(conversation -> builder.append(conversation(view, conversation)));
 
         return builder.build();
     }
@@ -104,17 +103,17 @@ public final class TabbedMessageRenderer implements MessageRenderer {
                 .build();
     }
 
-    private Component conversation(Chatter chatter, Conversation conversation) {
-        boolean isActive = conversation.equals(chatter.getActiveConversation());
-        return text().append(conversationName(chatter, conversation, isActive))
+    private Component conversation(View view, Conversation conversation) {
+        boolean isActive = conversation.equals(view.activeConversation());
+        return text().append(conversationName(view, conversation, isActive))
                 .append(text(" ").append(CHANNEL_DIVIDER).append(text(" "))).color(FRAME_COLOR)
                 .build();
     }
 
-    private Component conversationName(Chatter chatter, Conversation conversation, boolean isActive) {
+    private Component conversationName(View view, Conversation conversation, boolean isActive) {
         Component conversationName = conversation.getDisplayName()
-                .replaceText(playerName(chatter))
-                .replaceText(conversationPartnerName(chatter, conversation))
+                .replaceText(playerName(view.chatter()))
+                .replaceText(conversationPartnerName(view.chatter(), conversation))
                 .clickEvent(clickEvent(ClickEvent.Action.RUN_COMMAND, JOIN_CONVERSATION.apply(conversation)));
         if (isActive)
             conversationName = conversationName.color(ACTIVE_COLOR).decorate(ACTIVE_DECORATION);

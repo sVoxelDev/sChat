@@ -54,7 +54,7 @@ public class TabbedMessageRendererTests extends TestBase {
 
     @Test
     void footer() {
-        Component footer = view.footer(chatter);
+        Component footer = view.footer(new View(chatter));
 
         assertThat(toText(footer).stripTrailing())
                 .isEqualTo("""
@@ -65,7 +65,7 @@ public class TabbedMessageRendererTests extends TestBase {
     @Test
     void conversationTabs() {
         chatter.setActiveConversation(Channel.channel("test"));
-        Component footer = view.conversationTabs(chatter);
+        Component footer = view.conversationTabs(new View(chatter));
 
         assertThat(toText(footer).stripTrailing())
                 .isEqualTo("""
@@ -87,7 +87,7 @@ public class TabbedMessageRendererTests extends TestBase {
         Chatter chatter = Chatter.of(new PlayerMock(server, "test"));
         assertThat(chatter.getConversations()).isEmpty();
 
-        Component component = view.conversationTabs(chatter);
+        Component component = view.conversationTabs(new View(chatter));
         String text = cleaned(toText(component));
         assertThat(text).isEqualTo("&8| &7No Channels selected. Use &b/ch join <channel> &7to join a channel.");
     }
@@ -96,7 +96,7 @@ public class TabbedMessageRendererTests extends TestBase {
     void channels_renders_subscribedChannels() {
         addChannels();
 
-        String text = cleaned(toText(view.conversationTabs(chatter)));
+        String text = cleaned(toText(view.conversationTabs(new View(chatter))));
         assertThat(text)
                 .contains("test")
                 .contains("foobar");
@@ -107,7 +107,7 @@ public class TabbedMessageRendererTests extends TestBase {
         addChannels();
         chatter.setActiveConversation(ChatTarget.channel("active"));
 
-        String text = toText(view.conversationTabs(chatter));
+        String text = toText(view.conversationTabs(new View(chatter)));
         assertThat(text)
                 .isEqualTo("&8| &a&nactive&8 | &7foobar&8 | &7Global&8 | &7test&8 | ");
     }
@@ -119,7 +119,7 @@ public class TabbedMessageRendererTests extends TestBase {
         chatter.subscribe(channel);
         chatter.setActiveConversation(channel);
 
-        String text = toText(view.conversationTabs(chatter));
+        String text = toText(view.conversationTabs(new View(chatter)));
 
         assertThat(text).contains(toText(chatter.getDisplayName()));
     }
