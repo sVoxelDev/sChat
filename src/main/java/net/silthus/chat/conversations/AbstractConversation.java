@@ -26,6 +26,7 @@ import lombok.Setter;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.Format;
+import net.silthus.chat.Identity;
 import net.silthus.chat.identities.AbstractChatTarget;
 
 import java.util.*;
@@ -57,4 +58,10 @@ public abstract class AbstractConversation extends AbstractChatTarget implements
         this.targets.remove(target);
     }
 
+    @Override
+    public int compareTo(@NonNull Conversation o) {
+        return Comparator.comparing(Conversation::getType)
+                .thenComparing(Identity::getName)
+                .compare(this, o);
+    }
 }

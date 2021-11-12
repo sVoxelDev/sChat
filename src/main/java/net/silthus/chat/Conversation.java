@@ -27,7 +27,7 @@ import net.silthus.chat.conversations.DirectConversation;
 
 import java.util.Collection;
 
-public interface Conversation extends ChatTarget {
+public interface Conversation extends ChatTarget, Comparable<Conversation> {
 
     static Conversation direct(ChatTarget target1, ChatTarget target2) {
         ConversationManager conversationManager = SChat.instance().getConversationManager();
@@ -52,4 +52,24 @@ public interface Conversation extends ChatTarget {
     void addTarget(@NonNull ChatTarget target);
 
     void removeTarget(@NonNull ChatTarget target);
+
+    default Type getType() {
+        return Type.fromConversation(this);
+    }
+
+    enum Type {
+        CHANNEL,
+        DIRECT,
+        OTHER;
+
+        private static Type fromConversation(Conversation conversation) {
+            if (conversation instanceof Channel) {
+                return CHANNEL;
+            } else if (conversation instanceof DirectConversation) {
+                return DIRECT;
+            } else {
+                return OTHER;
+            }
+        }
+    }
 }

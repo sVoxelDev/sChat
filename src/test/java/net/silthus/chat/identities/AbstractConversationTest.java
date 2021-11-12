@@ -22,8 +22,14 @@ package net.silthus.chat.identities;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.TestBase;
+import net.silthus.chat.conversations.Channel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class AbstractConversationTest extends TestBase {
 
@@ -40,5 +46,24 @@ class AbstractConversationTest extends TestBase {
     @Test
     void subscribe_returnsSubscription() {
         conversation.addTarget(ChatTarget.player(server.addPlayer()));
+    }
+
+    @Test
+    void sorted_byName() {
+        Channel one = Conversation.channel("Abc");
+        Channel two = Conversation.channel("def");
+        Conversation three = Conversation.direct(ChatTarget.player(server.addPlayer()), ChatTarget.player(server.addPlayer()));
+        List<Conversation> conversations = List.of(
+                three,
+                two,
+                one
+        );
+
+        List<Conversation> sorted = conversations.stream().sorted().collect(Collectors.toList());
+        assertThat(sorted).containsExactly(
+                one,
+                two,
+                three
+        );
     }
 }

@@ -57,14 +57,14 @@ public class TabbedMessageRenderer implements MessageRenderer {
     }
 
     Component conversationTabs(Chatter chatter) {
-        if (chatter.getConversations().isEmpty()) {
+        if (chatter.getConversations().isEmpty())
             return noConversations();
-        }
 
         TextComponent.Builder builder = text().append(text(CHANNEL_DIVIDER + " ").color(FRAME_COLOR));
-        for (Conversation conversation : chatter.getConversations()) {
-            builder.append(conversation(chatter, conversation));
-        }
+        chatter.getConversations().stream()
+                .sorted()
+                .forEach(conversation -> builder.append(conversation(chatter, conversation)));
+
         return builder.build();
     }
 

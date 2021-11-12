@@ -57,8 +57,12 @@ public class TabbedMessageRendererTests extends TestBase {
 
     @Test
     void footer() {
+        chatter.setActiveConversation(Channel.channel("test"));
         Component footer = view.footer(chatter);
-        assertThat(footer).isEqualTo(view.conversationTabs(chatter));
+
+        assertThat(toText(footer).stripTrailing())
+                .isEqualTo("""
+                        &8| &7Global&8 | &a&ntest&8 |""");
     }
 
     @Test
