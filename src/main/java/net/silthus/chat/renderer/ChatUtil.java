@@ -19,12 +19,21 @@
 
 package net.silthus.chat.renderer;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
+
+import static net.kyori.adventure.text.Component.text;
 
 public final class ChatUtil {
 
     public static final int PADDING = 1;
     public static final int MAX_LINE_LENGTH = 316;
+
+    public static int getTextLength(Component component) {
+        return getTextLength(LegacyComponentSerializer.legacySection().serialize(component));
+    }
 
     public static int getTextLength(String str) {
         if (str == null || str.isEmpty()) return 0;
@@ -47,45 +56,45 @@ public final class ChatUtil {
         return length;
     }
 
-    public static String wrapText(String text, String leftCorner, String spacer, String rightCorner) {
+    public static Component wrapText(Component text, Component leftCorner, Component spacer, Component rightCorner) {
         int lineLength = MAX_LINE_LENGTH - getTextLength(leftCorner) - getTextLength(rightCorner);
-        return leftCorner + centerText(text, spacer, lineLength) + rightCorner;
+        return text().append(leftCorner)
+                .append(centerText(text, spacer, lineLength))
+                .append(rightCorner)
+                .build();
     }
 
-    public static String centerText(String text, String spacer) {
+    public static Component centerText(Component text, Component spacer) {
         return centerText(text, spacer, MAX_LINE_LENGTH);
     }
 
-    public static String spaceAndCenterText(String leftCorner, String divider, String rightCorner, String spacer, String... text) {
-        StringBuilder sb = new StringBuilder();
-        int availableSpacePerText = (MAX_LINE_LENGTH / text.length) - (getTextLength(leftCorner) + getTextLength(rightCorner) + (getTextLength(divider) * (text.length - 1)));
+    public static Component spaceAndCenterText(Component leftCorner, Component divider, Component rightCorner, Component spacer, Component... text) {
+        int lineLength = MAX_LINE_LENGTH - getTextLength(leftCorner) - getTextLength(rightCorner) - (getTextLength(divider) * (text.length - 1));
+        int availableSpacePerText = lineLength / text.length;
+        TextComponent.Builder builder = text();
         for (int i = 0; i < text.length; i++) {
-            String fragment = text[i];
-            sb.append(centerText(fragment, spacer, availableSpacePerText));
+            Component fragment = text[i];
+            builder.append(centerText(fragment, spacer, availableSpacePerText));
             if (i != text.length - 1)
-                sb.append(divider);
+                builder.append(divider);
         }
-        return leftCorner + sb + rightCorner;
+        return text().append(leftCorner).append(builder.build()).append(rightCorner).build();
     }
 
-    private static String centerText(String text, String spacer, int lineLength) {
+    public static Component centerText(final Component text, final Component spacer, int lineLength) {
         int spacerLength = getTextLength(spacer);
         int compensated = 0;
-        StringBuilder prefix = new StringBuilder();
-        StringBuilder suffix = new StringBuilder();
-        while (compensated < getPixelsToCenterText(text, lineLength)) {
+        TextComponent.Builder prefix = text();
+        TextComponent.Builder suffix = text();
+        while (compensated < getPixelsToCompensate(text, lineLength) - spacerLength) {
             prefix.append(spacer);
             suffix.append(spacer);
             compensated += spacerLength;
         }
-        return prefix.append(text).append(suffix).toString();
+        return text().append(prefix).append(text).append(suffix).build();
     }
 
-    private static int getPixelsToCenterText(String text, int lineLength) {
-        return getCenterPixel(lineLength) - getTextLength(text) / 2;
-    }
-
-    private static int getCenterPixel(int lineLength) {
-        return lineLength / 2 - PADDING;
+    private static int getPixelsToCompensate(Component text, int lineLength) {
+        return lineLength / 2 - getTextLength(text) / 2;
     }
 }

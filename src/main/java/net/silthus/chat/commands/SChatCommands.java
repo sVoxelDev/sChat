@@ -49,6 +49,18 @@ public class SChatCommands extends BaseCommand {
         this.plugin = plugin;
     }
 
+    @Subcommand("conversations")
+    public class ConversationCommands extends BaseCommand {
+
+        @Subcommand("set-active")
+        public void setActive(@Flags("self") Chatter chatter, Conversation conversation) {
+            if (!chatter.getConversations().contains(conversation)) {
+                throw new ConditionFailedException(key(INVALID_CONVERSATION));
+            }
+            chatter.setActiveConversation(conversation);
+        }
+    }
+
     @Subcommand("channel|ch")
     @CommandAlias("channel")
     @CommandPermission(PERMISSION_PLAYER_CHANNEL_COMMANDS)
@@ -89,8 +101,13 @@ public class SChatCommands extends BaseCommand {
         @Subcommand("send")
         @CommandAlias("m|tell|msg|message|w|dm")
         @CommandCompletion("@chatters *")
-        public void directMessage(@Flags("self") Chatter source, Chatter target, String message) {
-            Conversation.direct(source, target).sendMessage(Message.message(source, message).build());
+        public void directMessage(@Flags("self") Chatter source, Chatter target, @Optional String message) {
+            Conversation conversation = Conversation.direct(source, target);
+            if (message != null) {
+                conversation.sendMessage(Message.message(source, message).build());
+            } else {
+                source.setActiveConversation(conversation);
+            }
         }
     }
 

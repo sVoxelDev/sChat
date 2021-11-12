@@ -21,6 +21,7 @@ package net.silthus.chat;
 
 import lombok.NonNull;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -28,6 +29,8 @@ import net.md_5.bungee.api.ChatColor;
 import net.silthus.chat.conversations.Channel;
 
 import java.util.function.Function;
+
+import static net.kyori.adventure.text.Component.text;
 
 public final class Constants {
 
@@ -70,6 +73,7 @@ public final class Constants {
         public static final String ACCESS_TO_CHANNEL_DENIED = "access-to-channel-denied";
         public static final String SEND_TO_CHANNEL_DENIED = "send-to-channel-denied";
         public static final String JOINED_CHANNEL = "joined-channel";
+        public static final String INVALID_CONVERSATION = "invalid-conversation";
     }
 
     public static class Errors {
@@ -92,12 +96,14 @@ public final class Constants {
         public static final TextColor INACTIVE_COLOR = NamedTextColor.GRAY;
         public static final TextDecoration ACTIVE_DECORATION = TextDecoration.UNDERLINED;
 
-        public static final String CHANNEL_DIVIDER = "|";
+        public static final Component CHANNEL_DIVIDER = text("|");
+        public static final Component FRAME_SPACER = text("-");
     }
 
     public static class Commands {
 
-        public static final Function<Conversation, String> JOIN_CONVERSATION = conversation -> "/schat channel join " + conversation.getUniqueId();
+        public static final Function<Conversation, String> JOIN_CHANNEL = conversation -> "/schat channel join " + conversation.getUniqueId();
+        public static final Function<Conversation, String> JOIN_CONVERSATION = conversation -> "/schat conversations set-active " + conversation.getUniqueId();
     }
 
     public static class BungeeCord {

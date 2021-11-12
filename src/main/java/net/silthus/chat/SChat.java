@@ -205,6 +205,7 @@ public final class SChat extends JavaPlugin {
 
         registerChatterContext(commandManager);
         registerChannelContext(commandManager);
+        registerConversationContext(commandManager);
 
         registerChannelCompletion(commandManager);
         registerChatterCompletion(commandManager);
@@ -251,6 +252,10 @@ public final class SChat extends JavaPlugin {
 
             return Chatter.of(player);
         });
+    }
+
+    private void registerConversationContext(PaperCommandManager commandManager) {
+        commandManager.getCommandContexts().registerContext(Conversation.class, context -> getConversationManager().getConversation(UUID.fromString(context.popFirstArg())));
     }
 
     private void registerChannelCompletion(PaperCommandManager commandManager) {

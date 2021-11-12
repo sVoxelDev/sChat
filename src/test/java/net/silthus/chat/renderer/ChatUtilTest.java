@@ -19,58 +19,80 @@
 
 package net.silthus.chat.renderer;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.assertj.core.api.Assertions;
-import org.bukkit.ChatColor;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.withinPercentage;
 
-@Disabled
 class ChatUtilTest {
 
     @Test
     void getLength_returnsStringLength() {
-        final String str = "> [&6Admin] " + ChatColor.GRAY + "User: " + ChatColor.BOLD + "Hi!";
-        Assertions.assertThat(ChatUtil.getTextLength(str)).isEqualTo(90);
+        TextComponent text = text().append(text("> ["))
+                .append(text("Admin").color(NamedTextColor.RED))
+                .append(text("]"))
+                .append(text("User: ").color(NamedTextColor.GRAY))
+                .append(text("Hi!").decorate(TextDecoration.BOLD))
+                .build();
+        Assertions.assertThat(ChatUtil.getTextLength(text)).isEqualTo(86);
     }
 
     @Test
     void centerText_addsLeftSpacingCharacter() {
 
-        final String str = " &6Hello&l! ";
-        String centerText = ChatUtil.centerText(str, FontInfo.MINUS.toString());
+        TextComponent text = text(" Hello").color(NamedTextColor.RED)
+                .append(text("! ").decorate(TextDecoration.BOLD));
+
+        Component centerText = ChatUtil.centerText(text, text("-"));
         assertNotExceedingMaxLineLength(centerText);
-        assertThat(centerText).isEqualTo("------------------------ &6Hello&l! ------------------------");
+        assertThat(toText(centerText))
+                .isEqualTo("-----------------------&c Hello&l! &r-----------------------");
+    }
+
+    @Test
+    void centerText_reallyLongText() {
+        final Component str = text(" Hi there my good old friend! ");
+        Component text = ChatUtil.centerText(str, text("-"));
+        assertNotExceedingMaxLineLength(text);
+        assertThat(toText(text)).isEqualTo("------------- Hi there my good old friend! -------------");
     }
 
     @Test
     void frameText_addsSpacingAndLeftAndRightSuffix() {
-        final String str = "Hi";
-        String text = ChatUtil.wrapText(str, "|-", "-", "-|");
+        Component text = ChatUtil.wrapText(text("Hi"), text("|-"), text("-"), text("-|"));
         assertNotExceedingMaxLineLength(text);
-        assertThat(text).isEqualTo("|--------------------------Hi--------------------------|");
+        assertThat(toText(text)).isEqualTo("|-------------------------Hi-------------------------|");
     }
 
     @Test
     void spaceAndCenterText() {
-        final String[] text = {"Hi", "there", "friend!"};
-        String result = ChatUtil.spaceAndCenterText("|- ", " | ", "-|", " ", text);
+        final Component[] text = {text("Hi"), text("there"), text("friend!")};
+        Component result = ChatUtil.spaceAndCenterText(text("|-"), text(" | "), text("-|"), text(" "), text);
         assertNotExceedingMaxLineLength(result);
-        assertThat(result).isEqualTo("|-        Hi        |      there      |     friend!    -|");
+        assertThat(toText(result)).isEqualTo("|-          Hi           |        there        |        friend!       -|");
     }
 
     @Test
     void centerText_isNotLonger_thanMaxLineLength() {
-        final String str = "Hi";
-        String text = ChatUtil.centerText("Hi", "-");
+        Component text = ChatUtil.centerText(text("Hi"), text("-"));
         assertNotExceedingMaxLineLength(text);
+        assertThat(toText(text)).isEqualTo("-------------------------Hi-------------------------");
     }
 
-    private void assertNotExceedingMaxLineLength(String text) {
+    private void assertNotExceedingMaxLineLength(Component text) {
         int textLength = ChatUtil.getTextLength(text);
         assertThat(textLength).isLessThan(ChatUtil.MAX_LINE_LENGTH);
-        assertThat(textLength).isCloseTo(ChatUtil.MAX_LINE_LENGTH, withinPercentage(5));
+        assertThat(textLength).isCloseTo(ChatUtil.MAX_LINE_LENGTH, withinPercentage(6));
+    }
+
+    private String toText(Component component) {
+        return LegacyComponentSerializer.legacyAmpersand().serialize(component);
     }
 }

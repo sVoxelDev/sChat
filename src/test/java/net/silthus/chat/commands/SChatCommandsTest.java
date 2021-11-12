@@ -21,10 +21,7 @@ package net.silthus.chat.commands;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.md_5.bungee.api.ChatColor;
-import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Constants;
-import net.silthus.chat.Message;
-import net.silthus.chat.TestBase;
+import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.DirectConversation;
 import net.silthus.chat.identities.Chatter;
@@ -96,7 +93,7 @@ class SChatCommandsTest extends TestBase {
         @Test
         void clickOnChannel_joinsChannel() {
             Channel channel = createChannel("test");
-            String command = Constants.Commands.JOIN_CONVERSATION.apply(channel).replaceFirst("/", "");
+            String command = Constants.Commands.JOIN_CHANNEL.apply(channel).replaceFirst("/", "");
             Chatter chatter = Chatter.of(player);
             assertThat(chatter.getActiveConversation()).isNotEqualTo(channel);
 
@@ -127,6 +124,40 @@ class SChatCommandsTest extends TestBase {
                     .extracting(ChatTarget::getLastReceivedMessage)
                     .extracting(Message::getText)
                     .isEqualTo(text("Hi"));
+        }
+
+        @Test
+        void clickOnDirectConversationSetsConversationActive() {
+            PlayerMock player1 = server.addPlayer();
+            player.performCommand("w Player1 Hey!");
+
+            Chatter chatter = Chatter.of(player);
+            Conversation directConversation = chatter.getActiveConversation();
+            assertThat(directConversation)
+                    .isNotNull()
+                    .isInstanceOf(DirectConversation.class);
+            chatter.setActiveConversation(createChannel("test"));
+
+            player.performCommand(Constants.Commands.JOIN_CONVERSATION.apply(directConversation).replace("/", ""));
+            assertThat(chatter.getActiveConversation())
+                    .isEqualTo(directConversation);
+        }
+
+        @Test
+        void directMessage_toOpenConversation() {
+            PlayerMock player1 = server.addPlayer();
+            player.performCommand("message Player1");
+
+            Chatter sender = Chatter.of(player);
+            Chatter target = Chatter.of(player1);
+            assertThat(sender.getActiveConversation())
+                    .isNotNull()
+                    .isInstanceOf(DirectConversation.class)
+                    .extracting(Conversation::getTargets)
+                    .asList()
+                    .contains(sender, target);
+            assertThat(target.getActiveConversation())
+                    .isNotInstanceOf(DirectConversation.class);
         }
     }
 

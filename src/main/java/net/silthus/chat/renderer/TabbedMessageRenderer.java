@@ -34,8 +34,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static net.kyori.adventure.text.Component.newline;
-import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
 import static net.silthus.chat.Constants.Commands.JOIN_CONVERSATION;
@@ -53,14 +52,16 @@ public class TabbedMessageRenderer implements MessageRenderer {
     }
 
     Component footer(Chatter chatter) {
-        return conversationTabs(chatter);
+        return ChatUtil.centerText(empty(), FRAME_SPACER)
+                .append(newline())
+                .append(conversationTabs(chatter));
     }
 
     Component conversationTabs(Chatter chatter) {
         if (chatter.getConversations().isEmpty())
             return noConversations();
 
-        TextComponent.Builder builder = text().append(text(CHANNEL_DIVIDER + " ").color(FRAME_COLOR));
+        TextComponent.Builder builder = text().append(CHANNEL_DIVIDER.append(text(" ")).color(FRAME_COLOR));
         chatter.getConversations().stream()
                 .sorted()
                 .forEach(conversation -> builder.append(conversation(chatter, conversation)));
@@ -90,29 +91,30 @@ public class TabbedMessageRenderer implements MessageRenderer {
     }
 
     private TextComponent noConversations() {
-        return text(CHANNEL_DIVIDER + " ").color(FRAME_COLOR)
+        return text().append(CHANNEL_DIVIDER.append(text(" ")).color(FRAME_COLOR))
                 .append(text("No Channels selected. Use ").color(INFO_COLOR))
                 .append(text("/ch join <channel> ").color(COMMAND).clickEvent(suggestCommand("/ch join ")))
-                .append(text("to join a channel.").color(INFO_COLOR));
+                .append(text("to join a channel.").color(INFO_COLOR))
+                .build();
     }
 
     private Component conversation(Chatter chatter, Conversation conversation) {
         boolean isActive = conversation.equals(chatter.getActiveConversation());
         return text().append(conversationName(chatter, conversation, isActive))
-                .append(text(" " + CHANNEL_DIVIDER + " ").color(FRAME_COLOR))
+                .append(text(" ").append(CHANNEL_DIVIDER).append(text(" "))).color(FRAME_COLOR)
                 .build();
     }
 
     private Component conversationName(Chatter chatter, Conversation conversation, boolean isActive) {
-        Component channelName = conversation.getDisplayName()
+        Component conversationName = conversation.getDisplayName()
                 .replaceText(playerName(chatter))
                 .replaceText(conversationPartnerName(chatter, conversation))
                 .clickEvent(clickEvent(ClickEvent.Action.RUN_COMMAND, JOIN_CONVERSATION.apply(conversation)));
         if (isActive)
-            channelName = channelName.color(ACTIVE_COLOR).decorate(ACTIVE_DECORATION);
+            conversationName = conversationName.color(ACTIVE_COLOR).decorate(ACTIVE_DECORATION);
         else
-            channelName = channelName.color(INACTIVE_COLOR);
-        return channelName;
+            conversationName = conversationName.color(INACTIVE_COLOR);
+        return conversationName;
     }
 
     private TextReplacementConfig playerName(Chatter chatter) {
