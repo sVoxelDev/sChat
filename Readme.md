@@ -16,8 +16,15 @@ default settings. Copy and adjust it to your needs.
 
 ## Commands
 
-Your players don't need to remember any commands. All they need to do is click on the various UI elements in the chat.
+Your players won't need to remember any commands. All they need to do is click on the various UI elements in the chat.
 For example: clicking on a channel will set the channel as active.
+
+| Commands | Alias | Permission | Description |
+| -------- | ----- | ---------- | ----------- |
+| `/schat channel join <channel>` | `/ch <channel>` | `schat.player.channel.join` | Joins the given channel or sets it as active channel. |
+| `/schat channel leave <channel>` | `/leave <channel>` | `schat.player.channel.leave` | Leaves the given channel. |
+| `/schat channel message <channel> <message>` | `/ch <channel> <message>` | `schat.player.channel.quickmessage` | Sends a message to the given channel without switching to it. |
+| `/tell <player> [message]` | `/m`, `/w`, `/msg`, `/pm`, `/qm`, `/dm` | `schat.player.directmessage` | Sends a message to the given player or opens the conversation. |
 
 ## Permissions
 
@@ -26,6 +33,7 @@ For example: clicking on a channel will set the channel as active.
 | `schat.player` | This permission grouping contains all of the `schat.player.*` permissions. Normally this is the only one you need. |
 | `schat.player.channel` | Allows the player to use the `/channel *` commands. |
 | `schat.player.channel.join` | Allows the player to join channels. This can be further restricted with individual channel permissions. |
+| `schat.player.channel.leave` | Allows the player to leave channels. |
 | `schat.player.channel.quickmessage` | Enables the player to send quick messages (`/ch <channel> <message>`) to channels he is allowed to write in. |
 | `schat.player.directmessage` | Allows the player to send direct messages (`/dm <player> <message>`) to other players. |
 

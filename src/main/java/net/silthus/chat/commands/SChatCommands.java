@@ -111,7 +111,7 @@ public class SChatCommands extends BaseCommand {
     public class DirectMessageCommands extends BaseCommand {
 
         @Subcommand("send")
-        @CommandAlias("m|tell|msg|message|w|dm|pm")
+        @CommandAlias("m|tell|msg|message|w|dm|pm|qm")
         @CommandCompletion("@chatters *")
         public void directMessage(@Flags("self") Chatter source, Chatter target, @Optional String message) {
             if (source.equals(target))
