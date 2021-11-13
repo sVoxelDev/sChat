@@ -23,7 +23,9 @@ import net.kyori.adventure.text.Component;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Message;
 
+import java.util.Collection;
 import java.util.Objects;
+import java.util.UUID;
 
 public final class DirectConversation extends AbstractConversation {
 
@@ -32,6 +34,12 @@ public final class DirectConversation extends AbstractConversation {
         setDisplayName(Component.text("<partner_name>"));
         addTarget(target1);
         addTarget(target2);
+    }
+
+    public DirectConversation(UUID id, String name, Component displayName, Collection<ChatTarget> targets) {
+        super(id, name);
+        setDisplayName(displayName);
+        addTargets(targets);
     }
 
     @Override

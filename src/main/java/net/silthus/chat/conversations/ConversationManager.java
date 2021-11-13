@@ -62,4 +62,8 @@ public final class ConversationManager {
                 .filter(conversation -> conversation.getTargets().stream().filter(target -> target instanceof Chatter).collect(Collectors.toSet()).equals(Set.of(targets)))
                 .findFirst();
     }
+
+    public void remove(@NonNull Conversation conversation) {
+        conversations.remove(conversation.getUniqueId());
+    }
 }

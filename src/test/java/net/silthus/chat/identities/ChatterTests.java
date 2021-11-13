@@ -376,9 +376,11 @@ public class ChatterTests extends TestBase {
 
     @Test
     void view_containsTheLastMessagesThePlayerSaw() {
-        chatter.sendMessage(Message.message("hi").build());
+        Message message = message("hi").build();
+        chatter.sendMessage(message);
 
         View view = chatter.getView();
+        assertThat(view.messages()).contains(message);
     }
 
     @Nested

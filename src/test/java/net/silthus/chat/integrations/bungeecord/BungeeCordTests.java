@@ -21,10 +21,15 @@ package net.silthus.chat.integrations.bungeecord;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
+import net.silthus.chat.conversations.AbstractConversation;
+import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.conversations.ConversationManager;
 import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.ChatterManager;
+import net.silthus.chat.scopes.GlobalScope;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,10 +74,50 @@ public class BungeeCordTests extends TestBase {
         chatterManager.removeChatter(chatter);
         assertThat(chatterManager.getChatter(chatter.getUniqueId())).isNull();
 
-        bungeecord.synchronizeChatter(chatter);
+        bungeecord.sendChatter(chatter);
 
         verify(bungeecord, atLeastOnce()).onPluginMessageReceived(eq(BUNGEECORD_CHANNEL), any(), any());
         assertThat(chatterManager.getChatter(chatter.getUniqueId()))
                 .isNotNull().isEqualTo(chatter);
+    }
+
+    @Test
+    void synchronizeConversation() {
+        ConversationManager conversationManager = plugin.getConversationManager();
+
+        Message message = Chatter.of(server.addPlayer()).message("Hi").to(Chatter.of(server.addPlayer())).build();
+        Conversation conversation = message.getConversation();
+        assertThat(conversationManager.getConversations()).contains(conversation);
+
+        conversationManager.remove(conversation);
+        bungeecord.sendConversation(conversation);
+        assertThat(conversationManager.getConversations()).contains(conversation);
+    }
+
+    @Test
+    void sendGlobalPrivateChatMessage() {
+        Chatter offlinePlayer = Chatter.of(server.addPlayer());
+        server.setPlayers(0);
+        Chatter chatter = Chatter.of(server.addPlayer());
+
+        Message message = chatter.message("Hi").to(offlinePlayer).send();
+
+        verify(plugin.getBungeecord(), atLeastOnce()).sendMessage(message);
+        assertThat(offlinePlayer.getLastReceivedMessage()).isEqualTo(message);
+    }
+
+    @Test
+    void sendMessageToChannel_keepsFormat() {
+        Chatter source = Chatter.of(server.addPlayer());
+        Channel channel = createChannel("test", config -> config.scope(new GlobalScope()));
+        plugin.getChannelRegistry().remove(channel);
+
+        Message message = source.message("Hi").to(channel).send();
+        verify(plugin.getBungeecord(), atLeastOnce()).sendMessage(message);
+
+        assertThat(plugin.getChannelRegistry().contains("test")).isTrue();
+        assertThat(plugin.getChannelRegistry().getOrCreate("test"))
+                .extracting(AbstractConversation::getFormat)
+                .isEqualTo(channel.getFormat());
     }
 }

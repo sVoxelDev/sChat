@@ -58,9 +58,9 @@ public class ChannelConfig {
     @Builder.Default
     private boolean autoJoin = false;
     @Builder.Default
-    private Scope scope = Scopes.server();
-    @Builder.Default
     private Format format = Format.channelFormat();
+    @Builder.Default
+    private transient Scope scope = Scopes.server();
 
     ChannelConfig.ChannelConfigBuilder withConfig(ConfigurationSection config) {
         if (config == null) return toBuilder();

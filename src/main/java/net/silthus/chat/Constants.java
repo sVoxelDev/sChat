@@ -116,8 +116,9 @@ public final class Constants {
     public static class BungeeCord {
 
         public static final String BUNGEECORD_CHANNEL = "BungeeCord";
-        public static final String MESSAGES_CHANNEL = "schat:messages";
-        public static final String CHATTER_CHANNEL = "schat:chatter";
+        public static final String SEND_MESSAGE = "schat:send-message";
+        public static final String SEND_CHATTER = "schat:send-chatter";
+        public static final String SEND_CONVERSATION = "schat:send-conversation";
     }
 
     public static class Scopes {

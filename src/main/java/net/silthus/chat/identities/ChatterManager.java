@@ -103,7 +103,7 @@ public final class ChatterManager {
         if (chatters.containsKey(chatter.getUniqueId())) return getChatter(chatter.getUniqueId());
         chatters.put(chatter.getUniqueId(), chatter);
         plugin.getServer().getPluginManager().registerEvents(chatter, plugin);
-        plugin.getBungeecord().synchronizeChatter(chatter);
+        plugin.getBungeecord().sendChatter(chatter);
         return chatter;
     }
 

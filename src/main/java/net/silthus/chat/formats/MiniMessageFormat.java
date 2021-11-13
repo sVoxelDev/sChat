@@ -20,6 +20,7 @@
 package net.silthus.chat.formats;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.extern.java.Log;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -35,6 +36,7 @@ import static net.kyori.adventure.text.minimessage.template.TemplateResolver.tem
 @EqualsAndHashCode(of = {"format"})
 public class MiniMessageFormat implements Format {
 
+    @Getter
     private final String format;
 
     public MiniMessageFormat(String miniMessage) {

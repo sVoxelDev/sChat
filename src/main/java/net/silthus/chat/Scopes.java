@@ -67,12 +67,19 @@ public final class Scopes {
     }
 
     public static <TScope extends Scope> void register(Class<TScope> scope) {
-        String name = getName(scope);
+        String name = name(scope);
         Supplier<TScope> supplier = getScopeSupplier(scope);
         RegisteredScope<?> oldScope = scopes.put(name, new RegisteredScope<>(name, scope, supplier));
         if (oldScope != null)
             log.warning("Existing scope " + oldScope.scopeClass().getCanonicalName() + " with key '"
-                    + name + "' was replaced by " + scope.getCanonicalName());
+                        + name + "' was replaced by " + scope.getCanonicalName());
+    }
+
+    public static String name(Class<? extends Scope> scope) {
+        if (scope.isAnnotationPresent(Scope.Name.class))
+            return scope.getAnnotation(Scope.Name.class).value();
+        else
+            return getNameFromClass(scope);
     }
 
     @NotNull
@@ -90,13 +97,6 @@ public final class Scopes {
         } catch (NoSuchMethodException e) {
             throw new ScopeInstantiationException(e);
         }
-    }
-
-    private static String getName(Class<? extends Scope> scope) {
-        if (scope.isAnnotationPresent(Scope.Name.class))
-            return scope.getAnnotation(Scope.Name.class).value();
-        else
-            return getNameFromClass(scope);
     }
 
     private final static Pattern CAMEL_CASE_PATTERN = Pattern.compile("(?!^)(?=[A-Z][a-z])");

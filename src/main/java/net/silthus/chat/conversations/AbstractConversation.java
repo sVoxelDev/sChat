@@ -39,8 +39,16 @@ public abstract class AbstractConversation extends AbstractChatTarget implements
     private final Set<ChatTarget> targets = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>()));
     private Format format = Format.defaultFormat();
 
+    public AbstractConversation(UUID id, String name) {
+        super(id, name);
+    }
+
     protected AbstractConversation(String name) {
         super(name);
+    }
+
+    protected void addTargets(Collection<ChatTarget> targets) {
+        this.targets.addAll(targets);
     }
 
     @Override

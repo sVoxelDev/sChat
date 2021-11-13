@@ -272,7 +272,7 @@ public class ChatterManagerTests extends TestBase {
         @Test
         void onJoin_synchronizesChatter_withOtherServers() {
             Chatter chatter = Chatter.of(server.addPlayer());
-            verify(plugin.getBungeecord()).synchronizeChatter(chatter);
+            verify(plugin.getBungeecord()).sendChatter(chatter);
         }
     }
 }

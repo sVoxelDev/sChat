@@ -20,12 +20,14 @@
 package net.silthus.chat;
 
 import lombok.NonNull;
+import net.kyori.adventure.text.Component;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.ConversationManager;
 import net.silthus.chat.conversations.DirectConversation;
 
 import java.util.Collection;
+import java.util.UUID;
 
 public interface Conversation extends ChatTarget, Comparable<Conversation> {
 
@@ -33,6 +35,12 @@ public interface Conversation extends ChatTarget, Comparable<Conversation> {
         ConversationManager conversationManager = SChat.instance().getConversationManager();
         return conversationManager.getDirectConversation(target1, target2)
                 .orElseGet(() -> conversationManager.registerConversation(new DirectConversation(target1, target2)));
+    }
+
+    static Conversation direct(UUID id, String name, Component displayName, Collection<ChatTarget> targets) {
+        ConversationManager conversationManager = SChat.instance().getConversationManager();
+        return conversationManager.getDirectConversation(targets.toArray(new ChatTarget[0]))
+                .orElseGet(() -> conversationManager.registerConversation(new DirectConversation(id, name, displayName, targets)));
     }
 
     static Channel channel(String identifier) {
