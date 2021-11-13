@@ -19,12 +19,13 @@
 
 package net.silthus.chat.integrations.bungeecord;
 
+import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class IdentityDtoTest {
+class IdentityDtoTest extends TestBase {
 
     @Test
     void typeFromChannel_returnsChannelType() {

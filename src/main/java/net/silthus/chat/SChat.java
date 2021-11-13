@@ -105,14 +105,17 @@ public final class SChat extends JavaPlugin {
 
         setupBStats();
 
-        setupAndLoadChannels();
+        setupChannelRegistry();
         setupChatterManager();
         setupConversationManager();
         setupConsoleChatter();
 
+        loadChannels();
+
         setupProtocolLib();
         setupVaultIntegration();
         setupBungeecordIntegration();
+
         setupCommands();
     }
 
@@ -150,8 +153,11 @@ public final class SChat extends JavaPlugin {
         metrics = new Metrics(this, Constants.BSTATS_ID);
     }
 
-    private void setupAndLoadChannels() {
+    private void setupChannelRegistry() {
         channelRegistry = new ChannelRegistry(this);
+    }
+
+    private void loadChannels() {
         channelRegistry.load(getPluginConfig());
     }
 

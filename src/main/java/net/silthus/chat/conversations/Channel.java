@@ -51,6 +51,8 @@ public class Channel extends AbstractConversation implements ChatSource {
         this.config = config;
         if (config.name() != null)
             setDisplayName(Component.text(config.name()));
+        if (config.sendToConsole())
+            addTarget(Console.console());
         setFormat(config.format());
     }
 
@@ -69,11 +71,8 @@ public class Channel extends AbstractConversation implements ChatSource {
 
     @Override
     public void sendMessage(Message message) {
-        if (getReceivedMessages().contains(message)) return;
-        addReceivedMessage(message);
+        if (alreadyProcessed(message)) return;
 
-        if (getConfig().sendToConsole())
-            addTarget(Console.console());
         getScopedTargets(message).forEach(target -> target.sendMessage(message));
     }
 

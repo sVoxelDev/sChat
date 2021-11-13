@@ -30,7 +30,6 @@ import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
 import net.silthus.chat.MessageRenderer;
 import net.silthus.chat.identities.Chatter;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -78,7 +77,9 @@ public final class TabbedMessageRenderer implements MessageRenderer {
                 JoinConfiguration.builder()
                         .separator(newline())
                         .build(),
-                sortMessages(messages)
+                messages.stream()
+                        .map(Message::formatted)
+                        .toList()
         );
     }
 
@@ -90,15 +91,6 @@ public final class TabbedMessageRenderer implements MessageRenderer {
         return builder.build();
     }
 
-    @NotNull
-    private List<Component> sortMessages(Collection<Message> messages) {
-        return messages.stream()
-                .distinct()
-                .sorted()
-                .map(Message::formatted)
-                .collect(Collectors.toList());
-    }
-
     private TextComponent noConversations() {
         return text().append(CHANNEL_DIVIDER.append(text(" ")).color(FRAME_COLOR))
                 .append(text("Use ").color(INFO_COLOR))
@@ -108,7 +100,9 @@ public final class TabbedMessageRenderer implements MessageRenderer {
     }
 
     private Component conversation(View view, Conversation conversation) {
-        boolean isActive = conversation.equals(view.activeConversation());
+        boolean isActive = view.activeConversation()
+                .filter(active -> active.equals(conversation))
+                .isPresent();
         return text().append(conversationName(view, conversation, isActive))
                 .append(text(" ").append(CHANNEL_DIVIDER).append(text(" "))).color(FRAME_COLOR)
                 .build();

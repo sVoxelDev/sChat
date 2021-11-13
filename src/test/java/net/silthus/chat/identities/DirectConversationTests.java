@@ -131,10 +131,10 @@ public class DirectConversationTests extends TestBase {
     void getName_formatsToOtherPlayer() {
         Message message = sendMessage();
 
-        TabbedMessageRenderer view = new TabbedMessageRenderer();
+        TabbedMessageRenderer renderer = new TabbedMessageRenderer();
 
-        assertThat(toCleanText(view.render(new View(chatter1, message)))).contains("\u2502 Player1 \u2502");
-        assertThat(toCleanText(view.render(new View(chatter2, message)))).contains("\u2502 Player0 \u2502");
+        assertThat(toCleanText(renderer.render(new View(chatter1)))).contains("\u2502 Player1 \u2502");
+        assertThat(toCleanText(renderer.render(new View(chatter2)))).contains("\u2502 Player0 \u2502");
     }
 
     @Test

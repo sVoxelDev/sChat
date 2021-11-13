@@ -59,6 +59,8 @@ public class BungeeCord extends AbstractChatTarget implements PluginMessageListe
 
     @Override
     public void sendMessage(Message message) {
+        if (alreadyProcessed(message)) return;
+
         String json = gson.toJson(new MessageDto(message));
         sendPluginMessage(forwardToAllServers(MESSAGES_CHANNEL), json);
     }

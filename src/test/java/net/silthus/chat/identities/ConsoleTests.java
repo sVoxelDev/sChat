@@ -98,16 +98,10 @@ public class ConsoleTests {
         }
 
         @Test
-        void getTarget_isNotNull() {
-            assertThat(console.getTarget())
-                    .isNotNull();
-        }
-
-        @Test
         void onChat_sendsMessageToDefaultTarget() {
 
             console.onConsoleChat(new ServerCommandEvent(server.getConsoleSender(), "Hi there!"));
-            assertThat(console.getTarget().getLastReceivedMessage())
+            assertThat(console.getLastReceivedMessage())
                     .isNotNull()
                     .extracting(Message::getText)
                     .isEqualTo(text("Hi there!"));
@@ -120,7 +114,7 @@ public class ConsoleTests {
         void onChat_doesNotSendCommandsAsMessage() {
             console.onConsoleChat(new ServerCommandEvent(server.getConsoleSender(), "/tell hi"));
 
-            assertThat(console.getTarget().getLastReceivedMessage())
+            assertThat(console.getLastReceivedMessage())
                     .isNull();
             assertThat(((ConsoleCommandSenderMock) server.getConsoleSender()).nextMessage())
                     .isNull();

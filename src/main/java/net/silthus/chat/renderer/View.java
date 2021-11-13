@@ -19,33 +19,98 @@
 
 package net.silthus.chat.renderer;
 
+import lombok.Data;
 import lombok.NonNull;
-import lombok.Value;
 import lombok.experimental.Accessors;
-import net.silthus.chat.Conversation;
-import net.silthus.chat.Message;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.audience.MessageType;
+import net.kyori.adventure.identity.Identity;
+import net.kyori.adventure.text.Component;
+import net.silthus.chat.*;
+import net.silthus.chat.conversations.DirectConversation;
 import net.silthus.chat.identities.Chatter;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
-@Value
+@Data
 @Accessors(fluent = true)
 public class View {
 
-    Chatter chatter;
-    List<Message> messages;
-    List<Conversation> conversations;
-    Conversation activeConversation;
+    private final Chatter chatter;
+    private MessageRenderer renderer = MessageRenderer.TABBED;
 
-    public View(@NonNull Chatter chatter, Message... messages) {
-        this(chatter, List.of(messages));
+    public View(@NonNull Chatter chatter, @NonNull MessageRenderer renderer) {
+        this.chatter = chatter;
+        this.renderer = renderer;
     }
 
-    public View(@NonNull Chatter chatter, @NonNull Collection<Message> messages) {
+    public View(Chatter chatter) {
         this.chatter = chatter;
-        this.messages = messages.stream().sorted().distinct().toList();
-        this.conversations = chatter.getConversations().stream().sorted().toList();
-        this.activeConversation = chatter.getActiveConversation();
+    }
+
+    public void sendTo(Audience audience) {
+        audience.sendMessage(senderAudience(), render(), MessageType.SYSTEM);
+    }
+
+    private Component render() {
+        return appendMessageTag(renderer.render(this));
+    }
+
+    public List<Message> messages() {
+        return Stream.concat(getConversationMessages(), getSystemMessages())
+                .distinct()
+                .sorted()
+                .toList();
+    }
+
+    public Optional<Message> lastMessage() {
+        return messages().stream().reduce((message, message2) -> message2);
+    }
+
+    public List<Conversation> conversations() {
+        return chatter().getConversations().stream()
+                .sorted()
+                .toList();
+    }
+
+    public Optional<Conversation> activeConversation() {
+        return Optional.ofNullable(chatter().getActiveConversation());
+    }
+
+    private Stream<Message> getSystemMessages() {
+        if (isDirectConversation())
+            return Stream.empty();
+        return chatter().getReceivedMessages().stream()
+                .filter(msg -> msg.getType() == Message.Type.SYSTEM);
+    }
+
+    private boolean isDirectConversation() {
+        return activeConversation()
+                .map(conversation -> conversation instanceof DirectConversation)
+                .orElse(false);
+    }
+
+    private Stream<Message> getConversationMessages() {
+        return activeConversation()
+                .map(ChatTarget::getReceivedMessages)
+                .stream()
+                .flatMap(Collection::stream);
+    }
+
+    private Component appendMessageTag(Component message) {
+        return message.append(Component.storageNBT()
+                .nbtPath(Constants.NBT_IS_SCHAT_MESSAGE.asString())
+                .storage(Constants.NBT_IS_SCHAT_MESSAGE));
+    }
+
+    private net.kyori.adventure.identity.Identity senderAudience() {
+        return lastMessage()
+                .map(Message::getSource)
+                .map(net.silthus.chat.Identity::getUniqueId)
+                .map(Identity::identity)
+                .orElse(Identity.nil());
     }
 }

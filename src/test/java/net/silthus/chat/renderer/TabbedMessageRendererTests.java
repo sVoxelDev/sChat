@@ -22,17 +22,11 @@ package net.silthus.chat.renderer;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Format;
-import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.identities.Chatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static net.kyori.adventure.text.Component.newline;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -114,7 +108,6 @@ public class TabbedMessageRendererTests extends TestBase {
 
     @Test
     void supports_channelName_placeholders() {
-
         Channel channel = createChannel("foo", config -> config.name("<player_name>"));
         chatter.subscribe(channel);
         chatter.setActiveConversation(channel);
@@ -122,26 +115,6 @@ public class TabbedMessageRendererTests extends TestBase {
         String text = toText(view.conversationTabs(new View(chatter)));
 
         assertThat(text).contains(toText(chatter.getDisplayName()));
-    }
-
-    @Test
-    void renders_onlyUniqueMessages() {
-
-        Message message = Message.message("test").format(Format.noFormat()).build();
-
-        Component component = view.renderMessages(List.of(message, message));
-        assertThat(toText(component)).containsOnlyOnce("test");
-    }
-
-    @Test
-    void ordersMessages_byTimestamp() {
-        Collection<Message> messages = randomMessages(10);
-        String sortedMessages = messages.stream().sorted()
-                .map(this::toCleanText)
-                .collect(Collectors.joining("\n"));
-
-        Component component = view.renderMessages(messages);
-        assertThat(toCleanText(component)).isEqualTo(sortedMessages);
     }
 
     private void addChannels() {

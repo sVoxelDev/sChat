@@ -81,4 +81,9 @@ public abstract class AbstractChatTarget extends AbstractIdentity implements Cha
             setActiveConversation(getConversations().stream().findFirst().orElse(null));
     }
 
+    protected boolean alreadyProcessed(Message message) {
+        if (getReceivedMessages().contains(message)) return true;
+        addReceivedMessage(message);
+        return false;
+    }
 }

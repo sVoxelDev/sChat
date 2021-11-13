@@ -23,6 +23,7 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.renderer.View;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -123,7 +124,7 @@ public class ChatterTests extends TestBase {
     void sendMessage_formatsTheMessageIfNotFormatted() {
         sendMessage(server.addPlayer(), "Hi");
 
-        assertReceivedMessage(player, "Player0: Hi");
+        assertLastReceivedMessage(player, "Player0: Hi");
     }
 
     @Test
@@ -238,7 +239,7 @@ public class ChatterTests extends TestBase {
     @Test
     void setActiveChannel_addsPlayerAsTargetToChannel() {
         Channel channel = ChatTarget.channel("test");
-        assertThat(channel.getTargets()).isEmpty();
+        assertThat(channel.getTargets()).doesNotContain(chatter);
         chatter.setActiveConversation(channel);
         assertThat(channel.getTargets()).contains(chatter);
     }
@@ -267,7 +268,7 @@ public class ChatterTests extends TestBase {
         chatter.subscribe(channel);
         chatter.subscribe(channel);
 
-        assertThat(channel.getTargets()).hasSize(1);
+        assertThat(channel.getTargets()).containsOnlyOnce(chatter);
         assertThat(chatter.getConversations()).containsOnlyOnce(channel);
     }
 
@@ -370,6 +371,13 @@ public class ChatterTests extends TestBase {
         assertThat(chatter.getLastReceivedMessage())
                 .isNotNull().isEqualTo(message);
         verify(plugin.getBungeecord()).sendMessage(message);
+    }
+
+    @Test
+    void view_containsTheLastMessagesThePlayerSaw() {
+        chatter.sendMessage(Message.message("hi").build());
+
+        View view = chatter.getView();
     }
 
     @Nested

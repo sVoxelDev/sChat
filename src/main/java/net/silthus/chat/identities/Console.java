@@ -19,16 +19,19 @@
 
 package net.silthus.chat.identities;
 
-import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NonNull;
-import net.silthus.chat.*;
+import net.silthus.chat.ChatSource;
+import net.silthus.chat.Constants;
+import net.silthus.chat.Message;
+import net.silthus.chat.SChat;
 import net.silthus.chat.config.ConsoleConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerCommandEvent;
+
+import java.util.Optional;
 
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public final class Console extends AbstractChatTarget implements ChatSource, Listener {
@@ -48,27 +51,27 @@ public final class Console extends AbstractChatTarget implements ChatSource, Lis
         return instance;
     }
 
-    @Getter(AccessLevel.PACKAGE)
-    private final ChatTarget target;
+    private final ConsoleConfig config;
 
     private Console(ConsoleConfig config) {
         super(Constants.Targets.CONSOLE);
+        this.config = config;
         setDisplayName(Bukkit.getConsoleSender().name());
-        this.target = SChat.instance().getChannelRegistry().find(config.defaultChannel()).orElse(null);
     }
 
     @Override
     public void sendMessage(Message message) {
+        if (alreadyProcessed(message)) return;
+
         Bukkit.getConsoleSender().sendMessage(message.formatted());
-        addReceivedMessage(message);
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onConsoleChat(ServerCommandEvent event) {
         if (event.getCommand().startsWith("/")) return;
 
-        message(event.getCommand())
-                .to(getTarget(), this)
-                .send();
+        Optional.ofNullable(getActiveConversation())
+                .or(() -> SChat.instance().getChannelRegistry().find(config.defaultChannel()))
+                .ifPresent(conversation -> message(event.getCommand()).to(conversation).send());
     }
 }

@@ -90,9 +90,14 @@ public class ChannelTests extends TestBase {
     }
 
     @Test
-    void hasEmptyTargetList_byDefault() {
-        assertThat(channel.getTargets())
-                .isEmpty();
+    void hasEmptyTargetList_ifNoConsole() {
+        Channel channel = createChannel(config -> config.sendToConsole(false));
+        assertThat(channel.getTargets()).isEmpty();
+    }
+
+    @Test
+    void hasConsoleByDefault() {
+        assertThat(channel.getTargets()).containsOnly(Console.console());
     }
 
     @Test
@@ -117,7 +122,7 @@ public class ChannelTests extends TestBase {
         channel.addTarget(player);
 
         assertThat(channel.getTargets())
-                .hasSize(1);
+                .containsOnlyOnce(player);
     }
 
     @Test
@@ -130,13 +135,13 @@ public class ChannelTests extends TestBase {
 
     @Test
     void leave_removesChatTarget_fromChannelTargets() {
-        Chatter player = Chatter.of(server.addPlayer());
-        channel.addTarget(player);
-        assertThat(channel.getTargets()).contains(player);
+        Chatter chatter = Chatter.of(server.addPlayer());
+        channel.addTarget(chatter);
+        assertThat(channel.getTargets()).contains(chatter);
 
-        channel.removeTarget(player);
+        channel.removeTarget(chatter);
 
-        assertThat(channel.getTargets()).isEmpty();
+        assertThat(channel.getTargets()).doesNotContain(chatter);
     }
 
     @Test
@@ -161,9 +166,10 @@ public class ChannelTests extends TestBase {
     void sendMessage_sendsMessageToNobody() {
 
         PlayerMock player = server.addPlayer();
-        ChatSource.player(player).message("test").to(createChannel("nousers", config -> config.sendToConsole(false))).send();
+        Chatter chatter = ChatSource.player(player);
+        chatter.message("test").to(createChannel("nousers", config -> config.sendToConsole(false))).send();
 
-        assertThat(channel.getTargets()).isEmpty();
+        assertThat(channel.getTargets()).doesNotContain(chatter);
         assertThat(player.nextMessage()).isNull();
     }
 
@@ -300,7 +306,7 @@ public class ChannelTests extends TestBase {
 
         assertThat(channel.getTargets()).contains(chatter);
         plugin.getChatterManager().removeChatter(player);
-        assertThat(channel.getTargets()).isEmpty();
+        assertThat(channel.getTargets()).doesNotContain(chatter);
     }
 
     @Test

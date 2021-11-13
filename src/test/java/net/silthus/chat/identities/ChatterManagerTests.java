@@ -170,7 +170,7 @@ public class ChatterManagerTests extends TestBase {
         chatter.subscribe(channel);
 
         manager.removeChatter(chatter);
-        assertThat(channel.getTargets()).isEmpty();
+        assertThat(channel.getTargets()).doesNotContain(chatter);
         assertThat(chatter.getConversations()).isEmpty();
     }
 
@@ -221,7 +221,7 @@ public class ChatterManagerTests extends TestBase {
         @Test
         void onJoin_player_autoSubscribes_toConfiguredChannels() {
 
-            Channel channel = ChatTarget.channel("test");
+            Channel channel = createChannel(config -> config.sendToConsole(false));
             plugin.getChannelRegistry().add(channel);
             PlayerMock player = new PlayerMock(server, "test");
             player.addAttachment(plugin, Constants.Permissions.getAutoJoinPermission(channel), true);
@@ -248,7 +248,7 @@ public class ChatterManagerTests extends TestBase {
         @Test
         void onJoin_doesNotJoinProtectedChannels_withoutPermission() {
 
-            Channel channel = createChannel(config -> config.protect(true));
+            Channel channel = createChannel(config -> config.protect(true).sendToConsole(false));
             plugin.getChannelRegistry().add(channel);
 
             PlayerMock player = new PlayerMock(server, "test");

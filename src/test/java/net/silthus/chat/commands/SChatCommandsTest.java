@@ -67,9 +67,10 @@ class SChatCommandsTest extends TestBase {
         @Test
         void join_withoutPermission_fails() {
             Channel channel = createChannel("test", cfg -> cfg.protect(true));
+            Chatter chatter = Chatter.of(player);
 
             assertThat(player.performCommand("ch test")).isTrue();
-            assertThat(channel.getTargets()).isEmpty();
+            assertThat(channel.getTargets()).doesNotContain(chatter);
             assertThat(player.nextMessage()).contains(ChatColor.RED + "You don't have permission to access the 'test' channel.");
         }
 
