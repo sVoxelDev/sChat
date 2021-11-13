@@ -43,9 +43,7 @@ public final class DirectConversation extends AbstractConversation {
     }
 
     @Override
-    public void sendMessage(Message message) {
-        if (alreadyProcessed(message)) return;
-
+    protected void processMessage(Message message) {
         getTargets().stream()
                 .filter(target -> !target.getConversations().contains(this))
                 .forEach(target -> target.setActiveConversation(this));

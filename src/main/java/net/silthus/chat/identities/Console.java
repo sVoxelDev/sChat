@@ -60,9 +60,7 @@ public final class Console extends AbstractChatTarget implements ChatSource, Lis
     }
 
     @Override
-    public void sendMessage(Message message) {
-        if (alreadyProcessed(message)) return;
-
+    protected void processMessage(Message message) {
         Bukkit.getConsoleSender().sendMessage(message.formatted());
     }
 

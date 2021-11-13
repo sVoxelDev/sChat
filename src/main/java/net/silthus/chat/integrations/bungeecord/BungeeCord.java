@@ -64,9 +64,7 @@ public class BungeeCord extends AbstractChatTarget implements PluginMessageListe
     }
 
     @Override
-    public void sendMessage(Message message) {
-        if (alreadyProcessed(message)) return;
-
+    protected void processMessage(Message message) {
         sendPluginMessage(forwardToAllServers(SEND_MESSAGE), json(new MessageDto(message)));
     }
 

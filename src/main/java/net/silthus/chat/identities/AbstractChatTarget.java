@@ -33,6 +33,7 @@ public abstract class AbstractChatTarget extends AbstractIdentity implements Cha
 
     private final Stack<Message> receivedMessages = new Stack<>();
     private final Set<Conversation> conversations = new HashSet<>();
+    private final Map<Conversation, Set<Message>> unreadMessages = new HashMap<>();
     @Getter
     private Conversation activeConversation;
 
@@ -45,6 +46,16 @@ public abstract class AbstractChatTarget extends AbstractIdentity implements Cha
     }
 
     @Override
+    public void sendMessage(Message message) {
+        if (getReceivedMessages().contains(message)) return;
+        addReceivedMessage(message);
+
+        processMessage(message);
+    }
+
+    protected abstract void processMessage(Message message);
+
+    @Override
     public Message getLastReceivedMessage() {
         if (receivedMessages.isEmpty()) return null;
         return receivedMessages.peek();
@@ -55,14 +66,24 @@ public abstract class AbstractChatTarget extends AbstractIdentity implements Cha
         return List.copyOf(receivedMessages);
     }
 
+    @Override
+    public Collection<Message> getUnreadMessages(Conversation conversation) {
+        return List.copyOf(unreadMessages.getOrDefault(conversation, new HashSet<>()));
+    }
+
     protected void addReceivedMessage(Message lastMessage) {
         this.receivedMessages.push(lastMessage);
+        if (lastMessage.getConversation() != null && !lastMessage.getConversation().equals(getActiveConversation())) {
+            unreadMessages.computeIfAbsent(lastMessage.getConversation(), conversation -> new HashSet<>()).add(lastMessage);
+        }
     }
 
     public void setActiveConversation(Conversation conversation) {
         this.activeConversation = conversation;
-        if (conversation != null)
+        if (conversation != null) {
             subscribe(conversation);
+            unreadMessages.remove(conversation);
+        }
     }
 
     public Collection<Conversation> getConversations() {
@@ -76,14 +97,9 @@ public abstract class AbstractChatTarget extends AbstractIdentity implements Cha
 
     public void unsubscribe(@NonNull Conversation conversation) {
         conversation.removeTarget(this);
+        unreadMessages.remove(conversation);
         conversations.removeIf(existingConversation -> existingConversation.equals(conversation));
         if (conversation.equals(activeConversation))
             setActiveConversation(getConversations().stream().findFirst().orElse(null));
-    }
-
-    protected boolean alreadyProcessed(Message message) {
-        if (getReceivedMessages().contains(message)) return true;
-        addReceivedMessage(message);
-        return false;
     }
 }

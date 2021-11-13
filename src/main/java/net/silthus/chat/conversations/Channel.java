@@ -70,9 +70,7 @@ public class Channel extends AbstractConversation implements ChatSource {
     }
 
     @Override
-    public void sendMessage(Message message) {
-        if (alreadyProcessed(message)) return;
-
+    protected void processMessage(Message message) {
         getScopedTargets(message).forEach(target -> target.sendMessage(message));
     }
 

@@ -97,6 +97,8 @@ public final class Constants {
         public static final TextColor INFO_COLOR = NamedTextColor.GRAY;
         public static final TextColor COMMAND = NamedTextColor.AQUA;
         public static final TextColor ACTIVE_COLOR = NamedTextColor.GREEN;
+        public static final TextColor UNREAD_COLOR = NamedTextColor.WHITE;
+        public static final TextColor UNREAD_COUNT_COLOR = NamedTextColor.RED;
         public static final TextColor INACTIVE_COLOR = NamedTextColor.GRAY;
         public static final TextDecoration ACTIVE_DECORATION = TextDecoration.UNDERLINED;
 

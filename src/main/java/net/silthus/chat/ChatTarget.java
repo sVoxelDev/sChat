@@ -69,5 +69,7 @@ public interface ChatTarget extends Identity {
 
     void unsubscribe(@NonNull Conversation conversation);
 
+    Collection<Message> getUnreadMessages(Conversation conversation);
+
     void setActiveConversation(Conversation conversation);
 }

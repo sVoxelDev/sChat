@@ -117,6 +117,19 @@ public class TabbedMessageRendererTests extends TestBase {
         assertThat(text).contains(toText(chatter.getDisplayName()));
     }
 
+    @Test
+    void renders_unreadMessageCountNearChannelName() {
+        Channel test = createChannel("test");
+        Channel foo = createChannel("foo");
+        chatter.setActiveConversation(test);
+        chatter.subscribe(foo);
+
+        foo.sendMessage("test");
+
+        final String text = toText(view.conversationTabs(new View(chatter)));
+        assertThat(text).contains("foo&c\u2081");
+    }
+
     private void addChannels() {
         chatter.subscribe(ChatTarget.channel("test"));
         chatter.subscribe(ChatTarget.channel("foobar"));

@@ -384,6 +384,47 @@ public class ChatterTests extends TestBase {
     }
 
     @Nested
+    class UnreadMessages {
+
+        private Channel test;
+        private Channel foo;
+
+        @BeforeEach
+        void setUp() {
+            test = createChannel("test");
+            foo = createChannel("foo");
+            chatter.setActiveConversation(test);
+            chatter.subscribe(foo);
+        }
+
+        @Test
+        void containsUnreadMessages() {
+            final Message message = foo.sendMessage("hi");
+
+            assertThat(chatter.getUnreadMessages(foo)).hasSize(1).contains(message);
+            assertThat(chatter.getUnreadMessages(test)).isEmpty();
+        }
+
+        @Test
+        void clearsUnreadMessages_onConversationActive() {
+            final Message message = foo.sendMessage("hi");
+
+            assertThat(chatter.getUnreadMessages(foo)).hasSize(1).contains(message);
+            chatter.setActiveConversation(foo);
+            assertThat(chatter.getUnreadMessages(foo)).isEmpty();
+        }
+
+        @Test
+        void unsubscribe_removesUnreadMessages() {
+
+            final Message message = foo.sendMessage("hi");
+            assertThat(chatter.getUnreadMessages(foo)).hasSize(1).contains(message);
+            chatter.unsubscribe(foo);
+            assertThat(chatter.getUnreadMessages(foo)).isEmpty();
+        }
+    }
+
+    @Nested
     @DisplayName("direct messaging")
     class DirectMessages {
 

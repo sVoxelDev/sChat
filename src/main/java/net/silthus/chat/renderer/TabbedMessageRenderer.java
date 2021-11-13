@@ -33,6 +33,7 @@ import net.silthus.chat.identities.Chatter;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static net.kyori.adventure.text.Component.*;
@@ -115,9 +116,33 @@ public final class TabbedMessageRenderer implements MessageRenderer {
                 .clickEvent(clickEvent(ClickEvent.Action.RUN_COMMAND, JOIN_CONVERSATION.apply(conversation)));
         if (isActive)
             conversationName = conversationName.color(ACTIVE_COLOR).decorate(ACTIVE_DECORATION);
+        else if (view.unreadMessageCount(conversation) > 0)
+            conversationName = conversationName.color(UNREAD_COLOR).append(smallNumber(view.unreadMessageCount(conversation)).color(UNREAD_COUNT_COLOR));
         else
             conversationName = conversationName.color(INACTIVE_COLOR);
         return conversationName;
+    }
+
+    private final Map<Integer, Character> numberMap = Map.of(
+            0, '₀',
+            1, '₁',
+            2, '₂',
+            3, '₃',
+            4, '₄',
+            5, '₅',
+            6, '₆',
+            7, '₇',
+            8, '₈',
+            9, '₉'
+    );
+
+    private Component smallNumber(int number) {
+        StringBuilder str = new StringBuilder();
+        while (number > 0) {
+            str.insert(0, numberMap.get(number % 10));
+            number = number / 10;
+        }
+        return Component.text(str.toString());
     }
 
     private TextReplacementConfig playerName(Chatter chatter) {

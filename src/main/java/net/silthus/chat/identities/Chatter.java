@@ -86,9 +86,7 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     }
 
     @Override
-    public void sendMessage(Message message) {
-        if (alreadyProcessed(message)) return;
-
+    protected void processMessage(Message message) {
         getPlayer().ifPresentOrElse(
                 view::sendTo,
                 () -> SChat.instance().getBungeecord().sendMessage(message)

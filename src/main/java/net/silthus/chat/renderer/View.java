@@ -30,9 +30,7 @@ import net.silthus.chat.*;
 import net.silthus.chat.conversations.DirectConversation;
 import net.silthus.chat.identities.Chatter;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Data
@@ -40,6 +38,7 @@ import java.util.stream.Stream;
 public class View {
 
     private final Chatter chatter;
+    private final Map<UUID, Set<Message>> unreadMessages = new HashMap<>();
     private MessageRenderer renderer = MessageRenderer.TABBED;
 
     public View(@NonNull Chatter chatter, @NonNull MessageRenderer renderer) {
@@ -78,6 +77,11 @@ public class View {
 
     public Optional<Conversation> activeConversation() {
         return Optional.ofNullable(chatter().getActiveConversation());
+    }
+
+    public int unreadMessageCount(Conversation conversation) {
+        if (conversation == null) return 0;
+        return chatter().getUnreadMessages(conversation).size();
     }
 
     private Stream<Message> getSystemMessages() {
