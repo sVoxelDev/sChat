@@ -91,6 +91,7 @@ public final class ChannelRegistry implements Iterable<Channel> {
     }
 
     public void clear() {
+        channels.values().forEach(channel -> channel.getTargets().forEach(target -> target.unsubscribe(channel)));
         channels.clear();
     }
 

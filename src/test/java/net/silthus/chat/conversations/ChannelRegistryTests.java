@@ -24,6 +24,7 @@ import net.silthus.chat.Format;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.config.PluginConfig;
+import net.silthus.chat.identities.Chatter;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -266,6 +267,18 @@ public class ChannelRegistryTests extends TestBase {
         Channel channel = ChatTarget.channel(identifier);
         registry.add(channel);
         return channel;
+    }
+
+    @Test
+    void clear_unsubscribesAllFromChannel() {
+        final Channel foobar = createChannel("foobar");
+        registry.add(foobar);
+        final Chatter chatter = Chatter.of(server.addPlayer());
+        chatter.subscribe(foobar);
+
+        assertThat(chatter.getConversations()).contains(foobar);
+        registry.clear();
+        assertThat(chatter.getConversations()).doesNotContain(foobar);
     }
 
     @Nested
