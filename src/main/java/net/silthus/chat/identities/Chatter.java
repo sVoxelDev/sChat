@@ -22,6 +22,7 @@ package net.silthus.chat.identities;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.renderer.View;
@@ -49,7 +50,8 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         return SChat.instance().getChatterManager().getOrCreateChatter(identity);
     }
 
-    private final View view = new View(this, RENDERER);
+    @Setter
+    private View view = new View(this, RENDERER);
 
     Chatter(OfflinePlayer player) {
         super(player.getUniqueId(), player.getName());

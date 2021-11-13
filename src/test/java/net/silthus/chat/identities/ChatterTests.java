@@ -53,6 +53,7 @@ public class ChatterTests extends TestBase {
         player = new PlayerMock(server, "Test");
         player.addAttachment(plugin, Constants.Permissions.getChannelPermission(ChatTarget.channel("test")), true);
         chatter = plugin.getChatterManager().registerChatter(spy(new Chatter(player)));
+        chatter.setView(new View(chatter));
         server.addPlayer(player);
     }
 
