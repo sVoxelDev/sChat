@@ -60,6 +60,15 @@ public class SChatCommands extends BaseCommand {
             chatter.setActiveConversation(conversation);
             chatter.updateView();
         }
+
+        @Subcommand("leave")
+        private void leave(@Flags("self") Chatter chatter, Conversation conversation) {
+            if (!chatter.getConversations().contains(conversation)) {
+                throw new ConditionFailedException(key(INVALID_CONVERSATION));
+            }
+            chatter.unsubscribe(conversation);
+            chatter.updateView();
+        }
     }
 
     @Subcommand("channel|ch")

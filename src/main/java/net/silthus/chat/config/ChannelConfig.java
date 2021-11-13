@@ -58,6 +58,8 @@ public class ChannelConfig {
     @Builder.Default
     private boolean autoJoin = false;
     @Builder.Default
+    private boolean canLeave = true;
+    @Builder.Default
     private Format format = Format.channelFormat();
     @Builder.Default
     private transient Scope scope = Scopes.server();
@@ -67,6 +69,7 @@ public class ChannelConfig {
         return toBuilder()
                 .name(config.getString("name", name))
                 .protect(config.getBoolean("protect", protect))
+                .canLeave(!config.getBoolean("force", !canLeave))
                 .sendToConsole(config.getBoolean("console", sendToConsole))
                 .autoJoin(config.getBoolean("auto_join", autoJoin))
                 .scope(Scopes.scope(config.getString("scope", SERVER), config))

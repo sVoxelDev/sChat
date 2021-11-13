@@ -46,6 +46,7 @@ class ChannelConfigTest extends TestBase {
         cfg.set("protect", true);
         cfg.set("console", false);
         cfg.set("auto_join", false);
+        cfg.set("force", true);
         cfg.set("scope", "global");
 
         ChannelConfig expected = ChannelConfig.builder()
@@ -54,6 +55,7 @@ class ChannelConfigTest extends TestBase {
                 .protect(true)
                 .sendToConsole(false)
                 .autoJoin(false)
+                .canLeave(false)
                 .scope(new GlobalScope())
                 .build();
         ChannelConfig config = ChannelConfig.of(cfg);

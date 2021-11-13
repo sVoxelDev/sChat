@@ -100,8 +100,10 @@ public final class Constants {
         public static final TextColor UNREAD_COLOR = NamedTextColor.WHITE;
         public static final TextColor UNREAD_COUNT_COLOR = NamedTextColor.RED;
         public static final TextColor INACTIVE_COLOR = NamedTextColor.GRAY;
+        public static final TextColor CLOSE_CHANNEL_COLOR = NamedTextColor.DARK_RED;
         public static final TextDecoration ACTIVE_DECORATION = TextDecoration.UNDERLINED;
 
+        public static final Component CLOSE_CHANNEL = text("\u2718"); // ✘
         public static final Component CHANNEL_DIVIDER = text("\u2502"); // │
         public static final Component LEFT_FRAME = text("\u250C"); // ┌
         public static final Component FRAME_SPACER = text("\u2500"); // ─
@@ -113,6 +115,7 @@ public final class Constants {
         public static final Function<Conversation, String> JOIN_CHANNEL = conversation -> "/schat channel join " + conversation.getUniqueId();
         public static final Function<Conversation, String> LEAVE_CHANNEL = conversation -> "/schat channel leave " + conversation.getUniqueId();
         public static final Function<Conversation, String> JOIN_CONVERSATION = conversation -> "/schat conversations set-active " + conversation.getUniqueId();
+        public static final Function<Conversation, String> LEAVE_CONVERSATION = conversation -> "/schat conversations leave " + conversation.getUniqueId();
     }
 
     public static class BungeeCord {

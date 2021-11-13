@@ -114,6 +114,13 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         return player != null && player.hasPermission(channel.getAutoJoinPermission());
     }
 
+    public boolean canLeave(Conversation conversation) {
+        if (conversation instanceof Channel) {
+            return ((Channel) conversation).getConfig().canLeave();
+        }
+        return true;
+    }
+
     public boolean canSendMessage(Channel channel) {
         return canJoin(channel);
     }

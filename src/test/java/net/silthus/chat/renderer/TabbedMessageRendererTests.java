@@ -53,7 +53,7 @@ public class TabbedMessageRendererTests extends TestBase {
         assertThat(toText(footer).stripTrailing())
                 .isEqualTo("""
                         &8\u250C&m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500&r
-                        &8\u2502 &7Global&8 \u2502 &a&ntest&8 \u2502 &7Trade&8 \u2502""");
+                        &8\u2502 &7Global&8 \u2502 &4&n\u2718&a&ntest&8 \u2502 &4\u2718&7Trade&8 \u2502""");
     }
 
     @Test
@@ -63,7 +63,7 @@ public class TabbedMessageRendererTests extends TestBase {
 
         assertThat(toText(footer).stripTrailing())
                 .isEqualTo("""
-                        &8\u2502 &7Global&8 \u2502 &a&ntest&8 \u2502 &7Trade&8 \u2502""");
+                        &8\u2502 &7Global&8 \u2502 &4&n\u2718&a&ntest&8 \u2502 &4\u2718&7Trade&8 \u2502""");
     }
 
     @Test
@@ -103,7 +103,7 @@ public class TabbedMessageRendererTests extends TestBase {
 
         String text = toText(view.conversationTabs(new View(chatter)));
         assertThat(text)
-                .isEqualTo("&8\u2502 &a&nactive&8 \u2502 &7foobar&8 \u2502 &7Global&8 \u2502 &7test&8 \u2502 &7Trade&8 \u2502 ");
+                .isEqualTo("&8\u2502 &4&n\u2718&a&nactive&8 \u2502 &4\u2718&7foobar&8 \u2502 &7Global&8 \u2502 &4\u2718&7test&8 \u2502 &4\u2718&7Trade&8 \u2502 ");
     }
 
     @Test
@@ -128,6 +128,24 @@ public class TabbedMessageRendererTests extends TestBase {
 
         final String text = toText(view.conversationTabs(new View(chatter)));
         assertThat(text).contains("foo&c\u2081");
+    }
+
+    @Test
+    void renders_leave_icon_forCanLeaveChannel() {
+        final Channel test = createChannel("test");
+        chatter.setActiveConversation(test);
+
+        final String text = toCleanText(view.conversationTabs(chatter.getView()));
+        assertThat(text).contains("\u2718test");
+    }
+
+    @Test
+    void render_doesNotRenderLeaveIcon_forForcedChannel() {
+        final Channel channel = createChannel(config -> config.canLeave(false));
+        chatter.setActiveConversation(channel);
+
+        final String text = toCleanText(view.conversationTabs(chatter.getView()));
+        assertThat(text).contains(" " + channel.getName() + " ");
     }
 
     private void addChannels() {

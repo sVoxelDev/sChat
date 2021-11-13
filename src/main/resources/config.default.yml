@@ -5,6 +5,7 @@ defaults:
   channel:
     protect: false
     auto_join: false
+    force: false
     console: true
     scope: server
     worlds:
@@ -51,6 +52,9 @@ channels:
     # The permission is: 'schat.channel.<id>', e.g. 'schat.channel.global'
     # default: false
     protect: false
+    # Set 'true' to prevent players from leaving the channel.
+    # default: false
+    force: true
     # Set 'true' to automatically let every player that has the permission join this channel.
     # This is useful for global channels that everyone should have.
     # default: false

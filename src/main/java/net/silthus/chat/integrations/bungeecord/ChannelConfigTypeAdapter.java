@@ -37,6 +37,7 @@ public class ChannelConfigTypeAdapter implements JsonDeserializer<ChannelConfig>
                 .name(name == null ? null : (name.isJsonNull() ? null : name.getAsString()))
                 .protect(object.get("protect").getAsBoolean())
                 .autoJoin(object.get("auto_join").getAsBoolean())
+                .canLeave(object.get("can_leave").getAsBoolean())
                 .sendToConsole(object.get("console").getAsBoolean())
                 .scope(Scopes.scope(object.get("scope").getAsString()))
                 .format(Format.miniMessage(object.get("format").getAsString()))
@@ -49,6 +50,7 @@ public class ChannelConfigTypeAdapter implements JsonDeserializer<ChannelConfig>
         object.addProperty("name", src.name());
         object.addProperty("protect", src.protect());
         object.addProperty("auto_join", src.autoJoin());
+        object.addProperty("can_leave", src.canLeave());
         object.addProperty("console", src.sendToConsole());
         object.addProperty("scope", Scopes.name(src.scope().getClass()));
         object.addProperty("format", src.format() instanceof MiniMessageFormat ? ((MiniMessageFormat) src.format()).getFormat() : null);

@@ -133,8 +133,8 @@ public class DirectConversationTests extends TestBase {
 
         TabbedMessageRenderer renderer = new TabbedMessageRenderer();
 
-        assertThat(toCleanText(renderer.render(new View(chatter1)))).contains("\u2502 Player1 \u2502");
-        assertThat(toCleanText(renderer.render(new View(chatter2)))).contains("\u2502 Player0 \u2502");
+        assertThat(toCleanText(renderer.render(new View(chatter1)))).contains("\u2502 \u2718Player1 \u2502");
+        assertThat(toCleanText(renderer.render(new View(chatter2)))).contains("\u2502 \u2718Player0 \u2502");
     }
 
     @Test

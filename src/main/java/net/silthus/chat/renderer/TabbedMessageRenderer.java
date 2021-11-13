@@ -23,13 +23,13 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextReplacementConfig;
-import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
 import net.silthus.chat.MessageRenderer;
 import net.silthus.chat.identities.Chatter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,9 +37,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static net.kyori.adventure.text.Component.*;
+import static net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND;
 import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
 import static net.silthus.chat.Constants.Commands.JOIN_CONVERSATION;
+import static net.silthus.chat.Constants.Commands.LEAVE_CONVERSATION;
 import static net.silthus.chat.Constants.View.*;
 
 public final class TabbedMessageRenderer implements MessageRenderer {
@@ -110,10 +112,12 @@ public final class TabbedMessageRenderer implements MessageRenderer {
     }
 
     private Component conversationName(View view, Conversation conversation, boolean isActive) {
-        Component conversationName = conversation.getDisplayName()
-                .replaceText(playerName(view.chatter()))
-                .replaceText(conversationPartnerName(view.chatter(), conversation))
-                .clickEvent(clickEvent(ClickEvent.Action.RUN_COMMAND, JOIN_CONVERSATION.apply(conversation)));
+        Component conversationName = leaveConversationIcon(view, conversation)
+                .append(conversation.getDisplayName()
+                        .replaceText(playerName(view.chatter()))
+                        .replaceText(conversationPartnerName(view.chatter(), conversation))
+                        .clickEvent(clickEvent(RUN_COMMAND, JOIN_CONVERSATION.apply(conversation)))
+                );
         if (isActive)
             conversationName = conversationName.color(ACTIVE_COLOR).decorate(ACTIVE_DECORATION);
         else if (view.unreadMessageCount(conversation) > 0)
@@ -121,6 +125,13 @@ public final class TabbedMessageRenderer implements MessageRenderer {
         else
             conversationName = conversationName.color(INACTIVE_COLOR);
         return conversationName;
+    }
+
+    @NotNull
+    private Component leaveConversationIcon(View view, Conversation conversation) {
+        if (!view.chatter().canLeave(conversation)) return Component.empty();
+        return text().append(CLOSE_CHANNEL.color(CLOSE_CHANNEL_COLOR)
+                .clickEvent(clickEvent(RUN_COMMAND, LEAVE_CONVERSATION.apply(conversation)))).build();
     }
 
     private final Map<Integer, Character> numberMap = Map.of(

@@ -144,7 +144,7 @@ public class ChatterTests extends TestBase {
         chatter.setActiveConversation(ChatTarget.channel("test"));
         chatter.sendMessage(Message.message("test").build());
 
-        assertThat(cleaned(player.nextMessage())).contains("\u2502 test \u2502");
+        assertThat(cleaned(player.nextMessage())).contains("\u2502 \u2718test \u2502");
     }
 
     @Test
@@ -381,6 +381,24 @@ public class ChatterTests extends TestBase {
 
         View view = chatter.getView();
         assertThat(view.messages()).contains(message);
+    }
+
+    @Test
+    void canLeave_isTrueByDefault() {
+        final Channel channel = createChannel("test");
+        assertThat(chatter.canLeave(channel)).isTrue();
+    }
+
+    @Test
+    void canLeave_isFalseIfSet() {
+        final Channel channel = createChannel(config -> config.canLeave(false));
+        assertThat(chatter.canLeave(channel)).isFalse();
+    }
+
+    @Test
+    void canLeave_isTrue_ifConversation() {
+        final Conversation conversation = Conversation.direct(chatter, Chatter.of(server.addPlayer()));
+        assertThat(chatter.canLeave(conversation)).isTrue();
     }
 
     @Nested

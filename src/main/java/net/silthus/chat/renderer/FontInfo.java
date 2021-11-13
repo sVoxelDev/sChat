@@ -127,6 +127,7 @@ public enum FontInfo {
     CARET('>', 4),
     DOWN_CARET('\u23F7', 5), // ⏷
     DOUBLE_ARROW_RIGHT('\u21D2', 7), // ⇒
+    CURSIVE_X('\u2718', 6), // ✘
     LINE('|', 1),
     TILDE('~', 5),
     TICK('`', 2),
