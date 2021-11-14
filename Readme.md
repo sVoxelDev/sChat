@@ -11,7 +11,7 @@ Chat like never before!
 ## Configuration
 
 All configuration is done inside the `config.yml`. There will always be an
-up-to-date [`config.defaults.yml`](src/main/resources/config.defaults.yml) which contains the latest config values and
+up-to-date [`config.default.yml`](src/main/resources/config.default.yml) which contains the latest config values and
 default settings. Copy and adjust it to your needs.
 
 ## Commands
