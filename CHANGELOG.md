@@ -1,3 +1,11 @@
+# [1.0.0-beta.2](https://github.com/Silthus/sChat/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2021-11-14)
+
+
+### Features
+
+* **cmd:** add non-disruptive `/schat reload` command ([486eb48](https://github.com/Silthus/sChat/commit/486eb48a7365e45ce0588aee598f6d6756422c79)), closes [#10](https://github.com/Silthus/sChat/issues/10)
+* **integrations:** add optional PlaceholderAPI support ([4c5ed02](https://github.com/Silthus/sChat/commit/4c5ed02dd21e38c99313f0a739f57ef34c2ff0ff)), closes [#11](https://github.com/Silthus/sChat/issues/11)
+
 # 1.0.0-beta.1 (2021-11-14)
 
 
