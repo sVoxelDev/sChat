@@ -56,7 +56,7 @@ spigot {
     apiVersion = project.property("apiVersion")
     load = STARTUP
     depends = ['ProtocolLib']
-    softDepends = ['Vault']
+    softDepends = ['Vault', 'PlaceholderAPI']
     permissions {
         'schat.player' {
             description 'Contains all basic player permissions for using sChat.'
@@ -96,6 +96,7 @@ repositories {
     maven { url = 'https://repo.dmulloy2.net/repository/public/' }
     maven { url = 'https://jitpack.io' }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
 }
 
 dependencies {
@@ -109,6 +110,7 @@ dependencies {
 
     implementation 'org.bstats:bstats-bukkit:2.2.1'
     implementation 'net.silthus.config-mapper:bukkit:1.6.1'
+    implementation 'me.clip:placeholderapi:2.10.10'
 
     //Test dependencies
     testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'

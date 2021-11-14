@@ -67,6 +67,7 @@ channels:
     # The following custom mini message placeholders are available:
     # - <channel_name>: The name of the channel (see above).
     # - <sender_vault_prefix>: The Vault prefix of the sending player. Requires Vault to work. "Bleeding" color codes in prefix and suffix currently do not work.
+    # - <sender_world>: The world of the sending player.
     # - <sender_name>: The name or nick of the sending player.
     # - <sender_vault_suffix>: The Vault suffix of the sending player. Requires Vault to work. "Bleeding" color codes in prefix and suffix currently do not work.
     # - <message>: The message that is being sent.

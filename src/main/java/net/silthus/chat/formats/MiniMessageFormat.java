@@ -29,6 +29,8 @@ import net.silthus.chat.Constants;
 import net.silthus.chat.Format;
 import net.silthus.chat.Message;
 import net.silthus.chat.SChat;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import static net.kyori.adventure.text.minimessage.template.TemplateResolver.templates;
 
@@ -52,6 +54,7 @@ public class MiniMessageFormat implements Format {
         return MiniMessage.miniMessage().deserialize(format, templates(
                 channelTemplate(message),
                 vaultPrefixTemplate(message),
+                senderWorld(message),
                 senderTemplate(message),
                 vaultSuffixTemplate(message),
                 messageTemplate(message)
@@ -64,6 +67,14 @@ public class MiniMessageFormat implements Format {
 
     private Template senderTemplate(Message message) {
         return Template.template("sender_name", message.getSource().getDisplayName());
+    }
+
+    private Template senderWorld(Message message) {
+        final Player player = Bukkit.getPlayer(message.getSource().getUniqueId());
+        if (player != null) {
+            return Template.template("sender_world", player.getWorld().getName());
+        }
+        return Template.template("sender_world", Component.empty());
     }
 
     private Template channelTemplate(Message message) {

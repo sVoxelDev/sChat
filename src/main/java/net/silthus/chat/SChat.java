@@ -39,6 +39,9 @@ import net.silthus.chat.identities.AbstractIdentity;
 import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.ChatterManager;
 import net.silthus.chat.identities.Console;
+import net.silthus.chat.integrations.placeholders.BasicPlaceholders;
+import net.silthus.chat.integrations.placeholders.PlaceholderAPIWrapper;
+import net.silthus.chat.integrations.placeholders.Placeholders;
 import net.silthus.chat.integrations.protocollib.ChatPacketQueue;
 import net.silthus.chat.integrations.vault.VaultProvider;
 import org.bstats.bukkit.Metrics;
@@ -78,6 +81,7 @@ public final class SChat extends JavaPlugin {
     private ProtocolManager protocolManager;
     @Setter(AccessLevel.PACKAGE)
     private VaultProvider vaultProvider;
+    private Placeholders placeholders;
 
     @Setter(AccessLevel.PACKAGE)
     private ChatPacketQueue chatPacketQueue;
@@ -127,6 +131,7 @@ public final class SChat extends JavaPlugin {
         setupProtocolLib();
         setupVaultIntegration();
         setupBungeecordIntegration();
+        setupPlaceholderAPIIntegration();
 
         setupCommands();
     }
@@ -216,6 +221,14 @@ public final class SChat extends JavaPlugin {
             this.getServer().getMessenger().unregisterIncomingPluginChannel(this, Constants.BungeeCord.BUNGEECORD_CHANNEL, bungeecord);
         }
         this.bungeecord = null;
+    }
+
+    private void setupPlaceholderAPIIntegration() {
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            placeholders = new PlaceholderAPIWrapper();
+        } else {
+            placeholders = new BasicPlaceholders();
+        }
     }
 
     private void setupCommands() {

@@ -6,13 +6,30 @@
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
-Chat like never before!
+Supercharge the Minecraft Chat Experience of your Players!
+
+* [Installation](#installation)
+* [Configuration](#configuration)
+* [Commands](#commands)
+    * [Player Commands](#player-commands)
+    * [Admin Commands](#admin-commands)
+* [Permissions](#permissions)
+    * [Channel Permissions](#channel-permissions)
+* [Plugin Integrations](#plugin-integrations)
+    * [PlaceholderAPI Support](#placeholderapi-support)
+
+## Installation
+
+**sChat** requires the server to run on [Paper][1] and [ProtocolLib][4] must be installed. After these prerequisites are
+met you can [download sChat][5] and drop it into the `plugins/` folder. Restart your server and you are done.
 
 ## Configuration
 
 All configuration is done inside the `config.yml`. There will always be an
 up-to-date [`config.default.yml`](src/main/resources/config.default.yml) which contains the latest config values and
 default settings. Copy and adjust it to your needs.
+
+You can run `/schat reload` to reload your configuration without restarting the server.
 
 ## Commands
 
@@ -60,3 +77,24 @@ channels:
     name: My cool Team
     protect: true
 ```
+
+## Plugin Integrations
+
+- **Vault Prefix & Suffix**: Supports using [Vault][2] prefixes and suffixes. The use of Vault is completely optional.
+- **PlaceholderAPI Placeholders**: Channel formats support the use of [PlaceholderAPI][3] placeholders. The use of the
+  PlaceholderAPI plugin is completely optional.
+
+### PlaceholderAPI Support
+
+The use of [PlaceholderAPI][2] placeholders in the channel format is possible. For
+example `[<channel_name>]%vault_rank% %player_name%: <message>` will work and replace the placeholders.
+
+[1]: https://papermc.io/
+
+[2]: https://www.spigotmc.org/resources/vault.34315/
+
+[3]: https://www.spigotmc.org/resources/placeholderapi.6245/
+
+[4]: https://www.spigotmc.org/resources/protocollib.1997/
+
+[5]: https://github.com/Silthus/sChat/releases
