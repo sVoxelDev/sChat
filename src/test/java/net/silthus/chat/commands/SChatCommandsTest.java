@@ -31,6 +31,9 @@ import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 class SChatCommandsTest extends TestBase {
 
@@ -48,6 +51,17 @@ class SChatCommandsTest extends TestBase {
         player.addAttachment(plugin, Constants.PERMISSION_PLAYER_CHANNEL_LEAVE, true);
         player.addAttachment(plugin, Constants.PERMISSION_PLAYER_CHANNEL_QUICKMESSAGE, true);
         player.addAttachment(plugin, Constants.PERMISSION_PLAYER_DIRECT_MESSAGE, true);
+    }
+
+    @Test
+    void reload() {
+        player.performCommand("schat reload");
+        verify(plugin.getChannelRegistry(), never()).load(any());
+
+        loadTestConfig("reload-test.yml");
+        player.addAttachment(plugin, Constants.PERMISSION_ADMIN_RELOAD, true);
+        player.performCommand("schat reload");
+        verify(plugin.getChannelRegistry()).load(any());
     }
 
     @Nested

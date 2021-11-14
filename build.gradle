@@ -69,6 +69,13 @@ spigot {
                     'schat.player.directmessage': true
             ]
         }
+        'schat.admin' {
+            description 'Contains all admin permissions for sChat.'
+            defaults 'op'
+            children = [
+                    'schat.admin.reload': true
+            ]
+        }
     }
 }
 

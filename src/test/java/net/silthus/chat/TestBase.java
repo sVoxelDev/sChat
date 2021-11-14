@@ -46,10 +46,14 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -71,6 +75,7 @@ public abstract class TestBase {
         plugin.setChatPacketQueue(spy(new ChatPacketQueue(plugin)));
         setupVaultMock();
         setupBungeecordMock();
+        plugin.setChannelRegistry(spy(plugin.getChannelRegistry()));
 
     }
 
@@ -180,5 +185,11 @@ public abstract class TestBase {
     @Nullable
     protected String cleaned(@NonNull String message) {
         return ChatColor.stripColor(message.stripLeading());
+    }
+
+    @SneakyThrows
+    protected void loadTestConfig(String name) {
+        final File config = new File(plugin.getDataFolder(), "config.yml");
+        Files.copy(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResourceAsStream(name)), config.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 }

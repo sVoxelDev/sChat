@@ -21,7 +21,11 @@ package net.silthus.chat;
 
 import co.aikar.commands.BukkitCommandManager;
 import net.kyori.adventure.text.Component;
+import net.silthus.chat.config.ChannelConfig;
+import net.silthus.chat.config.PluginConfig;
 import net.silthus.chat.conversations.Channel;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -29,6 +33,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 class SChatTest extends TestBase {
 
@@ -82,4 +88,47 @@ class SChatTest extends TestBase {
         assertThat(config).exists();
         assertThat(defaultConfig).exists();
     }
+
+    @Nested
+    class Reload {
+
+        @BeforeEach
+        void setUp() {
+
+            plugin.setChannelRegistry(spy(plugin.getChannelRegistry()));
+        }
+
+        @Test
+        void reload_loadsNewConfigYAML() {
+            loadTestConfig("reload-test.yml");
+            final PluginConfig oldConfig = plugin.getPluginConfig();
+            plugin.reload();
+            final PluginConfig newConfig = plugin.getPluginConfig();
+
+            assertThat(oldConfig).isNotEqualTo(newConfig);
+            assertThat(newConfig)
+                    .extracting(PluginConfig::defaults)
+                    .extracting(PluginConfig.Defaults::channel)
+                    .extracting(
+                            ChannelConfig::autoJoin,
+                            ChannelConfig::protect,
+                            ChannelConfig::canLeave
+                    ).contains(
+                            true,
+                            true,
+                            false
+                    );
+        }
+
+        @Test
+        void reloadsChannels_ifConfigChanged() {
+            plugin.reload();
+            verify(plugin.getChannelRegistry(), never()).load(any());
+
+            loadTestConfig("reload-test.yml");
+            plugin.reload();
+            verify(plugin.getChannelRegistry()).load(any());
+        }
+    }
+
 }

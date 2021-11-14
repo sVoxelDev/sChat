@@ -24,6 +24,7 @@ import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.Constants;
+import net.silthus.chat.Conversation;
 import net.silthus.chat.SChat;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.config.PluginConfig;
@@ -33,7 +34,7 @@ import java.util.*;
 
 @Log(topic = Constants.PLUGIN_NAME)
 @AllArgsConstructor
-public final class ChannelRegistry implements Iterable<Channel> {
+public class ChannelRegistry implements Iterable<Channel> {
 
     private final SChat plugin;
     private final Map<String, Channel> channels = Collections.synchronizedMap(new HashMap<>());
@@ -77,6 +78,14 @@ public final class ChannelRegistry implements Iterable<Channel> {
         return channels.computeIfAbsent(identifier.toLowerCase(), s -> new Channel(s, config));
     }
 
+    public Channel get(@NonNull String identifier) {
+        return channels.get(identifier.toLowerCase());
+    }
+
+    public Channel create(@NonNull String identifier, @NonNull ChannelConfig config) {
+        return channels.compute(identifier, (s, channel) -> new Channel(identifier, config));
+    }
+
     public int size() {
         return channels.size();
     }
@@ -91,31 +100,39 @@ public final class ChannelRegistry implements Iterable<Channel> {
     }
 
     public void clear() {
-        channels.values().forEach(channel -> channel.getTargets().forEach(target -> target.unsubscribe(channel)));
+        channels.values().forEach(Conversation::close);
         channels.clear();
     }
 
     public void load(@NonNull PluginConfig config) {
-        clear();
         loadChannels(config);
     }
 
     private void loadChannels(@NonNull PluginConfig config) {
-        config.channels().entrySet().stream()
-                .map(entry -> Channel.channel(entry.getKey(), entry.getValue()))
-                .forEach(this::add);
+        for (Map.Entry<String, ChannelConfig> entry : config.channels().entrySet()) {
+            if (contains(entry.getKey())) {
+                get(entry.getKey()).setConfig(entry.getValue());
+            } else {
+                create(entry.getKey(), entry.getValue());
+            }
+        }
+        final Set<String> channelsToRemove = new HashSet<>(channels.keySet());
+        channelsToRemove.removeAll(config.channels().keySet());
+        channelsToRemove.forEach(this::remove);
     }
 
     public void add(@NonNull Channel channel) {
         this.channels.put(channel.getName(), channel);
     }
 
-    public boolean remove(@NonNull Channel channel) {
-        return this.channels.remove(channel.getName(), channel);
+    public void remove(@NonNull Channel channel) {
+        remove(channel.getName());
     }
 
     public Channel remove(String identifier) {
         if (identifier == null) return null;
-        return this.channels.remove(identifier.toLowerCase());
+        final Channel channel = this.channels.remove(identifier.toLowerCase());
+        if (channel != null) channel.close();
+        return channel;
     }
 }

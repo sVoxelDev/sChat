@@ -19,8 +19,7 @@
 
 package net.silthus.chat.config;
 
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
 import net.silthus.chat.Constants;
@@ -33,8 +32,10 @@ import static java.util.Objects.requireNonNullElseGet;
 import static java.util.stream.Collectors.toMap;
 
 @Data
+@Builder
 @Accessors(fluent = true)
 @Log(topic = Constants.PLUGIN_NAME)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PluginConfig {
 
     public static PluginConfig fromConfig(ConfigurationSection config) {
@@ -44,6 +45,7 @@ public class PluginConfig {
     private final Defaults defaults;
     private final ConsoleConfig console;
     private final PrivateChatConfig privateChat;
+    @Singular
     private final Map<String, ChannelConfig> channels;
 
     private PluginConfig(@NonNull ConfigurationSection config) {

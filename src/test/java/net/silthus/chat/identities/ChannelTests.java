@@ -423,6 +423,17 @@ public class ChannelTests extends TestBase {
                 .isNotNull().isNotEqualTo(channel);
     }
 
+    @Test
+    void close_unsubscribesAllTargets() {
+        final Channel channel = createChannel(config -> config);
+        final Chatter chatter = Chatter.of(server.addPlayer());
+        chatter.subscribe(channel);
+
+        channel.close();
+        assertThat(channel.getTargets()).isEmpty();
+        assertThat(chatter.getConversations()).doesNotContain(channel);
+    }
+
     @Nested
     @DisplayName("with config")
     class WithConfig {

@@ -18,9 +18,6 @@ defaults:
 console:
   # This is the channel the console will send chat messages to.
   default_channel: global
-private_chats:
-  # set false to only allow private chats on the active server
-  global: true
 # Define your list of channels here.
 channels:
   # The id of the channel must be unique across your server network.

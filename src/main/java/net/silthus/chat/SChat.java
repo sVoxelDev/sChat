@@ -69,6 +69,7 @@ public final class SChat extends JavaPlugin {
     private PluginConfig pluginConfig;
     private Metrics metrics;
 
+    @Setter(AccessLevel.PACKAGE)
     private ChannelRegistry channelRegistry;
     private ChatterManager chatterManager;
     private ConversationManager conversationManager;
@@ -92,6 +93,17 @@ public final class SChat extends JavaPlugin {
         super(loader, description, dataFolder, file);
         instance = this;
         testing = true;
+    }
+
+    public void reload() {
+        reloadConfig();
+
+        final PluginConfig oldConfig = getPluginConfig();
+        pluginConfig = PluginConfig.fromConfig(getConfig());
+
+        if (oldConfig.equals(pluginConfig)) return;
+
+        getChannelRegistry().load(getPluginConfig());
     }
 
     @Override

@@ -72,4 +72,10 @@ public abstract class AbstractConversation extends AbstractChatTarget implements
                 .thenComparing(Identity::getName)
                 .compare(this, o);
     }
+
+    @Override
+    public void close() {
+        getTargets().forEach(target -> target.unsubscribe(this));
+        targets.clear();
+    }
 }

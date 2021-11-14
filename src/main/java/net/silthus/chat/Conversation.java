@@ -65,6 +65,8 @@ public interface Conversation extends ChatTarget, Comparable<Conversation> {
         return Type.fromConversation(this);
     }
 
+    void close();
+
     enum Type {
         CHANNEL,
         DIRECT,

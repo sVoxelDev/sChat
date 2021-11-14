@@ -40,7 +40,7 @@ public class Channel extends AbstractConversation implements ChatSource {
         return SChat.instance().getChannelRegistry().getOrCreate(identifier, config);
     }
 
-    private final ChannelConfig config;
+    private ChannelConfig config;
 
     Channel(String identifier) {
         this(identifier, ChannelConfig.defaults());
@@ -48,6 +48,10 @@ public class Channel extends AbstractConversation implements ChatSource {
 
     Channel(String identifier, ChannelConfig config) {
         super(identifier);
+        setConfig(config);
+    }
+
+    public void setConfig(ChannelConfig config) {
         this.config = config;
         if (config.name() != null)
             setDisplayName(Component.text(config.name()));

@@ -16,8 +16,10 @@ default settings. Copy and adjust it to your needs.
 
 ## Commands
 
-Your players won't need to remember any commands. All they need to do is click on the various UI elements in the chat.
-For example: clicking on a channel will set the channel as active.
+### Player Commands
+
+Your players won't need to remember any commands. All they need to do is click on the various UI elements in the chat, *
+e.g. clicking on a channel will set the channel as active*. However, here are the commands if you like typing:
 
 | Commands | Alias | Permission | Description |
 | -------- | ----- | ---------- | ----------- |
@@ -25,6 +27,12 @@ For example: clicking on a channel will set the channel as active.
 | `/schat channel leave <channel>` | `/leave <channel>` | `schat.player.channel.leave` | Leaves the given channel. |
 | `/schat channel message <channel> <message>` | `/ch <channel> <message>` | `schat.player.channel.quickmessage` | Sends a message to the given channel without switching to it. |
 | `/tell <player> [message]` | `/m`, `/w`, `/msg`, `/pm`, `/qm`, `/dm` | `schat.player.directmessage` | Sends a message to the given player or opens the conversation. |
+
+### Admin Commands
+
+| Commands | Alias | Permission | Description |
+| -------- | ----- | ---------- | ----------- |
+| `/schat reload` | | `schat.admin.reload` | Reloads the sChat config and all channels that have changes. This is non disruptive and will not touch unchanged channels. |
 
 ## Permissions
 
@@ -36,6 +44,8 @@ For example: clicking on a channel will set the channel as active.
 | `schat.player.channel.leave` | Allows the player to leave channels. |
 | `schat.player.channel.quickmessage` | Enables the player to send quick messages (`/ch <channel> <message>`) to channels he is allowed to write in. |
 | `schat.player.directmessage` | Allows the player to send direct messages (`/dm <player> <message>`) to other players. |
+| `schat.admin` | This permission groups all admin permissions nested under the `schat.admin.*` permissions. OPs get this by default. |
+| `schat.admin.reload` | Allows performing the `/schat reload` command to reload the plugin. |
 
 ### Channel Permissions
 

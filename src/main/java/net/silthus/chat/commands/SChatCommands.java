@@ -49,6 +49,13 @@ public class SChatCommands extends BaseCommand {
         this.plugin = plugin;
     }
 
+    @Subcommand("reload")
+    @CommandPermission(PERMISSION_ADMIN_RELOAD)
+    public void reload() {
+        plugin.reload();
+        success(PLUGIN_RELOADED);
+    }
+
     @Subcommand("conversations")
     public class ConversationCommands extends BaseCommand {
 

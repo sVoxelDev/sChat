@@ -45,6 +45,7 @@ public final class Constants {
     public static final String PERMISSION_PLAYER_CHANNEL_LEAVE = "schat.player.channel.leave";
     public static final String PERMISSION_PLAYER_CHANNEL_QUICKMESSAGE = "schat.player.channel.quickmessage";
     public static final String PERMISSION_PLAYER_DIRECT_MESSAGE = "schat.player.directmessage";
+    public static final String PERMISSION_ADMIN_RELOAD = "schat.admin.reload";
 
     public static class Targets {
 
@@ -77,6 +78,7 @@ public final class Constants {
         public static final String JOINED_CHANNEL = "joined-channel";
         public static final String LEAVE_CHANNEL = "leave-channel";
         public static final String INVALID_CONVERSATION = "invalid-conversation";
+        public static final String PLUGIN_RELOADED = "plugin-reloaded";
     }
 
     public static class Errors {

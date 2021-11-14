@@ -102,13 +102,8 @@ public class ChannelRegistryTests extends TestBase {
         registry.add(channel);
         assertThat(registry.size()).isOne();
 
-        assertThat(registry.remove(channel)).isTrue();
+        registry.remove(channel);
         assertThat(registry.size()).isZero();
-    }
-
-    @Test
-    void remove_returnsFalse_ifChannelNotRegistered() {
-        assertThat(registry.remove(ChatTarget.channel("test"))).isFalse();
     }
 
     @Test
@@ -281,6 +276,18 @@ public class ChannelRegistryTests extends TestBase {
         assertThat(chatter.getConversations()).doesNotContain(foobar);
     }
 
+    @Test
+    void remove_closesChannel() {
+        final Channel channel = createChannel("abc");
+        registry.add(channel);
+        final Chatter chatter = Chatter.of(server.addPlayer());
+        channel.subscribe(channel);
+
+        registry.remove(channel);
+        assertThat(chatter.getConversations()).doesNotContain(channel);
+        assertThat(channel.getTargets()).doesNotContain(chatter);
+    }
+
     @Nested
     class Load {
 
@@ -317,6 +324,38 @@ public class ChannelRegistryTests extends TestBase {
             registry.load(config);
         }
 
+        @Test
+        void load_reloadsConfigOfExistingChannels() {
+            registry.load(channelConfigBefore());
+            assertThat(registry.contains("test1")).isTrue();
+            assertThat(registry.contains("test2")).isTrue();
+
+            registry.load(channelConfigAfter());
+            assertThat(registry.getOrCreate("test1"))
+                    .extracting(Channel::getConfig)
+                    .extracting(
+                            ChannelConfig::name,
+                            ChannelConfig::autoJoin
+                    ).contains(
+                            "Foobar",
+                            false
+                    );
+            assertThat(registry.contains("test2")).isFalse();
+        }
+
+        @Test
+        void load_doesNotCreateNewChannel_ifChannelExists() {
+            registry.load(channelConfigBefore());
+            Channel channel = registry.get("test1");
+            Chatter chatter = ChatTarget.player(server.addPlayer());
+            channel.addTarget(chatter);
+            assertThat(channel.getTargets()).contains(chatter);
+
+            registry.load(channelConfigAfter());
+            channel = registry.get("test1");
+            assertThat(channel.getTargets()).contains(chatter);
+        }
+
         private void loadTwoChannels() {
             MemoryConfiguration cfg = new MemoryConfiguration();
             cfg.set("channels.test1.name", "Test 1");
@@ -326,6 +365,21 @@ public class ChannelRegistryTests extends TestBase {
 
         private void loadFromEmptyChannelConfig() {
             registry.load(PluginConfig.fromConfig(new MemoryConfiguration()));
+        }
+
+        private PluginConfig channelConfigBefore() {
+            final PluginConfig config = PluginConfig.builder()
+                    .channel("test1", ChannelConfig.builder().name("Test 1").autoJoin(true).build())
+                    .channel("test2", ChannelConfig.builder().name("Test 2").format(Format.noFormat()).build())
+                    .build();
+            return config;
+        }
+
+        private PluginConfig channelConfigAfter() {
+            final PluginConfig newConfig = PluginConfig.builder()
+                    .channel("test1", ChannelConfig.builder().name("Foobar").autoJoin(false).build())
+                    .build();
+            return newConfig;
         }
     }
 }

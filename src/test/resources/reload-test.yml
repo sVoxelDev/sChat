@@ -1,0 +1,26 @@
+defaults:
+  channel:
+    protect: true
+    auto_join: true
+    force: true
+    console: true
+    scope: server
+    worlds:
+      - world
+      - world_nether
+      - world_the_end
+    range: 100
+    format: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset><yellow><sender_vault_prefix><sender_name><sender_vault_suffix><gray>: <gray><message>'
+console:
+  default_channel: global
+private_chats:
+  global: true
+channels:
+  global:
+    name: Global
+    scope: server
+    protect: true
+    force: false
+    auto_join: false
+    console: false
+    format: '<channel_name><sender_name>: <gray><message>'
