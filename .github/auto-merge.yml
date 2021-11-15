@@ -1,3 +1,20 @@
-- match:
-    dependency_type: all
-    update_type: "semver:minor" # includes patch updates!
+updateBranch: true
+deleteBranchAfterMerge: true
+reportStatus: true
+
+minApprovals:
+  COLLABORATOR: 0
+maxRequestedChanges:
+  NONE: 0
+blockingLabels:
+  - blocked
+
+# Will merge whenever the above conditions are met, but also
+# the owner has approved or merge label was added.
+rules:
+  - minApprovals:
+      OWNER: 1
+  - requiredLabels:
+      - merge
+
+mergeMethod: rebase
