@@ -1,3 +1,15 @@
+# [1.0.0-beta.5](https://github.com/Silthus/sChat/compare/v1.0.0-beta.4...v1.0.0-beta.5) (2021-11-15)
+
+
+### Bug Fixes
+
+* **cmd:** reload not removing console target from channel if `console: false` ([f77794f](https://github.com/Silthus/sChat/commit/f77794f24f17480a50d8fb901196dab0124c5672))
+
+
+### Features
+
+* **config:** add name config to console ([c30afb1](https://github.com/Silthus/sChat/commit/c30afb1cf17436a0bd8233b96f1c72dfd64d38fb))
+
 # [1.0.0-beta.4](https://github.com/Silthus/sChat/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2021-11-15)
 
 
