@@ -33,9 +33,29 @@ import net.silthus.chat.SChat;
 import net.silthus.chat.identities.Chatter;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 
 @Log(topic = Constants.PLUGIN_NAME)
 public class ChatPacketQueue extends PacketAdapter {
+
+    private static Object PAPER_GSON_SERIALIZER;
+    private static Method PAPER_SERIALIZE;
+
+    static {
+        try {
+            PAPER_GSON_SERIALIZER = Class.forName("io.papermc.paper.text.PaperComponents").getDeclaredMethod("gsonSerializer").invoke(null);
+            PAPER_SERIALIZE = Arrays.stream(PAPER_GSON_SERIALIZER.getClass().getDeclaredMethods())
+                    .filter(method -> method.getName().equals("serialize"))
+                    .findFirst()
+                    .orElse(null);
+            if (PAPER_SERIALIZE != null)
+                PAPER_SERIALIZE.setAccessible(true);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
+            log.warning("Unable to find PaperMC chat components. You can ignore this if you are not running PaperMC or a fork.");
+        }
+    }
 
     public ChatPacketQueue(SChat plugin) {
         super(plugin, PacketType.Play.Server.CHAT);
@@ -80,13 +100,15 @@ public class ChatPacketQueue extends PacketAdapter {
     }
 
     private Component getPaperMessage(PacketEvent event) {
+        if (PAPER_SERIALIZE == null) return null;
         try {
             Object handle = event.getPacket().getHandle();
             Class<?> packetClass = handle.getClass();
             Field field = packetClass.getDeclaredField("adventure$message");
             field.setAccessible(true);
-            return (Component) field.get(handle);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+            String json = (String) PAPER_SERIALIZE.invoke(PAPER_GSON_SERIALIZER, field.get(handle));
+            return GsonComponentSerializer.gson().deserialize(json);
+        } catch (NoSuchFieldException | IllegalAccessException | InvocationTargetException e) {
             log.severe("Unable to extract PaperMC message from chat packet: " + e.getMessage());
             e.printStackTrace();
             return null;
