@@ -1,3 +1,10 @@
+# [1.0.0-beta.3](https://github.com/Silthus/sChat/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2021-11-15)
+
+
+### Bug Fixes
+
+* **platform:** drop paper support and shade adventure-text directly ([76c25cc](https://github.com/Silthus/sChat/commit/76c25cc76d29790d4b27f9976caf6ba3393e7f03)), closes [#34](https://github.com/Silthus/sChat/issues/34)
+
 # [1.0.0-beta.2](https://github.com/Silthus/sChat/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2021-11-14)
 
 
