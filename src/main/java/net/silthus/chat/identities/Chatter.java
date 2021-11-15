@@ -19,7 +19,6 @@
 
 package net.silthus.chat.identities;
 
-import io.papermc.paper.event.player.AsyncChatEvent;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,9 +31,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.Objects;
 import java.util.Optional;
+
+import static net.kyori.adventure.text.Component.text;
 
 @Getter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
@@ -56,7 +58,7 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     Chatter(OfflinePlayer player) {
         super(player.getUniqueId(), player.getName());
         if (player.isOnline()) {
-            setDisplayName(Objects.requireNonNull(player.getPlayer()).displayName());
+            setDisplayName(text(Objects.requireNonNull(player.getPlayer()).getDisplayName()));
         }
     }
 
@@ -74,12 +76,12 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    void onPlayerChat(AsyncChatEvent event) {
+    void onPlayerChat(AsyncPlayerChatEvent event) {
         if (isNotApplicable(event)) return;
 
         Message.message()
                 .from(this)
-                .text(event.message())
+                .text(event.getMessage())
                 .to(getActiveConversation())
                 .send();
         event.setCancelled(true);
@@ -125,16 +127,16 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         return canJoin(channel);
     }
 
-    private boolean isNotApplicable(AsyncChatEvent event) {
+    private boolean isNotApplicable(AsyncPlayerChatEvent event) {
         return isNotSamePlayer(event) || noActiveConversation(event);
     }
 
-    private boolean isNotSamePlayer(AsyncChatEvent event) {
+    private boolean isNotSamePlayer(AsyncPlayerChatEvent event) {
         return getPlayer().map(player -> !event.getPlayer().equals(player))
                 .orElse(true);
     }
 
-    private boolean noActiveConversation(AsyncChatEvent event) {
+    private boolean noActiveConversation(AsyncPlayerChatEvent event) {
         if (getActiveConversation() != null) return false;
         event.getPlayer().sendMessage(Constants.Errors.NO_ACTIVE_CHANNEL);
         event.setCancelled(true);

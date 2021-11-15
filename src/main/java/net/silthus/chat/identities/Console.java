@@ -33,6 +33,8 @@ import org.bukkit.event.server.ServerCommandEvent;
 
 import java.util.Optional;
 
+import static net.kyori.adventure.text.Component.text;
+
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public final class Console extends AbstractChatTarget implements ChatSource, Listener {
 
@@ -56,12 +58,12 @@ public final class Console extends AbstractChatTarget implements ChatSource, Lis
     private Console(ConsoleConfig config) {
         super(Constants.Targets.CONSOLE);
         this.config = config;
-        setDisplayName(Bukkit.getConsoleSender().name());
+        setDisplayName(text(Bukkit.getConsoleSender().getName()));
     }
 
     @Override
     protected void processMessage(Message message) {
-        Bukkit.getConsoleSender().sendMessage(message.formatted());
+        SChat.instance().getAudiences().console().sendMessage(message.formatted());
     }
 
     @EventHandler(ignoreCancelled = true)

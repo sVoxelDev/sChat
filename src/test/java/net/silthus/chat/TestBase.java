@@ -27,6 +27,7 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.milkbowl.vault.chat.Chat;
@@ -47,13 +48,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -77,6 +76,22 @@ public abstract class TestBase {
         setupBungeecordMock();
         plugin.setChannelRegistry(spy(plugin.getChannelRegistry()));
 
+    }
+
+    @AfterEach
+    @SneakyThrows
+    public void tearDown() {
+        Bukkit.getScheduler().cancelTasks(plugin);
+        MockBukkit.unmock();
+        clearAudiences();
+    }
+
+    @SneakyThrows
+    @SuppressWarnings("unchecked")
+    private void clearAudiences() {
+        Field instances = Class.forName("net.kyori.adventure.platform.bukkit.BukkitAudiencesImpl").getDeclaredField("INSTANCES");
+        instances.setAccessible(true);
+        ((Map<String, BukkitAudiences>) instances.get(null)).clear();
     }
 
     private void setupVaultMock() {
@@ -107,13 +122,6 @@ public abstract class TestBase {
             return invocation;
         }).when(messageChannelSender).sendPluginMessage(eq(plugin), anyString(), any());
         plugin.setBungeecord(spy(new BungeeCord(plugin, () -> messageChannelSender)));
-    }
-
-    @AfterEach
-    @SneakyThrows
-    public void tearDown() {
-        Bukkit.getScheduler().cancelTasks(plugin);
-        MockBukkit.unmock();
     }
 
     protected Stream<Listener> getRegisteredListeners() {

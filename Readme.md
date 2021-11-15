@@ -20,8 +20,8 @@ Supercharge the Minecraft Chat Experience of your Players!
 
 ## Installation
 
-**sChat** requires the server to run on [Paper][1] and [ProtocolLib][4] must be installed. After these prerequisites are
-met you can [download sChat][5] and drop it into the `plugins/` folder. Restart your server and you are done.
+**sChat** requires at least **Java 16** and [ProtocolLib][4] must be installed. After these prerequisites are met you
+can [download sChat][5] and drop it into the `plugins/` folder. Restart your server and you are done.
 
 ## Configuration
 
