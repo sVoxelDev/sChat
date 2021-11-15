@@ -1,3 +1,10 @@
+# [1.0.0-beta.4](https://github.com/Silthus/sChat/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2021-11-15)
+
+
+### Bug Fixes
+
+* **platform:** system messages display under the channel tabs ([cac4ffb](https://github.com/Silthus/sChat/commit/cac4ffbc62b48b981be3b68b79d595d93ecbd87b)), closes [#36](https://github.com/Silthus/sChat/issues/36)
+
 # [1.0.0-beta.3](https://github.com/Silthus/sChat/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2021-11-15)
 
 
