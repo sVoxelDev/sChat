@@ -27,7 +27,9 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.md_5.bungee.api.ChatColor;
 import net.silthus.chat.conversations.Channel;
+import org.bukkit.NamespacedKey;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 import static net.kyori.adventure.text.Component.text;
@@ -133,5 +135,10 @@ public final class Constants {
         public static final String SERVER = "server";
         public static final String GLOBAL = "global";
         public static final String WORLD = "world";
+    }
+
+    public static class Persistence {
+
+        public static final NamespacedKey PLAYER_DATA = Objects.requireNonNull(NamespacedKey.fromString("schat:player_data"));
     }
 }

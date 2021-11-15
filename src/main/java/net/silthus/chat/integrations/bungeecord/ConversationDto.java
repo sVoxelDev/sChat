@@ -43,7 +43,7 @@ class ConversationDto extends IdentityDto {
         this.targets = conversation.getTargets().stream().filter(target -> target instanceof Chatter).map(IdentityDto::new).toList();
     }
 
-    public Conversation asConversation() {
+    Conversation asConversation() {
         final List<ChatTarget> targets = this.targets.stream().map(identityDto -> (ChatTarget) identityDto.asChatIdentity()).toList();
         final Component displayName = BungeeHelper.deserialize(displayName());
         return switch (conversationType) {

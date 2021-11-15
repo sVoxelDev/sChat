@@ -22,6 +22,7 @@ package net.silthus.chat.identities;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.persistence.PlayerData;
 import net.silthus.chat.renderer.View;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -399,6 +400,32 @@ public class ChatterTests extends TestBase {
     void canLeave_isTrue_ifConversation() {
         final Conversation conversation = Conversation.direct(chatter, Chatter.of(server.addPlayer()));
         assertThat(chatter.canLeave(conversation)).isTrue();
+    }
+
+    @Nested
+    class SaveAndLoad {
+
+        private PlayerMock player;
+        private Chatter chatter;
+
+        @BeforeEach
+        void setUp() {
+            player = server.addPlayer();
+            chatter = Chatter.of(player);
+        }
+
+        @Test
+        void save_storesPlayerSettingsInDataContainer() {
+            final Channel channel = createChannel(config -> config.name("Test 1"));
+            chatter.setActiveConversation(channel);
+
+            chatter.save();
+
+            assertThat(player.getPersistentDataContainer().get(Constants.Persistence.PLAYER_DATA, PlayerData.type()))
+                    .isNotNull()
+                    .extracting(PlayerData::activeConversation)
+                    .isEqualTo(chatter.getActiveConversation().getUniqueId());
+        }
     }
 
     @Nested

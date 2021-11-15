@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
 @Data
 @Accessors(fluent = true)
-public class MessageDto {
+class MessageDto {
 
     private UUID id;
     private String message;
@@ -60,7 +60,7 @@ public class MessageDto {
         return new ConversationDto(conversation);
     }
 
-    public Message toMessage() {
+    Message asMessage() {
         return Message.message()
                 .id(id)
                 .text(BungeeHelper.deserialize(message()))

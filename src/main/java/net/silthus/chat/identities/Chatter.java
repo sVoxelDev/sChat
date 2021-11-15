@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.persistence.PlayerData;
 import net.silthus.chat.renderer.View;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -127,6 +128,15 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         return canJoin(channel);
     }
 
+    public void save() {
+        getPlayer().ifPresent(this::save);
+    }
+
+    private void save(Player player) {
+        new PlayerData(this).saveTo(player);
+    }
+
+    private boolean isNotApplicable(AsyncPlayerChatEvent event) {
     private boolean isNotApplicable(AsyncPlayerChatEvent event) {
         return isNotSamePlayer(event) || noActiveConversation(event);
     }
