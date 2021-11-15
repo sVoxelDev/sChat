@@ -20,7 +20,6 @@
 package net.silthus.chat.identities;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
@@ -31,6 +30,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -60,7 +60,7 @@ public class ChannelTests extends TestBase {
                         Constants.Permissions.CHANNEL_PERMISSION + ".test"
                 );
         assertThat(channel.getDisplayName())
-                .isEqualTo(Component.text("test"));
+                .isEqualTo(text("test"));
         assertThat(channel.getConfig())
                 .extracting(ChannelConfig::name)
                 .isEqualTo(null);
@@ -226,7 +226,7 @@ public class ChannelTests extends TestBase {
                     .extracting(
                             m -> m.getSource().getDisplayName()
                     ).isEqualTo(
-                            Component.text("Player1")
+                            text("Player1")
                     );
         } catch (Exception e) {
             e.printStackTrace();
@@ -434,6 +434,41 @@ public class ChannelTests extends TestBase {
         assertThat(chatter.getConversations()).doesNotContain(channel);
     }
 
+    @Test
+    void setConfig_changesDisplayName() {
+        final Channel channel = createChannel(config -> config.name("Test 123"));
+        channel.setConfig(ChannelConfig.builder().name("Foobar").build());
+
+        assertThat(channel.getDisplayName()).isEqualTo(text("Foobar"));
+    }
+
+    @Test
+    void setConfig_removeConsoleSender() {
+        final Channel channel = createChannel(config -> config.sendToConsole(true));
+        assertThat(channel.getTargets()).contains(Console.console());
+
+        channel.setConfig(ChannelConfig.builder().sendToConsole(false).build());
+        assertThat(channel.getTargets()).doesNotContain(Console.console());
+    }
+
+    @Test
+    void setConfig_addsConsoleSender() {
+        final Channel channel = createChannel(config -> config.sendToConsole(false));
+        assertThat(channel.getTargets()).doesNotContain(Console.console());
+
+        channel.setConfig(ChannelConfig.builder().sendToConsole(true).build());
+        assertThat(channel.getTargets()).contains(Console.console());
+    }
+
+    @Test
+    void setConfig_updatesChannelFormat() {
+        final Channel channel = createChannel(config -> config.format(Format.noFormat()));
+        assertThat(channel.getFormat()).isEqualTo(Format.noFormat());
+
+        channel.setConfig(ChannelConfig.builder().format(Format.channelFormat()).build());
+        assertThat(channel.getFormat()).isEqualTo(Format.channelFormat());
+    }
+
     @Nested
     @DisplayName("with config")
     class WithConfig {
@@ -450,7 +485,7 @@ public class ChannelTests extends TestBase {
 
             Channel channel = Channel.channel("config-test", ChannelConfig.of(cfg));
 
-            assertThat(channel.getDisplayName()).isEqualTo(Component.text("Test"));
+            assertThat(channel.getDisplayName()).isEqualTo(text("Test"));
             assertThat(channel.getConfig())
                     .extracting(
                             ChannelConfig::format,

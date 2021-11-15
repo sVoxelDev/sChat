@@ -55,8 +55,12 @@ public class Channel extends AbstractConversation implements ChatSource {
         this.config = config;
         if (config.name() != null)
             setDisplayName(Component.text(config.name()));
+
         if (config.sendToConsole())
             addTarget(Console.console());
+        else
+            removeTarget(Console.console());
+
         setFormat(config.format());
     }
 
