@@ -20,21 +20,20 @@
 package net.silthus.chat.identities;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NonNull;
 import net.silthus.chat.ChatSource;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Message;
 import net.silthus.chat.SChat;
 import net.silthus.chat.config.ConsoleConfig;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerCommandEvent;
 
 import java.util.Optional;
 
-import static net.kyori.adventure.text.Component.text;
-
+@Getter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public final class Console extends AbstractChatTarget implements ChatSource, Listener {
 
@@ -53,12 +52,16 @@ public final class Console extends AbstractChatTarget implements ChatSource, Lis
         return instance;
     }
 
-    private final ConsoleConfig config;
+    private ConsoleConfig config;
 
     private Console(ConsoleConfig config) {
         super(Constants.Targets.CONSOLE);
+        setConfig(config);
+    }
+
+    public void setConfig(ConsoleConfig config) {
         this.config = config;
-        setDisplayName(text(Bukkit.getConsoleSender().getName()));
+        setDisplayName(config.name());
     }
 
     @Override

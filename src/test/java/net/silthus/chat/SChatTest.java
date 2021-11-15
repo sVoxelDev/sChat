@@ -20,10 +20,10 @@
 package net.silthus.chat;
 
 import co.aikar.commands.BukkitCommandManager;
-import net.kyori.adventure.text.Component;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.config.PluginConfig;
 import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.identities.Console;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.Optional;
 
+import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -74,7 +75,7 @@ class SChatTest extends TestBase {
                         c -> toText(c.getConfig().format().applyTo(Message.message(ChatSource.player(server.addPlayer()), "test").to(c).build()))
                 ).contains(
                         "global",
-                        Component.text("Global"),
+                        text("Global"),
                         "&6[&aGlobal&6]&7[ADMIN]&ePlayer0[!]&7: test"
                 );
     }
@@ -94,7 +95,6 @@ class SChatTest extends TestBase {
 
         @BeforeEach
         void setUp() {
-
             plugin.setChannelRegistry(spy(plugin.getChannelRegistry()));
         }
 
@@ -128,6 +128,16 @@ class SChatTest extends TestBase {
             loadTestConfig("reload-test.yml");
             plugin.reload();
             verify(plugin.getChannelRegistry()).load(any());
+        }
+
+        @Test
+        void reloadsConsoleConfig() {
+            loadTestConfig("reload-test.yml");
+            plugin.reload();
+
+            final Console console = Console.console();
+            assertThat(console.getDisplayName()).isEqualTo(text("MyConsole"));
+            assertThat(console.getConfig().defaultChannel()).isEqualTo("none");
         }
     }
 

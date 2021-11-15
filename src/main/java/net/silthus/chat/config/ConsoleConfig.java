@@ -19,20 +19,28 @@
 
 package net.silthus.chat.config;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.configuration.ConfigurationSection;
 
+import static net.kyori.adventure.text.Component.text;
+
 @Data
+@Builder
 @NoArgsConstructor
 @Accessors(fluent = true)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConsoleConfig {
 
+    @Builder.Default
+    private Component name = text("Console");
+    @Builder.Default
     private String defaultChannel = "global";
 
     ConsoleConfig(@NonNull ConfigurationSection config) {
+        this.name = MiniMessage.miniMessage().deserialize(config.getString("name", "Console"));
         this.defaultChannel = config.getString("default_channel", defaultChannel);
     }
 }

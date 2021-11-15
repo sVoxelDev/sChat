@@ -16,6 +16,8 @@ defaults:
     format: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset><yellow><sender_vault_prefix><sender_name><sender_vault_suffix><gray>: <gray><message>'
 # You can fine tune the behaviour of the console chat in this section.
 console:
+  # Set the name players see when chatting from the console.
+  name: Console
   # This is the channel the console will send chat messages to.
   default_channel: global
 # Define your list of channels here.

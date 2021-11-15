@@ -110,6 +110,7 @@ public final class SChat extends JavaPlugin {
 
         if (oldConfig.equals(pluginConfig)) return;
 
+        Console.console().setConfig(getPluginConfig().console());
         getChannelRegistry().load(getPluginConfig());
     }
 

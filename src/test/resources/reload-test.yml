@@ -12,7 +12,8 @@ defaults:
     range: 100
     format: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset><yellow><sender_vault_prefix><sender_name><sender_vault_suffix><gray>: <gray><message>'
 console:
-  default_channel: global
+  default_channel: none
+  name: MyConsole
 private_chats:
   global: true
 channels:

@@ -22,6 +22,7 @@ package net.silthus.chat.identities;
 import be.seeseemelk.mockbukkit.command.ConsoleCommandSenderMock;
 import net.silthus.chat.*;
 import net.silthus.chat.config.ConsoleConfig;
+import net.silthus.chat.conversations.Channel;
 import org.bukkit.ChatColor;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.junit.jupiter.api.AfterEach;
@@ -107,7 +108,11 @@ public class ConsoleTests {
                     .isEqualTo(text("Hi there!"));
             assertThat(ChatColor.stripColor(((ConsoleCommandSenderMock) server.getConsoleSender()).nextMessage()))
                     .isNotNull()
-                    .contains("[Global]CONSOLE: Hi there!");
+                    .contains("[Global]Console: Hi there!");
+            assertThat(Channel.channel("global").getLastReceivedMessage())
+                    .isNotNull()
+                    .extracting(Message::getSource)
+                    .isEqualTo(Console.console());
         }
 
         @Test
@@ -117,6 +122,24 @@ public class ConsoleTests {
             assertThat(console.getLastReceivedMessage())
                     .isNull();
             assertThat(((ConsoleCommandSenderMock) server.getConsoleSender()).nextMessage())
+                    .isNull();
+        }
+
+        @Test
+        void setConfig_changesTheName() {
+            assertThat(console.getDisplayName()).isEqualTo(text("Console"));
+
+            console.setConfig(ConsoleConfig.builder().name(text("Foobar")).build());
+            assertThat(console.getDisplayName()).isEqualTo(text("Foobar"));
+        }
+
+        @Test
+        void setConfig_changesDefaultChannel() {
+            console.setConfig(ConsoleConfig.builder().defaultChannel("none").build());
+            console.onConsoleChat(new ServerCommandEvent(server.getConsoleSender(), "Hi!"));
+
+            assertThat(console.getLastReceivedMessage()).isNull();
+            assertThat(ChatColor.stripColor(((ConsoleCommandSenderMock) server.getConsoleSender()).nextMessage()))
                     .isNull();
         }
     }
