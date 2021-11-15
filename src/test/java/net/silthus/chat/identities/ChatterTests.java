@@ -20,7 +20,6 @@
 package net.silthus.chat.identities;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import io.papermc.paper.event.player.AsyncChatEvent;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.renderer.View;
@@ -28,6 +27,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -472,26 +472,26 @@ public class ChatterTests extends TestBase {
     @DisplayName("with player chatting")
     class PlayerChatEvent {
 
-        private ArgumentCaptor<AsyncChatEvent> eventCaptor;
+        private ArgumentCaptor<AsyncPlayerChatEvent> eventCaptor;
 
         @BeforeEach
         public void setUp() {
             Bukkit.getPluginManager().registerEvents(chatter, plugin);
-            eventCaptor = ArgumentCaptor.forClass(AsyncChatEvent.class);
+            eventCaptor = ArgumentCaptor.forClass(AsyncPlayerChatEvent.class);
         }
 
         @Test
         void onChat_catchesChatEvent() {
-            AsyncChatEvent event = chat("Hello!");
+            AsyncPlayerChatEvent event = chat("Hello!");
 
-            assertThat(event.message()).isEqualTo(text("Hello!"));
+            assertThat(event.getMessage()).isEqualTo("Hello!");
         }
 
         @Test
         void onChat_forwardsMessageToActiveChannel() {
             Channel channel = ChatTarget.channel("test");
             chatter.setActiveConversation(channel);
-            AsyncChatEvent event = chat("Hi");
+            AsyncPlayerChatEvent event = chat("Hi");
 
             assertThat(channel.getLastReceivedMessage())
                     .isNotNull()
@@ -503,7 +503,7 @@ public class ChatterTests extends TestBase {
         @Test
         void onChat_withNoActiveChannel_sendsPlayerAnErrorMessage() {
             chatter.setActiveConversation(null);
-            AsyncChatEvent event = chat("Hi");
+            AsyncPlayerChatEvent event = chat("Hi");
 
             assertThat(player.nextMessage())
                     .isEqualTo(Constants.Errors.NO_ACTIVE_CHANNEL);
@@ -517,18 +517,18 @@ public class ChatterTests extends TestBase {
             chatter.setActiveConversation(channel);
 
             PlayerMock player2 = new PlayerMock(server, "test");
-            AsyncChatEvent event = chat(player2, "hi");
+            AsyncPlayerChatEvent event = chat(player2, "hi");
 
             assertThat(event.isCancelled()).isFalse();
             assertThat(player2.nextMessage()).isNull();
             assertThat(channel.getLastReceivedMessage()).isNull();
         }
 
-        private AsyncChatEvent chat(String message) {
+        private AsyncPlayerChatEvent chat(String message) {
             return chat(player, message);
         }
 
-        private AsyncChatEvent chat(Player player, String message) {
+        private AsyncPlayerChatEvent chat(Player player, String message) {
             player.chat(message);
             server.getScheduler().waitAsyncEventsFinished();
             verify(chatter, atLeastOnce()).onPlayerChat(eventCaptor.capture());

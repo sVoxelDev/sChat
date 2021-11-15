@@ -26,6 +26,7 @@ import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.identities.Chatter;
 import org.junit.jupiter.api.Test;
 
+import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MessageDtoTests extends TestBase {
@@ -102,7 +103,7 @@ public class MessageDtoTests extends TestBase {
                 ).contains(
                         player.getUniqueId(),
                         player.getName(),
-                        player.displayName()
+                        text(player.getDisplayName())
                 );
     }
 

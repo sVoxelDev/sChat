@@ -29,6 +29,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.milkbowl.vault.chat.Chat;
 import net.silthus.chat.commands.SChatCommands;
 import net.silthus.chat.config.PluginConfig;
@@ -68,6 +69,8 @@ public final class SChat extends JavaPlugin {
     private static SChat instance;
     @Getter
     private static boolean testing = false;
+
+    private BukkitAudiences audiences;
 
     private PluginConfig pluginConfig;
     private Metrics metrics;
@@ -112,15 +115,11 @@ public final class SChat extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (!isTesting() && isNotPaperMC()) {
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-
         setupAndLoadConfigs();
 
         setupBStats();
 
+        setupAdventureAPI();
         setupChannelRegistry();
         setupChatterManager();
         setupConversationManager();
@@ -134,16 +133,6 @@ public final class SChat extends JavaPlugin {
         setupPlaceholderAPIIntegration();
 
         setupCommands();
-    }
-
-    private boolean isNotPaperMC() {
-        try {
-            Class.forName("io.papermc.paper.event.player.AsyncChatEvent");
-            return false;
-        } catch (ClassNotFoundException e) {
-            getLogger().severe("Server not running PaperMC, but it is required by this plugin. Disabling...");
-            return true;
-        }
     }
 
     @Override
@@ -168,6 +157,10 @@ public final class SChat extends JavaPlugin {
     private void setupBStats() {
         if (isTesting()) return;
         metrics = new Metrics(this, Constants.BSTATS_ID);
+    }
+
+    private void setupAdventureAPI() {
+        this.audiences = BukkitAudiences.create(this);
     }
 
     private void setupChannelRegistry() {
