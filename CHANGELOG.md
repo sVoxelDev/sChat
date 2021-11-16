@@ -1,3 +1,11 @@
+# [1.0.0-beta.6](https://github.com/Silthus/sChat/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2021-11-16)
+
+
+### Features
+
+* persist active channel across restarts ([c8b4279](https://github.com/Silthus/sChat/commit/c8b427987c87888b0a46578ba9b9f8acc168a8b9)), closes [#15](https://github.com/Silthus/sChat/issues/15)
+* remember active channel across restarts ([0092d34](https://github.com/Silthus/sChat/commit/0092d3430db3b97ae427d65c8c2973ad72acf658))
+
 # [1.0.0-beta.5](https://github.com/Silthus/sChat/compare/v1.0.0-beta.4...v1.0.0-beta.5) (2021-11-15)
 
 
