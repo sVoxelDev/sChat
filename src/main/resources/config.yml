@@ -17,6 +17,8 @@ defaults:
       - world_the_end
     range: 100
     format: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset><yellow><sender_vault_prefix><sender_name><sender_vault_suffix><gray>: <gray><message>'
+    footer:
+      enabled: true
 # You can fine tune the behaviour of the console chat in this section.
 console:
   # Set the name players see when chatting from the console.
@@ -78,9 +80,14 @@ channels:
     # - <message>: The message that is being sent.
     # default: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset><yellow><sender_vault_prefix><sender_name><sender_vault_suffix><gray>: <gray><message>'
     format: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset><yellow><sender_vault_prefix><sender_name><sender_vault_suffix><gray>: <gray><message>'
+    # Configures the line above the channel names.
+    footer:
+      enabled: true
   trade:
     name: Trade
     auto_join: true
+    footer:
+      enabled: false
   team:
     # Protecting a channel requires the "schat.channel.<id>" permission to join it.
     # For the team channel this would be "schat.channel.team".

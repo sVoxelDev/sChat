@@ -23,6 +23,7 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.TestBase;
+import net.silthus.chat.config.FooterConfig;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.identities.Chatter;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,9 +52,15 @@ public class TabbedMessageRendererTests extends TestBase {
         Component footer = view.footer(new View(chatter));
 
         assertThat(toText(footer).stripTrailing())
-                .isEqualTo("""
-                        &8\u250C&m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500&r
-                        &8\u2502 &7Global&8 \u2502 &4&n\u2718&a&ntest&8 \u2502 &4\u2718&7Trade&8 \u2502""");
+                .isEqualTo("&8\u250C&m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500&r");
+    }
+
+    @Test
+    void footer_isNotRendered_ifDisabled() {
+        chatter.setActiveConversation(createChannel(config -> config.footer(FooterConfig.builder().enabled(false).build())));
+        final Component footer = view.footer(new View(chatter));
+
+        assertThat(footer).isEqualTo(Component.empty());
     }
 
     @Test

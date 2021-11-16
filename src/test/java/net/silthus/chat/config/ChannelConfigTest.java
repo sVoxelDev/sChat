@@ -48,6 +48,7 @@ class ChannelConfigTest extends TestBase {
         cfg.set("auto_join", false);
         cfg.set("force", true);
         cfg.set("scope", "global");
+        cfg.set("footer.enabled", false);
 
         ChannelConfig expected = ChannelConfig.builder()
                 .name("Test")
@@ -57,6 +58,7 @@ class ChannelConfigTest extends TestBase {
                 .autoJoin(false)
                 .canLeave(false)
                 .scope(new GlobalScope())
+                .footer(FooterConfig.builder().enabled(false).build())
                 .build();
         ChannelConfig config = ChannelConfig.of(cfg);
         assertThat(config).isEqualTo(expected);

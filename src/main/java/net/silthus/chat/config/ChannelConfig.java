@@ -39,7 +39,7 @@ import static net.silthus.chat.Constants.Scopes.SERVER;
 public class ChannelConfig {
 
     public static ChannelConfig of(@NonNull ConfigurationSection config) {
-        return ChannelConfig.builder().build().withConfig(config).build();
+        return defaults().withConfig(config).build();
     }
 
     public static ChannelConfig of(ConfigurationSection config, ChannelConfig defaults) {
@@ -63,6 +63,8 @@ public class ChannelConfig {
     private Format format = Format.channelFormat();
     @Builder.Default
     private transient Scope scope = Scopes.server();
+    @Builder.Default
+    private FooterConfig footer = FooterConfig.builder().build();
 
     ChannelConfig.ChannelConfigBuilder withConfig(ConfigurationSection config) {
         if (config == null) return toBuilder();
@@ -73,7 +75,8 @@ public class ChannelConfig {
                 .sendToConsole(config.getBoolean("console", sendToConsole))
                 .autoJoin(config.getBoolean("auto_join", autoJoin))
                 .scope(Scopes.scope(config.getString("scope", SERVER), config))
-                .format(config.isSet("format") ? Format.miniMessage(config.getString("format")) : format);
+                .format(config.isSet("format") ? Format.miniMessage(config.getString("format")) : format)
+                .footer(FooterConfig.fromConfig(config.getConfigurationSection("footer")));
     }
 
     public Channel toChannel(String identifier) {

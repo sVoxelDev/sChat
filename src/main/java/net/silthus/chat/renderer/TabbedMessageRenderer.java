@@ -28,6 +28,8 @@ import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
 import net.silthus.chat.MessageRenderer;
+import net.silthus.chat.config.FooterConfig;
+import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.identities.Chatter;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,16 +54,23 @@ public final class TabbedMessageRenderer implements MessageRenderer {
                 .append(renderMessages(view.messages()))
                 .append(newline())
                 .append(footer(view))
+                .append(conversationTabs(view))
                 .build();
     }
 
     Component footer(View view) {
-        return ChatUtil.wrapText(empty(),
-                        LEFT_FRAME.color(FRAME_COLOR),
-                        FRAME_SPACER.color(FRAME_COLOR).decorate(TextDecoration.STRIKETHROUGH),
-                        FRAME_SPACER.color(FRAME_COLOR).decorate(TextDecoration.STRIKETHROUGH)
-                ).append(newline())
-                .append(conversationTabs(view));
+        if (view.activeConversation()
+                .filter(conversation -> conversation instanceof Channel)
+                .map(conversation -> ((Channel) conversation).getConfig().footer())
+                .map(FooterConfig::enabled).orElse(true)
+        ) {
+            return ChatUtil.wrapText(empty(),
+                    LEFT_FRAME.color(FRAME_COLOR),
+                    FRAME_SPACER.color(FRAME_COLOR).decorate(TextDecoration.STRIKETHROUGH),
+                    FRAME_SPACER.color(FRAME_COLOR).decorate(TextDecoration.STRIKETHROUGH)
+            ).append(newline());
+        }
+        return Component.empty();
     }
 
     Component conversationTabs(View view) {
