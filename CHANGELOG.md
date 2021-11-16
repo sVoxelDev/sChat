@@ -1,3 +1,16 @@
+# [1.0.0-beta.7](https://github.com/Silthus/sChat/compare/v1.0.0-beta.6...v1.0.0-beta.7) (2021-11-16)
+
+
+### Bug Fixes
+
+* **cmd:** add missing permission checks to channel click leave/join events ([151a687](https://github.com/Silthus/sChat/commit/151a68701a1a40a7d06d0d61a306f7cae642db39)), closes [#41](https://github.com/Silthus/sChat/issues/41)
+
+
+### Features
+
+* **chat:** add an option to disable the channel footer ([6837db2](https://github.com/Silthus/sChat/commit/6837db20cbbb5871c9a6f808bf75c408979ad8b3))
+* **chat:** clicking player names starts private conversation ([7b0ff8e](https://github.com/Silthus/sChat/commit/7b0ff8eddd35fa959707b2415688d3a338015c15)), closes [#39](https://github.com/Silthus/sChat/issues/39)
+
 # [1.0.0-beta.6](https://github.com/Silthus/sChat/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2021-11-16)
 
 
