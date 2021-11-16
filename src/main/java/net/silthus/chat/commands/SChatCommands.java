@@ -59,6 +59,7 @@ public class SChatCommands extends BaseCommand {
     public class ConversationCommands extends BaseCommand {
 
         @Subcommand("set-active")
+        @CommandPermission(PERMISSION_PLAYER_CHANNEL_JOIN)
         public void setActive(@Flags("self") Chatter chatter, Conversation conversation) {
             if (!chatter.getConversations().contains(conversation)) {
                 throw new ConditionFailedException(key(Language.Commands.INVALID_CONVERSATION));
@@ -68,6 +69,7 @@ public class SChatCommands extends BaseCommand {
         }
 
         @Subcommand("leave")
+        @CommandPermission(PERMISSION_PLAYER_CHANNEL_LEAVE)
         private void leave(@Flags("self") Chatter chatter, Conversation conversation) {
             if (!chatter.getConversations().contains(conversation)) {
                 throw new ConditionFailedException(key(Language.Commands.INVALID_CONVERSATION));
