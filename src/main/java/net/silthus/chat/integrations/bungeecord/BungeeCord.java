@@ -93,7 +93,7 @@ public class BungeeCord extends AbstractChatTarget implements PluginMessageListe
     }
 
     private void processGlobalMessage(ByteArrayDataInput in) {
-        Message message = gson.fromJson(getJsonData(in), MessageDto.class).toMessage();
+        Message message = gson.fromJson(getJsonData(in), MessageDto.class).asMessage();
         message.getTargets().forEach(target -> target.sendMessage(message));
     }
 

@@ -30,6 +30,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.*;
 
@@ -94,6 +95,7 @@ public final class ChatterManager {
 
     public void removeChatter(Chatter chatter) {
         if (chatter == null) return;
+        chatter.save();
         chatters.remove(chatter.getUniqueId());
         HandlerList.unregisterAll(chatter);
         chatter.getConversations().forEach(chatter::unsubscribe);
@@ -102,6 +104,7 @@ public final class ChatterManager {
     Chatter registerChatter(@NonNull Chatter chatter) {
         if (chatters.containsKey(chatter.getUniqueId())) return getChatter(chatter.getUniqueId());
         chatters.put(chatter.getUniqueId(), chatter);
+        chatter.load();
         plugin.getServer().getPluginManager().registerEvents(chatter, plugin);
         plugin.getBungeecord().sendChatter(chatter);
         return chatter;
@@ -112,6 +115,11 @@ public final class ChatterManager {
         @EventHandler(ignoreCancelled = true)
         public void onJoin(PlayerJoinEvent event) {
             autoJoinChannels(registerChatter(event.getPlayer()));
+        }
+
+        @EventHandler(ignoreCancelled = true)
+        public void onQuit(PlayerQuitEvent event) {
+            getOrCreateChatter(event.getPlayer()).save();
         }
     }
 }

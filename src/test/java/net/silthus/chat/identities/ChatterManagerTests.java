@@ -25,6 +25,7 @@ import net.silthus.chat.Constants;
 import net.silthus.chat.Identity;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -32,6 +33,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 public class ChatterManagerTests extends TestBase {
@@ -183,6 +185,23 @@ public class ChatterManagerTests extends TestBase {
         assertThat(manager.getChatters()).isEmpty();
     }
 
+    @Test
+    void register_loadsPlayerData() {
+        final Chatter chatter = spy(new Chatter(new PlayerMock(server, "test")));
+        manager.registerChatter(chatter);
+
+        verify(chatter).load();
+    }
+
+    @Test
+    void remove_callsSave() {
+        final Chatter chatter = spy(new Chatter(new PlayerMock(server, "test")));
+        manager.registerChatter(chatter);
+        manager.removeChatter(chatter);
+
+        verify(chatter).save();
+    }
+
     private Chatter registerChatter() {
         PlayerMock player = new PlayerMock(server, "test");
         return manager.registerChatter(player);
@@ -273,6 +292,17 @@ public class ChatterManagerTests extends TestBase {
         void onJoin_synchronizesChatter_withOtherServers() {
             Chatter chatter = Chatter.of(server.addPlayer());
             verify(plugin.getBungeecord()).sendChatter(chatter);
+        }
+
+        @Test
+        void onQuit_callsSaveOnChatter() {
+            final PlayerMock player = new PlayerMock(server, "Test");
+            final Chatter chatter = spy(new Chatter(player));
+            manager.registerChatter(chatter);
+            server.addPlayer(player);
+
+            listener.onQuit(new PlayerQuitEvent(player, ""));
+            verify(chatter).save();
         }
     }
 }

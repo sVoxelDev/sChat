@@ -59,7 +59,7 @@ public class MessageDtoTests extends TestBase {
         PlayerMock player = server.addPlayer();
         Message originalMessage = Message.message("Hi").from(ChatSource.player(player)).build();
         MessageDto dto = new MessageDto(originalMessage);
-        Message message = dto.toMessage();
+        Message message = dto.asMessage();
 
         assertThat(message.getId()).isEqualTo(originalMessage.getId());
         assertThat(toCleanText(message)).isEqualTo("Player0: Hi");
@@ -78,7 +78,7 @@ public class MessageDtoTests extends TestBase {
                 .from(ChatSource.player(player))
                 .to(channel)
                 .build());
-        Message message = dto.toMessage();
+        Message message = dto.asMessage();
 
         assertThat(message.getConversation())
                 .isNotNull()
@@ -91,7 +91,7 @@ public class MessageDtoTests extends TestBase {
     void toMessage_offlinePlayer_usesNamedSource() {
         PlayerMock player = new PlayerMock(server, "Test");
         MessageDto dto = new MessageDto(Message.message("Hi").from(ChatSource.player(player)).build());
-        Message message = dto.toMessage();
+        Message message = dto.asMessage();
 
         assertThat(toCleanText(message)).isEqualTo("Test: Hi");
         assertThat(message.getSource())

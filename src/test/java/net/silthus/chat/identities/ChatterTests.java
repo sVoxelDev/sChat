@@ -22,6 +22,7 @@ package net.silthus.chat.identities;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.persistence.PlayerData;
 import net.silthus.chat.renderer.View;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -37,6 +38,7 @@ import org.mockito.ArgumentCaptor;
 import java.util.UUID;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.silthus.chat.Constants.Persistence.PLAYER_DATA;
 import static net.silthus.chat.Message.message;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -399,6 +401,98 @@ public class ChatterTests extends TestBase {
     void canLeave_isTrue_ifConversation() {
         final Conversation conversation = Conversation.direct(chatter, Chatter.of(server.addPlayer()));
         assertThat(chatter.canLeave(conversation)).isTrue();
+    }
+
+    @Nested
+    class SaveAndLoad {
+
+        private PlayerMock player;
+        private Chatter chatter;
+
+        @BeforeEach
+        void setUp() {
+            player = server.addPlayer();
+            chatter = Chatter.of(player);
+        }
+
+        @Test
+        void save_storesPlayerSettingsInDataContainer() {
+            final Channel channel = createChannel(config -> config.name("Test 1"));
+            chatter.setActiveConversation(channel);
+
+            chatter.save();
+
+            assertSavedPlayerData(channel.getUniqueId(), channel.getName());
+        }
+
+        @Test
+        void save_withNullActiveConversation_savesNull() {
+            chatter.setActiveConversation(null);
+
+            chatter.save();
+
+            assertSavedPlayerData(null, null);
+        }
+
+        @Test
+        void load_restoresActiveChannel() {
+            final Channel channel = createChannel("test");
+            chatter.setActiveConversation(channel);
+            chatter.save();
+            plugin.getChatterManager().removeChatter(chatter);
+
+            final Chatter chatter = Chatter.of(player);
+            chatter.load();
+            assertThat(chatter.getActiveConversation()).isEqualTo(channel);
+        }
+
+        @Test
+        void load_withoutSave_doesNothing() {
+            final Channel channel = createChannel("foobar");
+            chatter.setActiveConversation(channel);
+
+            chatter.load();
+            assertThat(chatter.getActiveConversation()).isEqualTo(channel);
+        }
+
+        @Test
+        void load_withNullConversation_loads() {
+            chatter.setActiveConversation(null);
+            chatter.save();
+
+            chatter.load();
+            assertThat(chatter.getActiveConversation()).isNull();
+        }
+
+        @Test
+        void save_doesNothingIfPlayerIsOffline() {
+            final PlayerMock player = new PlayerMock(server, "test");
+            final Chatter chatter = Chatter.of(player);
+            chatter.save();
+
+            assertThat(player.getPersistentDataContainer().get(PLAYER_DATA, PlayerData.type())).isNull();
+        }
+
+        @Test
+        void load_doesNothingIfPlayerIsOffline() {
+            final PlayerMock player = new PlayerMock(server, "test");
+            final Chatter chatter = Chatter.of(player);
+            chatter.load();
+
+            assertThat(chatter.getActiveConversation()).isNull();
+        }
+
+        private void assertSavedPlayerData(UUID id, String name) {
+            assertThat(player.getPersistentDataContainer().get(PLAYER_DATA, PlayerData.type()))
+                    .isNotNull()
+                    .extracting(
+                            PlayerData::activeConversationId,
+                            PlayerData::activeConversationName
+                    ).contains(
+                            id,
+                            name
+                    );
+        }
     }
 
     @Nested
