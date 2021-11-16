@@ -73,14 +73,24 @@ public final class Constants {
     }
 
     public static class Language {
-        public static final String ACF_BASE_KEY = "commands";
-        public static final String ACCESS_TO_CHANNEL_DENIED = "access-to-channel-denied";
-        public static final String SEND_TO_CHANNEL_DENIED = "send-to-channel-denied";
-        public static final String CANNOT_SEND_TO_SELF = "cannot-send-to-self";
-        public static final String JOINED_CHANNEL = "joined-channel";
-        public static final String LEAVE_CHANNEL = "leave-channel";
-        public static final String INVALID_CONVERSATION = "invalid-conversation";
-        public static final String PLUGIN_RELOADED = "plugin-reloaded";
+
+        public static class Commands {
+
+            public static final String BASE_KEY = "commands";
+            public static final String ACCESS_TO_CHANNEL_DENIED = "access-to-channel-denied";
+            public static final String SEND_TO_CHANNEL_DENIED = "send-to-channel-denied";
+            public static final String CANNOT_SEND_TO_SELF = "cannot-send-to-self";
+            public static final String JOINED_CHANNEL = "joined-channel";
+            public static final String LEAVE_CHANNEL = "leave-channel";
+            public static final String INVALID_CONVERSATION = "invalid-conversation";
+            public static final String PLUGIN_RELOADED = "plugin-reloaded";
+        }
+
+        public static class Formats {
+
+            public static final String BASE_KEY = "formats";
+            public static final String PLAYER_CLICK = "player.click-to-send";
+        }
     }
 
     public static class Errors {
@@ -120,6 +130,7 @@ public final class Constants {
         public static final Function<Conversation, String> LEAVE_CHANNEL = conversation -> "/schat channel leave " + conversation.getUniqueId();
         public static final Function<Conversation, String> JOIN_CONVERSATION = conversation -> "/schat conversations set-active " + conversation.getUniqueId();
         public static final Function<Conversation, String> LEAVE_CONVERSATION = conversation -> "/schat conversations leave " + conversation.getUniqueId();
+        public static final Function<ChatSource, String> PRIVATE_MESSAGE = source -> "/schat directmessage send " + source.getUniqueId();
     }
 
     public static class BungeeCord {

@@ -7,3 +7,6 @@ commands:
   invalid-conversation: "The conversation you tried to join does not exist."
   cannot-send-to-self: "You can't send messages to yourself."
   plugin-reloaded: "sChat and all channel configs have been reloaded."
+formats:
+  player:
+    click-to-send: "<gray>Click to send <yellow><player_name></yellow> a message."

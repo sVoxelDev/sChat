@@ -1,3 +1,6 @@
+# Set the name of the language file to use.
+# The key is the name of the file without .yaml inside the languages/ folder.
+language: "en"
 # Define your personal defaults for the various configs in this section.
 # Not setting a value in the actual config section will use these defaults.
 # For example: the trade channel below will inherit all the configs from this defaults config.

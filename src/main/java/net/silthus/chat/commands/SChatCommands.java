@@ -32,7 +32,6 @@ import net.silthus.chat.SChat;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.identities.Chatter;
 
-import static net.silthus.chat.Constants.Language.*;
 import static net.silthus.chat.Constants.*;
 
 @CommandAlias("schat")
@@ -40,7 +39,7 @@ import static net.silthus.chat.Constants.*;
 public class SChatCommands extends BaseCommand {
 
     static MessageKey key(String key) {
-        return MessageKey.of(ACF_BASE_KEY + "." + key);
+        return MessageKey.of(Language.Commands.BASE_KEY + "." + key);
     }
 
     private final SChat plugin;
@@ -53,7 +52,7 @@ public class SChatCommands extends BaseCommand {
     @CommandPermission(PERMISSION_ADMIN_RELOAD)
     public void reload() {
         plugin.reload();
-        success(PLUGIN_RELOADED);
+        success(Language.Commands.PLUGIN_RELOADED);
     }
 
     @Subcommand("conversations")
@@ -62,7 +61,7 @@ public class SChatCommands extends BaseCommand {
         @Subcommand("set-active")
         public void setActive(@Flags("self") Chatter chatter, Conversation conversation) {
             if (!chatter.getConversations().contains(conversation)) {
-                throw new ConditionFailedException(key(INVALID_CONVERSATION));
+                throw new ConditionFailedException(key(Language.Commands.INVALID_CONVERSATION));
             }
             chatter.setActiveConversation(conversation);
             chatter.updateView();
@@ -71,7 +70,7 @@ public class SChatCommands extends BaseCommand {
         @Subcommand("leave")
         private void leave(@Flags("self") Chatter chatter, Conversation conversation) {
             if (!chatter.getConversations().contains(conversation)) {
-                throw new ConditionFailedException(key(INVALID_CONVERSATION));
+                throw new ConditionFailedException(key(Language.Commands.INVALID_CONVERSATION));
             }
             chatter.unsubscribe(conversation);
             chatter.updateView();
@@ -90,11 +89,11 @@ public class SChatCommands extends BaseCommand {
         public void join(@Flags("self") Chatter chatter, Channel channel) {
             try {
                 chatter.join(channel);
-                success(JOINED_CHANNEL, "{channel}", getChannelName(channel));
+                success(Language.Commands.JOINED_CHANNEL, "{channel}", getChannelName(channel));
                 chatter.updateView();
             } catch (AccessDeniedException e) {
-                error(ACCESS_TO_CHANNEL_DENIED, "{channel}", getChannelName(channel));
-                throw new ConditionFailedException(key(ACCESS_TO_CHANNEL_DENIED), "{channel}", getChannelName(channel));
+                error(Language.Commands.ACCESS_TO_CHANNEL_DENIED, "{channel}", getChannelName(channel));
+                throw new ConditionFailedException(key(Language.Commands.ACCESS_TO_CHANNEL_DENIED), "{channel}", getChannelName(channel));
             }
         }
 
@@ -104,7 +103,7 @@ public class SChatCommands extends BaseCommand {
         @CommandPermission(PERMISSION_PLAYER_CHANNEL_LEAVE)
         public void leave(@Flags("self") Chatter chatter, Channel channel) {
             chatter.unsubscribe(channel);
-            success(LEAVE_CHANNEL, "{channel}", getChannelName(channel));
+            success(Language.Commands.LEAVE_CHANNEL, "{channel}", getChannelName(channel));
             chatter.updateView();
         }
 
@@ -116,8 +115,8 @@ public class SChatCommands extends BaseCommand {
             if (chatter.canSendMessage(channel)) {
                 Message.message(chatter, message).to(channel).send();
             } else {
-                error(SEND_TO_CHANNEL_DENIED, "{channel}", getChannelName(channel));
-                throw new ConditionFailedException(key(SEND_TO_CHANNEL_DENIED), "{channel}", getChannelName(channel));
+                error(Language.Commands.SEND_TO_CHANNEL_DENIED, "{channel}", getChannelName(channel));
+                throw new ConditionFailedException(key(Language.Commands.SEND_TO_CHANNEL_DENIED), "{channel}", getChannelName(channel));
             }
         }
     }
@@ -131,7 +130,7 @@ public class SChatCommands extends BaseCommand {
         @CommandCompletion("@chatters *")
         public void directMessage(@Flags("self") Chatter source, Chatter target, @Optional String message) {
             if (source.equals(target))
-                throw new ConditionFailedException(key(CANNOT_SEND_TO_SELF));
+                throw new ConditionFailedException(key(Language.Commands.CANNOT_SEND_TO_SELF));
 
             if (message != null) {
                 source.message(message).to(target).send();

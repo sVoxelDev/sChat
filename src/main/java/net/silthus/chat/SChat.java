@@ -32,6 +32,7 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.milkbowl.vault.chat.Chat;
 import net.silthus.chat.commands.SChatCommands;
+import net.silthus.chat.config.Language;
 import net.silthus.chat.config.PluginConfig;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.ChannelRegistry;
@@ -48,7 +49,7 @@ import net.silthus.chat.integrations.vault.VaultProvider;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -56,7 +57,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -71,6 +71,8 @@ public final class SChat extends JavaPlugin {
     private static boolean testing = false;
 
     private BukkitAudiences audiences;
+    @Accessors(fluent = true)
+    private Language language;
 
     private PluginConfig pluginConfig;
     private Metrics metrics;
@@ -117,6 +119,7 @@ public final class SChat extends JavaPlugin {
     @Override
     public void onEnable() {
         setupAndLoadConfigs();
+        setupAndLoadLanguage();
 
         setupBStats();
 
@@ -151,8 +154,14 @@ public final class SChat extends JavaPlugin {
     private void setupAndLoadConfigs() {
         saveDefaultConfig();
         saveResource("config.default.yml", true);
-        saveResource("lang_en.yaml", false);
         pluginConfig = PluginConfig.fromConfig(getConfig());
+    }
+
+    private void setupAndLoadLanguage() {
+        final String languageConfig = getPluginConfig().languageConfig();
+        saveResource(languageConfig, true);
+        this.language = new Language(YamlConfiguration.loadConfiguration(new File(getDataFolder(), languageConfig)),
+                Locale.forLanguageTag(languageConfig.replace("languages/", "").replace(".yaml", "")));
     }
 
     private void setupBStats() {
@@ -298,14 +307,20 @@ public final class SChat extends JavaPlugin {
                         .collect(Collectors.toSet()));
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void loadCommandLocales(PaperCommandManager commandManager) {
-        try {
-            commandManager.getLocales().setDefaultLocale(Locale.ENGLISH);
-            commandManager.getLocales().loadYamlLanguageFile("lang_en.yaml", Locale.ENGLISH);
-        } catch (IOException | InvalidConfigurationException e) {
-            getLogger().severe("Failed to load language config: " + e.getMessage());
-            e.printStackTrace();
+        commandManager.getLocales().setDefaultLocale(Locale.ENGLISH);
+        final File languages = new File(getDataFolder(), "languages");
+        languages.mkdirs();
+        for (File file : Objects.requireNonNull(languages.listFiles())) {
+            saveResource("languages/" + file.getName(), true);
+            loadCommandLanguage(file);
         }
+    }
+
+    private void loadCommandLanguage(File file) {
+        final YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+        commandManager.getLocales().loadLanguage(config, Locale.forLanguageTag(file.getName().replace(".yaml", "")));
     }
 
     private boolean isEntitySelector(String arg) {

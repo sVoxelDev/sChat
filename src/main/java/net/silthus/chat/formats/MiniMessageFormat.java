@@ -23,16 +23,20 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.java.Log;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
-import net.silthus.chat.Constants;
-import net.silthus.chat.Format;
-import net.silthus.chat.Message;
-import net.silthus.chat.SChat;
+import net.silthus.chat.*;
+import net.silthus.chat.config.Language;
+import net.silthus.chat.identities.Chatter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
+import static net.kyori.adventure.text.event.HoverEvent.showText;
 import static net.kyori.adventure.text.minimessage.template.TemplateResolver.templates;
+import static net.silthus.chat.Constants.Language.Formats.PLAYER_CLICK;
 
 @Log(topic = Constants.PLUGIN_NAME)
 @EqualsAndHashCode(of = {"format"})
@@ -51,7 +55,7 @@ public class MiniMessageFormat implements Format {
 
     @Override
     public Component applyTo(Message message) {
-        return MiniMessage.miniMessage().deserialize(format, templates(
+        final Component component = MiniMessage.miniMessage().deserialize(format, templates(
                 channelTemplate(message),
                 vaultPrefixTemplate(message),
                 senderWorld(message),
@@ -59,6 +63,10 @@ public class MiniMessageFormat implements Format {
                 vaultSuffixTemplate(message),
                 messageTemplate(message)
         ));
+        if (message.getSource() instanceof Chatter) {
+            return SChat.instance().getPlaceholders().setPlaceholders((Chatter) message.getSource(), component);
+        }
+        return component;
     }
 
     private Template messageTemplate(Message message) {
@@ -66,7 +74,31 @@ public class MiniMessageFormat implements Format {
     }
 
     private Template senderTemplate(Message message) {
-        return Template.template("sender_name", message.getSource().getDisplayName());
+        return Template.template("sender_name", message.getSource().getDisplayName()
+                .hoverEvent(showText(playerHover(message)))
+                .clickEvent(sendPrivateMessage(message)));
+    }
+
+    private ClickEvent sendPrivateMessage(Message message) {
+        return clickEvent(ClickEvent.Action.RUN_COMMAND, Constants.Commands.PRIVATE_MESSAGE.apply(message.getSource()));
+    }
+
+    private Component playerHover(Message message) {
+        Component playerHover = lang().get(PLAYER_CLICK);
+        final TextReplacementConfig playerNameReplacement = playerName(message.getSource());
+        if (playerNameReplacement != null)
+            playerHover = playerHover.replaceText(playerNameReplacement);
+        return playerHover;
+    }
+
+    private TextReplacementConfig playerName(ChatSource source) {
+        if (source == null) return null;
+        final Player player = Bukkit.getPlayer(source.getUniqueId());
+        if (player == null) return null;
+        return TextReplacementConfig.builder()
+                .match("<player_name>")
+                .replacement(player.getDisplayName())
+                .build();
     }
 
     private Template senderWorld(Message message) {
@@ -90,5 +122,9 @@ public class MiniMessageFormat implements Format {
 
     private Template vaultSuffixTemplate(Message message) {
         return Template.template("sender_vault_suffix", SChat.instance().getVaultProvider().getSuffix(message.getSource()));
+    }
+
+    private Language lang() {
+        return SChat.instance().language().section(Constants.Language.Formats.BASE_KEY);
     }
 }

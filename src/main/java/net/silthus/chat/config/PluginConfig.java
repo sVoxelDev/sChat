@@ -42,6 +42,7 @@ public class PluginConfig {
         return new PluginConfig(config);
     }
 
+    private final String languageConfig;
     private final Defaults defaults;
     private final ConsoleConfig console;
     private final PrivateChatConfig privateChat;
@@ -49,6 +50,7 @@ public class PluginConfig {
     private final Map<String, ChannelConfig> channels;
 
     private PluginConfig(@NonNull ConfigurationSection config) {
+        this.languageConfig = "languages/" + config.getString("language", "en") + ".yaml";
         this.defaults = loadDefaults(config.getConfigurationSection("defaults"));
         this.console = loadConsoleConfig(config.getConfigurationSection("console"));
         this.privateChat = loadPrivateChatConfig(config.getConfigurationSection("private_chats"));
