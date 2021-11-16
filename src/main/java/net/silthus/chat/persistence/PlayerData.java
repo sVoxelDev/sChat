@@ -24,14 +24,18 @@ import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
-import net.silthus.chat.Constants;
+import net.silthus.chat.Conversation;
+import net.silthus.chat.SChat;
 import net.silthus.chat.identities.Chatter;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
 import java.util.UUID;
+
+import static net.silthus.chat.Constants.Persistence.PLAYER_DATA;
 
 @Getter
 @Accessors(fluent = true)
@@ -41,14 +45,44 @@ public class PlayerData {
     @Accessors(fluent = true)
     private static final PlayerData.DataType type = new DataType();
 
-    private UUID activeConversation;
-
-    public PlayerData(Chatter chatter) {
-        this.activeConversation = chatter.getActiveConversation().getUniqueId();
+    public static void save(@NonNull Chatter chatter) {
+        final PlayerData data = new PlayerData(chatter);
+        chatter.getPlayer().ifPresent(data::saveTo);
     }
 
-    public void saveTo(@NonNull Player player) {
-        player.getPersistentDataContainer().set(Constants.Persistence.PLAYER_DATA, PlayerData.type(), this);
+    public static void load(@NonNull final Chatter chatter) {
+        final SChat plugin = SChat.instance();
+        chatter.getPlayer()
+                .flatMap(PlayerData::load)
+                .filter(playerData -> playerData.activeConversationId != null)
+                .filter(playerData -> playerData.activeConversationName != null)
+                .map(playerData -> {
+                    final Conversation conversation = plugin.getConversationManager().getConversation(playerData.activeConversationId);
+                    if (conversation != null) return conversation;
+                    return plugin.getChannelRegistry().get(playerData.activeConversationName);
+                }).ifPresent(chatter::setActiveConversation);
+    }
+
+    private static Optional<PlayerData> load(Player player) {
+        return Optional.ofNullable(player.getPersistentDataContainer().get(PLAYER_DATA, type()));
+    }
+
+    private final UUID activeConversationId;
+
+    private final String activeConversationName;
+
+    public PlayerData(Chatter chatter) {
+        if (chatter.getActiveConversation() != null) {
+            this.activeConversationId = chatter.getActiveConversation().getUniqueId();
+            this.activeConversationName = chatter.getActiveConversation().getName();
+        } else {
+            this.activeConversationId = null;
+            this.activeConversationName = null;
+        }
+    }
+
+    private void saveTo(@NonNull Player player) {
+        player.getPersistentDataContainer().set(PLAYER_DATA, type(), this);
     }
 
     public static class DataType implements PersistentDataType<String, PlayerData> {

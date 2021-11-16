@@ -129,14 +129,13 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     }
 
     public void save() {
-        getPlayer().ifPresent(this::save);
+        PlayerData.save(this);
     }
 
-    private void save(Player player) {
-        new PlayerData(this).saveTo(player);
+    public void load() {
+        PlayerData.load(this);
     }
 
-    private boolean isNotApplicable(AsyncPlayerChatEvent event) {
     private boolean isNotApplicable(AsyncPlayerChatEvent event) {
         return isNotSamePlayer(event) || noActiveConversation(event);
     }
