@@ -89,6 +89,13 @@ channels:
 The use of [PlaceholderAPI][2] placeholders in the channel format is possible. For
 example `[<channel_name>]%vault_rank% %player_name%: <message>` will work and replace the placeholders.
 
+## Frequently Asked Questions
+
+### Are HEX colors supported?
+
+Yes they are. Use them just like the other colors, e.g. `<#ffffff><message>`. See this [formatting documentation][6] for
+more details.
+
 [1]: https://papermc.io/
 
 [2]: https://www.spigotmc.org/resources/vault.34315/
@@ -98,3 +105,5 @@ example `[<channel_name>]%vault_rank% %player_name%: <message>` will work and re
 [4]: https://www.spigotmc.org/resources/protocollib.1997/
 
 [5]: https://github.com/Silthus/sChat/releases
+
+[6]: https://docs.adventure.kyori.net/minimessage#format
