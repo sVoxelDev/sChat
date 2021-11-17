@@ -26,7 +26,7 @@ import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.silthus.chat.*;
 import net.silthus.chat.config.Language;
-import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.PlayerChatter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -90,8 +90,7 @@ public final class TabbedMessageRenderer implements MessageRenderer {
     }
 
     private Component renderMessage(View view, Message message) {
-        final boolean canSelectMessages = view.chatter().getPlayer().map(player -> player.hasPermission(PERMISSION_SELECT_MESSAGE)).orElse(false);
-        if (canSelectMessages) {
+        if (view.chatter().hasPermission(PERMISSION_SELECT_MESSAGE)) {
             final TextComponent prefix = view.selectedMessage().filter(msg -> msg.equals(message))
                     .map(msg -> text("> ").color(NamedTextColor.RED))
                     .orElse(empty());
@@ -173,7 +172,7 @@ public final class TabbedMessageRenderer implements MessageRenderer {
     private TextReplacementConfig conversationPartnerName(Chatter viewer, Conversation conversation) {
         List<Component> names = conversation.getTargets().stream()
                 .filter(target -> !target.equals(viewer))
-                .filter(target -> target instanceof Chatter)
+                .filter(target -> target instanceof PlayerChatter)
                 .map(ChatTarget::getDisplayName)
                 .collect(Collectors.toList());
         return TextReplacementConfig.builder()

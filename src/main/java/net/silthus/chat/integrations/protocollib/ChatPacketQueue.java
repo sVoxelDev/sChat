@@ -27,10 +27,10 @@ import lombok.extern.java.Log;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.StorageNBTComponent;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.silthus.chat.Chatter;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Message;
 import net.silthus.chat.SChat;
-import net.silthus.chat.identities.Chatter;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -72,7 +72,7 @@ public class ChatPacketQueue extends PacketAdapter {
 
         if (isIgnoredMessage(messageText)) return;
 
-        Chatter chatter = Chatter.of(event.getPlayer());
+        Chatter chatter = Chatter.player(event.getPlayer());
         Message.message(messageText).to(chatter).send();
         event.setCancelled(true);
     }

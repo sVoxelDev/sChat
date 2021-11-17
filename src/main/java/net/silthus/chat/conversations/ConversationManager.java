@@ -23,7 +23,7 @@ import lombok.NonNull;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.SChat;
-import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.PlayerChatter;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -59,7 +59,7 @@ public final class ConversationManager {
     public Optional<Conversation> getDirectConversation(ChatTarget... targets) {
         return conversations.values().stream()
                 .filter(conversation -> conversation instanceof DirectConversation)
-                .filter(conversation -> conversation.getTargets().stream().filter(target -> target instanceof Chatter).collect(Collectors.toSet()).equals(Set.of(targets)))
+                .filter(conversation -> conversation.getTargets().stream().filter(target -> target instanceof PlayerChatter).collect(Collectors.toSet()).equals(Set.of(targets)))
                 .findFirst();
     }
 

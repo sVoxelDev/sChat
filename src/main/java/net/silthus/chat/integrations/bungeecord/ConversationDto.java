@@ -26,7 +26,7 @@ import net.silthus.chat.SChat;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.DirectConversation;
-import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.PlayerChatter;
 
 import java.util.List;
 
@@ -40,7 +40,7 @@ class ConversationDto extends IdentityDto {
         super(conversation);
         this.conversationType = Type.fromConversation(conversation);
         this.config = conversation instanceof Channel ? ((Channel) conversation).getConfig() : null;
-        this.targets = conversation.getTargets().stream().filter(target -> target instanceof Chatter).map(IdentityDto::new).toList();
+        this.targets = conversation.getTargets().stream().filter(target -> target instanceof PlayerChatter).map(IdentityDto::new).toList();
     }
 
     Conversation asConversation() {

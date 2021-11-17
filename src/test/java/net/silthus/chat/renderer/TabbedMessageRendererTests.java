@@ -21,13 +21,9 @@ package net.silthus.chat.renderer;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Constants;
-import net.silthus.chat.Message;
-import net.silthus.chat.TestBase;
+import net.silthus.chat.*;
 import net.silthus.chat.config.FooterConfig;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.identities.Chatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +43,7 @@ public class TabbedMessageRendererTests extends TestBase {
 
         view = new TabbedMessageRenderer();
         player = server.addPlayer();
-        chatter = Chatter.of(player);
+        chatter = Chatter.player(player);
         chatter.setActiveConversation(ChatTarget.channel("test"));
     }
 
@@ -89,7 +85,7 @@ public class TabbedMessageRendererTests extends TestBase {
     @Test
     void channels_renders_noChannelInfo() {
 
-        Chatter chatter = Chatter.of(new PlayerMock(server, "test"));
+        Chatter chatter = Chatter.player(new PlayerMock(server, "test"));
         assertThat(chatter.getConversations()).isEmpty();
 
         Component component = view.conversationTabs(new View(chatter));

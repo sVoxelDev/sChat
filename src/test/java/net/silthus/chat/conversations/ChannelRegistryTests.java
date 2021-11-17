@@ -20,11 +20,11 @@
 package net.silthus.chat.conversations;
 
 import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Chatter;
 import net.silthus.chat.Format;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.config.PluginConfig;
-import net.silthus.chat.identities.Chatter;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -63,7 +63,6 @@ public class ChannelRegistryTests extends TestBase {
     }
 
     @Test
-    @SuppressWarnings("ConstantConditions")
     void getChannels_isImmutable() {
         assertThatExceptionOfType(UnsupportedOperationException.class)
                 .isThrownBy(() -> registry.getChannels().add(ChatTarget.channel("test")));
@@ -268,7 +267,7 @@ public class ChannelRegistryTests extends TestBase {
     void clear_unsubscribesAllFromChannel() {
         final Channel foobar = createChannel("foobar");
         registry.add(foobar);
-        final Chatter chatter = Chatter.of(server.addPlayer());
+        final Chatter chatter = Chatter.player(server.addPlayer());
         chatter.subscribe(foobar);
 
         assertThat(chatter.getConversations()).contains(foobar);
@@ -280,7 +279,7 @@ public class ChannelRegistryTests extends TestBase {
     void remove_closesChannel() {
         final Channel channel = createChannel("abc");
         registry.add(channel);
-        final Chatter chatter = Chatter.of(server.addPlayer());
+        final Chatter chatter = Chatter.player(server.addPlayer());
         channel.subscribe(channel);
 
         registry.remove(channel);
@@ -368,18 +367,16 @@ public class ChannelRegistryTests extends TestBase {
         }
 
         private PluginConfig channelConfigBefore() {
-            final PluginConfig config = PluginConfig.builder()
+            return PluginConfig.builder()
                     .channel("test1", ChannelConfig.builder().name("Test 1").autoJoin(true).build())
                     .channel("test2", ChannelConfig.builder().name("Test 2").format(Format.noFormat()).build())
                     .build();
-            return config;
         }
 
         private PluginConfig channelConfigAfter() {
-            final PluginConfig newConfig = PluginConfig.builder()
+            return PluginConfig.builder()
                     .channel("test1", ChannelConfig.builder().name("Foobar").autoJoin(false).build())
                     .build();
-            return newConfig;
         }
     }
 }

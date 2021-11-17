@@ -30,7 +30,6 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.silthus.chat.*;
 import net.silthus.chat.config.Language;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.identities.Chatter;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.event.ClickEvent.runCommand;

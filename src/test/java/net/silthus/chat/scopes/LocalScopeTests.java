@@ -21,10 +21,10 @@ package net.silthus.chat.scopes;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Chatter;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.Console;
 import org.bukkit.Location;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,7 +74,7 @@ public class LocalScopeTests extends TestBase {
     private Chatter chatterAt(double x, double y) {
         PlayerMock player = server.addPlayer();
         player.setLocation(new Location(player.getWorld(), x, 128, y));
-        Chatter chatter = Chatter.of(player);
+        Chatter chatter = Chatter.player(player);
         channel.addTarget(chatter);
         return chatter;
     }

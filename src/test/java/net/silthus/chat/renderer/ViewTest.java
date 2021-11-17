@@ -21,11 +21,11 @@ package net.silthus.chat.renderer;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.TextComponent;
+import net.silthus.chat.Chatter;
 import net.silthus.chat.Message;
 import net.silthus.chat.MessageRenderer;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.identities.Chatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -47,7 +47,7 @@ class ViewTest extends TestBase {
         super.setUp();
 
         player = server.addPlayer();
-        chatter = Chatter.of(player);
+        chatter = Chatter.player(player);
         view = new View(chatter, MessageRenderer.TABBED);
     }
 
@@ -79,7 +79,7 @@ class ViewTest extends TestBase {
         chatter.sendMessage(Message.message("testing").build());
         PlayerMock player = server.addPlayer();
 
-        view.sendTo(player);
+        view.sendTo(plugin.getAudiences().player(player));
 
         assertThat(cleaned(player.nextMessage())).contains("testing");
     }

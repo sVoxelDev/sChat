@@ -23,10 +23,10 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.Console;
 import net.silthus.chat.identities.NamedChatSource;
 import net.silthus.chat.identities.NilChatIdentity;
+import net.silthus.chat.identities.PlayerChatter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -55,7 +55,7 @@ class IdentityDto {
                 Player player = Bukkit.getPlayer(uniqueId);
                 if (player == null)
                     yield Chatter.chatter(Identity.identity(uniqueId, name, BungeeHelper.deserialize(name)));
-                yield Chatter.of(player);
+                yield Chatter.player(player);
             }
             case CHANNEL -> ChatTarget.channel(name);
             case CONVERSATION -> SChat.instance().getConversationManager().getConversation(uniqueId);
@@ -66,7 +66,7 @@ class IdentityDto {
     }
 
     enum Type {
-        CHATTER(Chatter.class),
+        CHATTER(PlayerChatter.class),
         CHANNEL(Channel.class),
         CONSOLE(Console.class),
         NAMED(NamedChatSource.class),

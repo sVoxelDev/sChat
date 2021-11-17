@@ -23,7 +23,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.milkbowl.vault.chat.Chat;
 import net.silthus.chat.Identity;
-import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.PlayerChatter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -74,6 +74,6 @@ public class VaultProvider {
     }
 
     private boolean isInvalidIdentity(Identity identity) {
-        return chat == null || !(identity instanceof Chatter);
+        return chat == null || !(identity instanceof PlayerChatter);
     }
 }

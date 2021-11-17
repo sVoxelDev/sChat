@@ -22,7 +22,6 @@ package net.silthus.chat;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.Console;
 import net.silthus.chat.identities.NamedChatSource;
 import net.silthus.chat.identities.NilChatIdentity;
@@ -35,7 +34,7 @@ public interface ChatSource extends Identity {
     ChatSource NIL = new NilChatIdentity();
 
     static Chatter player(OfflinePlayer player) {
-        return Chatter.of(player);
+        return Chatter.player(player);
     }
 
     static ChatSource named(String name) {

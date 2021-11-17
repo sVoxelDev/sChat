@@ -29,7 +29,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.silthus.chat.*;
 import net.silthus.chat.config.Language;
-import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.PlayerChatter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -63,8 +63,8 @@ public class MiniMessageFormat implements Format {
                 vaultSuffixTemplate(message),
                 messageTemplate(message)
         ));
-        if (message.getSource() instanceof Chatter) {
-            return SChat.instance().getPlaceholders().setPlaceholders((Chatter) message.getSource(), component);
+        if (message.getSource() instanceof PlayerChatter) {
+            return SChat.instance().getPlaceholders().setPlaceholders((PlayerChatter) message.getSource(), component);
         }
         return component;
     }

@@ -71,6 +71,7 @@ public abstract class AbstractChatTarget extends AbstractIdentity implements Cha
 
     protected abstract void processMessage(Message message);
 
+    @Override
     public Optional<Message> getMessage(UUID messageId) {
         return receivedMessages.stream().filter(message -> message.getId().equals(messageId)).findFirst();
     }

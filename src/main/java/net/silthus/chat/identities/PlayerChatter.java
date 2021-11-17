@@ -21,11 +21,12 @@ package net.silthus.chat.identities;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
-import net.silthus.chat.*;
-import net.silthus.chat.conversations.Channel;
+import net.kyori.adventure.audience.Audience;
+import net.silthus.chat.Constants;
+import net.silthus.chat.Identity;
+import net.silthus.chat.Message;
+import net.silthus.chat.SChat;
 import net.silthus.chat.persistence.PlayerData;
-import net.silthus.chat.renderer.View;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -41,47 +42,18 @@ import static net.kyori.adventure.text.Component.text;
 
 @Getter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public class Chatter extends AbstractChatTarget implements Listener, ChatSource, ChatTarget {
+public class PlayerChatter extends AbstractChatter implements Listener {
 
-    private static final MessageRenderer RENDERER = MessageRenderer.TABBED;
-
-    public static Chatter of(OfflinePlayer player) {
-        return SChat.instance().getChatterManager().getOrCreateChatter(player);
-    }
-
-    public static Chatter chatter(Identity identity) {
-        return SChat.instance().getChatterManager().getOrCreateChatter(identity);
-    }
-
-    @Setter
-    private View view = new View(this, RENDERER);
-
-    Chatter(OfflinePlayer player) {
+    PlayerChatter(OfflinePlayer player) {
         super(player.getUniqueId(), player.getName());
         if (player.isOnline()) {
             setDisplayName(text(Objects.requireNonNull(player.getPlayer()).getDisplayName()));
         }
     }
 
-    Chatter(Identity identity) {
+    PlayerChatter(Identity identity) {
         super(identity.getUniqueId(), identity.getName());
         setDisplayName(identity.getDisplayName());
-    }
-
-    public Optional<Player> getPlayer() {
-        return Optional.ofNullable(Bukkit.getPlayer(getUniqueId()));
-    }
-
-    @Override
-    public boolean deleteMessage(Message message) {
-        final boolean deleted = super.deleteMessage(message);
-        if (deleted)
-            updateView();
-        return deleted;
-    }
-
-    public void updateView() {
-        getPlayer().ifPresent(view::sendTo);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -97,51 +69,27 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
     }
 
     @Override
-    protected void processMessage(Message message) {
-        getPlayer().ifPresentOrElse(
-                view::sendTo,
-                () -> SChat.instance().getBungeecord().sendMessage(message)
-        );
+    public boolean hasPermission(String permission) {
+        return getPlayer().map(player -> player.hasPermission(permission)).orElse(false);
     }
 
-    public void join(Channel channel) throws AccessDeniedException {
-        if (!canJoin(channel))
-            throw new AccessDeniedException("You don't have permission to join the channel: " + channel.getName());
-        setActiveConversation(channel);
-    }
-
-    public boolean canJoin(Channel channel) {
-        if (channel.getConfig().protect()) {
-            Player player = Bukkit.getPlayer(getUniqueId());
-            return player != null && player.hasPermission(channel.getPermission());
-        }
-        return true;
-    }
-
-    public boolean canAutoJoin(Channel channel) {
-        if (!canJoin(channel)) return false;
-        if (canJoin(channel) && channel.getConfig().autoJoin()) return true;
-        Player player = Bukkit.getPlayer(getUniqueId());
-        return player != null && player.hasPermission(channel.getAutoJoinPermission());
-    }
-
-    public boolean canLeave(Conversation conversation) {
-        if (conversation instanceof Channel) {
-            return ((Channel) conversation).getConfig().canLeave();
-        }
-        return true;
-    }
-
-    public boolean canSendMessage(Channel channel) {
-        return canJoin(channel);
-    }
-
+    @Override
     public void save() {
         PlayerData.save(this);
     }
 
+    @Override
     public void load() {
         PlayerData.load(this);
+    }
+
+    @Override
+    public Optional<Audience> getAudience() {
+        return getPlayer().map(player -> SChat.instance().getAudiences().player(player));
+    }
+
+    public Optional<Player> getPlayer() {
+        return Optional.ofNullable(Bukkit.getPlayer(getUniqueId()));
     }
 
     private boolean isNotApplicable(AsyncPlayerChatEvent event) {

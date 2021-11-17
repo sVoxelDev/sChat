@@ -20,9 +20,9 @@
 package net.silthus.chat.integrations.placeholders;
 
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.PlayerChatter;
 
 public interface Placeholders {
 
-    Component setPlaceholders(Chatter chatter, Component text);
+    Component setPlaceholders(PlayerChatter chatter, Component text);
 }

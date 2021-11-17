@@ -26,7 +26,6 @@ import net.silthus.chat.conversations.AbstractConversation;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.ConversationManager;
 import net.silthus.chat.identities.AbstractChatTarget;
-import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.ChatterManager;
 import net.silthus.chat.scopes.GlobalScope;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -73,7 +72,7 @@ public class BungeeCordTests extends TestBase {
         ChatterManager chatterManager = plugin.getChatterManager();
 
         PlayerMock player = new PlayerMock(server, "test");
-        Chatter chatter = Chatter.of(player);
+        Chatter chatter = Chatter.player(player);
         chatterManager.removeChatter(chatter);
         assertThat(chatterManager.getChatter(chatter.getUniqueId())).isNull();
 
@@ -96,7 +95,7 @@ public class BungeeCordTests extends TestBase {
     void synchronizeConversation() {
         ConversationManager conversationManager = plugin.getConversationManager();
 
-        Message message = Chatter.of(server.addPlayer()).message("Hi").to(Chatter.of(server.addPlayer())).build();
+        Message message = Chatter.player(server.addPlayer()).message("Hi").to(Chatter.player(server.addPlayer())).build();
         Conversation conversation = message.getConversation();
         assertThat(conversationManager.getConversations()).contains(conversation);
 
@@ -107,9 +106,9 @@ public class BungeeCordTests extends TestBase {
 
     @Test
     void sendGlobalPrivateChatMessage() {
-        Chatter offlinePlayer = Chatter.of(server.addPlayer());
+        Chatter offlinePlayer = Chatter.player(server.addPlayer());
         server.setPlayers(0);
-        Chatter chatter = Chatter.of(server.addPlayer());
+        Chatter chatter = Chatter.player(server.addPlayer());
 
         Message message = chatter.message("Hi").to(offlinePlayer).send();
 
@@ -119,7 +118,7 @@ public class BungeeCordTests extends TestBase {
 
     @Test
     void sendMessageToChannel_keepsFormat() {
-        Chatter source = Chatter.of(server.addPlayer());
+        Chatter source = Chatter.player(server.addPlayer());
         Channel channel = createChannel("test", config -> config.scope(new GlobalScope()));
         plugin.getChannelRegistry().remove(channel);
         channel.addTarget(bungeecord);
@@ -145,7 +144,7 @@ public class BungeeCordTests extends TestBase {
         plugin.getChannelRegistry().remove(channel);
         channel.addTarget(bungeecord);
 
-        final Message message = Chatter.of(server.addPlayer()).message("test").to(channel).send();
+        final Message message = Chatter.player(server.addPlayer()).message("test").to(channel).send();
         message.delete();
 
         assertReceivedBungeeMessage(DELETE_MESSAGE);

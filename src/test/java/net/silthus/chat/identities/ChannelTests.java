@@ -103,12 +103,12 @@ public class ChannelTests extends TestBase {
     @Test
     void getTargets_isImmutable() {
         assertThatExceptionOfType(UnsupportedOperationException.class)
-                .isThrownBy(() -> channel.getTargets().add(Chatter.of(server.addPlayer())));
+                .isThrownBy(() -> channel.getTargets().add(Chatter.player(server.addPlayer())));
     }
 
     @Test
     void join_addsPlayerToChannelTargets() {
-        Chatter player = Chatter.of(server.addPlayer());
+        Chatter player = Chatter.player(server.addPlayer());
         channel.addTarget(player);
 
         assertThat(channel.getTargets())
@@ -117,7 +117,7 @@ public class ChannelTests extends TestBase {
 
     @Test
     void join_canOnlyJoinChannelOnce() {
-        Chatter player = Chatter.of(server.addPlayer());
+        Chatter player = Chatter.player(server.addPlayer());
         channel.addTarget(player);
         channel.addTarget(player);
 
@@ -135,7 +135,7 @@ public class ChannelTests extends TestBase {
 
     @Test
     void leave_removesChatTarget_fromChannelTargets() {
-        Chatter chatter = Chatter.of(server.addPlayer());
+        Chatter chatter = Chatter.player(server.addPlayer());
         channel.addTarget(chatter);
         assertThat(channel.getTargets()).contains(chatter);
 
@@ -147,9 +147,9 @@ public class ChannelTests extends TestBase {
     @Test
     void leave_doesNothingIfPlayerIsNotJoined() {
 
-        Chatter player = Chatter.of(server.addPlayer());
+        Chatter player = Chatter.player(server.addPlayer());
         channel.addTarget(player);
-        assertThatCode(() -> channel.removeTarget(Chatter.of(server.addPlayer())))
+        assertThatCode(() -> channel.removeTarget(Chatter.player(server.addPlayer())))
                 .doesNotThrowAnyException();
         assertThat(channel.getTargets()).contains(player);
     }
@@ -177,10 +177,10 @@ public class ChannelTests extends TestBase {
     void sendMessage_sendsMessageToAllJoinedTargets() {
 
         PlayerMock player0 = server.addPlayer();
-        Chatter chatter0 = Chatter.of(player0);
+        Chatter chatter0 = Chatter.player(player0);
         chatter0.setActiveConversation(channel);
         PlayerMock player1 = server.addPlayer();
-        Chatter chatter1 = Chatter.of(player1);
+        Chatter chatter1 = Chatter.player(player1);
         chatter1.setActiveConversation(channel);
         PlayerMock player2 = server.addPlayer();
 
@@ -195,7 +195,7 @@ public class ChannelTests extends TestBase {
     void sendFormattedMessage_doesNotFormatAgain() {
 
         PlayerMock player = server.addPlayer();
-        Chatter chatter = Chatter.of(player);
+        Chatter chatter = Chatter.player(player);
         chatter.setActiveConversation(channel);
 
         ChatSource.player(server.addPlayer())
@@ -212,7 +212,7 @@ public class ChannelTests extends TestBase {
 
         try {
             PlayerMock player = server.addPlayer();
-            Chatter chatter = Chatter.of(player);
+            Chatter chatter = Chatter.player(player);
             channel.addTarget(chatter);
 
             Message message = ChatSource.player(server.addPlayer())
@@ -264,7 +264,7 @@ public class ChannelTests extends TestBase {
         ChatSource source2 = ChatSource.player(server.addPlayer());
 
         PlayerMock player = server.addPlayer();
-        Chatter chatter = Chatter.of(player);
+        Chatter chatter = Chatter.player(player);
         channel.addTarget(chatter);
 
         source1.message("test").to(channel).send();
@@ -284,7 +284,7 @@ public class ChannelTests extends TestBase {
     @Test
     void sendMessage_setsTargetToChannel() {
 
-        Chatter chatter = Chatter.of(server.addPlayer());
+        Chatter chatter = Chatter.player(server.addPlayer());
         channel.addTarget(chatter);
 
         ChatSource.player(server.addPlayer())
@@ -301,7 +301,7 @@ public class ChannelTests extends TestBase {
     @Test
     void subscribedTarget_isRemoved_onRemoveChatter() {
         PlayerMock player = server.addPlayer();
-        Chatter chatter = Chatter.of(player);
+        Chatter chatter = Chatter.player(player);
         chatter.subscribe(channel);
 
         assertThat(channel.getTargets()).contains(chatter);
@@ -313,14 +313,14 @@ public class ChannelTests extends TestBase {
     void canJoin_unprotected_isTrue() {
         Channel channel = createChannel(c -> c.protect(false));
 
-        assertThat(Chatter.of(server.addPlayer()).canJoin(channel)).isTrue();
+        assertThat(Chatter.player(server.addPlayer()).canJoin(channel)).isTrue();
     }
 
     @Test
     void canJoin_protected_withoutPermission_isFalse() {
         Channel channel = createChannel(c -> c.protect(true));
 
-        assertThat(Chatter.of(server.addPlayer()).canJoin(channel)).isFalse();
+        assertThat(Chatter.player(server.addPlayer()).canJoin(channel)).isFalse();
     }
 
     @Test
@@ -330,14 +330,14 @@ public class ChannelTests extends TestBase {
         PlayerMock player = server.addPlayer();
         player.addAttachment(plugin, channel.getPermission(), true);
 
-        assertThat(Chatter.of(player).canJoin(channel)).isTrue();
+        assertThat(Chatter.player(player).canJoin(channel)).isTrue();
     }
 
     @Test
     void canAutoJoin_true_ifConfigured() {
 
         Channel channel = createChannel(config -> config.autoJoin(true));
-        assertThat(Chatter.of(server.addPlayer()).canAutoJoin(channel)).isTrue();
+        assertThat(Chatter.player(server.addPlayer()).canAutoJoin(channel)).isTrue();
     }
 
     @Test
@@ -346,14 +346,14 @@ public class ChannelTests extends TestBase {
         PlayerMock player = server.addPlayer();
         player.addAttachment(plugin, channel.getAutoJoinPermission(), true);
 
-        assertThat(Chatter.of(player).canAutoJoin(channel)).isTrue();
+        assertThat(Chatter.player(player).canAutoJoin(channel)).isTrue();
     }
 
     @Test
     void canAutoJoin_protectedChannel_noPermission_isFalse() {
         Channel channel = createChannel(config -> config.autoJoin(true).protect(true));
 
-        assertThat(Chatter.of(server.addPlayer()).canAutoJoin(channel)).isFalse();
+        assertThat(Chatter.player(server.addPlayer()).canAutoJoin(channel)).isFalse();
     }
 
     @Test
@@ -364,7 +364,7 @@ public class ChannelTests extends TestBase {
         player.addAttachment(plugin, channel.getPermission(), true);
         player.addAttachment(plugin, channel.getAutoJoinPermission(), true);
 
-        assertThat(Chatter.of(player).canAutoJoin(channel)).isTrue();
+        assertThat(Chatter.player(player).canAutoJoin(channel)).isTrue();
     }
 
     @Test
@@ -414,7 +414,7 @@ public class ChannelTests extends TestBase {
     @Test
     void unsubscribe_removesActiveConversation() {
         Channel channel = createChannel(config -> config);
-        Chatter chatter = Chatter.of(server.addPlayer());
+        Chatter chatter = Chatter.player(server.addPlayer());
         chatter.setActiveConversation(channel);
 
         chatter.unsubscribe(channel);
@@ -426,7 +426,7 @@ public class ChannelTests extends TestBase {
     @Test
     void close_unsubscribesAllTargets() {
         final Channel channel = createChannel(config -> config);
-        final Chatter chatter = Chatter.of(server.addPlayer());
+        final Chatter chatter = Chatter.player(server.addPlayer());
         chatter.subscribe(channel);
 
         channel.close();

@@ -24,7 +24,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.PlayerChatter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -206,7 +206,7 @@ public class Message implements Comparable<Message> {
         }
 
         private boolean chatterTargeted() {
-            return conversation == null && targetsNotEmpty() && targets$value.stream().allMatch(target -> target instanceof Chatter);
+            return conversation == null && targetsNotEmpty() && targets$value.stream().allMatch(target -> target instanceof PlayerChatter);
         }
 
         private boolean targetsNotEmpty() {

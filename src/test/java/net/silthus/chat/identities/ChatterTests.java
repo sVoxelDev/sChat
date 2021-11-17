@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
 
 public class ChatterTests extends TestBase {
     private PlayerMock player;
-    private Chatter chatter;
+    private PlayerChatter chatter;
 
     @Override
     @BeforeEach
@@ -54,7 +54,7 @@ public class ChatterTests extends TestBase {
 
         player = new PlayerMock(server, "Test");
         player.addAttachment(plugin, Constants.Permissions.getChannelPermission(ChatTarget.channel("test")), true);
-        chatter = plugin.getChatterManager().registerChatter(spy(new Chatter(player)));
+        chatter = (PlayerChatter) plugin.getChatterManager().registerChatter(spy(new PlayerChatter(player)));
         chatter.setView(new View(chatter));
         server.addPlayer(player);
     }
@@ -96,11 +96,10 @@ public class ChatterTests extends TestBase {
     @Test
     void of_usesGlobalChatterCache() {
         PlayerMock player = server.addPlayer();
-        Chatter chatter = Chatter.of(player);
-        Message message = message("test").send();
-        chatter.addReceivedMessage(message);
+        Chatter chatter = Chatter.player(player);
+        Message message = message("test").to(chatter).send();
 
-        Chatter newChatter = Chatter.of(player);
+        Chatter newChatter = Chatter.player(player);
         assertThat(newChatter).isSameAs(chatter);
         assertThat(newChatter.getLastReceivedMessage()).isEqualTo(message);
     }
@@ -110,8 +109,8 @@ public class ChatterTests extends TestBase {
 
         PlayerMock player = server.addPlayer();
 
-        Chatter chatter0 = Chatter.of(player);
-        Chatter chatter1 = Chatter.of(player);
+        Chatter chatter0 = Chatter.player(player);
+        Chatter chatter1 = Chatter.player(player);
 
         assertThat(chatter0).isEqualTo(chatter1);
     }
@@ -186,10 +185,10 @@ public class ChatterTests extends TestBase {
         Thread.sleep(1L);
         Message.message("system 3").to(chatter).send();
         Thread.sleep(1L);
-        Message.message("test").from(Chatter.of(server.addPlayer())).to(chatter).send();
+        Message.message("test").from(Chatter.player(server.addPlayer())).to(chatter).send();
         Thread.sleep(1L);
         chatter.setActiveConversation(channel);
-        Message.message("channel 4").from(Chatter.of(server.addPlayer())).to(channel).send();
+        Message.message("channel 4").from(Chatter.player(server.addPlayer())).to(channel).send();
 
         assertLastReceivedMessage(player, """
                 system 1
@@ -202,9 +201,9 @@ public class ChatterTests extends TestBase {
     @Test
     void sendMessage_systemMessages_doNotRender_inPrivateMessages() {
         PlayerMock sourcePlayer = server.addPlayer();
-        Chatter source = Chatter.of(sourcePlayer);
+        Chatter source = Chatter.player(sourcePlayer);
         PlayerMock targetPlayer = server.addPlayer();
-        Chatter target = Chatter.of(targetPlayer);
+        Chatter target = Chatter.player(targetPlayer);
         source.sendMessage("system");
         source.message("hi").to(target).send();
 
@@ -369,7 +368,7 @@ public class ChatterTests extends TestBase {
     void sendGlobalMessage_ifChatterIsOffline() {
         Message message = message("hi").format(Format.noFormat()).build();
         OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.randomUUID());
-        Chatter chatter = Chatter.of(player);
+        Chatter chatter = Chatter.player(player);
         chatter.sendMessage(message);
 
         assertThat(chatter.getLastReceivedMessage())
@@ -400,7 +399,7 @@ public class ChatterTests extends TestBase {
 
     @Test
     void canLeave_isTrue_ifConversation() {
-        final Conversation conversation = Conversation.direct(chatter, Chatter.of(server.addPlayer()));
+        final Conversation conversation = Conversation.direct(chatter, Chatter.player(server.addPlayer()));
         assertThat(chatter.canLeave(conversation)).isTrue();
     }
 
@@ -425,7 +424,7 @@ public class ChatterTests extends TestBase {
         @BeforeEach
         void setUp() {
             player = server.addPlayer();
-            chatter = Chatter.of(player);
+            chatter = Chatter.player(player);
         }
 
         @Test
@@ -455,7 +454,7 @@ public class ChatterTests extends TestBase {
             chatter.save();
             plugin.getChatterManager().removeChatter(chatter);
 
-            final Chatter chatter = Chatter.of(player);
+            final Chatter chatter = Chatter.player(player);
             chatter.load();
             assertThat(chatter.getActiveConversation()).isEqualTo(channel);
         }
@@ -481,7 +480,7 @@ public class ChatterTests extends TestBase {
         @Test
         void save_doesNothingIfPlayerIsOffline() {
             final PlayerMock player = new PlayerMock(server, "test");
-            final Chatter chatter = Chatter.of(player);
+            final Chatter chatter = Chatter.player(player);
             chatter.save();
 
             assertThat(player.getPersistentDataContainer().get(PLAYER_DATA, PlayerData.type())).isNull();
@@ -490,7 +489,7 @@ public class ChatterTests extends TestBase {
         @Test
         void load_doesNothingIfPlayerIsOffline() {
             final PlayerMock player = new PlayerMock(server, "test");
-            final Chatter chatter = Chatter.of(player);
+            final Chatter chatter = Chatter.player(player);
             chatter.load();
 
             assertThat(chatter.getActiveConversation()).isNull();
@@ -556,15 +555,15 @@ public class ChatterTests extends TestBase {
 
         private Chatter sender;
         private PlayerMock sendingPlayer;
-        private Chatter receiver;
+        private PlayerChatter receiver;
         private PlayerMock receivingPlayer;
 
         @BeforeEach
         void setUp() {
             sendingPlayer = server.addPlayer();
-            sender = Chatter.of(sendingPlayer);
+            sender = Chatter.player(sendingPlayer);
             receivingPlayer = server.addPlayer();
-            receiver = Chatter.of(receivingPlayer);
+            receiver = (PlayerChatter) Chatter.player(receivingPlayer);
         }
 
         @Test

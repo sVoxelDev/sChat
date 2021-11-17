@@ -20,10 +20,7 @@
 package net.silthus.chat.identities;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Constants;
-import net.silthus.chat.Identity;
-import net.silthus.chat.TestBase;
+import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.persistence.PlayerData;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -64,7 +61,7 @@ public class ChatterManagerTests extends TestBase {
     @SuppressWarnings("ConstantConditions")
     void getChatters_isImmutable() {
         assertThatExceptionOfType(UnsupportedOperationException.class)
-                .isThrownBy(() -> manager.getChatters().add(Chatter.of(server.addPlayer())));
+                .isThrownBy(() -> manager.getChatters().add(Chatter.player(server.addPlayer())));
     }
 
     @Test
@@ -187,7 +184,7 @@ public class ChatterManagerTests extends TestBase {
 
     @Test
     void register_loadsPlayerData() {
-        final Chatter chatter = spy(new Chatter(new PlayerMock(server, "test")));
+        final PlayerChatter chatter = spy(new PlayerChatter(new PlayerMock(server, "test")));
         manager.registerChatter(chatter);
 
         verify(chatter).load();
@@ -195,7 +192,7 @@ public class ChatterManagerTests extends TestBase {
 
     @Test
     void remove_callsSave() {
-        final Chatter chatter = spy(new Chatter(new PlayerMock(server, "test")));
+        final PlayerChatter chatter = spy(new PlayerChatter(new PlayerMock(server, "test")));
         manager.registerChatter(chatter);
         manager.removeChatter(chatter);
 
@@ -226,7 +223,7 @@ public class ChatterManagerTests extends TestBase {
 
         @Test
         void playerIsAddedToChatters_onJoin() {
-            Chatter chatter = Chatter.of(server.addPlayer());
+            Chatter chatter = Chatter.player(server.addPlayer());
 
             assertThat(manager.getChatters())
                     .hasSize(1)
@@ -239,12 +236,12 @@ public class ChatterManagerTests extends TestBase {
         void onJoin_loadsPlayerData() {
             final PlayerMock player = new PlayerMock(server, "test");
             final Channel channel = createChannel("test");
-            final Chatter chatter = mock(Chatter.class);
+            final Chatter chatter = mock(PlayerChatter.class);
             when(chatter.getActiveConversation()).thenReturn(channel);
             player.getPersistentDataContainer().set(Constants.Persistence.PLAYER_DATA, PlayerData.type(), new PlayerData(chatter));
 
             server.addPlayer(player);
-            final Chatter joinedChatter = Chatter.of(player);
+            final Chatter joinedChatter = Chatter.player(player);
             assertThat(joinedChatter.getActiveConversation()).isEqualTo(channel);
         }
 
@@ -257,7 +254,7 @@ public class ChatterManagerTests extends TestBase {
             assertThat(channel.getTargets()).isEmpty();
 
             server.addPlayer(player);
-            Chatter chatter = Chatter.of(player);
+            Chatter chatter = Chatter.player(player);
             assertThat(channel.getTargets()).contains(chatter);
             assertThat(chatter.getConversations()).contains(channel);
         }
@@ -283,7 +280,7 @@ public class ChatterManagerTests extends TestBase {
             assertThat(channel.getTargets()).isEmpty();
 
             server.addPlayer(player);
-            assertThat(channel.getTargets()).doesNotContain(Chatter.of(player));
+            assertThat(channel.getTargets()).doesNotContain(Chatter.player(player));
         }
 
         @Test
@@ -291,20 +288,20 @@ public class ChatterManagerTests extends TestBase {
             Channel channel = createChannel(config -> config.autoJoin(true));
             plugin.getChannelRegistry().add(channel);
 
-            Chatter chatter = Chatter.of(server.addPlayer());
+            Chatter chatter = Chatter.player(server.addPlayer());
             assertThat(channel.getTargets()).contains(chatter);
         }
 
         @Test
         void onJoin_synchronizesChatter_withOtherServers() {
-            Chatter chatter = Chatter.of(server.addPlayer());
+            Chatter chatter = Chatter.player(server.addPlayer());
             verify(plugin.getBungeecord()).sendChatter(chatter);
         }
 
         @Test
         void onQuit_callsSaveOnChatter() {
             final PlayerMock player = new PlayerMock(server, "Test");
-            final Chatter chatter = spy(new Chatter(player));
+            final PlayerChatter chatter = spy(new PlayerChatter(player));
             manager.registerChatter(chatter);
             server.addPlayer(player);
 

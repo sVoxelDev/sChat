@@ -38,8 +38,6 @@ import net.silthus.chat.config.PluginConfig;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.ChannelRegistry;
 import net.silthus.chat.conversations.ConversationManager;
-import net.silthus.chat.identities.AbstractIdentity;
-import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.ChatterManager;
 import net.silthus.chat.identities.Console;
 import net.silthus.chat.integrations.placeholders.BasicPlaceholders;
@@ -262,7 +260,7 @@ public final class SChat extends JavaPlugin {
     private void registerChatterContext(PaperCommandManager commandManager) {
         commandManager.getCommandContexts().registerIssuerAwareContext(Chatter.class, context -> {
             if (context.hasFlag("self")) {
-                return Chatter.of(context.getPlayer());
+                return Chatter.player(context.getPlayer());
             }
 
             String arg = context.popFirstArg();
@@ -271,7 +269,7 @@ public final class SChat extends JavaPlugin {
                 player = selectPlayer(context.getSender(), arg);
             } else {
                 if (Strings.isNullOrEmpty(arg)) {
-                    return Chatter.of(context.getPlayer());
+                    return Chatter.player(context.getPlayer());
                 }
                 try {
                     return getChatterManager().getChatter(UUID.fromString(arg));
@@ -286,7 +284,7 @@ public final class SChat extends JavaPlugin {
                 throw new InvalidCommandArgument("The player '" + arg + "' was not found.");
             }
 
-            return Chatter.of(player);
+            return Chatter.player(player);
         });
     }
 
@@ -297,7 +295,7 @@ public final class SChat extends JavaPlugin {
     private void registerMessageContext(PaperCommandManager commandManager) {
         commandManager.getCommandContexts().registerIssuerAwareContext(Message.class, context -> {
             try {
-                final Chatter chatter = Chatter.of(context.getPlayer());
+                final Chatter chatter = Chatter.player(context.getPlayer());
                 final Optional<Message> optionalMessage = chatter.getMessage(UUID.fromString(context.popFirstArg()));
                 if (optionalMessage.isEmpty())
                     throw new InvalidCommandArgument(MessageKeys.UNKNOWN_COMMAND);
@@ -318,7 +316,7 @@ public final class SChat extends JavaPlugin {
     private void registerChatterCompletion(PaperCommandManager commandManager) {
         commandManager.getCommandCompletions().registerAsyncCompletion("chatters", context ->
                 getChatterManager().getChatters().stream()
-                        .map(AbstractIdentity::getName)
+                        .map(Chatter::getName)
                         .filter(name -> !context.getSender().getName().equalsIgnoreCase(name))
                         .collect(Collectors.toSet()));
     }

@@ -22,6 +22,7 @@ package net.silthus.chat.renderer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
@@ -30,8 +31,6 @@ import net.silthus.chat.*;
 import net.silthus.chat.config.FooterConfig;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.DirectConversation;
-import net.silthus.chat.identities.Chatter;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -60,8 +59,8 @@ public class View {
         this.chatter = chatter;
     }
 
-    public void sendTo(Player player) {
-        SChat.instance().getAudiences().player(player).sendMessage(senderAudience(), render(), MessageType.SYSTEM);
+    public void sendTo(@NonNull Audience audience) {
+        audience.sendMessage(senderAudience(), render(), MessageType.SYSTEM);
     }
 
     public Optional<Message> selectedMessage() {

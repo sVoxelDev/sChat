@@ -21,12 +21,8 @@ package net.silthus.chat.scopes;
 
 import be.seeseemelk.mockbukkit.WorldMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Message;
-import net.silthus.chat.Scopes;
-import net.silthus.chat.TestBase;
+import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.Console;
 import net.silthus.configmapper.ConfigurationException;
 import org.bukkit.Location;
@@ -93,7 +89,7 @@ public class WorldScopeTests extends TestBase {
     private Chatter chatterInWorld(WorldMock world) {
         PlayerMock player = server.addPlayer();
         player.teleport(new Location(world, 1, 2, 3));
-        Chatter chatter = Chatter.of(player);
+        Chatter chatter = Chatter.player(player);
         channel.addTarget(chatter);
         return chatter;
     }

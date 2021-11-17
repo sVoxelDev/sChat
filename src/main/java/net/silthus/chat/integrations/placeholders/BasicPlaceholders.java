@@ -21,12 +21,13 @@ package net.silthus.chat.integrations.placeholders;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
-import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.Chatter;
+import net.silthus.chat.identities.PlayerChatter;
 
 public class BasicPlaceholders implements Placeholders {
 
     @Override
-    public Component setPlaceholders(Chatter chatter, Component text) {
+    public Component setPlaceholders(PlayerChatter chatter, Component text) {
         return text
                 .replaceText(playerName(chatter))
                 .replaceText(playerWorld(chatter));
@@ -37,7 +38,7 @@ public class BasicPlaceholders implements Placeholders {
                 .match("<player_name>").replacement(chatter.getDisplayName()).build();
     }
 
-    private TextReplacementConfig playerWorld(Chatter chatter) {
+    private TextReplacementConfig playerWorld(PlayerChatter chatter) {
         return TextReplacementConfig.builder()
                 .match("<player_world>").replacement(chatter.getPlayer().map(player -> Component.text(player.getWorld().getName())).orElse(Component.empty()))
                 .build();

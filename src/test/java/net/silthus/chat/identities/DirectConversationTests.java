@@ -20,6 +20,7 @@
 package net.silthus.chat.identities;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
+import net.silthus.chat.Chatter;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
@@ -47,9 +48,9 @@ public class DirectConversationTests extends TestBase {
         super.setUp();
 
         player1 = server.addPlayer();
-        chatter1 = Chatter.of(player1);
+        chatter1 = Chatter.player(player1);
         player2 = server.addPlayer();
-        chatter2 = Chatter.of(player2);
+        chatter2 = Chatter.player(player2);
         conversation = Conversation.direct(chatter1, chatter2);
     }
 

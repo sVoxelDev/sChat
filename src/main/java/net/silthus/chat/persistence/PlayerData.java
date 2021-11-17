@@ -24,9 +24,10 @@ import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
+import net.silthus.chat.Chatter;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.SChat;
-import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.PlayerChatter;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
@@ -45,12 +46,12 @@ public class PlayerData {
     @Accessors(fluent = true)
     private static final PlayerData.DataType type = new DataType();
 
-    public static void save(@NonNull Chatter chatter) {
+    public static void save(@NonNull PlayerChatter chatter) {
         final PlayerData data = new PlayerData(chatter);
         chatter.getPlayer().ifPresent(data::saveTo);
     }
 
-    public static void load(@NonNull final Chatter chatter) {
+    public static void load(@NonNull final PlayerChatter chatter) {
         final SChat plugin = SChat.instance();
         chatter.getPlayer()
                 .flatMap(PlayerData::load)

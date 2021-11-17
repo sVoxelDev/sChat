@@ -22,7 +22,6 @@ package net.silthus.chat;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.DirectConversation;
-import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.Console;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -158,8 +157,8 @@ class MessageTest extends TestBase {
 
     @Test
     void type_isConversation_withDirectConversation() {
-        Chatter source = Chatter.of(server.addPlayer());
-        Chatter target = Chatter.of(server.addPlayer());
+        Chatter source = Chatter.player(server.addPlayer());
+        Chatter target = Chatter.player(server.addPlayer());
         Message message = source.message("test").to(target).build();
 
         assertThat(message.getType()).isEqualTo(Message.Type.CONVERSATION);
@@ -198,7 +197,7 @@ class MessageTest extends TestBase {
     @Test
     void send_toChannelTarget_doesNotCreateDirectConversation() {
         ChatTarget channel = createChannel("test");
-        Message message = Message.message("test").from(Chatter.of(server.addPlayer())).to(channel).send();
+        Message message = Message.message("test").from(Chatter.player(server.addPlayer())).to(channel).send();
         assertThat(message.getConversation())
                 .isNotInstanceOf(DirectConversation.class)
                 .isEqualTo(channel);
@@ -214,7 +213,7 @@ class MessageTest extends TestBase {
         @BeforeEach
         void setUp() {
             player = server.addPlayer();
-            chatter = Chatter.of(player);
+            chatter = Chatter.player(player);
             message = chatter.sendMessage("hi");
         }
 
@@ -255,7 +254,7 @@ class MessageTest extends TestBase {
             final Channel channel = createChannel("test", config -> config.sendToConsole(true).scope(Scopes.global()));
             chatter.setActiveConversation(channel);
             final PlayerMock player2 = server.addPlayer();
-            final Chatter chatter2 = Chatter.of(player2);
+            final Chatter chatter2 = Chatter.player(player2);
             chatter2.setActiveConversation(channel);
             final Message message = channel.sendMessage("foobar");
 

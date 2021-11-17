@@ -23,7 +23,7 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import com.google.gson.Gson;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.PlayerChatter;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.text;
@@ -64,7 +64,7 @@ public class MessageDtoTests extends TestBase {
         assertThat(message.getId()).isEqualTo(originalMessage.getId());
         assertThat(toCleanText(message)).isEqualTo("Player0: Hi");
         assertThat(message.getSource())
-                .isInstanceOf(Chatter.class)
+                .isInstanceOf(PlayerChatter.class)
                 .extracting(Identity::getUniqueId).isEqualTo(player.getUniqueId());
         assertThat(message.getTargets()).isEmpty();
         assertThat(message.getConversation()).isNull();

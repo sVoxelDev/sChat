@@ -22,7 +22,7 @@ package net.silthus.chat.integrations.placeholders;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
-import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.PlayerChatter;
 import org.bukkit.entity.Player;
 
 import java.util.regex.Pattern;
@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 public class PlaceholderAPIWrapper extends BasicPlaceholders {
 
     @Override
-    public Component setPlaceholders(Chatter chatter, Component text) {
+    public Component setPlaceholders(PlayerChatter chatter, Component text) {
         final Component component = super.setPlaceholders(chatter, text);
         return chatter.getPlayer()
                 .map(player -> component

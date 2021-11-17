@@ -20,9 +20,9 @@
 package net.silthus.chat.conversations;
 
 import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Chatter;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.TestBase;
-import net.silthus.chat.identities.Chatter;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

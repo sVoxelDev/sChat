@@ -24,7 +24,6 @@ import net.md_5.bungee.api.ChatColor;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.DirectConversation;
-import net.silthus.chat.identities.Chatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -76,14 +75,14 @@ class SChatCommandsTest extends TestBase {
             player.addAttachment(plugin, channel.getPermission(), true);
 
             assertThat(player.performCommand("schat channel join test")).isTrue();
-            assertThat(channel.getTargets()).contains(Chatter.of(player));
+            assertThat(channel.getTargets()).contains(Chatter.player(player));
             assertThat(player.nextMessage()).contains(ChatColor.GRAY + "You joined the channel: " + ChatColor.GOLD + "test" + ChatColor.GRAY + ".");
         }
 
         @Test
         void join_withoutPermission_fails() {
             Channel channel = createChannel("test", cfg -> cfg.protect(true));
-            Chatter chatter = Chatter.of(player);
+            Chatter chatter = Chatter.player(player);
 
             assertThat(player.performCommand("ch test")).isTrue();
             assertThat(channel.getTargets()).doesNotContain(chatter);
@@ -112,7 +111,7 @@ class SChatCommandsTest extends TestBase {
         void clickOnChannel_joinsChannel() {
             Channel channel = createChannel("test");
             String command = Constants.Commands.JOIN_CHANNEL.apply(channel).replaceFirst("/", "");
-            Chatter chatter = Chatter.of(player);
+            Chatter chatter = Chatter.player(player);
             assertThat(chatter.getActiveConversation()).isNotEqualTo(channel);
 
             assertThat(player.performCommand(command)).isTrue();
@@ -122,7 +121,7 @@ class SChatCommandsTest extends TestBase {
         @Test
         void leave_unsubscribesFromChannel() throws AccessDeniedException {
             Channel channel = createChannel("test");
-            Chatter chatter = Chatter.of(player);
+            Chatter chatter = Chatter.player(player);
             chatter.join(channel);
             assertThat(chatter.getActiveConversation()).isEqualTo(channel);
 
@@ -149,7 +148,7 @@ class SChatCommandsTest extends TestBase {
             PlayerMock player1 = server.addPlayer();
             player.performCommand("dm Player1 Hi");
 
-            assertThat(Chatter.of(player).getActiveConversation())
+            assertThat(Chatter.player(player).getActiveConversation())
                     .isNotNull()
                     .isInstanceOf(DirectConversation.class)
                     .extracting(ChatTarget::getLastReceivedMessage)
@@ -162,7 +161,7 @@ class SChatCommandsTest extends TestBase {
             PlayerMock player1 = server.addPlayer();
             player.performCommand("w Player1 Hey!");
 
-            Chatter chatter = Chatter.of(player);
+            Chatter chatter = Chatter.player(player);
             Conversation directConversation = chatter.getActiveConversation();
             assertThat(directConversation)
                     .isNotNull()
@@ -177,10 +176,10 @@ class SChatCommandsTest extends TestBase {
         @Test
         void directMessage_toOpenConversation() {
             PlayerMock player1 = server.addPlayer();
-            Chatter target = Chatter.of(player1);
+            Chatter target = Chatter.player(player1);
             player.performCommand(Constants.Commands.PRIVATE_MESSAGE.apply(target).replace("/", ""));
 
-            Chatter sender = Chatter.of(player);
+            Chatter sender = Chatter.player(player);
             assertThat(sender.getActiveConversation())
                     .isNotNull()
                     .isInstanceOf(DirectConversation.class)
@@ -207,7 +206,7 @@ class SChatCommandsTest extends TestBase {
 
         @BeforeEach
         void setUp() {
-            chatter = Chatter.of(player);
+            chatter = Chatter.player(player);
             message = chatter.sendMessage("hi");
         }
 
@@ -239,7 +238,7 @@ class SChatCommandsTest extends TestBase {
         @Test
         void selectMessage_onlyShowsButtonWithPermission() {
             final PlayerMock player = server.addPlayer();
-            Chatter.of(player).sendMessage(message);
+            Chatter.player(player).sendMessage(message);
             player.addAttachment(plugin, Constants.PERMISSION_SELECT_MESSAGE, true);
             player.performCommand("schat message select " + message.getId());
             assertThat(cleaned(getLastMessage(player))).doesNotContain("[Delete]");
@@ -261,7 +260,7 @@ class SChatCommandsTest extends TestBase {
     }
 
     private void assertLastMessage(PlayerMock player, String message) {
-        assertThat(Chatter.of(player).getLastReceivedMessage())
+        assertThat(Chatter.player(player).getLastReceivedMessage())
                 .isNotNull()
                 .extracting(Message::getText)
                 .isEqualTo(text(message));
