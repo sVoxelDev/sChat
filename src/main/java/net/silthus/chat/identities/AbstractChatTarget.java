@@ -20,7 +20,6 @@
 package net.silthus.chat.identities;
 
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NonNull;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
@@ -34,7 +33,6 @@ public abstract class AbstractChatTarget extends AbstractIdentity implements Cha
     private final Stack<Message> receivedMessages = new Stack<>();
     private final Set<Conversation> conversations = new HashSet<>();
     private final Map<Conversation, Set<Message>> unreadMessages = new HashMap<>();
-    @Getter
     private Conversation activeConversation;
 
     protected AbstractChatTarget(UUID id, String name) {
@@ -100,6 +98,10 @@ public abstract class AbstractChatTarget extends AbstractIdentity implements Cha
         }
     }
 
+    public Conversation getActiveConversation() {
+        return Optional.ofNullable(activeConversation).orElseGet(() -> getConversations().stream().findFirst().orElse(null));
+    }
+
     public void setActiveConversation(Conversation conversation) {
         this.activeConversation = conversation;
         if (conversation != null) {
@@ -110,6 +112,11 @@ public abstract class AbstractChatTarget extends AbstractIdentity implements Cha
 
     public Collection<Conversation> getConversations() {
         return conversations.stream().sorted().toList();
+    }
+
+    @Override
+    public void clearConversations() {
+        getConversations().forEach(this::unsubscribe);
     }
 
     public void subscribe(@NonNull Conversation conversation) {

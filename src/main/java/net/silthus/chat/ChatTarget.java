@@ -67,6 +67,8 @@ public interface ChatTarget extends Identity {
 
     Collection<Conversation> getConversations();
 
+    void clearConversations();
+
     void subscribe(@NonNull Conversation conversation);
 
     void unsubscribe(@NonNull Conversation conversation);

@@ -248,11 +248,12 @@ public class ChatterTests extends TestBase {
     }
 
     @Test
-    void setActiveChannel_toNull() {
+    void setActiveChannel_toDefaultChannel() {
         Channel channel = ChatTarget.channel("test");
         chatter.setActiveConversation(channel);
         chatter.setActiveConversation(null);
-        assertThat(chatter.getActiveConversation()).isNull();
+        assertThat(chatter.getActiveConversation()).isNotNull()
+                .isIn(chatter.getConversations());
     }
 
     @Test
@@ -439,6 +440,7 @@ public class ChatterTests extends TestBase {
 
         @Test
         void save_withNullActiveConversation_savesNull() {
+            chatter.clearConversations();
             chatter.setActiveConversation(null);
 
             chatter.save();
@@ -469,7 +471,7 @@ public class ChatterTests extends TestBase {
 
         @Test
         void load_withNullConversation_loads() {
-            chatter.setActiveConversation(null);
+            chatter.clearConversations();
             chatter.save();
 
             chatter.load();
@@ -608,7 +610,7 @@ public class ChatterTests extends TestBase {
 
         @Test
         void onChat_withNoActiveChannel_sendsPlayerAnErrorMessage() {
-            chatter.setActiveConversation(null);
+            chatter.clearConversations();
             AsyncPlayerChatEvent event = chat("Hi");
 
             assertThat(player.nextMessage())

@@ -55,7 +55,7 @@ public final class ChatterManager {
     public void autoJoinChannels(Chatter chatter) {
         plugin.getChannelRegistry().getChannels().stream()
                 .filter(chatter::canAutoJoin)
-                .forEach(chatter::setActiveConversation);
+                .forEach(chatter::subscribe);
     }
 
     public Chatter registerChatter(@NonNull OfflinePlayer player) {

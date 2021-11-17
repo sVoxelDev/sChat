@@ -25,6 +25,7 @@ import net.silthus.chat.Constants;
 import net.silthus.chat.Identity;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.persistence.PlayerData;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,8 +34,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class ChatterManagerTests extends TestBase {
 
@@ -219,7 +219,6 @@ public class ChatterManagerTests extends TestBase {
 
         @Test
         void registerListener() {
-
             assertThat(listener).isNotNull();
             assertThat(getRegisteredListeners())
                     .contains(listener);
@@ -227,7 +226,6 @@ public class ChatterManagerTests extends TestBase {
 
         @Test
         void playerIsAddedToChatters_onJoin() {
-
             Chatter chatter = Chatter.of(server.addPlayer());
 
             assertThat(manager.getChatters())
@@ -238,8 +236,20 @@ public class ChatterManagerTests extends TestBase {
         }
 
         @Test
-        void onJoin_player_autoSubscribes_toConfiguredChannels() {
+        void onJoin_loadsPlayerData() {
+            final PlayerMock player = new PlayerMock(server, "test");
+            final Channel channel = createChannel("test");
+            final Chatter chatter = mock(Chatter.class);
+            when(chatter.getActiveConversation()).thenReturn(channel);
+            player.getPersistentDataContainer().set(Constants.Persistence.PLAYER_DATA, PlayerData.type(), new PlayerData(chatter));
 
+            server.addPlayer(player);
+            final Chatter joinedChatter = Chatter.of(player);
+            assertThat(joinedChatter.getActiveConversation()).isEqualTo(channel);
+        }
+
+        @Test
+        void onJoin_player_autoSubscribes_toConfiguredChannels() {
             Channel channel = createChannel(config -> config.sendToConsole(false));
             plugin.getChannelRegistry().add(channel);
             PlayerMock player = new PlayerMock(server, "test");
@@ -249,12 +259,11 @@ public class ChatterManagerTests extends TestBase {
             server.addPlayer(player);
             Chatter chatter = Chatter.of(player);
             assertThat(channel.getTargets()).contains(chatter);
-            assertThat(chatter.getActiveConversation()).isNotNull();
+            assertThat(chatter.getConversations()).contains(channel);
         }
 
         @Test
         void onJoin_doesNotSubscribe_toChannelsWithoutPermission() {
-
             Channel channel = createChannel(config -> config.protect(true));
             plugin.getChannelRegistry().add(channel);
 
@@ -266,7 +275,6 @@ public class ChatterManagerTests extends TestBase {
 
         @Test
         void onJoin_doesNotJoinProtectedChannels_withoutPermission() {
-
             Channel channel = createChannel(config -> config.protect(true).sendToConsole(false));
             plugin.getChannelRegistry().add(channel);
 
@@ -280,7 +288,6 @@ public class ChatterManagerTests extends TestBase {
 
         @Test
         void onJoin_channelWithAutoJoin_joinsAllRegardlessOfPermission() {
-
             Channel channel = createChannel(config -> config.autoJoin(true));
             plugin.getChannelRegistry().add(channel);
 
