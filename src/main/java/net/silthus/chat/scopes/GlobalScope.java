@@ -20,20 +20,22 @@
 package net.silthus.chat.scopes;
 
 import lombok.EqualsAndHashCode;
-import net.silthus.chat.*;
+import net.silthus.chat.Constants;
+import net.silthus.chat.SChat;
+import net.silthus.chat.Scope;
 import net.silthus.chat.conversations.Channel;
-
-import java.util.Collection;
-import java.util.HashSet;
 
 @EqualsAndHashCode
 @Scope.Name(Constants.Scopes.GLOBAL)
 public final class GlobalScope implements Scope {
 
     @Override
-    public Collection<ChatTarget> apply(Channel channel, Message message) {
-        HashSet<ChatTarget> chatTargets = new HashSet<>(channel.getTargets());
-        chatTargets.add(SChat.instance().getBungeecord());
-        return chatTargets;
+    public void onApply(Channel channel) {
+        channel.addTarget(SChat.instance().getBungeecord());
+    }
+
+    @Override
+    public void onRemove(Channel channel) {
+        channel.removeTarget(SChat.instance().getBungeecord());
     }
 }

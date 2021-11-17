@@ -23,10 +23,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Conversation;
-import net.silthus.chat.Format;
-import net.silthus.chat.Identity;
+import net.silthus.chat.*;
 import net.silthus.chat.identities.AbstractChatTarget;
 
 import java.util.*;
@@ -64,6 +61,15 @@ public abstract class AbstractConversation extends AbstractChatTarget implements
     @Override
     public void removeTarget(@NonNull ChatTarget target) {
         this.targets.remove(target);
+    }
+
+    @Override
+    public boolean deleteMessage(Message message) {
+        if (super.deleteMessage(message)) {
+            getTargets().forEach(target -> target.deleteMessage(message));
+            return true;
+        }
+        return false;
     }
 
     @Override

@@ -129,12 +129,12 @@ public final class SChat extends JavaPlugin {
         setupConversationManager();
         setupConsoleChatter();
 
-        loadChannels();
-
         setupProtocolLib();
         setupVaultIntegration();
         setupBungeecordIntegration();
         setupPlaceholderAPIIntegration();
+
+        loadChannels();
 
         setupCommands();
     }
@@ -145,8 +145,8 @@ public final class SChat extends JavaPlugin {
         Console.instance = null;
         if (commandManager != null) commandManager.unregisterCommands();
         if (chatterManager != null) chatterManager.removeAllChatters();
-        if (bungeecord != null) tearDownBungeecord();
         if (channelRegistry != null) channelRegistry.clear();
+        if (bungeecord != null) tearDownBungeecord();
 
         HandlerList.unregisterAll(this);
     }

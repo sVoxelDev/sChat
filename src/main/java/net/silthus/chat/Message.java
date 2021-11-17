@@ -92,6 +92,10 @@ public class Message implements Comparable<Message> {
         return this;
     }
 
+    public void delete() {
+        getTargets().forEach(target -> target.deleteMessage(this));
+    }
+
     @Override
     public int compareTo(@NotNull Message o) {
         return getTimestamp().compareTo(o.getTimestamp());

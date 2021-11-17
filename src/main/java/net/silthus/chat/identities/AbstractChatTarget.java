@@ -53,6 +53,24 @@ public abstract class AbstractChatTarget extends AbstractIdentity implements Cha
         processMessage(message);
     }
 
+    @Override
+    public boolean deleteMessage(Message message) {
+        if (!receivedMessages.remove(message)) return false;
+        deleteMessageFromConversations(message);
+        deleteMessageFromUnreadMessages(message);
+        return true;
+    }
+
+    private void deleteMessageFromConversations(Message message) {
+        getConversations().forEach(conversation -> conversation.deleteMessage(message));
+    }
+
+    private void deleteMessageFromUnreadMessages(Message message) {
+        for (Set<Message> value : unreadMessages.values()) {
+            value.removeIf(msg -> msg.equals(message));
+        }
+    }
+
     protected abstract void processMessage(Message message);
 
     @Override

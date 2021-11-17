@@ -19,6 +19,8 @@
 
 package net.silthus.chat.scopes;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Message;
 import net.silthus.chat.Scope;
@@ -34,6 +36,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Data
+@Accessors(fluent = true)
 @Scope.Name("world")
 public final class WorldScope implements Scope {
 
@@ -41,7 +45,7 @@ public final class WorldScope implements Scope {
     List<String> worlds;
 
     @Override
-    public Collection<ChatTarget> apply(Channel channel, Message message) {
+    public Collection<ChatTarget> filterTargets(Channel channel, Message message) {
         return channel.getTargets().stream()
                 .filter(this::isNoPlayerOrInWorld)
                 .collect(Collectors.toList());

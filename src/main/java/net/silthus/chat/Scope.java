@@ -29,7 +29,15 @@ import java.util.Collection;
 
 public interface Scope {
 
-    Collection<ChatTarget> apply(Channel channel, Message message);
+    default void onApply(Channel channel) {
+    }
+
+    default Collection<ChatTarget> filterTargets(Channel channel, Message message) {
+        return channel.getTargets();
+    }
+
+    default void onRemove(Channel channel) {
+    }
 
     @Target(ElementType.TYPE)
     @Retention(RetentionPolicy.RUNTIME)

@@ -137,6 +137,7 @@ public final class Constants {
 
         public static final String BUNGEECORD_CHANNEL = "BungeeCord";
         public static final String SEND_MESSAGE = "schat:send-message";
+        public static final String DELETE_MESSAGE = "schat:delete-message";
         public static final String SEND_CHATTER = "schat:send-chatter";
         public static final String SEND_CONVERSATION = "schat:send-conversation";
     }

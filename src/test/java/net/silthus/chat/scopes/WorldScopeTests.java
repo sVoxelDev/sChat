@@ -84,7 +84,7 @@ public class WorldScopeTests extends TestBase {
         Chatter chatter2 = chatterInWorld(someWorld);
         Chatter chatter3 = chatterInWorld(otherWorld);
 
-        Collection<ChatTarget> targets = scope.apply(channel, Message.message("hi").build());
+        Collection<ChatTarget> targets = scope.filterTargets(channel, Message.message("hi").build());
         assertThat(targets)
                 .doesNotContain(chatter3)
                 .contains(chatter1, chatter2, Console.console());

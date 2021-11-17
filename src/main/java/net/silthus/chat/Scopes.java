@@ -49,8 +49,20 @@ public final class Scopes {
         register(LocalScope.class);
     }
 
-    public static Scope server() {
-        return new ServerScope();
+    public static ServerScope server() {
+        return scope(ServerScope.class);
+    }
+
+    public static GlobalScope global() {
+        return scope(GlobalScope.class);
+    }
+
+    public static LocalScope local() {
+        return scope(LocalScope.class);
+    }
+
+    public static <TScope extends Scope> TScope scope(Class<TScope> scopeClass) {
+        return scopeClass.cast(scope(name(scopeClass)));
     }
 
     public static Scope scope(String scope) {

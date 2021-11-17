@@ -52,6 +52,7 @@ public class Channel extends AbstractConversation implements ChatSource {
     }
 
     public void setConfig(ChannelConfig config) {
+        removeScope(config);
         this.config = config;
         if (config.name() != null)
             setDisplayName(Component.text(config.name()));
@@ -62,6 +63,17 @@ public class Channel extends AbstractConversation implements ChatSource {
             removeTarget(Console.console());
 
         setFormat(config.format());
+        applyScope(config);
+    }
+
+    private void removeScope(ChannelConfig config) {
+        if (this.config == null) return;
+        if (!this.config.scope().equals(config.scope()))
+            this.config.scope().onRemove(this);
+    }
+
+    private void applyScope(ChannelConfig config) {
+        config.scope().onApply(this);
     }
 
     public String getPermission() {
@@ -82,8 +94,14 @@ public class Channel extends AbstractConversation implements ChatSource {
         getScopedTargets(message).forEach(target -> target.sendMessage(message));
     }
 
+    @Override
+    public void close() {
+        super.close();
+        getConfig().scope().onRemove(this);
+    }
+
     private Collection<ChatTarget> getScopedTargets(Message message) {
         if (getConfig().scope() == null) return getTargets();
-        return getConfig().scope().apply(this, message);
+        return getConfig().scope().filterTargets(this, message);
     }
 }
