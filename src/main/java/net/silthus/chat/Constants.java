@@ -47,6 +47,8 @@ public final class Constants {
     public static final String PERMISSION_PLAYER_CHANNEL_LEAVE = "schat.player.channel.leave";
     public static final String PERMISSION_PLAYER_CHANNEL_QUICKMESSAGE = "schat.player.channel.quickmessage";
     public static final String PERMISSION_PLAYER_DIRECT_MESSAGE = "schat.player.directmessage";
+    public static final String PERMISSION_SELECT_MESSAGE = "schat.message.select";
+    public static final String PERMISSION_MESSAGE_DELETE = "schat.message.delete";
     public static final String PERMISSION_ADMIN_RELOAD = "schat.admin.reload";
 
     public static class Targets {
@@ -84,12 +86,18 @@ public final class Constants {
             public static final String LEAVE_CHANNEL = "leave-channel";
             public static final String INVALID_CONVERSATION = "invalid-conversation";
             public static final String PLUGIN_RELOADED = "plugin-reloaded";
+            public static final String SELECTED_MESSAGE = "message.selected";
+            public static final String DELETED_MESSAGE = "message.deleted";
+            public static final String DESELECTED_MESSAGE = "message.deselected";
+            public static final String DELETE_MESSAGE_BUTTON = "message.delete-button";
+            public static final String DESELECT_MESSAGE_BUTTON = "message.deselect-button";
+
         }
 
         public static class Formats {
-
             public static final String BASE_KEY = "formats";
             public static final String PLAYER_CLICK = "player.click-to-send";
+            public static final String SELECT_MESSAGE = "message.select-to-moderate";
         }
     }
 
@@ -130,7 +138,9 @@ public final class Constants {
         public static final Function<Conversation, String> LEAVE_CHANNEL = conversation -> "/schat channel leave " + conversation.getUniqueId();
         public static final Function<Conversation, String> JOIN_CONVERSATION = conversation -> "/schat conversations set-active " + conversation.getUniqueId();
         public static final Function<Conversation, String> LEAVE_CONVERSATION = conversation -> "/schat conversations leave " + conversation.getUniqueId();
-        public static final Function<ChatSource, String> PRIVATE_MESSAGE = source -> "/schat directmessage send " + source.getUniqueId();
+        public static final Function<ChatSource, String> PRIVATE_MESSAGE = source -> "/schat message send " + source.getUniqueId();
+        public static final Function<Message, String> SELECT_MESSAGE = message -> "/schat message select " + message.getId();
+        public static final Function<Message, String> DELETE_MESSAGE = message -> "/schat message delete " + message.getId();
     }
 
     public static class BungeeCord {

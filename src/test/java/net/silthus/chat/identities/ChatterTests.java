@@ -403,6 +403,18 @@ public class ChatterTests extends TestBase {
         assertThat(chatter.canLeave(conversation)).isTrue();
     }
 
+    @Test
+    void getMessage_returnsEmpty_unknownMessageId() {
+        assertThat(chatter.getMessage(UUID.randomUUID())).isEmpty();
+    }
+
+    @Test
+    void getMessage_returnsMessage() {
+        final Message message = chatter.sendMessage("test");
+        assertThat(chatter.getMessage(message.getId()))
+                .isPresent().get().isEqualTo(message);
+    }
+
     @Nested
     class SaveAndLoad {
 

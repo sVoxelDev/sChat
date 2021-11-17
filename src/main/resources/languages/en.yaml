@@ -7,6 +7,14 @@ commands:
   invalid-conversation: "The conversation you tried to join does not exist."
   cannot-send-to-self: "You can't send messages to yourself."
   plugin-reloaded: "sChat and all channel configs have been reloaded."
+  message:
+    selected: "<green>Selected Chat Message"
+    deselected: "<gold>Deselected Chat Message"
+    deleted: "<red>Deleted Chat Message"
+    delete-button: " <hover:show_text:'<red>Click to delete the selected message.'><dark_gray>[<red>Delete<dark_gray>]</hover> "
+    deselect-button: " <hover:show_text:'<gray>Click to deselect the message and abort.'><dark_gray>[<gray>Abort<dark_gray>]</hover> "
 formats:
   player:
     click-to-send: "<gray>Click to send <yellow><player_name></yellow> a message."
+  message:
+    select-to-moderate: "<gray>Click to select this message for moderation."

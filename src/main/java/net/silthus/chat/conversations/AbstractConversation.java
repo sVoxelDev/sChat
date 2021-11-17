@@ -65,11 +65,10 @@ public abstract class AbstractConversation extends AbstractChatTarget implements
 
     @Override
     public boolean deleteMessage(Message message) {
-        if (super.deleteMessage(message)) {
+        final boolean deleted = super.deleteMessage(message);
+        if (deleted)
             getTargets().forEach(target -> target.deleteMessage(message));
-            return true;
-        }
-        return false;
+        return deleted;
     }
 
     @Override

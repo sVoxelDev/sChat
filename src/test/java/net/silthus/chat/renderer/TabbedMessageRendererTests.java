@@ -22,6 +22,8 @@ package net.silthus.chat.renderer;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Constants;
+import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.config.FooterConfig;
 import net.silthus.chat.conversations.Channel;
@@ -35,6 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TabbedMessageRendererTests extends TestBase {
 
     private TabbedMessageRenderer view;
+    private PlayerMock player;
     private Chatter chatter;
 
     @Override
@@ -43,7 +46,8 @@ public class TabbedMessageRendererTests extends TestBase {
         super.setUp();
 
         view = new TabbedMessageRenderer();
-        chatter = Chatter.of(server.addPlayer());
+        player = server.addPlayer();
+        chatter = Chatter.of(player);
         chatter.setActiveConversation(ChatTarget.channel("test"));
     }
 
@@ -154,6 +158,26 @@ public class TabbedMessageRendererTests extends TestBase {
         final String text = toCleanText(view.conversationTabs(chatter.getView()));
         assertThat(text).contains(" " + channel.getName() + " ");
     }
+
+    @Test
+    void render_withHighlightMessage_withoutPermission_doesNotMarkMessage() {
+        final Message message = Message.message("test").to(chatter).send();
+        chatter.getView().selectedMessage(message);
+
+        final String text = toCleanText(view.render(chatter.getView()));
+        assertThat(text).contains("test");
+    }
+
+    @Test
+    void render_withHighlightMessage_doesNotMarkMessage() {
+        player.addAttachment(plugin, Constants.PERMISSION_SELECT_MESSAGE, true);
+        final Message message = Message.message("test").to(chatter).send();
+        chatter.getView().selectedMessage(message);
+
+        final String text = toCleanText(view.render(chatter.getView()));
+        assertThat(text).contains("> test");
+    }
+
 
     private void addChannels() {
         chatter.subscribe(ChatTarget.channel("test"));

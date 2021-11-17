@@ -25,13 +25,21 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.silthus.chat.*;
+import net.silthus.chat.config.FooterConfig;
+import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.DirectConversation;
 import net.silthus.chat.identities.Chatter;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Stream;
+
+import static net.kyori.adventure.text.Component.empty;
+import static net.kyori.adventure.text.Component.newline;
+import static net.silthus.chat.Constants.View.*;
 
 @Data
 @Accessors(fluent = true)
@@ -40,6 +48,8 @@ public class View {
     private final Chatter chatter;
     private final Map<UUID, Set<Message>> unreadMessages = new HashMap<>();
     private MessageRenderer renderer = MessageRenderer.TABBED;
+    private Message selectedMessage;
+    private Component footer;
 
     public View(@NonNull Chatter chatter, @NonNull MessageRenderer renderer) {
         this.chatter = chatter;
@@ -52,6 +62,33 @@ public class View {
 
     public void sendTo(Player player) {
         SChat.instance().getAudiences().player(player).sendMessage(senderAudience(), render(), MessageType.SYSTEM);
+    }
+
+    public Optional<Message> selectedMessage() {
+        return Optional.ofNullable(selectedMessage);
+    }
+
+    public Component footer() {
+        if (footer != null) return wrapFooterText(footer);
+        if (isFooterEnabled()) return wrapFooterText(empty());
+        return Component.empty();
+    }
+
+    @NotNull
+    private Boolean isFooterEnabled() {
+        return activeConversation()
+                .filter(conversation -> conversation instanceof Channel)
+                .map(conversation -> ((Channel) conversation).getConfig().footer())
+                .map(FooterConfig::enabled).orElse(true);
+    }
+
+    @NotNull
+    private Component wrapFooterText(Component text) {
+        return ChatUtil.wrapText(text,
+                LEFT_FRAME.color(FRAME_COLOR),
+                FRAME_SPACER.color(FRAME_COLOR).decorate(TextDecoration.STRIKETHROUGH),
+                FRAME_SPACER.color(FRAME_COLOR).decorate(TextDecoration.STRIKETHROUGH)
+        ).append(newline());
     }
 
     private Component render() {

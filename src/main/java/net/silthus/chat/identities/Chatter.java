@@ -72,6 +72,14 @@ public class Chatter extends AbstractChatTarget implements Listener, ChatSource,
         return Optional.ofNullable(Bukkit.getPlayer(getUniqueId()));
     }
 
+    @Override
+    public boolean deleteMessage(Message message) {
+        final boolean deleted = super.deleteMessage(message);
+        if (deleted)
+            updateView();
+        return deleted;
+    }
+
     public void updateView() {
         getPlayer().ifPresent(view::sendTo);
     }

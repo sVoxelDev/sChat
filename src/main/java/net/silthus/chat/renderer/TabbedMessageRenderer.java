@@ -23,17 +23,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextReplacementConfig;
-import net.kyori.adventure.text.format.TextDecoration;
-import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Conversation;
-import net.silthus.chat.Message;
-import net.silthus.chat.MessageRenderer;
-import net.silthus.chat.config.FooterConfig;
-import net.silthus.chat.conversations.Channel;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.silthus.chat.*;
+import net.silthus.chat.config.Language;
 import net.silthus.chat.identities.Chatter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -42,8 +37,10 @@ import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND;
 import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
+import static net.kyori.adventure.text.event.HoverEvent.showText;
 import static net.silthus.chat.Constants.Commands.JOIN_CONVERSATION;
 import static net.silthus.chat.Constants.Commands.LEAVE_CONVERSATION;
+import static net.silthus.chat.Constants.PERMISSION_SELECT_MESSAGE;
 import static net.silthus.chat.Constants.View.*;
 
 public final class TabbedMessageRenderer implements MessageRenderer {
@@ -51,7 +48,7 @@ public final class TabbedMessageRenderer implements MessageRenderer {
     @Override
     public Component render(View view) {
         return text().append(clearChat())
-                .append(renderMessages(view.messages()))
+                .append(renderMessages(view))
                 .append(newline())
                 .append(footer(view))
                 .append(conversationTabs(view))
@@ -59,18 +56,7 @@ public final class TabbedMessageRenderer implements MessageRenderer {
     }
 
     Component footer(View view) {
-        if (view.activeConversation()
-                .filter(conversation -> conversation instanceof Channel)
-                .map(conversation -> ((Channel) conversation).getConfig().footer())
-                .map(FooterConfig::enabled).orElse(true)
-        ) {
-            return ChatUtil.wrapText(empty(),
-                    LEFT_FRAME.color(FRAME_COLOR),
-                    FRAME_SPACER.color(FRAME_COLOR).decorate(TextDecoration.STRIKETHROUGH),
-                    FRAME_SPACER.color(FRAME_COLOR).decorate(TextDecoration.STRIKETHROUGH)
-            ).append(newline());
-        }
-        return Component.empty();
+        return view.footer();
     }
 
     Component conversationTabs(View view) {
@@ -84,13 +70,13 @@ public final class TabbedMessageRenderer implements MessageRenderer {
         return builder.build();
     }
 
-    Component renderMessages(Collection<Message> messages) {
+    Component renderMessages(View view) {
         return Component.join(
                 JoinConfiguration.builder()
                         .separator(newline())
                         .build(),
-                messages.stream()
-                        .map(Message::formatted)
+                view.messages().stream()
+                        .map(message -> renderMessage(view, message))
                         .toList()
         );
     }
@@ -101,6 +87,20 @@ public final class TabbedMessageRenderer implements MessageRenderer {
             builder.append(newline());
         }
         return builder.build();
+    }
+
+    private Component renderMessage(View view, Message message) {
+        final boolean canSelectMessages = view.chatter().getPlayer().map(player -> player.hasPermission(PERMISSION_SELECT_MESSAGE)).orElse(false);
+        if (canSelectMessages) {
+            final TextComponent prefix = view.selectedMessage().filter(msg -> msg.equals(message))
+                    .map(msg -> text("> ").color(NamedTextColor.RED))
+                    .orElse(empty());
+            return prefix.append(message.formatted()
+                    .clickEvent(clickEvent(RUN_COMMAND, Constants.Commands.SELECT_MESSAGE.apply(message)))
+                    .hoverEvent(showText(lang(Constants.Language.Formats.SELECT_MESSAGE))));
+        } else {
+            return message.formatted();
+        }
     }
 
     private TextComponent noConversations() {
@@ -179,5 +179,13 @@ public final class TabbedMessageRenderer implements MessageRenderer {
         return TextReplacementConfig.builder()
                 .match("<partner_name>").replacement(Component.join(JoinConfiguration.separator(Component.text(",")), names))
                 .build();
+    }
+
+    private Component lang(String key) {
+        return lang().get(key);
+    }
+
+    private Language lang() {
+        return SChat.instance().language().section(Constants.Language.Formats.BASE_KEY);
     }
 }

@@ -20,16 +20,19 @@
 package net.silthus.chat.renderer;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
+import net.kyori.adventure.text.TextComponent;
 import net.silthus.chat.Message;
 import net.silthus.chat.MessageRenderer;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.identities.Chatter;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
+import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ViewTest extends TestBase {
@@ -120,15 +123,35 @@ class ViewTest extends TestBase {
         Message systemMessage = Message.message("system").to(chatter).send();
         Thread.sleep(1L);
         Message channelMessage = channel.sendMessage("channel");
-//        Message message1 = Message.message("system 1").to(chatter).send();
-//        Message message2 = channel.sendMessage("channel 2");
-//        Message message3 = Message.message("system 3").to(chatter).send();
-//        Message otherMessage = Message.message("test").from(Chatter.of(server.addPlayer())).to(chatter).send();
-//        chatter.setActiveConversation(channel);
-//        Message message4 = Message.message("channel 4").from(Chatter.of(server.addPlayer())).to(channel).send();
 
         assertThat(view.messages())
                 .hasSize(2)
                 .containsExactly(systemMessage, channelMessage);
+    }
+
+    @Test
+    void setFooter_displaysFooter() {
+        final TextComponent text = text("Hi there!");
+        view.footer(text);
+
+        assertThat(toText(view.footer())).contains("Hi there!");
+    }
+
+    @Nested
+    class MessageModeration {
+
+        private Message message;
+
+        @BeforeEach
+        void setUp() {
+            message = Message.message("test").to(chatter).send();
+            view.selectedMessage(message);
+        }
+
+        @Test
+        void selectMessage_isSet() {
+            assertThat(view.selectedMessage()).isPresent().get()
+                    .isEqualTo(message);
+        }
     }
 }
