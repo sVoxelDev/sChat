@@ -22,6 +22,7 @@ package net.silthus.chat;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.renderer.View;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 
 public interface Chatter extends Identity, ChatTarget, ChatSource, Listener {
@@ -32,6 +33,10 @@ public interface Chatter extends Identity, ChatTarget, ChatSource, Listener {
 
     static Chatter chatter(Identity identity) {
         return SChat.instance().getChatterManager().getOrCreateChatter(identity);
+    }
+
+    static Chatter commandSender(CommandSender sender) {
+        return SChat.instance().getChatterManager().getOrCreateChatter(sender);
     }
 
     View getView();

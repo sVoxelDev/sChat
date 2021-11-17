@@ -26,6 +26,8 @@ import net.silthus.chat.Constants;
 import net.silthus.chat.Identity;
 import net.silthus.chat.SChat;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -40,6 +42,7 @@ public final class ChatterManager {
 
     private final SChat plugin;
     private final Map<UUID, Chatter> chatters = Collections.synchronizedMap(new HashMap<>());
+    private final Map<String, UUID> senderIds = Collections.synchronizedMap(new HashMap<>());
 
     final PlayerListener playerListener;
 
@@ -63,6 +66,10 @@ public final class ChatterManager {
         return getOrCreateChatter(player);
     }
 
+    public Chatter getOrCreateChatter(@NonNull Player player) {
+        return getOrCreateChatter((OfflinePlayer) player);
+    }
+
     public Chatter getOrCreateChatter(@NonNull OfflinePlayer player) {
         if (chatters.containsKey(player.getUniqueId()))
             return chatters.get(player.getUniqueId());
@@ -73,6 +80,15 @@ public final class ChatterManager {
         if (chatters.containsKey(identity.getUniqueId()))
             return chatters.get(identity.getUniqueId());
         return registerChatter(new PlayerChatter(identity));
+    }
+
+    public Chatter getOrCreateChatter(@NonNull CommandSender sender) {
+        final UUID uuid = getSenderId(sender);
+        if (chatters.containsKey(uuid))
+            return chatters.get(uuid);
+        final CommandSendingChatter chatter = new CommandSendingChatter(uuid, sender);
+        senderIds.put(chatter.getName(), uuid);
+        return registerChatter(chatter);
     }
 
     public Chatter getChatter(UUID id) {
@@ -109,6 +125,12 @@ public final class ChatterManager {
         plugin.getServer().getPluginManager().registerEvents(chatter, plugin);
         plugin.getBungeecord().sendChatter(chatter);
         return chatter;
+    }
+
+    private @NonNull UUID getSenderId(CommandSender sender) {
+        if (sender instanceof Entity)
+            return ((Entity) sender).getUniqueId();
+        return senderIds.getOrDefault(sender.getName(), UUID.randomUUID());
     }
 
     class PlayerListener implements Listener {

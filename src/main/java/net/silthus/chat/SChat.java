@@ -259,9 +259,10 @@ public final class SChat extends JavaPlugin {
 
     private void registerChatterContext(PaperCommandManager commandManager) {
         commandManager.getCommandContexts().registerIssuerAwareContext(Chatter.class, context -> {
-            if (context.hasFlag("self")) {
+            if (!(context.getSender() instanceof Player))
+                return Chatter.commandSender(context.getSender());
+            if (context.hasFlag("self"))
                 return Chatter.player(context.getPlayer());
-            }
 
             String arg = context.popFirstArg();
             Player player;

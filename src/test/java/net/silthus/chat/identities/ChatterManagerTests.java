@@ -23,6 +23,7 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.persistence.PlayerData;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -197,6 +198,17 @@ public class ChatterManagerTests extends TestBase {
         manager.removeChatter(chatter);
 
         verify(chatter).save();
+    }
+
+    @Test
+    void commandSender_withNameOnly_mapsId() {
+        final CommandSender sender = mock(CommandSender.class);
+        when(sender.getName()).thenReturn("Bob");
+        final Chatter chatter = manager.getOrCreateChatter(sender);
+        final Message message = chatter.sendMessage("hi");
+        final Chatter chatter2 = manager.getOrCreateChatter(sender);
+
+        assertThat(chatter).isSameAs(chatter2);
     }
 
     private Chatter registerChatter() {
