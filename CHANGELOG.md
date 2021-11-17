@@ -1,3 +1,11 @@
+# [1.0.0-beta.8](https://github.com/sVoxelDev/sChat/compare/v1.0.0-beta.7...v1.0.0-beta.8) (2021-11-17)
+
+
+### Features
+
+* **api:** add method to delete messages ([1b367e2](https://github.com/sVoxelDev/sChat/commit/1b367e262ad1b0e5e8ecf33ff3a58246bb159620))
+* **chat:** add message deletion feature ([a7b20bc](https://github.com/sVoxelDev/sChat/commit/a7b20bc30c311eac27c66826f70867824848188a)), closes [#12](https://github.com/sVoxelDev/sChat/issues/12)
+
 # [1.0.0-beta.7](https://github.com/Silthus/sChat/compare/v1.0.0-beta.6...v1.0.0-beta.7) (2021-11-16)
 
 
