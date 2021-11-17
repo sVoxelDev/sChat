@@ -77,6 +77,15 @@ public class BungeeCord extends AbstractChatTarget implements PluginMessageListe
     }
 
     @Override
+    public boolean deleteMessage(Message message) {
+        if (super.deleteMessage(message)) {
+            sendPluginMessage(forwardToAllServers(DELETE_MESSAGE), json(new MessageDto(message)));
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte[] serverMessage) {
         if (!channel.equals(BUNGEECORD_CHANNEL)) {
             return;
@@ -87,14 +96,19 @@ public class BungeeCord extends AbstractChatTarget implements PluginMessageListe
 
         switch (subChannel) {
             case SEND_MESSAGE -> processGlobalMessage(in);
+            case DELETE_MESSAGE -> processGlobalDeleteMessage(in);
             case SEND_CHATTER -> processChatter(in);
             case SEND_CONVERSATION -> processConversation(in);
         }
     }
 
     private void processGlobalMessage(ByteArrayDataInput in) {
-        Message message = gson.fromJson(getJsonData(in), MessageDto.class).asMessage();
+        Message message = getMessageFromStream(in);
         message.getTargets().forEach(target -> target.sendMessage(message));
+    }
+
+    private void processGlobalDeleteMessage(ByteArrayDataInput in) {
+        getMessageFromStream(in).delete();
     }
 
     private void processChatter(ByteArrayDataInput in) {
@@ -134,6 +148,10 @@ public class BungeeCord extends AbstractChatTarget implements PluginMessageListe
         out.writeShort(bytes.length);
         out.write(bytes);
         return out;
+    }
+
+    private Message getMessageFromStream(ByteArrayDataInput in) {
+        return gson.fromJson(getJsonData(in), MessageDto.class).asMessage();
     }
 
     private String getJsonData(ByteArrayDataInput in) {

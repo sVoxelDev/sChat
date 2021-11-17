@@ -59,6 +59,8 @@ public interface ChatTarget extends Identity {
 
     void sendMessage(Message message);
 
+    boolean deleteMessage(Message message);
+
     Message getLastReceivedMessage();
 
     Collection<Message> getReceivedMessages();

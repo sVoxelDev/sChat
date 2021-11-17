@@ -20,30 +20,32 @@
 package net.silthus.chat.integrations.bungeecord;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Conversation;
-import net.silthus.chat.Message;
-import net.silthus.chat.TestBase;
+import com.google.common.io.ByteStreams;
+import net.silthus.chat.*;
 import net.silthus.chat.conversations.AbstractConversation;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.ConversationManager;
+import net.silthus.chat.identities.AbstractChatTarget;
 import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.ChatterManager;
 import net.silthus.chat.scopes.GlobalScope;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
-import static net.silthus.chat.Constants.BungeeCord.BUNGEECORD_CHANNEL;
+import static net.silthus.chat.Constants.BungeeCord.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
+@SuppressWarnings("UnstableApiUsage")
 public class BungeeCordTests extends TestBase {
 
     private BungeeCord bungeecord;
+    private ArgumentCaptor<byte[]> captor;
 
     @Override
     @BeforeEach
@@ -51,6 +53,7 @@ public class BungeeCordTests extends TestBase {
         super.setUp();
 
         bungeecord = plugin.getBungeecord();
+        captor = ArgumentCaptor.forClass(byte[].class);
     }
 
     @Test
@@ -61,7 +64,7 @@ public class BungeeCordTests extends TestBase {
         Message message = Message.message("test").to(chatter).build();
         bungeecord.sendMessage(message);
 
-        verify(bungeecord, atLeastOnce()).onPluginMessageReceived(eq(BUNGEECORD_CHANNEL), any(), any());
+        assertReceivedBungeeMessage(SEND_MESSAGE);
         assertThat(chatter.getLastReceivedMessage()).isEqualTo(message);
     }
 
@@ -76,9 +79,17 @@ public class BungeeCordTests extends TestBase {
 
         bungeecord.sendChatter(chatter);
 
-        verify(bungeecord, atLeastOnce()).onPluginMessageReceived(eq(BUNGEECORD_CHANNEL), any(), any());
+        assertReceivedBungeeMessage(SEND_CHATTER);
         assertThat(chatterManager.getChatter(chatter.getUniqueId()))
                 .isNotNull().isEqualTo(chatter);
+    }
+
+    private void assertReceivedBungeeMessage(String subChannel) {
+        verify(bungeecord, atLeastOnce()).onPluginMessageReceived(eq(BUNGEECORD_CHANNEL), any(), captor.capture());
+        final boolean anyMatch = captor.getAllValues().stream()
+                .map(bytes -> ByteStreams.newDataInput(bytes).readUTF())
+                .anyMatch(s -> s.equals(subChannel));
+        assertThat(anyMatch).isTrue();
     }
 
     @Test
@@ -102,7 +113,7 @@ public class BungeeCordTests extends TestBase {
 
         Message message = chatter.message("Hi").to(offlinePlayer).send();
 
-        verify(plugin.getBungeecord(), atLeastOnce()).sendMessage(message);
+        assertReceivedBungeeMessage(SEND_MESSAGE);
         assertThat(offlinePlayer.getLastReceivedMessage()).isEqualTo(message);
     }
 
@@ -111,13 +122,35 @@ public class BungeeCordTests extends TestBase {
         Chatter source = Chatter.of(server.addPlayer());
         Channel channel = createChannel("test", config -> config.scope(new GlobalScope()));
         plugin.getChannelRegistry().remove(channel);
+        channel.addTarget(bungeecord);
 
         Message message = source.message("Hi").to(channel).send();
-        verify(plugin.getBungeecord(), atLeastOnce()).sendMessage(message);
+        assertReceivedBungeeMessage(SEND_MESSAGE);
 
         assertThat(plugin.getChannelRegistry().contains("test")).isTrue();
-        assertThat(plugin.getChannelRegistry().getOrCreate("test"))
-                .extracting(AbstractConversation::getFormat)
-                .isEqualTo(channel.getFormat());
+        assertThat(plugin.getChannelRegistry().get("test"))
+                .isNotNull()
+                .extracting(
+                        AbstractConversation::getFormat,
+                        AbstractChatTarget::getLastReceivedMessage
+                ).contains(
+                        channel.getFormat(),
+                        message
+                );
+    }
+
+    @Test
+    void deleteMessage_removesMessageOnAllServers() {
+        final Channel channel = createChannel(config -> config.scope(Scopes.global()));
+        plugin.getChannelRegistry().remove(channel);
+        channel.addTarget(bungeecord);
+
+        final Message message = Chatter.of(server.addPlayer()).message("test").to(channel).send();
+        message.delete();
+
+        assertReceivedBungeeMessage(DELETE_MESSAGE);
+        assertThat(plugin.getChannelRegistry().get(channel.getName()))
+                .isNotNull().extracting(AbstractChatTarget::getReceivedMessages)
+                .asList().doesNotContain(message);
     }
 }

@@ -22,6 +22,9 @@ package net.silthus.chat;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.DirectConversation;
 import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.Console;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -198,5 +201,50 @@ class MessageTest extends TestBase {
         assertThat(message.getConversation())
                 .isNotInstanceOf(DirectConversation.class)
                 .isEqualTo(channel);
+    }
+
+    @Nested
+    class Delete {
+
+        private Chatter chatter;
+        private Message message;
+
+        @BeforeEach
+        void setUp() {
+            chatter = Chatter.of(server.addPlayer());
+            message = chatter.sendMessage("hi");
+        }
+
+        @Test
+        void delete_removesMessageFromTargets() {
+            assertThat(chatter.getReceivedMessages()).contains(message);
+            message.delete();
+            assertThat(chatter.getReceivedMessages()).doesNotContain(message);
+        }
+
+        @Test
+        void delete_removesMessageFromUnreadMessages() {
+            final Channel channel = createChannel("test");
+            chatter.subscribe(channel);
+            final Message message = Message.message("test").to(channel).send();
+            assertThat(chatter.getUnreadMessages(channel)).contains(message);
+
+            message.delete();
+            assertThat(chatter.getUnreadMessages(channel)).doesNotContain(message);
+        }
+
+        @Test
+        void delete_removesMessageEverywhere() {
+            final Channel channel = createChannel("test", config -> config.sendToConsole(true).scope(Scopes.global()));
+            chatter.setActiveConversation(channel);
+
+            final Message message = channel.sendMessage("hey");
+            message.delete();
+
+            assertThat(channel.getReceivedMessages()).doesNotContain(message);
+            assertThat(chatter.getReceivedMessages()).doesNotContain(message);
+            assertThat(Console.console().getReceivedMessages()).doesNotContain(message);
+            assertThat(plugin.getBungeecord().getReceivedMessages()).doesNotContain(message);
+        }
     }
 }

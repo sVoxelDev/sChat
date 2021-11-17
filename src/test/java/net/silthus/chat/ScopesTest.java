@@ -19,6 +19,7 @@
 
 package net.silthus.chat;
 
+import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.configmapper.ConfigOption;
 import org.bukkit.configuration.MemoryConfiguration;
@@ -29,8 +30,10 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
-class ScopesTest {
+class ScopesTest extends TestBase {
 
     @Test
     void register_usesTaggedName() {
@@ -70,6 +73,50 @@ class ScopesTest {
                 .contains("test", worlds);
     }
 
+    @Test
+    void scope_withClassName_castsToClass() {
+        Scopes.register(TestScope.class);
+        final TestScope scope = Scopes.scope(TestScope.class);
+
+        assertThat(scope).isNotNull();
+    }
+
+    @Test
+    void onApply_calledWhenScopeIsSetToChannel() {
+        final TestScope scope = setupTestScope();
+        final Channel channel = channelWithScope(scope);
+
+        verify(scope).onApply(channel);
+    }
+
+    @Test
+    void onRemove_calledWhenScopeIsReplaced() {
+        final TestScope scope = setupTestScope();
+        final Channel channel = channelWithScope(scope);
+
+        channel.setConfig(ChannelConfig.builder().scope(Scopes.global()).build());
+        verify(scope).onRemove(channel);
+        assertThat(channel.getConfig().scope()).isNotEqualTo(scope);
+    }
+
+    @Test
+    void close_callsOnRemove() {
+        final TestScope scope = setupTestScope();
+        final Channel channel = channelWithScope(scope);
+
+        channel.close();
+        verify(scope).onRemove(channel);
+    }
+
+    private Channel channelWithScope(TestScope scope) {
+        return createChannel(config -> config.scope(scope));
+    }
+
+    private TestScope setupTestScope() {
+        Scopes.register(TestScope.class);
+        return spy(Scopes.scope(TestScope.class));
+    }
+
     @Scope.Name("foo")
     static class TestScope implements Scope {
 
@@ -79,15 +126,25 @@ class ScopesTest {
         private List<String> worlds = new ArrayList<>();
 
         @Override
-        public Collection<ChatTarget> apply(Channel channel, Message message) {
+        public void onApply(Channel channel) {
+
+        }
+
+        @Override
+        public Collection<ChatTarget> filterTargets(Channel channel, Message message) {
             return new ArrayList<>();
+        }
+
+        @Override
+        public void onRemove(Channel channel) {
+
         }
     }
 
     static class NotAnnotatedScope implements Scope {
 
         @Override
-        public Collection<ChatTarget> apply(Channel channel, Message message) {
+        public Collection<ChatTarget> filterTargets(Channel channel, Message message) {
             return new ArrayList<>();
         }
     }

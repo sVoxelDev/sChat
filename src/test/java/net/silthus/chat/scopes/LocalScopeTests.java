@@ -56,7 +56,7 @@ public class LocalScopeTests extends TestBase {
         Chatter chatter2 = chatterAt(5, 5);
         Chatter notInRange = chatterAt(11, 0);
 
-        Collection<ChatTarget> targets = scope.apply(channel, chatter1.message("hi").to(channel).build());
+        Collection<ChatTarget> targets = scope.filterTargets(channel, chatter1.message("hi").to(channel).build());
 
         assertThat(targets).contains(chatter1, chatter2, Console.console())
                 .doesNotContain(notInRange);
@@ -67,7 +67,7 @@ public class LocalScopeTests extends TestBase {
         Chatter chatter1 = chatterAt(10, 20);
         Chatter chatter2 = chatterAt(100, 200);
 
-        Collection<ChatTarget> targets = scope.apply(channel, Message.message("hi").build());
+        Collection<ChatTarget> targets = scope.filterTargets(channel, Message.message("hi").build());
         assertThat(targets).contains(chatter1, chatter2, Console.console());
     }
 

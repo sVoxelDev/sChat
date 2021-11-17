@@ -19,6 +19,8 @@
 
 package net.silthus.chat.scopes;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Message;
 import net.silthus.chat.Scope;
@@ -31,6 +33,8 @@ import org.bukkit.entity.Player;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+@Data
+@Accessors(fluent = true)
 @Scope.Name("local")
 public final class LocalScope implements Scope {
 
@@ -38,7 +42,7 @@ public final class LocalScope implements Scope {
     int range = 100;
 
     @Override
-    public Collection<ChatTarget> apply(Channel channel, Message message) {
+    public Collection<ChatTarget> filterTargets(Channel channel, Message message) {
         Player source = Bukkit.getPlayer(message.getSource().getUniqueId());
         if (source == null) return channel.getTargets();
         return channel.getTargets().stream()
