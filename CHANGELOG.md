@@ -1,3 +1,11 @@
+# [1.0.0-beta.9](https://github.com/sVoxelDev/sChat/compare/v1.0.0-beta.8...v1.0.0-beta.9) (2021-11-17)
+
+
+### Bug Fixes
+
+* **chat:** console and command blocks cannot chat ([34d0691](https://github.com/sVoxelDev/sChat/commit/34d0691088ff258f442066588e657c77ce595dfd)), closes [#45](https://github.com/sVoxelDev/sChat/issues/45)
+* last active chat not correctly loaded after restart ([06a4703](https://github.com/sVoxelDev/sChat/commit/06a47030ec48cd9da382283e33e4b58524629148))
+
 # [1.0.0-beta.8](https://github.com/sVoxelDev/sChat/compare/v1.0.0-beta.7...v1.0.0-beta.8) (2021-11-17)
 
 
