@@ -24,6 +24,7 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.silthus.chat.Constants;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Locale;
@@ -42,6 +43,10 @@ public class Language {
         this.config = config;
         this.parser = MiniMessage.miniMessage();
         this.locale = locale;
+    }
+
+    public Language commands() {
+        return section(Constants.Language.Commands.BASE_KEY);
     }
 
     public Language section(String key) {

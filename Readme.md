@@ -11,12 +11,14 @@ Supercharge the Minecraft Chat Experience of your Players!
 * [Installation](#installation)
 * [Configuration](#configuration)
 * [Commands](#commands)
-    * [Player Commands](#player-commands)
-    * [Admin Commands](#admin-commands)
+  * [Player Commands](#player-commands)
+  * [Admin Commands](#admin-commands)
 * [Permissions](#permissions)
-    * [Channel Permissions](#channel-permissions)
+  * [Channel Permissions](#channel-permissions)
 * [Plugin Integrations](#plugin-integrations)
-    * [PlaceholderAPI Support](#placeholderapi-support)
+  * [PlaceholderAPI Support](#placeholderapi-support)
+* [Frequently Asked Questions](#frequently-asked-questions)
+  * [Are HEX colors supported?](#are-hex-colors-supported)
 
 ## Installation
 
@@ -61,6 +63,8 @@ e.g. clicking on a channel will set the channel as active*. However, here are th
 | `schat.player.channel.leave` | Allows the player to leave channels. |
 | `schat.player.channel.quickmessage` | Enables the player to send quick messages (`/ch <channel> <message>`) to channels he is allowed to write in. |
 | `schat.player.directmessage` | Allows the player to send direct messages (`/dm <player> <message>`) to other players. |
+| `schat.message.select` | Allows selecting chat messages for moderation or editing. |
+| `schat.message.delete` | Allows deleting chat messages. |
 | `schat.admin` | This permission groups all admin permissions nested under the `schat.admin.*` permissions. OPs get this by default. |
 | `schat.admin.reload` | Allows performing the `/schat reload` command to reload the plugin. |
 

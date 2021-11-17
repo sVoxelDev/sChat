@@ -19,6 +19,7 @@
 
 package net.silthus.chat;
 
+import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.DirectConversation;
 import net.silthus.chat.identities.Chatter;
@@ -206,12 +207,14 @@ class MessageTest extends TestBase {
     @Nested
     class Delete {
 
+        private PlayerMock player;
         private Chatter chatter;
         private Message message;
 
         @BeforeEach
         void setUp() {
-            chatter = Chatter.of(server.addPlayer());
+            player = server.addPlayer();
+            chatter = Chatter.of(player);
             message = chatter.sendMessage("hi");
         }
 
@@ -245,6 +248,20 @@ class MessageTest extends TestBase {
             assertThat(chatter.getReceivedMessages()).doesNotContain(message);
             assertThat(Console.console().getReceivedMessages()).doesNotContain(message);
             assertThat(plugin.getBungeecord().getReceivedMessages()).doesNotContain(message);
+        }
+
+        @Test
+        void delete_updatesView() {
+            final Channel channel = createChannel("test", config -> config.sendToConsole(true).scope(Scopes.global()));
+            chatter.setActiveConversation(channel);
+            final PlayerMock player2 = server.addPlayer();
+            final Chatter chatter2 = Chatter.of(player2);
+            chatter2.setActiveConversation(channel);
+            final Message message = channel.sendMessage("foobar");
+
+            message.delete();
+            assertThat(cleaned(getLastMessage(player))).doesNotContain("foobar");
+            assertThat(cleaned(getLastMessage(player2))).doesNotContain("foobar");
         }
     }
 }

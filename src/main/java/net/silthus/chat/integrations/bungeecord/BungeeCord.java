@@ -78,11 +78,10 @@ public class BungeeCord extends AbstractChatTarget implements PluginMessageListe
 
     @Override
     public boolean deleteMessage(Message message) {
-        if (super.deleteMessage(message)) {
+        final boolean deleted = super.deleteMessage(message);
+        if (deleted)
             sendPluginMessage(forwardToAllServers(DELETE_MESSAGE), json(new MessageDto(message)));
-            return true;
-        }
-        return false;
+        return deleted;
     }
 
     @Override

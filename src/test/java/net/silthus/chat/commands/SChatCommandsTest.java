@@ -51,6 +51,8 @@ class SChatCommandsTest extends TestBase {
         player.addAttachment(plugin, Constants.PERMISSION_PLAYER_CHANNEL_LEAVE, true);
         player.addAttachment(plugin, Constants.PERMISSION_PLAYER_CHANNEL_QUICKMESSAGE, true);
         player.addAttachment(plugin, Constants.PERMISSION_PLAYER_DIRECT_MESSAGE, true);
+        player.addAttachment(plugin, Constants.PERMISSION_SELECT_MESSAGE, true);
+        player.addAttachment(plugin, Constants.PERMISSION_MESSAGE_DELETE, true);
     }
 
     @Test
@@ -175,10 +177,10 @@ class SChatCommandsTest extends TestBase {
         @Test
         void directMessage_toOpenConversation() {
             PlayerMock player1 = server.addPlayer();
-            player.performCommand("message Player1");
+            Chatter target = Chatter.of(player1);
+            player.performCommand(Constants.Commands.PRIVATE_MESSAGE.apply(target).replace("/", ""));
 
             Chatter sender = Chatter.of(player);
-            Chatter target = Chatter.of(player1);
             assertThat(sender.getActiveConversation())
                     .isNotNull()
                     .isInstanceOf(DirectConversation.class)
@@ -194,6 +196,67 @@ class SChatCommandsTest extends TestBase {
             player.performCommand("dm Player0");
 
             assertThat(cleaned(player.nextMessage())).isEqualTo("You can't send messages to yourself.");
+        }
+    }
+
+    @Nested
+    class MessageModeration {
+
+        private Chatter chatter;
+        private Message message;
+
+        @BeforeEach
+        void setUp() {
+            chatter = Chatter.of(player);
+            message = chatter.sendMessage("hi");
+        }
+
+        @Test
+        void selectMessage_selectsMessageInView() {
+            selectMessage();
+            assertThat(chatter.getView().selectedMessage())
+                    .isPresent().get()
+                    .isEqualTo(message);
+            assertThat(cleaned(getLastMessage(player))).contains("> hi")
+                    .contains(" [Delete]  [Abort] ");
+        }
+
+        @Test
+        void selectMessage_again_deselectsMessage() {
+            selectMessage();
+            selectMessage();
+            assertThat(chatter.getView().selectedMessage()).isEmpty();
+            assertThat(toCleanText(chatter.getView().footer())).doesNotContain("[Abort]");
+        }
+
+        @Test
+        void selectMessage_setsFooterTextToModerationMode() {
+            selectMessage();
+            assertThat(toCleanText(chatter.getView().footer()))
+                    .contains("[Delete]  [Abort]");
+        }
+
+        @Test
+        void selectMessage_onlyShowsButtonWithPermission() {
+            final PlayerMock player = server.addPlayer();
+            Chatter.of(player).sendMessage(message);
+            player.addAttachment(plugin, Constants.PERMISSION_SELECT_MESSAGE, true);
+            player.performCommand("schat message select " + message.getId());
+            assertThat(cleaned(getLastMessage(player))).doesNotContain("[Delete]");
+        }
+
+        @Test
+        void delete_removesMessage() {
+            selectMessage();
+            player.performCommand("schat message delete " + message.getId());
+            assertThat(chatter.getReceivedMessages()).doesNotContain(message);
+            assertThat(cleaned(getLastMessage(player)))
+                    .doesNotContain("hi")
+                    .doesNotContain("[Abort]");
+        }
+
+        private void selectMessage() {
+            player.performCommand("schat message select " + message.getId());
         }
     }
 

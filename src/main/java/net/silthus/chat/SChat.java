@@ -20,6 +20,7 @@
 package net.silthus.chat;
 
 import co.aikar.commands.InvalidCommandArgument;
+import co.aikar.commands.MessageKeys;
 import co.aikar.commands.PaperCommandManager;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -240,6 +241,7 @@ public final class SChat extends JavaPlugin {
         registerChatterContext(commandManager);
         registerChannelContext(commandManager);
         registerConversationContext(commandManager);
+        registerMessageContext(commandManager);
 
         registerChannelCompletion(commandManager);
         registerChatterCompletion(commandManager);
@@ -290,6 +292,20 @@ public final class SChat extends JavaPlugin {
 
     private void registerConversationContext(PaperCommandManager commandManager) {
         commandManager.getCommandContexts().registerContext(Conversation.class, context -> getConversationManager().getConversation(UUID.fromString(context.popFirstArg())));
+    }
+
+    private void registerMessageContext(PaperCommandManager commandManager) {
+        commandManager.getCommandContexts().registerIssuerAwareContext(Message.class, context -> {
+            try {
+                final Chatter chatter = Chatter.of(context.getPlayer());
+                final Optional<Message> optionalMessage = chatter.getMessage(UUID.fromString(context.popFirstArg()));
+                if (optionalMessage.isEmpty())
+                    throw new InvalidCommandArgument(MessageKeys.UNKNOWN_COMMAND);
+                return optionalMessage.get();
+            } catch (IllegalArgumentException e) {
+                throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
+            }
+        });
     }
 
     private void registerChannelCompletion(PaperCommandManager commandManager) {

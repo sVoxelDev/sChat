@@ -138,13 +138,18 @@ public abstract class TestBase {
     }
 
     protected void assertLastReceivedMessage(PlayerMock player, String message) {
+        final String lastMessage = getLastMessage(player);
+        assertThat(lastMessage).isNotNull();
+        assertThat(cleaned(lastMessage)).startsWith(message);
+    }
+
+    protected String getLastMessage(PlayerMock player) {
         String nextMessage;
         String lastMessage = null;
         while ((nextMessage = player.nextMessage()) != null) {
             lastMessage = nextMessage;
         }
-        assertThat(lastMessage).isNotNull();
-        assertThat(cleaned(lastMessage)).startsWith(message);
+        return lastMessage;
     }
 
     protected Channel createChannel(Function<ChannelConfig, ChannelConfig> cfg) {
