@@ -53,6 +53,7 @@ public final class Constants {
     public static final String PERMISSION_ADMIN_OTHERS = "schat.admin.others";
     public static final String PERMISSION_NICKNAME_SET = "schat.nickname.set";
     public static final String PERMISSION_NICKNAME_SET_OTHERS = "schat.nickname.set.others";
+    public static final String PERMISSION_NICKNAME_SET_BLOCKED = "schat.nickname.set.blocked";
 
     public static class Targets {
 

@@ -46,6 +46,14 @@ class NicknameCommandsTest extends TestBase {
     }
 
     @Test
+    void nick_canBypassBlockedWithPermission() {
+        player.addAttachment(plugin, Constants.PERMISSION_NICKNAME_SET_BLOCKED, true);
+        player.performCommand("nickname Administrator");
+        assertThat(getLastMessage(player)).doesNotContain("cannot be used");
+        assertThat(player.getDisplayName()).isEqualTo("Administrator");
+    }
+
+    @Test
     void nick_blocksNamesInBlacklist() {
         player.performCommand("nick nOtcH");
         assertThat(getLastMessage(player)).contains("cannot be used");

@@ -17,8 +17,7 @@ import java.util.regex.Pattern;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.silthus.chat.Constants.Language.Commands.Nicknames.*;
-import static net.silthus.chat.Constants.PERMISSION_NICKNAME_SET;
-import static net.silthus.chat.Constants.PERMISSION_NICKNAME_SET_OTHERS;
+import static net.silthus.chat.Constants.*;
 
 @CommandAlias("nickname|nick")
 public class NicknameCommands extends BaseCommand {
@@ -52,7 +51,8 @@ public class NicknameCommands extends BaseCommand {
     }
 
     private void validateAndSetNickname(Chatter chatter, String name) {
-        validateNickname(name);
+        if (!getCurrentCommandIssuer().hasPermission(PERMISSION_NICKNAME_SET_BLOCKED))
+            validateNickname(name);
         setNickname(chatter, name);
     }
 
