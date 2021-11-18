@@ -12,8 +12,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.silthus.chat.Constants.Language.Commands.Nicknames.*;
@@ -83,8 +83,11 @@ public class NicknameCommands extends BaseCommand {
     }
 
     private void validateBlockedNicknames(String name) {
-        List<String> blockedNickNames = plugin.getPluginConfig().player().blockedNickNames();
-        if (blockedNickNames.stream().anyMatch(name::equalsIgnoreCase))
+        boolean nicknameIsBlocked = plugin.getPluginConfig().player().blockedNickNames()
+                .stream().map(s -> Pattern.compile(s, Pattern.CASE_INSENSITIVE))
+                .map(pattern -> pattern.matcher(name))
+                .anyMatch(Matcher::matches);
+        if (nicknameIsBlocked)
             throw new ConditionFailedException(key(BLOCKED), "{nickname}", name);
     }
 
