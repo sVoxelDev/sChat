@@ -6,10 +6,12 @@ players:
   # Set a regular expression of allowed nicknames.
   # This defaults to the allowed Minecraft nicknames.
   nickname_pattern: "[a-zA-Z0-9_]{3,16}"
-  # Players without the schat.nickname.allow-blocked cannot use these nicknames.
+  # Players without the schat.nickname.set.blocked cannot use these nicknames.
   # The names are matched case-insensitive. nOtcH will be blocked as well.
+  # You can also use regular expressions to block nicknames. The expressions are matched case-insensitive as well.
   blocked_nicknames:
     - Notch
+    - .*admin.*
 # You can fine tune the behaviour of the console chat in this section.
 console:
   # Set the name players see when chatting from the console.

@@ -40,6 +40,12 @@ class NicknameCommandsTest extends TestBase {
     }
 
     @Test
+    void nick_isBlockedIfMatchesBlockPattern() {
+        player.performCommand("nickname Administrator");
+        assertThat(getLastMessage(player)).contains("cannot be used");
+    }
+
+    @Test
     void nick_blocksNamesInBlacklist() {
         player.performCommand("nick nOtcH");
         assertThat(getLastMessage(player)).contains("cannot be used");
