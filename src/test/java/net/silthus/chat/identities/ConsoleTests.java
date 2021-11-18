@@ -31,9 +31,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.silthus.chat.config.ConsoleConfig.consoleDefaults;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.mock;
 
 public class ConsoleTests {
 
@@ -65,7 +65,7 @@ public class ConsoleTests {
         @Test
         void init_twice_throws() {
             assertThatExceptionOfType(UnsupportedOperationException.class)
-                    .isThrownBy(() -> Console.init(mock(ConsoleConfig.class)));
+                    .isThrownBy(() -> Console.init(consoleDefaults()));
         }
 
         @Test

@@ -152,7 +152,7 @@ public abstract class TestBase {
         return lastMessage;
     }
 
-    protected Channel createChannel(Function<ChannelConfig, ChannelConfig> cfg) {
+    protected Channel createChannel(Function<ChannelConfig.ChannelConfigBuilder, ChannelConfig.ChannelConfigBuilder> cfg) {
         return createChannel(RandomStringUtils.randomAlphabetic(10), cfg);
     }
 
@@ -160,8 +160,8 @@ public abstract class TestBase {
         return createChannel(identifier, config -> config);
     }
 
-    protected Channel createChannel(String identifier, Function<ChannelConfig, ChannelConfig> cfg) {
-        return cfg.apply(ChannelConfig.defaults()).toChannel(identifier);
+    protected Channel createChannel(String identifier, Function<ChannelConfig.ChannelConfigBuilder, ChannelConfig.ChannelConfigBuilder> cfg) {
+        return cfg.apply(ChannelConfig.builder()).build().toChannel(identifier);
     }
 
     protected String toText(Component component) {

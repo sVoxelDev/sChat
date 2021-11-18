@@ -42,7 +42,7 @@ class LanguageTest extends TestBase {
     void get_parsesLanguageAsMiniMessageFormat() {
         final MemoryConfiguration cfg = new MemoryConfiguration();
         cfg.set("test", "<gray>Hi there!");
-        final Language language = new Language(cfg, Locale.ENGLISH);
+        final Language language = Language.language(cfg, Locale.ENGLISH);
         assertThat(language.get("test")).isEqualTo(text("Hi there!").color(NamedTextColor.GRAY));
     }
 }

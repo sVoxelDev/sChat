@@ -107,7 +107,7 @@ public final class SChat extends JavaPlugin {
         reloadConfig();
 
         final PluginConfig oldConfig = getPluginConfig();
-        pluginConfig = PluginConfig.fromConfig(getConfig());
+        pluginConfig = PluginConfig.config(getConfig());
 
         if (oldConfig.equals(pluginConfig)) return;
 
@@ -153,13 +153,13 @@ public final class SChat extends JavaPlugin {
     private void setupAndLoadConfigs() {
         saveDefaultConfig();
         saveResource("config.default.yml", true);
-        pluginConfig = PluginConfig.fromConfig(getConfig());
+        pluginConfig = PluginConfig.config(getConfig());
     }
 
     private void setupAndLoadLanguage() {
         final String languageConfig = getPluginConfig().languageConfig();
         saveResource(languageConfig, true);
-        this.language = new Language(YamlConfiguration.loadConfiguration(new File(getDataFolder(), languageConfig)),
+        this.language = Language.language(YamlConfiguration.loadConfiguration(new File(getDataFolder(), languageConfig)),
                 Locale.forLanguageTag(languageConfig.replace("languages/", "").replace(".yaml", "")));
     }
 

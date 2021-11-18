@@ -66,6 +66,15 @@ class SChatCommandsTest extends TestBase {
     }
 
     @Nested
+    class NickNameCommands {
+
+        @Test
+        void nick_changesTheChattersDisplayName() {
+            player.performCommand("nick Cool");
+        }
+    }
+
+    @Nested
     class ChannelCommands {
 
         @Test

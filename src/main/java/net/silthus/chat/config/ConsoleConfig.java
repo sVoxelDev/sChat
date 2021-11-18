@@ -27,20 +27,30 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import static net.kyori.adventure.text.Component.text;
 
-@Data
-@Builder
-@NoArgsConstructor
+@Value
+@With
+@Builder(toBuilder = true)
 @Accessors(fluent = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConsoleConfig {
 
-    @Builder.Default
-    private Component name = text("Console");
-    @Builder.Default
-    private String defaultChannel = "global";
+    public static ConsoleConfig consoleConfig(ConfigurationSection config) {
+        return consoleDefaults().withConfig(config).build();
+    }
 
-    ConsoleConfig(@NonNull ConfigurationSection config) {
-        this.name = MiniMessage.miniMessage().deserialize(config.getString("name", "Console"));
-        this.defaultChannel = config.getString("default_channel", defaultChannel);
+    public static ConsoleConfig consoleDefaults() {
+        return builder().build();
+    }
+
+    @Builder.Default
+    Component name = text("Console");
+    @Builder.Default
+    String defaultChannel = "global";
+
+    public ConsoleConfig.ConsoleConfigBuilder withConfig(ConfigurationSection config) {
+        if (config == null) return toBuilder();
+        return toBuilder()
+                .name(MiniMessage.miniMessage().deserialize(config.getString("name", "Console")))
+                .defaultChannel(config.getString("default_channel", defaultChannel));
     }
 }

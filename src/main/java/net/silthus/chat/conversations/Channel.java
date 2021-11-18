@@ -43,7 +43,7 @@ public class Channel extends AbstractConversation implements ChatSource {
     private ChannelConfig config;
 
     Channel(String identifier) {
-        this(identifier, ChannelConfig.defaults());
+        this(identifier, ChannelConfig.channelDefaults());
     }
 
     Channel(String identifier, ChannelConfig config) {

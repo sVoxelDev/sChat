@@ -19,7 +19,7 @@
 
 package net.silthus.chat.config;
 
-import lombok.Getter;
+import lombok.Value;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -31,15 +31,19 @@ import java.util.Locale;
 
 import static net.kyori.adventure.text.Component.text;
 
+@Value
 @Accessors(fluent = true)
 public class Language {
 
-    private final ConfigurationSection config;
-    private final MiniMessage parser;
-    @Getter
-    private final Locale locale;
+    public static Language language(ConfigurationSection config, Locale locale) {
+        return new Language(config, locale);
+    }
 
-    public Language(ConfigurationSection config, Locale locale) {
+    ConfigurationSection config;
+    MiniMessage parser;
+    Locale locale;
+
+    private Language(ConfigurationSection config, Locale locale) {
         this.config = config;
         this.parser = MiniMessage.miniMessage();
         this.locale = locale;

@@ -24,73 +24,75 @@ import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
 import net.silthus.chat.Constants;
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNullElseGet;
 import static java.util.stream.Collectors.toMap;
+import static net.silthus.chat.config.ChannelConfig.channelConfig;
+import static net.silthus.chat.config.ChannelConfig.channelDefaults;
+import static net.silthus.chat.config.ConsoleConfig.consoleConfig;
+import static net.silthus.chat.config.ConsoleConfig.consoleDefaults;
+import static net.silthus.chat.config.PrivateChatConfig.privateChatDefaults;
 
-@Data
-@Builder
+@Value
+@With
+@Builder(toBuilder = true)
 @Accessors(fluent = true)
 @Log(topic = Constants.PLUGIN_NAME)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PluginConfig {
 
-    public static PluginConfig fromConfig(ConfigurationSection config) {
-        return new PluginConfig(config);
+    public static PluginConfig config(ConfigurationSection config) {
+        return configDefaults().withConfig(config).build();
     }
 
-    private final String languageConfig;
-    private final Defaults defaults;
-    private final ConsoleConfig console;
-    private final PrivateChatConfig privateChat;
+    public static PluginConfig configDefaults() {
+        return builder().build();
+    }
+
+    @Builder.Default
+    String languageConfig = "languages/en.yaml";
+    @Builder.Default
+    Defaults defaults = new Defaults(channelDefaults());
+    @Builder.Default
+    ConsoleConfig console = consoleDefaults();
+    @Builder.Default
+    PrivateChatConfig privateChat = privateChatDefaults();
     @Singular
-    private final Map<String, ChannelConfig> channels;
+    Map<String, ChannelConfig> channels;
 
-    private PluginConfig(@NonNull ConfigurationSection config) {
-        this.languageConfig = "languages/" + config.getString("language", "en") + ".yaml";
-        this.defaults = loadDefaults(config.getConfigurationSection("defaults"));
-        this.console = loadConsoleConfig(config.getConfigurationSection("console"));
-        this.privateChat = loadPrivateChatConfig(config.getConfigurationSection("private_chats"));
-        this.channels = loadChannels(config.getConfigurationSection("channels"));
+    public PluginConfig.PluginConfigBuilder withConfig(ConfigurationSection config) {
+        return toBuilder()
+                .languageConfig(loadLanguage(config))
+                .defaults(loadDefaults(getSection(config, "defaults")))
+                .console(consoleConfig(getSection(config, "console")))
+                .privateChat(PrivateChatConfig.privateChat(getSection(config, "private_chats")))
+                .channelsFromConfig(getSection(config, "channels"));
     }
 
-    private Defaults loadDefaults(ConfigurationSection config) {
-        if (config == null) {
-            warnSectionNotDefined("defaults");
-            return new Defaults(ChannelConfig.defaults());
-        }
-        return new Defaults(ChannelConfig.of(requireNonNullElseGet(config.getConfigurationSection("channel"), () -> config.createSection("channel"))));
+    private String loadLanguage(ConfigurationSection config) {
+        if (!config.isSet("language"))
+            warnSectionNotDefined("language");
+        return "languages/" + config.getString("language", "en") + ".yaml";
     }
 
-    private ConsoleConfig loadConsoleConfig(ConfigurationSection config) {
-        if (config == null) {
-            warnSectionNotDefined("console");
-            return new ConsoleConfig();
-        }
-        return new ConsoleConfig(config);
+    private Defaults loadDefaults(@NonNull ConfigurationSection config) {
+        return new Defaults(channelConfig(getSection(config, "channel")));
     }
 
-    private PrivateChatConfig loadPrivateChatConfig(ConfigurationSection config) {
-        if (config == null) {
-            warnSectionNotDefined("private_chats");
-            return new PrivateChatConfig();
-        }
-        return new PrivateChatConfig(config);
+    @NotNull
+    private ConfigurationSection getSection(@NonNull ConfigurationSection config, String section) {
+        return requireNonNullElseGet(
+                config.getConfigurationSection(section),
+                () -> warnAndDefault(config.getCurrentPath() + "." + section, config.createSection(section))
+        );
     }
 
-    private Map<String, ChannelConfig> loadChannels(ConfigurationSection config) {
-        if (config == null) {
-            warnSectionNotDefined("channels");
-            return new HashMap<>();
-        }
-        return config.getKeys(false).stream()
-                .collect(toMap(
-                        key -> key,
-                        key -> defaults.channel.withConfig(config.getConfigurationSection(key)).build()
-                ));
+    private <TConfig> TConfig warnAndDefault(String section, TConfig defaultValue) {
+        warnSectionNotDefined(section);
+        return defaultValue;
     }
 
     private void warnSectionNotDefined(String section) {
@@ -99,5 +101,21 @@ public class PluginConfig {
 
     public record Defaults(ChannelConfig channel) {
 
+    }
+
+    public static class PluginConfigBuilder {
+
+        private PluginConfigBuilder channelsFromConfig(ConfigurationSection config) {
+            return channels(loadChannels(config));
+        }
+
+        private Map<String, ChannelConfig> loadChannels(@NonNull ConfigurationSection config) {
+            final Defaults defaults = defaults$set ? defaults$value : $default$defaults();
+            return config.getKeys(false).stream()
+                    .collect(toMap(
+                            key -> key,
+                            key -> defaults.channel.withConfig(config.getConfigurationSection(key)).build()
+                    ));
+        }
     }
 }

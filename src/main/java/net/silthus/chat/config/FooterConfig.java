@@ -19,31 +19,29 @@
 
 package net.silthus.chat.config;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
 import org.bukkit.configuration.ConfigurationSection;
 
 @Log
-@Data
+@Value
+@With
 @Builder(toBuilder = true)
 @Accessors(fluent = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class FooterConfig {
 
-    public static FooterConfig defaults() {
+    public static FooterConfig defaultFooter() {
         return FooterConfig.builder().build();
     }
 
-    public static FooterConfig fromConfig(ConfigurationSection config) {
-        return defaults().withConfig(config).build();
+    public static FooterConfig footerConfig(ConfigurationSection config) {
+        return defaultFooter().withConfig(config).build();
     }
 
     @Builder.Default
-    private boolean enabled = true;
+    boolean enabled = true;
 
     FooterConfig.FooterConfigBuilder withConfig(ConfigurationSection config) {
         if (config == null) return toBuilder();
