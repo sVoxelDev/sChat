@@ -60,15 +60,15 @@ class ChannelConfigTest extends TestBase {
                 .scope(new GlobalScope())
                 .footer(FooterConfig.builder().enabled(false).build())
                 .build();
-        ChannelConfig config = ChannelConfig.of(cfg);
+        ChannelConfig config = ChannelConfig.channelConfig(cfg);
         assertThat(config).isEqualTo(expected);
     }
 
     @Test
     void toChannel_createsChannelWithConfig() {
 
-        Channel channel = ChannelConfig.defaults()
-                .name("Test 1")
+        Channel channel = ChannelConfig.channelDefaults()
+                .withName("Test 1")
                 .toChannel("test");
         assertThat(channel)
                 .extracting(
@@ -84,7 +84,7 @@ class ChannelConfigTest extends TestBase {
     void nullFormat_usesDefaultFormat() {
 
         MemoryConfiguration cfg = new MemoryConfiguration();
-        ChannelConfig config = ChannelConfig.of(cfg);
+        ChannelConfig config = ChannelConfig.channelConfig(cfg);
 
         Component component = Message.message(ChatSource.named("source"), "test")
                 .format(config.format())
@@ -103,7 +103,7 @@ class ChannelConfigTest extends TestBase {
         MemoryConfiguration cfg = new MemoryConfiguration();
         cfg.set("scope", "world");
         cfg.set("worlds", worlds);
-        ChannelConfig config = ChannelConfig.of(cfg);
+        ChannelConfig config = ChannelConfig.channelConfig(cfg);
 
         assertThat(config.scope())
                 .isNotNull().isInstanceOf(WorldScope.class)
@@ -116,7 +116,7 @@ class ChannelConfigTest extends TestBase {
         MemoryConfiguration cfg = new MemoryConfiguration();
         cfg.set("scope", "local");
         cfg.set("range", 20);
-        ChannelConfig config = ChannelConfig.of(cfg);
+        ChannelConfig config = ChannelConfig.channelConfig(cfg);
 
         assertThat(config.scope())
                 .isInstanceOf(LocalScope.class)

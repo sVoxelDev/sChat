@@ -235,7 +235,7 @@ public class ChannelTests extends TestBase {
 
     @Test
     void sendMessage_storesFormattedChannelMessage() {
-        Channel channel = Channel.channel("test", ChannelConfig.defaults().format(Format.miniMessage("[<channel_name]<sender_name>: <message>")));
+        Channel channel = createChannel("test", config -> config.format(Format.miniMessage("[<channel_name]<sender_name>: <message>")));
         Message message = ChatSource.named("test").message("test").to(channel).send();
 
         assertThat(channel.getLastReceivedMessage())
@@ -483,7 +483,7 @@ public class ChannelTests extends TestBase {
             cfg.set("protect", true);
             cfg.set("auto_join", true);
 
-            Channel channel = Channel.channel("config-test", ChannelConfig.of(cfg));
+            Channel channel = Channel.channel("config-test", ChannelConfig.channelConfig(cfg));
 
             assertThat(channel.getDisplayName()).isEqualTo(text("Test"));
             assertThat(channel.getConfig())

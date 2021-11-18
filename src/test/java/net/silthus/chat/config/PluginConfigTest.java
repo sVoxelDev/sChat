@@ -27,13 +27,14 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 
 class PluginConfigTest extends TestBase {
 
     @Test
     void create() {
         YamlConfiguration file = YamlConfiguration.loadConfiguration(new File("src/main/resources/config.yml"));
-        PluginConfig config = PluginConfig.fromConfig(file);
+        PluginConfig config = PluginConfig.config(file);
 
         assertThat(config.channels())
                 .hasSizeGreaterThanOrEqualTo(1)
@@ -46,11 +47,23 @@ class PluginConfigTest extends TestBase {
                 .isEqualTo("global");
     }
 
+    // adjust the 'config.yml' defaults... values or the default properties in the config object if this test fails
     @Test
-        // adjust the 'config.yml' defaults... values or the default properties in the config object if this test fails
     void defaultValues() {
         PluginConfig config = plugin.getPluginConfig();
         assertThat(config.defaults().channel())
-                .isEqualTo(ChannelConfig.of(new MemoryConfiguration()));
+                .isEqualTo(ChannelConfig.channelConfig(new MemoryConfiguration()));
+    }
+
+    @Test
+    void withDifferentDefaultValues() {
+        final MemoryConfiguration cfg = new MemoryConfiguration();
+        cfg.set("defaults.channel.protect", true);
+        cfg.set("channels.test.name", "Test");
+        final PluginConfig pluginConfig = PluginConfig.config(cfg);
+
+        assertThat(pluginConfig.defaults().channel().protect()).isTrue();
+        assertThat(pluginConfig.channels())
+                .containsOnly(entry("test", ChannelConfig.builder().protect(true).name("Test").build()));
     }
 }

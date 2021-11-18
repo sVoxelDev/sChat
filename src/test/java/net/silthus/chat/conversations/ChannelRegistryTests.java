@@ -70,7 +70,7 @@ public class ChannelRegistryTests extends TestBase {
 
     @Test
     void add_addsChannelToRegistry() {
-        Channel channel = Channel.channel("foo", ChannelConfig.defaults()
+        Channel channel = createChannel("foo", config -> config
                 .name("Test")
                 .format(Format.defaultFormat()));
         registry.add(channel);
@@ -318,7 +318,7 @@ public class ChannelRegistryTests extends TestBase {
         @Test
         void load_registersSystemChannel_ifConfigured() {
             MemoryConfiguration cfg = new MemoryConfiguration();
-            PluginConfig config = PluginConfig.fromConfig(cfg);
+            PluginConfig config = PluginConfig.config(cfg);
 
             registry.load(config);
         }
@@ -359,11 +359,11 @@ public class ChannelRegistryTests extends TestBase {
             MemoryConfiguration cfg = new MemoryConfiguration();
             cfg.set("channels.test1.name", "Test 1");
             cfg.set("channels.test2.name", "Test 2");
-            registry.load(PluginConfig.fromConfig(cfg));
+            registry.load(PluginConfig.config(cfg));
         }
 
         private void loadFromEmptyChannelConfig() {
-            registry.load(PluginConfig.fromConfig(new MemoryConfiguration()));
+            registry.load(PluginConfig.config(new MemoryConfiguration()));
         }
 
         private PluginConfig channelConfigBefore() {

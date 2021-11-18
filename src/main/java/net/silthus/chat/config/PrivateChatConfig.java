@@ -19,19 +19,31 @@
 
 package net.silthus.chat.config;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
+import lombok.Value;
+import lombok.With;
 import lombok.experimental.Accessors;
 import org.bukkit.configuration.ConfigurationSection;
 
-@Data
-@NoArgsConstructor
+@Value
+@With
+@Builder(toBuilder = true)
 @Accessors(fluent = true)
 public class PrivateChatConfig {
 
-    private boolean global = true;
+    public static PrivateChatConfig privateChat(ConfigurationSection config) {
+        return privateChatDefaults().withConfig(config).build();
+    }
 
-    PrivateChatConfig(ConfigurationSection config) {
-        this.global = config.getBoolean("global", global);
+    public static PrivateChatConfig privateChatDefaults() {
+        return builder().build();
+    }
+
+    @Builder.Default
+    boolean global = true;
+
+    public PrivateChatConfig.PrivateChatConfigBuilder withConfig(ConfigurationSection config) {
+        return toBuilder()
+                .global(config.getBoolean("global", global));
     }
 }
