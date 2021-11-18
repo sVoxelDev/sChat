@@ -45,7 +45,13 @@ e.g. clicking on a channel will set the channel as active*. However, here are th
 | `/schat channel join <channel>` | `/ch <channel>` | `schat.player.channel.join` | Joins the given channel or sets it as active channel. |
 | `/schat channel leave <channel>` | `/leave <channel>` | `schat.player.channel.leave` | Leaves the given channel. |
 | `/schat channel message <channel> <message>` | `/ch <channel> <message>` | `schat.player.channel.quickmessage` | Sends a message to the given channel without switching to it. |
-| `/tell <player> [message]` | `/m`, `/w`, `/msg`, `/pm`, `/qm`, `/dm` | `schat.player.directmessage` | Sends a message to the given player or opens the conversation. |
+| | | | |
+| `/schat message send <player> [message]` | `/tell`, `/m`, `/w`, `/msg`, `/pm`, `/qm`, `/dm` | `schat.player.directmessage` | Sends a message to the given player or opens the conversation. |
+| | | | |
+| `/nickname set <name>` | `/nick <name>` | `schat.nickname.set` | Sets the nickname to the given name. |
+| `/nickname set <player> <name>` | `/nick <player> <name>` | `schat.nickname.set.others` | Sets the nickname of another player to the given name. |
+| `/nickname reset` | `/nick reset` | `schat.nickname.set` | Resets the nickname to the real player name. |
+| `/nickname reset <player>` | `/nick reset <player>` | `schat.nickname.set.others` | Resets the nickname of another player to the real player name. |
 
 ### Admin Commands
 
@@ -63,10 +69,15 @@ e.g. clicking on a channel will set the channel as active*. However, here are th
 | `schat.player.channel.leave` | Allows the player to leave channels. |
 | `schat.player.channel.quickmessage` | Enables the player to send quick messages (`/ch <channel> <message>`) to channels he is allowed to write in. |
 | `schat.player.directmessage` | Allows the player to send direct messages (`/dm <player> <message>`) to other players. |
-| `schat.message.select` | Allows selecting chat messages for moderation or editing. |
-| `schat.message.delete` | Allows deleting chat messages. |
+| | |
 | `schat.admin` | This permission groups all admin permissions nested under the `schat.admin.*` permissions. OPs get this by default. |
 | `schat.admin.reload` | Allows performing the `/schat reload` command to reload the plugin. |
+| | |
+| `schat.message.select` | Allows selecting chat messages for moderation or editing. |
+| `schat.message.delete` | Allows deleting chat messages. |
+| | |
+| `schat.nickname.set` | Allows setting a nickname with `/nick`. |
+| `schat.nickname.set.others` | Allows to set the nickname of other players with `/nick <player> <name>`. |
 
 ### Channel Permissions
 

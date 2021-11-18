@@ -19,9 +19,7 @@
 
 package net.silthus.chat;
 
-import co.aikar.commands.InvalidCommandArgument;
-import co.aikar.commands.MessageKeys;
-import co.aikar.commands.PaperCommandManager;
+import co.aikar.commands.*;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.google.common.base.Strings;
@@ -32,6 +30,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.milkbowl.vault.chat.Chat;
+import net.silthus.chat.commands.NicknameCommands;
 import net.silthus.chat.commands.SChatCommands;
 import net.silthus.chat.config.Language;
 import net.silthus.chat.config.PluginConfig;
@@ -54,6 +53,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
@@ -247,6 +247,7 @@ public final class SChat extends JavaPlugin {
         loadCommandLocales(commandManager);
 
         commandManager.registerCommand(new SChatCommands(this));
+        commandManager.registerCommand(new NicknameCommands(this));
     }
 
     private void registerChannelContext(PaperCommandManager commandManager) {
@@ -259,34 +260,58 @@ public final class SChat extends JavaPlugin {
 
     private void registerChatterContext(PaperCommandManager commandManager) {
         commandManager.getCommandContexts().registerIssuerAwareContext(Chatter.class, context -> {
-            if (!(context.getSender() instanceof Player))
+            if (selectSelf(context))
                 return Chatter.commandSender(context.getSender());
-            if (context.hasFlag("self"))
-                return Chatter.player(context.getPlayer());
 
             String arg = context.popFirstArg();
-            Player player;
-            if (isEntitySelector(arg)) {
-                player = selectPlayer(context.getSender(), arg);
-            } else {
-                if (Strings.isNullOrEmpty(arg)) {
-                    return Chatter.player(context.getPlayer());
-                }
-                try {
-                    return getChatterManager().getChatter(UUID.fromString(arg));
-                } catch (Exception e) {
-                    Optional<Chatter> chatter = getChatterManager().getChatter(arg);
-                    if (chatter.isPresent()) return chatter.get();
-                    player = Bukkit.getPlayerExact(arg);
-                }
-            }
-
-            if (player == null) {
+            Player player = getPlayer(context, arg);
+            if (player == null)
                 throw new InvalidCommandArgument("The player '" + arg + "' was not found.");
-            }
+
+            validatePermissionForOthers(context, player);
 
             return Chatter.player(player);
         });
+    }
+
+    private boolean selectSelf(BukkitCommandExecutionContext context) {
+        return context.hasFlag("self") || defaultsToSelf(context) || noPermissionForOthers(context);
+    }
+
+    private boolean defaultsToSelf(BukkitCommandExecutionContext context) {
+        return Strings.isNullOrEmpty(context.getFirstArg()) && context.hasFlag("defaultself");
+    }
+
+    private boolean noPermissionForOthers(BukkitCommandExecutionContext context) {
+        boolean selectOthers = context.hasFlag("other");
+        if (!selectOthers) return false;
+        validatePermissionForOthers(context, getPlayer(context, context.getFirstArg()));
+        return !context.getIssuer().hasPermission(context.getFlagValue("other", Constants.PERMISSION_ADMIN_OTHERS));
+    }
+
+    @Nullable
+    private Player getPlayer(BukkitCommandExecutionContext context, String arg) {
+        if (isEntitySelector(arg))
+            return selectPlayer(context.getSender(), arg);
+        return findPlayer(context, arg);
+    }
+
+    @Nullable
+    private Player findPlayer(BukkitCommandExecutionContext context, String arg) {
+        try {
+            return Bukkit.getPlayer(UUID.fromString(arg));
+        } catch (Exception e) {
+            return ACFBukkitUtil.findPlayerSmart(context.getIssuer(), arg);
+        }
+    }
+
+    private void validatePermissionForOthers(BukkitCommandExecutionContext context, Player player) {
+        if (player == null) return;
+        boolean hasOtherFlag = context.hasFlag("other");
+        boolean isOther = hasOtherFlag && !Objects.equals(player, context.getPlayer());
+        String otherPermission = context.getFlagValue("other", Constants.PERMISSION_ADMIN_OTHERS);
+        if (isOther && !context.getIssuer().hasPermission(otherPermission))
+            throw new ConditionFailedException(MessageKeys.PERMISSION_DENIED);
     }
 
     private void registerConversationContext(PaperCommandManager commandManager) {

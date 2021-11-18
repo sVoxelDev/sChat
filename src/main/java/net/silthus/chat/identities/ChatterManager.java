@@ -83,9 +83,13 @@ public final class ChatterManager {
     }
 
     public Chatter getOrCreateChatter(@NonNull CommandSender sender) {
+        if (sender instanceof Player)
+            return getOrCreateChatter((Player) sender);
+
         final UUID uuid = getSenderId(sender);
         if (chatters.containsKey(uuid))
             return chatters.get(uuid);
+
         final CommandSendingChatter chatter = new CommandSendingChatter(uuid, sender);
         senderIds.put(chatter.getName(), uuid);
         return registerChatter(chatter);

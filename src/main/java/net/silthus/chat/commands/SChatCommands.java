@@ -39,8 +39,8 @@ import static net.silthus.chat.Constants.Language.Commands.*;
 @CommandAlias("schat")
 public class SChatCommands extends BaseCommand {
 
-    static MessageKey key(String key) {
-        return MessageKey.of(BASE_KEY + "." + key);
+    public static MessageKey key(String key) {
+        return MessageKey.of(COMMANDS_BASE + "." + key);
     }
 
     private final SChat plugin;
@@ -127,7 +127,7 @@ public class SChatCommands extends BaseCommand {
     public class DirectMessageCommands extends BaseCommand {
 
         @Subcommand("send")
-        @CommandAlias("m|tell|msg|message|w|dm|pm|qm")
+        @CommandAlias("tell|m|msg|message|w|dm|pm|qm")
         @CommandCompletion("@chatters *")
         @CommandPermission(PERMISSION_PLAYER_DIRECT_MESSAGE)
         public void directMessage(@Flags("self") Chatter source, Chatter target, @Optional String message) {
@@ -205,6 +205,6 @@ public class SChatCommands extends BaseCommand {
     }
 
     private Language lang() {
-        return plugin.language().section(Constants.Language.Commands.BASE_KEY);
+        return plugin.language().section(Constants.Language.Commands.COMMANDS_BASE);
     }
 }

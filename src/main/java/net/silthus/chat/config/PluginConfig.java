@@ -34,6 +34,7 @@ import static net.silthus.chat.config.ChannelConfig.channelConfig;
 import static net.silthus.chat.config.ChannelConfig.channelDefaults;
 import static net.silthus.chat.config.ConsoleConfig.consoleConfig;
 import static net.silthus.chat.config.ConsoleConfig.consoleDefaults;
+import static net.silthus.chat.config.PlayerConfig.playerConfig;
 import static net.silthus.chat.config.PrivateChatConfig.privateChatDefaults;
 
 @Value
@@ -60,6 +61,8 @@ public class PluginConfig {
     ConsoleConfig console = consoleDefaults();
     @Builder.Default
     PrivateChatConfig privateChat = privateChatDefaults();
+    @Builder.Default
+    PlayerConfig player = PlayerConfig.playerDefaults();
     @Singular
     Map<String, ChannelConfig> channels;
 
@@ -68,6 +71,7 @@ public class PluginConfig {
                 .languageConfig(loadLanguage(config))
                 .defaults(loadDefaults(getSection(config, "defaults")))
                 .console(consoleConfig(getSection(config, "console")))
+                .player(playerConfig(getSection(config, "players")))
                 .privateChat(PrivateChatConfig.privateChat(getSection(config, "private_chats")))
                 .channelsFromConfig(getSection(config, "channels"));
     }

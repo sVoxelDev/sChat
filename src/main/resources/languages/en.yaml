@@ -7,6 +7,11 @@ commands:
   invalid-conversation: "The conversation you tried to join does not exist."
   cannot-send-to-self: "You can't send messages to yourself."
   plugin-reloaded: "sChat and all channel configs have been reloaded."
+  nickname:
+    invalid: "<red>The nickname {nickname} is not valid."
+    blocked: "<red>The nickname {nickname} cannot be used."
+    changed: "<green>You changed your name from <st><red>{old_nickname}</red></st> to <aqua>{nickname}</aqua>."
+    reset: "<green>Your nickname was reset to: <aqua>{nickname}</aqua>."
   message:
     selected: "<green>Selected Chat Message"
     deselected: "<gold>Deselected Chat Message"

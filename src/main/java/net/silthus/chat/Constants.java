@@ -50,6 +50,9 @@ public final class Constants {
     public static final String PERMISSION_SELECT_MESSAGE = "schat.message.select";
     public static final String PERMISSION_MESSAGE_DELETE = "schat.message.delete";
     public static final String PERMISSION_ADMIN_RELOAD = "schat.admin.reload";
+    public static final String PERMISSION_ADMIN_OTHERS = "schat.admin.others";
+    public static final String PERMISSION_NICKNAME_SET = "schat.nickname.set";
+    public static final String PERMISSION_NICKNAME_SET_OTHERS = "schat.nickname.set.others";
 
     public static class Targets {
 
@@ -78,7 +81,7 @@ public final class Constants {
 
         public static class Commands {
 
-            public static final String BASE_KEY = "commands";
+            public static final String COMMANDS_BASE = "commands";
             public static final String ACCESS_TO_CHANNEL_DENIED = "access-to-channel-denied";
             public static final String SEND_TO_CHANNEL_DENIED = "send-to-channel-denied";
             public static final String CANNOT_SEND_TO_SELF = "cannot-send-to-self";
@@ -91,6 +94,15 @@ public final class Constants {
             public static final String DESELECTED_MESSAGE = "message.deselected";
             public static final String DELETE_MESSAGE_BUTTON = "message.delete-button";
             public static final String DESELECT_MESSAGE_BUTTON = "message.deselect-button";
+
+            public static class Nicknames {
+
+                public static final String NICKNAMES_BASE = "nickname";
+                public static final String INVALID = "invalid";
+                public static final String BLOCKED = "blocked";
+                public static final String CHANGED = "changed";
+                public static final String RESET = "reset";
+            }
 
         }
 

@@ -35,7 +35,8 @@ import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 class SChatTest extends TestBase {
 
@@ -122,9 +123,6 @@ class SChatTest extends TestBase {
 
         @Test
         void reloadsChannels_ifConfigChanged() {
-            plugin.reload();
-            verify(plugin.getChannelRegistry(), never()).load(any());
-
             loadTestConfig("reload-test.yml");
             plugin.reload();
             verify(plugin.getChannelRegistry()).load(any());
