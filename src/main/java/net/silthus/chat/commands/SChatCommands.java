@@ -23,12 +23,9 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.MessageType;
 import co.aikar.commands.annotation.*;
-import co.aikar.locales.MessageKey;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.silthus.chat.*;
-import net.silthus.chat.config.Language;
 import net.silthus.chat.conversations.Channel;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,16 +34,10 @@ import static net.silthus.chat.Constants.*;
 import static net.silthus.chat.Constants.Language.Commands.*;
 
 @CommandAlias("schat")
-public class SChatCommands extends BaseCommand {
-
-    public static MessageKey key(String key) {
-        return MessageKey.of(COMMANDS_BASE + "." + key);
-    }
-
-    private final SChat plugin;
+public class SChatCommands extends SChatBaseCommand {
 
     public SChatCommands(SChat plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     @Subcommand("reload")
@@ -63,7 +54,7 @@ public class SChatCommands extends BaseCommand {
         @CommandPermission(PERMISSION_PLAYER_CHANNEL_JOIN)
         public void setActive(@Flags("self") Chatter chatter, Conversation conversation) {
             if (!chatter.getConversations().contains(conversation)) {
-                throw new ConditionFailedException(key(INVALID_CONVERSATION));
+                throw new ConditionFailedException(messageKey(INVALID_CONVERSATION));
             }
             chatter.setActiveConversation(conversation);
             chatter.updateView();
@@ -73,7 +64,7 @@ public class SChatCommands extends BaseCommand {
         @CommandPermission(PERMISSION_PLAYER_CHANNEL_LEAVE)
         private void leave(@Flags("self") Chatter chatter, Conversation conversation) {
             if (!chatter.getConversations().contains(conversation)) {
-                throw new ConditionFailedException(key(INVALID_CONVERSATION));
+                throw new ConditionFailedException(messageKey(INVALID_CONVERSATION));
             }
             chatter.unsubscribe(conversation);
             chatter.updateView();
@@ -95,7 +86,7 @@ public class SChatCommands extends BaseCommand {
                 chatter.updateView();
             } catch (AccessDeniedException e) {
                 error(ACCESS_TO_CHANNEL_DENIED, "{channel}", getChannelName(channel));
-                throw new ConditionFailedException(key(ACCESS_TO_CHANNEL_DENIED), "{channel}", getChannelName(channel));
+                throw new ConditionFailedException(messageKey(ACCESS_TO_CHANNEL_DENIED), "{channel}", getChannelName(channel));
             }
         }
 
@@ -118,7 +109,7 @@ public class SChatCommands extends BaseCommand {
                 Message.message(chatter, message).to(channel).send();
             } else {
                 error(SEND_TO_CHANNEL_DENIED, "{channel}", getChannelName(channel));
-                throw new ConditionFailedException(key(SEND_TO_CHANNEL_DENIED), "{channel}", getChannelName(channel));
+                throw new ConditionFailedException(messageKey(SEND_TO_CHANNEL_DENIED), "{channel}", getChannelName(channel));
             }
         }
     }
@@ -132,7 +123,7 @@ public class SChatCommands extends BaseCommand {
         @CommandPermission(PERMISSION_PLAYER_DIRECT_MESSAGE)
         public void directMessage(@Flags("self") Chatter source, Chatter target, @Optional String message) {
             if (source.equals(target))
-                throw new ConditionFailedException(key(CANNOT_SEND_TO_SELF));
+                throw new ConditionFailedException(messageKey(CANNOT_SEND_TO_SELF));
 
             if (message != null) {
                 source.message(message).to(target).send();
@@ -189,22 +180,10 @@ public class SChatCommands extends BaseCommand {
     }
 
     private void success(String key, String... replacements) {
-        getCurrentCommandIssuer().sendMessage(MessageType.INFO, key(key), replacements);
+        getCurrentCommandIssuer().sendMessage(MessageType.INFO, messageKey(key), replacements);
     }
 
     private void error(String key, String... replacements) {
-        getCurrentCommandIssuer().sendMessage(MessageType.ERROR, key(key), replacements);
-    }
-
-    private Audience sender() {
-        return plugin.getAudiences().sender(getCurrentCommandIssuer().getIssuer());
-    }
-
-    private Component lang(String key) {
-        return lang().get(key);
-    }
-
-    private Language lang() {
-        return plugin.language().section(Constants.Language.Commands.COMMANDS_BASE);
+        getCurrentCommandIssuer().sendMessage(MessageType.ERROR, messageKey(key), replacements);
     }
 }

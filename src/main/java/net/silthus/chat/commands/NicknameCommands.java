@@ -19,9 +19,7 @@
 
 package net.silthus.chat.commands;
 
-import co.aikar.commands.BaseCommand;
 import co.aikar.commands.ConditionFailedException;
-import co.aikar.commands.MessageType;
 import co.aikar.commands.annotation.*;
 import co.aikar.locales.MessageKey;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -37,12 +35,10 @@ import static net.silthus.chat.Constants.Language.Commands.Nicknames.*;
 import static net.silthus.chat.Constants.*;
 
 @CommandAlias("nickname")
-public class NicknameCommands extends BaseCommand {
-
-    private final SChat plugin;
+public class NicknameCommands extends SChatBaseCommand {
 
     public NicknameCommands(SChat plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     @Default
@@ -76,9 +72,7 @@ public class NicknameCommands extends BaseCommand {
 
     private void resetNickname(Chatter chatter) {
         chatter.setDisplayName(null);
-        getCurrentCommandIssuer().sendMessage(MessageType.INFO, key(RESET),
-                "{nickname}", getDisplayName(chatter)
-        );
+        send(key(RESET), "{nickname}", getDisplayName(chatter));
     }
 
     private void validateAndSetNickname(Chatter chatter, String name) {
@@ -90,7 +84,7 @@ public class NicknameCommands extends BaseCommand {
     private void setNickname(Chatter chatter, String name) {
         String oldName = getDisplayName(chatter);
         chatter.setDisplayName(text(name));
-        getCurrentCommandIssuer().sendMessage(MessageType.INFO, key(CHANGED),
+        send(key(CHANGED),
                 "{nickname}", name,
                 "{old_nickname}", oldName
         );
@@ -112,16 +106,21 @@ public class NicknameCommands extends BaseCommand {
                 .map(pattern -> pattern.matcher(name))
                 .anyMatch(Matcher::matches);
         if (nicknameIsBlocked)
-            throw new ConditionFailedException(key(BLOCKED), "{nickname}", name);
+            throw new ConditionFailedException(messageKey(BLOCKED), "{nickname}", name);
     }
 
     private void validateNicknamePattern(String name) {
         Matcher matcher = plugin.getPluginConfig().player().nickNamePattern().matcher(name);
         if (!matcher.matches())
-            throw new ConditionFailedException(key(INVALID), "{nickname}", name);
+            throw new ConditionFailedException(messageKey(INVALID), "{nickname}", name);
     }
 
-    private MessageKey key(String key) {
-        return SChatCommands.key(NICKNAMES_BASE + "." + key);
+    @Override
+    protected MessageKey messageKey(String key) {
+        return super.messageKey(NICKNAMES_BASE + "." + key);
+    }
+
+    private String key(String key) {
+        return NICKNAMES_BASE + "." + key;
     }
 }
