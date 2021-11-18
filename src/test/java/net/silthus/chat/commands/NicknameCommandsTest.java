@@ -100,7 +100,7 @@ class NicknameCommandsTest extends TestBase {
     @Test
     void resetOther_failsWithNoPermission() {
         PlayerMock player1 = server.addPlayer();
-        player.performCommand("nickname reset Player1");
+        player.performCommand("nickname reset player Player1");
         assertThat(Chatter.player(player1).getDisplayName()).isEqualTo(text("Player1"));
         assertThat(player1.getDisplayName()).isEqualTo("Player1");
         assertThat(getLastMessage(player)).contains("you do not have permission to perform this command");
@@ -124,7 +124,7 @@ class NicknameCommandsTest extends TestBase {
         player1.setDisplayName("Foobar");
         Chatter.player(player1).setDisplayName(text("Foobar"));
 
-        player.performCommand("nickname reset Player1");
+        player.performCommand("nickname reset player Player1");
 
         assertThat(Chatter.player(player1).getDisplayName()).isEqualTo(text("Player1"));
         assertThat(player1.getDisplayName()).isEqualTo("Player1");

@@ -36,7 +36,7 @@ import static net.kyori.adventure.text.Component.text;
 import static net.silthus.chat.Constants.Language.Commands.Nicknames.*;
 import static net.silthus.chat.Constants.*;
 
-@CommandAlias("nickname|nick")
+@CommandAlias("nickname")
 public class NicknameCommands extends BaseCommand {
 
     private final SChat plugin;
@@ -46,16 +46,31 @@ public class NicknameCommands extends BaseCommand {
     }
 
     @Default
-    @Subcommand("set")
+    @CommandAlias("nick")
     @CommandCompletion("*")
     @CommandPermission(PERMISSION_NICKNAME_SET)
-    public void set(@Flags("defaultself,other=" + PERMISSION_NICKNAME_SET_OTHERS) Chatter chatter, String name) {
+    public void setSelf(@Flags("self") Chatter chatter, String name) {
+        validateAndSetNickname(chatter, name);
+    }
+
+    @Subcommand("set")
+    @CommandCompletion("@chatters *")
+    @CommandPermission(PERMISSION_NICKNAME_SET_OTHERS)
+    public void set(Chatter chatter, String name) {
         validateAndSetNickname(chatter, name);
     }
 
     @Subcommand("reset")
+    @CommandAlias("nick reset")
     @CommandPermission(PERMISSION_NICKNAME_SET)
-    public void reset(@Flags("defaultself,other=" + PERMISSION_NICKNAME_SET_OTHERS) Chatter chatter) {
+    public void resetSelf(@Flags("self") Chatter chatter) {
+        resetNickname(chatter);
+    }
+
+    @Subcommand("reset player")
+    @CommandCompletion("@chatters")
+    @CommandPermission(PERMISSION_NICKNAME_SET_OTHERS)
+    public void reset(Chatter chatter) {
         resetNickname(chatter);
     }
 

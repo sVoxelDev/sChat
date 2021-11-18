@@ -265,8 +265,9 @@ public final class SChat extends JavaPlugin {
 
             String arg = context.popFirstArg();
             Player player = getPlayer(context, arg);
-            if (player == null)
-                throw new InvalidCommandArgument("The player '" + arg + "' was not found.");
+            if (player == null && context.hasFlag("defaultself"))
+                return Chatter.commandSender(context.getSender());
+            if (player == null) return null;
 
             validatePermissionForOthers(context, player);
 
@@ -275,18 +276,11 @@ public final class SChat extends JavaPlugin {
     }
 
     private boolean selectSelf(BukkitCommandExecutionContext context) {
-        return context.hasFlag("self") || defaultsToSelf(context) || noPermissionForOthers(context);
+        return context.hasFlag("self") || defaultsToSelf(context);
     }
 
     private boolean defaultsToSelf(BukkitCommandExecutionContext context) {
         return Strings.isNullOrEmpty(context.getFirstArg()) && context.hasFlag("defaultself");
-    }
-
-    private boolean noPermissionForOthers(BukkitCommandExecutionContext context) {
-        boolean selectOthers = context.hasFlag("other");
-        if (!selectOthers) return false;
-        validatePermissionForOthers(context, getPlayer(context, context.getFirstArg()));
-        return !context.getIssuer().hasPermission(context.getFlagValue("other", Constants.PERMISSION_ADMIN_OTHERS));
     }
 
     @Nullable
