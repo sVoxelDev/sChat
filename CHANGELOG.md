@@ -1,3 +1,12 @@
+# [1.0.0-beta.11](https://github.com/sVoxelDev/sChat/compare/v1.0.0-beta.10...v1.0.0-beta.11) (2021-11-18)
+
+
+### Bug Fixes
+
+* **cmd:** /nick commands not formatted correctly ([4c34576](https://github.com/sVoxelDev/sChat/commit/4c34576cf7619cf93a7145e6fd3729442a2b2c4a)), closes [#14](https://github.com/sVoxelDev/sChat/issues/14)
+* **cmd:** /nick not working for other players ([8611edc](https://github.com/sVoxelDev/sChat/commit/8611edc167ae228dbb9da7a739d63d5e8f84cf73)), closes [#14](https://github.com/sVoxelDev/sChat/issues/14)
+* **nicknames:** persist nicknames across restarts ([072857b](https://github.com/sVoxelDev/sChat/commit/072857b15ccee02db41477e14bbb66fa1bfd6280)), closes [#14](https://github.com/sVoxelDev/sChat/issues/14)
+
 # [1.0.0-beta.10](https://github.com/sVoxelDev/sChat/compare/v1.0.0-beta.9...v1.0.0-beta.10) (2021-11-18)
 
 
