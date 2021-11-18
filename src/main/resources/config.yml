@@ -1,30 +1,24 @@
 # Set the name of the language file to use.
 # The key is the name of the file without .yaml inside the languages/ folder.
 language: "en"
-# Define your personal defaults for the various configs in this section.
-# Not setting a value in the actual config section will use these defaults.
-# For example: the trade channel below will inherit all the configs from this defaults config.
-defaults:
-  channel:
-    protect: false
-    auto_join: false
-    force: false
-    console: true
-    scope: server
-    worlds:
-      - world
-      - world_nether
-      - world_the_end
-    range: 100
-    format: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset><yellow><sender_vault_prefix><sender_name><sender_vault_suffix><gray>: <gray><message>'
-    footer:
-      enabled: true
+# Configure player related settings here.
+players:
+  # Set a regular expression of allowed nicknames.
+  # This defaults to the allowed Minecraft nicknames.
+  nickname_pattern: "[a-zA-Z0-9_]{3,16}"
+  # Players without the schat.nickname.allow-blocked cannot use these nicknames.
+  # The names are matched case-insensitive. nOtcH will be blocked as well.
+  blocked_nicknames:
+    - Notch
 # You can fine tune the behaviour of the console chat in this section.
 console:
   # Set the name players see when chatting from the console.
   name: Console
   # This is the channel the console will send chat messages to.
   default_channel: global
+private_chats:
+  # Set false to disable global private chatting and restrict it to the current server.
+  global: true
 # Define your list of channels here.
 channels:
   # The id of the channel must be unique across your server network.
@@ -93,3 +87,21 @@ channels:
     # Protecting a channel requires the "schat.channel.<id>" permission to join it.
     # For the team channel this would be "schat.channel.team".
     protect: true
+# Define your personal defaults for the various configs in this section.
+# Not setting a value in the actual config section will use these defaults.
+# For example: the trade channel below will inherit all the configs from this defaults config.
+defaults:
+  channel:
+    protect: false
+    auto_join: false
+    force: false
+    console: true
+    scope: server
+    worlds:
+      - world
+      - world_nether
+      - world_the_end
+    range: 100
+    format: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset><yellow><sender_vault_prefix><sender_name><sender_vault_suffix><gray>: <gray><message>'
+    footer:
+      enabled: true

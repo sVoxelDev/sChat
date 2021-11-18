@@ -50,7 +50,7 @@ public class Language {
     }
 
     public Language commands() {
-        return section(Constants.Language.Commands.BASE_KEY);
+        return section(Constants.Language.Commands.COMMANDS_BASE);
     }
 
     public Language section(String key) {

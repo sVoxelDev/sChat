@@ -32,12 +32,12 @@ import org.bukkit.configuration.ConfigurationSection;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class FooterConfig {
 
-    public static FooterConfig defaultFooter() {
+    public static FooterConfig footerDefaults() {
         return FooterConfig.builder().build();
     }
 
     public static FooterConfig footerConfig(ConfigurationSection config) {
-        return defaultFooter().withConfig(config).build();
+        return footerDefaults().withConfig(config).build();
     }
 
     @Builder.Default
