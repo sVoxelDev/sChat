@@ -27,8 +27,6 @@ import co.aikar.locales.MessageKey;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.silthus.chat.Chatter;
 import net.silthus.chat.SChat;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Matcher;
@@ -63,7 +61,6 @@ public class NicknameCommands extends BaseCommand {
 
     private void resetNickname(Chatter chatter) {
         chatter.setDisplayName(null);
-        setPlayerNickname(chatter, chatter.getName());
         getCurrentCommandIssuer().sendMessage(MessageType.INFO, key(RESET),
                 "{nickname}", getDisplayName(chatter)
         );
@@ -78,7 +75,6 @@ public class NicknameCommands extends BaseCommand {
     private void setNickname(Chatter chatter, String name) {
         String oldName = getDisplayName(chatter);
         chatter.setDisplayName(text(name));
-        setPlayerNickname(chatter, name);
         getCurrentCommandIssuer().sendMessage(MessageType.INFO, key(CHANGED),
                 "{nickname}", name,
                 "{old_nickname}", oldName
@@ -88,12 +84,6 @@ public class NicknameCommands extends BaseCommand {
     @NotNull
     private String getDisplayName(Chatter chatter) {
         return LegacyComponentSerializer.legacyAmpersand().serialize(chatter.getDisplayName());
-    }
-
-    private void setPlayerNickname(Chatter chatter, String name) {
-        Player player = Bukkit.getPlayer(chatter.getUniqueId());
-        if (player != null)
-            player.setDisplayName(name);
     }
 
     private void validateNickname(String name) {

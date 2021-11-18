@@ -24,6 +24,7 @@ import com.google.gson.GsonBuilder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.silthus.chat.Chatter;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.SChat;
@@ -53,15 +54,16 @@ public class PlayerData {
 
     public static void load(@NonNull final PlayerChatter chatter) {
         final SChat plugin = SChat.instance();
-        chatter.getPlayer()
-                .flatMap(PlayerData::load)
-                .filter(playerData -> playerData.activeConversationId != null)
+        final Optional<PlayerData> data = chatter.getPlayer()
+                .flatMap(PlayerData::load);
+        data.filter(playerData -> playerData.activeConversationId != null)
                 .filter(playerData -> playerData.activeConversationName != null)
                 .map(playerData -> {
                     final Conversation conversation = plugin.getConversationManager().getConversation(playerData.activeConversationId);
                     if (conversation != null) return conversation;
                     return plugin.getChannelRegistry().get(playerData.activeConversationName);
                 }).ifPresent(chatter::setActiveConversation);
+        data.ifPresent(playerData -> chatter.setDisplayName(GsonComponentSerializer.gson().deserialize(playerData.displayName())));
     }
 
     private static Optional<PlayerData> load(Player player) {
@@ -69,8 +71,8 @@ public class PlayerData {
     }
 
     private final UUID activeConversationId;
-
     private final String activeConversationName;
+    private final String displayName;
 
     public PlayerData(Chatter chatter) {
         if (chatter.getActiveConversation() != null) {
@@ -80,6 +82,7 @@ public class PlayerData {
             this.activeConversationId = null;
             this.activeConversationName = null;
         }
+        this.displayName = GsonComponentSerializer.gson().serialize(chatter.getDisplayName());
     }
 
     private void saveTo(@NonNull Player player) {

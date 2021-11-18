@@ -22,6 +22,8 @@ package net.silthus.chat.identities;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Identity;
 import net.silthus.chat.Message;
@@ -54,6 +56,13 @@ public class PlayerChatter extends AbstractChatter implements Listener {
     PlayerChatter(Identity identity) {
         super(identity.getUniqueId(), identity.getName());
         setDisplayName(identity.getDisplayName());
+    }
+
+    @Override
+    public void setDisplayName(Component name) {
+        super.setDisplayName(name);
+        final Component displayName = name == null ? text(getName()) : name;
+        getPlayer().ifPresent(player -> player.setDisplayName(LegacyComponentSerializer.legacySection().serialize(displayName)));
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
