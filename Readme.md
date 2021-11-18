@@ -78,6 +78,7 @@ e.g. clicking on a channel will set the channel as active*. However, here are th
 | | |
 | `schat.nickname.set` | Allows setting a nickname with `/nick`. |
 | `schat.nickname.set.others` | Allows to set the nickname of other players with `/nick <player> <name>`. |
+| `schat.nickname.set.blocked` | Allows to bypass the nickname pattern and to use blocked nicknames. |
 
 ### Channel Permissions
 
