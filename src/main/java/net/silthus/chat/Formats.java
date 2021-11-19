@@ -19,7 +19,9 @@
 
 package net.silthus.chat;
 
+import lombok.SneakyThrows;
 import lombok.extern.java.Log;
+import net.silthus.chat.config.FormatConfig;
 import net.silthus.chat.formats.MiniMessageFormat;
 import net.silthus.configmapper.bukkit.BukkitConfigMap;
 import org.bukkit.configuration.ConfigurationSection;
@@ -29,13 +31,24 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static net.silthus.chat.Constants.Formatting.*;
 import static net.silthus.chat.utils.AnnotationUtils.name;
 import static net.silthus.chat.utils.ReflectionUtil.getDefaultSupplier;
 
 @Log(topic = Constants.PLUGIN_NAME)
 public final class Formats {
+
+    public static final Map<String, FormatConfig> DEFAULT_FORMATS = Map.of(
+            DEFAULT, FormatConfig.miniMessage(DEFAULT_FORMAT),
+            CHANNEL, FormatConfig.miniMessage(DEFAULT_CHANNEL_FORMAT),
+            NO_FORMAT, FormatConfig.miniMessage(DEFAULT_NO_FORMAT),
+            SENDER_TEMPLATE, FormatConfig.miniMessage(SENDER_FORMAT),
+            SENDER_HOVER_TEMPLATE, FormatConfig.miniMessage(SENDER_HOVER_FORMAT),
+            CHANNEL_FORMATTED_TEMPLATE, FormatConfig.miniMessage(CHANNEL_FORMATTED_FORMAT)
+    );
 
     private final static Map<String, RegisteredFormat<?>> formats = new HashMap<>();
     private final static Map<String, FormatTemplate<?>> templates = new HashMap<>();
@@ -45,15 +58,15 @@ public final class Formats {
     }
 
     public static Format defaultFormat() {
-        return miniMessage(Constants.Formatting.DEFAULT_FORMAT);
+        return formatFromTemplate(DEFAULT).orElse(miniMessage(DEFAULT_FORMAT));
     }
 
     public static Format channelFormat() {
-        return miniMessage(Constants.Formatting.DEFAULT_CHANNEL_FORMAT);
+        return formatFromTemplate(CHANNEL).orElse(miniMessage(DEFAULT_CHANNEL_FORMAT));
     }
 
     public static Format noFormat() {
-        return miniMessage(Constants.Formatting.NO_FORMAT);
+        return formatFromTemplate(NO_FORMAT).orElse(miniMessage(DEFAULT_NO_FORMAT));
     }
 
     public static Format miniMessage(String format) {
@@ -66,6 +79,11 @@ public final class Formats {
 
     public static Optional<Format> format(String name) {
         return format(name, new MemoryConfiguration());
+    }
+
+    public static Optional<Format> format(ConfigurationSection config) {
+        if (config == null) return Optional.empty();
+        return format(config.getString("type", name(MiniMessageFormat.class)), config);
     }
 
     public static Optional<Format> format(String name, ConfigurationSection config) {
@@ -92,12 +110,37 @@ public final class Formats {
     }
 
     public static <TFormat extends Format> void registerFormatTemplate(String templateName, Class<TFormat> formatClass, ConfigurationSection config) {
-        templates.put(templateName, new FormatTemplate<>(templateName, formatClass, config));
+        registerFormatTemplate(templateName, formatClass, configure -> BukkitConfigMap.of(configure).with(config).apply());
+    }
+
+    public static <TFormat extends Format> void registerFormatTemplate(String templateName, Class<TFormat> formatClass, Function<TFormat, TFormat> config) {
+        final FormatTemplate<?> oldTemplate = templates.put(templateName, new FormatTemplate<>(templateName, formatClass, config));
+        if (oldTemplate != null)
+            log.warning("Existing format template '" + oldTemplate.name + "' was replaced.");
+        log.info("Registered format template: " + templateName);
+    }
+
+    @SneakyThrows
+    public static void registerFormatTemplate(String templateName, String type, ConfigurationSection config) {
+        final RegisteredFormat<?> registeredFormat = formats.get(type);
+        if (registeredFormat == null) {
+            log.warning("The template '" + templateName + "' tried to use an unknown format type: '" + type + "'");
+            return;
+        }
+        registerFormatTemplate(templateName, registeredFormat.formatClass(), config);
     }
 
     public static Optional<Format> formatFromTemplate(String templateName) {
         return Optional.ofNullable(templates.get(templateName))
-                .map(formatTemplate -> format(formatTemplate.format(), formatTemplate.config()));
+                .map(formatTemplate -> formatTemplate.config().apply(format(formatTemplate.format())));
+    }
+
+    public static <TFormat extends Format> Optional<TFormat> formatFromTemplate(String templateName, Class<TFormat> formatClass) {
+        return formatFromTemplate(templateName).map(formatClass::cast);
+    }
+
+    public static boolean containsTemplate(String template) {
+        return templates.containsKey(template);
     }
 
     @NotNull
@@ -107,6 +150,7 @@ public final class Formats {
         if (oldFormat != null)
             log.warning("Existing format " + oldFormat.formatClass().getCanonicalName() + " with key '"
                     + name + "' was replaced by " + format.getCanonicalName());
+        log.info("Registered format type: " + name);
         return registeredFormat;
     }
 
@@ -121,7 +165,7 @@ public final class Formats {
     private static record FormatTemplate<TFormat extends Format>(
             String name,
             Class<TFormat> format,
-            ConfigurationSection config
+            Function<TFormat, TFormat> config
     ) {
 
     }

@@ -24,17 +24,24 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.template.TemplateResolver;
 import net.silthus.chat.identities.PlayerChatter;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Function;
 
 @Value
 @EqualsAndHashCode(of = "id")
 @Builder(builderMethodName = "message", toBuilder = true)
-public class Message implements Comparable<Message> {
+public class Message implements Comparable<Message>, TemplateResolver {
 
     public static Message empty() {
         return Message.message(Component.empty()).build();
@@ -69,6 +76,7 @@ public class Message implements Comparable<Message> {
     Conversation conversation;
     @Builder.Default
     Collection<ChatTarget> targets = new HashSet<>();
+    Map<String, Template> templates;
 
     public MessageBuilder copy() {
         return toBuilder().id(UUID.randomUUID());
@@ -94,6 +102,16 @@ public class Message implements Comparable<Message> {
 
     public void delete() {
         getTargets().forEach(target -> target.deleteMessage(this));
+    }
+
+    @Override
+    public boolean canResolve(@NotNull String key) {
+        return templates.containsKey(key);
+    }
+
+    @Override
+    public @Nullable Template resolve(@NotNull String key) {
+        return templates.get(key);
     }
 
     @Override
@@ -169,18 +187,70 @@ public class Message implements Comparable<Message> {
         public Message build() {
             checkForDirectConversation();
 
-            UUID id = id$set ? id$value : $default$id();
-            Format format = conversation != null ? conversation.getFormat() : defaultFormat;
-            if (format$set) format = format$value;
-            ChatSource source = source$set ? source$value : $default$source();
-            Component text = text$set ? text$value : $default$text();
-            Collection<ChatTarget> targets = targets$set ? targets$value : $default$targets();
-
-            return new Message(id, source, text, format, type, conversation, targets);
+            return new Message(
+                    getId(),
+                    getSource(),
+                    getText(),
+                    getFormat(),
+                    type,
+                    conversation,
+                    getTargets(),
+                    getTemplates()
+            );
         }
 
         public Message send() {
             return build().send();
+        }
+
+        private Map<String, Template> getTemplates() {
+            final HashMap<String, Template> templates = new HashMap<>();
+            templates.putAll(playerTemplate("sender_world", player -> player.getWorld().getName()));
+            templates.putAll(playerTemplate("player_name", HumanEntity::getName));
+            templates.putAll(playerTemplate("player_display_name", Player::getDisplayName));
+            templates.put("sender_name", senderName(getSource()));
+            templates.put("sender_display_name", senderDisplayName(getSource()));
+            templates.put("sender_vault_prefix", vaultPrefixTemplate(getSource()));
+            templates.put("sender_vault_suffix", vaultSuffixTemplate(getSource()));
+            templates.put("channel_name", channelTemplate(conversation));
+            templates.put("message", Template.template("message", getText()));
+            return templates;
+        }
+
+        private Map<String, Template> playerTemplate(String key, Function<Player, String> value) {
+            if (!source$set) return Map.of();
+            final Player player = Bukkit.getPlayer(source$value.getUniqueId());
+            if (player == null) return Map.of();
+            return Map.of(key, Template.template(key, value.apply(player)));
+        }
+
+        private Template senderName(ChatSource source) {
+            if (source == null) {
+                return Template.template("sender_name", Component.empty());
+            }
+            return Template.template("sender_name", source.getName());
+        }
+
+        private Template senderDisplayName(ChatSource source) {
+            if (source == null) {
+                return Template.template("sender_display_name", Component.empty());
+            }
+            return Template.template("sender_display_name", source.getDisplayName());
+        }
+
+        private Template channelTemplate(Conversation conversation) {
+            if (conversation != null) {
+                return Template.template("channel_name", conversation.getDisplayName());
+            }
+            return Template.template("channel_name", Component.empty());
+        }
+
+        private Template vaultPrefixTemplate(ChatSource source) {
+            return Template.template("sender_vault_prefix", MiniMessage.miniMessage().serialize(SChat.instance().getVaultProvider().getPrefix(source)));
+        }
+
+        private Template vaultSuffixTemplate(ChatSource source) {
+            return Template.template("sender_vault_suffix", MiniMessage.miniMessage().serialize(SChat.instance().getVaultProvider().getSuffix(source)));
         }
 
         private void checkForDirectConversation() {
@@ -211,6 +281,28 @@ public class Message implements Comparable<Message> {
 
         private boolean targetsNotEmpty() {
             return targets$set && targets$value.size() > 0;
+        }
+
+        private Component getText() {
+            return text$set ? text$value : $default$text();
+        }
+
+        private Format getFormat() {
+            Format format = conversation != null ? conversation.getFormat() : defaultFormat;
+            if (format$set) format = format$value;
+            return format;
+        }
+
+        private Collection<ChatTarget> getTargets() {
+            return targets$set ? targets$value : $default$targets();
+        }
+
+        private ChatSource getSource() {
+            return source$set ? source$value : $default$source();
+        }
+
+        private UUID getId() {
+            return id$set ? id$value : $default$id();
         }
     }
 

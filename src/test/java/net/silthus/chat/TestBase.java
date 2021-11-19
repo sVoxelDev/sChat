@@ -30,6 +30,7 @@ import lombok.SneakyThrows;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.examination.string.MultiLineStringExaminer;
 import net.milkbowl.vault.chat.Chat;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
@@ -54,6 +55,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -204,5 +206,13 @@ public abstract class TestBase {
     protected void loadTestConfig(String name) {
         final File config = new File(plugin.getDataFolder(), "config.yml");
         Files.copy(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResourceAsStream(name)), config.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    protected String prettyPrint(final Component component) {
+        return component.compact().examine(MultiLineStringExaminer.simpleEscaping()).collect(Collectors.joining("\n"));
+    }
+
+    protected void assertComponents(Component actual, Component expected) {
+        assertThat(prettyPrint(actual)).isEqualTo(prettyPrint(expected));
     }
 }

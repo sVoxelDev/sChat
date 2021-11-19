@@ -32,6 +32,7 @@ import java.io.File;
 import java.util.Optional;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.silthus.chat.Constants.Formatting.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -53,7 +54,6 @@ class SChatTest extends TestBase {
 
     @Test
     void onEnable_registersCommands() {
-
         assertThat(plugin.getCommandManager())
                 .isNotNull()
                 .extracting(BukkitCommandManager::hasRegisteredCommands)
@@ -62,7 +62,6 @@ class SChatTest extends TestBase {
 
     @Test
     void onEnable_loadsChannelsFromConfig() {
-
         assertThat(plugin.getChannelRegistry().getChannels())
                 .hasSizeGreaterThanOrEqualTo(1);
         Optional<Channel> channel = plugin.getChannelRegistry().getChannels().stream()
@@ -77,18 +76,24 @@ class SChatTest extends TestBase {
                 ).contains(
                         "global",
                         text("Global"),
-                        "&6[&aGlobal&6]&7[ADMIN]&ePlayer0[!]&7: test"
+                        "&6[&aGlobal&6]&7[ADMIN]&aPlayer0[!]&7: test"
                 );
     }
 
     @Test
     void writes_defaultConfig() {
-
         File config = new File(plugin.getDataFolder(), "config.yml");
         File defaultConfig = new File(plugin.getDataFolder(), "config.default.yml");
 
         assertThat(config).exists();
         assertThat(defaultConfig).exists();
+    }
+
+    @Test
+    void loads_defaultFormats() {
+        assertThat(Formats.formatFromTemplate(DEFAULT)).isPresent();
+        assertThat(Formats.formatFromTemplate(CHANNEL)).isPresent();
+        assertThat(Formats.formatFromTemplate(NO_FORMAT)).isPresent();
     }
 
     @Nested

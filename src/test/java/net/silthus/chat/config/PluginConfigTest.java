@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
+import static net.silthus.chat.Constants.Formatting.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 
@@ -45,6 +46,8 @@ class PluginConfigTest extends TestBase {
                 .isNotNull()
                 .extracting(ConsoleConfig::defaultChannel)
                 .isEqualTo("global");
+        assertThat(config.formats())
+                .containsKeys("default", "channel", "none", "sender", "sender_hover", "channel_formatted");
     }
 
     // adjust the 'config.yml' defaults... values or the default properties in the config object if this test fails
@@ -65,5 +68,39 @@ class PluginConfigTest extends TestBase {
         assertThat(pluginConfig.defaults().channel().protect()).isTrue();
         assertThat(pluginConfig.channels())
                 .containsOnly(entry("test", ChannelConfig.builder().protect(true).name("Test").build()));
+    }
+
+    @Test
+    void loads_default_Formats() {
+        final PluginConfig pluginConfig = PluginConfig.config(new MemoryConfiguration()).registerFormatTemplates();
+
+        assertThat(pluginConfig.formats()).isNotEmpty()
+                .containsKeys(DEFAULT, CHANNEL, NO_FORMAT);
+    }
+
+    @Test
+    void loadsCustomFormats() {
+        final MemoryConfiguration cfg = new MemoryConfiguration();
+        cfg.set("formats.test.format", "foobar: <message>");
+        final PluginConfig config = PluginConfig.config(cfg);
+        assertThat(config.formats())
+                .extractingByKey("test")
+                .isNotNull()
+                .extracting(FormatConfig::toFormat)
+                .extracting("format")
+                .isEqualTo("foobar: <message>");
+    }
+
+    @Test
+    void allows_overwriting_defaultFormat() {
+        final MemoryConfiguration cfg = new MemoryConfiguration();
+        cfg.set("formats.none.format", "<gray><message>");
+        final PluginConfig config = PluginConfig.config(cfg);
+        assertThat(config.formats())
+                .extractingByKey("none")
+                .isNotNull()
+                .extracting(FormatConfig::toFormat)
+                .extracting("format")
+                .isEqualTo("<gray><message>");
     }
 }

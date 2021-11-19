@@ -87,6 +87,12 @@ public class FormatsTests extends TestBase {
                 .isEqualTo("test");
     }
 
+    @Test
+    void registerFormatTemplate_withTypeKey() {
+        Formats.registerFormatTemplate("test", "mini-message", new MemoryConfiguration());
+        assertThat(Formats.formatFromTemplate("test")).isPresent();
+    }
+
     @Data
     @Accessors(fluent = true)
     static class TestFormat implements Format {

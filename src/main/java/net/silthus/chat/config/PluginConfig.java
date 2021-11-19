@@ -19,10 +19,12 @@
 
 package net.silthus.chat.config;
 
+import com.google.common.base.Strings;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
 import net.silthus.chat.Constants;
+import net.silthus.chat.Formats;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,6 +36,7 @@ import static net.silthus.chat.config.ChannelConfig.channelConfig;
 import static net.silthus.chat.config.ChannelConfig.channelDefaults;
 import static net.silthus.chat.config.ConsoleConfig.consoleConfig;
 import static net.silthus.chat.config.ConsoleConfig.consoleDefaults;
+import static net.silthus.chat.config.FormatConfig.formatConfig;
 import static net.silthus.chat.config.PlayerConfig.playerConfig;
 import static net.silthus.chat.config.PrivateChatConfig.privateChatDefaults;
 
@@ -44,6 +47,10 @@ import static net.silthus.chat.config.PrivateChatConfig.privateChatDefaults;
 @Log(topic = Constants.PLUGIN_NAME)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PluginConfig {
+
+    public static PluginConfig.PluginConfigBuilder builder() {
+        return new PluginConfigBuilder().formats(Formats.DEFAULT_FORMATS);
+    }
 
     public static PluginConfig config(ConfigurationSection config) {
         return configDefaults().withConfig(config).build();
@@ -65,6 +72,13 @@ public class PluginConfig {
     PlayerConfig player = PlayerConfig.playerDefaults();
     @Singular
     Map<String, ChannelConfig> channels;
+    @Singular
+    Map<String, FormatConfig> formats;
+
+    public PluginConfig registerFormatTemplates() {
+        formats.forEach((key, value) -> value.registerAsTemplate(key));
+        return this;
+    }
 
     public PluginConfig.PluginConfigBuilder withConfig(ConfigurationSection config) {
         return toBuilder()
@@ -73,7 +87,8 @@ public class PluginConfig {
                 .console(consoleConfig(getSection(config, "console")))
                 .player(playerConfig(getSection(config, "players")))
                 .privateChat(PrivateChatConfig.privateChat(getSection(config, "private_chats")))
-                .channelsFromConfig(getSection(config, "channels"));
+                .channelsFromConfig(getSection(config, "channels"))
+                .formatsFromConfig(getSection(config, "formats"));
     }
 
     private String loadLanguage(ConfigurationSection config) {
@@ -88,9 +103,10 @@ public class PluginConfig {
 
     @NotNull
     private ConfigurationSection getSection(@NonNull ConfigurationSection config, String section) {
+        final String path = Strings.isNullOrEmpty(config.getCurrentPath()) ? "" : config.getCurrentPath() + ".";
         return requireNonNullElseGet(
                 config.getConfigurationSection(section),
-                () -> warnAndDefault(config.getCurrentPath() + "." + section, config.createSection(section))
+                () -> warnAndDefault(path + section, config.createSection(section))
         );
     }
 
@@ -109,8 +125,12 @@ public class PluginConfig {
 
     public static class PluginConfigBuilder {
 
-        private PluginConfigBuilder channelsFromConfig(ConfigurationSection config) {
+        private PluginConfigBuilder channelsFromConfig(@NonNull ConfigurationSection config) {
             return channels(loadChannels(config));
+        }
+
+        private PluginConfigBuilder formatsFromConfig(@NonNull ConfigurationSection config) {
+            return formats(loadFormats(config));
         }
 
         private Map<String, ChannelConfig> loadChannels(@NonNull ConfigurationSection config) {
@@ -119,6 +139,14 @@ public class PluginConfig {
                     .collect(toMap(
                             key -> key,
                             key -> defaults.channel.withConfig(config.getConfigurationSection(key)).build()
+                    ));
+        }
+
+        private Map<String, FormatConfig> loadFormats(@NonNull ConfigurationSection config) {
+            return config.getKeys(false).stream()
+                    .collect(toMap(
+                            key -> key,
+                            key -> formatConfig(config.getConfigurationSection(key))
                     ));
         }
     }

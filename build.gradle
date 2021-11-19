@@ -108,7 +108,9 @@ dependencies {
 
     implementation "net.kyori:adventure-api:4.9.3"
     implementation "net.kyori:adventure-platform-bukkit:4.0.0"
-    implementation 'net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT'
+//    implementation 'net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT'
+    // TODO: replace branch with official snapshot once this PR is merged: https://github.com/KyoriPowered/adventure-text-minimessage/pull/187
+    implementation 'com.github.KyoriPowered:adventure-text-minimessage:fix~recursively-resolve-string-placeholders-SNAPSHOT'
     implementation 'net.kyori:adventure-text-serializer-plain:4.9.3'
 
     implementation 'org.bstats:bstats-bukkit:2.2.1'
@@ -130,6 +132,7 @@ shadowJar {
     dependencies {
         include(dependency('co.aikar::'))
         include(dependency('net.kyori::'))
+        include(dependency('com.github.KyoriPowered::'))
         include(dependency('org.bstats::'))
         include(dependency('net.silthus.config-mapper::'))
     }
