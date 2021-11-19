@@ -1,3 +1,10 @@
+# [1.0.0-beta.13](https://github.com/sVoxelDev/sChat/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2021-11-19)
+
+
+### Features
+
+* add custom formatting for channels and players ([af2ac60](https://github.com/sVoxelDev/sChat/commit/af2ac60befa7d16eeb5539c4e511962629a38e92)), closes [#21](https://github.com/sVoxelDev/sChat/issues/21) [#5](https://github.com/sVoxelDev/sChat/issues/5)
+
 # [1.0.0-beta.12](https://github.com/sVoxelDev/sChat/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2021-11-19)
 
 
