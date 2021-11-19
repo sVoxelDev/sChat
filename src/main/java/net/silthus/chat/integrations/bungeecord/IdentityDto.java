@@ -21,6 +21,7 @@ package net.silthus.chat.integrations.bungeecord;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.identities.Console;
@@ -50,19 +51,27 @@ class IdentityDto {
 
     @SuppressWarnings("unchecked")
     <T extends Identity> T asChatIdentity() {
+        final Component displayName = BungeeHelper.deserialize(this.displayName);
         return (T) switch (type) {
             case CHATTER -> {
-                Player player = Bukkit.getPlayer(uniqueId);
-                if (player == null)
-                    yield Chatter.chatter(Identity.identity(uniqueId, name, BungeeHelper.deserialize(name)));
-                yield Chatter.player(player);
+                Chatter chatter = getChatter(displayName);
+                chatter.setDisplayName(displayName);
+                yield chatter;
             }
             case CHANNEL -> ChatTarget.channel(name);
             case CONVERSATION -> SChat.instance().getConversationManager().getConversation(uniqueId);
             case CONSOLE -> ChatTarget.console();
-            case NAMED -> ChatSource.named(uniqueId, name, BungeeHelper.deserialize(name));
+            case NAMED -> ChatSource.named(uniqueId, name, displayName);
             default -> ChatTarget.nil();
         };
+    }
+
+    private Chatter getChatter(Component displayName) {
+        Player player = Bukkit.getPlayer(uniqueId);
+        if (player == null)
+            return Chatter.chatter(Identity.identity(uniqueId, name, displayName));
+        else
+            return Chatter.player(player);
     }
 
     enum Type {

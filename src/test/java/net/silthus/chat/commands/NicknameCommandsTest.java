@@ -26,9 +26,11 @@ import net.silthus.chat.Identity;
 import net.silthus.chat.TestBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 
 class NicknameCommandsTest extends TestBase {
 
@@ -47,9 +49,13 @@ class NicknameCommandsTest extends TestBase {
     void nick_changesTheChattersDisplayName() {
         player.performCommand("nick Cool");
         assertThat(player.getDisplayName()).isEqualTo("Cool");
-        assertThat(Chatter.player(player))
+        final Chatter chatter = Chatter.player(this.player);
+        assertThat(chatter)
                 .extracting(Identity::getDisplayName)
                 .isEqualTo(text("Cool"));
+        final ArgumentCaptor<Chatter> captor = ArgumentCaptor.forClass(Chatter.class);
+        verify(plugin.getBungeecord()).sendChatter(captor.capture());
+        assertThat(captor.getValue().getDisplayName()).isEqualTo(text("Cool"));
     }
 
     @Test

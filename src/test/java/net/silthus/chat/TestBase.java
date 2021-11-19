@@ -72,9 +72,9 @@ public abstract class TestBase {
         server = MockBukkit.mock();
         plugin = MockBukkit.load(SChat.class);
         plugin.setChatPacketQueue(spy(new ChatPacketQueue(plugin)));
-        setupVaultMock();
-        setupBungeecordMock();
         plugin.setChannelRegistry(spy(plugin.getChannelRegistry()));
+        setupVaultMock();
+        setupBungeeCordMock();
 
     }
 
@@ -101,7 +101,7 @@ public abstract class TestBase {
         plugin.setVaultProvider(new VaultProvider(chat));
     }
 
-    private void setupBungeecordMock() {
+    private void setupBungeeCordMock() {
         PlayerMock messageChannelSender = spy(new PlayerMock(server, "PluginMessageChannelSender"));
         doAnswer(invocation -> {
             byte[] message = invocation.getArgument(2);
