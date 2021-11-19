@@ -19,9 +19,9 @@
 
 package net.silthus.chat;
 
-public class ScopeInstantiationException extends RuntimeException {
+public class InstantiationException extends RuntimeException {
 
-    public ScopeInstantiationException(Throwable cause) {
+    public InstantiationException(Throwable cause) {
         super(cause);
     }
 }

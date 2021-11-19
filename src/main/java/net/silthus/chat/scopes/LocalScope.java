@@ -24,6 +24,7 @@ import lombok.experimental.Accessors;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Message;
 import net.silthus.chat.Scope;
+import net.silthus.chat.annotations.Name;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.configmapper.ConfigOption;
 import org.bukkit.Bukkit;
@@ -35,7 +36,7 @@ import java.util.stream.Collectors;
 
 @Data
 @Accessors(fluent = true)
-@Scope.Name("local")
+@Name("local")
 public final class LocalScope implements Scope {
 
     @ConfigOption

@@ -23,10 +23,11 @@ import lombok.EqualsAndHashCode;
 import net.silthus.chat.Constants;
 import net.silthus.chat.SChat;
 import net.silthus.chat.Scope;
+import net.silthus.chat.annotations.Name;
 import net.silthus.chat.conversations.Channel;
 
 @EqualsAndHashCode
-@Scope.Name(Constants.Scopes.GLOBAL)
+@Name(Constants.Scopes.GLOBAL)
 public final class GlobalScope implements Scope {
 
     @Override

@@ -20,16 +20,17 @@
 package net.silthus.chat.integrations.bungeecord;
 
 import com.google.gson.*;
-import net.silthus.chat.Format;
+import lombok.SneakyThrows;
 import net.silthus.chat.Scopes;
 import net.silthus.chat.config.ChannelConfig;
-import net.silthus.chat.formats.MiniMessageFormat;
+import net.silthus.chat.utils.AnnotationUtils;
 
 import java.lang.reflect.Type;
 
 public class ChannelConfigTypeAdapter implements JsonDeserializer<ChannelConfig>, JsonSerializer<ChannelConfig> {
 
     @Override
+    @SneakyThrows
     public ChannelConfig deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         final JsonObject object = json.getAsJsonObject();
         final JsonElement name = object.get("name");
@@ -40,7 +41,7 @@ public class ChannelConfigTypeAdapter implements JsonDeserializer<ChannelConfig>
                 .canLeave(object.get("can_leave").getAsBoolean())
                 .sendToConsole(object.get("console").getAsBoolean())
                 .scope(Scopes.scope(object.get("scope").getAsString()))
-                .format(Format.miniMessage(object.get("format").getAsString()))
+                .format(context.deserialize(object.get("format"), Class.forName(object.get("format_type").getAsString())))
                 .build();
     }
 
@@ -52,8 +53,9 @@ public class ChannelConfigTypeAdapter implements JsonDeserializer<ChannelConfig>
         object.addProperty("auto_join", src.autoJoin());
         object.addProperty("can_leave", src.canLeave());
         object.addProperty("console", src.sendToConsole());
-        object.addProperty("scope", Scopes.name(src.scope().getClass()));
-        object.addProperty("format", src.format() instanceof MiniMessageFormat ? ((MiniMessageFormat) src.format()).getFormat() : null);
+        object.addProperty("scope", AnnotationUtils.name(src.scope().getClass()));
+        object.add("format", context.serialize(src.format()));
+        object.addProperty("format_type", src.format().getClass().getCanonicalName());
         return object;
     }
 }

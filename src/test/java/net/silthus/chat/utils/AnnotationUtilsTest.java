@@ -17,14 +17,44 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.scopes;
+package net.silthus.chat.utils;
 
-import lombok.EqualsAndHashCode;
-import net.silthus.chat.Constants;
-import net.silthus.chat.Scope;
 import net.silthus.chat.annotations.Name;
+import org.junit.jupiter.api.Test;
 
-@EqualsAndHashCode
-@Name(Constants.Scopes.SERVER)
-public final class ServerScope implements Scope {
+import static org.assertj.core.api.Assertions.assertThat;
+
+class AnnotationUtilsTest {
+
+    @Test
+    void name_withAnnotation_returnsName() {
+        assertThat(AnnotationUtils.name(TestClass.class)).isEqualTo("foo");
+    }
+
+    @Test
+    void clazz_withoutNameAnnotation_returnsClazzName() {
+        assertThat(AnnotationUtils.name(SecondTest.class)).isEqualTo("second-test");
+    }
+
+    @Test
+    void clazz_withSuperclass_getsStripedOfName() {
+        assertThat(AnnotationUtils.name(FooBar.class)).isEqualTo("foo");
+    }
+
+    @Name("foo")
+    public static class TestClass {
+
+    }
+
+    public static class SecondTest {
+
+    }
+
+    public static class FooBar implements Bar {
+
+    }
+
+    public interface Bar {
+
+    }
 }

@@ -201,7 +201,7 @@ public class ChannelTests extends TestBase {
         ChatSource.player(server.addPlayer())
                 .message("test")
                 .to(channel)
-                .format(Format.defaultFormat())
+                .format(Formats.defaultFormat())
                 .send();
 
         assertReceivedMessage(player, "Player1: test");
@@ -235,7 +235,7 @@ public class ChannelTests extends TestBase {
 
     @Test
     void sendMessage_storesFormattedChannelMessage() {
-        Channel channel = createChannel("test", config -> config.format(Format.miniMessage("[<channel_name]<sender_name>: <message>")));
+        Channel channel = createChannel("test", config -> config.format(Formats.miniMessage("[<channel_name]<sender_name>: <message>")));
         Message message = ChatSource.named("test").message("test").to(channel).send();
 
         assertThat(channel.getLastReceivedMessage())
@@ -462,11 +462,11 @@ public class ChannelTests extends TestBase {
 
     @Test
     void setConfig_updatesChannelFormat() {
-        final Channel channel = createChannel(config -> config.format(Format.noFormat()));
-        assertThat(channel.getFormat()).isEqualTo(Format.noFormat());
+        final Channel channel = createChannel(config -> config.format(Formats.noFormat()));
+        assertThat(channel.getFormat()).isEqualTo(Formats.noFormat());
 
-        channel.setConfig(ChannelConfig.builder().format(Format.channelFormat()).build());
-        assertThat(channel.getFormat()).isEqualTo(Format.channelFormat());
+        channel.setConfig(ChannelConfig.builder().format(Formats.channelFormat()).build());
+        assertThat(channel.getFormat()).isEqualTo(Formats.channelFormat());
     }
 
     @Nested
@@ -493,7 +493,7 @@ public class ChannelTests extends TestBase {
                             ChannelConfig::protect,
                             ChannelConfig::autoJoin
                     ).contains(
-                            Format.miniMessage("<green><message>"),
+                            Formats.miniMessage("<green><message>"),
                             true,
                             true,
                             true

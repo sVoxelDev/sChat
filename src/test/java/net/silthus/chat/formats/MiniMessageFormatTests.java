@@ -20,7 +20,10 @@
 package net.silthus.chat.formats;
 
 import net.silthus.chat.*;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.Test;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -77,12 +80,21 @@ public class MiniMessageFormatTests extends TestBase {
 
     @Test
     void withoutMessageTag_appendsMessageTag() {
-        MiniMessageFormat format = new MiniMessageFormat("source: ");
+        final Format format = Formats.miniMessage("source: ");
         String text = toText(format.applyTo(Message.message("test").build()));
         assertThat(text).isEqualTo("source: test");
     }
 
+    @Test
+    void withLoadFromConfig() {
+        final MemoryConfiguration cfg = new MemoryConfiguration();
+        cfg.set("format", "<message>");
+        final Optional<Format> format = Formats.format("mini-message", cfg);
+        assertThat(format).isPresent().get()
+                .extracting("format").isEqualTo("<message>");
+    }
+
     private String toText(String format, Message message) {
-        return toText(Format.miniMessage(format).applyTo(message));
+        return toText(Formats.miniMessage(format).applyTo(message));
     }
 }
