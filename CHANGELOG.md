@@ -1,3 +1,11 @@
+# [1.0.0-beta.12](https://github.com/sVoxelDev/sChat/compare/v1.0.0-beta.11...v1.0.0-beta.12) (2021-11-19)
+
+
+### Bug Fixes
+
+* **nicknames:** nickname not synchronized across servers ([22456f4](https://github.com/sVoxelDev/sChat/commit/22456f49c30a395b2b56810866142f24c20453ec)), closes [#14](https://github.com/sVoxelDev/sChat/issues/14)
+* **packets:** bungee chat packets not handled properly ([fcb5bc1](https://github.com/sVoxelDev/sChat/commit/fcb5bc184b48facc9fcb0cc56a7e7df38f3ea814)), closes [#47](https://github.com/sVoxelDev/sChat/issues/47)
+
 # [1.0.0-beta.11](https://github.com/sVoxelDev/sChat/compare/v1.0.0-beta.10...v1.0.0-beta.11) (2021-11-18)
 
 
