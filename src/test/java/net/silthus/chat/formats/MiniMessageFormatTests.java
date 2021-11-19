@@ -19,12 +19,17 @@
 
 package net.silthus.chat.formats;
 
+import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
+import net.silthus.chat.conversations.Channel;
 import org.bukkit.configuration.MemoryConfiguration;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MiniMessageFormatTests extends TestBase {
@@ -63,26 +68,18 @@ public class MiniMessageFormatTests extends TestBase {
     }
 
     @Test
-        // requires a feature in the adventure lib to allow bleeding color codes
     void withVaultPrefix() {
-        assertThat(toText("<sender_vault_prefix><sender_name>: <message>", Message.message(ChatSource.player(server.addPlayer()), "test").build()))
-                .isEqualTo("&7[ADMIN]&rPlayer0: test");
-//                .isEqualTo("&7[ADMIN]Player0: test");
+        final Message message = Message.message(ChatSource.player(server.addPlayer()), "test").build();
+        final Component result = Formats.miniMessage("<sender_vault_prefix><sender_name>: <message>").applyTo(message);
+
+        assertComponents(result, text("").append(text("[ADMIN]", GRAY)).append(text("Player0: test", GREEN)));
     }
 
     @Test
-        // requires a feature in the adventure lib to allow bleeding color codes
     void withVaultSuffix() {
-        assertThat(toText("<sender_name><sender_vault_suffix>: <message>", Message.message(ChatSource.player(server.addPlayer()), "test").build()))
-                .isEqualTo("Player0[!]: test");
-//                .isEqualTo("Player0[!]&a: test");
-    }
-
-    @Test
-    void withoutMessageTag_appendsMessageTag() {
-        final Format format = Formats.miniMessage("source: ");
-        String text = toText(format.applyTo(Message.message("test").build()));
-        assertThat(text).isEqualTo("source: test");
+        final Message message = Message.message(ChatSource.player(server.addPlayer()), "test").build();
+        final Component result = Formats.miniMessage("<sender_name><sender_vault_suffix>: <message>").applyTo(message);
+        assertComponents(result, text("Player0[!]").append(text(": test", GREEN)));
     }
 
     @Test
@@ -92,6 +89,19 @@ public class MiniMessageFormatTests extends TestBase {
         final Optional<Format> format = Formats.format("mini-message", cfg);
         assertThat(format).isPresent().get()
                 .extracting("format").isEqualTo("<message>");
+    }
+
+    @Test
+    @Disabled
+    void withNestedTemplates_resolvesAllTemplates() {
+        final Format format = plugin.getPluginConfig().defaults().channel().format();
+        final Channel channel = createChannel("test");
+        final Chatter chatter = Chatter.player(server.addPlayer());
+        final Message message = chatter.message("Hi!").to(channel).build();
+
+        final Component result = format.applyTo(message);
+        assertComponents(result, text("[", GOLD).append(text("test", GREEN)).append(text("]", GOLD)
+                .append(text("[ADMIN]", GRAY).append(text("Player0[!]: Hi", GREEN)))));
     }
 
     private String toText(String format, Message message) {

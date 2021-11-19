@@ -25,7 +25,6 @@ import net.silthus.chat.Identity;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -74,8 +73,8 @@ class CommandSendingChatterTest extends TestBase {
         verify(sender, times(2)).sendMessage(captor.capture());
         assertThat(captor.getAllValues())
                 .contains(
-                        ChatColor.GRAY + "Hi",
-                        ChatColor.GRAY + "Test"
+                        "Hi",
+                        "Test"
                 );
     }
 

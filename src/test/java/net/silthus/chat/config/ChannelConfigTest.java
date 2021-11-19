@@ -20,10 +20,7 @@
 package net.silthus.chat.config;
 
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.ChatSource;
-import net.silthus.chat.Formats;
-import net.silthus.chat.Message;
-import net.silthus.chat.TestBase;
+import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.scopes.GlobalScope;
 import net.silthus.chat.scopes.LocalScope;
@@ -39,10 +36,9 @@ class ChannelConfigTest extends TestBase {
 
     @Test
     void load_fromConfig() {
-
         MemoryConfiguration cfg = new MemoryConfiguration();
         cfg.set("name", "Test");
-        cfg.set("format", "<message>");
+        cfg.set("format", "TEST: <message>");
         cfg.set("protect", true);
         cfg.set("console", false);
         cfg.set("auto_join", false);
@@ -52,7 +48,7 @@ class ChannelConfigTest extends TestBase {
 
         ChannelConfig expected = ChannelConfig.builder()
                 .name("Test")
-                .format(Formats.miniMessage("<message>"))
+                .format(Formats.miniMessage("TEST: <message>"))
                 .protect(true)
                 .sendToConsole(false)
                 .autoJoin(false)
@@ -66,7 +62,6 @@ class ChannelConfigTest extends TestBase {
 
     @Test
     void toChannel_createsChannelWithConfig() {
-
         Channel channel = ChannelConfig.channelDefaults()
                 .withName("Test 1")
                 .toChannel("test");
@@ -82,7 +77,6 @@ class ChannelConfigTest extends TestBase {
 
     @Test
     void nullFormat_usesDefaultFormat() {
-
         MemoryConfiguration cfg = new MemoryConfiguration();
         ChannelConfig config = ChannelConfig.channelConfig(cfg);
 
@@ -98,7 +92,6 @@ class ChannelConfigTest extends TestBase {
 
     @Test
     void loadWorldScope_withWorldsConfig() {
-
         List<String> worlds = List.of("world", "world_nether");
         MemoryConfiguration cfg = new MemoryConfiguration();
         cfg.set("scope", "world");
@@ -122,5 +115,26 @@ class ChannelConfigTest extends TestBase {
                 .isInstanceOf(LocalScope.class)
                 .extracting("range")
                 .isEqualTo(20);
+    }
+
+    @Test
+    void withTemplateFormat() {
+        final MemoryConfiguration cfg = new MemoryConfiguration();
+        cfg.set("format", "none");
+        final ChannelConfig config = ChannelConfig.channelConfig(cfg);
+        assertThat(config.format())
+                .extracting("format")
+                .isEqualTo(Constants.Formatting.DEFAULT_NO_FORMAT);
+    }
+
+    @Test
+    void withFormatConfigSection() {
+        final MemoryConfiguration cfg = new MemoryConfiguration();
+        cfg.set("format.type", "mini-message");
+        cfg.set("format.format", "TESTING: <message>");
+        final ChannelConfig config = ChannelConfig.channelConfig(cfg);
+        assertThat(config.format())
+                .extracting("format")
+                .isEqualTo("TESTING: <message>");
     }
 }

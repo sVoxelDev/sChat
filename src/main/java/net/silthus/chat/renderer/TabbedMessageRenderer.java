@@ -37,7 +37,6 @@ import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND;
 import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
-import static net.kyori.adventure.text.event.HoverEvent.showText;
 import static net.silthus.chat.Constants.Commands.JOIN_CONVERSATION;
 import static net.silthus.chat.Constants.Commands.LEAVE_CONVERSATION;
 import static net.silthus.chat.Constants.PERMISSION_SELECT_MESSAGE;
@@ -90,16 +89,13 @@ public final class TabbedMessageRenderer implements MessageRenderer {
     }
 
     private Component renderMessage(View view, Message message) {
+        TextComponent prefix = Component.empty();
         if (view.chatter().hasPermission(PERMISSION_SELECT_MESSAGE)) {
-            final TextComponent prefix = view.selectedMessage().filter(msg -> msg.equals(message))
+            prefix = view.selectedMessage().filter(msg -> msg.equals(message))
                     .map(msg -> text("> ").color(NamedTextColor.RED))
                     .orElse(empty());
-            return prefix.append(message.formatted()
-                    .clickEvent(clickEvent(RUN_COMMAND, Constants.Commands.SELECT_MESSAGE.apply(message)))
-                    .hoverEvent(showText(lang(Constants.Language.Formats.SELECT_MESSAGE))));
-        } else {
-            return message.formatted();
         }
+        return prefix.append(message.formatted());
     }
 
     private TextComponent noConversations() {

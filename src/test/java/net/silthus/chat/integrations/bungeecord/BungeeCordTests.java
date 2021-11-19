@@ -92,6 +92,7 @@ public class BungeeCordTests extends TestBase {
     }
 
     @Test
+    // TODO: race condition bug?
     void synchronizeConversation() {
         ConversationManager conversationManager = plugin.getConversationManager();
 
