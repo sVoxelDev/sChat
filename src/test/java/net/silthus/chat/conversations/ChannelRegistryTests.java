@@ -21,7 +21,7 @@ package net.silthus.chat.conversations;
 
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Chatter;
-import net.silthus.chat.Format;
+import net.silthus.chat.Formats;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.config.PluginConfig;
@@ -72,7 +72,7 @@ public class ChannelRegistryTests extends TestBase {
     void add_addsChannelToRegistry() {
         Channel channel = createChannel("foo", config -> config
                 .name("Test")
-                .format(Format.defaultFormat()));
+                .format(Formats.defaultFormat()));
         registry.add(channel);
 
         assertThat(registry.getChannels())
@@ -369,7 +369,7 @@ public class ChannelRegistryTests extends TestBase {
         private PluginConfig channelConfigBefore() {
             return PluginConfig.builder()
                     .channel("test1", ChannelConfig.builder().name("Test 1").autoJoin(true).build())
-                    .channel("test2", ChannelConfig.builder().name("Test 2").format(Format.noFormat()).build())
+                    .channel("test2", ChannelConfig.builder().name("Test 2").format(Formats.noFormat()).build())
                     .build();
         }
 

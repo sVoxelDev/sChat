@@ -73,7 +73,7 @@ public class MessageDtoTests extends TestBase {
     @Test
     void toMessage_withChannel_serializesChannel() {
         PlayerMock player = server.addPlayer();
-        Channel channel = createChannel("test", config -> config.format(Format.format("[<channel_name>]<sender_name>: <message>")));
+        Channel channel = createChannel("test", config -> config.format(Formats.miniMessage("[<channel_name>]<sender_name>: <message>")));
         MessageDto dto = new MessageDto(Message.message("Hi")
                 .from(ChatSource.player(player))
                 .to(channel)

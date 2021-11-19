@@ -19,6 +19,7 @@
 
 package net.silthus.chat;
 
+import net.silthus.chat.annotations.Name;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.configmapper.ConfigOption;
@@ -117,7 +118,7 @@ class ScopesTest extends TestBase {
         return spy(Scopes.scope(TestScope.class));
     }
 
-    @Scope.Name("foo")
+    @Name("foo")
     static class TestScope implements Scope {
 
         @ConfigOption

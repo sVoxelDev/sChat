@@ -24,18 +24,15 @@ import net.silthus.chat.scopes.GlobalScope;
 import net.silthus.chat.scopes.LocalScope;
 import net.silthus.chat.scopes.ServerScope;
 import net.silthus.chat.scopes.WorldScope;
+import net.silthus.chat.utils.AnnotationUtils;
+import net.silthus.chat.utils.ReflectionUtil;
 import net.silthus.configmapper.bukkit.BukkitConfigMap;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemoryConfiguration;
-import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Log(topic = Constants.PLUGIN_NAME)
 public final class Scopes {
@@ -62,7 +59,7 @@ public final class Scopes {
     }
 
     public static <TScope extends Scope> TScope scope(Class<TScope> scopeClass) {
-        return scopeClass.cast(scope(name(scopeClass)));
+        return scopeClass.cast(scope(AnnotationUtils.name(scopeClass)));
     }
 
     public static Scope scope(String scope) {
@@ -79,49 +76,12 @@ public final class Scopes {
     }
 
     public static <TScope extends Scope> void register(Class<TScope> scope) {
-        String name = name(scope);
-        Supplier<TScope> supplier = getScopeSupplier(scope);
+        String name = AnnotationUtils.name(scope);
+        Supplier<TScope> supplier = ReflectionUtil.getDefaultSupplier(scope);
         RegisteredScope<?> oldScope = scopes.put(name, new RegisteredScope<>(name, scope, supplier));
         if (oldScope != null)
             log.warning("Existing scope " + oldScope.scopeClass().getCanonicalName() + " with key '"
-                        + name + "' was replaced by " + scope.getCanonicalName());
-    }
-
-    public static String name(Class<? extends Scope> scope) {
-        if (scope.isAnnotationPresent(Scope.Name.class))
-            return scope.getAnnotation(Scope.Name.class).value();
-        else
-            return getNameFromClass(scope);
-    }
-
-    @NotNull
-    private static <TScope extends Scope> Supplier<TScope> getScopeSupplier(Class<TScope> scope) {
-        try {
-            final Constructor<TScope> constructor = scope.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            return () -> {
-                try {
-                    return constructor.newInstance();
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                    throw new ScopeInstantiationException(e);
-                }
-            };
-        } catch (NoSuchMethodException e) {
-            throw new ScopeInstantiationException(e);
-        }
-    }
-
-    private final static Pattern CAMEL_CASE_PATTERN = Pattern.compile("(?!^)(?=[A-Z][a-z])");
-
-    @NotNull
-    private static String getNameFromClass(Class<? extends Scope> scope) {
-        Matcher matcher = CAMEL_CASE_PATTERN.matcher(getClassName(scope));
-        return matcher.replaceAll("-").toLowerCase();
-    }
-
-    @NotNull
-    private static String getClassName(Class<? extends Scope> scope) {
-        return scope.getSimpleName().replace("Scope", "");
+                    + name + "' was replaced by " + scope.getCanonicalName());
     }
 
     private Scopes() {
@@ -129,6 +89,5 @@ public final class Scopes {
 
     private static record RegisteredScope<TScope extends Scope>(String name, Class<TScope> scopeClass,
                                                                 Supplier<TScope> supplier) {
-
     }
 }

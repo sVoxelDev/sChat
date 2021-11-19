@@ -92,7 +92,7 @@ class MessageTest extends TestBase {
         Message message = ChatSource.named("test")
                 .message("Hi")
                 .to(Channel.channel("channel"))
-                .format(Format.noFormat())
+                .format(Formats.noFormat())
                 .build();
         String text = toCleanText(message);
 

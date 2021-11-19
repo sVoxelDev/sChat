@@ -41,7 +41,7 @@ public class Message implements Comparable<Message> {
     }
 
     public static MessageBuilder message() {
-        return new MessageBuilder(Format.defaultFormat());
+        return new MessageBuilder(Formats.defaultFormat());
     }
 
     public static MessageBuilder message(String message) {
@@ -49,11 +49,11 @@ public class Message implements Comparable<Message> {
     }
 
     public static MessageBuilder message(Component message) {
-        return new MessageBuilder(Format.noFormat()).text(message);
+        return new MessageBuilder(Formats.noFormat()).text(message);
     }
 
     public static MessageBuilder message(ChatSource source, String message) {
-        return new MessageBuilder(Format.defaultFormat()).text(message).source(source);
+        return new MessageBuilder(Formats.defaultFormat()).text(message).source(source);
     }
 
     @Builder.Default
@@ -64,7 +64,7 @@ public class Message implements Comparable<Message> {
     @Builder.Default
     Component text = Component.empty();
     @Builder.Default
-    Format format = Format.noFormat();
+    Format format = Formats.noFormat();
     Type type;
     Conversation conversation;
     @Builder.Default
@@ -110,7 +110,7 @@ public class Message implements Comparable<Message> {
         }
 
         private MessageBuilder() {
-            this.defaultFormat = Format.defaultFormat();
+            this.defaultFormat = Formats.defaultFormat();
         }
 
         public MessageBuilder from(@NonNull ChatSource source) {

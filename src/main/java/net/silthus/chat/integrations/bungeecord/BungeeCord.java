@@ -24,10 +24,12 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
 import lombok.extern.java.Log;
 import net.silthus.chat.*;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.identities.AbstractChatTarget;
+import net.silthus.chat.integrations.placeholders.Placeholders;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -52,6 +54,7 @@ public class BungeeCord extends AbstractChatTarget implements PluginMessageListe
         this.playerSupplier = playerSupplier;
         gson = new GsonBuilder()
                 .registerTypeAdapter(ChannelConfig.class, new ChannelConfigTypeAdapter())
+                .registerTypeAdapter(Placeholders.class, (InstanceCreator<Placeholders>) type -> plugin.getPlaceholders())
                 .create();
     }
 

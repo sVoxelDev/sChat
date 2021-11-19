@@ -17,14 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.scopes;
+package net.silthus.chat.annotations;
 
-import lombok.EqualsAndHashCode;
-import net.silthus.chat.Constants;
-import net.silthus.chat.Scope;
-import net.silthus.chat.annotations.Name;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@EqualsAndHashCode
-@Name(Constants.Scopes.SERVER)
-public final class ServerScope implements Scope {
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Name {
+
+    String value();
 }

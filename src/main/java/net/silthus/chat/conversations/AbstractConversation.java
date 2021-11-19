@@ -34,7 +34,7 @@ import java.util.*;
 public abstract class AbstractConversation extends AbstractChatTarget implements Conversation {
 
     private final Set<ChatTarget> targets = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>()));
-    private Format format = Format.defaultFormat();
+    private Format format = Formats.defaultFormat();
 
     public AbstractConversation(UUID id, String name) {
         super(id, name);

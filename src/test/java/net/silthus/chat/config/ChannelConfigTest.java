@@ -21,7 +21,7 @@ package net.silthus.chat.config;
 
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.ChatSource;
-import net.silthus.chat.Format;
+import net.silthus.chat.Formats;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
@@ -52,7 +52,7 @@ class ChannelConfigTest extends TestBase {
 
         ChannelConfig expected = ChannelConfig.builder()
                 .name("Test")
-                .format(Format.format("<message>"))
+                .format(Formats.miniMessage("<message>"))
                 .protect(true)
                 .sendToConsole(false)
                 .autoJoin(false)

@@ -23,6 +23,7 @@ import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
 import net.silthus.chat.Format;
+import net.silthus.chat.Formats;
 import net.silthus.chat.Scope;
 import net.silthus.chat.Scopes;
 import net.silthus.chat.conversations.Channel;
@@ -56,7 +57,7 @@ public class ChannelConfig {
     @Builder.Default
     boolean canLeave = true;
     @Builder.Default
-    Format format = Format.channelFormat();
+    Format format = Formats.channelFormat();
     @Builder.Default
     transient Scope scope = Scopes.server();
     @Builder.Default
@@ -71,7 +72,7 @@ public class ChannelConfig {
                 .sendToConsole(config.getBoolean("console", sendToConsole))
                 .autoJoin(config.getBoolean("auto_join", autoJoin))
                 .scope(Scopes.scope(config.getString("scope", SERVER), config))
-                .format(config.isSet("format") ? Format.miniMessage(config.getString("format")) : format)
+                .format(config.isSet("format") ? Formats.miniMessage(config.getString("format")) : format)
                 .footer(FooterConfig.footerConfig(config.getConfigurationSection("footer")));
     }
 

@@ -355,7 +355,7 @@ public class ChatterTests extends TestBase {
 
     @Test
     void sendMessage_doesNotSendDuplicateMessage() {
-        Message message = message("hi").format(Format.noFormat()).build();
+        Message message = message("hi").format(Formats.noFormat()).build();
 
         chatter.sendMessage(message);
         assertReceivedMessage(player, "hi");
@@ -366,7 +366,7 @@ public class ChatterTests extends TestBase {
 
     @Test
     void sendGlobalMessage_ifChatterIsOffline() {
-        Message message = message("hi").format(Format.noFormat()).build();
+        Message message = message("hi").format(Formats.noFormat()).build();
         OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.randomUUID());
         Chatter chatter = Chatter.player(player);
         chatter.sendMessage(message);

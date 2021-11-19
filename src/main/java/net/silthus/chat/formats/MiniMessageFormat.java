@@ -19,8 +19,9 @@
 
 package net.silthus.chat.formats;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
@@ -30,31 +31,31 @@ import net.kyori.adventure.text.minimessage.Template;
 import net.silthus.chat.*;
 import net.silthus.chat.config.Language;
 import net.silthus.chat.identities.PlayerChatter;
+import net.silthus.chat.integrations.placeholders.Placeholders;
+import net.silthus.configmapper.ConfigOption;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.event.HoverEvent.showText;
 import static net.kyori.adventure.text.minimessage.template.TemplateResolver.templates;
+import static net.silthus.chat.Constants.Formatting.DEFAULT_FORMAT;
 import static net.silthus.chat.Constants.Language.Formats.PLAYER_CLICK;
 
+@Data
+@Accessors(fluent = true)
 @Log(topic = Constants.PLUGIN_NAME)
 @EqualsAndHashCode(of = {"format"})
 public class MiniMessageFormat implements Format {
 
-    @Getter
-    private final String format;
+    private final Placeholders placeholders;
 
-    public MiniMessageFormat(String miniMessage) {
-        if (!miniMessage.contains("<message>")) {
-            log.warning("Format '" + miniMessage + "' without <message> tag! Appending <message> tag...");
-            miniMessage += "<message>";
-        }
-        this.format = miniMessage;
-    }
+    @ConfigOption
+    private String format = DEFAULT_FORMAT;
 
     @Override
     public Component applyTo(Message message) {
+        checkForMessageTag();
         final Component component = MiniMessage.miniMessage().deserialize(format, templates(
                 channelTemplate(message),
                 vaultPrefixTemplate(message),
@@ -67,6 +68,13 @@ public class MiniMessageFormat implements Format {
             return SChat.instance().getPlaceholders().setPlaceholders((PlayerChatter) message.getSource(), component);
         }
         return component;
+    }
+
+    private void checkForMessageTag() {
+        if (!format.contains("<message>")) {
+            log.warning("Format '" + format + "' without <message> tag! Appending <message> tag...");
+            format += "<message>";
+        }
     }
 
     private Template messageTemplate(Message message) {

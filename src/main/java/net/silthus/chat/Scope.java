@@ -21,10 +21,6 @@ package net.silthus.chat;
 
 import net.silthus.chat.conversations.Channel;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.util.Collection;
 
 public interface Scope {
@@ -39,10 +35,4 @@ public interface Scope {
     default void onRemove(Channel channel) {
     }
 
-    @Target(ElementType.TYPE)
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface Name {
-
-        String value();
-    }
 }

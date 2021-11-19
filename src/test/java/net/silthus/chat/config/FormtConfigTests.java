@@ -17,14 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.scopes;
+package net.silthus.chat.config;
 
-import lombok.EqualsAndHashCode;
-import net.silthus.chat.Constants;
-import net.silthus.chat.Scope;
-import net.silthus.chat.annotations.Name;
+import net.silthus.chat.TestBase;
+import org.junit.jupiter.api.Test;
 
-@EqualsAndHashCode
-@Name(Constants.Scopes.SERVER)
-public final class ServerScope implements Scope {
+public class FormtConfigTests extends TestBase {
+
+    @Test
+    void isIncluded_inPluginConfig() {
+
+    }
 }
