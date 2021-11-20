@@ -23,6 +23,16 @@ private_chats:
   global: true
   # Set the format template that should be applied to private messages.
   format: private_message
+  # The name of the conversation (channel) tab in the footer.
+  # Possible replacements are:
+  #   - <partner_name>: resolves to the other conversation partner depending on the viewer.
+  name: "<partner_name>"
+# Fine tune the behaviour of the broadcast command here.
+broadcast:
+  # Set the format template that should be applied to broadcasts.
+  format: default
+  # Set false to only broadcast to channels. Players will receive an unread indicator in all channels.
+  include_private_chats: true
 # Define your list of channels here.
 channels:
   # The id of the channel must be unique across your server network.

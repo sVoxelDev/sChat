@@ -68,4 +68,8 @@ public interface ChatSource extends Identity {
     default Message.MessageBuilder message(String message) {
         return Message.message(this, message);
     }
+
+    default Message.MessageBuilder message(Component message) {
+        return Message.message(this, message);
+    }
 }

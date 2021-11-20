@@ -37,6 +37,8 @@ import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 
+import static net.kyori.adventure.text.Component.text;
+
 @Value
 @EqualsAndHashCode(of = "id")
 @Builder(builderMethodName = "message", toBuilder = true)
@@ -51,7 +53,7 @@ public class Message implements Comparable<Message>, TemplateResolver {
     }
 
     public static MessageBuilder message(String message) {
-        return message(Component.text(message));
+        return message(text(message));
     }
 
     public static MessageBuilder message(Component message) {
@@ -59,6 +61,10 @@ public class Message implements Comparable<Message>, TemplateResolver {
     }
 
     public static MessageBuilder message(ChatSource source, String message) {
+        return message(source, text(message));
+    }
+
+    public static MessageBuilder message(ChatSource source, Component message) {
         return new MessageBuilder(Formats.defaultFormat()).text(message).source(source);
     }
 
@@ -159,7 +165,6 @@ public class Message implements Comparable<Message>, TemplateResolver {
                 if (target instanceof Conversation)
                     conversation((Conversation) target);
                 targetList.add(target);
-
             }
             return targets(targetList);
         }

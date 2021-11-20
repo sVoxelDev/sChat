@@ -20,15 +20,19 @@
 package net.silthus.chat.commands;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
+import net.kyori.adventure.text.TextComponent;
 import net.md_5.bungee.api.ChatColor;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.PrivateConversation;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -63,6 +67,46 @@ class SChatCommandsTest extends TestBase {
         player.addAttachment(plugin, Constants.PERMISSION_ADMIN_RELOAD, true);
         player.performCommand("schat reload");
         verify(plugin.getChannelRegistry()).load(any());
+    }
+
+    @Test
+    void broadcast_sendsMessageToAllChannels() {
+        final Chatter chatter = Chatter.player(player);
+        final Channel channel = createChannel("test");
+        final Channel foobar = createChannel("foobar");
+        final Channel unsubscribed = createChannel("unsubscribed");
+        chatter.subscribe(foobar);
+        chatter.setActiveConversation(channel);
+
+        assertThat(player.performCommand("broadcast Hey you all!")).isTrue();
+        assertThat(getLastMessage(player)).contains("you do not have permission to perform this command");
+        player.addAttachment(plugin, Constants.PERMISSION_ADMIN_BROADCAST, true);
+
+        final TextComponent expected = broadcast();
+        assertLastMessage(chatter, expected);
+        assertLastMessage(channel, expected);
+        assertLastMessage(foobar, expected);
+        assertLastMessage(unsubscribed, expected);
+    }
+
+    @NotNull
+    private TextComponent broadcast() {
+        final TextComponent expected = text("Player0", YELLOW).append(text(": Hey you all!", GRAY));
+        player.performCommand("broadcast Hey you all!");
+        return expected;
+    }
+
+    @Test
+    void broadcast_marksMessageAsReadEverywhere() {
+        final Chatter chatter = Chatter.player(player);
+        final Channel active = createChannel("active");
+        final Channel channel = createChannel("channel");
+        chatter.subscribe(channel);
+        channel.setActiveConversation(active);
+        player.addAttachment(plugin, Constants.PERMISSION_ADMIN_BROADCAST, true);
+
+        broadcast();
+        assertThat(chatter.getUnreadMessages(channel)).isEmpty();
     }
 
     @Nested

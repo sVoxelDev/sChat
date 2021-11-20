@@ -26,7 +26,9 @@ import co.aikar.commands.annotation.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.silthus.chat.*;
+import net.silthus.chat.config.BroadcastConfig;
 import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.conversations.PrivateConversation;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.event.ClickEvent.runCommand;
@@ -45,6 +47,24 @@ public class SChatCommands extends SChatBaseCommand {
     public void reload() {
         plugin.reload();
         success(PLUGIN_RELOADED);
+    }
+
+    @CommandAlias("broadcast")
+    @Subcommand("broadcast")
+    @CommandPermission(PERMISSION_ADMIN_BROADCAST)
+    public void broadcast(@Flags("self") Chatter chatter, String message) {
+        final BroadcastConfig broadcast = plugin.getPluginConfig().broadcast();
+        final ChatTarget[] targets = plugin.getConversationManager().getConversations()
+                .stream().filter(conversation -> {
+                    if (!broadcast.includePrivateChats())
+                        return !(conversation instanceof PrivateConversation);
+                    return true;
+                }).toArray(ChatTarget[]::new);
+        chatter.message(message)
+                .to(targets)
+                .conversation(null)
+                .format(broadcast.format())
+                .send();
     }
 
     @Subcommand("conversations")

@@ -59,6 +59,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -124,6 +125,8 @@ public abstract class TestBase {
             return invocation;
         }).when(messageChannelSender).sendPluginMessage(eq(plugin), anyString(), any());
         plugin.setBungeecord(spy(new BungeeCord(plugin, () -> messageChannelSender)));
+        // reset the global chat target to the bungeecord mock
+        plugin.getChannelRegistry().getChannels().forEach(channel -> channel.setConfig(channel.getConfig()));
     }
 
     protected Stream<Listener> getRegisteredListeners() {
@@ -213,6 +216,11 @@ public abstract class TestBase {
     }
 
     protected void assertComponents(Component actual, Component expected) {
-        assertThat(prettyPrint(actual)).isEqualTo(prettyPrint(expected));
+        assertEquals(prettyPrint(expected), prettyPrint(actual));
+    }
+
+    protected void assertLastMessage(ChatTarget target, Component expected) {
+        assertThat(target.getLastReceivedMessage()).isNotNull();
+        assertComponents(target.getLastReceivedMessage().formatted(), expected);
     }
 }

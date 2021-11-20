@@ -50,6 +50,7 @@ public final class Constants {
     public static final String PERMISSION_SELECT_MESSAGE = "schat.message.select";
     public static final String PERMISSION_MESSAGE_DELETE = "schat.message.delete";
     public static final String PERMISSION_ADMIN_RELOAD = "schat.admin.reload";
+    public static final String PERMISSION_ADMIN_BROADCAST = "schat.admin.broadcast";
     public static final String PERMISSION_ADMIN_OTHERS = "schat.admin.others";
     public static final String PERMISSION_NICKNAME_SET = "schat.nickname.set";
     public static final String PERMISSION_NICKNAME_SET_OTHERS = "schat.nickname.set.others";

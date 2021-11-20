@@ -73,7 +73,13 @@ spigot {
             description 'Contains all admin permissions for sChat.'
             defaults 'op'
             children = [
-                    'schat.admin.reload': true
+                    'schat.admin.reload': true,
+                    'schat.admin.broadcast': true,
+                    'schat.message.select': true,
+                    'schat.message.delete': true,
+                    'schat.nickname.set': true,
+                    'schat.nickname.set.blocked': true,
+                    'schat.nickname.set.others': true,
             ]
         }
     }

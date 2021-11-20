@@ -52,7 +52,7 @@ public class ConversationManagerTests extends TestBase {
 
     @Test
     void isEmpty_afterCreation() {
-        assertThat(manager.getConversations()).isEmpty();
+        assertThat(manager.getConversations()).noneMatch(conversation -> conversation instanceof PrivateConversation);
     }
 
     @Test
@@ -61,7 +61,6 @@ public class ConversationManagerTests extends TestBase {
     }
 
     @Test
-    @SuppressWarnings("ConstantConditions")
     void getConversations_isImmutable() {
         assertThatExceptionOfType(UnsupportedOperationException.class)
                 .isThrownBy(() -> manager.getConversations().add(Conversation.channel("test")));
@@ -100,7 +99,7 @@ public class ConversationManagerTests extends TestBase {
         Conversation conversation = registerConversation();
         manager.registerConversation(conversation);
 
-        assertThat(manager.getConversations()).hasSize(1);
+        assertThat(manager.getConversations()).containsOnlyOnce(conversation);
     }
 
     @Test
@@ -127,5 +126,15 @@ public class ConversationManagerTests extends TestBase {
 
         assertThat(manager.getPrivateConversation(target2))
                 .isEmpty();
+    }
+
+    @Test
+    void getConversations_includesChannels() {
+        Chatter target1 = ChatTarget.player(server.addPlayer());
+        Chatter target2 = ChatTarget.player(server.addPlayer());
+        Conversation conversation = Conversation.privateConversation(target1, target2);
+        final Channel channel = createChannel("test");
+        assertThat(manager.getConversations())
+                .contains(channel, conversation);
     }
 }

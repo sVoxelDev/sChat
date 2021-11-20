@@ -29,6 +29,7 @@ import net.silthus.chat.identities.PlayerChatter;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class ConversationManager {
 
@@ -40,7 +41,10 @@ public final class ConversationManager {
     }
 
     public Collection<Conversation> getConversations() {
-        return Set.copyOf(conversations.values());
+        return Stream.concat(
+                conversations.values().stream(),
+                plugin.getChannelRegistry().getChannels().stream()
+        ).toList();
     }
 
     public Conversation getConversation(@NonNull UUID id) {

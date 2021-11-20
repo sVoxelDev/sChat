@@ -58,6 +58,7 @@ e.g. clicking on a channel will set the channel as active*. However, here are th
 | Commands | Alias | Permission | Description |
 | -------- | ----- | ---------- | ----------- |
 | `/schat reload` | | `schat.admin.reload` | Reloads the sChat config and all channels that have changes. This is non disruptive and will not touch unchanged channels. |
+| `/schat broadcast <message>` | `/broadcast <message>` | `schat.admin.broadcast` | Sends a message to all channels and private conversations. Every player will get this message. |
 
 ## Permissions
 
@@ -72,6 +73,7 @@ e.g. clicking on a channel will set the channel as active*. However, here are th
 | | |
 | `schat.admin` | This permission groups all admin permissions nested under the `schat.admin.*` permissions. OPs get this by default. |
 | `schat.admin.reload` | Allows performing the `/schat reload` command to reload the plugin. |
+| `schat.admin.broadcast` | Allows performing the `/broadcast` command. |
 | | |
 | `schat.message.select` | Allows selecting chat messages for moderation or editing. |
 | `schat.message.delete` | Allows deleting chat messages. |

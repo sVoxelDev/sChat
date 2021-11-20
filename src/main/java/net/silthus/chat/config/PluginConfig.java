@@ -32,6 +32,7 @@ import java.util.Map;
 
 import static java.util.Objects.requireNonNullElseGet;
 import static java.util.stream.Collectors.toMap;
+import static net.silthus.chat.config.BroadcastConfig.broadcastDefaults;
 import static net.silthus.chat.config.ChannelConfig.channelConfig;
 import static net.silthus.chat.config.ChannelConfig.channelDefaults;
 import static net.silthus.chat.config.ConsoleConfig.consoleConfig;
@@ -69,6 +70,8 @@ public class PluginConfig {
     @Builder.Default
     PrivateChatConfig privateChat = privateChatDefaults();
     @Builder.Default
+    BroadcastConfig broadcast = broadcastDefaults();
+    @Builder.Default
     PlayerConfig player = PlayerConfig.playerDefaults();
     @Singular
     Map<String, ChannelConfig> channels;
@@ -87,6 +90,7 @@ public class PluginConfig {
                 .console(consoleConfig(getSection(config, "console")))
                 .player(playerConfig(getSection(config, "players")))
                 .privateChat(PrivateChatConfig.privateChat(getSection(config, "private_chats")))
+                .broadcast(BroadcastConfig.broadcast(getSection(config, "broadcast")))
                 .channelsFromConfig(getSection(config, "channels"))
                 .formatsFromConfig(getSection(config, "formats"));
     }
