@@ -87,15 +87,6 @@ class CommandSendingChatterTest extends TestBase {
         assertReceivedMessage("[test]Mock: hi");
     }
 
-    @Test
-    void message_alwaysAddsSender_asTarget() {
-        final Channel channel = createChannel("foo");
-        final Message message = chatter.message("hi").to(channel).send();
-
-        assertThat(chatter.getLastReceivedMessage()).isEqualTo(message);
-        assertReceivedMessage("[foo]Mock: hi");
-    }
-
     private void assertReceivedMessage(String message) {
         verify(sender).sendMessage(captor.capture());
         assertThat(cleaned(captor.getValue())).isEqualTo(message);
