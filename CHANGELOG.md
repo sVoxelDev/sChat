@@ -1,3 +1,16 @@
+# [1.0.0-beta.16](https://github.com/sVoxelDev/sChat/compare/v1.0.0-beta.15...v1.0.0-beta.16) (2021-11-20)
+
+
+### Bug Fixes
+
+* **bungee:** format message on sending server to allow resolving of placeholders ([49a9cbd](https://github.com/sVoxelDev/sChat/commit/49a9cbd188583eceba75cfc01ddc8efd05e4c6e8))
+* **chat:** click to select (and delete) message not possible ([8f0c05a](https://github.com/sVoxelDev/sChat/commit/8f0c05ae46a8a489d7f56ea26b52e33488bc0220))
+
+
+### Features
+
+* **formats:** add option to center messages, e.g. broadcasts ([e313b2c](https://github.com/sVoxelDev/sChat/commit/e313b2c3d4225eb66a67466ec23c3b9e08d53720))
+
 # [1.0.0-beta.15](https://github.com/sVoxelDev/sChat/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2021-11-20)
 
 
