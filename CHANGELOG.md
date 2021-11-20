@@ -1,3 +1,10 @@
+# [1.0.0-beta.15](https://github.com/sVoxelDev/sChat/compare/v1.0.0-beta.14...v1.0.0-beta.15) (2021-11-20)
+
+
+### Features
+
+* **cmd:** add /broadcast command incl. config ([1309129](https://github.com/sVoxelDev/sChat/commit/13091295a5ddcd94958835a7205df878329baddb)), closes [#18](https://github.com/sVoxelDev/sChat/issues/18)
+
 # [1.0.0-beta.14](https://github.com/sVoxelDev/sChat/compare/v1.0.0-beta.13...v1.0.0-beta.14) (2021-11-20)
 
 
