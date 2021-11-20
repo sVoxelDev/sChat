@@ -1,3 +1,10 @@
+# [1.0.0-beta.14](https://github.com/sVoxelDev/sChat/compare/v1.0.0-beta.13...v1.0.0-beta.14) (2021-11-20)
+
+
+### Features
+
+* **config:** add private chat config options ([98ed9f5](https://github.com/sVoxelDev/sChat/commit/98ed9f5331ac5d2a56a34b451032aaa3904d3764))
+
 # [1.0.0-beta.13](https://github.com/sVoxelDev/sChat/compare/v1.0.0-beta.12...v1.0.0-beta.13) (2021-11-19)
 
 
