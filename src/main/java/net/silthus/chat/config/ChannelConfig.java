@@ -59,7 +59,7 @@ public class ChannelConfig {
     @Builder.Default
     Format format = Formats.channelFormat();
     @Builder.Default
-    transient Scope scope = Scopes.server();
+    Scope scope = Scopes.server();
     @Builder.Default
     FooterConfig footer = FooterConfig.builder().build();
 

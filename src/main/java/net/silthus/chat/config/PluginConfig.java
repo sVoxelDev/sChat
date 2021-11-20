@@ -32,6 +32,7 @@ import java.util.Map;
 
 import static java.util.Objects.requireNonNullElseGet;
 import static java.util.stream.Collectors.toMap;
+import static net.silthus.chat.config.BroadcastConfig.broadcastConfig;
 import static net.silthus.chat.config.BroadcastConfig.broadcastDefaults;
 import static net.silthus.chat.config.ChannelConfig.channelConfig;
 import static net.silthus.chat.config.ChannelConfig.channelDefaults;
@@ -39,6 +40,7 @@ import static net.silthus.chat.config.ConsoleConfig.consoleConfig;
 import static net.silthus.chat.config.ConsoleConfig.consoleDefaults;
 import static net.silthus.chat.config.FormatConfig.formatConfig;
 import static net.silthus.chat.config.PlayerConfig.playerConfig;
+import static net.silthus.chat.config.PrivateChatConfig.privateChatConfig;
 import static net.silthus.chat.config.PrivateChatConfig.privateChatDefaults;
 
 @Value
@@ -78,21 +80,18 @@ public class PluginConfig {
     @Singular
     Map<String, FormatConfig> formats;
 
-    public PluginConfig registerFormatTemplates() {
-        formats.forEach((key, value) -> value.registerAsTemplate(key));
-        return this;
-    }
-
     public PluginConfig.PluginConfigBuilder withConfig(ConfigurationSection config) {
+        if (config == null) return toBuilder();
+        final Map<String, FormatConfig> formats = loadFormats(getSection(config, "formats"));
         return toBuilder()
                 .languageConfig(loadLanguage(config))
                 .defaults(loadDefaults(getSection(config, "defaults")))
                 .console(consoleConfig(getSection(config, "console")))
                 .player(playerConfig(getSection(config, "players")))
-                .privateChat(PrivateChatConfig.privateChat(getSection(config, "private_chats")))
-                .broadcast(BroadcastConfig.broadcast(getSection(config, "broadcast")))
+                .privateChat(privateChatConfig(getSection(config, "private_chats")))
+                .broadcast(broadcastConfig(getSection(config, "broadcast")))
                 .channelsFromConfig(getSection(config, "channels"))
-                .formatsFromConfig(getSection(config, "formats"));
+                .formats(formats);
     }
 
     private String loadLanguage(ConfigurationSection config) {
@@ -103,6 +102,16 @@ public class PluginConfig {
 
     private Defaults loadDefaults(@NonNull ConfigurationSection config) {
         return new Defaults(channelConfig(getSection(config, "channel")));
+    }
+
+    private Map<String, FormatConfig> loadFormats(@NonNull ConfigurationSection config) {
+        final Map<String, FormatConfig> formats = config.getKeys(false).stream()
+                .collect(toMap(
+                        key -> key,
+                        key -> formatConfig(config.getConfigurationSection(key))
+                ));
+        formats.forEach((key, value) -> value.registerAsTemplate(key));
+        return formats;
     }
 
     @NotNull
@@ -133,24 +142,12 @@ public class PluginConfig {
             return channels(loadChannels(config));
         }
 
-        private PluginConfigBuilder formatsFromConfig(@NonNull ConfigurationSection config) {
-            return formats(loadFormats(config));
-        }
-
         private Map<String, ChannelConfig> loadChannels(@NonNull ConfigurationSection config) {
             final Defaults defaults = defaults$set ? defaults$value : $default$defaults();
             return config.getKeys(false).stream()
                     .collect(toMap(
                             key -> key,
                             key -> defaults.channel.withConfig(config.getConfigurationSection(key)).build()
-                    ));
-        }
-
-        private Map<String, FormatConfig> loadFormats(@NonNull ConfigurationSection config) {
-            return config.getKeys(false).stream()
-                    .collect(toMap(
-                            key -> key,
-                            key -> formatConfig(config.getConfigurationSection(key))
                     ));
         }
     }

@@ -19,7 +19,6 @@
 
 package net.silthus.chat.integrations.bungeecord;
 
-import net.kyori.adventure.text.Component;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.SChat;
@@ -45,9 +44,8 @@ class ConversationDto extends IdentityDto {
 
     Conversation asConversation() {
         final List<ChatTarget> targets = this.targets.stream().map(identityDto -> (ChatTarget) identityDto.asChatIdentity()).toList();
-        final Component displayName = BungeeHelper.deserialize(displayName());
         return switch (conversationType) {
-            case DIRECT -> Conversation.privateConversation(uniqueId(), name(), displayName, targets);
+            case DIRECT -> Conversation.privateConversation(uniqueId(), name(), displayName(), targets);
             case CHANNEL -> Channel.channel(name(), config);
             case UNKNOWN -> SChat.instance().getConversationManager().getConversation(uniqueId());
         };

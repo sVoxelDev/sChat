@@ -25,7 +25,6 @@ import net.silthus.chat.*;
 import net.silthus.chat.config.FooterConfig;
 import net.silthus.chat.conversations.Channel;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.newline;
@@ -112,18 +111,6 @@ public class TabbedMessageRendererTests extends TestBase {
         String text = toText(view.conversationTabs(new View(chatter)));
         assertThat(text)
                 .isEqualTo("&8\u2502 &4&n\u2718&a&nactive&8 \u2502 &4\u2718&7foobar&8 \u2502 &7Global&8 \u2502 &4\u2718&7test&8 \u2502 &4\u2718&7Trade&8 \u2502 ");
-    }
-
-    @Test
-    @Disabled
-    void supports_channelName_placeholders() {
-        Channel channel = createChannel("foo", config -> config.name("<player_name>"));
-        chatter.subscribe(channel);
-        chatter.setActiveConversation(channel);
-
-        String text = toText(view.conversationTabs(new View(chatter)));
-
-        assertThat(text).contains(toText(chatter.getDisplayName()));
     }
 
     @Test

@@ -70,6 +70,7 @@ class SChatCommandsTest extends TestBase {
     }
 
     @Test
+    // TODO: some race condition test error
     void broadcast_sendsMessageToAllChannels() {
         final Chatter chatter = Chatter.player(player);
         final Channel channel = createChannel("test");
@@ -78,7 +79,7 @@ class SChatCommandsTest extends TestBase {
         chatter.subscribe(foobar);
         chatter.setActiveConversation(channel);
 
-        assertThat(player.performCommand("broadcast Hey you all!")).isTrue();
+        broadcast();
         assertThat(getLastMessage(player)).contains("you do not have permission to perform this command");
         player.addAttachment(plugin, Constants.PERMISSION_ADMIN_BROADCAST, true);
 

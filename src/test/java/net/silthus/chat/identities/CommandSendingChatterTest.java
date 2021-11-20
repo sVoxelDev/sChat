@@ -27,7 +27,6 @@ import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
 import org.bukkit.command.CommandSender;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -89,8 +88,6 @@ class CommandSendingChatterTest extends TestBase {
     }
 
     @Test
-    @Disabled
-        // TODO: refactor source <-> chatter and always add source as message target
     void message_alwaysAddsSender_asTarget() {
         final Channel channel = createChannel("foo");
         final Message message = chatter.message("hi").to(channel).send();

@@ -21,6 +21,7 @@ package net.silthus.chat.integrations.bungeecord;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
 
 import java.util.ArrayList;
@@ -34,14 +35,16 @@ import java.util.stream.Collectors;
 class MessageDto {
 
     private UUID id;
-    private String message;
+    private Component text;
+    private Component formatted;
     private IdentityDto sender;
     private ConversationDto conversation;
     private List<IdentityDto> targets = new ArrayList<>();
 
     public MessageDto(Message message) {
         this.id = message.getId();
-        this.message = BungeeHelper.serialize(message.getText());
+        this.text = message.getText();
+        this.formatted = message.getFormatted();
         sender(toIdentityDto(message.getSource()));
         conversation(toConversationDto(message.getConversation()));
         targets(message.getTargets().stream()
@@ -63,7 +66,8 @@ class MessageDto {
     Message asMessage() {
         return Message.message()
                 .id(id)
-                .text(BungeeHelper.deserialize(message()))
+                .text(text)
+                .formatted(formatted)
                 .from(sender != null ? sender.asChatIdentity() : ChatSource.nil())
                 .to(conversation != null ? conversation.asConversation() : null)
                 .to(targets.stream().map(identity -> (ChatTarget) identity.asChatIdentity())

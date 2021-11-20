@@ -21,15 +21,14 @@ package net.silthus.chat.formats;
 
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
-import net.silthus.chat.conversations.Channel;
 import org.bukkit.configuration.MemoryConfiguration;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.*;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MiniMessageFormatTests extends TestBase {
@@ -89,19 +88,6 @@ public class MiniMessageFormatTests extends TestBase {
         final Optional<Format> format = Formats.format("mini-message", cfg);
         assertThat(format).isPresent().get()
                 .extracting("format").isEqualTo("<message>");
-    }
-
-    @Test
-    @Disabled
-    void withNestedTemplates_resolvesAllTemplates() {
-        final Format format = plugin.getPluginConfig().defaults().channel().format();
-        final Channel channel = createChannel("test");
-        final Chatter chatter = Chatter.player(server.addPlayer());
-        final Message message = chatter.message("Hi!").to(channel).build();
-
-        final Component result = format.applyTo(message);
-        assertComponents(result, text("[", GOLD).append(text("test", GREEN)).append(text("]", GOLD)
-                .append(text("[ADMIN]", GRAY).append(text("Player0[!]: Hi", GREEN)))));
     }
 
     private String toText(String format, Message message) {

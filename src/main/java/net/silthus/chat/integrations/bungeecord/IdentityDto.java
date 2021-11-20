@@ -39,19 +39,18 @@ class IdentityDto {
 
     private final UUID uniqueId;
     private final String name;
-    private final String displayName;
+    private final Component displayName;
     private final Type type;
 
     IdentityDto(Identity identity) {
         this.uniqueId = identity.getUniqueId();
         this.name = identity.getName();
-        this.displayName = BungeeHelper.serialize(identity.getDisplayName());
+        this.displayName = identity.getDisplayName();
         this.type = Type.fromChatIdentity(identity);
     }
 
     @SuppressWarnings("unchecked")
     <T extends Identity> T asChatIdentity() {
-        final Component displayName = BungeeHelper.deserialize(this.displayName);
         return (T) switch (type) {
             case CHATTER -> {
                 Chatter chatter = getChatter(displayName);

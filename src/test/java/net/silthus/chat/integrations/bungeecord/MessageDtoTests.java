@@ -39,17 +39,17 @@ public class MessageDtoTests extends TestBase {
         assertThat(serialized(message))
                 .extracting(
                         MessageDto::id,
-                        MessageDto::message,
+                        MessageDto::formatted,
                         msg -> msg.sender().uniqueId(),
                         msg -> msg.sender().name(),
                         msg -> msg.sender().displayName(),
                         msg -> msg.sender().type()
                 ).contains(
                         message.getId(),
-                        "{\"text\":\"test\"}",
+                        message.formatted(),
                         player.getUniqueId(),
-                        "{\"text\":\"test\"}",
-                        "{\"text\":\"Player0\"}",
+                        "Player0",
+                        message.getSource().getDisplayName(),
                         IdentityDto.Type.CHATTER
                 );
     }
@@ -57,7 +57,7 @@ public class MessageDtoTests extends TestBase {
     @Test
     void toMessage_createsMessageFromDto() {
         PlayerMock player = server.addPlayer();
-        Message originalMessage = Message.message("Hi").from(ChatSource.player(player)).build();
+        Message originalMessage = Message.message(ChatSource.player(player), "Hi").build();
         MessageDto dto = new MessageDto(originalMessage);
         Message message = dto.asMessage();
 
@@ -90,7 +90,7 @@ public class MessageDtoTests extends TestBase {
     @Test
     void toMessage_offlinePlayer_usesNamedSource() {
         PlayerMock player = new PlayerMock(server, "Test");
-        MessageDto dto = new MessageDto(Message.message("Hi").from(ChatSource.player(player)).build());
+        MessageDto dto = new MessageDto(Message.message(ChatSource.player(player), "Hi").build());
         Message message = dto.asMessage();
 
         assertThat(toCleanText(message)).isEqualTo("Test: Hi");
@@ -108,7 +108,7 @@ public class MessageDtoTests extends TestBase {
     }
 
     private MessageDto serialized(Message message) {
-        Gson gson = new Gson();
+        Gson gson = plugin.getBungeecord().getSerializer();
         MessageDto dto = new MessageDto(message);
         return gson.fromJson(gson.toJson(dto), MessageDto.class);
     }

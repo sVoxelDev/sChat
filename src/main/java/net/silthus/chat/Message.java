@@ -84,7 +84,7 @@ public class Message implements Comparable<Message>, TemplateResolver {
     Map<String, Template> templates;
     Component formatted;
 
-    private Message(UUID id, ChatSource source, Component text, Format format, Type type, Conversation conversation, Collection<ChatTarget> targets, Map<String, Template> templates) {
+    private Message(UUID id, ChatSource source, Component text, Format format, Type type, Conversation conversation, Collection<ChatTarget> targets, Map<String, Template> templates, Component formatted) {
         this.id = id;
         this.source = source;
         this.text = text;
@@ -93,7 +93,7 @@ public class Message implements Comparable<Message>, TemplateResolver {
         this.conversation = conversation;
         this.targets = targets;
         this.templates = templates;
-        this.formatted = format.applyTo(this);
+        this.formatted = formatted == null ? format.applyTo(this) : formatted;
     }
 
     public MessageBuilder copy() {
@@ -212,7 +212,8 @@ public class Message implements Comparable<Message>, TemplateResolver {
                     type,
                     conversation,
                     getTargets(),
-                    getTemplates()
+                    getTemplates(),
+                    formatted
             );
         }
 

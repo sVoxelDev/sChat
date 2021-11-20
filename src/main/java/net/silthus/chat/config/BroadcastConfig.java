@@ -35,7 +35,7 @@ import static net.silthus.chat.Constants.Formatting.DEFAULT;
 @Accessors(fluent = true)
 public class BroadcastConfig {
 
-    public static BroadcastConfig broadcast(ConfigurationSection config) {
+    public static BroadcastConfig broadcastConfig(ConfigurationSection config) {
         return broadcastDefaults().withConfig(config).build();
     }
 

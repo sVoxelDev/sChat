@@ -37,7 +37,7 @@ import java.util.*;
 public class ChannelRegistry implements Iterable<Channel> {
 
     private final SChat plugin;
-    private final Map<String, Channel> channels = Collections.synchronizedMap(new HashMap<>());
+    private final Map<String, Channel> channels = new HashMap<>();
 
     @Override
     public @NotNull Iterator<Channel> iterator() {

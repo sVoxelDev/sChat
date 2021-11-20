@@ -38,7 +38,7 @@ import static net.silthus.chat.Constants.Formatting.PRIVATE_MESSAGE;
 @Accessors(fluent = true)
 public class PrivateChatConfig {
 
-    public static PrivateChatConfig privateChat(ConfigurationSection config) {
+    public static PrivateChatConfig privateChatConfig(ConfigurationSection config) {
         return privateChatDefaults().withConfig(config).build();
     }
 

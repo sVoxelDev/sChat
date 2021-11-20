@@ -34,7 +34,7 @@ import java.util.stream.Stream;
 public final class ConversationManager {
 
     private final SChat plugin;
-    private final Map<UUID, Conversation> conversations = Collections.synchronizedMap(new HashMap<>());
+    private final Map<UUID, Conversation> conversations = new HashMap<>();
 
     public ConversationManager(SChat plugin) {
         this.plugin = plugin;
@@ -44,7 +44,7 @@ public final class ConversationManager {
         return Stream.concat(
                 conversations.values().stream(),
                 plugin.getChannelRegistry().getChannels().stream()
-        ).toList();
+        ).collect(Collectors.toUnmodifiableSet());
     }
 
     public Conversation getConversation(@NonNull UUID id) {

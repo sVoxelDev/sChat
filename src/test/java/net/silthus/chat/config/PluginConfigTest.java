@@ -72,7 +72,7 @@ class PluginConfigTest extends TestBase {
 
     @Test
     void loads_default_Formats() {
-        final PluginConfig pluginConfig = PluginConfig.config(new MemoryConfiguration()).registerFormatTemplates();
+        final PluginConfig pluginConfig = PluginConfig.config(new MemoryConfiguration());
 
         assertThat(pluginConfig.formats()).isNotEmpty()
                 .containsKeys(DEFAULT, CHANNEL, NO_FORMAT);

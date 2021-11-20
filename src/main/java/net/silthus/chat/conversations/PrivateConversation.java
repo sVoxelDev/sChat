@@ -19,6 +19,7 @@
 
 package net.silthus.chat.conversations;
 
+import lombok.EqualsAndHashCode;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
 import net.silthus.chat.config.PrivateChatConfig;
@@ -26,6 +27,7 @@ import net.silthus.chat.config.PrivateChatConfig;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public final class PrivateConversation extends AbstractConversation {
 
     PrivateConversation(PrivateChatConfig config, Chatter... chatters) {
@@ -49,17 +51,5 @@ public final class PrivateConversation extends AbstractConversation {
                 .filter(target -> !target.getConversations().contains(this))
                 .forEach(target -> target.setActiveConversation(this));
         getTargets().forEach(target -> target.sendMessage(message));
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PrivateConversation that)) return false;
-        return getTargets().equals(that.getTargets());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), getTargets());
     }
 }

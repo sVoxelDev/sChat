@@ -37,7 +37,7 @@ class PrivateChatConfigTest extends TestBase {
 
     @Test
     void fromEmptyConfig_loadsDefaultValues() {
-        PrivateChatConfig config = PrivateChatConfig.privateChat(new MemoryConfiguration());
+        PrivateChatConfig config = PrivateChatConfig.privateChatConfig(new MemoryConfiguration());
         assertDefaults(config);
     }
 
@@ -47,7 +47,7 @@ class PrivateChatConfigTest extends TestBase {
         cfg.set("global", false);
         cfg.set("format", NO_FORMAT);
         cfg.set("name", "<sender_name><-><partner_name>");
-        final PrivateChatConfig playerConfig = PrivateChatConfig.privateChat(cfg);
+        final PrivateChatConfig playerConfig = PrivateChatConfig.privateChatConfig(cfg);
         assertThat(playerConfig)
                 .extracting(
                         PrivateChatConfig::global,

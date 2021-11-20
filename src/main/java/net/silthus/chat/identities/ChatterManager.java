@@ -41,8 +41,8 @@ import java.util.*;
 public final class ChatterManager {
 
     private final SChat plugin;
-    private final Map<UUID, Chatter> chatters = Collections.synchronizedMap(new HashMap<>());
-    private final Map<String, UUID> senderIds = Collections.synchronizedMap(new HashMap<>());
+    private final Map<UUID, Chatter> chatters = new HashMap<>();
+    private final Map<String, UUID> senderIds = new HashMap<>();
 
     final PlayerListener playerListener;
 

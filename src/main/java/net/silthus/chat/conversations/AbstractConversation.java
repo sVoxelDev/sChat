@@ -33,7 +33,7 @@ import java.util.*;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public abstract class AbstractConversation extends AbstractChatTarget implements Conversation {
 
-    private final Set<ChatTarget> targets = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>()));
+    private final Set<ChatTarget> targets = Collections.newSetFromMap(new WeakHashMap<>());
     private Format format = Formats.defaultFormat();
 
     public AbstractConversation(UUID id, String name) {

@@ -25,7 +25,9 @@ import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
+import lombok.Getter;
 import lombok.extern.java.Log;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.silthus.chat.*;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.identities.AbstractChatTarget;
@@ -46,15 +48,16 @@ public class BungeeCord extends AbstractChatTarget implements PluginMessageListe
     private final SChat plugin;
 
     private final Supplier<Player> playerSupplier;
-    private final Gson gson;
+    @Getter
+    private final Gson serializer;
 
     public BungeeCord(SChat plugin, Supplier<Player> playerSupplier) {
         super(BUNGEECORD_CHANNEL);
         this.plugin = plugin;
         this.playerSupplier = playerSupplier;
-        gson = new GsonBuilder()
-                .registerTypeAdapter(ChannelConfig.class, new ChannelConfigTypeAdapter())
-                .registerTypeAdapter(Placeholders.class, (InstanceCreator<Placeholders>) type -> plugin.getPlaceholders())
+        serializer = GsonComponentSerializer.gson().populator().apply(new GsonBuilder()
+                        .registerTypeAdapter(ChannelConfig.class, new ChannelConfigTypeAdapter())
+                        .registerTypeAdapter(Placeholders.class, (InstanceCreator<Placeholders>) type -> plugin.getPlaceholders()))
                 .create();
     }
 
@@ -110,11 +113,11 @@ public class BungeeCord extends AbstractChatTarget implements PluginMessageListe
     }
 
     private void processChatter(ByteArrayDataInput in) {
-        gson.fromJson(getJsonData(in), IdentityDto.class).asChatIdentity();
+        serializer.fromJson(getJsonData(in), IdentityDto.class).asChatIdentity();
     }
 
     private void processConversation(ByteArrayDataInput in) {
-        gson.fromJson(getJsonData(in), ConversationDto.class).asConversation();
+        serializer.fromJson(getJsonData(in), ConversationDto.class).asConversation();
     }
 
     private void sendPluginMessage(ByteArrayDataOutput out) {
@@ -149,7 +152,7 @@ public class BungeeCord extends AbstractChatTarget implements PluginMessageListe
     }
 
     private Message getMessageFromStream(ByteArrayDataInput in) {
-        return gson.fromJson(getJsonData(in), MessageDto.class).asMessage();
+        return serializer.fromJson(getJsonData(in), MessageDto.class).asMessage();
     }
 
     private String getJsonData(ByteArrayDataInput in) {
@@ -161,6 +164,6 @@ public class BungeeCord extends AbstractChatTarget implements PluginMessageListe
     }
 
     private String json(Object object) {
-        return gson.toJson(object);
+        return serializer.toJson(object);
     }
 }
