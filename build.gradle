@@ -156,7 +156,7 @@ tasks.prepareSpigotPlugins.dependsOn(shadowJar)
 test {
     useJUnitPlatform()
     testLogging {
-        events "passed", "skipped", "failed"
+        events "skipped", "failed"
     }
     ignoreFailures = false
 }
