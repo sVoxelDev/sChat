@@ -30,7 +30,7 @@ private_chats:
 # Fine tune the behaviour of the broadcast command here.
 broadcast:
   # Set the format template that should be applied to broadcasts.
-  format: default
+  format: broadcast
   # Set false to only broadcast to channels. Players will receive an unread indicator in all channels.
   include_private_chats: true
 # Define your list of channels here.
@@ -129,6 +129,12 @@ formats:
     format: |-
       <gray>Name: <yellow><sender_name>
       <gray><i>Click to send <yellow><sender_display_name></yellow> a message.
+  broadcast:
+    # Set true to center the final formatted message.
+    center: true
+    # Define the spacer to fill the left and right side of the centered text. Defaults to a blank line.
+    center_spacer: " "
+    format: "<red><bold><message>"
 # Define your personal defaults for the various configs in this section.
 # Not setting a value in the actual config section will use these defaults.
 # For example: the trade channel below will inherit all the configs from this 'defaults' section.

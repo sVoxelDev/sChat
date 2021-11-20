@@ -90,6 +90,15 @@ public class MiniMessageFormatTests extends TestBase {
                 .extracting("format").isEqualTo("<message>");
     }
 
+    @Test
+    void withCenter_centersText() {
+        final Component result = Formats.format(MiniMessageFormat.class)
+                .format("<message>")
+                .center(true)
+                .applyTo(Message.message("Hi!").build());
+        assertComponents(result, text("                                      Hi!                                      "));
+    }
+
     private String toText(String format, Message message) {
         return toText(Formats.miniMessage(format).applyTo(message));
     }

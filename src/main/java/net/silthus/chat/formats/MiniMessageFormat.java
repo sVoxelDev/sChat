@@ -31,6 +31,7 @@ import net.silthus.chat.Message;
 import net.silthus.chat.SChat;
 import net.silthus.chat.identities.PlayerChatter;
 import net.silthus.chat.integrations.placeholders.Placeholders;
+import net.silthus.chat.renderer.ChatUtil;
 import net.silthus.configmapper.ConfigOption;
 
 import static net.silthus.chat.Constants.Formatting.DEFAULT_FORMAT;
@@ -45,15 +46,21 @@ public class MiniMessageFormat implements Format {
 
     @ConfigOption
     private String format = DEFAULT_FORMAT;
+    @ConfigOption
+    private boolean center = false;
+    @ConfigOption
+    private String centerSpacer = " ";
 
     @Override
     public Component applyTo(Message message) {
-        final Component component = MiniMessage.builder()
+        final MiniMessage miniMessage = MiniMessage.builder()
                 .templateResolver(message)
-                .build().deserialize(format, new MiniMessageFormatTemplateResolver());
-        if (message.getSource() instanceof PlayerChatter) {
-            return SChat.instance().getPlaceholders().setPlaceholders((PlayerChatter) message.getSource(), component);
-        }
+                .build();
+        Component component = miniMessage.deserialize(format, new MiniMessageFormatTemplateResolver());
+        if (message.getSource() instanceof PlayerChatter)
+            component = SChat.instance().getPlaceholders().setPlaceholders((PlayerChatter) message.getSource(), component);
+        if (center)
+            component = ChatUtil.centerText(component, miniMessage.deserialize(centerSpacer, new MiniMessageFormatTemplateResolver()));
         return component;
     }
 }

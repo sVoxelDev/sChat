@@ -29,6 +29,8 @@ import net.silthus.chat.Scopes;
 import net.silthus.chat.conversations.Channel;
 import org.bukkit.configuration.ConfigurationSection;
 
+import static net.silthus.chat.Constants.Formatting.CHANNEL;
+import static net.silthus.chat.Constants.Formatting.CHANNEL_FORMAT;
 import static net.silthus.chat.Constants.Scopes.SERVER;
 
 @Log
@@ -72,7 +74,7 @@ public class ChannelConfig {
                 .sendToConsole(config.getBoolean("console", sendToConsole))
                 .autoJoin(config.getBoolean("auto_join", autoJoin))
                 .scope(Scopes.scope(config.getString("scope", SERVER), config))
-                .format(ConfigUtils.getFormatFromConfig(config, format))
+                .format(ConfigUtils.getFormatFromConfig(config, format, CHANNEL, CHANNEL_FORMAT))
                 .footer(FooterConfig.footerConfig(config.getConfigurationSection("footer")));
     }
 

@@ -1,12 +1,11 @@
 commands:
-  reload-success: "sLimits successfully reloaded. Loaded {limits} limits."
-  access-to-channel-denied: "You don't have permission to access the '{channel}' channel."
-  send-to-channel-denied: "You don't have permission to send messages to the '{channel}' channel."
-  joined-channel: "&7You joined the channel: &6{channel}&7."
-  leave-channel: "&7You left the channel: &6{channel}&7."
-  invalid-conversation: "The conversation you tried to join does not exist."
+  reload-success: "<green>sChat successfully reloaded. Loaded <aqua>{channels}</aqua> channels."
+  access-to-channel-denied: "<red>You don't have permission to access the '<gold>{channel}</gold>' channel."
+  send-to-channel-denied: "<red>You don't have permission to send messages to the '<gold>{channel}</gold>' channel."
+  joined-channel: "<gray>You joined the channel: <gold>{channel}</gold>."
+  leave-channel: "<gray>You left the channel: <gold>{channel}</gold>."
+  invalid-conversation: "<red>The conversation you tried to join does not exist."
   cannot-send-to-self: "You can't send messages to yourself."
-  plugin-reloaded: "sChat and all channel configs have been reloaded."
   nickname:
     invalid: "<red>The nickname {nickname} is not valid."
     blocked: "<red>The nickname {nickname} cannot be used."

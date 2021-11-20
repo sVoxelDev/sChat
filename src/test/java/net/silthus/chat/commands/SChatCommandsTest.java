@@ -31,8 +31,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -84,15 +82,15 @@ class SChatCommandsTest extends TestBase {
         player.addAttachment(plugin, Constants.PERMISSION_ADMIN_BROADCAST, true);
 
         final TextComponent expected = broadcast();
-        assertLastMessage(chatter, expected);
-        assertLastMessage(channel, expected);
-        assertLastMessage(foobar, expected);
-        assertLastMessage(unsubscribed, expected);
+        chatter.getLastReceivedMessage().getText().contains(expected);
+        channel.getLastReceivedMessage().getText().contains(expected);
+        foobar.getLastReceivedMessage().getText().contains(expected);
+        unsubscribed.getLastReceivedMessage().getText().contains(expected);
     }
 
     @NotNull
     private TextComponent broadcast() {
-        final TextComponent expected = text("Player0", YELLOW).append(text(": Hey you all!", GRAY));
+        final TextComponent expected = text("Hey you all!");
         player.performCommand("broadcast Hey you all!");
         return expected;
     }
@@ -131,7 +129,7 @@ class SChatCommandsTest extends TestBase {
 
             assertThat(player.performCommand("ch test")).isTrue();
             assertThat(channel.getTargets()).doesNotContain(chatter);
-            assertThat(player.nextMessage()).contains(ChatColor.RED + "You don't have permission to access the 'test' channel.");
+            assertThat(cleaned(player.nextMessage())).contains("You don't have permission to access the 'test' channel.");
         }
 
         @Test
@@ -149,7 +147,7 @@ class SChatCommandsTest extends TestBase {
 
             assertThat(player.performCommand("ch test Hey how are you?")).isTrue();
             assertThat(channel.getLastReceivedMessage()).isNull();
-            assertThat(player.nextMessage()).contains(ChatColor.RED + "You don't have permission to send messages to the 'test' channel.");
+            assertThat(cleaned(player.nextMessage())).contains("You don't have permission to send messages to the 'test' channel.");
         }
 
         @Test

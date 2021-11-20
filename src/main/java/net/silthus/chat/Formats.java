@@ -43,13 +43,14 @@ public final class Formats {
 
     public static final Map<String, FormatConfig> DEFAULT_FORMATS = Map.of(
             DEFAULT, FormatConfig.miniMessage(DEFAULT_FORMAT),
-            CHANNEL, FormatConfig.miniMessage(DEFAULT_CHANNEL_FORMAT),
-            NO_FORMAT, FormatConfig.miniMessage(DEFAULT_NO_FORMAT),
+            CHANNEL, FormatConfig.miniMessage(CHANNEL_FORMAT),
+            NO_FORMAT, FormatConfig.miniMessage(NO_FORMAT_FORMAT),
             SENDER, FormatConfig.miniMessage(SENDER_FORMAT),
             SENDER_HOVER, FormatConfig.miniMessage(SENDER_HOVER_FORMAT),
             CHANNEL_FORMATTED, FormatConfig.miniMessage(CHANNEL_FORMATTED_FORMAT),
             PRIVATE_MESSAGE, FormatConfig.miniMessage(PRIVATE_MESSAGE_FORMAT),
-            SENDER_NO_VAULT, FormatConfig.miniMessage(SENDER_NO_VAULT_FORMAT)
+            SENDER_NO_VAULT, FormatConfig.miniMessage(SENDER_NO_VAULT_FORMAT),
+            BROADCAST, FormatConfig.miniMessage(BROADCAST_FORMAT)
     );
 
     private final static Map<String, RegisteredFormat<?>> formats = new HashMap<>();

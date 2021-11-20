@@ -21,7 +21,6 @@ package net.silthus.chat.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.ConditionFailedException;
-import co.aikar.commands.MessageType;
 import co.aikar.commands.annotation.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -46,7 +45,7 @@ public class SChatCommands extends SChatBaseCommand {
     @CommandPermission(PERMISSION_ADMIN_RELOAD)
     public void reload() {
         plugin.reload();
-        success(PLUGIN_RELOADED);
+        send(RELOAD_SUCCESS, "{channels}", plugin.getChannelRegistry().size() + "");
     }
 
     @CommandAlias("broadcast")
@@ -65,6 +64,7 @@ public class SChatCommands extends SChatBaseCommand {
                 .conversation(null)
                 .format(broadcast.format())
                 .send();
+        chatter.updateView();
     }
 
     @Subcommand("conversations")
@@ -200,10 +200,10 @@ public class SChatCommands extends SChatBaseCommand {
     }
 
     private void success(String key, String... replacements) {
-        getCurrentCommandIssuer().sendMessage(MessageType.INFO, messageKey(key), replacements);
+        send(key, replacements);
     }
 
     private void error(String key, String... replacements) {
-        getCurrentCommandIssuer().sendMessage(MessageType.ERROR, messageKey(key), replacements);
+        send(key, replacements);
     }
 }

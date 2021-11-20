@@ -41,6 +41,7 @@ class FormatConfigTest extends TestBase {
     void create_fromConfig_setsProperties() {
         final MemoryConfiguration cfg = new MemoryConfiguration();
         cfg.set("type", "test");
+        cfg.set("center", true);
         final FormatConfig config = FormatConfig.formatConfig(cfg);
         assertThat(config)
                 .extracting(

@@ -27,7 +27,8 @@ import net.silthus.chat.Format;
 import net.silthus.chat.Formats;
 import org.bukkit.configuration.ConfigurationSection;
 
-import static net.silthus.chat.Constants.Formatting.DEFAULT;
+import static net.silthus.chat.Constants.Formatting.BROADCAST;
+import static net.silthus.chat.Constants.Formatting.BROADCAST_FORMAT;
 
 @Value
 @With
@@ -44,13 +45,13 @@ public class BroadcastConfig {
     }
 
     @Builder.Default
-    Format format = Formats.defaultFormat(DEFAULT);
+    Format format = Formats.defaultFormat(BROADCAST);
     @Builder.Default
     boolean includePrivateChats = true;
 
     public BroadcastConfig.BroadcastConfigBuilder withConfig(ConfigurationSection config) {
         return toBuilder()
                 .includePrivateChats(config.getBoolean("include_private_chats", includePrivateChats))
-                .format(ConfigUtils.getFormatFromConfig(config, format));
+                .format(ConfigUtils.getFormatFromConfig(config, format, BROADCAST, BROADCAST_FORMAT));
     }
 }

@@ -31,6 +31,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.silthus.chat.Constants.Formatting.PRIVATE_MESSAGE;
+import static net.silthus.chat.Constants.Formatting.PRIVATE_MESSAGE_FORMAT;
 
 @Value
 @With
@@ -56,7 +57,7 @@ public class PrivateChatConfig {
     public PrivateChatConfig.PrivateChatConfigBuilder withConfig(ConfigurationSection config) {
         return toBuilder()
                 .global(config.getBoolean("global", global))
-                .format(ConfigUtils.getFormatFromConfig(config, format))
+                .format(ConfigUtils.getFormatFromConfig(config, format, PRIVATE_MESSAGE, PRIVATE_MESSAGE_FORMAT))
                 .name(MiniMessage.miniMessage().deserialize(config.getString("name", "<partner_name>")));
     }
 }

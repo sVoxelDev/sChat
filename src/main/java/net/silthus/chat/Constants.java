@@ -90,7 +90,7 @@ public final class Constants {
             public static final String JOINED_CHANNEL = "joined-channel";
             public static final String LEAVE_CHANNEL = "leave-channel";
             public static final String INVALID_CONVERSATION = "invalid-conversation";
-            public static final String PLUGIN_RELOADED = "plugin-reloaded";
+            public static final String RELOAD_SUCCESS = "reload-success";
             public static final String SELECTED_MESSAGE = "message.selected";
             public static final String DELETED_MESSAGE = "message.deleted";
             public static final String DESELECTED_MESSAGE = "message.deselected";
@@ -129,10 +129,10 @@ public final class Constants {
         public static final String DEFAULT_FORMAT = "<yellow><sender_display_name><gray>: <message>";
 
         public static final String CHANNEL = "channel";
-        public static final String DEFAULT_CHANNEL_FORMAT = "<channel_formatted><yellow><sender><gray>: <message>";
+        public static final String CHANNEL_FORMAT = "<channel_formatted><yellow><sender><gray>: <message>";
 
         public static final String NO_FORMAT = "none";
-        public static final String DEFAULT_NO_FORMAT = "<message>";
+        public static final String NO_FORMAT_FORMAT = "<message>";
 
         public static final String SENDER = "sender";
         public static final String SENDER_FORMAT = "<sender_vault_prefix><sender_no_vault><sender_vault_suffix>";
@@ -150,6 +150,9 @@ public final class Constants {
 
         public static final String PRIVATE_MESSAGE = "private_message";
         public static final String PRIVATE_MESSAGE_FORMAT = "<yellow><sender_no_vault><gray>: <message>";
+
+        public static final String BROADCAST = "broadcast";
+        public static final String BROADCAST_FORMAT = "<dark_gray>[<bold><red>BROADCAST</bold><dark_gray>]<gold><sender><dark_gray>: <red><message>";
     }
 
     public static class View {

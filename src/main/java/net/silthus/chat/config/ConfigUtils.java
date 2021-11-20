@@ -20,17 +20,16 @@
 package net.silthus.chat.config;
 
 import lombok.NonNull;
-import net.silthus.chat.Constants;
 import net.silthus.chat.Format;
 import net.silthus.chat.Formats;
 import org.bukkit.configuration.ConfigurationSection;
 
 public final class ConfigUtils {
 
-    static Format getFormatFromConfig(@NonNull ConfigurationSection config, Format defaultFormat) {
+    static Format getFormatFromConfig(@NonNull ConfigurationSection config, Format defaultFormat, String template, String format) {
         if (!config.isSet("format")) return defaultFormat;
         return Formats.format(config.getConfigurationSection("format"))
-                .or(() -> Formats.formatFromTemplate(config.getString("format", Constants.Formatting.CHANNEL)))
-                .orElseGet(() -> Formats.miniMessage(config.getString("format", Constants.Formatting.DEFAULT_CHANNEL_FORMAT)));
+                .or(() -> Formats.formatFromTemplate(config.getString("format", template)))
+                .orElseGet(() -> Formats.miniMessage(config.getString("format", format)));
     }
 }

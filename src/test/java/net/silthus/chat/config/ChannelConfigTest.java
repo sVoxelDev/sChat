@@ -124,7 +124,7 @@ class ChannelConfigTest extends TestBase {
         final ChannelConfig config = ChannelConfig.channelConfig(cfg);
         assertThat(config.format())
                 .extracting("format")
-                .isEqualTo(Constants.Formatting.DEFAULT_NO_FORMAT);
+                .isEqualTo(Constants.Formatting.NO_FORMAT_FORMAT);
     }
 
     @Test

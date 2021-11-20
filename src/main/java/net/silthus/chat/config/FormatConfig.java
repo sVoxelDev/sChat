@@ -55,7 +55,6 @@ public class FormatConfig {
 
     @Builder.Default
     String type = name(MiniMessageFormat.class);
-
     @Builder.Default
     ConfigurationSection config = new MemoryConfiguration();
 
