@@ -39,7 +39,7 @@ import net.silthus.chat.conversations.ChannelRegistry;
 import net.silthus.chat.conversations.ConversationManager;
 import net.silthus.chat.identities.ChatterManager;
 import net.silthus.chat.identities.Console;
-import net.silthus.chat.integrations.placeholders.BasicPlaceholders;
+import net.silthus.chat.integrations.placeholders.EmptyPlaceholders;
 import net.silthus.chat.integrations.placeholders.PlaceholderAPIWrapper;
 import net.silthus.chat.integrations.placeholders.Placeholders;
 import net.silthus.chat.integrations.protocollib.ChatPacketQueue;
@@ -229,7 +229,7 @@ public final class SChat extends JavaPlugin {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             placeholders = new PlaceholderAPIWrapper();
         } else {
-            placeholders = new BasicPlaceholders();
+            placeholders = new EmptyPlaceholders();
         }
     }
 

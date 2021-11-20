@@ -23,6 +23,7 @@ import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Chatter;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.TestBase;
+import net.silthus.chat.identities.Console;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -89,7 +90,7 @@ public class ConversationManagerTests extends TestBase {
 
     @NotNull
     private Conversation registerConversation() {
-        Conversation conversation = Conversation.direct(ChatTarget.nil(), ChatTarget.nil());
+        Conversation conversation = Conversation.privateConversation(Chatter.player(server.addPlayer()), Console.console());
         manager.registerConversation(conversation);
         return conversation;
     }
@@ -106,10 +107,10 @@ public class ConversationManagerTests extends TestBase {
     void getConversation_betweenTargets_returnsRegisteredConversation() {
         Chatter target1 = ChatTarget.player(server.addPlayer());
         Chatter target2 = ChatTarget.player(server.addPlayer());
-        Conversation conversation = Conversation.direct(target1, target2);
+        Conversation conversation = Conversation.privateConversation(target1, target2);
         manager.registerConversation(conversation);
 
-        assertThat(manager.getDirectConversation(target1, target2))
+        assertThat(manager.getPrivateConversation(target1, target2))
                 .isPresent().get()
                 .isEqualTo(conversation);
     }
@@ -119,12 +120,12 @@ public class ConversationManagerTests extends TestBase {
         Chatter target1 = ChatTarget.player(server.addPlayer());
         Chatter target2 = ChatTarget.player(server.addPlayer());
         Chatter target3 = ChatTarget.player(server.addPlayer());
-        Conversation conversation = Conversation.direct(target1, target2);
-        Conversation conversation2 = Conversation.direct(target2, target3);
+        Conversation conversation = Conversation.privateConversation(target1, target2);
+        Conversation conversation2 = Conversation.privateConversation(target2, target3);
         manager.registerConversation(conversation);
         manager.registerConversation(conversation2);
 
-        assertThat(manager.getDirectConversation(target2))
+        assertThat(manager.getPrivateConversation(target2))
                 .isEmpty();
     }
 }

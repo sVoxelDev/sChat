@@ -20,7 +20,9 @@
 package net.silthus.chat.conversations;
 
 import lombok.NonNull;
+import net.kyori.adventure.text.Component;
 import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Chatter;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.SChat;
 import net.silthus.chat.identities.PlayerChatter;
@@ -56,11 +58,21 @@ public final class ConversationManager {
         return conversation;
     }
 
-    public Optional<Conversation> getDirectConversation(ChatTarget... targets) {
+    public Optional<Conversation> getPrivateConversation(ChatTarget... targets) {
         return conversations.values().stream()
-                .filter(conversation -> conversation instanceof DirectConversation)
+                .filter(conversation -> conversation instanceof PrivateConversation)
                 .filter(conversation -> conversation.getTargets().stream().filter(target -> target instanceof PlayerChatter).collect(Collectors.toSet()).equals(Set.of(targets)))
                 .findFirst();
+    }
+
+    public Conversation getOrCreatePrivateConversation(Chatter... targets) {
+        return getPrivateConversation(targets)
+                .orElseGet(() -> registerConversation(new PrivateConversation(plugin.getPluginConfig().privateChat(), targets)));
+    }
+
+    public Conversation getOrCreatePrivateConversation(UUID id, String name, Component displayName, ChatTarget... targets) {
+        return getPrivateConversation(targets)
+                .orElseGet(() -> registerConversation(new PrivateConversation(id, name, displayName, List.of(targets))));
     }
 
     public void remove(@NonNull Conversation conversation) {

@@ -52,7 +52,7 @@ class AbstractConversationTest extends TestBase {
     void sorted_byName() {
         Channel one = Conversation.channel("Abc");
         Channel two = Conversation.channel("def");
-        Conversation three = Conversation.direct(ChatTarget.player(server.addPlayer()), ChatTarget.player(server.addPlayer()));
+        Conversation three = Conversation.privateConversation(ChatTarget.player(server.addPlayer()), ChatTarget.player(server.addPlayer()));
         List<Conversation> conversations = List.of(
                 three,
                 two,

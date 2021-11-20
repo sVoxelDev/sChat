@@ -20,23 +20,24 @@
 package net.silthus.chat.conversations;
 
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Message;
+import net.silthus.chat.*;
+import net.silthus.chat.config.PrivateChatConfig;
 
-import java.util.Collection;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public final class DirectConversation extends AbstractConversation {
+public final class PrivateConversation extends AbstractConversation {
 
-    public DirectConversation(ChatTarget target1, ChatTarget target2) {
-        super(target1.getName() + "<->" + target2.getName());
-        setDisplayName(Component.text("<partner_name>"));
-        addTarget(target1);
-        addTarget(target2);
+    PrivateConversation(PrivateChatConfig config, Chatter... chatters) {
+        super(Arrays.stream(chatters).map(Identity::getName).collect(Collectors.joining(",")));
+        setDisplayName(config.name());
+        setFormat(config.format());
+        addTargets(List.of(chatters));
+        if (config.global())
+            addTarget(SChat.instance().getBungeecord());
     }
 
-    public DirectConversation(UUID id, String name, Component displayName, Collection<ChatTarget> targets) {
+    PrivateConversation(UUID id, String name, Component displayName, Collection<ChatTarget> targets) {
         super(id, name);
         setDisplayName(displayName);
         addTargets(targets);
@@ -53,7 +54,7 @@ public final class DirectConversation extends AbstractConversation {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DirectConversation that)) return false;
+        if (!(o instanceof PrivateConversation that)) return false;
         return getTargets().equals(that.getTargets());
     }
 

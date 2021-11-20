@@ -30,7 +30,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.silthus.chat.*;
 import net.silthus.chat.config.FooterConfig;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.conversations.DirectConversation;
+import net.silthus.chat.conversations.PrivateConversation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -129,7 +129,7 @@ public class View {
 
     private boolean isDirectConversation() {
         return activeConversation()
-                .map(conversation -> conversation instanceof DirectConversation)
+                .map(conversation -> conversation instanceof PrivateConversation)
                 .orElse(false);
     }
 

@@ -22,7 +22,10 @@ package net.silthus.chat.config;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
-import net.silthus.chat.*;
+import net.silthus.chat.Format;
+import net.silthus.chat.Formats;
+import net.silthus.chat.Scope;
+import net.silthus.chat.Scopes;
 import net.silthus.chat.conversations.Channel;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -69,18 +72,11 @@ public class ChannelConfig {
                 .sendToConsole(config.getBoolean("console", sendToConsole))
                 .autoJoin(config.getBoolean("auto_join", autoJoin))
                 .scope(Scopes.scope(config.getString("scope", SERVER), config))
-                .format(getFormat(config))
+                .format(ConfigUtils.getFormatFromConfig(config, format))
                 .footer(FooterConfig.footerConfig(config.getConfigurationSection("footer")));
     }
 
     public Channel toChannel(String identifier) {
         return Channel.channel(identifier, this);
-    }
-
-    private Format getFormat(@NonNull ConfigurationSection config) {
-        if (!config.isSet("format")) return format;
-        return Formats.format(config.getConfigurationSection("format"))
-                .or(() -> Formats.formatFromTemplate(config.getString("format", Constants.Formatting.CHANNEL)))
-                .orElseGet(() -> Formats.miniMessage(config.getString("format", Constants.Formatting.DEFAULT_CHANNEL_FORMAT)));
     }
 }

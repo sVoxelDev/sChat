@@ -128,7 +128,7 @@ public class SChatCommands extends SChatBaseCommand {
             if (message != null) {
                 source.message(message).to(target).send();
             } else {
-                source.setActiveConversation(Conversation.direct(source, target));
+                source.setActiveConversation(Conversation.privateConversation(source, target));
                 source.updateView();
             }
         }

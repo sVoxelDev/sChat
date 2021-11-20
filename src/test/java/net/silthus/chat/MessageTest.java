@@ -21,7 +21,7 @@ package net.silthus.chat;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.conversations.DirectConversation;
+import net.silthus.chat.conversations.PrivateConversation;
 import net.silthus.chat.identities.Console;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -186,12 +186,12 @@ class MessageTest extends TestBase {
 
         assertThat(message.getConversation())
                 .isNotNull()
-                .isInstanceOf(DirectConversation.class)
+                .isInstanceOf(PrivateConversation.class)
                 .extracting(ChatTarget::getLastReceivedMessage)
                 .isNotNull()
                 .isEqualTo(message);
-        assertThat(source.getActiveConversation()).isNotNull().isInstanceOf(DirectConversation.class);
-        assertThat(target.getActiveConversation()).isNotNull().isInstanceOf(DirectConversation.class);
+        assertThat(source.getActiveConversation()).isNotNull().isInstanceOf(PrivateConversation.class);
+        assertThat(target.getActiveConversation()).isNotNull().isInstanceOf(PrivateConversation.class);
     }
 
     @Test
@@ -199,7 +199,7 @@ class MessageTest extends TestBase {
         ChatTarget channel = createChannel("test");
         Message message = Message.message("test").from(Chatter.player(server.addPlayer())).to(channel).send();
         assertThat(message.getConversation())
-                .isNotInstanceOf(DirectConversation.class)
+                .isNotInstanceOf(PrivateConversation.class)
                 .isEqualTo(channel);
     }
 

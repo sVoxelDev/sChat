@@ -27,17 +27,15 @@ import org.bukkit.entity.Player;
 
 import java.util.regex.Pattern;
 
-public class PlaceholderAPIWrapper extends BasicPlaceholders {
+public class PlaceholderAPIWrapper implements Placeholders {
 
     @Override
     public Component setPlaceholders(PlayerChatter chatter, Component text) {
-        final Component component = super.setPlaceholders(chatter, text);
         return chatter.getPlayer()
-                .map(player -> component
+                .map(player -> text
                         .replaceText(replacePlaceholderAPIPlaceholders(player))
                         .replaceText(replaceBracketPlaceholders(player))
-                )
-                .orElse(component);
+                ).orElse(text);
     }
 
     private TextReplacementConfig replacePlaceholderAPIPlaceholders(Player player) {

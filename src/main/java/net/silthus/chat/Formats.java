@@ -45,9 +45,11 @@ public final class Formats {
             DEFAULT, FormatConfig.miniMessage(DEFAULT_FORMAT),
             CHANNEL, FormatConfig.miniMessage(DEFAULT_CHANNEL_FORMAT),
             NO_FORMAT, FormatConfig.miniMessage(DEFAULT_NO_FORMAT),
-            SENDER_TEMPLATE, FormatConfig.miniMessage(SENDER_FORMAT),
-            SENDER_HOVER_TEMPLATE, FormatConfig.miniMessage(SENDER_HOVER_FORMAT),
-            CHANNEL_FORMATTED_TEMPLATE, FormatConfig.miniMessage(CHANNEL_FORMATTED_FORMAT)
+            SENDER, FormatConfig.miniMessage(SENDER_FORMAT),
+            SENDER_HOVER, FormatConfig.miniMessage(SENDER_HOVER_FORMAT),
+            CHANNEL_FORMATTED, FormatConfig.miniMessage(CHANNEL_FORMATTED_FORMAT),
+            PRIVATE_MESSAGE, FormatConfig.miniMessage(PRIVATE_MESSAGE_FORMAT),
+            SENDER_NO_VAULT, FormatConfig.miniMessage(SENDER_NO_VAULT_FORMAT)
     );
 
     private final static Map<String, RegisteredFormat<?>> formats = new HashMap<>();
@@ -58,15 +60,19 @@ public final class Formats {
     }
 
     public static Format defaultFormat() {
-        return formatFromTemplate(DEFAULT).orElse(miniMessage(DEFAULT_FORMAT));
+        return formatFromTemplate(DEFAULT).orElseGet(() -> miniMessage(DEFAULT_FORMAT));
     }
 
     public static Format channelFormat() {
-        return formatFromTemplate(CHANNEL).orElse(miniMessage(DEFAULT_CHANNEL_FORMAT));
+        return defaultFormat(CHANNEL);
     }
 
     public static Format noFormat() {
-        return formatFromTemplate(NO_FORMAT).orElse(miniMessage(DEFAULT_NO_FORMAT));
+        return defaultFormat(NO_FORMAT);
+    }
+
+    public static Format defaultFormat(String key) {
+        return formatFromTemplate(key).orElseGet(() -> DEFAULT_FORMATS.get(key).toFormat());
     }
 
     public static Format miniMessage(String format) {

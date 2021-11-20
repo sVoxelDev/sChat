@@ -23,7 +23,14 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.With;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.silthus.chat.Format;
+import net.silthus.chat.Formats;
 import org.bukkit.configuration.ConfigurationSection;
+
+import static net.kyori.adventure.text.Component.text;
+import static net.silthus.chat.Constants.Formatting.PRIVATE_MESSAGE;
 
 @Value
 @With
@@ -41,9 +48,15 @@ public class PrivateChatConfig {
 
     @Builder.Default
     boolean global = true;
+    @Builder.Default
+    Format format = Formats.defaultFormat(PRIVATE_MESSAGE);
+    @Builder.Default
+    Component name = text("<partner_name>");
 
     public PrivateChatConfig.PrivateChatConfigBuilder withConfig(ConfigurationSection config) {
         return toBuilder()
-                .global(config.getBoolean("global", global));
+                .global(config.getBoolean("global", global))
+                .format(ConfigUtils.getFormatFromConfig(config, format))
+                .name(MiniMessage.miniMessage().deserialize(config.getString("name", "<partner_name>")));
     }
 }

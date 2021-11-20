@@ -23,24 +23,19 @@ import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.conversations.ConversationManager;
-import net.silthus.chat.conversations.DirectConversation;
+import net.silthus.chat.conversations.PrivateConversation;
 
 import java.util.Collection;
 import java.util.UUID;
 
 public interface Conversation extends ChatTarget, Comparable<Conversation> {
 
-    static Conversation direct(ChatTarget target1, ChatTarget target2) {
-        ConversationManager conversationManager = SChat.instance().getConversationManager();
-        return conversationManager.getDirectConversation(target1, target2)
-                .orElseGet(() -> conversationManager.registerConversation(new DirectConversation(target1, target2)));
+    static Conversation privateConversation(Chatter... targets) {
+        return SChat.instance().getConversationManager().getOrCreatePrivateConversation(targets);
     }
 
-    static Conversation direct(UUID id, String name, Component displayName, Collection<ChatTarget> targets) {
-        ConversationManager conversationManager = SChat.instance().getConversationManager();
-        return conversationManager.getDirectConversation(targets.toArray(new ChatTarget[0]))
-                .orElseGet(() -> conversationManager.registerConversation(new DirectConversation(id, name, displayName, targets)));
+    static Conversation privateConversation(UUID id, String name, Component displayName, Collection<ChatTarget> targets) {
+        return SChat.instance().getConversationManager().getOrCreatePrivateConversation(id, name, displayName, targets.toArray(new ChatTarget[0]));
     }
 
     static Channel channel(String identifier) {
@@ -75,7 +70,7 @@ public interface Conversation extends ChatTarget, Comparable<Conversation> {
         private static Type fromConversation(Conversation conversation) {
             if (conversation instanceof Channel) {
                 return CHANNEL;
-            } else if (conversation instanceof DirectConversation) {
+            } else if (conversation instanceof PrivateConversation) {
                 return DIRECT;
             } else {
                 return OTHER;

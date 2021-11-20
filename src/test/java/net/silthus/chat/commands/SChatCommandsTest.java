@@ -23,7 +23,7 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.md_5.bungee.api.ChatColor;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.conversations.DirectConversation;
+import net.silthus.chat.conversations.PrivateConversation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -150,7 +150,7 @@ class SChatCommandsTest extends TestBase {
 
             assertThat(Chatter.player(player).getActiveConversation())
                     .isNotNull()
-                    .isInstanceOf(DirectConversation.class)
+                    .isInstanceOf(PrivateConversation.class)
                     .extracting(ChatTarget::getLastReceivedMessage)
                     .extracting(Message::getText)
                     .isEqualTo(text("Hi"));
@@ -165,7 +165,7 @@ class SChatCommandsTest extends TestBase {
             Conversation directConversation = chatter.getActiveConversation();
             assertThat(directConversation)
                     .isNotNull()
-                    .isInstanceOf(DirectConversation.class);
+                    .isInstanceOf(PrivateConversation.class);
             chatter.setActiveConversation(createChannel("test"));
 
             player.performCommand(Constants.Commands.JOIN_CONVERSATION.apply(directConversation).replace("/", ""));
@@ -182,12 +182,12 @@ class SChatCommandsTest extends TestBase {
             Chatter sender = Chatter.player(player);
             assertThat(sender.getActiveConversation())
                     .isNotNull()
-                    .isInstanceOf(DirectConversation.class)
+                    .isInstanceOf(PrivateConversation.class)
                     .extracting(Conversation::getTargets)
                     .asList()
                     .contains(sender, target);
             assertThat(target.getActiveConversation())
-                    .isNotInstanceOf(DirectConversation.class);
+                    .isNotInstanceOf(PrivateConversation.class);
         }
 
         @Test

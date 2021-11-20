@@ -25,7 +25,7 @@ import net.silthus.chat.Conversation;
 import net.silthus.chat.SChat;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.conversations.DirectConversation;
+import net.silthus.chat.conversations.PrivateConversation;
 import net.silthus.chat.identities.PlayerChatter;
 
 import java.util.List;
@@ -47,14 +47,14 @@ class ConversationDto extends IdentityDto {
         final List<ChatTarget> targets = this.targets.stream().map(identityDto -> (ChatTarget) identityDto.asChatIdentity()).toList();
         final Component displayName = BungeeHelper.deserialize(displayName());
         return switch (conversationType) {
-            case DIRECT -> Conversation.direct(uniqueId(), name(), displayName, targets);
+            case DIRECT -> Conversation.privateConversation(uniqueId(), name(), displayName, targets);
             case CHANNEL -> Channel.channel(name(), config);
             case UNKNOWN -> SChat.instance().getConversationManager().getConversation(uniqueId());
         };
     }
 
     private enum Type {
-        DIRECT(DirectConversation.class),
+        DIRECT(PrivateConversation.class),
         CHANNEL(Channel.class),
         UNKNOWN(Conversation.class);
 

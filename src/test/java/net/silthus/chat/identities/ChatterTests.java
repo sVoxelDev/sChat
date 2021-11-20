@@ -399,7 +399,7 @@ public class ChatterTests extends TestBase {
 
     @Test
     void canLeave_isTrue_ifConversation() {
-        final Conversation conversation = Conversation.direct(chatter, Chatter.player(server.addPlayer()));
+        final Conversation conversation = Conversation.privateConversation(chatter, Chatter.player(server.addPlayer()));
         assertThat(chatter.canLeave(conversation)).isTrue();
     }
 

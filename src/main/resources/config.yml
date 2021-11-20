@@ -21,6 +21,12 @@ console:
 private_chats:
   # Set false to disable global private chatting and restrict it to the current server.
   global: true
+  # Set the format template that should be applied to private messages.
+  format: private_message
+  # The name of the conversation (channel) tab in the footer.
+  # Possible replacements are:
+  #   - <partner_name>: resolves to the other conversation partner depending on the viewer.
+  name: "<partner_name>"
 # Define your list of channels here.
 channels:
   # The id of the channel must be unique across your server network.
@@ -98,19 +104,21 @@ channels:
 # Go to https://docs.adventure.kyori.net/minimessage#format and read it if you want to customize this.
 formats:
   default:
+    # The 'type' defaults to mini-message if omitted
     type: mini-message
     format: "<yellow><sender_display_name><gray>: <message>"
   channel:
-    type: mini-message
     format: "<channel_formatted><yellow><sender><gray>: <message>"
+  private_message:
+    format: "<yellow><sender_no_vault><gray>: <message>"
   none:
-    type: mini-message
     format: "<message>"
   channel_formatted:
-    # The 'type' defaults to mini-message if omitted
     format: "<gold>[</gold><green><channel_name></green><gold>]</gold>"
   sender:
-    format: "<sender_vault_prefix><click:run_command:/schat message send <sender_name>><hover:show_text:'<sender_hover>'><sender_display_name></hover></click><sender_vault_suffix>"
+    format: "<sender_vault_prefix><sender_no_vault><sender_vault_suffix>"
+  sender_no_vault:
+    format: "<click:run_command:/schat message send <sender_name>><hover:show_text:'<sender_hover>'><sender_display_name></hover></click>"
   sender_hover:
     format: |-
       <gray>Name: <yellow><sender_name>

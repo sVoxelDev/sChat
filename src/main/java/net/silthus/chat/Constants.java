@@ -130,16 +130,22 @@ public final class Constants {
         public static final String NO_FORMAT = "none";
         public static final String DEFAULT_NO_FORMAT = "<message>";
 
-        public static final String SENDER_TEMPLATE = "sender";
-        public static final String SENDER_FORMAT = "<sender_vault_prefix><click:run_command:/schat message send <sender_name>><hover:show_text:'<sender_hover>'><sender_display_name></hover></click><sender_vault_suffix>";
+        public static final String SENDER = "sender";
+        public static final String SENDER_FORMAT = "<sender_vault_prefix><sender_no_vault><sender_vault_suffix>";
 
-        public static final String SENDER_HOVER_TEMPLATE = "sender_hover";
+        public static final String SENDER_NO_VAULT = "sender_no_vault";
+        public static final String SENDER_NO_VAULT_FORMAT = "<click:run_command:/schat message send <sender_name>><hover:show_text:'<sender_hover>'><sender_display_name></hover></click>";
+
+        public static final String SENDER_HOVER = "sender_hover";
         public static final String SENDER_HOVER_FORMAT = """
                 <gray>Name: <yellow><sender_name>
                 <gray><i>Click to send <yellow><sender_display_name></yellow> a message.""";
 
-        public static final String CHANNEL_FORMATTED_TEMPLATE = "channel_formatted";
+        public static final String CHANNEL_FORMATTED = "channel_formatted";
         public static final String CHANNEL_FORMATTED_FORMAT = "<gold>[</gold><green><channel_name></green><gold>]</gold>";
+
+        public static final String PRIVATE_MESSAGE = "private_message";
+        public static final String PRIVATE_MESSAGE_FORMAT = "<yellow><sender_no_vault><gray>: <message>";
     }
 
     public static class View {

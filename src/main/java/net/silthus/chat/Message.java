@@ -27,7 +27,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.Template;
 import net.kyori.adventure.text.minimessage.template.TemplateResolver;
-import net.silthus.chat.identities.PlayerChatter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -77,13 +76,26 @@ public class Message implements Comparable<Message>, TemplateResolver {
     @Builder.Default
     Collection<ChatTarget> targets = new HashSet<>();
     Map<String, Template> templates;
+    Component formatted;
+
+    private Message(UUID id, ChatSource source, Component text, Format format, Type type, Conversation conversation, Collection<ChatTarget> targets, Map<String, Template> templates) {
+        this.id = id;
+        this.source = source;
+        this.text = text;
+        this.format = format;
+        this.type = type;
+        this.conversation = conversation;
+        this.targets = targets;
+        this.templates = templates;
+        this.formatted = format.applyTo(this);
+    }
 
     public MessageBuilder copy() {
         return toBuilder().id(UUID.randomUUID());
     }
 
     public Component formatted() {
-        return format.applyTo(this);
+        return formatted;
     }
 
     public Type getType() {
@@ -206,6 +218,7 @@ public class Message implements Comparable<Message>, TemplateResolver {
         private Map<String, Template> getTemplates() {
             final HashMap<String, Template> templates = new HashMap<>();
             templates.putAll(playerTemplate("sender_world", player -> player.getWorld().getName()));
+            templates.putAll(playerTemplate("player_world", player -> player.getWorld().getName()));
             templates.putAll(playerTemplate("player_name", HumanEntity::getName));
             templates.putAll(playerTemplate("player_display_name", Player::getDisplayName));
             templates.put("sender_name", senderName(getSource()));
@@ -254,29 +267,32 @@ public class Message implements Comparable<Message>, TemplateResolver {
         }
 
         private void checkForDirectConversation() {
-            if (sourceIsChatTarget() && chatterTargeted()) {
-                to(createDirectConversation((ChatTarget) source$value, firstTargetOrNull()));
+            if (sourceIsChatter() && chatterTargeted()) {
+                to(createDirectConversation((Chatter) source$value, firstTargetOrNull()));
             }
         }
 
         @Nullable
-        private ChatTarget firstTargetOrNull() {
-            return targets$value.stream().findFirst().orElse(null);
+        private Chatter firstTargetOrNull() {
+            return targets$value.stream()
+                    .filter(target -> target instanceof Chatter)
+                    .map(target -> (Chatter) target)
+                    .findFirst().orElse(null);
         }
 
         @Nullable
-        private Conversation createDirectConversation(ChatTarget source, ChatTarget target) {
+        private Conversation createDirectConversation(Chatter source, Chatter target) {
             if (source == null) return null;
             if (target == null) return null;
-            return Conversation.direct(source, target);
+            return Conversation.privateConversation(source, target);
         }
 
-        private boolean sourceIsChatTarget() {
-            return source$value instanceof ChatTarget;
+        private boolean sourceIsChatter() {
+            return source$value instanceof Chatter;
         }
 
         private boolean chatterTargeted() {
-            return conversation == null && targetsNotEmpty() && targets$value.stream().allMatch(target -> target instanceof PlayerChatter);
+            return conversation == null && targetsNotEmpty() && targets$value.stream().allMatch(target -> target instanceof Chatter);
         }
 
         private boolean targetsNotEmpty() {

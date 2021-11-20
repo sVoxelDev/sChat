@@ -25,6 +25,7 @@ import net.silthus.chat.*;
 import net.silthus.chat.config.FooterConfig;
 import net.silthus.chat.conversations.Channel;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.newline;
@@ -114,6 +115,7 @@ public class TabbedMessageRendererTests extends TestBase {
     }
 
     @Test
+    @Disabled
     void supports_channelName_placeholders() {
         Channel channel = createChannel("foo", config -> config.name("<player_name>"));
         chatter.subscribe(channel);

@@ -118,7 +118,6 @@ public final class TabbedMessageRenderer implements MessageRenderer {
     private Component conversationName(View view, Conversation conversation, boolean isActive) {
         Component conversationName = leaveConversationIcon(view, conversation)
                 .append(conversation.getDisplayName()
-                        .replaceText(playerName(view.chatter()))
                         .replaceText(conversationPartnerName(view.chatter(), conversation))
                         .clickEvent(clickEvent(RUN_COMMAND, JOIN_CONVERSATION.apply(conversation)))
                 );
@@ -158,11 +157,6 @@ public final class TabbedMessageRenderer implements MessageRenderer {
             number = number / 10;
         }
         return Component.text(str.toString());
-    }
-
-    private TextReplacementConfig playerName(Chatter chatter) {
-        return TextReplacementConfig.builder()
-                .match("<player_name>").replacement(chatter.getDisplayName()).build();
     }
 
     private TextReplacementConfig conversationPartnerName(Chatter viewer, Conversation conversation) {
