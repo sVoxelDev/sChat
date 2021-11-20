@@ -28,6 +28,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.newline;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TabbedMessageRendererTests extends TestBase {
@@ -89,8 +92,11 @@ public class TabbedMessageRendererTests extends TestBase {
         assertThat(chatter.getConversations()).isEmpty();
 
         Component component = view.conversationTabs(new View(chatter));
-        String text = cleaned(toText(component));
-        assertThat(text).isEqualTo("&8\u2502 &7Use &b/ch join <channel> &7to join a channel.");
+        assertComponents(component, text().append(text("\u2502 ", DARK_GRAY))
+                .append(text("Use ", GRAY)
+                        .append(text("/ch <channel>", AQUA).clickEvent(suggestCommand("/ch ")))
+                        .append(text(" to join a channel.", GRAY)))
+                .build());
     }
 
     @Test

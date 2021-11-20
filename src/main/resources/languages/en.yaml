@@ -19,6 +19,7 @@ commands:
     delete-button: " <hover:show_text:'<red>Click to delete the selected message.'><dark_gray>[<red>Delete<dark_gray>]</hover> "
     deselect-button: " <hover:show_text:'<gray>Click to deselect the message and abort.'><dark_gray>[<gray>Abort<dark_gray>]</hover> "
 formats:
+  no-channel: "<gray>Use <aqua><click:suggest_command:/ch >/ch <channel></click></aqua> to join a channel."
   player:
     click-to-send: "<gray>Click to send <yellow><player_name></yellow> a message."
   message:

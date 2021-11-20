@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 import static net.kyori.adventure.text.Component.*;
 import static net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND;
 import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
-import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
 import static net.silthus.chat.Constants.Commands.JOIN_CONVERSATION;
 import static net.silthus.chat.Constants.Commands.LEAVE_CONVERSATION;
 import static net.silthus.chat.Constants.PERMISSION_SELECT_MESSAGE;
@@ -94,15 +93,15 @@ public final class TabbedMessageRenderer implements MessageRenderer {
             prefix = view.selectedMessage().filter(msg -> msg.equals(message))
                     .map(msg -> text("> ").color(NamedTextColor.RED))
                     .orElse(empty());
+            return prefix.append(message.formatted()
+                    .clickEvent(clickEvent(RUN_COMMAND, Constants.Commands.SELECT_MESSAGE.apply(message))));
         }
         return prefix.append(message.formatted());
     }
 
     private TextComponent noConversations() {
-        return text().append(CHANNEL_DIVIDER.append(text(" ")).color(FRAME_COLOR))
-                .append(text("Use ").color(INFO_COLOR))
-                .append(text("/ch join <channel> ").color(COMMAND).clickEvent(suggestCommand("/ch join ")))
-                .append(text("to join a channel.").color(INFO_COLOR))
+        return text().append(CHANNEL_DIVIDER.color(FRAME_COLOR).append(text(" ")))
+                .append(lang(Constants.Language.NO_CHANNEL_SELECTED))
                 .build();
     }
 

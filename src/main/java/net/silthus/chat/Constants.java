@@ -109,10 +109,13 @@ public final class Constants {
         }
 
         public static class Formats {
+
             public static final String BASE_KEY = "formats";
             public static final String PLAYER_CLICK = "player.click-to-send";
             public static final String SELECT_MESSAGE = "message.select-to-moderate";
         }
+
+        public static final String NO_CHANNEL_SELECTED = "no-channel";
     }
 
     public static class Errors {
