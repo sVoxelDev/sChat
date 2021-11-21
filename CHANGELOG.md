@@ -1,3 +1,10 @@
+# [1.0.0-beta.17](https://github.com/sVoxelDev/sChat/compare/v1.0.0-beta.16...v1.0.0-beta.17) (2021-11-21)
+
+
+### Features
+
+* **integrations:** add worldguard region chats ([39c9d70](https://github.com/sVoxelDev/sChat/commit/39c9d70883f5ef148ac35db48c49fa0cbfce322b))
+
 # [1.0.0-beta.16](https://github.com/sVoxelDev/sChat/compare/v1.0.0-beta.15...v1.0.0-beta.16) (2021-11-20)
 
 
