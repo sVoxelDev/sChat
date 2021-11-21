@@ -205,4 +205,9 @@ public final class Constants {
 
         public static final NamespacedKey PLAYER_DATA = Objects.requireNonNull(NamespacedKey.fromString("schat:player_data"));
     }
+
+    public static class WorldGuard {
+
+        public static final String REGION_CHANNEL_PREFIX = "worldguard:";
+    }
 }

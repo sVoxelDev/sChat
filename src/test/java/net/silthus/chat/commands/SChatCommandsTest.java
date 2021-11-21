@@ -68,8 +68,7 @@ class SChatCommandsTest extends TestBase {
     }
 
     @Test
-    // TODO: some race condition test error
-    void broadcast_sendsMessageToAllChannels() {
+    void broadcast_sendsMessageToAllChannels() throws InterruptedException {
         final Chatter chatter = Chatter.player(player);
         final Channel channel = createChannel("test");
         final Channel foobar = createChannel("foobar");
@@ -80,6 +79,7 @@ class SChatCommandsTest extends TestBase {
         broadcast();
         assertThat(getLastMessage(player)).contains("you do not have permission to perform this command");
         player.addAttachment(plugin, Constants.PERMISSION_ADMIN_BROADCAST, true);
+        Thread.sleep(10L);
 
         final TextComponent expected = broadcast();
         chatter.getLastReceivedMessage().getText().contains(expected);
@@ -113,7 +113,7 @@ class SChatCommandsTest extends TestBase {
 
         @Test
         void join_JoinsPlayerToChannel() {
-            Channel channel = ChatTarget.channel("test");
+            Channel channel = createChannel("test");
 
             player.addAttachment(plugin, channel.getPermission(), true);
 
@@ -134,7 +134,7 @@ class SChatCommandsTest extends TestBase {
 
         @Test
         void quickMessage_sendsMessageToChannel() {
-            Channel channel = ChatTarget.channel("test");
+            Channel channel = createChannel("test");
 
             assertThat(player.performCommand("ch test Hey how are you?")).isTrue();
             assertThat(channel.getLastReceivedMessage()).isNotNull();

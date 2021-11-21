@@ -21,7 +21,10 @@ package net.silthus.chat.renderer;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.*;
+import net.silthus.chat.Chatter;
+import net.silthus.chat.Constants;
+import net.silthus.chat.Message;
+import net.silthus.chat.TestBase;
 import net.silthus.chat.config.FooterConfig;
 import net.silthus.chat.conversations.Channel;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +50,7 @@ public class TabbedMessageRendererTests extends TestBase {
         view = new TabbedMessageRenderer();
         player = server.addPlayer();
         chatter = Chatter.player(player);
-        chatter.setActiveConversation(ChatTarget.channel("test"));
+        chatter.setActiveConversation(createChannel("test"));
     }
 
     @Test
@@ -68,7 +71,7 @@ public class TabbedMessageRendererTests extends TestBase {
 
     @Test
     void conversationTabs() {
-        chatter.setActiveConversation(Channel.channel("test"));
+        chatter.setActiveConversation(createChannel("test"));
         Component footer = view.conversationTabs(new View(chatter));
 
         assertThat(toText(footer).stripTrailing())
@@ -112,7 +115,7 @@ public class TabbedMessageRendererTests extends TestBase {
     @Test
     void channels_renders_activeChannelUnderlined() {
         addChannels();
-        chatter.setActiveConversation(ChatTarget.channel("active"));
+        chatter.setActiveConversation(createChannel("active"));
 
         String text = toText(view.conversationTabs(new View(chatter)));
         assertThat(text)
@@ -171,7 +174,7 @@ public class TabbedMessageRendererTests extends TestBase {
 
 
     private void addChannels() {
-        chatter.subscribe(ChatTarget.channel("test"));
-        chatter.subscribe(ChatTarget.channel("foobar"));
+        chatter.subscribe(createChannel("test"));
+        chatter.subscribe(createChannel("foobar"));
     }
 }

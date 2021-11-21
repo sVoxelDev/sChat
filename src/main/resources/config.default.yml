@@ -135,9 +135,43 @@ formats:
     # Define the spacer to fill the left and right side of the centered text. Defaults to a blank line.
     center_spacer: " "
     format: "<red><bold><message>"
+worldguard:
+  # Set false to completely disable the WorldGuard integration, regardless if WorldGuard is installed or not.
+  # If WorldGuard is not installed, nothing will break and the integration is simply not used.
+  enabled: true
+  # Set the 'schat:region-chat' region flag to ALLOW to enable the region chat for that region.
+  # The region will use the default channel config defined below.
+  # You can define an individual config per region in the 'regions' section if you wish.
+  channel_configs:
+    # All of these config values are the same as in the channel config and applied to every region that has the 'schat:region-chat' flag set.
+    # Any values not set will use the defaults from the global default config.
+    default:
+      # The name of the chat defaults to the name of the region.
+      # For convenience there is also a 'schat:region-chat-name' to set the name without the need to set a config for every region.
+      name: "<worldguard:region_id>"
+      # Set true to automatically open the region chat when the player enters the region.
+      # If false the player must manually join the chat by typing /join <region>.
+      auto_join: true
+      # Force means the player cannot leave the region chat.
+      force: true
+      # Global region chats will sync up with regions on other servers and worlds that are named exactly the same.
+      # For example: you have three servers and on each there is a 'spawn' region with the 'schat:region-chat' flag set to ALLOW.
+      # With the global option, the players can chat across servers inside the spawn chat, but only if they are in the region on any of the servers.
+      #
+      # Other options are:
+      # server: region chats across worlds on the same server sync up.
+      # local: further restrict how far players can hear messages inside this region.
+      # current_world: the region chat is only scoped to the current world.
+      scope: global
+    # Override any default settings for individual regions here.
+    regions:
+      # This must be the id of the region, e.g. __global__, spawn, etc.
+      my_town:
+        # Any values not set will be used from the default config above.
+        name: "Oldtown"
 # Define your personal defaults for the various configs in this section.
 # Not setting a value in the actual config section will use these defaults.
-# For example: the trade channel below will inherit all the configs from this 'defaults' section.
+# For example: the team channel above will inherit all the configs from this 'defaults' section.
 defaults:
   channel:
     protect: false

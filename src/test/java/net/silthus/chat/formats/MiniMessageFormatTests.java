@@ -21,6 +21,7 @@ package net.silthus.chat.formats;
 
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
+import net.silthus.chat.conversations.Channel;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +48,7 @@ public class MiniMessageFormatTests extends TestBase {
 
     @Test
     void withSource() {
-        assertThat(toText("<sender_name>: <message>", Message.message(ChatSource.player(server.addPlayer()), "test").build()))
+        assertThat(toText("<sender_name>: <message>", Message.message(Chatter.player(server.addPlayer()), "test").build()))
                 .isEqualTo("Player0: test");
     }
 
@@ -59,8 +60,8 @@ public class MiniMessageFormatTests extends TestBase {
 
     @Test
     void withChannelName() {
-        Message message = Message.message(ChatSource.player(server.addPlayer()), "test")
-                .to(ChatTarget.channel("test channel")).build();
+        Message message = Message.message(Chatter.player(server.addPlayer()), "test")
+                .to(Channel.createChannel("test channel")).build();
 
         assertThat(toText("[<channel_name>]<sender_name>: <message>", message))
                 .isEqualTo("[test channel]Player0: test");
@@ -68,7 +69,7 @@ public class MiniMessageFormatTests extends TestBase {
 
     @Test
     void withVaultPrefix() {
-        final Message message = Message.message(ChatSource.player(server.addPlayer()), "test").build();
+        final Message message = Message.message(Chatter.player(server.addPlayer()), "test").build();
         final Component result = Formats.miniMessage("<sender_vault_prefix><sender_name>: <message>").applyTo(message);
 
         assertComponents(result, text("").append(text("[ADMIN]", GRAY)).append(text("Player0: test", GREEN)));
@@ -76,7 +77,7 @@ public class MiniMessageFormatTests extends TestBase {
 
     @Test
     void withVaultSuffix() {
-        final Message message = Message.message(ChatSource.player(server.addPlayer()), "test").build();
+        final Message message = Message.message(Chatter.player(server.addPlayer()), "test").build();
         final Component result = Formats.miniMessage("<sender_name><sender_vault_suffix>: <message>").applyTo(message);
         assertComponents(result, text("Player0[!]").append(text(": test", GREEN)));
     }

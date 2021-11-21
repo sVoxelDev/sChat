@@ -31,7 +31,6 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import static net.silthus.chat.Constants.Formatting.CHANNEL;
 import static net.silthus.chat.Constants.Formatting.CHANNEL_FORMAT;
-import static net.silthus.chat.Constants.Scopes.SERVER;
 
 @Log
 @Value
@@ -73,12 +72,18 @@ public class ChannelConfig {
                 .canLeave(!config.getBoolean("force", !canLeave))
                 .sendToConsole(config.getBoolean("console", sendToConsole))
                 .autoJoin(config.getBoolean("auto_join", autoJoin))
-                .scope(Scopes.scope(config.getString("scope", SERVER), config))
+                .scope(getScope(config))
                 .format(ConfigUtils.getFormatFromConfig(config, format, CHANNEL, CHANNEL_FORMAT))
                 .footer(FooterConfig.footerConfig(config.getConfigurationSection("footer")));
     }
 
+    private Scope getScope(ConfigurationSection config) {
+        if (config.isSet("scope"))
+            return Scopes.scope(config.getString("scope"), config);
+        return scope;
+    }
+
     public Channel toChannel(String identifier) {
-        return Channel.channel(identifier, this);
+        return Channel.createChannel(identifier, this);
     }
 }

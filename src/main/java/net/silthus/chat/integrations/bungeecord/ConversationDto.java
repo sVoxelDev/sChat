@@ -24,6 +24,8 @@ import net.silthus.chat.Conversation;
 import net.silthus.chat.SChat;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.conversations.ChannelRegistry;
+import net.silthus.chat.conversations.ConversationManager;
 import net.silthus.chat.conversations.PrivateConversation;
 import net.silthus.chat.identities.PlayerChatter;
 
@@ -43,11 +45,13 @@ class ConversationDto extends IdentityDto {
     }
 
     Conversation asConversation() {
+        final ConversationManager conversationManager = SChat.instance().getConversationManager();
+        final ChannelRegistry channelRegistry = SChat.instance().getChannelRegistry();
         final List<ChatTarget> targets = this.targets.stream().map(identityDto -> (ChatTarget) identityDto.asChatIdentity()).toList();
         return switch (conversationType) {
-            case DIRECT -> Conversation.privateConversation(uniqueId(), name(), displayName(), targets);
-            case CHANNEL -> Channel.channel(name(), config);
-            case UNKNOWN -> SChat.instance().getConversationManager().getConversation(uniqueId());
+            case DIRECT -> conversationManager.getOrCreatePrivateConversation(uniqueId(), name(), displayName(), targets.toArray(new ChatTarget[0]));
+            case CHANNEL -> channelRegistry.getOrCreate(name(), config);
+            case UNKNOWN -> conversationManager.getConversation(uniqueId());
         };
     }
 

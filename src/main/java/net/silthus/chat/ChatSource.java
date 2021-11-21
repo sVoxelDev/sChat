@@ -20,22 +20,15 @@
 package net.silthus.chat;
 
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.config.ChannelConfig;
-import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.identities.Console;
 import net.silthus.chat.identities.NamedChatSource;
 import net.silthus.chat.identities.NilChatIdentity;
-import org.bukkit.OfflinePlayer;
 
 import java.util.UUID;
 
 public interface ChatSource extends Identity {
 
     ChatSource NIL = new NilChatIdentity();
-
-    static Chatter player(OfflinePlayer player) {
-        return Chatter.player(player);
-    }
 
     static ChatSource named(String name) {
         return new NamedChatSource(name);
@@ -47,14 +40,6 @@ public interface ChatSource extends Identity {
 
     static ChatSource named(UUID id, String name, Component displayName) {
         return new NamedChatSource(id, name, displayName);
-    }
-
-    static Channel channel(String name) {
-        return Channel.channel(name);
-    }
-
-    static Channel channel(String name, ChannelConfig config) {
-        return Channel.channel(name, config);
     }
 
     static ChatSource nil() {

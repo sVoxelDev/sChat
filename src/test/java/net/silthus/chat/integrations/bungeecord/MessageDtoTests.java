@@ -34,7 +34,7 @@ public class MessageDtoTests extends TestBase {
     @Test
     void create() {
         PlayerMock player = server.addPlayer();
-        Message message = Message.message("test").from(ChatSource.player(player)).build();
+        Message message = Message.message("test").from(Chatter.player(player)).build();
 
         assertThat(serialized(message))
                 .extracting(
@@ -57,7 +57,7 @@ public class MessageDtoTests extends TestBase {
     @Test
     void toMessage_createsMessageFromDto() {
         PlayerMock player = server.addPlayer();
-        Message originalMessage = Message.message(ChatSource.player(player), "Hi").build();
+        Message originalMessage = Message.message(Chatter.player(player), "Hi").build();
         MessageDto dto = new MessageDto(originalMessage);
         Message message = dto.asMessage();
 
@@ -75,7 +75,7 @@ public class MessageDtoTests extends TestBase {
         PlayerMock player = server.addPlayer();
         Channel channel = createChannel("test", config -> config.format(Formats.miniMessage("[<channel_name>]<sender_name>: <message>")));
         MessageDto dto = new MessageDto(Message.message("Hi")
-                .from(ChatSource.player(player))
+                .from(Chatter.player(player))
                 .to(channel)
                 .build());
         Message message = dto.asMessage();
@@ -90,7 +90,7 @@ public class MessageDtoTests extends TestBase {
     @Test
     void toMessage_offlinePlayer_usesNamedSource() {
         PlayerMock player = new PlayerMock(server, "Test");
-        MessageDto dto = new MessageDto(Message.message(ChatSource.player(player), "Hi").build());
+        MessageDto dto = new MessageDto(Message.message(Chatter.player(player), "Hi").build());
         Message message = dto.asMessage();
 
         assertThat(toCleanText(message)).isEqualTo("Test: Hi");

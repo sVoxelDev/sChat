@@ -97,7 +97,7 @@ public class PrivateConversationTests extends TestBase {
     void sendMessage_onlySetsActive_ifNotSubscribed() {
         sendMessage();
 
-        Channel channel = Channel.channel("test");
+        Channel channel = Channel.createChannel("test");
         chatter1.setActiveConversation(channel);
         assertThat(chatter1.getActiveConversation()).isEqualTo(channel);
 
