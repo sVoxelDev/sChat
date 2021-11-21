@@ -81,5 +81,7 @@ public final class ConversationManager {
 
     public void remove(@NonNull Conversation conversation) {
         conversations.remove(conversation.getUniqueId());
+        if (conversation instanceof Channel)
+            plugin.getChannelRegistry().remove((Channel) conversation);
     }
 }

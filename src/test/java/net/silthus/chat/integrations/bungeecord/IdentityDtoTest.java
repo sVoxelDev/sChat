@@ -29,7 +29,7 @@ class IdentityDtoTest extends TestBase {
 
     @Test
     void typeFromChannel_returnsChannelType() {
-        IdentityDto.Type type = IdentityDto.Type.fromChatIdentity(Channel.channel("test"));
+        IdentityDto.Type type = IdentityDto.Type.fromChatIdentity(Channel.createChannel("test"));
         assertThat(type).isEqualTo(IdentityDto.Type.CHANNEL);
     }
 }

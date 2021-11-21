@@ -72,7 +72,7 @@ class SChatTest extends TestBase {
                 .extracting(
                         Channel::getName,
                         Channel::getDisplayName,
-                        c -> toText(c.getConfig().format().applyTo(Message.message(ChatSource.player(server.addPlayer()), "test").to(c).build()))
+                        c -> toText(c.getConfig().format().applyTo(Message.message(Chatter.player(server.addPlayer()), "test").to(c).build()))
                 ).contains(
                         "global",
                         text("Global"),

@@ -22,7 +22,6 @@ package net.silthus.chat.identities;
 import be.seeseemelk.mockbukkit.command.ConsoleCommandSenderMock;
 import net.silthus.chat.*;
 import net.silthus.chat.config.ConsoleConfig;
-import net.silthus.chat.conversations.Channel;
 import org.bukkit.ChatColor;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.junit.jupiter.api.AfterEach;
@@ -87,7 +86,6 @@ public class ConsoleTests {
 
         @Test
         void sendMessage_sendsMessageToConsole() {
-
             Message message = Message.message("Hi").to(console).send();
 
             assertThat(cleaned(((ConsoleCommandSenderMock) server.getConsoleSender()).nextMessage()))
@@ -100,7 +98,6 @@ public class ConsoleTests {
 
         @Test
         void onChat_sendsMessageToDefaultTarget() {
-
             console.onConsoleChat(new ServerCommandEvent(server.getConsoleSender(), "Hi there!"));
             assertThat(console.getLastReceivedMessage())
                     .isNotNull()
@@ -109,7 +106,7 @@ public class ConsoleTests {
             assertThat(ChatColor.stripColor(((ConsoleCommandSenderMock) server.getConsoleSender()).nextMessage()))
                     .isNotNull()
                     .contains("[Global]Console: Hi there!");
-            assertThat(Channel.channel("global").getLastReceivedMessage())
+            assertThat(createChannel("global").getLastReceivedMessage())
                     .isNotNull()
                     .extracting(Message::getSource)
                     .isEqualTo(Console.console());

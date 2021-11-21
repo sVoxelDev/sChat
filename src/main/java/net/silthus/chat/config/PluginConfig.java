@@ -19,29 +19,28 @@
 
 package net.silthus.chat.config;
 
-import com.google.common.base.Strings;
 import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Formats;
 import org.bukkit.configuration.ConfigurationSection;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-import static java.util.Objects.requireNonNullElseGet;
 import static java.util.stream.Collectors.toMap;
 import static net.silthus.chat.config.BroadcastConfig.broadcastConfig;
 import static net.silthus.chat.config.BroadcastConfig.broadcastDefaults;
 import static net.silthus.chat.config.ChannelConfig.channelConfig;
 import static net.silthus.chat.config.ChannelConfig.channelDefaults;
+import static net.silthus.chat.config.ConfigUtils.getSection;
 import static net.silthus.chat.config.ConsoleConfig.consoleConfig;
 import static net.silthus.chat.config.ConsoleConfig.consoleDefaults;
 import static net.silthus.chat.config.FormatConfig.formatConfig;
 import static net.silthus.chat.config.PlayerConfig.playerConfig;
 import static net.silthus.chat.config.PrivateChatConfig.privateChatConfig;
 import static net.silthus.chat.config.PrivateChatConfig.privateChatDefaults;
+import static net.silthus.chat.config.WorldGuardConfig.worldGuardConfig;
 
 @Value
 @With
@@ -75,6 +74,8 @@ public class PluginConfig {
     BroadcastConfig broadcast = broadcastDefaults();
     @Builder.Default
     PlayerConfig player = PlayerConfig.playerDefaults();
+    @Builder.Default
+    WorldGuardConfig worldGuard = WorldGuardConfig.worldGuardDefaults();
     @Singular
     Map<String, ChannelConfig> channels;
     @Singular
@@ -83,20 +84,22 @@ public class PluginConfig {
     public PluginConfig.PluginConfigBuilder withConfig(ConfigurationSection config) {
         if (config == null) return toBuilder();
         final Map<String, FormatConfig> formats = loadFormats(getSection(config, "formats"));
+        final Defaults defaults = loadDefaults(getSection(config, "defaults"));
         return toBuilder()
                 .languageConfig(loadLanguage(config))
-                .defaults(loadDefaults(getSection(config, "defaults")))
+                .defaults(defaults)
                 .console(consoleConfig(getSection(config, "console")))
                 .player(playerConfig(getSection(config, "players")))
                 .privateChat(privateChatConfig(getSection(config, "private_chats")))
                 .broadcast(broadcastConfig(getSection(config, "broadcast")))
                 .channelsFromConfig(getSection(config, "channels"))
+                .worldGuard(worldGuardConfig(defaults, getSection(config, "worldguard")))
                 .formats(formats);
     }
 
     private String loadLanguage(ConfigurationSection config) {
         if (!config.isSet("language"))
-            warnSectionNotDefined("language");
+            ConfigUtils.warnSectionNotDefined("language");
         return "languages/" + config.getString("language", "en") + ".yaml";
     }
 
@@ -112,24 +115,6 @@ public class PluginConfig {
                 ));
         formats.forEach((key, value) -> value.registerAsTemplate(key));
         return formats;
-    }
-
-    @NotNull
-    private ConfigurationSection getSection(@NonNull ConfigurationSection config, String section) {
-        final String path = Strings.isNullOrEmpty(config.getCurrentPath()) ? "" : config.getCurrentPath() + ".";
-        return requireNonNullElseGet(
-                config.getConfigurationSection(section),
-                () -> warnAndDefault(path + section, config.createSection(section))
-        );
-    }
-
-    private <TConfig> TConfig warnAndDefault(String section, TConfig defaultValue) {
-        warnSectionNotDefined(section);
-        return defaultValue;
-    }
-
-    private void warnSectionNotDefined(String section) {
-        log.warning("No '" + section + "' section found inside your config.yml! Make sure your config is up-to-date with the config.default.yml.");
     }
 
     public record Defaults(ChannelConfig channel) {

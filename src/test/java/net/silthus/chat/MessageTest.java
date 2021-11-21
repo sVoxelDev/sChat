@@ -65,7 +65,7 @@ class MessageTest extends TestBase {
     @Test
     void toChannel_setsChannel_andTarget() {
 
-        Channel channel = Channel.channel("test");
+        Channel channel = Channel.createChannel("test");
         Message message = Message.message("hi").to(channel).build();
 
         assertThat(message.getConversation())
@@ -91,7 +91,7 @@ class MessageTest extends TestBase {
     void format_overrides_channelFormat() {
         Message message = ChatSource.named("test")
                 .message("Hi")
-                .to(Channel.channel("channel"))
+                .to(Channel.createChannel("channel"))
                 .format(Formats.noFormat())
                 .build();
         String text = toCleanText(message);
@@ -103,7 +103,7 @@ class MessageTest extends TestBase {
     void format_usesChannelFormat_ifNotSet() {
         Message message = ChatSource.named("test")
                 .message("Hi")
-                .to(Channel.channel("channel"))
+                .to(Channel.createChannel("channel"))
                 .build();
         String text = toText(message);
 
@@ -147,7 +147,7 @@ class MessageTest extends TestBase {
 
     @Test
     void type_isConversation() {
-        Channel channel = Channel.channel("test");
+        Channel channel = Channel.createChannel("test");
         Message message = Message.message("test").conversation(channel).build();
         assertThat(message.getType()).isEqualTo(Message.Type.CONVERSATION);
 
@@ -180,8 +180,8 @@ class MessageTest extends TestBase {
 
     @Test
     void send_oneSource_oneTarget_noChannel_createsDirectConversation() {
-        Chatter source = ChatSource.player(server.addPlayer());
-        Chatter target = ChatTarget.player(server.addPlayer());
+        Chatter source = Chatter.player(server.addPlayer());
+        Chatter target = Chatter.player(server.addPlayer());
         Message message = Message.message("Hi").from(source).to(target).send();
 
         assertThat(message.getConversation())

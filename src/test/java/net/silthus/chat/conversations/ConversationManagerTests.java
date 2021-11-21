@@ -19,7 +19,6 @@
 
 package net.silthus.chat.conversations;
 
-import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Chatter;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.TestBase;
@@ -63,12 +62,12 @@ public class ConversationManagerTests extends TestBase {
     @Test
     void getConversations_isImmutable() {
         assertThatExceptionOfType(UnsupportedOperationException.class)
-                .isThrownBy(() -> manager.getConversations().add(Conversation.channel("test")));
+                .isThrownBy(() -> manager.getConversations().add(Channel.createChannel("test")));
     }
 
     @Test
     void getConversation_withChannelId_returnsChannel() {
-        Channel channel = Channel.channel("test");
+        Channel channel = createChannel("test");
         assertThat(manager.getConversation(channel.getUniqueId()))
                 .isNotNull().isEqualTo(channel);
     }
@@ -104,8 +103,8 @@ public class ConversationManagerTests extends TestBase {
 
     @Test
     void getConversation_betweenTargets_returnsRegisteredConversation() {
-        Chatter target1 = ChatTarget.player(server.addPlayer());
-        Chatter target2 = ChatTarget.player(server.addPlayer());
+        Chatter target1 = Chatter.player(server.addPlayer());
+        Chatter target2 = Chatter.player(server.addPlayer());
         Conversation conversation = Conversation.privateConversation(target1, target2);
         manager.registerConversation(conversation);
 
@@ -116,9 +115,9 @@ public class ConversationManagerTests extends TestBase {
 
     @Test
     void getConversation_withMoreTargets_onlyReturnsExactMatch() {
-        Chatter target1 = ChatTarget.player(server.addPlayer());
-        Chatter target2 = ChatTarget.player(server.addPlayer());
-        Chatter target3 = ChatTarget.player(server.addPlayer());
+        Chatter target1 = Chatter.player(server.addPlayer());
+        Chatter target2 = Chatter.player(server.addPlayer());
+        Chatter target3 = Chatter.player(server.addPlayer());
         Conversation conversation = Conversation.privateConversation(target1, target2);
         Conversation conversation2 = Conversation.privateConversation(target2, target3);
         manager.registerConversation(conversation);
@@ -130,11 +129,22 @@ public class ConversationManagerTests extends TestBase {
 
     @Test
     void getConversations_includesChannels() {
-        Chatter target1 = ChatTarget.player(server.addPlayer());
-        Chatter target2 = ChatTarget.player(server.addPlayer());
+        Chatter target1 = Chatter.player(server.addPlayer());
+        Chatter target2 = Chatter.player(server.addPlayer());
         Conversation conversation = Conversation.privateConversation(target1, target2);
         final Channel channel = createChannel("test");
         assertThat(manager.getConversations())
                 .contains(channel, conversation);
+    }
+
+    @Test
+    void close_removesChannelFromRegistry() {
+        final Channel channel = createChannel("test");
+        assertThat(manager.getConversation(channel.getUniqueId())).isNotNull();
+        assertThat(plugin.getChannelRegistry().contains(channel)).isTrue();
+
+        channel.close();
+        assertThat(manager.getConversation(channel.getUniqueId())).isNull();
+        assertThat(plugin.getChannelRegistry().contains(channel)).isFalse();
     }
 }

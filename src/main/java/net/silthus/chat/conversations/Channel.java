@@ -21,33 +21,39 @@ package net.silthus.chat.conversations;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.identities.Console;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 @Getter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class Channel extends AbstractConversation implements ChatSource {
 
-    public static Channel channel(String identifier) {
-        return SChat.instance().getChannelRegistry().getOrCreate(identifier);
+    public static Channel createChannel(String identifier) {
+        return new Channel(identifier);
     }
 
-    public static Channel channel(String identifier, ChannelConfig config) {
-        return SChat.instance().getChannelRegistry().getOrCreate(identifier, config);
+    public static Channel createChannel(String identifier, ChannelConfig config) {
+        return new Channel(identifier, config);
+    }
+
+    public static Channel createChannel(String identifier, Function<ChannelConfig.ChannelConfigBuilder, ChannelConfig.ChannelConfigBuilder> config) {
+        return createChannel(identifier, config.apply(ChannelConfig.channelDefaults().toBuilder()).build());
     }
 
     private ChannelConfig config;
 
-    Channel(String identifier) {
+    protected Channel(@NonNull String identifier) {
         this(identifier, ChannelConfig.channelDefaults());
     }
 
-    Channel(String identifier, ChannelConfig config) {
-        super(identifier);
+    protected Channel(@NonNull String identifier, @NonNull ChannelConfig config) {
+        super(identifier.toLowerCase());
         setConfig(config);
     }
 
@@ -84,6 +90,27 @@ public class Channel extends AbstractConversation implements ChatSource {
         return Constants.Permissions.getAutoJoinPermission(this);
     }
 
+    public boolean canJoin(Chatter chatter) {
+        if (getConfig().protect()) {
+            return chatter.hasPermission(getPermission());
+        }
+        return true;
+    }
+
+    public boolean canAutoJoin(Chatter chatter) {
+        if (!canJoin(chatter)) return false;
+        if (canJoin(chatter) && getConfig().autoJoin()) return true;
+        return chatter.hasPermission(getAutoJoinPermission());
+    }
+
+    public boolean canLeave(Chatter chatter) {
+        return getConfig().canLeave();
+    }
+
+    public boolean canSendMessage(Chatter chatter) {
+        return canJoin(chatter);
+    }
+
     @Override
     public Message sendMessage(String message) {
         return Message.message(message).to(this).send();
@@ -94,10 +121,15 @@ public class Channel extends AbstractConversation implements ChatSource {
         getScopedTargets(message).forEach(target -> target.sendMessage(message));
     }
 
+    public Channel register() {
+        return SChat.instance().getChannelRegistry().register(this);
+    }
+
     @Override
     public void close() {
-        super.close();
+        if (isClosed()) return;
         getConfig().scope().onRemove(this);
+        super.close();
     }
 
     private Collection<ChatTarget> getScopedTargets(Message message) {

@@ -19,10 +19,7 @@
 
 package net.silthus.chat.conversations;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 import net.silthus.chat.*;
 import net.silthus.chat.identities.AbstractChatTarget;
 
@@ -35,6 +32,8 @@ public abstract class AbstractConversation extends AbstractChatTarget implements
 
     private final Set<ChatTarget> targets = Collections.newSetFromMap(new WeakHashMap<>());
     private Format format = Formats.defaultFormat();
+    @Setter(AccessLevel.PROTECTED)
+    private boolean closed = false;
 
     public AbstractConversation(UUID id, String name) {
         super(id, name);
@@ -72,15 +71,18 @@ public abstract class AbstractConversation extends AbstractChatTarget implements
     }
 
     @Override
+    public void close() {
+        if (isClosed()) return;
+        setClosed(true);
+        getTargets().forEach(target -> target.unsubscribe(this));
+        targets.clear();
+        SChat.instance().getConversationManager().remove(this);
+    }
+
+    @Override
     public int compareTo(@NonNull Conversation o) {
         return Comparator.comparing(Conversation::getType)
                 .thenComparing(Identity::getName)
                 .compare(this, o);
-    }
-
-    @Override
-    public void close() {
-        getTargets().forEach(target -> target.unsubscribe(this));
-        targets.clear();
     }
 }

@@ -23,6 +23,7 @@ import co.aikar.commands.*;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.google.common.base.Strings;
+import com.sk89q.worldguard.WorldGuard;
 import kr.entree.spigradle.annotations.PluginMain;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -34,16 +35,19 @@ import net.silthus.chat.commands.NicknameCommands;
 import net.silthus.chat.commands.SChatCommands;
 import net.silthus.chat.config.Language;
 import net.silthus.chat.config.PluginConfig;
+import net.silthus.chat.config.WorldGuardConfig;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.ChannelRegistry;
 import net.silthus.chat.conversations.ConversationManager;
 import net.silthus.chat.identities.ChatterManager;
 import net.silthus.chat.identities.Console;
+import net.silthus.chat.integrations.bungeecord.BungeeCord;
 import net.silthus.chat.integrations.placeholders.EmptyPlaceholders;
 import net.silthus.chat.integrations.placeholders.PlaceholderAPIWrapper;
 import net.silthus.chat.integrations.placeholders.Placeholders;
 import net.silthus.chat.integrations.protocollib.ChatPacketQueue;
 import net.silthus.chat.integrations.vault.VaultProvider;
+import net.silthus.chat.integrations.worldguard.WorldGuardIntegration;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -86,11 +90,12 @@ public final class SChat extends JavaPlugin {
     @Setter(AccessLevel.PACKAGE)
     private VaultProvider vaultProvider;
     private Placeholders placeholders;
+    private WorldGuardIntegration worldGuard;
 
     @Setter(AccessLevel.PACKAGE)
     private ChatPacketQueue chatPacketQueue;
     @Setter(AccessLevel.PACKAGE)
-    private net.silthus.chat.integrations.bungeecord.BungeeCord bungeecord;
+    private BungeeCord bungeecord;
 
     public SChat() {
         instance = this;
@@ -103,23 +108,16 @@ public final class SChat extends JavaPlugin {
         testing = true;
     }
 
-    public void reload() {
-        reloadConfig();
+    @Override
+    public void onLoad() {
+        setupAndLoadConfigs();
+        setupAndLoadLanguage();
 
-        final PluginConfig oldConfig = getPluginConfig();
-        pluginConfig = PluginConfig.config(getConfig());
-
-        if (oldConfig.equals(pluginConfig)) return;
-
-        Console.console().setConfig(getPluginConfig().console());
-        getChannelRegistry().load(getPluginConfig());
+        loadWorldGuardIntegration();
     }
 
     @Override
     public void onEnable() {
-        setupAndLoadConfigs();
-        setupAndLoadLanguage();
-
         setupBStats();
 
         setupAdventureAPI();
@@ -132,10 +130,23 @@ public final class SChat extends JavaPlugin {
         setupVaultIntegration();
         setupBungeecordIntegration();
         setupPlaceholderAPIIntegration();
+        enableWorldGuardIntegration();
 
         loadChannels();
 
         setupCommands();
+    }
+
+    public void reload() {
+        reloadConfig();
+
+        final PluginConfig oldConfig = getPluginConfig();
+        pluginConfig = PluginConfig.config(getConfig());
+
+        if (oldConfig.equals(pluginConfig)) return;
+
+        Console.console().setConfig(getPluginConfig().console());
+        getChannelRegistry().load(getPluginConfig());
     }
 
     @Override
@@ -163,6 +174,30 @@ public final class SChat extends JavaPlugin {
                 Locale.forLanguageTag(languageConfig.replace("languages/", "").replace(".yaml", "")));
     }
 
+    private void loadWorldGuardIntegration() {
+        try {
+            final WorldGuardConfig config = getPluginConfig().worldGuard();
+            if (!config.enabled()) {
+                getLogger().info("WorldGuard Integration disabled in config. Not enabling...");
+                return;
+            }
+            this.worldGuard = new WorldGuardIntegration(this, WorldGuard.getInstance());
+            worldGuard.load();
+        } catch (NoClassDefFoundError e) {
+            getLogger().info("WorldGuard not found. Not enabling integration.");
+        }
+    }
+
+    private void enableWorldGuardIntegration() {
+        if (worldGuard == null) return;
+        // WorldGuard is enabled delayed
+        // Waiting one tick ensures all plugins are enabled
+        getServer().getScheduler().runTaskLater(this, () -> {
+            worldGuard.enable();
+            getLogger().info("Enabled WorldGuard Integration.");
+        }, 1L);
+    }
+
     private void setupBStats() {
         if (isTesting()) return;
         metrics = new Metrics(this, Constants.BSTATS_ID);
@@ -173,7 +208,7 @@ public final class SChat extends JavaPlugin {
     }
 
     private void setupChannelRegistry() {
-        channelRegistry = new ChannelRegistry(this);
+        channelRegistry = new ChannelRegistry();
     }
 
     private void loadChannels() {
@@ -198,19 +233,20 @@ public final class SChat extends JavaPlugin {
         protocolManager = ProtocolLibrary.getProtocolManager();
         chatPacketQueue = new ChatPacketQueue(this);
         protocolManager.addPacketListener(chatPacketQueue);
-        getLogger().info("Enabled ProtocolLib handler.");
+        getLogger().info("Enabled ProtocolLib Integration.");
     }
 
     private void setupVaultIntegration() {
         if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             vaultProvider = new VaultProvider(Objects.requireNonNull(getServer().getServicesManager().getRegistration(Chat.class)).getProvider());
+            getLogger().info("Enabled Vault Integration.");
         } else {
             vaultProvider = new VaultProvider();
         }
     }
 
     private void setupBungeecordIntegration() {
-        this.bungeecord = new net.silthus.chat.integrations.bungeecord.BungeeCord(this);
+        this.bungeecord = new BungeeCord(this);
         if (!isTesting()) {
             this.getServer().getMessenger().registerOutgoingPluginChannel(this, Constants.BungeeCord.BUNGEECORD_CHANNEL);
             this.getServer().getMessenger().registerIncomingPluginChannel(this, Constants.BungeeCord.BUNGEECORD_CHANNEL, bungeecord);
@@ -228,6 +264,7 @@ public final class SChat extends JavaPlugin {
     private void setupPlaceholderAPIIntegration() {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             placeholders = new PlaceholderAPIWrapper();
+            getLogger().info("Enabled PlaceholderAPI Integration.");
         } else {
             placeholders = new EmptyPlaceholders();
         }

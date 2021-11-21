@@ -82,7 +82,7 @@ class ChannelConfigTest extends TestBase {
 
         Component component = Message.message(ChatSource.named("source"), "test")
                 .format(config.format())
-                .to(Channel.channel("test"))
+                .to(Channel.createChannel("test"))
                 .build()
                 .formatted();
 

@@ -21,7 +21,6 @@ package net.silthus.chat;
 
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.PrivateConversation;
 
@@ -36,14 +35,6 @@ public interface Conversation extends ChatTarget, Comparable<Conversation> {
 
     static Conversation privateConversation(UUID id, String name, Component displayName, Collection<ChatTarget> targets) {
         return SChat.instance().getConversationManager().getOrCreatePrivateConversation(id, name, displayName, targets.toArray(new ChatTarget[0]));
-    }
-
-    static Channel channel(String identifier) {
-        return Channel.channel(identifier);
-    }
-
-    static Channel channel(String identifier, ChannelConfig config) {
-        return Channel.channel(identifier, config);
     }
 
     Format getFormat();

@@ -57,7 +57,7 @@ class IdentityDto {
                 chatter.setDisplayName(displayName);
                 yield chatter;
             }
-            case CHANNEL -> ChatTarget.channel(name);
+            case CHANNEL -> SChat.instance().getChannelRegistry().get(name);
             case CONVERSATION -> SChat.instance().getConversationManager().getConversation(uniqueId);
             case CONSOLE -> ChatTarget.console();
             case NAMED -> ChatSource.named(uniqueId, name, displayName);

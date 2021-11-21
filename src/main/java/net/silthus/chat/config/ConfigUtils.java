@@ -19,11 +19,18 @@
 
 package net.silthus.chat.config;
 
+import com.google.common.base.Strings;
 import lombok.NonNull;
+import lombok.extern.java.Log;
+import net.silthus.chat.Constants;
 import net.silthus.chat.Format;
 import net.silthus.chat.Formats;
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.NotNull;
 
+import static java.util.Objects.requireNonNullElseGet;
+
+@Log(topic = Constants.PLUGIN_NAME)
 public final class ConfigUtils {
 
     static Format getFormatFromConfig(@NonNull ConfigurationSection config, Format defaultFormat, String template, String format) {
@@ -31,5 +38,28 @@ public final class ConfigUtils {
         return Formats.format(config.getConfigurationSection("format"))
                 .or(() -> Formats.formatFromTemplate(config.getString("format", template)))
                 .orElseGet(() -> Formats.miniMessage(config.getString("format", format)));
+    }
+
+    @NotNull
+    static ConfigurationSection getSection(@NonNull ConfigurationSection config, String section) {
+        return getSection(config, section, false);
+    }
+
+    @NotNull
+    static ConfigurationSection getSection(@NonNull ConfigurationSection config, String section, boolean suppressWarning) {
+        final String path = Strings.isNullOrEmpty(config.getCurrentPath()) ? "" : config.getCurrentPath() + ".";
+        return requireNonNullElseGet(
+                config.getConfigurationSection(section),
+                () -> suppressWarning ? config.createSection(section) : warnAndDefault(path + section, config.createSection(section))
+        );
+    }
+
+    private static <TConfig> TConfig warnAndDefault(String section, TConfig defaultValue) {
+        warnSectionNotDefined(section);
+        return defaultValue;
+    }
+
+    static void warnSectionNotDefined(String section) {
+        log.warning("No '" + section + "' section found inside your config.yml! Make sure your config is up-to-date with the config.default.yml.");
     }
 }

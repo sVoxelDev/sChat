@@ -74,29 +74,24 @@ public abstract class AbstractChatter extends AbstractChatTarget implements Chat
 
     @Override
     public boolean canJoin(Channel channel) {
-        if (channel.getConfig().protect()) {
-            return hasPermission(channel.getPermission());
-        }
-        return true;
+        return channel.canJoin(this);
     }
 
     @Override
     public boolean canAutoJoin(Channel channel) {
-        if (!canJoin(channel)) return false;
-        if (canJoin(channel) && channel.getConfig().autoJoin()) return true;
-        return hasPermission(channel.getAutoJoinPermission());
+        return channel.canAutoJoin(this);
     }
 
     @Override
     public boolean canLeave(Conversation conversation) {
         if (conversation instanceof Channel) {
-            return ((Channel) conversation).getConfig().canLeave();
+            return ((Channel) conversation).canLeave(this);
         }
         return true;
     }
 
     @Override
     public boolean canSendMessage(Channel channel) {
-        return canJoin(channel);
+        return channel.canSendMessage(this);
     }
 }

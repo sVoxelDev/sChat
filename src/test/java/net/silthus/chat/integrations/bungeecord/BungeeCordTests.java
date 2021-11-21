@@ -58,7 +58,7 @@ public class BungeeCordTests extends TestBase {
     @Test
     void sendGlobalChatMessage() {
         assertThat(bungeecord).isInstanceOf(PluginMessageListener.class);
-        Chatter chatter = ChatTarget.player(server.addPlayer());
+        Chatter chatter = Chatter.player(server.addPlayer());
 
         Message message = Message.message("test").to(chatter).build();
         bungeecord.sendMessage(message);

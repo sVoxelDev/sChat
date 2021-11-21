@@ -16,6 +16,7 @@ Supercharge the Minecraft Chat Experience of your Players!
 * [Permissions](#permissions)
   * [Channel Permissions](#channel-permissions)
 * [Plugin Integrations](#plugin-integrations)
+  * [Dynamic WorldGuard Region Chats](#dynamic-worldguard-region-chats)
   * [PlaceholderAPI Support](#placeholderapi-support)
 * [Frequently Asked Questions](#frequently-asked-questions)
   * [Are HEX colors supported?](#are-hex-colors-supported)
@@ -98,9 +99,24 @@ channels:
 
 ## Plugin Integrations
 
+- **Dynamic WorldGuard Region Chats**: Use custom WorldGuard sChat flags on your regions to create a chat channel for
+  that region.
 - **Vault Prefix & Suffix**: Supports using [Vault][2] prefixes and suffixes. The use of Vault is completely optional.
 - **PlaceholderAPI Placeholders**: Channel formats support the use of [PlaceholderAPI][3] placeholders. The use of the
   PlaceholderAPI plugin is completely optional.
+
+### Dynamic WorldGuard Region Chats
+
+Set the WorldGuard region flag `schat:region-chat` to `ALLOW` to create a special chat channel for that region.
+Optionally set a name for the chat channel with the `schat:region-chat-name` flag.
+
+1. Create a new region (if you don't have one yet): `/region create my_schat_region`
+2. Enable the region chat: `/region flag my_schat_region schat:region-chat allow`
+3. Set a custom channel name for the region: `/region flag my_schat_region schat:region-chat-name My cool Region`
+
+Players inside the `my_schat_region` will now automatically get a channel where they can chat with other players inside
+that region. If they leave the region they will also automatically leave the channel. You can even further customize
+each region channel in the `config.yml` -> `worldguard` section.
 
 ### PlaceholderAPI Support
 

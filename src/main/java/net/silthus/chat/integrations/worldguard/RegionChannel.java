@@ -17,15 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.identities;
+package net.silthus.chat.integrations.worldguard;
 
-import net.silthus.chat.ChatSource;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import lombok.NonNull;
+import net.silthus.chat.config.ChannelConfig;
+import net.silthus.chat.conversations.Channel;
 
-import java.util.UUID;
+public class RegionChannel extends Channel {
 
-public final class OfflineChatter extends AbstractIdentity implements ChatSource {
+    private final ProtectedRegion region;
 
-    public OfflineChatter(UUID id, String name) {
-        super(id, name);
+    protected RegionChannel(@NonNull String identifier, @NonNull ChannelConfig config, ProtectedRegion region) {
+        super(identifier, config);
+        this.region = region;
     }
 }

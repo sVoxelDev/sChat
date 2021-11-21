@@ -162,11 +162,15 @@ public abstract class TestBase {
     }
 
     protected Channel createChannel(String identifier) {
-        return createChannel(identifier, config -> config);
+        return Channel.createChannel(identifier).register();
     }
 
     protected Channel createChannel(String identifier, Function<ChannelConfig.ChannelConfigBuilder, ChannelConfig.ChannelConfigBuilder> cfg) {
-        return cfg.apply(ChannelConfig.builder()).build().toChannel(identifier);
+        return Channel.createChannel(identifier, cfg).register();
+    }
+
+    protected Channel createChannel(String identifier, ChannelConfig config) {
+        return Channel.createChannel(identifier, config).register();
     }
 
     protected String toText(Component component) {

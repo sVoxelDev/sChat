@@ -107,14 +107,14 @@ class VaultProviderTest extends TestBase {
     @Test
     void offline_usesOfflinePlayerToGetPrefix() {
         when(chat.getPlayerPrefix(anyString(), anyString())).thenReturn("[PLAYER]");
-        Component prefix = provider.getPrefix(ChatSource.player(Bukkit.getOfflinePlayer(UUID.randomUUID())));
+        Component prefix = provider.getPrefix(Chatter.player(Bukkit.getOfflinePlayer(UUID.randomUUID())));
         assertThat(toText(prefix)).isEqualTo("[PLAYER]");
     }
 
     @Test
     void offline_usesOfflinePlayerToGetSuffix() {
         when(chat.getPlayerSuffix(anyString(), anyString())).thenReturn("[!]");
-        Component suffix = provider.getSuffix(ChatSource.player(Bukkit.getOfflinePlayer(UUID.randomUUID())));
+        Component suffix = provider.getSuffix(Chatter.player(Bukkit.getOfflinePlayer(UUID.randomUUID())));
         assertThat(toText(suffix)).isEqualTo("[!]");
     }
 }
