@@ -1,25 +1,38 @@
-# Define your personal defaults for the various configs in this section.
-# Not setting a value in the actual config section will use these defaults.
-# For example: the trade channel below will inherit all the configs from this defaults config.
-defaults:
-  channel:
-    protect: false
-    auto_join: false
-    console: true
-    scope: server
-    worlds:
-      - world
-      - world_nether
-      - world_the_end
-    range: 100
-    format: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset><yellow><sender_vault_prefix><sender_name><sender_vault_suffix><gray>: <gray><message>'
+# Set the name of the language file to use.
+# The key is the name of the file without .yaml inside the languages/ folder.
+language: "en"
+# Configure player related settings here.
+players:
+  # Set a regular expression of allowed nicknames.
+  # This defaults to the allowed Minecraft nicknames.
+  nickname_pattern: "[a-zA-Z0-9_]{3,16}"
+  # The names are matched case-insensitive. nOtcH will be blocked as well.
+  # You can also use regular expressions to block nicknames. The expressions are matched case-insensitive as well.
+  # Players with the 'schat.nickname.set.blocked' bypass these restrictions.
+  blocked_nicknames:
+    - Notch
+    - .*admin.*
 # You can fine tune the behaviour of the console chat in this section.
 console:
+  # Set the name players see when chatting from the console.
+  name: Console
   # This is the channel the console will send chat messages to.
   default_channel: global
 private_chats:
-  # set false to only allow private chats on the active server
+  # Set false to disable global private chatting and restrict it to the current server.
   global: true
+  # Set the format template that should be applied to private messages.
+  format: private_message
+  # The name of the conversation (channel) tab in the footer.
+  # Possible replacements are:
+  #   - <partner_name>: resolves to the other conversation partner depending on the viewer.
+  name: "<partner_name>"
+# Fine tune the behaviour of the broadcast command here.
+broadcast:
+  # Set the format template that should be applied to broadcasts.
+  format: broadcast
+  # Set false to only broadcast to channels. Players will receive an unread indicator in all channels.
+  include_private_chats: true
 # Define your list of channels here.
 channels:
   # The id of the channel must be unique across your server network.
@@ -51,6 +64,9 @@ channels:
     # The permission is: 'schat.channel.<id>', e.g. 'schat.channel.global'
     # default: false
     protect: false
+    # Set 'true' to prevent players from leaving the channel.
+    # default: false
+    force: true
     # Set 'true' to automatically let every player that has the permission join this channel.
     # This is useful for global channels that everyone should have.
     # default: false
@@ -60,21 +76,114 @@ channels:
     # default: true
     console: true
     # The formatting of the chat messages in this channel.
-    # You can use the mini message format documented here: https://docs.adventure.kyori.net/minimessage#format
-    # You can use the web viewer to preview how your chat will look: https://webui.adventure.kyori.net/
-    # You can use any PlaceholderAPI placeholders with the {placeholder} syntax.
-    # The following custom mini message placeholders are available:
-    # - <channel_name>: The name of the channel (see above).
-    # - <sender_vault_prefix>: The Vault prefix of the sending player. Requires Vault to work. "Bleeding" color codes in prefix and suffix currently do not work.
-    # - <sender_name>: The name or nick of the sending player.
-    # - <sender_vault_suffix>: The Vault suffix of the sending player. Requires Vault to work. "Bleeding" color codes in prefix and suffix currently do not work.
-    # - <message>: The message that is being sent.
-    # default: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset><yellow><sender_vault_prefix><sender_name><sender_vault_suffix><gray>: <gray><message>'
-    format: '<gold>[</gold><green><channel_name></green><gold>]</gold><reset><yellow><sender_vault_prefix><sender_name><sender_vault_suffix><gray>: <gray><message>'
+    # Use any of the defined format templates (see below) or create a custom format for the channel.
+    format: channel
+    # Configures the line above the channel names.
+    footer:
+      enabled: true
   trade:
     name: Trade
     auto_join: true
+    footer:
+      enabled: false
   team:
     # Protecting a channel requires the "schat.channel.<id>" permission to join it.
     # For the team channel this would be "schat.channel.team".
     protect: true
+# Define globally available format templates here.
+# You can use them in channel or other configurations where a format can be configured.
+# The format is always applied to a message, and you have access to the sender, target and channel, if it exists.
+# You can use any formatting documented here, including hex colors, click events, hovers, and so on: https://docs.adventure.kyori.net/minimessage#format
+# You can use the web viewer to preview how your chat will look: https://webui.adventure.kyori.net/
+# You can use any PlaceholderAPI placeholders with the {placeholder} syntax.
+# You can use any hex color inside the <...> brackets, e.g. <#ffffff> instead of <yellow> or <green></green> <#ffffff></#ffffff>
+#
+# The following custom mini message placeholders are available:
+# - <channel_name>: The name of the channel (see above).
+# - <sender_vault_prefix>: The Vault prefix of the sending player. Requires Vault to work.
+# - <sender_world>: The world of the sending player.
+# - <sender_name>: The real name of the sending player. Ignores the nickname.
+# - <sender_display_name>: The nickname of the sending player.
+# - <sender_vault_suffix>: The Vault suffix of the sending player. Requires Vault to work.
+# - <message>: The message that is being sent.
+#
+# Go to https://docs.adventure.kyori.net/minimessage#format and read it if you want to customize this.
+formats:
+  default:
+    # The 'type' defaults to mini-message if omitted
+    type: mini-message
+    format: "<yellow><sender_display_name><gray>: <message>"
+  channel:
+    format: "<channel_formatted><yellow><sender><gray>: <message>"
+  private_message:
+    format: "<yellow><sender_no_vault><gray>: <message>"
+  none:
+    format: "<message>"
+  channel_formatted:
+    format: "<gold>[</gold><green><channel_name></green><gold>]</gold>"
+  sender:
+    format: "<sender_vault_prefix><sender_no_vault><sender_vault_suffix>"
+  sender_no_vault:
+    format: "<click:run_command:/schat message send <sender_name>><hover:show_text:'<sender_hover>'><sender_display_name></hover></click>"
+  sender_hover:
+    format: |-
+      <gray>Name: <yellow><sender_name>
+      <gray><i>Click to send <yellow><sender_display_name></yellow> a message.
+  broadcast:
+    # Set true to center the final formatted message.
+    center: true
+    # Define the spacer to fill the left and right side of the centered text. Defaults to a blank line.
+    center_spacer: " "
+    format: "<red><bold><message>"
+worldguard:
+  # Set false to completely disable the WorldGuard integration, regardless if WorldGuard is installed or not.
+  # If WorldGuard is not installed, nothing will break and the integration is simply not used.
+  enabled: true
+  # Set the 'schat:region-chat' region flag to ALLOW to enable the region chat for that region.
+  # The region will use the default channel config defined below.
+  # You can define an individual config per region in the 'regions' section if you wish.
+  channel_configs:
+    # All of these config values are the same as in the channel config and applied to every region that has the 'schat:region-chat' flag set.
+    # Any values not set will use the defaults from the global default config.
+    default:
+      # The name of the chat defaults to the name of the region.
+      # For convenience there is also a 'schat:region-chat-name' to set the name without the need to set a config for every region.
+      name: "<worldguard:region_id>"
+      # Set true to automatically open the region chat when the player enters the region.
+      # If false the player must manually join the chat by typing /join <region>.
+      auto_join: true
+      # Force means the player cannot leave the region chat.
+      force: true
+      # Global region chats will sync up with regions on other servers and worlds that are named exactly the same.
+      # For example: you have three servers and on each there is a 'spawn' region with the 'schat:region-chat' flag set to ALLOW.
+      # With the global option, the players can chat across servers inside the spawn chat, but only if they are in the region on any of the servers.
+      #
+      # Other options are:
+      # server: region chats across worlds on the same server sync up.
+      # local: further restrict how far players can hear messages inside this region.
+      # current_world: the region chat is only scoped to the current world.
+      scope: global
+    # Override any default settings for individual regions here.
+    regions:
+      # This must be the id of the region, e.g. __global__, spawn, etc.
+      my_town:
+        # Any values not set will be used from the default config above.
+        name: "Oldtown"
+# Define your personal defaults for the various configs in this section.
+# Not setting a value in the actual config section will use these defaults.
+# For example: the team channel above will inherit all the configs from this 'defaults' section.
+defaults:
+  channel:
+    protect: false
+    auto_join: false
+    force: false
+    console: true
+    scope: server
+    worlds:
+      - world
+      - world_nether
+      - world_the_end
+    range: 100
+    format: channel
+    footer:
+      enabled: true

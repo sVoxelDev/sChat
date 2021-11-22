@@ -27,8 +27,10 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.examination.string.MultiLineStringExaminer;
 import net.milkbowl.vault.chat.Chat;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
@@ -46,14 +48,18 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.io.File;
+import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -69,9 +75,26 @@ public abstract class TestBase {
         server = MockBukkit.mock();
         plugin = MockBukkit.load(SChat.class);
         plugin.setChatPacketQueue(spy(new ChatPacketQueue(plugin)));
+        plugin.setChannelRegistry(spy(plugin.getChannelRegistry()));
         setupVaultMock();
-        setupBungeecordMock();
+        setupBungeeCordMock();
 
+    }
+
+    @AfterEach
+    @SneakyThrows
+    public void tearDown() {
+        Bukkit.getScheduler().cancelTasks(plugin);
+        MockBukkit.unmock();
+        clearAudiences();
+    }
+
+    @SneakyThrows
+    @SuppressWarnings("unchecked")
+    private void clearAudiences() {
+        Field instances = Class.forName("net.kyori.adventure.platform.bukkit.BukkitAudiencesImpl").getDeclaredField("INSTANCES");
+        instances.setAccessible(true);
+        ((Map<String, BukkitAudiences>) instances.get(null)).clear();
     }
 
     private void setupVaultMock() {
@@ -81,7 +104,7 @@ public abstract class TestBase {
         plugin.setVaultProvider(new VaultProvider(chat));
     }
 
-    private void setupBungeecordMock() {
+    private void setupBungeeCordMock() {
         PlayerMock messageChannelSender = spy(new PlayerMock(server, "PluginMessageChannelSender"));
         doAnswer(invocation -> {
             byte[] message = invocation.getArgument(2);
@@ -102,13 +125,8 @@ public abstract class TestBase {
             return invocation;
         }).when(messageChannelSender).sendPluginMessage(eq(plugin), anyString(), any());
         plugin.setBungeecord(spy(new BungeeCord(plugin, () -> messageChannelSender)));
-    }
-
-    @AfterEach
-    @SneakyThrows
-    public void tearDown() {
-        Bukkit.getScheduler().cancelTasks(plugin);
-        MockBukkit.unmock();
+        // reset the global chat target to the bungeecord mock
+        plugin.getChannelRegistry().getChannels().forEach(channel -> channel.setConfig(channel.getConfig()));
     }
 
     protected Stream<Listener> getRegisteredListeners() {
@@ -125,25 +143,34 @@ public abstract class TestBase {
     }
 
     protected void assertLastReceivedMessage(PlayerMock player, String message) {
+        final String lastMessage = getLastMessage(player);
+        assertThat(lastMessage).isNotNull();
+        assertThat(cleaned(lastMessage)).startsWith(message);
+    }
+
+    protected String getLastMessage(PlayerMock player) {
         String nextMessage;
         String lastMessage = null;
         while ((nextMessage = player.nextMessage()) != null) {
             lastMessage = nextMessage;
         }
-        assertThat(lastMessage).isNotNull();
-        assertThat(cleaned(lastMessage)).startsWith(message);
+        return lastMessage;
     }
 
-    protected Channel createChannel(Function<ChannelConfig, ChannelConfig> cfg) {
+    protected Channel createChannel(Function<ChannelConfig.ChannelConfigBuilder, ChannelConfig.ChannelConfigBuilder> cfg) {
         return createChannel(RandomStringUtils.randomAlphabetic(10), cfg);
     }
 
     protected Channel createChannel(String identifier) {
-        return createChannel(identifier, config -> config);
+        return Channel.createChannel(identifier).register();
     }
 
-    protected Channel createChannel(String identifier, Function<ChannelConfig, ChannelConfig> cfg) {
-        return cfg.apply(ChannelConfig.defaults()).toChannel(identifier);
+    protected Channel createChannel(String identifier, Function<ChannelConfig.ChannelConfigBuilder, ChannelConfig.ChannelConfigBuilder> cfg) {
+        return Channel.createChannel(identifier, cfg).register();
+    }
+
+    protected Channel createChannel(String identifier, ChannelConfig config) {
+        return Channel.createChannel(identifier, config).register();
     }
 
     protected String toText(Component component) {
@@ -180,5 +207,24 @@ public abstract class TestBase {
     @Nullable
     protected String cleaned(@NonNull String message) {
         return ChatColor.stripColor(message.stripLeading());
+    }
+
+    @SneakyThrows
+    protected void loadTestConfig(String name) {
+        final File config = new File(plugin.getDataFolder(), "config.yml");
+        Files.copy(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResourceAsStream(name)), config.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    protected String prettyPrint(final Component component) {
+        return component.compact().examine(MultiLineStringExaminer.simpleEscaping()).collect(Collectors.joining("\n"));
+    }
+
+    protected void assertComponents(Component actual, Component expected) {
+        assertEquals(prettyPrint(expected), prettyPrint(actual));
+    }
+
+    protected void assertLastMessage(ChatTarget target, Component expected) {
+        assertThat(target.getLastReceivedMessage()).isNotNull();
+        assertComponents(target.getLastReceivedMessage().formatted(), expected);
     }
 }

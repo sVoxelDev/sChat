@@ -17,11 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat;
+package net.silthus.chat.integrations.worldguard;
 
-public class ScopeInstantiationException extends RuntimeException {
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import lombok.NonNull;
+import net.silthus.chat.config.ChannelConfig;
+import net.silthus.chat.conversations.Channel;
 
-    public ScopeInstantiationException(Throwable cause) {
-        super(cause);
+public class RegionChannel extends Channel {
+
+    private final ProtectedRegion region;
+
+    protected RegionChannel(@NonNull String identifier, @NonNull ChannelConfig config, ProtectedRegion region) {
+        super(identifier, config);
+        this.region = region;
     }
 }

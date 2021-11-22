@@ -19,7 +19,7 @@
 
 package net.silthus.chat.identities;
 
-import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Chatter;
 import net.silthus.chat.Conversation;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
@@ -45,14 +45,14 @@ class AbstractConversationTest extends TestBase {
 
     @Test
     void subscribe_returnsSubscription() {
-        conversation.addTarget(ChatTarget.player(server.addPlayer()));
+        conversation.addTarget(Chatter.player(server.addPlayer()));
     }
 
     @Test
     void sorted_byName() {
-        Channel one = Conversation.channel("Abc");
-        Channel two = Conversation.channel("def");
-        Conversation three = Conversation.direct(ChatTarget.player(server.addPlayer()), ChatTarget.player(server.addPlayer()));
+        Channel one = Channel.createChannel("Abc");
+        Channel two = Channel.createChannel("def");
+        Conversation three = Conversation.privateConversation(Chatter.player(server.addPlayer()), Chatter.player(server.addPlayer()));
         List<Conversation> conversations = List.of(
                 three,
                 two,

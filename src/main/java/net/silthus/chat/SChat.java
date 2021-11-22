@@ -19,40 +19,47 @@
 
 package net.silthus.chat;
 
-import co.aikar.commands.InvalidCommandArgument;
-import co.aikar.commands.PaperCommandManager;
+import co.aikar.commands.*;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.google.common.base.Strings;
+import com.sk89q.worldguard.WorldGuard;
 import kr.entree.spigradle.annotations.PluginMain;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.milkbowl.vault.chat.Chat;
+import net.silthus.chat.commands.NicknameCommands;
 import net.silthus.chat.commands.SChatCommands;
+import net.silthus.chat.config.Language;
 import net.silthus.chat.config.PluginConfig;
+import net.silthus.chat.config.WorldGuardConfig;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.conversations.ChannelRegistry;
 import net.silthus.chat.conversations.ConversationManager;
-import net.silthus.chat.identities.AbstractIdentity;
-import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.ChatterManager;
 import net.silthus.chat.identities.Console;
+import net.silthus.chat.integrations.bungeecord.BungeeCord;
+import net.silthus.chat.integrations.placeholders.EmptyPlaceholders;
+import net.silthus.chat.integrations.placeholders.PlaceholderAPIWrapper;
+import net.silthus.chat.integrations.placeholders.Placeholders;
 import net.silthus.chat.integrations.protocollib.ChatPacketQueue;
 import net.silthus.chat.integrations.vault.VaultProvider;
+import net.silthus.chat.integrations.worldguard.WorldGuardIntegration;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -66,9 +73,14 @@ public final class SChat extends JavaPlugin {
     @Getter
     private static boolean testing = false;
 
+    private BukkitAudiences audiences;
+    @Accessors(fluent = true)
+    private Language language;
+
     private PluginConfig pluginConfig;
     private Metrics metrics;
 
+    @Setter(AccessLevel.PACKAGE)
     private ChannelRegistry channelRegistry;
     private ChatterManager chatterManager;
     private ConversationManager conversationManager;
@@ -77,11 +89,13 @@ public final class SChat extends JavaPlugin {
     private ProtocolManager protocolManager;
     @Setter(AccessLevel.PACKAGE)
     private VaultProvider vaultProvider;
+    private Placeholders placeholders;
+    private WorldGuardIntegration worldGuard;
 
     @Setter(AccessLevel.PACKAGE)
     private ChatPacketQueue chatPacketQueue;
     @Setter(AccessLevel.PACKAGE)
-    private net.silthus.chat.integrations.bungeecord.BungeeCord bungeecord;
+    private BungeeCord bungeecord;
 
     public SChat() {
         instance = this;
@@ -95,38 +109,44 @@ public final class SChat extends JavaPlugin {
     }
 
     @Override
-    public void onEnable() {
-        if (!isTesting() && isNotPaperMC()) {
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-
+    public void onLoad() {
         setupAndLoadConfigs();
+        setupAndLoadLanguage();
 
+        loadWorldGuardIntegration();
+    }
+
+    @Override
+    public void onEnable() {
         setupBStats();
 
+        setupAdventureAPI();
         setupChannelRegistry();
         setupChatterManager();
         setupConversationManager();
         setupConsoleChatter();
 
-        loadChannels();
-
         setupProtocolLib();
         setupVaultIntegration();
         setupBungeecordIntegration();
+        setupPlaceholderAPIIntegration();
+        enableWorldGuardIntegration();
+
+        loadChannels();
 
         setupCommands();
     }
 
-    private boolean isNotPaperMC() {
-        try {
-            Class.forName("io.papermc.paper.event.player.AsyncChatEvent");
-            return false;
-        } catch (ClassNotFoundException e) {
-            getLogger().severe("Server not running PaperMC, but it is required by this plugin. Disabling...");
-            return true;
-        }
+    public void reload() {
+        reloadConfig();
+
+        final PluginConfig oldConfig = getPluginConfig();
+        pluginConfig = PluginConfig.config(getConfig());
+
+        if (oldConfig.equals(pluginConfig)) return;
+
+        Console.console().setConfig(getPluginConfig().console());
+        getChannelRegistry().load(getPluginConfig());
     }
 
     @Override
@@ -135,8 +155,8 @@ public final class SChat extends JavaPlugin {
         Console.instance = null;
         if (commandManager != null) commandManager.unregisterCommands();
         if (chatterManager != null) chatterManager.removeAllChatters();
-        if (bungeecord != null) tearDownBungeecord();
         if (channelRegistry != null) channelRegistry.clear();
+        if (bungeecord != null) tearDownBungeecord();
 
         HandlerList.unregisterAll(this);
     }
@@ -144,8 +164,38 @@ public final class SChat extends JavaPlugin {
     private void setupAndLoadConfigs() {
         saveDefaultConfig();
         saveResource("config.default.yml", true);
-        saveResource("lang_en.yaml", false);
-        pluginConfig = PluginConfig.fromConfig(getConfig());
+        pluginConfig = PluginConfig.config(getConfig());
+    }
+
+    private void setupAndLoadLanguage() {
+        final String languageConfig = getPluginConfig().languageConfig();
+        saveResource(languageConfig, true);
+        this.language = Language.language(YamlConfiguration.loadConfiguration(new File(getDataFolder(), languageConfig)),
+                Locale.forLanguageTag(languageConfig.replace("languages/", "").replace(".yaml", "")));
+    }
+
+    private void loadWorldGuardIntegration() {
+        try {
+            final WorldGuardConfig config = getPluginConfig().worldGuard();
+            if (!config.enabled()) {
+                getLogger().info("WorldGuard Integration disabled in config. Not enabling...");
+                return;
+            }
+            this.worldGuard = new WorldGuardIntegration(this, WorldGuard.getInstance());
+            worldGuard.load();
+        } catch (NoClassDefFoundError e) {
+            getLogger().info("WorldGuard not found. Not enabling integration.");
+        }
+    }
+
+    private void enableWorldGuardIntegration() {
+        if (worldGuard == null) return;
+        // WorldGuard is enabled delayed
+        // Waiting one tick ensures all plugins are enabled
+        getServer().getScheduler().runTaskLater(this, () -> {
+            worldGuard.enable();
+            getLogger().info("Enabled WorldGuard Integration.");
+        }, 1L);
     }
 
     private void setupBStats() {
@@ -153,8 +203,12 @@ public final class SChat extends JavaPlugin {
         metrics = new Metrics(this, Constants.BSTATS_ID);
     }
 
+    private void setupAdventureAPI() {
+        this.audiences = BukkitAudiences.create(this);
+    }
+
     private void setupChannelRegistry() {
-        channelRegistry = new ChannelRegistry(this);
+        channelRegistry = new ChannelRegistry();
     }
 
     private void loadChannels() {
@@ -179,19 +233,20 @@ public final class SChat extends JavaPlugin {
         protocolManager = ProtocolLibrary.getProtocolManager();
         chatPacketQueue = new ChatPacketQueue(this);
         protocolManager.addPacketListener(chatPacketQueue);
-        getLogger().info("Enabled ProtocolLib handler.");
+        getLogger().info("Enabled ProtocolLib Integration.");
     }
 
     private void setupVaultIntegration() {
         if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             vaultProvider = new VaultProvider(Objects.requireNonNull(getServer().getServicesManager().getRegistration(Chat.class)).getProvider());
+            getLogger().info("Enabled Vault Integration.");
         } else {
             vaultProvider = new VaultProvider();
         }
     }
 
     private void setupBungeecordIntegration() {
-        this.bungeecord = new net.silthus.chat.integrations.bungeecord.BungeeCord(this);
+        this.bungeecord = new BungeeCord(this);
         if (!isTesting()) {
             this.getServer().getMessenger().registerOutgoingPluginChannel(this, Constants.BungeeCord.BUNGEECORD_CHANNEL);
             this.getServer().getMessenger().registerIncomingPluginChannel(this, Constants.BungeeCord.BUNGEECORD_CHANNEL, bungeecord);
@@ -206,12 +261,22 @@ public final class SChat extends JavaPlugin {
         this.bungeecord = null;
     }
 
+    private void setupPlaceholderAPIIntegration() {
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            placeholders = new PlaceholderAPIWrapper();
+            getLogger().info("Enabled PlaceholderAPI Integration.");
+        } else {
+            placeholders = new EmptyPlaceholders();
+        }
+    }
+
     private void setupCommands() {
         commandManager = new PaperCommandManager(this);
 
         registerChatterContext(commandManager);
         registerChannelContext(commandManager);
         registerConversationContext(commandManager);
+        registerMessageContext(commandManager);
 
         registerChannelCompletion(commandManager);
         registerChatterCompletion(commandManager);
@@ -219,6 +284,7 @@ public final class SChat extends JavaPlugin {
         loadCommandLocales(commandManager);
 
         commandManager.registerCommand(new SChatCommands(this));
+        commandManager.registerCommand(new NicknameCommands(this));
     }
 
     private void registerChannelContext(PaperCommandManager commandManager) {
@@ -231,37 +297,70 @@ public final class SChat extends JavaPlugin {
 
     private void registerChatterContext(PaperCommandManager commandManager) {
         commandManager.getCommandContexts().registerIssuerAwareContext(Chatter.class, context -> {
-            if (context.hasFlag("self")) {
-                return Chatter.of(context.getPlayer());
-            }
+            if (selectSelf(context))
+                return Chatter.commandSender(context.getSender());
 
             String arg = context.popFirstArg();
-            Player player;
-            if (isEntitySelector(arg)) {
-                player = selectPlayer(context.getSender(), arg);
-            } else {
-                if (Strings.isNullOrEmpty(arg)) {
-                    return Chatter.of(context.getPlayer());
-                }
-                try {
-                    return getChatterManager().getChatter(UUID.fromString(arg));
-                } catch (Exception e) {
-                    Optional<Chatter> chatter = getChatterManager().getChatter(arg);
-                    if (chatter.isPresent()) return chatter.get();
-                    player = Bukkit.getPlayerExact(arg);
-                }
-            }
+            Player player = getPlayer(context, arg);
+            if (player == null && context.hasFlag("defaultself"))
+                return Chatter.commandSender(context.getSender());
+            if (player == null) return null;
 
-            if (player == null) {
-                throw new InvalidCommandArgument("The player '" + arg + "' was not found.");
-            }
+            validatePermissionForOthers(context, player);
 
-            return Chatter.of(player);
+            return Chatter.player(player);
         });
+    }
+
+    private boolean selectSelf(BukkitCommandExecutionContext context) {
+        return context.hasFlag("self") || defaultsToSelf(context);
+    }
+
+    private boolean defaultsToSelf(BukkitCommandExecutionContext context) {
+        return Strings.isNullOrEmpty(context.getFirstArg()) && context.hasFlag("defaultself");
+    }
+
+    @Nullable
+    private Player getPlayer(BukkitCommandExecutionContext context, String arg) {
+        if (isEntitySelector(arg))
+            return selectPlayer(context.getSender(), arg);
+        return findPlayer(context, arg);
+    }
+
+    @Nullable
+    private Player findPlayer(BukkitCommandExecutionContext context, String arg) {
+        try {
+            return Bukkit.getPlayer(UUID.fromString(arg));
+        } catch (Exception e) {
+            return ACFBukkitUtil.findPlayerSmart(context.getIssuer(), arg);
+        }
+    }
+
+    private void validatePermissionForOthers(BukkitCommandExecutionContext context, Player player) {
+        if (player == null) return;
+        boolean hasOtherFlag = context.hasFlag("other");
+        boolean isOther = hasOtherFlag && !Objects.equals(player, context.getPlayer());
+        String otherPermission = context.getFlagValue("other", Constants.PERMISSION_ADMIN_OTHERS);
+        if (isOther && !context.getIssuer().hasPermission(otherPermission))
+            throw new ConditionFailedException(MessageKeys.PERMISSION_DENIED);
     }
 
     private void registerConversationContext(PaperCommandManager commandManager) {
         commandManager.getCommandContexts().registerContext(Conversation.class, context -> getConversationManager().getConversation(UUID.fromString(context.popFirstArg())));
+    }
+
+    private void registerMessageContext(PaperCommandManager commandManager) {
+        commandManager.getCommandContexts().registerIssuerAwareContext(Message.class, context -> {
+            try {
+                final Chatter chatter = Chatter.player(context.getPlayer());
+                final Optional<Message> optionalMessage = chatter.getMessage(UUID.fromString(context.popFirstArg()));
+                if (optionalMessage.isEmpty())
+                    throw new InvalidCommandArgument(MessageKeys.UNKNOWN_COMMAND);
+                return optionalMessage.get();
+            } catch (IllegalArgumentException e) {
+                throw new InvalidCommandArgument(MessageKeys.INVALID_SYNTAX);
+            }
+        });
     }
 
     private void registerChannelCompletion(PaperCommandManager commandManager) {
@@ -274,19 +373,25 @@ public final class SChat extends JavaPlugin {
     private void registerChatterCompletion(PaperCommandManager commandManager) {
         commandManager.getCommandCompletions().registerAsyncCompletion("chatters", context ->
                 getChatterManager().getChatters().stream()
-                        .map(AbstractIdentity::getName)
+                        .map(Chatter::getName)
                         .filter(name -> !context.getSender().getName().equalsIgnoreCase(name))
                         .collect(Collectors.toSet()));
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void loadCommandLocales(PaperCommandManager commandManager) {
-        try {
-            commandManager.getLocales().setDefaultLocale(Locale.ENGLISH);
-            commandManager.getLocales().loadYamlLanguageFile("lang_en.yaml", Locale.ENGLISH);
-        } catch (IOException | InvalidConfigurationException e) {
-            getLogger().severe("Failed to load language config: " + e.getMessage());
-            e.printStackTrace();
+        commandManager.getLocales().setDefaultLocale(Locale.ENGLISH);
+        final File languages = new File(getDataFolder(), "languages");
+        languages.mkdirs();
+        for (File file : Objects.requireNonNull(languages.listFiles())) {
+            saveResource("languages/" + file.getName(), true);
+            loadCommandLanguage(file);
         }
+    }
+
+    private void loadCommandLanguage(File file) {
+        final YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+        commandManager.getLocales().loadLanguage(config, Locale.forLanguageTag(file.getName().replace(".yaml", "")));
     }
 
     private boolean isEntitySelector(String arg) {

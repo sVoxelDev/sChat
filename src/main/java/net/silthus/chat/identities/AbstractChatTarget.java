@@ -20,7 +20,6 @@
 package net.silthus.chat.identities;
 
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NonNull;
 import net.silthus.chat.ChatTarget;
 import net.silthus.chat.Conversation;
@@ -33,7 +32,7 @@ public abstract class AbstractChatTarget extends AbstractIdentity implements Cha
 
     private final Stack<Message> receivedMessages = new Stack<>();
     private final Set<Conversation> conversations = new HashSet<>();
-    @Getter
+    private final Map<Conversation, Set<Message>> unreadMessages = new HashMap<>();
     private Conversation activeConversation;
 
     protected AbstractChatTarget(UUID id, String name) {
@@ -42,6 +41,39 @@ public abstract class AbstractChatTarget extends AbstractIdentity implements Cha
 
     protected AbstractChatTarget(String name) {
         super(name);
+    }
+
+    @Override
+    public void sendMessage(Message message) {
+        if (getReceivedMessages().contains(message)) return;
+        addReceivedMessage(message);
+
+        processMessage(message);
+    }
+
+    @Override
+    public boolean deleteMessage(Message message) {
+        if (!receivedMessages.remove(message)) return false;
+        deleteMessageFromConversations(message);
+        deleteMessageFromUnreadMessages(message);
+        return true;
+    }
+
+    private void deleteMessageFromConversations(Message message) {
+        getConversations().forEach(conversation -> conversation.deleteMessage(message));
+    }
+
+    private void deleteMessageFromUnreadMessages(Message message) {
+        for (Set<Message> value : unreadMessages.values()) {
+            value.removeIf(msg -> msg.equals(message));
+        }
+    }
+
+    protected abstract void processMessage(Message message);
+
+    @Override
+    public Optional<Message> getMessage(UUID messageId) {
+        return receivedMessages.stream().filter(message -> message.getId().equals(messageId)).findFirst();
     }
 
     @Override
@@ -55,18 +87,37 @@ public abstract class AbstractChatTarget extends AbstractIdentity implements Cha
         return List.copyOf(receivedMessages);
     }
 
+    @Override
+    public Collection<Message> getUnreadMessages(Conversation conversation) {
+        return List.copyOf(unreadMessages.getOrDefault(conversation, new HashSet<>()));
+    }
+
     protected void addReceivedMessage(Message lastMessage) {
         this.receivedMessages.push(lastMessage);
+        if (lastMessage.getConversation() != null && !lastMessage.getConversation().equals(getActiveConversation())) {
+            unreadMessages.computeIfAbsent(lastMessage.getConversation(), conversation -> new HashSet<>()).add(lastMessage);
+        }
+    }
+
+    public Conversation getActiveConversation() {
+        return Optional.ofNullable(activeConversation).orElseGet(() -> getConversations().stream().findFirst().orElse(null));
     }
 
     public void setActiveConversation(Conversation conversation) {
         this.activeConversation = conversation;
-        if (conversation != null)
+        if (conversation != null) {
             subscribe(conversation);
+            unreadMessages.remove(conversation);
+        }
     }
 
     public Collection<Conversation> getConversations() {
         return conversations.stream().sorted().toList();
+    }
+
+    @Override
+    public void clearConversations() {
+        getConversations().forEach(this::unsubscribe);
     }
 
     public void subscribe(@NonNull Conversation conversation) {
@@ -76,14 +127,9 @@ public abstract class AbstractChatTarget extends AbstractIdentity implements Cha
 
     public void unsubscribe(@NonNull Conversation conversation) {
         conversation.removeTarget(this);
+        unreadMessages.remove(conversation);
         conversations.removeIf(existingConversation -> existingConversation.equals(conversation));
         if (conversation.equals(activeConversation))
             setActiveConversation(getConversations().stream().findFirst().orElse(null));
-    }
-
-    protected boolean alreadyProcessed(Message message) {
-        if (getReceivedMessages().contains(message)) return true;
-        addReceivedMessage(message);
-        return false;
     }
 }

@@ -21,12 +21,13 @@ package net.silthus.chat.integrations.bungeecord;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.Console;
 import net.silthus.chat.identities.NamedChatSource;
 import net.silthus.chat.identities.NilChatIdentity;
+import net.silthus.chat.identities.PlayerChatter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -38,13 +39,13 @@ class IdentityDto {
 
     private final UUID uniqueId;
     private final String name;
-    private final String displayName;
+    private final Component displayName;
     private final Type type;
 
     IdentityDto(Identity identity) {
         this.uniqueId = identity.getUniqueId();
         this.name = identity.getName();
-        this.displayName = BungeeHelper.serialize(identity.getDisplayName());
+        this.displayName = identity.getDisplayName();
         this.type = Type.fromChatIdentity(identity);
     }
 
@@ -52,21 +53,28 @@ class IdentityDto {
     <T extends Identity> T asChatIdentity() {
         return (T) switch (type) {
             case CHATTER -> {
-                Player player = Bukkit.getPlayer(uniqueId);
-                if (player == null)
-                    yield Chatter.chatter(Identity.identity(uniqueId, name, BungeeHelper.deserialize(name)));
-                yield Chatter.of(player);
+                Chatter chatter = getChatter(displayName);
+                chatter.setDisplayName(displayName);
+                yield chatter;
             }
-            case CHANNEL -> ChatTarget.channel(name);
+            case CHANNEL -> SChat.instance().getChannelRegistry().get(name);
             case CONVERSATION -> SChat.instance().getConversationManager().getConversation(uniqueId);
             case CONSOLE -> ChatTarget.console();
-            case NAMED -> ChatSource.named(uniqueId, name, BungeeHelper.deserialize(name));
+            case NAMED -> ChatSource.named(uniqueId, name, displayName);
             default -> ChatTarget.nil();
         };
     }
 
+    private Chatter getChatter(Component displayName) {
+        Player player = Bukkit.getPlayer(uniqueId);
+        if (player == null)
+            return Chatter.chatter(Identity.identity(uniqueId, name, displayName));
+        else
+            return Chatter.player(player);
+    }
+
     enum Type {
-        CHATTER(Chatter.class),
+        CHATTER(PlayerChatter.class),
         CHANNEL(Channel.class),
         CONSOLE(Console.class),
         NAMED(NamedChatSource.class),

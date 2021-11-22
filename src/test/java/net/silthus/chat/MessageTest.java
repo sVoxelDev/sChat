@@ -19,9 +19,12 @@
 
 package net.silthus.chat;
 
+import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.conversations.DirectConversation;
-import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.conversations.PrivateConversation;
+import net.silthus.chat.identities.Console;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -62,7 +65,7 @@ class MessageTest extends TestBase {
     @Test
     void toChannel_setsChannel_andTarget() {
 
-        Channel channel = Channel.channel("test");
+        Channel channel = Channel.createChannel("test");
         Message message = Message.message("hi").to(channel).build();
 
         assertThat(message.getConversation())
@@ -88,8 +91,8 @@ class MessageTest extends TestBase {
     void format_overrides_channelFormat() {
         Message message = ChatSource.named("test")
                 .message("Hi")
-                .to(Channel.channel("channel"))
-                .format(Format.noFormat())
+                .to(Channel.createChannel("channel"))
+                .format(Formats.noFormat())
                 .build();
         String text = toCleanText(message);
 
@@ -100,7 +103,7 @@ class MessageTest extends TestBase {
     void format_usesChannelFormat_ifNotSet() {
         Message message = ChatSource.named("test")
                 .message("Hi")
-                .to(Channel.channel("channel"))
+                .to(Channel.createChannel("channel"))
                 .build();
         String text = toText(message);
 
@@ -144,7 +147,7 @@ class MessageTest extends TestBase {
 
     @Test
     void type_isConversation() {
-        Channel channel = Channel.channel("test");
+        Channel channel = Channel.createChannel("test");
         Message message = Message.message("test").conversation(channel).build();
         assertThat(message.getType()).isEqualTo(Message.Type.CONVERSATION);
 
@@ -154,8 +157,8 @@ class MessageTest extends TestBase {
 
     @Test
     void type_isConversation_withDirectConversation() {
-        Chatter source = Chatter.of(server.addPlayer());
-        Chatter target = Chatter.of(server.addPlayer());
+        Chatter source = Chatter.player(server.addPlayer());
+        Chatter target = Chatter.player(server.addPlayer());
         Message message = source.message("test").to(target).build();
 
         assertThat(message.getType()).isEqualTo(Message.Type.CONVERSATION);
@@ -177,26 +180,87 @@ class MessageTest extends TestBase {
 
     @Test
     void send_oneSource_oneTarget_noChannel_createsDirectConversation() {
-        Chatter source = ChatSource.player(server.addPlayer());
-        Chatter target = ChatTarget.player(server.addPlayer());
+        Chatter source = Chatter.player(server.addPlayer());
+        Chatter target = Chatter.player(server.addPlayer());
         Message message = Message.message("Hi").from(source).to(target).send();
 
         assertThat(message.getConversation())
                 .isNotNull()
-                .isInstanceOf(DirectConversation.class)
+                .isInstanceOf(PrivateConversation.class)
                 .extracting(ChatTarget::getLastReceivedMessage)
                 .isNotNull()
                 .isEqualTo(message);
-        assertThat(source.getActiveConversation()).isNotNull().isInstanceOf(DirectConversation.class);
-        assertThat(target.getActiveConversation()).isNotNull().isInstanceOf(DirectConversation.class);
+        assertThat(source.getActiveConversation()).isNotNull().isInstanceOf(PrivateConversation.class);
+        assertThat(target.getActiveConversation()).isNotNull().isInstanceOf(PrivateConversation.class);
     }
 
     @Test
     void send_toChannelTarget_doesNotCreateDirectConversation() {
         ChatTarget channel = createChannel("test");
-        Message message = Message.message("test").from(Chatter.of(server.addPlayer())).to(channel).send();
+        Message message = Message.message("test").from(Chatter.player(server.addPlayer())).to(channel).send();
         assertThat(message.getConversation())
-                .isNotInstanceOf(DirectConversation.class)
+                .isNotInstanceOf(PrivateConversation.class)
                 .isEqualTo(channel);
+    }
+
+    @Nested
+    class Delete {
+
+        private PlayerMock player;
+        private Chatter chatter;
+        private Message message;
+
+        @BeforeEach
+        void setUp() {
+            player = server.addPlayer();
+            chatter = Chatter.player(player);
+            message = chatter.sendMessage("hi");
+        }
+
+        @Test
+        void delete_removesMessageFromTargets() {
+            assertThat(chatter.getReceivedMessages()).contains(message);
+            message.delete();
+            assertThat(chatter.getReceivedMessages()).doesNotContain(message);
+        }
+
+        @Test
+        void delete_removesMessageFromUnreadMessages() {
+            final Channel channel = createChannel("test");
+            chatter.subscribe(channel);
+            final Message message = Message.message("test").to(channel).send();
+            assertThat(chatter.getUnreadMessages(channel)).contains(message);
+
+            message.delete();
+            assertThat(chatter.getUnreadMessages(channel)).doesNotContain(message);
+        }
+
+        @Test
+        void delete_removesMessageEverywhere() {
+            final Channel channel = createChannel("test", config -> config.sendToConsole(true).scope(Scopes.global()));
+            chatter.setActiveConversation(channel);
+
+            final Message message = channel.sendMessage("hey");
+            message.delete();
+
+            assertThat(channel.getReceivedMessages()).doesNotContain(message);
+            assertThat(chatter.getReceivedMessages()).doesNotContain(message);
+            assertThat(Console.console().getReceivedMessages()).doesNotContain(message);
+            assertThat(plugin.getBungeecord().getReceivedMessages()).doesNotContain(message);
+        }
+
+        @Test
+        void delete_updatesView() {
+            final Channel channel = createChannel("test", config -> config.sendToConsole(true).scope(Scopes.global()));
+            chatter.setActiveConversation(channel);
+            final PlayerMock player2 = server.addPlayer();
+            final Chatter chatter2 = Chatter.player(player2);
+            chatter2.setActiveConversation(channel);
+            final Message message = channel.sendMessage("foobar");
+
+            message.delete();
+            assertThat(cleaned(getLastMessage(player))).doesNotContain("foobar");
+            assertThat(cleaned(getLastMessage(player2))).doesNotContain("foobar");
+        }
     }
 }

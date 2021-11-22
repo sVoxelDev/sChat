@@ -21,19 +21,25 @@ package net.silthus.chat.renderer;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Chatter;
+import net.silthus.chat.Constants;
+import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
+import net.silthus.chat.config.FooterConfig;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.identities.Chatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.newline;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TabbedMessageRendererTests extends TestBase {
 
     private TabbedMessageRenderer view;
+    private PlayerMock player;
     private Chatter chatter;
 
     @Override
@@ -42,8 +48,9 @@ public class TabbedMessageRendererTests extends TestBase {
         super.setUp();
 
         view = new TabbedMessageRenderer();
-        chatter = Chatter.of(server.addPlayer());
-        chatter.setActiveConversation(ChatTarget.channel("test"));
+        player = server.addPlayer();
+        chatter = Chatter.player(player);
+        chatter.setActiveConversation(createChannel("test"));
     }
 
     @Test
@@ -51,19 +58,25 @@ public class TabbedMessageRendererTests extends TestBase {
         Component footer = view.footer(new View(chatter));
 
         assertThat(toText(footer).stripTrailing())
-                .isEqualTo("""
-                        &8\u250C&m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500&r
-                        &8\u2502 &7Global&8 \u2502 &a&ntest&8 \u2502 &7Trade&8 \u2502""");
+                .isEqualTo("&8\u250C&m\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500&r");
+    }
+
+    @Test
+    void footer_isNotRendered_ifDisabled() {
+        chatter.setActiveConversation(createChannel(config -> config.footer(FooterConfig.builder().enabled(false).build())));
+        final Component footer = view.footer(new View(chatter));
+
+        assertThat(footer).isEqualTo(Component.empty());
     }
 
     @Test
     void conversationTabs() {
-        chatter.setActiveConversation(Channel.channel("test"));
+        chatter.setActiveConversation(createChannel("test"));
         Component footer = view.conversationTabs(new View(chatter));
 
         assertThat(toText(footer).stripTrailing())
                 .isEqualTo("""
-                        &8\u2502 &7Global&8 \u2502 &a&ntest&8 \u2502 &7Trade&8 \u2502""");
+                        &8\u2502 &7Global&8 \u2502 &4&n\u2718&a&ntest&8 \u2502 &4\u2718&7Trade&8 \u2502""");
     }
 
     @Test
@@ -78,12 +91,15 @@ public class TabbedMessageRendererTests extends TestBase {
     @Test
     void channels_renders_noChannelInfo() {
 
-        Chatter chatter = Chatter.of(new PlayerMock(server, "test"));
+        Chatter chatter = Chatter.player(new PlayerMock(server, "test"));
         assertThat(chatter.getConversations()).isEmpty();
 
         Component component = view.conversationTabs(new View(chatter));
-        String text = cleaned(toText(component));
-        assertThat(text).isEqualTo("&8\u2502 &7Use &b/ch join <channel> &7to join a channel.");
+        assertComponents(component, text().append(text("\u2502 ", DARK_GRAY))
+                .append(text("Use ", GRAY)
+                        .append(text("/ch <channel>", AQUA).clickEvent(suggestCommand("/ch ")))
+                        .append(text(" to join a channel.", GRAY)))
+                .build());
     }
 
     @Test
@@ -99,26 +115,66 @@ public class TabbedMessageRendererTests extends TestBase {
     @Test
     void channels_renders_activeChannelUnderlined() {
         addChannels();
-        chatter.setActiveConversation(ChatTarget.channel("active"));
+        chatter.setActiveConversation(createChannel("active"));
 
         String text = toText(view.conversationTabs(new View(chatter)));
         assertThat(text)
-                .isEqualTo("&8\u2502 &a&nactive&8 \u2502 &7foobar&8 \u2502 &7Global&8 \u2502 &7test&8 \u2502 &7Trade&8 \u2502 ");
+                .isEqualTo("&8\u2502 &4&n\u2718&a&nactive&8 \u2502 &4\u2718&7foobar&8 \u2502 &7Global&8 \u2502 &4\u2718&7test&8 \u2502 &4\u2718&7Trade&8 \u2502 ");
     }
 
     @Test
-    void supports_channelName_placeholders() {
-        Channel channel = createChannel("foo", config -> config.name("<player_name>"));
-        chatter.subscribe(channel);
-        chatter.setActiveConversation(channel);
+    void renders_unreadMessageCountNearChannelName() {
+        Channel test = createChannel("test");
+        Channel foo = createChannel("foo");
+        chatter.setActiveConversation(test);
+        chatter.subscribe(foo);
 
-        String text = toText(view.conversationTabs(new View(chatter)));
+        foo.sendMessage("test");
 
-        assertThat(text).contains(toText(chatter.getDisplayName()));
+        final String text = toText(view.conversationTabs(new View(chatter)));
+        assertThat(text).contains("foo&c\u2081");
     }
 
+    @Test
+    void renders_leave_icon_forCanLeaveChannel() {
+        final Channel test = createChannel("test");
+        chatter.setActiveConversation(test);
+
+        final String text = toCleanText(view.conversationTabs(chatter.getView()));
+        assertThat(text).contains("\u2718test");
+    }
+
+    @Test
+    void render_doesNotRenderLeaveIcon_forForcedChannel() {
+        final Channel channel = createChannel(config -> config.canLeave(false));
+        chatter.setActiveConversation(channel);
+
+        final String text = toCleanText(view.conversationTabs(chatter.getView()));
+        assertThat(text).contains(" " + channel.getName() + " ");
+    }
+
+    @Test
+    void render_withHighlightMessage_withoutPermission_doesNotMarkMessage() {
+        final Message message = Message.message("test").to(chatter).send();
+        chatter.getView().selectedMessage(message);
+
+        final String text = toCleanText(view.render(chatter.getView()));
+        assertThat(text).contains("test");
+    }
+
+    @Test
+    void render_withHighlightMessage_doesNotMarkMessage() {
+        player.addAttachment(plugin, Constants.PERMISSION_SELECT_MESSAGE, true);
+        final Message message = Message.message("test").to(chatter).send();
+        chatter.getView().selectedMessage(message);
+
+        final String text = toCleanText(view.render(chatter.getView()));
+        assertThat(text).contains("> test");
+    }
+
+
     private void addChannels() {
-        chatter.subscribe(ChatTarget.channel("test"));
-        chatter.subscribe(ChatTarget.channel("foobar"));
+        chatter.subscribe(createChannel("test"));
+        chatter.subscribe(createChannel("foobar"));
     }
 }

@@ -23,9 +23,10 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import com.google.gson.Gson;
 import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.identities.PlayerChatter;
 import org.junit.jupiter.api.Test;
 
+import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MessageDtoTests extends TestBase {
@@ -33,22 +34,22 @@ public class MessageDtoTests extends TestBase {
     @Test
     void create() {
         PlayerMock player = server.addPlayer();
-        Message message = Message.message("test").from(ChatSource.player(player)).build();
+        Message message = Message.message("test").from(Chatter.player(player)).build();
 
         assertThat(serialized(message))
                 .extracting(
                         MessageDto::id,
-                        MessageDto::message,
+                        MessageDto::formatted,
                         msg -> msg.sender().uniqueId(),
                         msg -> msg.sender().name(),
                         msg -> msg.sender().displayName(),
                         msg -> msg.sender().type()
                 ).contains(
                         message.getId(),
-                        "{\"text\":\"test\"}",
+                        message.formatted(),
                         player.getUniqueId(),
-                        "{\"text\":\"test\"}",
-                        "{\"text\":\"Player0\"}",
+                        "Player0",
+                        message.getSource().getDisplayName(),
                         IdentityDto.Type.CHATTER
                 );
     }
@@ -56,14 +57,14 @@ public class MessageDtoTests extends TestBase {
     @Test
     void toMessage_createsMessageFromDto() {
         PlayerMock player = server.addPlayer();
-        Message originalMessage = Message.message("Hi").from(ChatSource.player(player)).build();
+        Message originalMessage = Message.message(Chatter.player(player), "Hi").build();
         MessageDto dto = new MessageDto(originalMessage);
-        Message message = dto.toMessage();
+        Message message = dto.asMessage();
 
         assertThat(message.getId()).isEqualTo(originalMessage.getId());
         assertThat(toCleanText(message)).isEqualTo("Player0: Hi");
         assertThat(message.getSource())
-                .isInstanceOf(Chatter.class)
+                .isInstanceOf(PlayerChatter.class)
                 .extracting(Identity::getUniqueId).isEqualTo(player.getUniqueId());
         assertThat(message.getTargets()).isEmpty();
         assertThat(message.getConversation()).isNull();
@@ -72,12 +73,12 @@ public class MessageDtoTests extends TestBase {
     @Test
     void toMessage_withChannel_serializesChannel() {
         PlayerMock player = server.addPlayer();
-        Channel channel = createChannel("test", config -> config.format(Format.format("[<channel_name>]<sender_name>: <message>")));
+        Channel channel = createChannel("test", config -> config.format(Formats.miniMessage("[<channel_name>]<sender_name>: <message>")));
         MessageDto dto = new MessageDto(Message.message("Hi")
-                .from(ChatSource.player(player))
+                .from(Chatter.player(player))
                 .to(channel)
                 .build());
-        Message message = dto.toMessage();
+        Message message = dto.asMessage();
 
         assertThat(message.getConversation())
                 .isNotNull()
@@ -89,8 +90,8 @@ public class MessageDtoTests extends TestBase {
     @Test
     void toMessage_offlinePlayer_usesNamedSource() {
         PlayerMock player = new PlayerMock(server, "Test");
-        MessageDto dto = new MessageDto(Message.message("Hi").from(ChatSource.player(player)).build());
-        Message message = dto.toMessage();
+        MessageDto dto = new MessageDto(Message.message(Chatter.player(player), "Hi").build());
+        Message message = dto.asMessage();
 
         assertThat(toCleanText(message)).isEqualTo("Test: Hi");
         assertThat(message.getSource())
@@ -102,12 +103,12 @@ public class MessageDtoTests extends TestBase {
                 ).contains(
                         player.getUniqueId(),
                         player.getName(),
-                        player.displayName()
+                        text(player.getDisplayName())
                 );
     }
 
     private MessageDto serialized(Message message) {
-        Gson gson = new Gson();
+        Gson gson = plugin.getBungeecord().getSerializer();
         MessageDto dto = new MessageDto(message);
         return gson.fromJson(gson.toJson(dto), MessageDto.class);
     }

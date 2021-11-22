@@ -19,19 +19,45 @@
 
 package net.silthus.chat.config;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
+import lombok.Value;
+import lombok.With;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.silthus.chat.Format;
+import net.silthus.chat.Formats;
 import org.bukkit.configuration.ConfigurationSection;
 
-@Data
-@NoArgsConstructor
+import static net.kyori.adventure.text.Component.text;
+import static net.silthus.chat.Constants.Formatting.PRIVATE_MESSAGE;
+import static net.silthus.chat.Constants.Formatting.PRIVATE_MESSAGE_FORMAT;
+
+@Value
+@With
+@Builder(toBuilder = true)
 @Accessors(fluent = true)
 public class PrivateChatConfig {
 
-    private boolean global = true;
+    public static PrivateChatConfig privateChatConfig(ConfigurationSection config) {
+        return privateChatDefaults().withConfig(config).build();
+    }
 
-    PrivateChatConfig(ConfigurationSection config) {
-        this.global = config.getBoolean("global", global);
+    public static PrivateChatConfig privateChatDefaults() {
+        return builder().build();
+    }
+
+    @Builder.Default
+    boolean global = true;
+    @Builder.Default
+    Format format = Formats.defaultFormat(PRIVATE_MESSAGE);
+    @Builder.Default
+    Component name = text("<partner_name>");
+
+    public PrivateChatConfig.PrivateChatConfigBuilder withConfig(ConfigurationSection config) {
+        return toBuilder()
+                .global(config.getBoolean("global", global))
+                .format(ConfigUtils.getFormatFromConfig(config, format, PRIVATE_MESSAGE, PRIVATE_MESSAGE_FORMAT))
+                .name(MiniMessage.miniMessage().deserialize(config.getString("name", "<partner_name>")));
     }
 }

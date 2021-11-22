@@ -26,14 +26,16 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
+import static net.silthus.chat.Constants.Formatting.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 
 class PluginConfigTest extends TestBase {
 
     @Test
     void create() {
         YamlConfiguration file = YamlConfiguration.loadConfiguration(new File("src/main/resources/config.yml"));
-        PluginConfig config = PluginConfig.fromConfig(file);
+        PluginConfig config = PluginConfig.config(file);
 
         assertThat(config.channels())
                 .hasSizeGreaterThanOrEqualTo(1)
@@ -44,13 +46,61 @@ class PluginConfigTest extends TestBase {
                 .isNotNull()
                 .extracting(ConsoleConfig::defaultChannel)
                 .isEqualTo("global");
+        assertThat(config.formats())
+                .containsKeys("default", "channel", "none", "sender", "sender_hover", "channel_formatted");
     }
 
+    // adjust the 'config.yml' defaults... values or the default properties in the config object if this test fails
     @Test
-        // adjust the 'config.yml' defaults... values or the default properties in the config object if this test fails
     void defaultValues() {
         PluginConfig config = plugin.getPluginConfig();
         assertThat(config.defaults().channel())
-                .isEqualTo(ChannelConfig.of(new MemoryConfiguration()));
+                .isEqualTo(ChannelConfig.channelConfig(new MemoryConfiguration()));
+    }
+
+    @Test
+    void withDifferentDefaultValues() {
+        final MemoryConfiguration cfg = new MemoryConfiguration();
+        cfg.set("defaults.channel.protect", true);
+        cfg.set("channels.test.name", "Test");
+        final PluginConfig pluginConfig = PluginConfig.config(cfg);
+
+        assertThat(pluginConfig.defaults().channel().protect()).isTrue();
+        assertThat(pluginConfig.channels())
+                .containsOnly(entry("test", ChannelConfig.builder().protect(true).name("Test").build()));
+    }
+
+    @Test
+    void loads_default_Formats() {
+        final PluginConfig pluginConfig = PluginConfig.config(new MemoryConfiguration());
+
+        assertThat(pluginConfig.formats()).isNotEmpty()
+                .containsKeys(DEFAULT, CHANNEL, NO_FORMAT);
+    }
+
+    @Test
+    void loadsCustomFormats() {
+        final MemoryConfiguration cfg = new MemoryConfiguration();
+        cfg.set("formats.test.format", "foobar: <message>");
+        final PluginConfig config = PluginConfig.config(cfg);
+        assertThat(config.formats())
+                .extractingByKey("test")
+                .isNotNull()
+                .extracting(FormatConfig::toFormat)
+                .extracting("format")
+                .isEqualTo("foobar: <message>");
+    }
+
+    @Test
+    void allows_overwriting_defaultFormat() {
+        final MemoryConfiguration cfg = new MemoryConfiguration();
+        cfg.set("formats.none.format", "<gray><message>");
+        final PluginConfig config = PluginConfig.config(cfg);
+        assertThat(config.formats())
+                .extractingByKey("none")
+                .isNotNull()
+                .extracting(FormatConfig::toFormat)
+                .extracting("format")
+                .isEqualTo("<gray><message>");
     }
 }

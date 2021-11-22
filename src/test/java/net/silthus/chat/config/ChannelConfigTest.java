@@ -20,10 +20,7 @@
 package net.silthus.chat.config;
 
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.ChatSource;
-import net.silthus.chat.Format;
-import net.silthus.chat.Message;
-import net.silthus.chat.TestBase;
+import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
 import net.silthus.chat.scopes.GlobalScope;
 import net.silthus.chat.scopes.LocalScope;
@@ -39,32 +36,34 @@ class ChannelConfigTest extends TestBase {
 
     @Test
     void load_fromConfig() {
-
         MemoryConfiguration cfg = new MemoryConfiguration();
         cfg.set("name", "Test");
-        cfg.set("format", "<message>");
+        cfg.set("format", "TEST: <message>");
         cfg.set("protect", true);
         cfg.set("console", false);
         cfg.set("auto_join", false);
+        cfg.set("force", true);
         cfg.set("scope", "global");
+        cfg.set("footer.enabled", false);
 
         ChannelConfig expected = ChannelConfig.builder()
                 .name("Test")
-                .format(Format.format("<message>"))
+                .format(Formats.miniMessage("TEST: <message>"))
                 .protect(true)
                 .sendToConsole(false)
                 .autoJoin(false)
+                .canLeave(false)
                 .scope(new GlobalScope())
+                .footer(FooterConfig.builder().enabled(false).build())
                 .build();
-        ChannelConfig config = ChannelConfig.of(cfg);
+        ChannelConfig config = ChannelConfig.channelConfig(cfg);
         assertThat(config).isEqualTo(expected);
     }
 
     @Test
     void toChannel_createsChannelWithConfig() {
-
-        Channel channel = ChannelConfig.defaults()
-                .name("Test 1")
+        Channel channel = ChannelConfig.channelDefaults()
+                .withName("Test 1")
                 .toChannel("test");
         assertThat(channel)
                 .extracting(
@@ -78,13 +77,12 @@ class ChannelConfigTest extends TestBase {
 
     @Test
     void nullFormat_usesDefaultFormat() {
-
         MemoryConfiguration cfg = new MemoryConfiguration();
-        ChannelConfig config = ChannelConfig.of(cfg);
+        ChannelConfig config = ChannelConfig.channelConfig(cfg);
 
         Component component = Message.message(ChatSource.named("source"), "test")
                 .format(config.format())
-                .to(Channel.channel("test"))
+                .to(Channel.createChannel("test"))
                 .build()
                 .formatted();
 
@@ -94,12 +92,11 @@ class ChannelConfigTest extends TestBase {
 
     @Test
     void loadWorldScope_withWorldsConfig() {
-
         List<String> worlds = List.of("world", "world_nether");
         MemoryConfiguration cfg = new MemoryConfiguration();
         cfg.set("scope", "world");
         cfg.set("worlds", worlds);
-        ChannelConfig config = ChannelConfig.of(cfg);
+        ChannelConfig config = ChannelConfig.channelConfig(cfg);
 
         assertThat(config.scope())
                 .isNotNull().isInstanceOf(WorldScope.class)
@@ -112,11 +109,32 @@ class ChannelConfigTest extends TestBase {
         MemoryConfiguration cfg = new MemoryConfiguration();
         cfg.set("scope", "local");
         cfg.set("range", 20);
-        ChannelConfig config = ChannelConfig.of(cfg);
+        ChannelConfig config = ChannelConfig.channelConfig(cfg);
 
         assertThat(config.scope())
                 .isInstanceOf(LocalScope.class)
                 .extracting("range")
                 .isEqualTo(20);
+    }
+
+    @Test
+    void withTemplateFormat() {
+        final MemoryConfiguration cfg = new MemoryConfiguration();
+        cfg.set("format", "none");
+        final ChannelConfig config = ChannelConfig.channelConfig(cfg);
+        assertThat(config.format())
+                .extracting("format")
+                .isEqualTo(Constants.Formatting.NO_FORMAT_FORMAT);
+    }
+
+    @Test
+    void withFormatConfigSection() {
+        final MemoryConfiguration cfg = new MemoryConfiguration();
+        cfg.set("format.type", "mini-message");
+        cfg.set("format.format", "TESTING: <message>");
+        final ChannelConfig config = ChannelConfig.channelConfig(cfg);
+        assertThat(config.format())
+                .extracting("format")
+                .isEqualTo("TESTING: <message>");
     }
 }

@@ -24,7 +24,7 @@ import lombok.NonNull;
 import lombok.extern.java.Log;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.Constants;
-import net.silthus.chat.SChat;
+import net.silthus.chat.Conversation;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.config.PluginConfig;
 import org.jetbrains.annotations.NotNull;
@@ -33,10 +33,9 @@ import java.util.*;
 
 @Log(topic = Constants.PLUGIN_NAME)
 @AllArgsConstructor
-public final class ChannelRegistry implements Iterable<Channel> {
+public class ChannelRegistry implements Iterable<Channel> {
 
-    private final SChat plugin;
-    private final Map<String, Channel> channels = Collections.synchronizedMap(new HashMap<>());
+    private final Map<String, Channel> channels = new HashMap<>();
 
     @Override
     public @NotNull Iterator<Channel> iterator() {
@@ -54,6 +53,14 @@ public final class ChannelRegistry implements Iterable<Channel> {
                 .orElse(null);
     }
 
+    public Channel get(@NonNull String identifier) {
+        return channels.get(identifier.toLowerCase());
+    }
+
+    public Channel getOrCreate(String identifier, ChannelConfig config) {
+        return Optional.ofNullable(get(identifier)).orElseGet(() -> createAndRegister(identifier, config));
+    }
+
     public Optional<Channel> find(String name) {
         if (name == null) return Optional.empty();
         return Optional.ofNullable(channels.get(name.toLowerCase()))
@@ -69,14 +76,6 @@ public final class ChannelRegistry implements Iterable<Channel> {
                 });
     }
 
-    public Channel getOrCreate(@NonNull String identifier) {
-        return channels.computeIfAbsent(identifier.toLowerCase(), Channel::new);
-    }
-
-    public Channel getOrCreate(@NonNull String identifier, ChannelConfig config) {
-        return channels.computeIfAbsent(identifier.toLowerCase(), s -> new Channel(s, config));
-    }
-
     public int size() {
         return channels.size();
     }
@@ -90,31 +89,48 @@ public final class ChannelRegistry implements Iterable<Channel> {
         return channels.containsValue(channel);
     }
 
-    public void clear() {
-        channels.clear();
-    }
-
     public void load(@NonNull PluginConfig config) {
-        clear();
         loadChannels(config);
     }
 
-    private void loadChannels(@NonNull PluginConfig config) {
-        config.channels().entrySet().stream()
-                .map(entry -> Channel.channel(entry.getKey(), entry.getValue()))
-                .forEach(this::add);
+    public Channel register(@NonNull final Channel channel) {
+        return channels.merge(channel.getName().toLowerCase(), channel, (existing, newChannel) -> {
+            existing.setConfig(newChannel.getConfig());
+            return existing;
+        });
     }
 
-    public void add(@NonNull Channel channel) {
-        this.channels.put(channel.getName(), channel);
+    public void clear() {
+        getChannels().forEach(Conversation::close);
+        channels.clear();
     }
 
-    public boolean remove(@NonNull Channel channel) {
-        return this.channels.remove(channel.getName(), channel);
+    public void remove(@NonNull Channel channel) {
+        remove(channel.getName());
     }
 
     public Channel remove(String identifier) {
         if (identifier == null) return null;
-        return this.channels.remove(identifier.toLowerCase());
+        final Channel channel = this.channels.remove(identifier.toLowerCase());
+        if (channel != null) channel.close();
+        return channel;
+    }
+
+    private void loadChannels(@NonNull PluginConfig config) {
+        for (Map.Entry<String, ChannelConfig> entry : config.channels().entrySet()) {
+            final String key = entry.getKey().toLowerCase();
+            if (contains(key)) {
+                get(key).setConfig(entry.getValue());
+            } else {
+                createAndRegister(key, entry.getValue());
+            }
+        }
+        final Set<String> channelsToRemove = new HashSet<>(channels.keySet());
+        channelsToRemove.removeAll(config.channels().keySet());
+        channelsToRemove.forEach(this::remove);
+    }
+
+    private Channel createAndRegister(@NonNull String identifier, @NonNull ChannelConfig config) {
+        return register(Channel.createChannel(identifier, config));
     }
 }

@@ -19,63 +19,48 @@
 
 package net.silthus.chat.formats;
 
+import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.Template;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Format;
 import net.silthus.chat.Message;
 import net.silthus.chat.SChat;
+import net.silthus.chat.identities.PlayerChatter;
+import net.silthus.chat.integrations.placeholders.Placeholders;
+import net.silthus.chat.renderer.ChatUtil;
+import net.silthus.configmapper.ConfigOption;
 
-import static net.kyori.adventure.text.minimessage.template.TemplateResolver.templates;
+import static net.silthus.chat.Constants.Formatting.DEFAULT_FORMAT;
 
+@Data
+@Accessors(fluent = true)
 @Log(topic = Constants.PLUGIN_NAME)
 @EqualsAndHashCode(of = {"format"})
 public class MiniMessageFormat implements Format {
 
-    private final String format;
+    private final Placeholders placeholders;
 
-    public MiniMessageFormat(String miniMessage) {
-        if (!miniMessage.contains("<message>")) {
-            log.warning("Format '" + miniMessage + "' without <message> tag! Appending <message> tag...");
-            miniMessage += "<message>";
-        }
-        this.format = miniMessage;
-    }
+    @ConfigOption
+    private String format = DEFAULT_FORMAT;
+    @ConfigOption
+    private boolean center = false;
+    @ConfigOption
+    private String centerSpacer = " ";
 
     @Override
     public Component applyTo(Message message) {
-        return MiniMessage.miniMessage().deserialize(format, templates(
-                channelTemplate(message),
-                vaultPrefixTemplate(message),
-                senderTemplate(message),
-                vaultSuffixTemplate(message),
-                messageTemplate(message)
-        ));
-    }
-
-    private Template messageTemplate(Message message) {
-        return Template.template("message", message.getText());
-    }
-
-    private Template senderTemplate(Message message) {
-        return Template.template("sender_name", message.getSource().getDisplayName());
-    }
-
-    private Template channelTemplate(Message message) {
-        if (message.getConversation() != null) {
-            return Template.template("channel_name", message.getConversation().getDisplayName());
-        }
-        return Template.template("channel_name", Component.empty());
-    }
-
-    private Template vaultPrefixTemplate(Message message) {
-        return Template.template("sender_vault_prefix", SChat.instance().getVaultProvider().getPrefix(message.getSource()));
-    }
-
-    private Template vaultSuffixTemplate(Message message) {
-        return Template.template("sender_vault_suffix", SChat.instance().getVaultProvider().getSuffix(message.getSource()));
+        final MiniMessage miniMessage = MiniMessage.builder()
+                .templateResolver(message)
+                .build();
+        Component component = miniMessage.deserialize(format, new MiniMessageFormatTemplateResolver());
+        if (message.getSource() instanceof PlayerChatter)
+            component = SChat.instance().getPlaceholders().setPlaceholders((PlayerChatter) message.getSource(), component);
+        if (center)
+            component = ChatUtil.centerText(component, miniMessage.deserialize(centerSpacer, new MiniMessageFormatTemplateResolver()));
+        return component;
     }
 }

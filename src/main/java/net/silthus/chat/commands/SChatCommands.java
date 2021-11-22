@@ -21,50 +21,78 @@ package net.silthus.chat.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.ConditionFailedException;
-import co.aikar.commands.MessageType;
 import co.aikar.commands.annotation.*;
-import co.aikar.locales.MessageKey;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.silthus.chat.AccessDeniedException;
-import net.silthus.chat.Conversation;
-import net.silthus.chat.Message;
-import net.silthus.chat.SChat;
+import net.silthus.chat.*;
+import net.silthus.chat.config.BroadcastConfig;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.conversations.PrivateConversation;
+import org.jetbrains.annotations.NotNull;
 
-import static net.silthus.chat.Constants.Language.*;
+import static net.kyori.adventure.text.event.ClickEvent.runCommand;
 import static net.silthus.chat.Constants.*;
+import static net.silthus.chat.Constants.Language.Commands.*;
 
 @CommandAlias("schat")
-@CommandPermission(PERMISSION_PLAYER_COMMANDS)
-public class SChatCommands extends BaseCommand {
-
-    static MessageKey key(String key) {
-        return MessageKey.of(ACF_BASE_KEY + "." + key);
-    }
-
-    private final SChat plugin;
+public class SChatCommands extends SChatBaseCommand {
 
     public SChatCommands(SChat plugin) {
-        this.plugin = plugin;
+        super(plugin);
+    }
+
+    @Subcommand("reload")
+    @CommandPermission(PERMISSION_ADMIN_RELOAD)
+    public void reload() {
+        plugin.reload();
+        send(RELOAD_SUCCESS, "{channels}", plugin.getChannelRegistry().size() + "");
+    }
+
+    @CommandAlias("broadcast")
+    @Subcommand("broadcast")
+    @CommandPermission(PERMISSION_ADMIN_BROADCAST)
+    public void broadcast(@Flags("self") Chatter chatter, String message) {
+        final BroadcastConfig broadcast = plugin.getPluginConfig().broadcast();
+        final ChatTarget[] targets = plugin.getConversationManager().getConversations()
+                .stream().filter(conversation -> {
+                    if (!broadcast.includePrivateChats())
+                        return !(conversation instanceof PrivateConversation);
+                    return true;
+                }).toArray(ChatTarget[]::new);
+        chatter.message(message)
+                .to(targets)
+                .conversation(null)
+                .format(broadcast.format())
+                .send();
+        chatter.updateView();
     }
 
     @Subcommand("conversations")
     public class ConversationCommands extends BaseCommand {
 
         @Subcommand("set-active")
+        @CommandPermission(PERMISSION_PLAYER_CHANNEL_JOIN)
         public void setActive(@Flags("self") Chatter chatter, Conversation conversation) {
             if (!chatter.getConversations().contains(conversation)) {
-                throw new ConditionFailedException(key(INVALID_CONVERSATION));
+                throw new ConditionFailedException(messageKey(INVALID_CONVERSATION));
             }
             chatter.setActiveConversation(conversation);
+            chatter.updateView();
+        }
+
+        @Subcommand("leave")
+        @CommandPermission(PERMISSION_PLAYER_CHANNEL_LEAVE)
+        private void leave(@Flags("self") Chatter chatter, Conversation conversation) {
+            if (!chatter.getConversations().contains(conversation)) {
+                throw new ConditionFailedException(messageKey(INVALID_CONVERSATION));
+            }
+            chatter.unsubscribe(conversation);
             chatter.updateView();
         }
     }
 
     @Subcommand("channel|ch")
     @CommandAlias("channel")
-    @CommandPermission(PERMISSION_PLAYER_CHANNEL_COMMANDS)
     public class ChannelCommands extends BaseCommand {
 
         @Subcommand("join")
@@ -78,7 +106,7 @@ public class SChatCommands extends BaseCommand {
                 chatter.updateView();
             } catch (AccessDeniedException e) {
                 error(ACCESS_TO_CHANNEL_DENIED, "{channel}", getChannelName(channel));
-                throw new ConditionFailedException(key(ACCESS_TO_CHANNEL_DENIED), "{channel}", getChannelName(channel));
+                throw new ConditionFailedException(messageKey(ACCESS_TO_CHANNEL_DENIED), "{channel}", getChannelName(channel));
             }
         }
 
@@ -101,28 +129,69 @@ public class SChatCommands extends BaseCommand {
                 Message.message(chatter, message).to(channel).send();
             } else {
                 error(SEND_TO_CHANNEL_DENIED, "{channel}", getChannelName(channel));
-                throw new ConditionFailedException(key(SEND_TO_CHANNEL_DENIED), "{channel}", getChannelName(channel));
+                throw new ConditionFailedException(messageKey(SEND_TO_CHANNEL_DENIED), "{channel}", getChannelName(channel));
             }
         }
     }
 
-    @Subcommand("directmessage")
-    @CommandPermission(PERMISSION_PLAYER_DIRECT_MESSAGE)
+    @Subcommand("message")
     public class DirectMessageCommands extends BaseCommand {
 
         @Subcommand("send")
-        @CommandAlias("m|tell|msg|message|w|dm|pm")
+        @CommandAlias("tell|m|msg|message|w|dm|pm|qm")
         @CommandCompletion("@chatters *")
+        @CommandPermission(PERMISSION_PLAYER_DIRECT_MESSAGE)
         public void directMessage(@Flags("self") Chatter source, Chatter target, @Optional String message) {
             if (source.equals(target))
-                throw new ConditionFailedException(key(CANNOT_SEND_TO_SELF));
+                throw new ConditionFailedException(messageKey(CANNOT_SEND_TO_SELF));
 
             if (message != null) {
                 source.message(message).to(target).send();
             } else {
-                source.setActiveConversation(Conversation.direct(source, target));
+                source.setActiveConversation(Conversation.privateConversation(source, target));
                 source.updateView();
             }
+        }
+
+        @Subcommand("select")
+        @CommandPermission(PERMISSION_SELECT_MESSAGE)
+        public void select(@Flags("self") Chatter chatter, Message message) {
+            final Boolean messageIsSelected = chatter.getView().selectedMessage()
+                    .map(msg -> msg.equals(message)).orElse(false);
+            if (messageIsSelected) {
+                deselectMessage(chatter);
+                sender().sendActionBar(lang(DESELECTED_MESSAGE));
+            } else {
+                chatter.getView().selectedMessage(message);
+                chatter.getView().footer(deleteButton(message).append(abortButton(message)));
+                sender().sendActionBar(lang(SELECTED_MESSAGE));
+            }
+            chatter.updateView();
+        }
+
+        @Subcommand("delete")
+        @CommandPermission(PERMISSION_MESSAGE_DELETE)
+        public void delete(@Flags("self") Chatter chatter, Message message) {
+            deselectMessage(chatter);
+            message.delete();
+            sender().sendActionBar(lang(DELETED_MESSAGE));
+        }
+
+        private void deselectMessage(@Flags("self") Chatter chatter) {
+            chatter.getView().selectedMessage(null);
+            chatter.getView().footer(null);
+        }
+
+        @NotNull
+        private Component deleteButton(Message message) {
+            if (getCurrentCommandIssuer().hasPermission(PERMISSION_MESSAGE_DELETE))
+                return lang(DELETE_MESSAGE_BUTTON).clickEvent(runCommand(Commands.DELETE_MESSAGE.apply(message)));
+            return Component.empty();
+        }
+
+        @NotNull
+        private Component abortButton(Message message) {
+            return lang(DESELECT_MESSAGE_BUTTON).clickEvent(runCommand(Commands.SELECT_MESSAGE.apply(message)));
         }
     }
 
@@ -131,10 +200,10 @@ public class SChatCommands extends BaseCommand {
     }
 
     private void success(String key, String... replacements) {
-        getCurrentCommandIssuer().sendMessage(MessageType.INFO, key(key), replacements);
+        send(key, replacements);
     }
 
     private void error(String key, String... replacements) {
-        getCurrentCommandIssuer().sendMessage(MessageType.ERROR, key(key), replacements);
+        send(key, replacements);
     }
 }

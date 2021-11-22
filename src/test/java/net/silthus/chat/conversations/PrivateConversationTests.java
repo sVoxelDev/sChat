@@ -17,23 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.identities;
+package net.silthus.chat.conversations;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import net.silthus.chat.Conversation;
-import net.silthus.chat.Message;
-import net.silthus.chat.TestBase;
-import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.conversations.DirectConversation;
+import net.silthus.chat.*;
+import net.silthus.chat.config.PrivateChatConfig;
+import net.silthus.chat.identities.AbstractIdentity;
 import net.silthus.chat.renderer.TabbedMessageRenderer;
 import net.silthus.chat.renderer.View;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
-public class DirectConversationTests extends TestBase {
+public class PrivateConversationTests extends TestBase {
 
     PlayerMock player1;
     Chatter chatter1;
@@ -47,17 +46,17 @@ public class DirectConversationTests extends TestBase {
         super.setUp();
 
         player1 = server.addPlayer();
-        chatter1 = Chatter.of(player1);
+        chatter1 = Chatter.player(player1);
         player2 = server.addPlayer();
-        chatter2 = Chatter.of(player2);
-        conversation = Conversation.direct(chatter1, chatter2);
+        chatter2 = Chatter.player(player2);
+        conversation = Conversation.privateConversation(chatter1, chatter2);
     }
 
     @Test
     void create() {
         assertThat(conversation)
                 .isNotNull()
-                .isInstanceOf(DirectConversation.class)
+                .isInstanceOf(PrivateConversation.class)
                 .extracting(
                         Conversation::getTargets
                 ).asList().contains(
@@ -98,7 +97,7 @@ public class DirectConversationTests extends TestBase {
     void sendMessage_onlySetsActive_ifNotSubscribed() {
         sendMessage();
 
-        Channel channel = Channel.channel("test");
+        Channel channel = Channel.createChannel("test");
         chatter1.setActiveConversation(channel);
         assertThat(chatter1.getActiveConversation()).isEqualTo(channel);
 
@@ -133,14 +132,48 @@ public class DirectConversationTests extends TestBase {
 
         TabbedMessageRenderer renderer = new TabbedMessageRenderer();
 
-        assertThat(toCleanText(renderer.render(new View(chatter1)))).contains("\u2502 Player1 \u2502");
-        assertThat(toCleanText(renderer.render(new View(chatter2)))).contains("\u2502 Player0 \u2502");
+        assertThat(toCleanText(renderer.render(new View(chatter1)))).contains("\u2502 \u2718Player1 \u2502");
+        assertThat(toCleanText(renderer.render(new View(chatter2)))).contains("\u2502 \u2718Player0 \u2502");
+    }
+
+    @Test
+    void message_isFormatted_accordingToFormat() {
+        final PrivateChatConfig config = PrivateChatConfig.builder().format(Formats.noFormat()).build();
+        final PrivateConversation conversation = new PrivateConversation(config, Chatter.player(server.addPlayer()));
+        final Message message = Message.message("test").to(conversation).send();
+        assertComponents(message.formatted(), text("test"));
     }
 
     @Test
     void equalsBasedOnTargetAndSource() {
-        Conversation secondConversation = Conversation.direct(chatter2, chatter1);
+        Conversation secondConversation = Conversation.privateConversation(chatter2, chatter1);
         assertThat(conversation).isEqualTo(secondConversation);
+    }
+
+    @Test
+    void withConfig_setsValues() {
+        final PrivateChatConfig config = PrivateChatConfig.builder()
+                .format(Formats.noFormat())
+                .global(false)
+                .name(text("Foobar"))
+                .build();
+        final PrivateConversation conversation = new PrivateConversation(config, chatter1, chatter2);
+        assertThat(conversation)
+                .extracting(
+                        AbstractConversation::getFormat,
+                        AbstractIdentity::getDisplayName
+                ).contains(
+                        Formats.noFormat(),
+                        text("Foobar")
+                );
+        assertThat(conversation.getTargets()).doesNotContain(plugin.getBungeecord());
+    }
+
+    @Test
+    void withGlobal_addsBungeeCord() {
+        final PrivateChatConfig config = PrivateChatConfig.builder().global(true).build();
+        final PrivateConversation conversation = new PrivateConversation(config);
+        assertThat(conversation.getTargets()).contains(plugin.getBungeecord());
     }
 
     private Message sendMessage() {

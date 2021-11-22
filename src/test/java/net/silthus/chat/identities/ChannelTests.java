@@ -20,7 +20,6 @@
 package net.silthus.chat.identities;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.conversations.Channel;
@@ -31,6 +30,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -44,7 +44,7 @@ public class ChannelTests extends TestBase {
     public void setUp() {
         super.setUp();
 
-        channel = ChatTarget.channel("test");
+        channel = createChannel("test");
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ChannelTests extends TestBase {
                         Constants.Permissions.CHANNEL_PERMISSION + ".test"
                 );
         assertThat(channel.getDisplayName())
-                .isEqualTo(Component.text("test"));
+                .isEqualTo(text("test"));
         assertThat(channel.getConfig())
                 .extracting(ChannelConfig::name)
                 .isEqualTo(null);
@@ -71,20 +71,20 @@ public class ChannelTests extends TestBase {
 
     @Test
     void create_withConfig_isRegistered() {
-        Channel channel = Channel.channel("test", ChannelConfig.builder().protect(true).autoJoin(false).build());
+        Channel channel = createChannel("test", ChannelConfig.builder().protect(true).autoJoin(false).build());
         assertThat(plugin.getChannelRegistry().getChannels()).contains(channel);
     }
 
     @Test
     void create_lowerCasesIdentifier() {
-        Channel channel = ChatTarget.channel("TEsT");
+        Channel channel = createChannel("TEsT");
         assertThat(channel.getName()).isEqualTo("test");
     }
 
     @Test
     void equalsBasedOnAlias() {
-        Channel channel1 = ChatTarget.channel("test");
-        Channel channel2 = ChatTarget.channel("test");
+        Channel channel1 = createChannel("test");
+        Channel channel2 = createChannel("test");
 
         assertThat(channel1).isEqualTo(channel2);
     }
@@ -103,12 +103,12 @@ public class ChannelTests extends TestBase {
     @Test
     void getTargets_isImmutable() {
         assertThatExceptionOfType(UnsupportedOperationException.class)
-                .isThrownBy(() -> channel.getTargets().add(Chatter.of(server.addPlayer())));
+                .isThrownBy(() -> channel.getTargets().add(Chatter.player(server.addPlayer())));
     }
 
     @Test
     void join_addsPlayerToChannelTargets() {
-        Chatter player = Chatter.of(server.addPlayer());
+        Chatter player = Chatter.player(server.addPlayer());
         channel.addTarget(player);
 
         assertThat(channel.getTargets())
@@ -117,7 +117,7 @@ public class ChannelTests extends TestBase {
 
     @Test
     void join_canOnlyJoinChannelOnce() {
-        Chatter player = Chatter.of(server.addPlayer());
+        Chatter player = Chatter.player(server.addPlayer());
         channel.addTarget(player);
         channel.addTarget(player);
 
@@ -135,7 +135,7 @@ public class ChannelTests extends TestBase {
 
     @Test
     void leave_removesChatTarget_fromChannelTargets() {
-        Chatter chatter = Chatter.of(server.addPlayer());
+        Chatter chatter = Chatter.player(server.addPlayer());
         channel.addTarget(chatter);
         assertThat(channel.getTargets()).contains(chatter);
 
@@ -147,9 +147,9 @@ public class ChannelTests extends TestBase {
     @Test
     void leave_doesNothingIfPlayerIsNotJoined() {
 
-        Chatter player = Chatter.of(server.addPlayer());
+        Chatter player = Chatter.player(server.addPlayer());
         channel.addTarget(player);
-        assertThatCode(() -> channel.removeTarget(Chatter.of(server.addPlayer())))
+        assertThatCode(() -> channel.removeTarget(Chatter.player(server.addPlayer())))
                 .doesNotThrowAnyException();
         assertThat(channel.getTargets()).contains(player);
     }
@@ -166,7 +166,7 @@ public class ChannelTests extends TestBase {
     void sendMessage_sendsMessageToNobody() {
 
         PlayerMock player = server.addPlayer();
-        Chatter chatter = ChatSource.player(player);
+        Chatter chatter = Chatter.player(player);
         chatter.message("test").to(createChannel("nousers", config -> config.sendToConsole(false))).send();
 
         assertThat(channel.getTargets()).doesNotContain(chatter);
@@ -177,10 +177,10 @@ public class ChannelTests extends TestBase {
     void sendMessage_sendsMessageToAllJoinedTargets() {
 
         PlayerMock player0 = server.addPlayer();
-        Chatter chatter0 = Chatter.of(player0);
+        Chatter chatter0 = Chatter.player(player0);
         chatter0.setActiveConversation(channel);
         PlayerMock player1 = server.addPlayer();
-        Chatter chatter1 = Chatter.of(player1);
+        Chatter chatter1 = Chatter.player(player1);
         chatter1.setActiveConversation(channel);
         PlayerMock player2 = server.addPlayer();
 
@@ -195,13 +195,13 @@ public class ChannelTests extends TestBase {
     void sendFormattedMessage_doesNotFormatAgain() {
 
         PlayerMock player = server.addPlayer();
-        Chatter chatter = Chatter.of(player);
+        Chatter chatter = Chatter.player(player);
         chatter.setActiveConversation(channel);
 
-        ChatSource.player(server.addPlayer())
+        Chatter.player(server.addPlayer())
                 .message("test")
                 .to(channel)
-                .format(Format.defaultFormat())
+                .format(Formats.defaultFormat())
                 .send();
 
         assertReceivedMessage(player, "Player1: test");
@@ -212,10 +212,10 @@ public class ChannelTests extends TestBase {
 
         try {
             PlayerMock player = server.addPlayer();
-            Chatter chatter = Chatter.of(player);
+            Chatter chatter = Chatter.player(player);
             channel.addTarget(chatter);
 
-            Message message = ChatSource.player(server.addPlayer())
+            Message message = Chatter.player(server.addPlayer())
                     .message("test")
                     .to(channel)
                     .send();
@@ -226,7 +226,7 @@ public class ChannelTests extends TestBase {
                     .extracting(
                             m -> m.getSource().getDisplayName()
                     ).isEqualTo(
-                            Component.text("Player1")
+                            text("Player1")
                     );
         } catch (Exception e) {
             e.printStackTrace();
@@ -235,7 +235,7 @@ public class ChannelTests extends TestBase {
 
     @Test
     void sendMessage_storesFormattedChannelMessage() {
-        Channel channel = Channel.channel("test", ChannelConfig.defaults().format(Format.miniMessage("[<channel_name]<sender_name>: <message>")));
+        Channel channel = createChannel("test", config -> config.format(Formats.miniMessage("[<channel_name]<sender_name>: <message>")));
         Message message = ChatSource.named("test").message("test").to(channel).send();
 
         assertThat(channel.getLastReceivedMessage())
@@ -260,11 +260,11 @@ public class ChannelTests extends TestBase {
     @Test
     void sendMultipleMessage_returnedbyLastMessages() {
 
-        ChatSource source1 = ChatSource.player(server.addPlayer());
-        ChatSource source2 = ChatSource.player(server.addPlayer());
+        ChatSource source1 = Chatter.player(server.addPlayer());
+        ChatSource source2 = Chatter.player(server.addPlayer());
 
         PlayerMock player = server.addPlayer();
-        Chatter chatter = Chatter.of(player);
+        Chatter chatter = Chatter.player(player);
         channel.addTarget(chatter);
 
         source1.message("test").to(channel).send();
@@ -284,10 +284,10 @@ public class ChannelTests extends TestBase {
     @Test
     void sendMessage_setsTargetToChannel() {
 
-        Chatter chatter = Chatter.of(server.addPlayer());
+        Chatter chatter = Chatter.player(server.addPlayer());
         channel.addTarget(chatter);
 
-        ChatSource.player(server.addPlayer())
+        Chatter.player(server.addPlayer())
                 .message("test")
                 .to(channel)
                 .send();
@@ -301,7 +301,7 @@ public class ChannelTests extends TestBase {
     @Test
     void subscribedTarget_isRemoved_onRemoveChatter() {
         PlayerMock player = server.addPlayer();
-        Chatter chatter = Chatter.of(player);
+        Chatter chatter = Chatter.player(player);
         chatter.subscribe(channel);
 
         assertThat(channel.getTargets()).contains(chatter);
@@ -313,14 +313,14 @@ public class ChannelTests extends TestBase {
     void canJoin_unprotected_isTrue() {
         Channel channel = createChannel(c -> c.protect(false));
 
-        assertThat(Chatter.of(server.addPlayer()).canJoin(channel)).isTrue();
+        assertThat(Chatter.player(server.addPlayer()).canJoin(channel)).isTrue();
     }
 
     @Test
     void canJoin_protected_withoutPermission_isFalse() {
         Channel channel = createChannel(c -> c.protect(true));
 
-        assertThat(Chatter.of(server.addPlayer()).canJoin(channel)).isFalse();
+        assertThat(Chatter.player(server.addPlayer()).canJoin(channel)).isFalse();
     }
 
     @Test
@@ -330,14 +330,14 @@ public class ChannelTests extends TestBase {
         PlayerMock player = server.addPlayer();
         player.addAttachment(plugin, channel.getPermission(), true);
 
-        assertThat(Chatter.of(player).canJoin(channel)).isTrue();
+        assertThat(Chatter.player(player).canJoin(channel)).isTrue();
     }
 
     @Test
     void canAutoJoin_true_ifConfigured() {
 
         Channel channel = createChannel(config -> config.autoJoin(true));
-        assertThat(Chatter.of(server.addPlayer()).canAutoJoin(channel)).isTrue();
+        assertThat(Chatter.player(server.addPlayer()).canAutoJoin(channel)).isTrue();
     }
 
     @Test
@@ -346,14 +346,14 @@ public class ChannelTests extends TestBase {
         PlayerMock player = server.addPlayer();
         player.addAttachment(plugin, channel.getAutoJoinPermission(), true);
 
-        assertThat(Chatter.of(player).canAutoJoin(channel)).isTrue();
+        assertThat(Chatter.player(player).canAutoJoin(channel)).isTrue();
     }
 
     @Test
     void canAutoJoin_protectedChannel_noPermission_isFalse() {
         Channel channel = createChannel(config -> config.autoJoin(true).protect(true));
 
-        assertThat(Chatter.of(server.addPlayer()).canAutoJoin(channel)).isFalse();
+        assertThat(Chatter.player(server.addPlayer()).canAutoJoin(channel)).isFalse();
     }
 
     @Test
@@ -364,7 +364,7 @@ public class ChannelTests extends TestBase {
         player.addAttachment(plugin, channel.getPermission(), true);
         player.addAttachment(plugin, channel.getAutoJoinPermission(), true);
 
-        assertThat(Chatter.of(player).canAutoJoin(channel)).isTrue();
+        assertThat(Chatter.player(player).canAutoJoin(channel)).isTrue();
     }
 
     @Test
@@ -414,13 +414,59 @@ public class ChannelTests extends TestBase {
     @Test
     void unsubscribe_removesActiveConversation() {
         Channel channel = createChannel(config -> config);
-        Chatter chatter = Chatter.of(server.addPlayer());
+        Chatter chatter = Chatter.player(server.addPlayer());
         chatter.setActiveConversation(channel);
 
         chatter.unsubscribe(channel);
         assertThat(chatter.getConversations()).doesNotContain(channel);
         assertThat(chatter.getActiveConversation())
                 .isNotNull().isNotEqualTo(channel);
+    }
+
+    @Test
+    void close_unsubscribesAllTargets() {
+        final Channel channel = createChannel(config -> config);
+        final Chatter chatter = Chatter.player(server.addPlayer());
+        chatter.subscribe(channel);
+
+        channel.close();
+        assertThat(channel.getTargets()).isEmpty();
+        assertThat(chatter.getConversations()).doesNotContain(channel);
+    }
+
+    @Test
+    void setConfig_changesDisplayName() {
+        final Channel channel = createChannel(config -> config.name("Test 123"));
+        channel.setConfig(ChannelConfig.builder().name("Foobar").build());
+
+        assertThat(channel.getDisplayName()).isEqualTo(text("Foobar"));
+    }
+
+    @Test
+    void setConfig_removeConsoleSender() {
+        final Channel channel = createChannel(config -> config.sendToConsole(true));
+        assertThat(channel.getTargets()).contains(Console.console());
+
+        channel.setConfig(ChannelConfig.builder().sendToConsole(false).build());
+        assertThat(channel.getTargets()).doesNotContain(Console.console());
+    }
+
+    @Test
+    void setConfig_addsConsoleSender() {
+        final Channel channel = createChannel(config -> config.sendToConsole(false));
+        assertThat(channel.getTargets()).doesNotContain(Console.console());
+
+        channel.setConfig(ChannelConfig.builder().sendToConsole(true).build());
+        assertThat(channel.getTargets()).contains(Console.console());
+    }
+
+    @Test
+    void setConfig_updatesChannelFormat() {
+        final Channel channel = createChannel(config -> config.format(Formats.noFormat()));
+        assertThat(channel.getFormat()).isEqualTo(Formats.noFormat());
+
+        channel.setConfig(ChannelConfig.builder().format(Formats.channelFormat()).build());
+        assertThat(channel.getFormat()).isEqualTo(Formats.channelFormat());
     }
 
     @Nested
@@ -437,9 +483,9 @@ public class ChannelTests extends TestBase {
             cfg.set("protect", true);
             cfg.set("auto_join", true);
 
-            Channel channel = Channel.channel("config-test", ChannelConfig.of(cfg));
+            Channel channel = Channel.createChannel("config-test", ChannelConfig.channelConfig(cfg));
 
-            assertThat(channel.getDisplayName()).isEqualTo(Component.text("Test"));
+            assertThat(channel.getDisplayName()).isEqualTo(text("Test"));
             assertThat(channel.getConfig())
                     .extracting(
                             ChannelConfig::format,
@@ -447,7 +493,7 @@ public class ChannelTests extends TestBase {
                             ChannelConfig::protect,
                             ChannelConfig::autoJoin
                     ).contains(
-                            Format.miniMessage("<green><message>"),
+                            Formats.miniMessage("<green><message>"),
                             true,
                             true,
                             true

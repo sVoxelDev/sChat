@@ -19,14 +19,8 @@
 
 package net.silthus.chat.conversations;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Conversation;
-import net.silthus.chat.Format;
-import net.silthus.chat.Identity;
+import lombok.*;
+import net.silthus.chat.*;
 import net.silthus.chat.identities.AbstractChatTarget;
 
 import java.util.*;
@@ -36,11 +30,21 @@ import java.util.*;
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public abstract class AbstractConversation extends AbstractChatTarget implements Conversation {
 
-    private final Set<ChatTarget> targets = Collections.newSetFromMap(Collections.synchronizedMap(new WeakHashMap<>()));
-    private Format format = Format.defaultFormat();
+    private final Set<ChatTarget> targets = Collections.newSetFromMap(new WeakHashMap<>());
+    private Format format = Formats.defaultFormat();
+    @Setter(AccessLevel.PROTECTED)
+    private boolean closed = false;
+
+    public AbstractConversation(UUID id, String name) {
+        super(id, name);
+    }
 
     protected AbstractConversation(String name) {
         super(name);
+    }
+
+    protected void addTargets(Collection<ChatTarget> targets) {
+        this.targets.addAll(targets);
     }
 
     @Override
@@ -56,6 +60,23 @@ public abstract class AbstractConversation extends AbstractChatTarget implements
     @Override
     public void removeTarget(@NonNull ChatTarget target) {
         this.targets.remove(target);
+    }
+
+    @Override
+    public boolean deleteMessage(Message message) {
+        final boolean deleted = super.deleteMessage(message);
+        if (deleted)
+            getTargets().forEach(target -> target.deleteMessage(message));
+        return deleted;
+    }
+
+    @Override
+    public void close() {
+        if (isClosed()) return;
+        setClosed(true);
+        getTargets().forEach(target -> target.unsubscribe(this));
+        targets.clear();
+        SChat.instance().getConversationManager().remove(this);
     }
 
     @Override

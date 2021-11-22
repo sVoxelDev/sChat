@@ -20,11 +20,11 @@
 package net.silthus.chat.identities;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Constants;
-import net.silthus.chat.Identity;
-import net.silthus.chat.TestBase;
+import net.silthus.chat.*;
 import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.persistence.PlayerData;
+import org.bukkit.command.CommandSender;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class ChatterManagerTests extends TestBase {
 
@@ -62,7 +62,7 @@ public class ChatterManagerTests extends TestBase {
     @SuppressWarnings("ConstantConditions")
     void getChatters_isImmutable() {
         assertThatExceptionOfType(UnsupportedOperationException.class)
-                .isThrownBy(() -> manager.getChatters().add(Chatter.of(server.addPlayer())));
+                .isThrownBy(() -> manager.getChatters().add(Chatter.player(server.addPlayer())));
     }
 
     @Test
@@ -166,7 +166,7 @@ public class ChatterManagerTests extends TestBase {
     void unregisterChatter_unsubscribesChannels() {
 
         Chatter chatter = registerChatter();
-        Channel channel = ChatTarget.channel("test");
+        Channel channel = Channel.createChannel("test");
         chatter.subscribe(channel);
 
         manager.removeChatter(chatter);
@@ -181,6 +181,34 @@ public class ChatterManagerTests extends TestBase {
 
         manager.removeAllChatters();
         assertThat(manager.getChatters()).isEmpty();
+    }
+
+    @Test
+    void register_loadsPlayerData() {
+        final PlayerChatter chatter = spy(new PlayerChatter(new PlayerMock(server, "test")));
+        manager.registerChatter(chatter);
+
+        verify(chatter).load();
+    }
+
+    @Test
+    void remove_callsSave() {
+        final PlayerChatter chatter = spy(new PlayerChatter(new PlayerMock(server, "test")));
+        manager.registerChatter(chatter);
+        manager.removeChatter(chatter);
+
+        verify(chatter).save();
+    }
+
+    @Test
+    void commandSender_withNameOnly_mapsId() {
+        final CommandSender sender = mock(CommandSender.class);
+        when(sender.getName()).thenReturn("Bob");
+        final Chatter chatter = manager.getOrCreateChatter(sender);
+        final Message message = chatter.sendMessage("hi");
+        final Chatter chatter2 = manager.getOrCreateChatter(sender);
+
+        assertThat(chatter).isSameAs(chatter2);
     }
 
     private Chatter registerChatter() {
@@ -200,7 +228,6 @@ public class ChatterManagerTests extends TestBase {
 
         @Test
         void registerListener() {
-
             assertThat(listener).isNotNull();
             assertThat(getRegisteredListeners())
                     .contains(listener);
@@ -208,8 +235,7 @@ public class ChatterManagerTests extends TestBase {
 
         @Test
         void playerIsAddedToChatters_onJoin() {
-
-            Chatter chatter = Chatter.of(server.addPlayer());
+            Chatter chatter = Chatter.player(server.addPlayer());
 
             assertThat(manager.getChatters())
                     .hasSize(1)
@@ -219,25 +245,36 @@ public class ChatterManagerTests extends TestBase {
         }
 
         @Test
-        void onJoin_player_autoSubscribes_toConfiguredChannels() {
+        void onJoin_loadsPlayerData() {
+            final PlayerMock player = new PlayerMock(server, "test");
+            final Channel channel = createChannel("test");
+            final Chatter chatter = mock(PlayerChatter.class);
+            when(chatter.getActiveConversation()).thenReturn(channel);
+            player.getPersistentDataContainer().set(Constants.Persistence.PLAYER_DATA, PlayerData.type(), new PlayerData(chatter));
 
+            server.addPlayer(player);
+            final Chatter joinedChatter = Chatter.player(player);
+            assertThat(joinedChatter.getActiveConversation()).isEqualTo(channel);
+        }
+
+        @Test
+        void onJoin_player_autoSubscribes_toConfiguredChannels() {
             Channel channel = createChannel(config -> config.sendToConsole(false));
-            plugin.getChannelRegistry().add(channel);
+            plugin.getChannelRegistry().register(channel);
             PlayerMock player = new PlayerMock(server, "test");
             player.addAttachment(plugin, Constants.Permissions.getAutoJoinPermission(channel), true);
             assertThat(channel.getTargets()).isEmpty();
 
             server.addPlayer(player);
-            Chatter chatter = Chatter.of(player);
+            Chatter chatter = Chatter.player(player);
             assertThat(channel.getTargets()).contains(chatter);
-            assertThat(chatter.getActiveConversation()).isNotNull();
+            assertThat(chatter.getConversations()).contains(channel);
         }
 
         @Test
         void onJoin_doesNotSubscribe_toChannelsWithoutPermission() {
-
             Channel channel = createChannel(config -> config.protect(true));
-            plugin.getChannelRegistry().add(channel);
+            plugin.getChannelRegistry().register(channel);
 
             PlayerMock player = server.addPlayer();
             Chatter chatter = manager.getOrCreateChatter(player);
@@ -247,32 +284,41 @@ public class ChatterManagerTests extends TestBase {
 
         @Test
         void onJoin_doesNotJoinProtectedChannels_withoutPermission() {
-
             Channel channel = createChannel(config -> config.protect(true).sendToConsole(false));
-            plugin.getChannelRegistry().add(channel);
+            plugin.getChannelRegistry().register(channel);
 
             PlayerMock player = new PlayerMock(server, "test");
             player.addAttachment(plugin, Constants.Permissions.getAutoJoinPermission(channel), true);
             assertThat(channel.getTargets()).isEmpty();
 
             server.addPlayer(player);
-            assertThat(channel.getTargets()).doesNotContain(Chatter.of(player));
+            assertThat(channel.getTargets()).doesNotContain(Chatter.player(player));
         }
 
         @Test
         void onJoin_channelWithAutoJoin_joinsAllRegardlessOfPermission() {
-
             Channel channel = createChannel(config -> config.autoJoin(true));
-            plugin.getChannelRegistry().add(channel);
+            plugin.getChannelRegistry().register(channel);
 
-            Chatter chatter = Chatter.of(server.addPlayer());
+            Chatter chatter = Chatter.player(server.addPlayer());
             assertThat(channel.getTargets()).contains(chatter);
         }
 
         @Test
         void onJoin_synchronizesChatter_withOtherServers() {
-            Chatter chatter = Chatter.of(server.addPlayer());
-            verify(plugin.getBungeecord()).synchronizeChatter(chatter);
+            Chatter chatter = Chatter.player(server.addPlayer());
+            verify(plugin.getBungeecord()).sendChatter(chatter);
+        }
+
+        @Test
+        void onQuit_callsSaveOnChatter() {
+            final PlayerMock player = new PlayerMock(server, "Test");
+            final PlayerChatter chatter = spy(new PlayerChatter(player));
+            manager.registerChatter(chatter);
+            server.addPlayer(player);
+
+            listener.onQuit(new PlayerQuitEvent(player, ""));
+            verify(chatter).save();
         }
     }
 }

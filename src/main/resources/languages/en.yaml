@@ -1,0 +1,25 @@
+commands:
+  reload-success: "<green>sChat successfully reloaded. Loaded <aqua>{channels}</aqua> channels."
+  access-to-channel-denied: "<red>You don't have permission to access the '<gold>{channel}</gold>' channel."
+  send-to-channel-denied: "<red>You don't have permission to send messages to the '<gold>{channel}</gold>' channel."
+  joined-channel: "<gray>You joined the channel: <gold>{channel}</gold>."
+  leave-channel: "<gray>You left the channel: <gold>{channel}</gold>."
+  invalid-conversation: "<red>The conversation you tried to join does not exist."
+  cannot-send-to-self: "You can't send messages to yourself."
+  nickname:
+    invalid: "<red>The nickname {nickname} is not valid."
+    blocked: "<red>The nickname {nickname} cannot be used."
+    changed: "<green>You changed your name from <st><red>{old_nickname}</red></st> to <aqua>{nickname}</aqua>."
+    reset: "<green>Your nickname was reset to: <aqua>{nickname}</aqua>."
+  message:
+    selected: "<green>Selected Chat Message"
+    deselected: "<gold>Deselected Chat Message"
+    deleted: "<red>Deleted Chat Message"
+    delete-button: " <hover:show_text:'<red>Click to delete the selected message.'><dark_gray>[<red>Delete<dark_gray>]</hover> "
+    deselect-button: " <hover:show_text:'<gray>Click to deselect the message and abort.'><dark_gray>[<gray>Abort<dark_gray>]</hover> "
+formats:
+  no-channel: "<gray>Use <aqua><click:suggest_command:/ch >/ch <channel></click></aqua> to join a channel."
+  player:
+    click-to-send: "<gray>Click to send <yellow><player_name></yellow> a message."
+  message:
+    select-to-moderate: "<gray>Click to select this message for moderation."

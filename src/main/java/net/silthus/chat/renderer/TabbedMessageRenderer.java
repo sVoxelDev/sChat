@@ -23,22 +23,22 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextReplacementConfig;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.format.TextDecoration;
-import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Conversation;
-import net.silthus.chat.Message;
-import net.silthus.chat.MessageRenderer;
-import net.silthus.chat.identities.Chatter;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.silthus.chat.*;
+import net.silthus.chat.config.Language;
+import net.silthus.chat.identities.PlayerChatter;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static net.kyori.adventure.text.Component.*;
+import static net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND;
 import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
-import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
 import static net.silthus.chat.Constants.Commands.JOIN_CONVERSATION;
+import static net.silthus.chat.Constants.Commands.LEAVE_CONVERSATION;
+import static net.silthus.chat.Constants.PERMISSION_SELECT_MESSAGE;
 import static net.silthus.chat.Constants.View.*;
 
 public final class TabbedMessageRenderer implements MessageRenderer {
@@ -46,19 +46,15 @@ public final class TabbedMessageRenderer implements MessageRenderer {
     @Override
     public Component render(View view) {
         return text().append(clearChat())
-                .append(renderMessages(view.messages()))
+                .append(renderMessages(view))
                 .append(newline())
                 .append(footer(view))
+                .append(conversationTabs(view))
                 .build();
     }
 
     Component footer(View view) {
-        return ChatUtil.wrapText(empty(),
-                        LEFT_FRAME.color(FRAME_COLOR),
-                        FRAME_SPACER.color(FRAME_COLOR).decorate(TextDecoration.STRIKETHROUGH),
-                        FRAME_SPACER.color(FRAME_COLOR).decorate(TextDecoration.STRIKETHROUGH)
-                ).append(newline())
-                .append(conversationTabs(view));
+        return view.footer();
     }
 
     Component conversationTabs(View view) {
@@ -72,13 +68,13 @@ public final class TabbedMessageRenderer implements MessageRenderer {
         return builder.build();
     }
 
-    Component renderMessages(Collection<Message> messages) {
+    Component renderMessages(View view) {
         return Component.join(
                 JoinConfiguration.builder()
                         .separator(newline())
                         .build(),
-                messages.stream()
-                        .map(Message::formatted)
+                view.messages().stream()
+                        .map(message -> renderMessage(view, message))
                         .toList()
         );
     }
@@ -91,11 +87,21 @@ public final class TabbedMessageRenderer implements MessageRenderer {
         return builder.build();
     }
 
+    private Component renderMessage(View view, Message message) {
+        TextComponent prefix = Component.empty();
+        if (view.chatter().hasPermission(PERMISSION_SELECT_MESSAGE)) {
+            prefix = view.selectedMessage().filter(msg -> msg.equals(message))
+                    .map(msg -> text("> ").color(NamedTextColor.RED))
+                    .orElse(empty());
+            return prefix.append(message.formatted()
+                    .clickEvent(clickEvent(RUN_COMMAND, Constants.Commands.SELECT_MESSAGE.apply(message))));
+        }
+        return prefix.append(message.formatted());
+    }
+
     private TextComponent noConversations() {
-        return text().append(CHANNEL_DIVIDER.append(text(" ")).color(FRAME_COLOR))
-                .append(text("Use ").color(INFO_COLOR))
-                .append(text("/ch join <channel> ").color(COMMAND).clickEvent(suggestCommand("/ch join ")))
-                .append(text("to join a channel.").color(INFO_COLOR))
+        return text().append(CHANNEL_DIVIDER.color(FRAME_COLOR).append(text(" ")))
+                .append(lang(Constants.Language.NO_CHANNEL_SELECTED))
                 .build();
     }
 
@@ -109,30 +115,65 @@ public final class TabbedMessageRenderer implements MessageRenderer {
     }
 
     private Component conversationName(View view, Conversation conversation, boolean isActive) {
-        Component conversationName = conversation.getDisplayName()
-                .replaceText(playerName(view.chatter()))
-                .replaceText(conversationPartnerName(view.chatter(), conversation))
-                .clickEvent(clickEvent(ClickEvent.Action.RUN_COMMAND, JOIN_CONVERSATION.apply(conversation)));
+        Component conversationName = leaveConversationIcon(view, conversation)
+                .append(conversation.getDisplayName()
+                        .replaceText(conversationPartnerName(view.chatter(), conversation))
+                        .clickEvent(clickEvent(RUN_COMMAND, JOIN_CONVERSATION.apply(conversation)))
+                );
         if (isActive)
             conversationName = conversationName.color(ACTIVE_COLOR).decorate(ACTIVE_DECORATION);
+        else if (view.unreadMessageCount(conversation) > 0)
+            conversationName = conversationName.color(UNREAD_COLOR).append(smallNumber(view.unreadMessageCount(conversation)).color(UNREAD_COUNT_COLOR));
         else
             conversationName = conversationName.color(INACTIVE_COLOR);
         return conversationName;
     }
 
-    private TextReplacementConfig playerName(Chatter chatter) {
-        return TextReplacementConfig.builder()
-                .match("<player_name>").replacement(chatter.getDisplayName()).build();
+    @NotNull
+    private Component leaveConversationIcon(View view, Conversation conversation) {
+        if (!view.chatter().canLeave(conversation)) return Component.empty();
+        return text().append(CLOSE_CHANNEL.color(CLOSE_CHANNEL_COLOR)
+                .clickEvent(clickEvent(RUN_COMMAND, LEAVE_CONVERSATION.apply(conversation)))).build();
+    }
+
+    private final Map<Integer, Character> numberMap = Map.of(
+            0, '₀',
+            1, '₁',
+            2, '₂',
+            3, '₃',
+            4, '₄',
+            5, '₅',
+            6, '₆',
+            7, '₇',
+            8, '₈',
+            9, '₉'
+    );
+
+    private Component smallNumber(int number) {
+        StringBuilder str = new StringBuilder();
+        while (number > 0) {
+            str.insert(0, numberMap.get(number % 10));
+            number = number / 10;
+        }
+        return Component.text(str.toString());
     }
 
     private TextReplacementConfig conversationPartnerName(Chatter viewer, Conversation conversation) {
         List<Component> names = conversation.getTargets().stream()
                 .filter(target -> !target.equals(viewer))
-                .filter(target -> target instanceof Chatter)
+                .filter(target -> target instanceof PlayerChatter)
                 .map(ChatTarget::getDisplayName)
                 .collect(Collectors.toList());
         return TextReplacementConfig.builder()
                 .match("<partner_name>").replacement(Component.join(JoinConfiguration.separator(Component.text(",")), names))
                 .build();
+    }
+
+    private Component lang(String key) {
+        return lang().get(key);
+    }
+
+    private Language lang() {
+        return SChat.instance().language().section(Constants.Language.Formats.BASE_KEY);
     }
 }

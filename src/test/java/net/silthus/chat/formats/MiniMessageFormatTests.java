@@ -19,9 +19,17 @@
 
 package net.silthus.chat.formats;
 
+import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
+import net.silthus.chat.conversations.Channel;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MiniMessageFormatTests extends TestBase {
@@ -40,7 +48,7 @@ public class MiniMessageFormatTests extends TestBase {
 
     @Test
     void withSource() {
-        assertThat(toText("<sender_name>: <message>", Message.message(ChatSource.player(server.addPlayer()), "test").build()))
+        assertThat(toText("<sender_name>: <message>", Message.message(Chatter.player(server.addPlayer()), "test").build()))
                 .isEqualTo("Player0: test");
     }
 
@@ -52,37 +60,47 @@ public class MiniMessageFormatTests extends TestBase {
 
     @Test
     void withChannelName() {
-        Message message = Message.message(ChatSource.player(server.addPlayer()), "test")
-                .to(ChatTarget.channel("test channel")).build();
+        Message message = Message.message(Chatter.player(server.addPlayer()), "test")
+                .to(Channel.createChannel("test channel")).build();
 
         assertThat(toText("[<channel_name>]<sender_name>: <message>", message))
                 .isEqualTo("[test channel]Player0: test");
     }
 
     @Test
-        // requires a feature in the adventure lib to allow bleeding color codes
     void withVaultPrefix() {
-        assertThat(toText("<sender_vault_prefix><sender_name>: <message>", Message.message(ChatSource.player(server.addPlayer()), "test").build()))
-                .isEqualTo("&7[ADMIN]&rPlayer0: test");
-//                .isEqualTo("&7[ADMIN]Player0: test");
+        final Message message = Message.message(Chatter.player(server.addPlayer()), "test").build();
+        final Component result = Formats.miniMessage("<sender_vault_prefix><sender_name>: <message>").applyTo(message);
+
+        assertComponents(result, text("").append(text("[ADMIN]", GRAY)).append(text("Player0: test", GREEN)));
     }
 
     @Test
-        // requires a feature in the adventure lib to allow bleeding color codes
     void withVaultSuffix() {
-        assertThat(toText("<sender_name><sender_vault_suffix>: <message>", Message.message(ChatSource.player(server.addPlayer()), "test").build()))
-                .isEqualTo("Player0[!]: test");
-//                .isEqualTo("Player0[!]&a: test");
+        final Message message = Message.message(Chatter.player(server.addPlayer()), "test").build();
+        final Component result = Formats.miniMessage("<sender_name><sender_vault_suffix>: <message>").applyTo(message);
+        assertComponents(result, text("Player0[!]").append(text(": test", GREEN)));
     }
 
     @Test
-    void withoutMessageTag_appendsMessageTag() {
-        MiniMessageFormat format = new MiniMessageFormat("source: ");
-        String text = toText(format.applyTo(Message.message("test").build()));
-        assertThat(text).isEqualTo("source: test");
+    void withLoadFromConfig() {
+        final MemoryConfiguration cfg = new MemoryConfiguration();
+        cfg.set("format", "<message>");
+        final Optional<Format> format = Formats.format("mini-message", cfg);
+        assertThat(format).isPresent().get()
+                .extracting("format").isEqualTo("<message>");
+    }
+
+    @Test
+    void withCenter_centersText() {
+        final Component result = Formats.format(MiniMessageFormat.class)
+                .format("<message>")
+                .center(true)
+                .applyTo(Message.message("Hi!").build());
+        assertComponents(result, text("                                      Hi!                                      "));
     }
 
     private String toText(String format, Message message) {
-        return toText(Format.miniMessage(format).applyTo(message));
+        return toText(Formats.miniMessage(format).applyTo(message));
     }
 }

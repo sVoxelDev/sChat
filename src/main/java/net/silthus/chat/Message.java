@@ -24,36 +24,48 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.Value;
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.identities.Chatter;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.minimessage.template.TemplateResolver;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Function;
+
+import static net.kyori.adventure.text.Component.text;
 
 @Value
 @EqualsAndHashCode(of = "id")
 @Builder(builderMethodName = "message", toBuilder = true)
-public class Message implements Comparable<Message> {
+public class Message implements Comparable<Message>, TemplateResolver {
 
     public static Message empty() {
         return Message.message(Component.empty()).build();
     }
 
     public static MessageBuilder message() {
-        return new MessageBuilder(Format.defaultFormat());
+        return new MessageBuilder(Formats.defaultFormat());
     }
 
     public static MessageBuilder message(String message) {
-        return message(Component.text(message));
+        return message(text(message));
     }
 
     public static MessageBuilder message(Component message) {
-        return new MessageBuilder(Format.noFormat()).text(message);
+        return new MessageBuilder(Formats.noFormat()).text(message);
     }
 
     public static MessageBuilder message(ChatSource source, String message) {
-        return new MessageBuilder(Format.defaultFormat()).text(message).source(source);
+        return message(source, text(message));
+    }
+
+    public static MessageBuilder message(ChatSource source, Component message) {
+        return new MessageBuilder(Formats.defaultFormat()).text(message).source(source);
     }
 
     @Builder.Default
@@ -64,18 +76,32 @@ public class Message implements Comparable<Message> {
     @Builder.Default
     Component text = Component.empty();
     @Builder.Default
-    Format format = Format.noFormat();
+    Format format = Formats.noFormat();
     Type type;
     Conversation conversation;
     @Builder.Default
     Collection<ChatTarget> targets = new HashSet<>();
+    Map<String, Template> templates;
+    Component formatted;
+
+    private Message(UUID id, ChatSource source, Component text, Format format, Type type, Conversation conversation, Collection<ChatTarget> targets, Map<String, Template> templates, Component formatted) {
+        this.id = id;
+        this.source = source;
+        this.text = text;
+        this.format = format;
+        this.type = type;
+        this.conversation = conversation;
+        this.targets = targets;
+        this.templates = templates;
+        this.formatted = formatted == null ? format.applyTo(this) : formatted;
+    }
 
     public MessageBuilder copy() {
         return toBuilder().id(UUID.randomUUID());
     }
 
     public Component formatted() {
-        return format.applyTo(this);
+        return formatted;
     }
 
     public Type getType() {
@@ -92,6 +118,20 @@ public class Message implements Comparable<Message> {
         return this;
     }
 
+    public void delete() {
+        getTargets().forEach(target -> target.deleteMessage(this));
+    }
+
+    @Override
+    public boolean canResolve(@NotNull String key) {
+        return templates.containsKey(key);
+    }
+
+    @Override
+    public @Nullable Template resolve(@NotNull String key) {
+        return templates.get(key);
+    }
+
     @Override
     public int compareTo(@NotNull Message o) {
         return getTimestamp().compareTo(o.getTimestamp());
@@ -106,7 +146,7 @@ public class Message implements Comparable<Message> {
         }
 
         private MessageBuilder() {
-            this.defaultFormat = Format.defaultFormat();
+            this.defaultFormat = Formats.defaultFormat();
         }
 
         public MessageBuilder from(@NonNull ChatSource source) {
@@ -125,7 +165,6 @@ public class Message implements Comparable<Message> {
                 if (target instanceof Conversation)
                     conversation((Conversation) target);
                 targetList.add(target);
-
             }
             return targets(targetList);
         }
@@ -165,40 +204,97 @@ public class Message implements Comparable<Message> {
         public Message build() {
             checkForDirectConversation();
 
-            UUID id = id$set ? id$value : $default$id();
-            Format format = conversation != null ? conversation.getFormat() : defaultFormat;
-            if (format$set) format = format$value;
-            ChatSource source = source$set ? source$value : $default$source();
-            Component text = text$set ? text$value : $default$text();
-            Collection<ChatTarget> targets = targets$set ? targets$value : $default$targets();
-
-            return new Message(id, source, text, format, type, conversation, targets);
+            return new Message(
+                    getId(),
+                    getSource(),
+                    getText(),
+                    getFormat(),
+                    type,
+                    conversation,
+                    getTargets(),
+                    getTemplates(),
+                    formatted
+            );
         }
 
         public Message send() {
             return build().send();
         }
 
+        private Map<String, Template> getTemplates() {
+            final HashMap<String, Template> templates = new HashMap<>();
+            templates.putAll(playerTemplate("sender_world", player -> player.getWorld().getName()));
+            templates.putAll(playerTemplate("player_world", player -> player.getWorld().getName()));
+            templates.putAll(playerTemplate("player_name", HumanEntity::getName));
+            templates.putAll(playerTemplate("player_display_name", Player::getDisplayName));
+            templates.put("sender_name", senderName(getSource()));
+            templates.put("sender_display_name", senderDisplayName(getSource()));
+            templates.put("sender_vault_prefix", vaultPrefixTemplate(getSource()));
+            templates.put("sender_vault_suffix", vaultSuffixTemplate(getSource()));
+            templates.put("channel_name", channelTemplate(conversation));
+            templates.put("message", Template.template("message", getText()));
+            return templates;
+        }
+
+        private Map<String, Template> playerTemplate(String key, Function<Player, String> value) {
+            if (!source$set) return Map.of();
+            final Player player = Bukkit.getPlayer(source$value.getUniqueId());
+            if (player == null) return Map.of();
+            return Map.of(key, Template.template(key, value.apply(player)));
+        }
+
+        private Template senderName(ChatSource source) {
+            if (source == null) {
+                return Template.template("sender_name", Component.empty());
+            }
+            return Template.template("sender_name", source.getName());
+        }
+
+        private Template senderDisplayName(ChatSource source) {
+            if (source == null) {
+                return Template.template("sender_display_name", Component.empty());
+            }
+            return Template.template("sender_display_name", source.getDisplayName());
+        }
+
+        private Template channelTemplate(Conversation conversation) {
+            if (conversation != null) {
+                return Template.template("channel_name", conversation.getDisplayName());
+            }
+            return Template.template("channel_name", Component.empty());
+        }
+
+        private Template vaultPrefixTemplate(ChatSource source) {
+            return Template.template("sender_vault_prefix", MiniMessage.miniMessage().serialize(SChat.instance().getVaultProvider().getPrefix(source)));
+        }
+
+        private Template vaultSuffixTemplate(ChatSource source) {
+            return Template.template("sender_vault_suffix", MiniMessage.miniMessage().serialize(SChat.instance().getVaultProvider().getSuffix(source)));
+        }
+
         private void checkForDirectConversation() {
-            if (sourceIsChatTarget() && chatterTargeted()) {
-                to(createDirectConversation((ChatTarget) source$value, firstTargetOrNull()));
+            if (sourceIsChatter() && chatterTargeted()) {
+                to(createDirectConversation((Chatter) source$value, firstTargetOrNull()));
             }
         }
 
         @Nullable
-        private ChatTarget firstTargetOrNull() {
-            return targets$value.stream().findFirst().orElse(null);
+        private Chatter firstTargetOrNull() {
+            return targets$value.stream()
+                    .filter(target -> target instanceof Chatter)
+                    .map(target -> (Chatter) target)
+                    .findFirst().orElse(null);
         }
 
         @Nullable
-        private Conversation createDirectConversation(ChatTarget source, ChatTarget target) {
+        private Conversation createDirectConversation(Chatter source, Chatter target) {
             if (source == null) return null;
             if (target == null) return null;
-            return Conversation.direct(source, target);
+            return Conversation.privateConversation(source, target);
         }
 
-        private boolean sourceIsChatTarget() {
-            return source$value instanceof ChatTarget;
+        private boolean sourceIsChatter() {
+            return source$value instanceof Chatter;
         }
 
         private boolean chatterTargeted() {
@@ -207,6 +303,28 @@ public class Message implements Comparable<Message> {
 
         private boolean targetsNotEmpty() {
             return targets$set && targets$value.size() > 0;
+        }
+
+        private Component getText() {
+            return text$set ? text$value : $default$text();
+        }
+
+        private Format getFormat() {
+            Format format = conversation != null ? conversation.getFormat() : defaultFormat;
+            if (format$set) format = format$value;
+            return format;
+        }
+
+        private Collection<ChatTarget> getTargets() {
+            return targets$set ? targets$value : $default$targets();
+        }
+
+        private ChatSource getSource() {
+            return source$set ? source$value : $default$source();
+        }
+
+        private UUID getId() {
+            return id$set ? id$value : $default$id();
         }
     }
 

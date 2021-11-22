@@ -33,7 +33,6 @@ public final class NilChatIdentity extends AbstractChatTarget implements ChatTar
     }
 
     @Override
-    public void sendMessage(Message message) {
-        addReceivedMessage(message);
+    protected void processMessage(Message message) {
     }
 }

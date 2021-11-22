@@ -19,81 +19,121 @@
 
 package net.silthus.chat.config;
 
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
 import net.silthus.chat.Constants;
+import net.silthus.chat.Formats;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.Objects.requireNonNullElseGet;
 import static java.util.stream.Collectors.toMap;
+import static net.silthus.chat.config.BroadcastConfig.broadcastConfig;
+import static net.silthus.chat.config.BroadcastConfig.broadcastDefaults;
+import static net.silthus.chat.config.ChannelConfig.channelConfig;
+import static net.silthus.chat.config.ChannelConfig.channelDefaults;
+import static net.silthus.chat.config.ConfigUtils.getSection;
+import static net.silthus.chat.config.ConsoleConfig.consoleConfig;
+import static net.silthus.chat.config.ConsoleConfig.consoleDefaults;
+import static net.silthus.chat.config.FormatConfig.formatConfig;
+import static net.silthus.chat.config.PlayerConfig.playerConfig;
+import static net.silthus.chat.config.PrivateChatConfig.privateChatConfig;
+import static net.silthus.chat.config.PrivateChatConfig.privateChatDefaults;
+import static net.silthus.chat.config.WorldGuardConfig.worldGuardConfig;
 
-@Data
+@Value
+@With
+@Builder(toBuilder = true)
 @Accessors(fluent = true)
 @Log(topic = Constants.PLUGIN_NAME)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PluginConfig {
 
-    public static PluginConfig fromConfig(ConfigurationSection config) {
-        return new PluginConfig(config);
+    public static PluginConfig.PluginConfigBuilder builder() {
+        return new PluginConfigBuilder().formats(Formats.DEFAULT_FORMATS);
     }
 
-    private final Defaults defaults;
-    private final ConsoleConfig console;
-    private final PrivateChatConfig privateChat;
-    private final Map<String, ChannelConfig> channels;
-
-    private PluginConfig(@NonNull ConfigurationSection config) {
-        this.defaults = loadDefaults(config.getConfigurationSection("defaults"));
-        this.console = loadConsoleConfig(config.getConfigurationSection("console"));
-        this.privateChat = loadPrivateChatConfig(config.getConfigurationSection("private_chats"));
-        this.channels = loadChannels(config.getConfigurationSection("channels"));
+    public static PluginConfig config(ConfigurationSection config) {
+        return configDefaults().withConfig(config).build();
     }
 
-    private Defaults loadDefaults(ConfigurationSection config) {
-        if (config == null) {
-            warnSectionNotDefined("defaults");
-            return new Defaults(ChannelConfig.defaults());
-        }
-        return new Defaults(ChannelConfig.of(requireNonNullElseGet(config.getConfigurationSection("channel"), () -> config.createSection("channel"))));
+    public static PluginConfig configDefaults() {
+        return builder().build();
     }
 
-    private ConsoleConfig loadConsoleConfig(ConfigurationSection config) {
-        if (config == null) {
-            warnSectionNotDefined("console");
-            return new ConsoleConfig();
-        }
-        return new ConsoleConfig(config);
+    @Builder.Default
+    String languageConfig = "languages/en.yaml";
+    @Builder.Default
+    Defaults defaults = new Defaults(channelDefaults());
+    @Builder.Default
+    ConsoleConfig console = consoleDefaults();
+    @Builder.Default
+    PrivateChatConfig privateChat = privateChatDefaults();
+    @Builder.Default
+    BroadcastConfig broadcast = broadcastDefaults();
+    @Builder.Default
+    PlayerConfig player = PlayerConfig.playerDefaults();
+    @Builder.Default
+    WorldGuardConfig worldGuard = WorldGuardConfig.worldGuardDefaults();
+    @Singular
+    Map<String, ChannelConfig> channels;
+    @Singular
+    Map<String, FormatConfig> formats;
+
+    public PluginConfig.PluginConfigBuilder withConfig(ConfigurationSection config) {
+        if (config == null) return toBuilder();
+        final Map<String, FormatConfig> formats = loadFormats(getSection(config, "formats"));
+        final Defaults defaults = loadDefaults(getSection(config, "defaults"));
+        return toBuilder()
+                .languageConfig(loadLanguage(config))
+                .defaults(defaults)
+                .console(consoleConfig(getSection(config, "console")))
+                .player(playerConfig(getSection(config, "players")))
+                .privateChat(privateChatConfig(getSection(config, "private_chats")))
+                .broadcast(broadcastConfig(getSection(config, "broadcast")))
+                .channelsFromConfig(getSection(config, "channels"))
+                .worldGuard(worldGuardConfig(defaults, getSection(config, "worldguard")))
+                .formats(formats);
     }
 
-    private PrivateChatConfig loadPrivateChatConfig(ConfigurationSection config) {
-        if (config == null) {
-            warnSectionNotDefined("private_chats");
-            return new PrivateChatConfig();
-        }
-        return new PrivateChatConfig(config);
+    private String loadLanguage(ConfigurationSection config) {
+        if (!config.isSet("language"))
+            ConfigUtils.warnSectionNotDefined("language");
+        return "languages/" + config.getString("language", "en") + ".yaml";
     }
 
-    private Map<String, ChannelConfig> loadChannels(ConfigurationSection config) {
-        if (config == null) {
-            warnSectionNotDefined("channels");
-            return new HashMap<>();
-        }
-        return config.getKeys(false).stream()
+    private Defaults loadDefaults(@NonNull ConfigurationSection config) {
+        return new Defaults(channelConfig(getSection(config, "channel")));
+    }
+
+    private Map<String, FormatConfig> loadFormats(@NonNull ConfigurationSection config) {
+        final Map<String, FormatConfig> formats = config.getKeys(false).stream()
                 .collect(toMap(
                         key -> key,
-                        key -> defaults.channel.withConfig(config.getConfigurationSection(key)).build()
+                        key -> formatConfig(config.getConfigurationSection(key))
                 ));
-    }
-
-    private void warnSectionNotDefined(String section) {
-        log.warning("No '" + section + "' section found inside your config.yml! Make sure your config is up-to-date with the config.default.yml.");
+        formats.forEach((key, value) -> value.registerAsTemplate(key));
+        return formats;
     }
 
     public record Defaults(ChannelConfig channel) {
 
+    }
+
+    public static class PluginConfigBuilder {
+
+        private PluginConfigBuilder channelsFromConfig(@NonNull ConfigurationSection config) {
+            return channels(loadChannels(config));
+        }
+
+        private Map<String, ChannelConfig> loadChannels(@NonNull ConfigurationSection config) {
+            final Defaults defaults = defaults$set ? defaults$value : $default$defaults();
+            return config.getKeys(false).stream()
+                    .collect(toMap(
+                            key -> key,
+                            key -> defaults.channel.withConfig(config.getConfigurationSection(key)).build()
+                    ));
+        }
     }
 }

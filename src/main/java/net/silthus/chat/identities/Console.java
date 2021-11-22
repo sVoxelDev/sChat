@@ -20,21 +20,24 @@
 package net.silthus.chat.identities;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NonNull;
+import net.kyori.adventure.audience.Audience;
 import net.silthus.chat.ChatSource;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Message;
 import net.silthus.chat.SChat;
 import net.silthus.chat.config.ConsoleConfig;
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerCommandEvent;
 
 import java.util.Optional;
+import java.util.UUID;
 
+@Getter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public final class Console extends AbstractChatTarget implements ChatSource, Listener {
+public final class Console extends AbstractChatter implements ChatSource, Listener {
 
     public static Console instance;
 
@@ -51,19 +54,26 @@ public final class Console extends AbstractChatTarget implements ChatSource, Lis
         return instance;
     }
 
-    private final ConsoleConfig config;
+    private ConsoleConfig config;
 
     private Console(ConsoleConfig config) {
-        super(Constants.Targets.CONSOLE);
+        super(UUID.randomUUID(), Constants.Targets.CONSOLE);
+        setConfig(config);
+    }
+
+    public void setConfig(ConsoleConfig config) {
         this.config = config;
-        setDisplayName(Bukkit.getConsoleSender().name());
+        setDisplayName(config.name());
     }
 
     @Override
-    public void sendMessage(Message message) {
-        if (alreadyProcessed(message)) return;
+    public Optional<Audience> getAudience() {
+        return Optional.of(SChat.instance().getAudiences().console());
+    }
 
-        Bukkit.getConsoleSender().sendMessage(message.formatted());
+    @Override
+    protected void processMessage(Message message) {
+        SChat.instance().getAudiences().console().sendMessage(message.formatted());
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -73,5 +83,20 @@ public final class Console extends AbstractChatTarget implements ChatSource, Lis
         Optional.ofNullable(getActiveConversation())
                 .or(() -> SChat.instance().getChannelRegistry().find(config.defaultChannel()))
                 .ifPresent(conversation -> message(event.getCommand()).to(conversation).send());
+    }
+
+    @Override
+    public boolean hasPermission(String permission) {
+        return true;
+    }
+
+    @Override
+    public void save() {
+
+    }
+
+    @Override
+    public void load() {
+
     }
 }

@@ -23,12 +23,15 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
+import lombok.Getter;
 import lombok.extern.java.Log;
-import net.silthus.chat.Constants;
-import net.silthus.chat.Message;
-import net.silthus.chat.SChat;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.silthus.chat.*;
+import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.identities.AbstractChatTarget;
-import net.silthus.chat.identities.Chatter;
+import net.silthus.chat.integrations.placeholders.Placeholders;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -45,12 +48,17 @@ public class BungeeCord extends AbstractChatTarget implements PluginMessageListe
     private final SChat plugin;
 
     private final Supplier<Player> playerSupplier;
-    private final Gson gson = new Gson();
+    @Getter
+    private final Gson serializer;
 
     public BungeeCord(SChat plugin, Supplier<Player> playerSupplier) {
         super(BUNGEECORD_CHANNEL);
         this.plugin = plugin;
         this.playerSupplier = playerSupplier;
+        serializer = GsonComponentSerializer.gson().populator().apply(new GsonBuilder()
+                        .registerTypeAdapter(ChannelConfig.class, new ChannelConfigTypeAdapter())
+                        .registerTypeAdapter(Placeholders.class, (InstanceCreator<Placeholders>) type -> plugin.getPlaceholders()))
+                .create();
     }
 
     public BungeeCord(SChat plugin) {
@@ -58,16 +66,24 @@ public class BungeeCord extends AbstractChatTarget implements PluginMessageListe
     }
 
     @Override
-    public void sendMessage(Message message) {
-        if (alreadyProcessed(message)) return;
-
-        String json = gson.toJson(new MessageDto(message));
-        sendPluginMessage(forwardToAllServers(MESSAGES_CHANNEL), json);
+    protected void processMessage(Message message) {
+        sendPluginMessage(forwardToAllServers(SEND_MESSAGE), json(new MessageDto(message)));
     }
 
-    public void synchronizeChatter(Chatter chatter) {
-        String json = gson.toJson(new IdentityDto(chatter));
-        sendPluginMessage(forwardToAllServers(CHATTER_CHANNEL), json);
+    public void sendChatter(Chatter chatter) {
+        sendPluginMessage(forwardToAllServers(SEND_CHATTER), json(new IdentityDto(chatter)));
+    }
+
+    public void sendConversation(Conversation conversation) {
+        sendPluginMessage(forwardToAllServers(SEND_CONVERSATION), json(new ConversationDto(conversation)));
+    }
+
+    @Override
+    public boolean deleteMessage(Message message) {
+        final boolean deleted = super.deleteMessage(message);
+        if (deleted)
+            sendPluginMessage(forwardToAllServers(DELETE_MESSAGE), json(new MessageDto(message)));
+        return deleted;
     }
 
     @Override
@@ -80,18 +96,28 @@ public class BungeeCord extends AbstractChatTarget implements PluginMessageListe
         String subChannel = in.readUTF();
 
         switch (subChannel) {
-            case MESSAGES_CHANNEL -> processGlobalMessageChannel(in);
-            case CHATTER_CHANNEL -> processChatterSynchronization(in);
+            case SEND_MESSAGE -> processGlobalMessage(in);
+            case DELETE_MESSAGE -> processGlobalDeleteMessage(in);
+            case SEND_CHATTER -> processChatter(in);
+            case SEND_CONVERSATION -> processConversation(in);
         }
     }
 
-    private void processGlobalMessageChannel(ByteArrayDataInput in) {
-        Message message = gson.fromJson(getJsonData(in), MessageDto.class).toMessage();
+    private void processGlobalMessage(ByteArrayDataInput in) {
+        Message message = getMessageFromStream(in);
         message.getTargets().forEach(target -> target.sendMessage(message));
     }
 
-    private void processChatterSynchronization(ByteArrayDataInput in) {
-        gson.fromJson(getJsonData(in), IdentityDto.class).asChatIdentity();
+    private void processGlobalDeleteMessage(ByteArrayDataInput in) {
+        getMessageFromStream(in).delete();
+    }
+
+    private void processChatter(ByteArrayDataInput in) {
+        serializer.fromJson(getJsonData(in), IdentityDto.class).asChatIdentity();
+    }
+
+    private void processConversation(ByteArrayDataInput in) {
+        serializer.fromJson(getJsonData(in), ConversationDto.class).asConversation();
     }
 
     private void sendPluginMessage(ByteArrayDataOutput out) {
@@ -125,11 +151,19 @@ public class BungeeCord extends AbstractChatTarget implements PluginMessageListe
         return out;
     }
 
+    private Message getMessageFromStream(ByteArrayDataInput in) {
+        return serializer.fromJson(getJsonData(in), MessageDto.class).asMessage();
+    }
+
     private String getJsonData(ByteArrayDataInput in) {
         short len = in.readShort();
         byte[] bytes = new byte[len];
         in.readFully(bytes);
 
         return ByteStreams.newDataInput(bytes).readUTF();
+    }
+
+    private String json(Object object) {
+        return serializer.toJson(object);
     }
 }

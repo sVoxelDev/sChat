@@ -21,10 +21,10 @@ package net.silthus.chat.scopes;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.silthus.chat.ChatTarget;
+import net.silthus.chat.Chatter;
 import net.silthus.chat.Message;
 import net.silthus.chat.TestBase;
 import net.silthus.chat.conversations.Channel;
-import net.silthus.chat.identities.Chatter;
 import net.silthus.chat.identities.Console;
 import org.bukkit.Location;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,7 +56,7 @@ public class LocalScopeTests extends TestBase {
         Chatter chatter2 = chatterAt(5, 5);
         Chatter notInRange = chatterAt(11, 0);
 
-        Collection<ChatTarget> targets = scope.apply(channel, chatter1.message("hi").to(channel).build());
+        Collection<ChatTarget> targets = scope.filterTargets(channel, chatter1.message("hi").to(channel).build());
 
         assertThat(targets).contains(chatter1, chatter2, Console.console())
                 .doesNotContain(notInRange);
@@ -67,14 +67,14 @@ public class LocalScopeTests extends TestBase {
         Chatter chatter1 = chatterAt(10, 20);
         Chatter chatter2 = chatterAt(100, 200);
 
-        Collection<ChatTarget> targets = scope.apply(channel, Message.message("hi").build());
+        Collection<ChatTarget> targets = scope.filterTargets(channel, Message.message("hi").build());
         assertThat(targets).contains(chatter1, chatter2, Console.console());
     }
 
     private Chatter chatterAt(double x, double y) {
         PlayerMock player = server.addPlayer();
         player.setLocation(new Location(player.getWorld(), x, 128, y));
-        Chatter chatter = Chatter.of(player);
+        Chatter chatter = Chatter.player(player);
         channel.addTarget(chatter);
         return chatter;
     }

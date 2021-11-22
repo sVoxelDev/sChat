@@ -21,32 +21,36 @@ package net.silthus.chat.integrations.bungeecord;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
-import net.silthus.chat.ChatSource;
-import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Identity;
-import net.silthus.chat.Message;
+import net.kyori.adventure.text.Component;
+import net.silthus.chat.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Data
 @Accessors(fluent = true)
-public class MessageDto {
+class MessageDto {
 
     private UUID id;
-    private String message;
+    private Component text;
+    private Component formatted;
     private IdentityDto sender;
-    private IdentityDto conversation;
+    private ConversationDto conversation;
     private List<IdentityDto> targets = new ArrayList<>();
 
     public MessageDto(Message message) {
         this.id = message.getId();
-        this.message = BungeeHelper.serialize(message.getText());
+        this.text = message.getText();
+        this.formatted = message.getFormatted();
         sender(toIdentityDto(message.getSource()));
-        conversation(toIdentityDto(message.getConversation()));
-        targets(message.getTargets().stream().map(this::toIdentityDto).collect(Collectors.toList()));
+        conversation(toConversationDto(message.getConversation()));
+        targets(message.getTargets().stream()
+                .filter(target -> !(target instanceof BungeeCord))
+                .map(this::toIdentityDto)
+                .collect(Collectors.toList()));
     }
 
     private IdentityDto toIdentityDto(Identity identity) {
@@ -54,13 +58,21 @@ public class MessageDto {
         return new IdentityDto(identity);
     }
 
-    public Message toMessage() {
+    private ConversationDto toConversationDto(Conversation conversation) {
+        if (conversation == null) return null;
+        return new ConversationDto(conversation);
+    }
+
+    Message asMessage() {
         return Message.message()
                 .id(id)
-                .text(BungeeHelper.deserialize(message()))
+                .text(text)
+                .formatted(formatted)
                 .from(sender != null ? sender.asChatIdentity() : ChatSource.nil())
-                .conversation(conversation != null ? conversation.asChatIdentity() : null)
-                .to(targets.stream().map(identity -> (ChatTarget) identity.asChatIdentity()).collect(Collectors.toList()))
+                .to(conversation != null ? conversation.asConversation() : null)
+                .to(targets.stream().map(identity -> (ChatTarget) identity.asChatIdentity())
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList()))
                 .build();
     }
 }

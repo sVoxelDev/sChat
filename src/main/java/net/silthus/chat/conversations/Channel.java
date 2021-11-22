@@ -21,39 +21,65 @@ package net.silthus.chat.conversations;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.chat.*;
 import net.silthus.chat.config.ChannelConfig;
 import net.silthus.chat.identities.Console;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 @Getter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class Channel extends AbstractConversation implements ChatSource {
 
-    public static Channel channel(String identifier) {
-        return SChat.instance().getChannelRegistry().getOrCreate(identifier);
+    public static Channel createChannel(String identifier) {
+        return new Channel(identifier);
     }
 
-    public static Channel channel(String identifier, ChannelConfig config) {
-        return SChat.instance().getChannelRegistry().getOrCreate(identifier, config);
+    public static Channel createChannel(String identifier, ChannelConfig config) {
+        return new Channel(identifier, config);
     }
 
-    private final ChannelConfig config;
-
-    Channel(String identifier) {
-        this(identifier, ChannelConfig.defaults());
+    public static Channel createChannel(String identifier, Function<ChannelConfig.ChannelConfigBuilder, ChannelConfig.ChannelConfigBuilder> config) {
+        return createChannel(identifier, config.apply(ChannelConfig.channelDefaults().toBuilder()).build());
     }
 
-    Channel(String identifier, ChannelConfig config) {
-        super(identifier);
+    private ChannelConfig config;
+
+    protected Channel(@NonNull String identifier) {
+        this(identifier, ChannelConfig.channelDefaults());
+    }
+
+    protected Channel(@NonNull String identifier, @NonNull ChannelConfig config) {
+        super(identifier.toLowerCase());
+        setConfig(config);
+    }
+
+    public void setConfig(ChannelConfig config) {
+        removeScope(config);
         this.config = config;
         if (config.name() != null)
             setDisplayName(Component.text(config.name()));
+
         if (config.sendToConsole())
             addTarget(Console.console());
+        else
+            removeTarget(Console.console());
+
         setFormat(config.format());
+        applyScope(config);
+    }
+
+    private void removeScope(ChannelConfig config) {
+        if (this.config == null) return;
+        if (!this.config.scope().equals(config.scope()))
+            this.config.scope().onRemove(this);
+    }
+
+    private void applyScope(ChannelConfig config) {
+        config.scope().onApply(this);
     }
 
     public String getPermission() {
@@ -64,20 +90,50 @@ public class Channel extends AbstractConversation implements ChatSource {
         return Constants.Permissions.getAutoJoinPermission(this);
     }
 
+    public boolean canJoin(Chatter chatter) {
+        if (getConfig().protect()) {
+            return chatter.hasPermission(getPermission());
+        }
+        return true;
+    }
+
+    public boolean canAutoJoin(Chatter chatter) {
+        if (!canJoin(chatter)) return false;
+        if (canJoin(chatter) && getConfig().autoJoin()) return true;
+        return chatter.hasPermission(getAutoJoinPermission());
+    }
+
+    public boolean canLeave(Chatter chatter) {
+        return getConfig().canLeave();
+    }
+
+    public boolean canSendMessage(Chatter chatter) {
+        return canJoin(chatter);
+    }
+
     @Override
     public Message sendMessage(String message) {
         return Message.message(message).to(this).send();
     }
 
     @Override
-    public void sendMessage(Message message) {
-        if (alreadyProcessed(message)) return;
-
+    protected void processMessage(Message message) {
         getScopedTargets(message).forEach(target -> target.sendMessage(message));
+    }
+
+    public Channel register() {
+        return SChat.instance().getChannelRegistry().register(this);
+    }
+
+    @Override
+    public void close() {
+        if (isClosed()) return;
+        getConfig().scope().onRemove(this);
+        super.close();
     }
 
     private Collection<ChatTarget> getScopedTargets(Message message) {
         if (getConfig().scope() == null) return getTargets();
-        return getConfig().scope().apply(this, message);
+        return getConfig().scope().filterTargets(this, message);
     }
 }

@@ -23,19 +23,43 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.google.gson.JsonParseException;
+import lombok.SneakyThrows;
 import lombok.extern.java.Log;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.StorageNBTComponent;
+import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.silthus.chat.Chatter;
 import net.silthus.chat.Constants;
 import net.silthus.chat.Message;
 import net.silthus.chat.SChat;
-import net.silthus.chat.identities.Chatter;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 
 @Log(topic = Constants.PLUGIN_NAME)
 public class ChatPacketQueue extends PacketAdapter {
+
+    private static Object PAPER_GSON_SERIALIZER;
+    private static Method PAPER_SERIALIZE;
+
+    static {
+        try {
+            PAPER_GSON_SERIALIZER = Class.forName("io.papermc.paper.text.PaperComponents").getDeclaredMethod("gsonSerializer").invoke(null);
+            PAPER_SERIALIZE = Arrays.stream(PAPER_GSON_SERIALIZER.getClass().getDeclaredMethods())
+                    .filter(method -> method.getName().equals("serialize"))
+                    .findFirst()
+                    .orElse(null);
+            if (PAPER_SERIALIZE != null)
+                PAPER_SERIALIZE.setAccessible(true);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
+            log.warning("Unable to find PaperMC chat components. You can ignore this if you are not running PaperMC or a fork.");
+        }
+    }
 
     public ChatPacketQueue(SChat plugin) {
         super(plugin, PacketType.Play.Server.CHAT);
@@ -46,14 +70,11 @@ public class ChatPacketQueue extends PacketAdapter {
     public void onPacketSending(PacketEvent event) {
         if (event.getPacketType() != PacketType.Play.Server.CHAT) return;
 
-        WrapperPlayServerChat packet = new WrapperPlayServerChat(event.getPacket());
-        WrappedChatComponent chat = packet.getMessage();
-        Component messageText = getPacketMessageText(event, chat);
+        Component message = getMessageFromPacket(event);
+        if (isIgnoredMessage(message)) return;
 
-        if (isIgnoredMessage(messageText)) return;
-
-        Chatter chatter = Chatter.of(event.getPlayer());
-        Message.message(messageText).to(chatter).send();
+        Chatter chatter = Chatter.player(event.getPlayer());
+        Message.message(message).to(chatter).send();
         event.setCancelled(true);
     }
 
@@ -65,31 +86,56 @@ public class ChatPacketQueue extends PacketAdapter {
                 .anyMatch(component -> component.storage().equals(Constants.NBT_IS_SCHAT_MESSAGE));
     }
 
-    private Component getPacketMessageText(PacketEvent event, WrappedChatComponent chat) {
-        Component messageText;
-        if (chat == null) {
-            messageText = getPaperMessage(event);
-        } else {
-            messageText = getLegacyMessage(chat);
-        }
-        return messageText;
+    @SneakyThrows
+    private Component getMessageFromPacket(PacketEvent event) {
+        WrapperPlayServerChat wrapper = new WrapperPlayServerChat(event.getPacket());
+        if (wrapper.getMessage() != null)
+            return getLegacyMessage(wrapper.getMessage());
+        Object packet = wrapper.getHandle().getHandle();
+        if (containsField(packet, "adventure$message"))
+            return getPaperMessage(packet);
+        if (containsField(packet, "components"))
+            return getBungeeMessage(packet);
+        throw new HandleChatPacketException("Unable to read message from chat packet.");
     }
 
     private Component getLegacyMessage(WrappedChatComponent chat) {
         return GsonComponentSerializer.gson().deserialize(chat.getJson());
     }
 
-    private Component getPaperMessage(PacketEvent event) {
+    private Component getPaperMessage(Object packet) {
+        if (PAPER_SERIALIZE == null) return null;
         try {
-            Object handle = event.getPacket().getHandle();
-            Class<?> packetClass = handle.getClass();
+            Class<?> packetClass = packet.getClass();
             Field field = packetClass.getDeclaredField("adventure$message");
             field.setAccessible(true);
-            return (Component) field.get(handle);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+            Object data = field.get(packet);
+            if (data == null) return null;
+            String json = (String) PAPER_SERIALIZE.invoke(PAPER_GSON_SERIALIZER, data);
+            return GsonComponentSerializer.gson().deserialize(json);
+        } catch (NoSuchFieldException | IllegalAccessException | InvocationTargetException | JsonParseException e) {
             log.severe("Unable to extract PaperMC message from chat packet: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
+    }
+
+    private Component getBungeeMessage(Object packet) {
+        try {
+            Field field = packet.getClass().getDeclaredField("components");
+            field.setAccessible(true);
+            BaseComponent[] baseComponents = (BaseComponent[]) field.get(packet);
+            if (baseComponents == null) return null;
+            return BungeeComponentSerializer.get().deserialize(baseComponents);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            log.severe("Unable to extract Bungee BaseComponents from chat packet: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean containsField(Object object, String fieldName) {
+        return Arrays.stream(object.getClass().getDeclaredFields())
+                .anyMatch(f -> f.getName().equals(fieldName));
     }
 }

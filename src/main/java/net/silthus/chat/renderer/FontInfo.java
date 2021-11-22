@@ -83,6 +83,16 @@ public enum FontInfo {
     NUM_8('8', 5),
     NUM_9('9', 5),
     NUM_0('0', 5),
+    SMALL_NUM_1('\u2081', 4), // ₁
+    SMALL_NUM_2('\u2082', 4), // ₂
+    SMALL_NUM_3('\u2083', 4), // ₃
+    SMALL_NUM_4('\u2084', 4), // ₄
+    SMALL_NUM_5('\u2085', 4), // ₅
+    SMALL_NUM_6('\u2086', 4), // ₆
+    SMALL_NUM_7('\u2087', 4), // ₇
+    SMALL_NUM_8('\u2088', 4), // ₈
+    SMALL_NUM_9('\u2089', 4), // ₉
+    SMALL_NUM_0('\u2080', 4), // ₀
     EXCLAMATION_POINT('!', 1),
     AT_SYMBOL('@', 6),
     NUM_SIGN('#', 5),
@@ -117,6 +127,7 @@ public enum FontInfo {
     CARET('>', 4),
     DOWN_CARET('\u23F7', 5), // ⏷
     DOUBLE_ARROW_RIGHT('\u21D2', 7), // ⇒
+    CURSIVE_X('\u2718', 6), // ✘
     LINE('|', 1),
     TILDE('~', 5),
     TICK('`', 2),

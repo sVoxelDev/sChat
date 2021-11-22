@@ -20,15 +20,24 @@
 package net.silthus.chat;
 
 import co.aikar.commands.BukkitCommandManager;
-import net.kyori.adventure.text.Component;
+import net.silthus.chat.config.ChannelConfig;
+import net.silthus.chat.config.PluginConfig;
 import net.silthus.chat.conversations.Channel;
+import net.silthus.chat.identities.Console;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Optional;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.silthus.chat.Constants.Formatting.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 class SChatTest extends TestBase {
 
@@ -45,7 +54,6 @@ class SChatTest extends TestBase {
 
     @Test
     void onEnable_registersCommands() {
-
         assertThat(plugin.getCommandManager())
                 .isNotNull()
                 .extracting(BukkitCommandManager::hasRegisteredCommands)
@@ -54,7 +62,6 @@ class SChatTest extends TestBase {
 
     @Test
     void onEnable_loadsChannelsFromConfig() {
-
         assertThat(plugin.getChannelRegistry().getChannels())
                 .hasSizeGreaterThanOrEqualTo(1);
         Optional<Channel> channel = plugin.getChannelRegistry().getChannels().stream()
@@ -65,21 +72,76 @@ class SChatTest extends TestBase {
                 .extracting(
                         Channel::getName,
                         Channel::getDisplayName,
-                        c -> toText(c.getConfig().format().applyTo(Message.message(ChatSource.player(server.addPlayer()), "test").to(c).build()))
+                        c -> toText(c.getConfig().format().applyTo(Message.message(Chatter.player(server.addPlayer()), "test").to(c).build()))
                 ).contains(
                         "global",
-                        Component.text("Global"),
-                        "&6[&aGlobal&6]&7[ADMIN]&ePlayer0[!]&7: test"
+                        text("Global"),
+                        "&6[&aGlobal&6]&7[ADMIN]&aPlayer0[!]&7: test"
                 );
     }
 
     @Test
     void writes_defaultConfig() {
-
         File config = new File(plugin.getDataFolder(), "config.yml");
         File defaultConfig = new File(plugin.getDataFolder(), "config.default.yml");
 
         assertThat(config).exists();
         assertThat(defaultConfig).exists();
     }
+
+    @Test
+    void loads_defaultFormats() {
+        assertThat(Formats.formatFromTemplate(DEFAULT)).isPresent();
+        assertThat(Formats.formatFromTemplate(CHANNEL)).isPresent();
+        assertThat(Formats.formatFromTemplate(NO_FORMAT)).isPresent();
+    }
+
+    @Nested
+    class Reload {
+
+        @BeforeEach
+        void setUp() {
+            plugin.setChannelRegistry(spy(plugin.getChannelRegistry()));
+        }
+
+        @Test
+        void reload_loadsNewConfigYAML() {
+            loadTestConfig("reload-test.yml");
+            final PluginConfig oldConfig = plugin.getPluginConfig();
+            plugin.reload();
+            final PluginConfig newConfig = plugin.getPluginConfig();
+
+            assertThat(oldConfig).isNotEqualTo(newConfig);
+            assertThat(newConfig)
+                    .extracting(PluginConfig::defaults)
+                    .extracting(PluginConfig.Defaults::channel)
+                    .extracting(
+                            ChannelConfig::autoJoin,
+                            ChannelConfig::protect,
+                            ChannelConfig::canLeave
+                    ).contains(
+                            true,
+                            true,
+                            false
+                    );
+        }
+
+        @Test
+        void reloadsChannels_ifConfigChanged() {
+            loadTestConfig("reload-test.yml");
+            plugin.reload();
+            verify(plugin.getChannelRegistry()).load(any());
+        }
+
+        @Test
+        void reloadsConsoleConfig() {
+            loadTestConfig("reload-test.yml");
+            plugin.reload();
+
+            final Console console = Console.console();
+            assertThat(console.getDisplayName()).isEqualTo(text("MyConsole"));
+            assertThat(console.getConfig().defaultChannel()).isEqualTo("none");
+        }
+    }
+
 }

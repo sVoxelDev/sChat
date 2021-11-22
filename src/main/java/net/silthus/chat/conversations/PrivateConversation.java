@@ -19,40 +19,37 @@
 
 package net.silthus.chat.conversations;
 
+import lombok.EqualsAndHashCode;
 import net.kyori.adventure.text.Component;
-import net.silthus.chat.ChatTarget;
-import net.silthus.chat.Message;
+import net.silthus.chat.*;
+import net.silthus.chat.config.PrivateChatConfig;
 
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public final class DirectConversation extends AbstractConversation {
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+public final class PrivateConversation extends AbstractConversation {
 
-    public DirectConversation(ChatTarget target1, ChatTarget target2) {
-        super(target1.getName() + "<->" + target2.getName());
-        setDisplayName(Component.text("<partner_name>"));
-        addTarget(target1);
-        addTarget(target2);
+    PrivateConversation(PrivateChatConfig config, Chatter... chatters) {
+        super(Arrays.stream(chatters).map(Identity::getName).collect(Collectors.joining(",")));
+        setDisplayName(config.name());
+        setFormat(config.format());
+        addTargets(List.of(chatters));
+        if (config.global())
+            addTarget(SChat.instance().getBungeecord());
+    }
+
+    PrivateConversation(UUID id, String name, Component displayName, Collection<ChatTarget> targets) {
+        super(id, name);
+        setDisplayName(displayName);
+        addTargets(targets);
     }
 
     @Override
-    public void sendMessage(Message message) {
-        if (alreadyProcessed(message)) return;
-
+    protected void processMessage(Message message) {
         getTargets().stream()
                 .filter(target -> !target.getConversations().contains(this))
                 .forEach(target -> target.setActiveConversation(this));
         getTargets().forEach(target -> target.sendMessage(message));
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DirectConversation that)) return false;
-        return getTargets().equals(that.getTargets());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), getTargets());
     }
 }

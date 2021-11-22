@@ -44,14 +44,12 @@ public final class GlobalScopeTests extends TestBase {
     void doesNotFilterTargets() {
         Channel channel = createChannel("test");
         channel.addTarget(ChatTarget.console());
-        assertThat(scope.apply(channel, Message.message("hi").build())).contains(ChatTarget.console());
+        assertThat(scope.filterTargets(channel, Message.message("hi").build())).contains(ChatTarget.console());
     }
 
     @Test
     void addsBungeeCordTarget() {
-        Channel channel = createChannel("test");
-        channel.addTarget(ChatTarget.console());
-        assertThat(scope.apply(channel, Message.message("hi").build()))
-                .contains(plugin.getBungeecord());
+        Channel channel = createChannel("test", config -> config.scope(scope));
+        assertThat(channel.getTargets()).contains(plugin.getBungeecord());
     }
 }

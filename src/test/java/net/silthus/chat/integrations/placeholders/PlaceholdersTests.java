@@ -17,15 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.chat.identities;
+package net.silthus.chat.integrations.placeholders;
 
-import net.silthus.chat.ChatSource;
+import net.silthus.chat.TestBase;
+import org.junit.jupiter.api.Test;
 
-import java.util.UUID;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public final class OfflineChatter extends AbstractIdentity implements ChatSource {
+public class PlaceholdersTests extends TestBase {
 
-    public OfflineChatter(UUID id, String name) {
-        super(id, name);
+    @Test
+    void onEnable_setsPlaceholders_Instance() {
+        assertThat(plugin.getPlaceholders()).isNotNull();
     }
 }
