@@ -104,7 +104,7 @@ dependencies {
     implementation 'net.silthus.config-mapper:bukkit:1.6.1'
 
     //Test dependencies
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
     testImplementation 'org.mockito:mockito-core:4.0.0'
     testImplementation 'net.silthus:MockBukkit:v1.17-SNAPSHOT'
 //    testImplementation 'com.github.seeseemelk:MockBukkit-v1.17:1.10.3'
