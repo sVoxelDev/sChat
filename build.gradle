@@ -98,7 +98,7 @@ dependencies {
     implementation "com.github.MilkBowl:VaultAPI:1.7.1"
     implementation 'com.comphenix.protocol:ProtocolLib:4.7.0'
 
-    implementation 'net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT'
+    implementation 'net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT'
 
     implementation 'org.bstats:bstats-bukkit:2.2.1'
     implementation 'net.silthus.config-mapper:bukkit:1.6.1'
