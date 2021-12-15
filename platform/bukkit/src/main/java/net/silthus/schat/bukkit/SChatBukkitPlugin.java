@@ -17,8 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'sChat'
-include 'api'
-include 'core'
-include 'platform'
-include 'platform:bukkit'
+package net.silthus.schat.bukkit;
+
+import java.io.File;
+import kr.entree.spigradle.annotations.PluginMain;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.java.JavaPluginLoader;
+import org.jetbrains.annotations.NotNull;
+
+@PluginMain
+public class SChatBukkitPlugin extends JavaPlugin {
+
+    public SChatBukkitPlugin() {
+    }
+
+    public SChatBukkitPlugin(@NotNull final JavaPluginLoader loader, @NotNull final PluginDescriptionFile description, @NotNull final File dataFolder, @NotNull final File file) {
+        super(loader, description, dataFolder, file);
+    }
+}

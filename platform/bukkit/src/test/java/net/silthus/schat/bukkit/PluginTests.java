@@ -17,8 +17,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'sChat'
-include 'api'
-include 'core'
-include 'platform'
-include 'platform:bukkit'
+package net.silthus.schat.bukkit;
+
+import be.seeseemelk.mockbukkit.MockBukkit;
+import be.seeseemelk.mockbukkit.ServerMock;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+
+public class PluginTests {
+
+    private ServerMock server;
+    private SChatBukkitPlugin plugin;
+
+    @BeforeEach
+    void setUp() {
+        server = MockBukkit.mock();
+        plugin = MockBukkit.load(SChatBukkitPlugin.class);
+    }
+
+    @AfterEach
+    void tearDown() {
+        MockBukkit.unmock();
+    }
+}

@@ -17,8 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'sChat'
-include 'api'
-include 'core'
-include 'platform'
-include 'platform:bukkit'
+package net.silthus.schat.core;
+
+import org.junit.jupiter.api.Test;
+
+import static net.kyori.adventure.text.Component.text;
+import static org.assertj.core.api.Assertions.assertThat;
+
+class MessageTests {
+
+    @Test
+    void twoMessages_withSameText_areNotEqual() {
+        final Message m1 = Message.message(null, text("Hi"));
+        final Message m2 = Message.message(null, text("Hi"));
+        assertThat(m1).isNotEqualTo(m2);
+    }
+}

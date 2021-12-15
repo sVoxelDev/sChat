@@ -17,8 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'sChat'
-include 'api'
-include 'core'
-include 'platform'
-include 'platform:bukkit'
+dependencies {
+    api project(':core')
+}

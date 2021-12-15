@@ -17,8 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'sChat'
-include 'api'
-include 'core'
-include 'platform'
-include 'platform:bukkit'
+package net.silthus.schat.core;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
+
+public abstract class MessageTarget {
+    private final List<Message> messages = new ArrayList<>();
+
+    public @NotNull @Unmodifiable List<Message> getMessages() {
+        return Collections.unmodifiableList(messages);
+    }
+
+    public void sendMessage(final @NonNull Message message) {
+        this.messages.add(message);
+    }
+}

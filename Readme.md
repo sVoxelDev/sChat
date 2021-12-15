@@ -29,7 +29,7 @@ can [download sChat][5] and drop it into the `plugins/` folder. Restart your ser
 ## Configuration
 
 All configuration is done inside the `config.yml`. There will always be an
-up-to-date [`config.default.yml`](src/main/resources/config.default.yml) which contains the latest config values and
+up-to-date [`config.default.yml`](bukkit/src/main/resources/config.default.yml) which contains the latest config values and
 default settings. Copy and adjust it to your needs.
 
 You can run `/schat reload` to reload your configuration without restarting the server.
