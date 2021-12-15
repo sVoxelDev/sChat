@@ -25,164 +25,107 @@ buildscript {
 }
 
 plugins {
-    id 'com.github.johnrengelman.shadow' version '7.1.0'
-    id 'kr.entree.spigradle' version '2.2.4'
-    id 'io.freefair.lombok' version '6.3.0'
-    id 'org.cadixdev.licenser' version '0.6.1'
-    id 'java'
-    id 'jacoco'
-    id 'idea'
+    id 'com.github.johnrengelman.shadow' version '7.1.0' apply false
+    id 'kr.entree.spigradle' version '2.2.4' apply false
+    id 'io.freefair.lombok' version '6.3.0' apply false
+    id 'org.cadixdev.licenser' version '0.6.1' apply false
 }
 
-apply from: "$rootDir/gradle/jacoco.gradle"
-apply from: "$rootDir/gradle/publish.gradle"
+allprojects {
+    apply plugin: 'checkstyle'
 
-if (project.hasProperty("local_script")) {
-    apply from: file(local_script + "/build.local.gradle")
-}
-
-sourceCompatibility = 16
-targetCompatibility = 16
-
-ext {
-    mcVersion = project.property("mcVersion")
-}
-
-group project.property("group")
-
-spigot {
-    name = project.property("pluginName")
-    authors = [project.property("author")]
-    apiVersion = project.property("apiVersion")
-    load = STARTUP
-    depends = ['ProtocolLib']
-    softDepends = ['Vault', 'PlaceholderAPI', 'WorldGuard']
-    permissions {
-        'schat.player' {
-            description 'Contains all basic player permissions for using sChat.'
-            defaults 'true'
-            children = [
-                    'schat.player.channel': true,
-                    'schat.player.channel.join': true,
-                    'schat.player.channel.leave': true,
-                    'schat.player.channel.quickmessage': true,
-                    'schat.player.directmessage': true
-            ]
-        }
-        'schat.admin' {
-            description 'Contains all admin permissions for sChat.'
-            defaults 'op'
-            children = [
-                    'schat.admin.reload': true,
-                    'schat.admin.broadcast': true,
-                    'schat.message.select': true,
-                    'schat.message.delete': true,
-                    'schat.nickname.set': true,
-                    'schat.nickname.set.blocked': true,
-                    'schat.nickname.set.others': true,
-            ]
-        }
-    }
-}
-
-compileJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs += ["-parameters"]
-    options.fork = true
-    options.forkOptions.executable = 'javac'
-}
-
-archivesBaseName = project.property("pluginName")
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-    spigot()
-    maven { url = 'https://repo.aikar.co/content/groups/aikar/' }
-    maven { url = 'https://repo.dmulloy2.net/repository/public/' }
-    maven { url = 'https://jitpack.io' }
-    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
-    maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
-    maven { url = 'https://maven.enginehub.org/repo/' }
-}
-
-dependencies {
-    implementation spigot(mcVersion)
-
-    implementation "co.aikar:acf-paper:0.5.0-SNAPSHOT"
-    implementation 'com.comphenix.protocol:ProtocolLib:4.7.0'
-
-    //
-    // Shaded Dependencies
-    //
-    // adventure-text: https://github.com/KyoriPowered/adventure
-    implementation "net.kyori:adventure-api:4.9.3"
-    implementation "net.kyori:adventure-platform-bukkit:4.0.0"
-//    implementation 'net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT'
-    // TODO: replace branch with official snapshot once this PR is merged: https://github.com/KyoriPowered/adventure-text-minimessage/pull/187
-    implementation 'com.github.KyoriPowered:adventure-text-minimessage:fix~recursively-resolve-string-placeholders-SNAPSHOT'
-    implementation 'net.kyori:adventure-text-serializer-plain:4.9.3'
-    // bStats: https://bstats.org/plugin/bukkit/sChat/13304
-    implementation 'org.bstats:bstats-bukkit:2.2.1'
-    // config-mapper: https://github.com/sVoxelDev/config-mapper
-    implementation 'net.silthus.config-mapper:bukkit:1.6.1'
-
-    //
-    // Optional Plugin Integrations
-    //
-    // PlaceholderAPI: https://github.com/PlaceholderAPI/PlaceholderAPI
-    implementation 'me.clip:placeholderapi:2.10.10'
-    // Vault: https://github.com/MilkBowl/VaultAPI
-    implementation "com.github.MilkBowl:VaultAPI:1.7.1"
-    // WorldGuard: https://github.com/EngineHub/WorldGuard
-    implementation 'com.sk89q.worldguard:worldguard-bukkit:7.0.6'
-
-    implementation 'org.jetbrains:annotations:22.0.0'
-
-    //Test dependencies
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
-    testImplementation 'org.mockito:mockito-core:4.0.0'
-    testImplementation 'net.silthus:MockBukkit:v1.17-SNAPSHOT'
-//    testImplementation 'com.github.seeseemelk:MockBukkit-v1.17:1.10.3'
-    testImplementation 'org.assertj:assertj-core:3.21.0'
-}
-
-shadowJar {
-    archiveClassifier.set("")
     dependencies {
-        include(dependency('co.aikar::'))
-        include(dependency('net.kyori::'))
-        include(dependency('com.github.KyoriPowered::'))
-        include(dependency('org.bstats::'))
-        include(dependency('net.silthus.config-mapper::'))
+        checkstyle("ca.stellardrift:stylecheck:0.1")
     }
-    relocate 'co.aikar.commands', "${packageName}.acf"
-    relocate 'co.aikar.locales', "${packageName}.locales"
-    relocate 'net.kyori', "${packageName}.text"
-    relocate 'org.bstats', "${packageName}.bstats"
-    relocate 'net.silthus.configmapper', "${packageName}.configmapper"
-}
 
-tasks.build.dependsOn(shadowJar)
-tasks.publish.dependsOn(shadowJar)
-tasks.prepareSpigotPlugins.dependsOn(shadowJar)
-
-test {
-    useJUnitPlatform()
-    testLogging {
-        events "skipped", "failed"
+    checkstyle {
+        configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+        configProperties.checkstyleSuppressionsPath = rootProject.file('config/checkstyle/supressions.xml')
     }
-    ignoreFailures = false
+
+    tasks.withType(Checkstyle) {
+        exclude 'net/silthus/schat/common/**'
+    }
 }
 
-processResources {
-    project.properties.put("version", this.version)
-    expand project.properties
-}
+subprojects {
+    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'io.freefair.lombok'
+    apply plugin: 'org.cadixdev.licenser'
+    apply plugin: 'jacoco'
+    apply plugin: 'java-library'
+    apply plugin: 'idea'
 
-license {
-    header = project.file('HEADER.txt')
-    include '**/*.java'
-}
+    apply from: "$rootDir/gradle/jacoco.gradle"
+    apply from: "$rootDir/gradle/publish.gradle"
 
-defaultTasks 'build'
+    if (project.hasProperty("local_script")) {
+        apply from: file(local_script + "/build.local.gradle")
+    }
+
+    sourceCompatibility = 17
+    targetCompatibility = 17
+
+    archivesBaseName = project.property("pluginName")
+    group project.property("group")
+
+    ext {
+        mcVersion = project.property("mcVersion")
+    }
+
+    compileJava {
+        options.encoding = 'UTF-8'
+        options.compilerArgs += ["-parameters"]
+        options.fork = true
+        options.forkOptions.executable = 'javac'
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+        maven { url = 'https://repo.aikar.co/content/groups/aikar/' }
+        maven { url = 'https://repo.dmulloy2.net/repository/public/' }
+        maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
+        maven { url = 'https://maven.enginehub.org/repo/' }
+        maven { url = 'https://storehouse.okaeri.eu/repository/maven-public/' }
+        maven { url = 'https://jitpack.io' }
+    }
+
+    dependencies {
+        api "net.kyori:adventure-api:4.2.0-SNAPSHOT"
+
+        implementation 'net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT'
+        implementation 'net.kyori:adventure-text-serializer-plain:4.9.3'
+        implementation 'net.kyori:event-api:3.0.0'
+
+        implementation 'org.jetbrains:annotations:22.0.0'
+
+        // Test dependencies
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+        testImplementation 'org.mockito:mockito-core:4.0.0'
+        testImplementation 'org.assertj:assertj-core:3.21.0'
+    }
+
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events "skipped", "failed"
+        }
+        ignoreFailures = false
+    }
+
+    processResources {
+        project.properties.put("version", this.version)
+        expand project.properties
+    }
+
+    license {
+        header = rootProject.file("HEADER.txt")
+        include '**/*.java'
+        newLine = true
+    }
+
+    defaultTasks 'licenseFormat', 'build'
+}

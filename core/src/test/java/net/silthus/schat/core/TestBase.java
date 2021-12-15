@@ -17,8 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'sChat'
-include 'api'
-include 'core'
-include 'platform'
-include 'platform:bukkit'
+package net.silthus.schat.core;
+
+import net.bytebuddy.utility.RandomString;
+import net.kyori.adventure.text.TextComponent;
+import org.jetbrains.annotations.NotNull;
+
+import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.core.Message.message;
+
+public class TestBase {
+    @NotNull
+    protected TextComponent randomText() {
+        return text(RandomString.make());
+    }
+
+    @NotNull
+    protected Message randomMessage() {
+        return message(randomText());
+    }
+}
