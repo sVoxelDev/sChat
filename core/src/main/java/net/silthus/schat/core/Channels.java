@@ -17,21 +17,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.core;
 
 import java.util.List;
+import java.util.Optional;
+import lombok.NonNull;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-public interface Channel extends Target {
-    @NotNull @Unmodifiable List<Target> getTargets();
+public interface Channels {
 
-    String getAlias();
+    @NotNull @Unmodifiable List<Channel> all();
 
-    net.kyori.adventure.text.Component getDisplayName();
+    @NotNull Optional<Channel> get(@NonNull String alias);
 
-    void setDisplayName(net.kyori.adventure.text.Component displayName);
+    @NotNull Channel create(@NonNull String alias) throws DuplicateAlias;
 
-    final class InvalidAlias extends RuntimeException {
+    boolean contains(@NonNull String alias);
+
+    @NotNull Channel create(@NonNull String alias, @NonNull Component displayName);
+
+    final class DuplicateAlias extends RuntimeException {
     }
 }
