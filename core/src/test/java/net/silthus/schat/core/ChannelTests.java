@@ -19,51 +19,94 @@
 
 package net.silthus.schat.core;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.silthus.schat.Channel;
+import net.silthus.schat.Message;
+import net.silthus.schat.Target;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
+import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-class ChannelTests extends MessageTargetTests<Channel> {
+class ChannelTests extends TestBase {
+
+    private static final String CHANNEL_ALIAS = "test";
+
+    private ChannelImpl channel;
 
     @BeforeEach
     void setUp() {
-        target = new Channel();
+        channel = createChannel(CHANNEL_ALIAS);
     }
 
     @NotNull
-    private MessageTarget addTarget(MessageTarget target) {
-        this.target.addTarget(target);
+    private static ChannelImpl createChannel(String alias) {
+        return new ChannelImpl(alias, text(alias));
+    }
+
+    @NotNull
+    private static Channel createChannel(Component name) {
+        return new ChannelImpl(ChannelTests.CHANNEL_ALIAS, name);
+    }
+
+    @NotNull
+    private Target addTarget(Target target) {
+        this.channel.addTarget(target);
         return target;
     }
 
     @Test
     void getTargets_isEmpty() {
-        assertThat(target.getTargets()).isEmpty();
+        assertThat(channel.getTargets()).isEmpty();
     }
 
     @Test
     @SuppressWarnings("ConstantConditions")
     void getTargets_isImmutable() {
         assertThatExceptionOfType(UnsupportedOperationException.class)
-            .isThrownBy(() -> target.getTargets().add(new DummyTarget()));
+            .isThrownBy(() -> channel.getTargets().add(new DummyTarget()));
     }
 
     @Test
     void addTarget_addsTarget() {
-        final MessageTarget target = addTarget(new DummyTarget());
-        assertThat(this.target.getTargets()).contains(target);
+        final Target target = addTarget(new DummyTarget());
+        assertThat(this.channel.getTargets()).contains(target);
     }
 
     @Test
     void sendMessage_forwardsMessage_toAllTargets() {
-        final MessageTarget spy = addTarget(Mockito.spy(MessageTarget.class));
+        final Target spy = addTarget(spy(Target.class));
         final Message message = randomMessage();
-        target.sendMessage(message);
+        channel.sendMessage(message);
         verify(spy).sendMessage(message);
+    }
+
+    @Test
+    void createChannel_withAlias() {
+        assertThat(channel.getAlias()).isEqualTo(CHANNEL_ALIAS);
+    }
+
+    @Test
+    void createChannel_withoutDisplayName_usesAlias() {
+        assertThat(channel.getDisplayName()).isEqualTo(text(CHANNEL_ALIAS));
+    }
+
+    @Test
+    void createChannel_withDisplayName_usesName() {
+        final TextComponent name = text("Bar");
+        final Channel channel = createChannel(name);
+        assertThat(channel.getDisplayName()).isEqualTo(name);
+    }
+
+    @Test
+    void createChannel_withEmptyAlias_throws() {
+        assertThatExceptionOfType(ChannelImpl.InvalidAlias.class)
+            .isThrownBy(() -> createChannel("   "));
     }
 }

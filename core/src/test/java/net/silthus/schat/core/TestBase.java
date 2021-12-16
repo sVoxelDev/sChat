@@ -21,10 +21,11 @@ package net.silthus.schat.core;
 
 import net.bytebuddy.utility.RandomString;
 import net.kyori.adventure.text.TextComponent;
+import net.silthus.schat.Message;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.core.Message.message;
+import static net.silthus.schat.Message.message;
 
 public class TestBase {
     @NotNull

@@ -19,6 +19,7 @@
 
 package net.silthus.schat.core;
 
+import net.silthus.schat.Message;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.text;

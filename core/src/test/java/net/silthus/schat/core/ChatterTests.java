@@ -19,80 +19,56 @@
 
 package net.silthus.schat.core;
 
+import net.silthus.schat.Chatter;
+import net.silthus.schat.Message;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-class ChatterTests extends MessageTargetTests<Chatter> {
+class ChatterTests extends TestBase {
 
-    @Override
+    private Chatter chatter;
+
     @BeforeEach
     void setUp() {
-        target = new Chatter();
+        chatter = new ChatterImpl();
     }
 
     @Test
     void getActiveChannel_isEmpty() {
-        assertThat(target.getActiveChannel()).isEmpty();
+        assertThat(chatter.getActiveChannel()).isEmpty();
+    }
+
+    @NotNull
+    private Message sendMessage(Message message) {
+        chatter.sendMessage(message);
+        return message;
     }
 
     @Test
-    void setActiveChannel_returnsActiveChannel() {
-        final Channel channel = new Channel();
-        target.setActiveChannel(channel);
-        assertThat(target.getActiveChannel())
-            .isPresent().get()
-            .isEqualTo(channel);
-    }
-
-    @Test
-    void setActiveChannel_addsChannel() {
-        final Channel channel = new Channel();
-        target.setActiveChannel(channel);
-        assertThat(target.getChannels()).contains(channel);
-    }
-
-    @Test
-    void clearActiveChannel_unsetsActiveChannel() {
-        target.setActiveChannel(new Channel());
-        target.clearActiveChannel();
-        assertThat(target.getActiveChannel()).isEmpty();
-    }
-
-    @Test
-    void getChannels_isEmpty() {
-        assertThat(target.getChannels()).isEmpty();
+    void getMessages_isEmpty() {
+        assertThat(chatter.getMessages()).isEmpty();
     }
 
     @Test
     @SuppressWarnings("ConstantConditions")
-    void getChannels_isUnmodifiable() {
+    void getMessages_isImmutable() {
         assertThatExceptionOfType(UnsupportedOperationException.class)
-            .isThrownBy(() -> target.getChannels().add(new Channel()));
+            .isThrownBy(() -> chatter.getMessages().add(randomMessage()));
     }
 
     @Test
-    void addChannel_addsChannel() {
-        final Channel channel = new Channel();
-        target.addChannel(channel);
-        assertThat(target.getChannels()).contains(channel);
+    void sendMessage_storesMessage() {
+        final Message message = sendMessage(randomMessage());
+        assertThat(chatter.getMessages()).contains(message);
     }
 
     @Test
-    void removeChannel_removesChannel() {
-        final Channel channel = new Channel();
-        target.addChannel(channel);
-        target.removeChannel(channel);
-        assertThat(target.getChannels()).doesNotContain(channel);
-    }
-
-    @Test
-    void removeChannel_removesActiveTarget_ifSame() {
-        final Channel channel = new Channel();
-        target.setActiveChannel(channel);
-        target.removeChannel(channel);
-        assertThat(target.getActiveChannel()).isEmpty();
+    void sendMessage_withSource() {
+        final Message message = sendMessage(Message.message("Bob", randomText()));
+        assertThat(chatter.getMessages()).contains(message);
     }
 }
