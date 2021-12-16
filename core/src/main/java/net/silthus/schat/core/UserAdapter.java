@@ -17,21 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.core;
 
-import java.util.List;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
+import java.util.UUID;
 
-public interface Channel extends Target {
-    @NotNull @Unmodifiable List<Target> getTargets();
+public interface UserAdapter {
 
-    String getAlias();
-
-    net.kyori.adventure.text.Component getDisplayName();
-
-    void setDisplayName(net.kyori.adventure.text.Component displayName);
-
-    final class InvalidAlias extends RuntimeException {
-    }
+    User getUser(UUID playerId);
 }

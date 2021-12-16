@@ -24,64 +24,76 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.WeakHashMap;
+import lombok.Getter;
 import lombok.NonNull;
-import net.silthus.schat.Channel;
-import net.silthus.schat.Chatter;
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.Message;
+import net.silthus.schat.Target;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-public class ChatterImpl implements Chatter {
+public class Chatter implements Target {
 
-    private final Set<Channel> channels = Collections.newSetFromMap(new WeakHashMap<>());
+    @Getter
+    private final User user;
     private final List<Message> messages = new ArrayList<>();
+    private final Set<Channel> channels = Collections.newSetFromMap(new WeakHashMap<>());
 
     private Channel activeChannel;
+
+    public Chatter(final User user) {
+        this.user = user;
+    }
+
+    public UUID getId() {
+        return user.id();
+    }
+
+    public String getName() {
+        return user.name();
+    }
+
+    public Component getDisplayName() {
+        return user.displayName();
+    }
 
     @Override
     public final void sendMessage(final @NonNull Message message) {
         this.messages.add(message);
     }
 
-    @Override
     public @NotNull @Unmodifiable List<Message> getMessages() {
         return Collections.unmodifiableList(messages);
     }
 
-    @Override
     public @NotNull Optional<Channel> getActiveChannel() {
         return Optional.ofNullable(activeChannel);
     }
 
-    @Override
     public boolean isActiveChannel(final @NonNull Channel channel) {
         return channel.equals(activeChannel);
     }
 
-    @Override
     public void setActiveChannel(final @NonNull Channel channel) {
         join(channel);
         this.activeChannel = channel;
     }
 
-    @Override
     public void clearActiveChannel() {
         this.activeChannel = null;
     }
 
-    @Override
     public @NotNull @Unmodifiable List<Channel> getChannels() {
         return List.copyOf(channels);
     }
 
-    @Override
     public void join(@NonNull Channel channel) {
         channels.add(channel);
         channel.addTarget(this);
     }
 
-    @Override
     public void leave(@NonNull Channel channel) {
         channels.remove(channel);
         channel.removeTarget(this);

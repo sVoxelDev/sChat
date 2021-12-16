@@ -21,7 +21,6 @@ package net.silthus.schat.core;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.silthus.schat.Channel;
 import net.silthus.schat.Message;
 import net.silthus.schat.Target;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +37,7 @@ class ChannelTests extends TestBase {
 
     private static final String CHANNEL_ALIAS = "test";
 
-    private ChannelImpl channel;
+    private Channel channel;
 
     @BeforeEach
     void setUp() {
@@ -46,13 +45,13 @@ class ChannelTests extends TestBase {
     }
 
     @NotNull
-    private static ChannelImpl createChannel(String alias) {
-        return new ChannelImpl(alias, text(alias));
+    private static Channel createChannel(String alias) {
+        return new Channel(alias, text(alias));
     }
 
     @NotNull
     private static Channel createChannel(Component name) {
-        return new ChannelImpl(ChannelTests.CHANNEL_ALIAS, name);
+        return new Channel(ChannelTests.CHANNEL_ALIAS, name);
     }
 
     @NotNull
@@ -106,7 +105,14 @@ class ChannelTests extends TestBase {
 
     @Test
     void createChannel_withEmptyAlias_throws() {
-        assertThatExceptionOfType(ChannelImpl.InvalidAlias.class)
+        assertThatExceptionOfType(Channel.InvalidAlias.class)
             .isThrownBy(() -> createChannel("   "));
+    }
+
+    @Test
+    void setDisplayName_setsProp() {
+        final TextComponent displayName = text("foo bar");
+        channel.setDisplayName(displayName);
+        assertThat(channel.getDisplayName()).isEqualTo(displayName);
     }
 }

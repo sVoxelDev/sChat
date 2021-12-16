@@ -24,8 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.Channel;
 import net.silthus.schat.Message;
 import net.silthus.schat.Target;
 import org.jetbrains.annotations.NotNull;
@@ -33,23 +33,31 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import static net.kyori.adventure.text.Component.text;
 
-public class ChannelImpl implements Channel {
+public class Channel implements net.silthus.schat.Channel {
 
     @Getter
-    private final String alias;
-    @Getter
-    private final Component displayName;
-    private final List<Target> targets = new ArrayList<>();
+    private final @NotNull String alias;
+    private final @NotNull List<Target> targets = new ArrayList<>();
 
-    ChannelImpl(String alias) {
+    @Getter
+    @Setter
+    private @NonNull Component displayName;
+
+    Channel(String alias) {
         this(alias, text(alias));
     }
 
-    ChannelImpl(String alias, Component displayName) {
-        if (alias == null || alias.isBlank())
+    @SuppressWarnings("NullableProblems")
+    Channel(String alias, final @NonNull Component displayName) {
+        if (isInvalidAlias(alias))
             throw new InvalidAlias();
         this.alias = alias;
         this.displayName = displayName;
+    }
+
+    @Override
+    public final void sendMessage(final @NonNull Message message) {
+        getTargets().forEach(target -> target.sendMessage(message));
     }
 
     @Override
@@ -58,19 +66,16 @@ public class ChannelImpl implements Channel {
         return Collections.unmodifiableList(targets);
     }
 
-    @Override
     public void addTarget(final @NonNull Target target) {
         this.targets.add(target);
     }
 
-    @Override
     public void removeTarget(final @NonNull Target target) {
         this.targets.remove(target);
     }
 
-    @Override
-    public final void sendMessage(final @NonNull Message message) {
-        getTargets().forEach(target -> target.sendMessage(message));
+    private boolean isInvalidAlias(final String alias) {
+        return alias == null || alias.isBlank();
     }
 
 }
