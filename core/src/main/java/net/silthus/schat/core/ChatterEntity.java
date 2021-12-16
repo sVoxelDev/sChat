@@ -30,11 +30,10 @@ import lombok.Getter;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.Message;
-import net.silthus.schat.Target;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-public class Chatter implements Target {
+public class ChatterEntity implements net.silthus.schat.Chatter {
 
     @Getter
     private final User user;
@@ -43,18 +42,21 @@ public class Chatter implements Target {
 
     private Channel activeChannel;
 
-    public Chatter(final User user) {
+    public ChatterEntity(final User user) {
         this.user = user;
     }
 
+    @Override
     public UUID getId() {
         return user.id();
     }
 
+    @Override
     public String getName() {
         return user.name();
     }
 
+    @Override
     public Component getDisplayName() {
         return user.displayName();
     }
@@ -64,20 +66,17 @@ public class Chatter implements Target {
         this.messages.add(message);
     }
 
+    @Override
     public @NotNull @Unmodifiable List<Message> getMessages() {
         return Collections.unmodifiableList(messages);
     }
 
-    public @NotNull Optional<Channel> getActiveChannel() {
+    @Override
+    public @NotNull Optional<net.silthus.schat.Channel> getActiveChannel() {
         return Optional.ofNullable(activeChannel);
     }
 
-    public boolean isActiveChannel(final @NonNull Channel channel) {
-        return channel.equals(activeChannel);
-    }
-
     public void setActiveChannel(final @NonNull Channel channel) {
-        join(channel);
         this.activeChannel = channel;
     }
 
@@ -85,19 +84,16 @@ public class Chatter implements Target {
         this.activeChannel = null;
     }
 
-    public @NotNull @Unmodifiable List<Channel> getChannels() {
+    @Override
+    public @NotNull @Unmodifiable List<net.silthus.schat.Channel> getChannels() {
         return List.copyOf(channels);
     }
 
-    public void join(@NonNull Channel channel) {
+    public void addChannel(final @NotNull Channel channel) {
         channels.add(channel);
-        channel.addTarget(this);
     }
 
-    public void leave(@NonNull Channel channel) {
+    public void removeChannel(final @NotNull Channel channel) {
         channels.remove(channel);
-        channel.removeTarget(this);
-        if (isActiveChannel(channel))
-            clearActiveChannel();
     }
 }
