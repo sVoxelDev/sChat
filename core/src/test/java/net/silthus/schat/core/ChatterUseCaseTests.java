@@ -29,16 +29,46 @@ import org.junit.jupiter.api.Test;
 import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
-class ChatterTests extends TestBase {
+class ChatterUseCaseTests extends TestBase {
 
-    private Chatter chatter;
+    private User user;
+    private ChattersInteractor useCase;
+    private ChatterEntity chatter;
     private Channel channel;
 
     @BeforeEach
     void setUp() {
-        chatter = new Chatter(new User(UUID.randomUUID(), "test", text("test")));
+        useCase = new ChattersInteractor(userAdapter());
+        chatter = new ChatterEntity(new User(UUID.randomUUID(), "test", text("test")));
         channel = new Channel("test");
+    }
+
+    private UserAdapter userAdapter() {
+        final UserAdapter userAdapter = mock(UserAdapter.class);
+        mockUser(userAdapter);
+        return userAdapter;
+    }
+
+    private void mockUser(final UserAdapter userAdapter) {
+        final UUID playerId = UUID.randomUUID();
+        user = new User(playerId, "test", text("Player"));
+        doReturn(user).when(userAdapter).getUser(playerId);
+    }
+
+    @Test
+    void create() {
+        assertThat(useCase.getPlayerChatter(user.id())).extracting(
+            ChatterEntity::getId,
+            ChatterEntity::getName,
+            ChatterEntity::getDisplayName
+        ).contains(
+            user.id(),
+            user.name(),
+            user.displayName()
+        );
     }
 
     @Test
@@ -93,7 +123,7 @@ class ChatterTests extends TestBase {
 
         @BeforeEach
         void setUp() {
-            chatter.join(channel);
+            useCase.join(chatter, channel);
         }
 
         @Test
@@ -111,7 +141,7 @@ class ChatterTests extends TestBase {
 
             @BeforeEach
             void setUp() {
-                chatter.leave(channel);
+                useCase.leave(chatter, channel);
             }
 
             @Test
@@ -131,7 +161,7 @@ class ChatterTests extends TestBase {
 
         @BeforeEach
         void setUp() {
-            chatter.setActiveChannel(channel);
+            useCase.setActiveChannel(chatter, channel);
         }
 
         @Test
@@ -153,7 +183,7 @@ class ChatterTests extends TestBase {
 
         @Test
         void leave_removesActiveTarget_ifSame() {
-            chatter.leave(channel);
+            useCase.leave(chatter, channel);
             assertThat(chatter.getActiveChannel()).isEmpty();
         }
     }

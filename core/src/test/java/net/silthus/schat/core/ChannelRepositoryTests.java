@@ -27,7 +27,7 @@ import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-class ChannelsInteractorTests {
+class ChannelRepositoryTests {
 
     private static final String TEST_CHANNEL_ALIAS = "test";
 
@@ -35,7 +35,7 @@ class ChannelsInteractorTests {
 
     @BeforeEach
     void setUp() {
-        channels = new ChannelsInteractor();
+        channels = new ChannelRepository();
     }
 
     private Channel createChannel() {

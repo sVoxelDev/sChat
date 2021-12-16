@@ -20,6 +20,7 @@
 package net.silthus.schat.core;
 
 import java.util.UUID;
+import lombok.NonNull;
 
 public class ChattersInteractor {
 
@@ -29,7 +30,24 @@ public class ChattersInteractor {
         this.userAdapter = userAdapter;
     }
 
-    public Chatter getPlayerChatter(final UUID playerId) {
-        return new Chatter(userAdapter.getUser(playerId));
+    public ChatterEntity getPlayerChatter(final UUID playerId) {
+        return new ChatterEntity(userAdapter.getUser(playerId));
+    }
+
+    public void setActiveChannel(@NonNull ChatterEntity chatter, @NonNull Channel channel) {
+        join(chatter, channel);
+        chatter.setActiveChannel(channel);
+    }
+
+    public void join(@NonNull ChatterEntity chatter, @NonNull Channel channel) {
+        chatter.addChannel(channel);
+        channel.addTarget(chatter);
+    }
+
+    public void leave(@NonNull ChatterEntity chatter, @NonNull Channel channel) {
+        chatter.removeChannel(channel);
+        channel.removeTarget(chatter);
+        if (chatter.isActiveChannel(channel))
+            chatter.clearActiveChannel();
     }
 }

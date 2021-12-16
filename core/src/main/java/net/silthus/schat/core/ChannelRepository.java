@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import static net.kyori.adventure.text.Component.text;
 
-public class ChannelsInteractor implements Channels {
+public class ChannelRepository implements Channels {
 
     private final Map<String, Channel> channels = new HashMap<>();
 
