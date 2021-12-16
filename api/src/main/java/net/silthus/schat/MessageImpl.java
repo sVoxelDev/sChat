@@ -17,30 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import lombok.NonNull;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
+import java.util.UUID;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import net.kyori.adventure.text.Component;
 
-public class Channel extends MessageTarget {
+@Getter
+@EqualsAndHashCode(of = {"id"})
+final class MessageImpl implements Message {
 
-    private final List<MessageTarget> targets = new ArrayList<>();
+    private final UUID id = UUID.randomUUID();
+    private final String source;
+    private final Component message;
 
-    public @NotNull @Unmodifiable List<MessageTarget> getTargets() {
-        return Collections.unmodifiableList(targets);
-    }
-
-    public void addTarget(final @NonNull MessageTarget target) {
-        this.targets.add(target);
-    }
-
-    @Override
-    public void sendMessage(final @NonNull Message message) {
-        super.sendMessage(message);
-        getTargets().forEach(messageTarget -> messageTarget.sendMessage(message));
+    MessageImpl(String source, Component message) {
+        this.source = source;
+        this.message = message;
     }
 }

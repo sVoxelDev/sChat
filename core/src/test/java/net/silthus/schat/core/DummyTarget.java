@@ -19,6 +19,13 @@
 
 package net.silthus.schat.core;
 
-public class DummyTarget extends MessageTarget {
+import lombok.NonNull;
+import net.silthus.schat.Message;
+import net.silthus.schat.Target;
 
+public class DummyTarget implements Target {
+
+    @Override
+    public void sendMessage(final @NonNull Message message) {
+    }
 }
