@@ -17,37 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.core.chatter;
 
 import java.util.UUID;
-import lombok.NonNull;
+import net.silthus.schat.core.UserAdapter;
 
-public class ChattersInteractor {
+public final class ChatterRepository {
 
     private final UserAdapter userAdapter;
 
-    public ChattersInteractor(final UserAdapter userAdapter) {
+    public ChatterRepository(final UserAdapter userAdapter) {
         this.userAdapter = userAdapter;
     }
 
-    public ChatterEntity getPlayerChatter(final UUID playerId) {
-        return new ChatterEntity(userAdapter.getUser(playerId));
-    }
-
-    public void setActiveChannel(@NonNull ChatterEntity chatter, @NonNull Channel channel) {
-        join(chatter, channel);
-        chatter.setActiveChannel(channel);
-    }
-
-    public void join(@NonNull ChatterEntity chatter, @NonNull Channel channel) {
-        chatter.addChannel(channel);
-        channel.addTarget(chatter);
-    }
-
-    public void leave(@NonNull ChatterEntity chatter, @NonNull Channel channel) {
-        chatter.removeChannel(channel);
-        channel.removeTarget(chatter);
-        if (chatter.isActiveChannel(channel))
-            chatter.clearActiveChannel();
+    public Chatter getPlayerChatter(final UUID playerId) {
+        return new Chatter(userAdapter.getUser(playerId));
     }
 }

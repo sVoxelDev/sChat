@@ -17,47 +17,48 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.core.channel;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import lombok.Getter;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.Channels;
+import net.silthus.schat.core.api.ApiChannelRepository;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import static net.kyori.adventure.text.Component.text;
 
-public class ChannelRepository implements Channels {
+public final class ChannelRepository {
+
+    @Getter
+    private final ApiChannelRepository apiProxy = new ApiChannelRepository(this);
 
     private final Map<String, Channel> channels = new HashMap<>();
 
-    @Override
     public @NotNull @Unmodifiable List<Channel> all() {
         return List.copyOf(channels.values());
     }
 
-    @Override
     public @NotNull Optional<Channel> get(final @NonNull String alias) {
         return Optional.ofNullable(channels.get(formatAlias(alias)));
     }
 
-    @Override
-    public @NotNull Channel create(final @NonNull String alias) throws DuplicateAlias {
+    public @NotNull Channel create(final @NonNull String alias) throws Channels.DuplicateAlias {
         return create(alias, text(alias));
     }
 
-    @Override
     public @NotNull Channel create(@NonNull final String alias, @NonNull final Component displayName) {
         if (contains(alias))
-            throw new DuplicateAlias();
+            throw new Channels.DuplicateAlias();
         return channels.computeIfAbsent(formatAlias(alias), c -> new Channel(c, displayName));
     }
 
-    @Override
     public boolean contains(final @NonNull String alias) {
         return channels.containsKey(formatAlias(alias));
     }

@@ -20,17 +20,23 @@
 package net.silthus.schat;
 
 import java.util.List;
+import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 public interface Channel extends Target {
-    @NotNull @Unmodifiable List<Target> getTargets();
 
     String getAlias();
 
     net.kyori.adventure.text.Component getDisplayName();
 
     void setDisplayName(net.kyori.adventure.text.Component displayName);
+
+    @NotNull @Unmodifiable List<Target> getTargets();
+
+    void addTarget(@NonNull Target target);
+
+    void removeTarget(@NonNull Target target);
 
     final class InvalidAlias extends RuntimeException {
     }

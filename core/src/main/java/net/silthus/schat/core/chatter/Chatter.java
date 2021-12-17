@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.core.chatter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,50 +29,51 @@ import java.util.WeakHashMap;
 import lombok.Getter;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.Channel;
 import net.silthus.schat.Message;
+import net.silthus.schat.Target;
+import net.silthus.schat.core.User;
+import net.silthus.schat.core.api.ApiChatter;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-public class ChatterEntity implements net.silthus.schat.Chatter {
+public final class Chatter implements Target {
 
     @Getter
+    private final ApiChatter apiProxy = new ApiChatter(this);
+
     private final User user;
     private final List<Message> messages = new ArrayList<>();
     private final Set<Channel> channels = Collections.newSetFromMap(new WeakHashMap<>());
 
     private Channel activeChannel;
 
-    public ChatterEntity(final User user) {
+    public Chatter(final User user) {
         this.user = user;
     }
 
-    @Override
     public UUID getId() {
         return user.id();
     }
 
-    @Override
     public String getName() {
         return user.name();
     }
 
-    @Override
     public Component getDisplayName() {
         return user.displayName();
     }
 
-    @Override
-    public final void sendMessage(final @NonNull Message message) {
+    public void sendMessage(final @NonNull Message message) {
         this.messages.add(message);
     }
 
-    @Override
     public @NotNull @Unmodifiable List<Message> getMessages() {
         return Collections.unmodifiableList(messages);
     }
 
-    @Override
-    public @NotNull Optional<net.silthus.schat.Channel> getActiveChannel() {
+    public @NotNull Optional<Channel> getActiveChannel() {
         return Optional.ofNullable(activeChannel);
     }
 
@@ -84,8 +85,11 @@ public class ChatterEntity implements net.silthus.schat.Chatter {
         this.activeChannel = null;
     }
 
-    @Override
-    public @NotNull @Unmodifiable List<net.silthus.schat.Channel> getChannels() {
+    public boolean isActiveChannel(@Nullable Channel channel) {
+        return getActiveChannel().map(c -> c.equals(channel)).orElse(false);
+    }
+
+    public @NotNull @Unmodifiable List<Channel> getChannels() {
         return List.copyOf(channels);
     }
 

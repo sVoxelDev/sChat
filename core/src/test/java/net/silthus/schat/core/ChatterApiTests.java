@@ -21,6 +21,9 @@ package net.silthus.schat.core;
 
 import java.util.UUID;
 import net.silthus.schat.Message;
+import net.silthus.schat.core.channel.Channel;
+import net.silthus.schat.core.chatter.Chatter;
+import net.silthus.schat.core.chatter.ChatterRepository;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -32,18 +35,18 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-class ChatterUseCaseTests extends TestBase {
+class ChatterApiTests extends TestBase {
 
     private User user;
-    private ChattersInteractor useCase;
-    private ChatterEntity chatter;
-    private Channel channel;
+    private ChatterRepository useCase;
+    private net.silthus.schat.Chatter chatter;
+    private net.silthus.schat.Channel channel;
 
     @BeforeEach
     void setUp() {
-        useCase = new ChattersInteractor(userAdapter());
-        chatter = new ChatterEntity(new User(UUID.randomUUID(), "test", text("test")));
-        channel = new Channel("test");
+        useCase = new ChatterRepository(userAdapter());
+        chatter = new Chatter(new User(UUID.randomUUID(), "test", text("test"))).getApiProxy();
+        channel = new Channel("test", text("test")).getApiProxy();
     }
 
     private UserAdapter userAdapter() {
@@ -61,9 +64,9 @@ class ChatterUseCaseTests extends TestBase {
     @Test
     void create() {
         assertThat(useCase.getPlayerChatter(user.id())).extracting(
-            ChatterEntity::getId,
-            ChatterEntity::getName,
-            ChatterEntity::getDisplayName
+            Chatter::getId,
+            Chatter::getName,
+            Chatter::getDisplayName
         ).contains(
             user.id(),
             user.name(),
@@ -94,16 +97,30 @@ class ChatterUseCaseTests extends TestBase {
             .isThrownBy(() -> chatter.getMessages().add(randomMessage()));
     }
 
-    @Test
-    void sendMessage_storesMessage() {
-        final Message message = sendMessage(randomMessage());
-        assertThat(chatter.getMessages()).contains(message);
-    }
+    @Nested
+    class SendMessage {
 
-    @Test
-    void sendMessage_withSource() {
-        final Message message = sendMessage(Message.message("Bob", randomText()));
-        assertThat(chatter.getMessages()).contains(message);
+        private Message message;
+
+        @BeforeEach
+        void setUp() {
+            message = sendMessage(Message.message("Bob", text("Hi")));
+        }
+
+        @Test
+        void sendMessage_storesMessage() {
+            assertThat(chatter.getMessages()).contains(message);
+        }
+
+        @Test
+        void sendMessage_hasSource() {
+            assertThat(message.getSource()).isEqualTo("Bob");
+        }
+
+        @Test
+        void sendMessage_hasText() {
+            assertThat(message.getMessage()).isEqualTo(text("Hi"));
+        }
     }
 
     @Test
@@ -123,7 +140,7 @@ class ChatterUseCaseTests extends TestBase {
 
         @BeforeEach
         void setUp() {
-            useCase.join(chatter, channel);
+            chatter.join(channel);
         }
 
         @Test
@@ -141,7 +158,7 @@ class ChatterUseCaseTests extends TestBase {
 
             @BeforeEach
             void setUp() {
-                useCase.leave(chatter, channel);
+                chatter.leave(channel);
             }
 
             @Test
@@ -161,7 +178,7 @@ class ChatterUseCaseTests extends TestBase {
 
         @BeforeEach
         void setUp() {
-            useCase.setActiveChannel(chatter, channel);
+            chatter.setActiveChannel(channel);
         }
 
         @Test
@@ -183,7 +200,7 @@ class ChatterUseCaseTests extends TestBase {
 
         @Test
         void leave_removesActiveTarget_ifSame() {
-            useCase.leave(chatter, channel);
+            chatter.leave(channel);
             assertThat(chatter.getActiveChannel()).isEmpty();
         }
     }
