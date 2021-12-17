@@ -20,6 +20,8 @@
 package net.silthus.schat.core;
 
 import net.kyori.adventure.text.TextComponent;
+import net.silthus.schat.Channels;
+import net.silthus.schat.core.channel.ChannelRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +29,7 @@ import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-class ChannelRepositoryTests {
+class ChannelsApiTests {
 
     private static final String TEST_CHANNEL_ALIAS = "test";
 
@@ -35,10 +37,10 @@ class ChannelRepositoryTests {
 
     @BeforeEach
     void setUp() {
-        channels = new ChannelRepository();
+        channels = new ChannelRepository().getApiProxy();
     }
 
-    private Channel createChannel() {
+    private net.silthus.schat.Channel createChannel() {
         return channels.create(TEST_CHANNEL_ALIAS);
     }
 
@@ -54,8 +56,9 @@ class ChannelRepositoryTests {
 
     @Test
     void create_addsChannelToRegistry() {
-        final Channel channel = createChannel();
+        final net.silthus.schat.Channel channel = createChannel();
         assertThat(channels.all()).contains(channel);
+        assertThat(channels.contains(TEST_CHANNEL_ALIAS)).isTrue();
     }
 
     @Test
@@ -74,7 +77,7 @@ class ChannelRepositoryTests {
 
     @Test
     void get_getsChannelByAlias() {
-        final Channel channel = createChannel();
+        final net.silthus.schat.Channel channel = createChannel();
         assertThat(channels.get(TEST_CHANNEL_ALIAS))
             .isPresent().get()
             .isEqualTo(channel);
@@ -82,7 +85,7 @@ class ChannelRepositoryTests {
 
     @Test
     void get_ignoreCase_getsChannel() {
-        final Channel channel = createChannel();
+        final net.silthus.schat.Channel channel = createChannel();
         assertThat(channels.get(TEST_CHANNEL_ALIAS.toUpperCase()))
             .isPresent().get()
             .isEqualTo(channel);
@@ -91,7 +94,7 @@ class ChannelRepositoryTests {
     @Test
     void createChannel_withDisplayName() {
         final TextComponent displayName = text("Foobar");
-        final Channel channel = channels.create(TEST_CHANNEL_ALIAS, displayName);
+        final net.silthus.schat.Channel channel = channels.create(TEST_CHANNEL_ALIAS, displayName);
         assertThat(channel.getDisplayName()).isEqualTo(displayName);
     }
 }

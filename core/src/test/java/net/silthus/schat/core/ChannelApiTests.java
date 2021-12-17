@@ -21,8 +21,11 @@ package net.silthus.schat.core;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.silthus.schat.Channels;
 import net.silthus.schat.Message;
 import net.silthus.schat.Target;
+import net.silthus.schat.core.channel.Channel;
+import net.silthus.schat.core.channel.ChannelRepository;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,25 +36,27 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-class ChannelTests extends TestBase {
+class ChannelApiTests extends TestBase {
 
     private static final String CHANNEL_ALIAS = "test";
 
-    private Channel channel;
+    private Channels repository;
+    private net.silthus.schat.Channel channel;
 
     @BeforeEach
     void setUp() {
+        repository = new ChannelRepository().getApiProxy();
         channel = createChannel(CHANNEL_ALIAS);
     }
 
     @NotNull
-    private static Channel createChannel(String alias) {
-        return new Channel(alias, text(alias));
+    private net.silthus.schat.Channel createChannel(String alias) {
+        return repository.create(alias);
     }
 
     @NotNull
-    private static Channel createChannel(Component name) {
-        return new Channel(ChannelTests.CHANNEL_ALIAS, name);
+    private Channel createChannel(Component name) {
+        return new Channel(ChannelApiTests.CHANNEL_ALIAS, name);
     }
 
     @NotNull
@@ -105,7 +110,7 @@ class ChannelTests extends TestBase {
 
     @Test
     void createChannel_withEmptyAlias_throws() {
-        assertThatExceptionOfType(Channel.InvalidAlias.class)
+        assertThatExceptionOfType(net.silthus.schat.Channel.InvalidAlias.class)
             .isThrownBy(() -> createChannel("   "));
     }
 

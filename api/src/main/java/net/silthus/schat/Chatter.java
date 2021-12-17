@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 public interface Chatter extends Target {
+
     UUID getId();
 
     String getName();
@@ -43,4 +44,10 @@ public interface Chatter extends Target {
     }
 
     @NotNull @Unmodifiable List<Channel> getChannels();
+
+    void setActiveChannel(Channel channel);
+
+    void join(Channel channel);
+
+    void leave(Channel channel);
 }

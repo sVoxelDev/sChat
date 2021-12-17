@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.core.channel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,12 +28,14 @@ import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.Message;
 import net.silthus.schat.Target;
+import net.silthus.schat.core.api.ApiChannel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-import static net.kyori.adventure.text.Component.text;
+public final class Channel {
 
-public class Channel implements net.silthus.schat.Channel {
+    @Getter
+    private final ApiChannel apiProxy = new ApiChannel(this);
 
     @Getter
     private final @NotNull String alias;
@@ -43,24 +45,18 @@ public class Channel implements net.silthus.schat.Channel {
     @Setter
     private @NonNull Component displayName;
 
-    Channel(String alias) {
-        this(alias, text(alias));
-    }
-
     @SuppressWarnings("NullableProblems")
-    Channel(String alias, final @NonNull Component displayName) {
+    public Channel(String alias, final @NonNull Component displayName) {
         if (isInvalidAlias(alias))
-            throw new InvalidAlias();
+            throw new net.silthus.schat.Channel.InvalidAlias();
         this.alias = alias;
         this.displayName = displayName;
     }
 
-    @Override
-    public final void sendMessage(final @NonNull Message message) {
+    public void sendMessage(final @NonNull Message message) {
         getTargets().forEach(target -> target.sendMessage(message));
     }
 
-    @Override
     @NotNull @Unmodifiable
     public List<Target> getTargets() {
         return Collections.unmodifiableList(targets);
