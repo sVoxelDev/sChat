@@ -22,34 +22,37 @@ package net.silthus.schat.core.channel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.Message;
-import net.silthus.schat.Target;
+import net.silthus.schat.channel.Channel;
 import net.silthus.schat.core.api.ApiChannel;
+import net.silthus.schat.core.repository.Entity;
+import net.silthus.schat.message.Message;
+import net.silthus.schat.message.MessageTarget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-public final class Channel {
+public final class ChannelEntity implements Entity<String> {
 
+    private static final Pattern VALID_CHANNEL_ID = Pattern.compile("^[a-z0-9_-]+$");
     @Getter
     private final ApiChannel apiProxy = new ApiChannel(this);
 
     @Getter
-    private final @NotNull String alias;
-    private final @NotNull List<Target> targets = new ArrayList<>();
+    private final @NotNull String key;
+    private final @NotNull List<MessageTarget> targets = new ArrayList<>();
 
     @Getter
     @Setter
     private @NonNull Component displayName;
 
-    @SuppressWarnings("NullableProblems")
-    public Channel(String alias, final @NonNull Component displayName) {
-        if (isInvalidAlias(alias))
-            throw new net.silthus.schat.Channel.InvalidAlias();
-        this.alias = alias;
+    public ChannelEntity(@NotNull String key, @NotNull Component displayName) {
+        if (isInvalidChannelKey(key))
+            throw new Channel.InvalidKey();
+        this.key = key;
         this.displayName = displayName;
     }
 
@@ -58,20 +61,20 @@ public final class Channel {
     }
 
     @NotNull @Unmodifiable
-    public List<Target> getTargets() {
+    public List<MessageTarget> getTargets() {
         return Collections.unmodifiableList(targets);
     }
 
-    public void addTarget(final @NonNull Target target) {
+    public void addTarget(final @NonNull MessageTarget target) {
         this.targets.add(target);
     }
 
-    public void removeTarget(final @NonNull Target target) {
+    public void removeTarget(final @NonNull MessageTarget target) {
         this.targets.remove(target);
     }
 
-    private boolean isInvalidAlias(final String alias) {
-        return alias == null || alias.isBlank();
+    private boolean isInvalidChannelKey(final String key) {
+        return VALID_CHANNEL_ID.asMatchPredicate().negate().test(key);
     }
 
 }

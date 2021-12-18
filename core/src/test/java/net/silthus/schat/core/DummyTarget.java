@@ -20,10 +20,10 @@
 package net.silthus.schat.core;
 
 import lombok.NonNull;
-import net.silthus.schat.Message;
-import net.silthus.schat.Target;
+import net.silthus.schat.message.Message;
+import net.silthus.schat.message.MessageTarget;
 
-public class DummyTarget implements Target {
+public class DummyTarget implements MessageTarget {
 
     @Override
     public void sendMessage(final @NonNull Message message) {

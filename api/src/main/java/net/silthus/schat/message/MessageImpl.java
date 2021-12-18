@@ -17,11 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.message;
 
 import java.util.UUID;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.NotNull;
 
-public record User(UUID id, String name, @NotNull Component displayName) {
+@Getter
+@EqualsAndHashCode(of = {"id"})
+final class MessageImpl implements Message {
+
+    private final UUID id = UUID.randomUUID();
+    private final String source;
+    private final Component message;
+
+    MessageImpl(String source, Component message) {
+        this.source = source;
+        this.message = message;
+    }
 }

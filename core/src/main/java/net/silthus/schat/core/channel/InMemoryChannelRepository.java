@@ -17,20 +17,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.core.channel;
 
-import net.silthus.schat.message.Message;
-import org.junit.jupiter.api.Test;
+import net.silthus.schat.core.repository.InMemoryRepository;
 
-import static net.kyori.adventure.text.Component.text;
-import static org.assertj.core.api.Assertions.assertThat;
+public final class InMemoryChannelRepository extends InMemoryRepository<String, ChannelEntity> implements ChannelRepository {
 
-class MessageTests {
-
-    @Test
-    void twoMessages_withSameText_areNotEqual() {
-        final Message m1 = Message.message(null, text("Hi"));
-        final Message m2 = Message.message(null, text("Hi"));
-        assertThat(m1).isNotEqualTo(m2);
-    }
 }

@@ -28,41 +28,36 @@ import java.util.UUID;
 import java.util.WeakHashMap;
 import lombok.Getter;
 import lombok.NonNull;
-import net.kyori.adventure.text.Component;
-import net.silthus.schat.Channel;
-import net.silthus.schat.Message;
-import net.silthus.schat.Target;
-import net.silthus.schat.core.User;
+import net.silthus.schat.channel.Channel;
 import net.silthus.schat.core.api.ApiChatter;
+import net.silthus.schat.core.repository.Entity;
+import net.silthus.schat.identity.Identified;
+import net.silthus.schat.identity.Identity;
+import net.silthus.schat.message.Message;
+import net.silthus.schat.message.MessageTarget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-public final class Chatter implements Target {
+public final class ChatterEntity implements MessageTarget, Entity<UUID>, Identified {
 
     @Getter
     private final ApiChatter apiProxy = new ApiChatter(this);
 
-    private final User user;
+    @Getter
+    private final Identity identity;
     private final List<Message> messages = new ArrayList<>();
     private final Set<Channel> channels = Collections.newSetFromMap(new WeakHashMap<>());
 
     private Channel activeChannel;
 
-    public Chatter(final User user) {
-        this.user = user;
+    public ChatterEntity(final Identity identity) {
+        this.identity = identity;
     }
 
-    public UUID getId() {
-        return user.id();
-    }
-
-    public String getName() {
-        return user.name();
-    }
-
-    public Component getDisplayName() {
-        return user.displayName();
+    @Override
+    public @NotNull UUID getKey() {
+        return getId();
     }
 
     public void sendMessage(final @NonNull Message message) {

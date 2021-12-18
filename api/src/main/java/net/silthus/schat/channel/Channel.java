@@ -17,20 +17,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.channel;
 
-import net.silthus.schat.message.Message;
-import org.junit.jupiter.api.Test;
+import java.util.List;
+import lombok.NonNull;
+import net.kyori.adventure.text.Component;
+import net.silthus.schat.message.MessageTarget;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
-import static net.kyori.adventure.text.Component.text;
-import static org.assertj.core.api.Assertions.assertThat;
+public interface Channel extends MessageTarget {
 
-class MessageTests {
+    String getKey();
 
-    @Test
-    void twoMessages_withSameText_areNotEqual() {
-        final Message m1 = Message.message(null, text("Hi"));
-        final Message m2 = Message.message(null, text("Hi"));
-        assertThat(m1).isNotEqualTo(m2);
+    Component getDisplayName();
+
+    void setDisplayName(Component displayName);
+
+    @NotNull @Unmodifiable List<MessageTarget> getTargets();
+
+    void addTarget(@NonNull MessageTarget target);
+
+    void removeTarget(@NonNull MessageTarget target);
+
+    final class InvalidKey extends RuntimeException {
     }
 }

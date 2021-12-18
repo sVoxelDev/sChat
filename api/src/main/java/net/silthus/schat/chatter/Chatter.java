@@ -17,17 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.chatter;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.message.Message;
+import net.silthus.schat.message.MessageTarget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-public interface Chatter extends Target {
+public interface Chatter extends MessageTarget {
 
     UUID getId();
 

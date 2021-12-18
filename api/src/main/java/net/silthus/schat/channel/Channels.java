@@ -17,23 +17,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.channel;
 
-import java.util.UUID;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import java.util.List;
+import java.util.Optional;
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
-@Getter
-@EqualsAndHashCode(of = {"id"})
-final class MessageImpl implements Message {
+public interface Channels {
 
-    private final UUID id = UUID.randomUUID();
-    private final String source;
-    private final Component message;
+    @NotNull @Unmodifiable List<Channel> all();
 
-    MessageImpl(String source, Component message) {
-        this.source = source;
-        this.message = message;
+    @NotNull Optional<Channel> get(@NonNull String alias);
+
+    boolean contains(@NonNull String alias);
+
+    @NotNull Channel create(@NonNull String alias) throws DuplicateIdentifier, Channel.InvalidKey;
+
+    @NotNull Channel create(@NonNull String alias, @NonNull Component displayName) throws DuplicateIdentifier, Channel.InvalidKey;
+
+    final class DuplicateIdentifier extends RuntimeException {
     }
+
 }

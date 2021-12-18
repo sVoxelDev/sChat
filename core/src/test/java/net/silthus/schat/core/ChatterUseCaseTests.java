@@ -19,11 +19,12 @@
 
 package net.silthus.schat.core;
 
-import java.util.UUID;
-import net.silthus.schat.Message;
-import net.silthus.schat.core.channel.Channel;
-import net.silthus.schat.core.chatter.Chatter;
-import net.silthus.schat.core.chatter.ChatterRepository;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.core.channel.ChannelEntity;
+import net.silthus.schat.core.chatter.ChatterEntity;
+import net.silthus.schat.identity.Identity;
+import net.silthus.schat.message.Message;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -32,46 +33,16 @@ import org.junit.jupiter.api.Test;
 import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
-class ChatterApiTests extends TestBase {
+class ChatterUseCaseTests extends TestBase {
 
-    private User user;
-    private ChatterRepository useCase;
-    private net.silthus.schat.Chatter chatter;
-    private net.silthus.schat.Channel channel;
+    private Chatter chatter;
+    private Channel channel;
 
     @BeforeEach
     void setUp() {
-        useCase = new ChatterRepository(userAdapter());
-        chatter = new Chatter(new User(UUID.randomUUID(), "test", text("test"))).getApiProxy();
-        channel = new Channel("test", text("test")).getApiProxy();
-    }
-
-    private UserAdapter userAdapter() {
-        final UserAdapter userAdapter = mock(UserAdapter.class);
-        mockUser(userAdapter);
-        return userAdapter;
-    }
-
-    private void mockUser(final UserAdapter userAdapter) {
-        final UUID playerId = UUID.randomUUID();
-        user = new User(playerId, "test", text("Player"));
-        doReturn(user).when(userAdapter).getUser(playerId);
-    }
-
-    @Test
-    void create() {
-        assertThat(useCase.getPlayerChatter(user.id())).extracting(
-            Chatter::getId,
-            Chatter::getName,
-            Chatter::getDisplayName
-        ).contains(
-            user.id(),
-            user.name(),
-            user.displayName()
-        );
+        chatter = new ChatterEntity(Identity.identity("test")).getApiProxy();
+        channel = new ChannelEntity("test", text("test")).getApiProxy();
     }
 
     @Test

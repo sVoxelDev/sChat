@@ -17,11 +17,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.identity;
 
-import java.util.UUID;
+import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
 
-public interface UserAdapter {
+/**
+ * An adapter that can convert between identities to platform native players.
+ *
+ * @param <P> the type of the player on the implementing platform
+ * @since next
+ */
+public interface PlayerOut<P> {
 
-    User getUser(UUID playerId);
+    /**
+     * Converts the given identity into a player.
+     *
+     * @param identity the identity
+     * @return the player for the given identity
+     * @since next
+     */
+    @NotNull Optional<P> toPlayer(@NotNull Identity identity);
 }
