@@ -17,24 +17,35 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.identity;
 
-import net.bytebuddy.utility.RandomString;
-import net.kyori.adventure.text.TextComponent;
-import net.silthus.schat.message.Message;
+import java.util.Optional;
+import java.util.UUID;
 import org.jetbrains.annotations.NotNull;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.message.Message.message;
+/**
+ * An adapter that can convert between platform native players to identities.
+ *
+ * @param <P> the type of the player on the implementing platform
+ * @since next
+ */
+public interface PlayerIn<P> {
 
-public class TestBase {
-    @NotNull
-    protected TextComponent randomText() {
-        return text(RandomString.make());
-    }
+    /**
+     * Converts the given player into an identity.
+     *
+     * @param player the player
+     * @return the identity of the player
+     * @since next
+     */
+    @NotNull Identity fromPlayer(@NotNull P player);
 
-    @NotNull
-    protected Message randomMessage() {
-        return message(randomText());
-    }
+    /**
+     * Tries to find a player by the given id and converts it into an identity.
+     *
+     * @param playerId the player id
+     * @return the identity of the player if found
+     * @since next
+     */
+    @NotNull Optional<Identity> fromId(UUID playerId);
 }

@@ -20,17 +20,7 @@
 package net.silthus.schat.core.chatter;
 
 import java.util.UUID;
-import net.silthus.schat.core.UserAdapter;
+import net.silthus.schat.core.repository.Repository;
 
-public final class ChatterRepository {
-
-    private final UserAdapter userAdapter;
-
-    public ChatterRepository(final UserAdapter userAdapter) {
-        this.userAdapter = userAdapter;
-    }
-
-    public Chatter getPlayerChatter(final UUID playerId) {
-        return new Chatter(userAdapter.getUser(playerId));
-    }
+public interface ChatterRepository extends Repository<UUID, ChatterEntity> {
 }

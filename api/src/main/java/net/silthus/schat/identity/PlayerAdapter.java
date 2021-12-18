@@ -17,27 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.identity;
 
-import java.util.List;
-import lombok.NonNull;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
-
-public interface Channel extends Target {
-
-    String getAlias();
-
-    net.kyori.adventure.text.Component getDisplayName();
-
-    void setDisplayName(net.kyori.adventure.text.Component displayName);
-
-    @NotNull @Unmodifiable List<Target> getTargets();
-
-    void addTarget(@NonNull Target target);
-
-    void removeTarget(@NonNull Target target);
-
-    final class InvalidAlias extends RuntimeException {
-    }
+public interface PlayerAdapter<P> extends PlayerIn<P>, PlayerOut<P> {
 }

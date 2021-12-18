@@ -17,20 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.message;
 
-import net.silthus.schat.message.Message;
-import org.junit.jupiter.api.Test;
+import lombok.NonNull;
 
-import static net.kyori.adventure.text.Component.text;
-import static org.assertj.core.api.Assertions.assertThat;
+@FunctionalInterface
+public interface MessageTarget {
 
-class MessageTests {
-
-    @Test
-    void twoMessages_withSameText_areNotEqual() {
-        final Message m1 = Message.message(null, text("Hi"));
-        final Message m2 = Message.message(null, text("Hi"));
-        assertThat(m1).isNotEqualTo(m2);
-    }
+    void sendMessage(@NonNull Message message);
 }

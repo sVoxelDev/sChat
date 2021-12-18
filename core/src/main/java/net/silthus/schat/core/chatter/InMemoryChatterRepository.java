@@ -17,27 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.core.chatter;
 
-import java.util.List;
-import java.util.Optional;
-import lombok.NonNull;
-import net.kyori.adventure.text.Component;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
+import java.util.UUID;
+import net.silthus.schat.core.repository.InMemoryRepository;
+import net.silthus.schat.identity.PlayerIn;
 
-public interface Channels {
+public final class InMemoryChatterRepository extends InMemoryRepository<UUID, ChatterEntity> implements ChatterRepository {
 
-    @NotNull @Unmodifiable List<Channel> all();
+    private final PlayerIn<?> playerAdapter;
 
-    @NotNull Optional<Channel> get(@NonNull String alias);
+    public InMemoryChatterRepository(final PlayerIn<?> playerAdapter) {
+        this.playerAdapter = playerAdapter;
+    }
 
-    @NotNull Channel create(@NonNull String alias) throws DuplicateAlias;
-
-    boolean contains(@NonNull String alias);
-
-    @NotNull Channel create(@NonNull String alias, @NonNull Component displayName);
-
-    final class DuplicateAlias extends RuntimeException {
+    public ChatterEntity getPlayerChatter(final UUID playerId) {
+        return playerAdapter.fromId(playerId)
+            .map(ChatterEntity::new)
+            .orElseThrow();
     }
 }

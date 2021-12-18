@@ -17,12 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.core.repository;
 
-import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
-@FunctionalInterface
-public interface Target {
+/**
+ * Represents an entity that can be stored in a {@link Repository} by its key.
+ *
+ * @param <K> the type of the key
+ * @since next
+ */
+public interface Entity<K> {
 
-    void sendMessage(@NonNull Message message);
+    /**
+     * Gets the key of the entity.
+     *
+     * @return the key
+     * @since next
+     */
+    @NotNull K getKey();
 }
