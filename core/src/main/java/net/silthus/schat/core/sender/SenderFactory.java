@@ -17,16 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.core.sender;
 
-import net.kyori.adventure.text.Component;
+import net.silthus.schat.chatter.Chatter;
 
-public interface Sender {
+public interface SenderFactory {
 
-    void sendMessage(Component component);
-
-    @FunctionalInterface
-    interface SendMessage<T> {
-        void sendMessage(T sender, Component component);
-    }
+    Sender createSender(final Chatter chatter);
 }

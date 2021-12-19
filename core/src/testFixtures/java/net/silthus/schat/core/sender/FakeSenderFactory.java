@@ -17,12 +17,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.message;
+package net.silthus.schat.core.sender;
 
-import lombok.NonNull;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.core.FakePlayer;
 
-@FunctionalInterface
-public interface MessageTarget {
+public final class FakeSenderFactory implements SenderFactory {
 
-    void sendMessage(@NonNull Message message);
+    public static FakeSenderFactory createStubSenderFactory(FakePlayer player) {
+        return new FakeSenderFactory(player);
+    }
+
+    private final FakePlayer player;
+
+    private FakeSenderFactory(FakePlayer player) {
+        this.player = player;
+    }
+
+    @Override
+    public Sender createSender(final Chatter chatter) {
+        return new GenericSender<>(player, FakePlayer::sendMessage);
+    }
 }

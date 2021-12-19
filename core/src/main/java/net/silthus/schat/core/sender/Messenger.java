@@ -17,11 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.core.sender;
 
-import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.message.Message;
 
-public interface SenderFactory {
+public class Messenger implements net.silthus.schat.message.Messenger {
 
-    Sender createSender(final Chatter chatter);
+    private final SenderFactory senderFactory;
+
+    public Messenger(final SenderFactory senderFactory) {
+        this.senderFactory = senderFactory;
+    }
+
+    @Override
+    public void sendMessage(final Message message) {
+        message.getTargets().sendMessage(message);
+    }
 }

@@ -21,11 +21,12 @@ package net.silthus.schat.core.chatter;
 
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.core.Messenger;
 import net.silthus.schat.core.TestBase;
 import net.silthus.schat.core.channel.ChannelEntity;
+import net.silthus.schat.core.sender.Messenger;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.message.source.MessageSource;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -35,7 +36,6 @@ import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 class ChatterTests extends TestBase {
 
@@ -76,12 +76,14 @@ class ChatterTests extends TestBase {
 
         private Messenger messenger;
         private Message message;
+        private MessageSource source;
 
         @BeforeEach
         void setUp() {
             messenger = mock(Messenger.class);
-            chatter = new ChatterEntity(Identity.identity("test"), messenger);
-            message = sendMessage(Message.message("Bob", text("Hi")));
+            chatter = new ChatterEntity(Identity.identity("test"));
+            source = MessageSource.messageSource(Identity.identity("Bob"));
+            message = sendMessage(Message.message(source, text("Hi")).build());
         }
 
         @Test
@@ -91,17 +93,12 @@ class ChatterTests extends TestBase {
 
         @Test
         void sendMessage_hasSource() {
-            assertThat(message.getSource()).isEqualTo("Bob");
+            assertThat(message.getSource()).isEqualTo(source);
         }
 
         @Test
         void sendMessage_hasText() {
-            assertThat(message.getMessage()).isEqualTo(text("Hi"));
-        }
-
-        @Test
-        void sendMessage_forwardsTo_Messenger() {
-            verify(messenger).sendMessage(chatter, message);
+            assertThat(message.getText()).isEqualTo(text("Hi"));
         }
     }
 

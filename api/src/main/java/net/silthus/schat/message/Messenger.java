@@ -17,24 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.message;
 
-import net.silthus.schat.chatter.Chatter;
+/**
+ * The messenger delivers messages to targets.
+ *
+ * @since next
+ */
+public interface Messenger {
 
-public final class FakeSenderFactory implements SenderFactory {
+    /**
+     * Delivers a message to the targets defined in the message.
+     *
+     * <p>The message is built during the send process and returned in the result.</p>
+     *
+     * @param message the message
+     * @since next
+     */
+    void sendMessage(Message message);
 
-    public static FakeSenderFactory createStubSenderFactory(FakePlayer player) {
-        return new FakeSenderFactory(player);
-    }
-
-    private final FakePlayer player;
-
-    private FakeSenderFactory(FakePlayer player) {
-        this.player = player;
-    }
-
-    @Override
-    public Sender createSender(final Chatter chatter) {
-        return new GenericSender<>(player, FakePlayer::sendMessage);
-    }
 }

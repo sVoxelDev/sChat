@@ -30,7 +30,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.core.Messenger;
 import net.silthus.schat.core.repository.Entity;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
@@ -42,19 +41,13 @@ public final class ChatterEntity implements Chatter, Entity<UUID> {
 
     @Getter
     private final Identity identity;
-    private final @Nullable Messenger messenger;
     private final List<Message> messages = new ArrayList<>();
     private final Set<Channel> channels = Collections.newSetFromMap(new WeakHashMap<>());
 
     private Channel activeChannel;
 
     public ChatterEntity(final Identity identity) {
-        this(identity, null);
-    }
-
-    public ChatterEntity(final Identity identity, final @Nullable Messenger messenger) {
         this.identity = identity;
-        this.messenger = messenger;
     }
 
     @Override
@@ -64,8 +57,6 @@ public final class ChatterEntity implements Chatter, Entity<UUID> {
 
     public void sendMessage(final @NonNull Message message) {
         this.messages.add(message);
-        if (messenger != null)
-            messenger.sendMessage(this, message);
     }
 
     public @NotNull @Unmodifiable List<Message> getMessages() {

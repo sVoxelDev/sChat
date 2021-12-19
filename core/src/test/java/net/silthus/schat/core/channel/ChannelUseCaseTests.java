@@ -27,7 +27,7 @@ import net.silthus.schat.channel.Channels;
 import net.silthus.schat.core.DummyTarget;
 import net.silthus.schat.core.TestBase;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.message.target.MessageTarget;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

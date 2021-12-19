@@ -21,7 +21,7 @@ package net.silthus.schat.bukkit;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.silthus.schat.core.Sender;
+import net.silthus.schat.core.sender.Sender;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.text;

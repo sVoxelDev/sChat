@@ -17,15 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.identity;
 
-import lombok.NonNull;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.message.target.MessageTarget;
+import java.util.UUID;
+import net.bytebuddy.utility.RandomString;
 
-public class DummyTarget implements MessageTarget {
+public final class IdentityStub {
 
-    @Override
-    public void sendMessage(final @NonNull Message message) {
+    public static Identity randomIdentity() {
+        return Identity.identity(RandomString.make());
+    }
+
+    public static Identity randomIdentity(final UUID uuid) {
+        return Identity.identity(uuid, RandomString.make());
+    }
+
+    private IdentityStub() {
     }
 }
