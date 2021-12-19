@@ -21,9 +21,12 @@ package net.silthus.schat.bukkit;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.silthus.schat.core.Sender;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.bukkit.BukkitPlayerAdapter.createPlayerIdentity;
+import static net.silthus.schat.core.IdentifiedChatterStub.identifiedChatter;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BukkitAudiencesSenderFactoryTests extends BukkitTestBase {
@@ -31,8 +34,9 @@ class BukkitAudiencesSenderFactoryTests extends BukkitTestBase {
     @Test
     void sendMessage_sendsToPlayerAudience() {
         final PlayerMock player = getServer().addPlayer();
-        final BukkitAudiencesSenderFactory factory = new BukkitAudiencesSenderFactory(new BukkitPlayerAdapter(), BukkitAudiences.create(getPlugin()));
-        factory.sendMessage().sendMessage(player, text("Hi"));
+        final BukkitAudiencesSenderFactory factory = new BukkitAudiencesSenderFactory(BukkitAudiences.create(getPlugin()));
+        final Sender sender = factory.createSender(identifiedChatter(createPlayerIdentity(player)));
+        sender.sendMessage(text("Hi"));
         assertThat(player.nextMessage()).isEqualTo("Hi");
     }
 }

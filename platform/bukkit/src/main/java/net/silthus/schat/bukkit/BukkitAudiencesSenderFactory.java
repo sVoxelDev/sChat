@@ -19,24 +19,38 @@
 
 package net.silthus.schat.bukkit;
 
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.core.Sender;
 import net.silthus.schat.core.SenderFactory;
-import net.silthus.schat.identity.PlayerAdapter;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public final class BukkitAudiencesSenderFactory extends SenderFactory<Player> {
+public final class BukkitAudiencesSenderFactory implements SenderFactory {
 
     private final BukkitAudiences audiences;
 
-    public BukkitAudiencesSenderFactory(final PlayerAdapter<Player> playerAdapter, final @NotNull BukkitAudiences audiences) {
-        super(playerAdapter);
+    public BukkitAudiencesSenderFactory(final @NotNull BukkitAudiences audiences) {
         this.audiences = audiences;
     }
 
     @Override
-    protected Sender.SendMessage<Player> sendMessage() {
-        return (sender, component) -> audiences.player(sender).sendMessage(component);
+    public Sender createSender(final Chatter chatter) {
+        return new AudienceSender(audiences.player(chatter.getId()));
+    }
+
+    private static class AudienceSender implements Sender {
+
+        private final Audience audience;
+
+        AudienceSender(final Audience audience) {
+            this.audience = audience;
+        }
+
+        @Override
+        public void sendMessage(final Component component) {
+            audience.sendMessage(component);
+        }
     }
 }

@@ -30,15 +30,20 @@ import org.jetbrains.annotations.NotNull;
 
 public final class BukkitPlayerAdapter implements PlayerAdapter<Player> {
 
-    public static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
-
-    @Override
-    public @NotNull Identity fromPlayer(@NotNull final Player player) {
+    @NotNull
+    public static Identity createPlayerIdentity(final @NotNull Player player) {
         return Identity.identity(
             player.getUniqueId(),
             player.getName(),
             () -> LEGACY_SERIALIZER.deserialize(player.getDisplayName())
         );
+    }
+
+    public static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
+
+    @Override
+    public @NotNull Identity fromPlayer(@NotNull final Player player) {
+        return createPlayerIdentity(player);
     }
 
     @Override
