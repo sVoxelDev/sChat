@@ -17,27 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter;
+package net.silthus.schat.bukkit;
 
-import java.util.List;
-import java.util.Optional;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.identity.Identified;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
+import be.seeseemelk.mockbukkit.entity.PlayerMock;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.junit.jupiter.api.Test;
 
-public interface Chatter extends MessageTarget, Identified {
+import static net.kyori.adventure.text.Component.text;
+import static org.assertj.core.api.Assertions.assertThat;
 
-    @NotNull @Unmodifiable List<Message> getMessages();
+class BukkitAudiencesSenderFactoryTests extends BukkitTestBase {
 
-    @NotNull Optional<Channel> getActiveChannel();
-
-    default boolean isActiveChannel(@Nullable Channel channel) {
-        return getActiveChannel().map(c -> c.equals(channel)).orElse(false);
+    @Test
+    void sendMessage_sendsToPlayerAudience() {
+        final PlayerMock player = getServer().addPlayer();
+        final BukkitAudiencesSenderFactory factory = new BukkitAudiencesSenderFactory(new BukkitPlayerAdapter(), BukkitAudiences.create(getPlugin()));
+        factory.sendMessage().sendMessage(player, text("Hi"));
+        assertThat(player.nextMessage()).isEqualTo("Hi");
     }
-
-    @NotNull @Unmodifiable List<Channel> getChannels();
 }

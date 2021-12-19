@@ -19,4 +19,8 @@
 
 dependencies {
     api project(':core')
+
+    implementation "net.kyori:adventure-platform-api:4.0.1"
+
+    testImplementation(testFixtures(project(":core")))
 }

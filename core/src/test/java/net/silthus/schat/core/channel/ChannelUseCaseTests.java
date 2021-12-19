@@ -17,15 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.core.channel;
 
 import net.bytebuddy.utility.RandomString;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.Channels;
-import net.silthus.schat.core.channel.ChannelInteractor;
-import net.silthus.schat.core.channel.InMemoryChannelRepository;
+import net.silthus.schat.core.DummyTarget;
+import net.silthus.schat.core.TestBase;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import org.jetbrains.annotations.NotNull;

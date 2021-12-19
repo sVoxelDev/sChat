@@ -17,27 +17,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter;
+package net.silthus.schat.core;
 
-import java.util.List;
-import java.util.Optional;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.identity.Identified;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
+import net.silthus.schat.identity.PlayerOut;
 
-public interface Chatter extends MessageTarget, Identified {
+public final class StubSenderFactory extends SenderFactory<FakePlayer> {
 
-    @NotNull @Unmodifiable List<Message> getMessages();
-
-    @NotNull Optional<Channel> getActiveChannel();
-
-    default boolean isActiveChannel(@Nullable Channel channel) {
-        return getActiveChannel().map(c -> c.equals(channel)).orElse(false);
+    public static StubSenderFactory createStubSenderFactory(FakePlayer player) {
+        return new StubSenderFactory(player);
     }
 
-    @NotNull @Unmodifiable List<Channel> getChannels();
+    private StubSenderFactory(FakePlayer player) {
+        super(new FakePlayerOut(player));
+    }
+
+    public StubSenderFactory(PlayerOut<FakePlayer> playerAdapter) {
+        super(playerAdapter);
+    }
+
+    @Override
+    protected Sender.SendMessage<FakePlayer> sendMessage() {
+        return FakePlayer::sendMessage;
+    }
 }

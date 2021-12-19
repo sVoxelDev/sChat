@@ -17,27 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter;
+package net.silthus.schat.core;
 
-import java.util.List;
-import java.util.Optional;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.identity.Identified;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
+import net.kyori.adventure.text.Component;
 
-public interface Chatter extends MessageTarget, Identified {
+class GenericSender<P> implements Sender {
 
-    @NotNull @Unmodifiable List<Message> getMessages();
+    private final P player;
+    private final SendMessage<P> sendMessage;
 
-    @NotNull Optional<Channel> getActiveChannel();
-
-    default boolean isActiveChannel(@Nullable Channel channel) {
-        return getActiveChannel().map(c -> c.equals(channel)).orElse(false);
+    GenericSender(final P player, final SendMessage<P> sendMessage) {
+        this.player = player;
+        this.sendMessage = sendMessage;
     }
 
-    @NotNull @Unmodifiable List<Channel> getChannels();
+    @Override
+    public void sendMessage(final Component component) {
+        sendMessage.sendMessage(player, component);
+    }
 }

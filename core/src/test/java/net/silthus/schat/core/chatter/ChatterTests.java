@@ -17,12 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.core.chatter;
 
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.core.Messenger;
+import net.silthus.schat.core.TestBase;
 import net.silthus.schat.core.channel.ChannelEntity;
-import net.silthus.schat.core.chatter.ChatterEntity;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import org.jetbrains.annotations.NotNull;
@@ -33,27 +34,29 @@ import org.junit.jupiter.api.Test;
 import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-class ChatterUseCaseTests extends TestBase {
+class ChatterTests extends TestBase {
 
     private Chatter chatter;
     private Channel channel;
 
     @BeforeEach
     void setUp() {
-        chatter = new ChatterEntity(Identity.identity("test")).getApiProxy();
-        channel = new ChannelEntity("test", text("test")).getApiProxy();
-    }
-
-    @Test
-    void getActiveChannel_isEmpty() {
-        assertThat(chatter.getActiveChannel()).isEmpty();
+        chatter = new ChatterEntity(Identity.identity("test"));
+        channel = new ChannelEntity("test", text("test"));
     }
 
     @NotNull
     private Message sendMessage(Message message) {
         chatter.sendMessage(message);
         return message;
+    }
+
+    @Test
+    void getActiveChannel_isEmpty() {
+        assertThat(chatter.getActiveChannel()).isEmpty();
     }
 
     @Test
@@ -71,10 +74,13 @@ class ChatterUseCaseTests extends TestBase {
     @Nested
     class SendMessage {
 
+        private Messenger messenger;
         private Message message;
 
         @BeforeEach
         void setUp() {
+            messenger = mock(Messenger.class);
+            chatter = new ChatterEntity(Identity.identity("test"), messenger);
             message = sendMessage(Message.message("Bob", text("Hi")));
         }
 
@@ -92,6 +98,11 @@ class ChatterUseCaseTests extends TestBase {
         void sendMessage_hasText() {
             assertThat(message.getMessage()).isEqualTo(text("Hi"));
         }
+
+        @Test
+        void sendMessage_forwardsTo_Messenger() {
+            verify(messenger).sendMessage(chatter, message);
+        }
     }
 
     @Test
@@ -104,75 +115,5 @@ class ChatterUseCaseTests extends TestBase {
     void getChannels_isUnmodifiable() {
         assertThatExceptionOfType(UnsupportedOperationException.class)
             .isThrownBy(() -> chatter.getChannels().add(channel));
-    }
-
-    @Nested
-    class JoinChannel {
-
-        @BeforeEach
-        void setUp() {
-            chatter.join(channel);
-        }
-
-        @Test
-        void join_addsChannel_toChatter() {
-            assertThat(chatter.getChannels()).contains(channel);
-        }
-
-        @Test
-        void join_addsTarget_toChannel() {
-            assertThat(channel.getTargets()).contains(chatter);
-        }
-
-        @Nested
-        class LeaveChannel {
-
-            @BeforeEach
-            void setUp() {
-                chatter.leave(channel);
-            }
-
-            @Test
-            void leave_removesChannel_fromChatter() {
-                assertThat(chatter.getChannels()).doesNotContain(channel);
-            }
-
-            @Test
-            void leave_removesTarget_fromChannel() {
-                assertThat(channel.getTargets()).doesNotContain(chatter);
-            }
-        }
-    }
-
-    @Nested
-    class SetActiveChannel {
-
-        @BeforeEach
-        void setUp() {
-            chatter.setActiveChannel(channel);
-        }
-
-        @Test
-        void getActiveChannel_returnsActiveChannel() {
-            assertThat(chatter.getActiveChannel())
-                .isPresent().get()
-                .isEqualTo(channel);
-        }
-
-        @Test
-        void setActiveChannel_addsChannel() {
-            assertThat(chatter.getChannels()).contains(channel);
-        }
-
-        @Test
-        void setActiveChannel_addsChatter_asTarget() {
-            assertThat(channel.getTargets()).contains(chatter);
-        }
-
-        @Test
-        void leave_removesActiveTarget_ifSame() {
-            chatter.leave(channel);
-            assertThat(chatter.getActiveChannel()).isEmpty();
-        }
     }
 }

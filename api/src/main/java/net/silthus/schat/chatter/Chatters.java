@@ -19,25 +19,16 @@
 
 package net.silthus.schat.chatter;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.identity.Identified;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
-public interface Chatter extends MessageTarget, Identified {
+public interface Chatters {
 
-    @NotNull @Unmodifiable List<Message> getMessages();
+    Chatter getPlayer(UUID playerId);
 
-    @NotNull Optional<Channel> getActiveChannel();
+    void setActiveChannel(Chatter chatter, Channel channel);
 
-    default boolean isActiveChannel(@Nullable Channel channel) {
-        return getActiveChannel().map(c -> c.equals(channel)).orElse(false);
-    }
+    void joinChannel(Chatter chatter, Channel channel);
 
-    @NotNull @Unmodifiable List<Channel> getChannels();
+    void leaveChannel(Chatter chatter, Channel channel);
 }

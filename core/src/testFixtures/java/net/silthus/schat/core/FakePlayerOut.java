@@ -19,18 +19,21 @@
 
 package net.silthus.schat.core;
 
-import net.silthus.schat.message.Message;
-import org.junit.jupiter.api.Test;
+import java.util.Optional;
+import net.silthus.schat.identity.Identity;
+import net.silthus.schat.identity.PlayerOut;
+import org.jetbrains.annotations.NotNull;
 
-import static net.kyori.adventure.text.Component.text;
-import static org.assertj.core.api.Assertions.assertThat;
+public final class FakePlayerOut implements PlayerOut<FakePlayer> {
 
-class MessageTests {
+    private final FakePlayer player;
 
-    @Test
-    void twoMessages_withSameText_areNotEqual() {
-        final Message m1 = Message.message(null, text("Hi"));
-        final Message m2 = Message.message(null, text("Hi"));
-        assertThat(m1).isNotEqualTo(m2);
+    public FakePlayerOut(final FakePlayer player) {
+        this.player = player;
+    }
+
+    @Override
+    public @NotNull Optional<FakePlayer> toPlayer(@NotNull final Identity identity) {
+        return Optional.of(player);
     }
 }

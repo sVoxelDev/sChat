@@ -20,8 +20,28 @@
 package net.silthus.schat.core.chatter;
 
 import java.util.UUID;
-import net.silthus.schat.core.repository.Repository;
+import lombok.AccessLevel;
+import lombok.Getter;
+import net.silthus.schat.core.repository.InMemoryRepository;
+import net.silthus.schat.identity.PlayerIn;
 
-public interface ChatterRepository extends Repository<UUID, ChatterEntity> {
-    ChatterEntity getPlayer(UUID playerId);
+public abstract class AbstractChatterRepository extends InMemoryRepository<UUID, ChatterEntity> implements ChatterRepository {
+
+    @Getter(AccessLevel.PROTECTED)
+    private final PlayerIn<?> playerAdapter;
+
+    protected AbstractChatterRepository(final PlayerIn<?> playerAdapter) {
+        this.playerAdapter = playerAdapter;
+    }
+
+    @Override
+    public final ChatterEntity getPlayer(final UUID playerId) {
+        return get(playerId).orElseGet(() -> {
+            final ChatterEntity chatter = getPlayerAdapter().fromId(playerId)
+                .map(ChatterEntity::new)
+                .orElseThrow();
+            add(chatter);
+            return chatter;
+        });
+    }
 }

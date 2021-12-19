@@ -28,18 +28,15 @@ import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.core.api.ApiChannel;
 import net.silthus.schat.core.repository.Entity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-public final class ChannelEntity implements Entity<String> {
+public final class ChannelEntity implements Channel, Entity<String> {
 
     private static final Pattern VALID_CHANNEL_ID = Pattern.compile("^[a-z0-9_-]+$");
-    @Getter
-    private final ApiChannel apiProxy = new ApiChannel(this);
 
     @Getter
     private final @NotNull String key;

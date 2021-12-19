@@ -17,27 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter;
+package net.silthus.schat.core;
 
-import java.util.List;
-import java.util.Optional;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.identity.Identified;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
-public interface Chatter extends MessageTarget, Identified {
+public class Messenger {
 
-    @NotNull @Unmodifiable List<Message> getMessages();
+    private final SenderFactory<?> senderFactory;
 
-    @NotNull Optional<Channel> getActiveChannel();
-
-    default boolean isActiveChannel(@Nullable Channel channel) {
-        return getActiveChannel().map(c -> c.equals(channel)).orElse(false);
+    public Messenger(final SenderFactory<?> senderFactory) {
+        this.senderFactory = senderFactory;
     }
 
-    @NotNull @Unmodifiable List<Channel> getChannels();
+    public void sendMessage(final Chatter chatter, final Message message) {
+        senderFactory.createSender(chatter).sendMessage(message.getMessage());
+    }
 }

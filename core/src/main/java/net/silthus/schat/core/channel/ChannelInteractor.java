@@ -19,9 +19,7 @@
 
 package net.silthus.schat.core.channel;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
@@ -41,17 +39,14 @@ public final class ChannelInteractor implements Channels {
     }
 
     @Override
-    public @NotNull @Unmodifiable List<Channel> all() {
-        final ArrayList<Channel> channels = new ArrayList<>();
-        for (ChannelEntity channel : repository.all()) {
-            channels.add(channel.getApiProxy());
-        }
-        return Collections.unmodifiableList(channels);
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public @NotNull @Unmodifiable Collection<Channel> all() {
+        return (Collection) repository.all();
     }
 
     @Override
     public @NotNull Optional<Channel> get(@NonNull String alias) {
-        return repository.get(alias).map(ChannelEntity::getApiProxy);
+        return repository.get(alias).map(channelEntity -> channelEntity);
     }
 
     @Override
@@ -60,16 +55,16 @@ public final class ChannelInteractor implements Channels {
     }
 
     @Override
-    public @NotNull Channel create(@NonNull String alias) throws DuplicateIdentifier {
+    public @NotNull ChannelEntity create(@NonNull String alias) throws DuplicateIdentifier {
         return create(alias, text(alias));
     }
 
     @Override
-    public @NotNull Channel create(@NonNull String alias, @NonNull Component displayName) {
+    public @NotNull ChannelEntity create(@NonNull String alias, @NonNull Component displayName) {
         if (contains(alias))
             throw new DuplicateIdentifier();
         return repository.get(alias)
-            .orElseGet(() -> createAndAddChannel(alias, displayName)).getApiProxy();
+            .orElseGet(() -> createAndAddChannel(alias, displayName));
     }
 
     private @NotNull ChannelEntity createAndAddChannel(final @NotNull String alias, final @NotNull Component displayName) {
