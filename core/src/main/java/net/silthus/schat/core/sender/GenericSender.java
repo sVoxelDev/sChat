@@ -17,20 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.core.sender;
 
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.message.Message;
+import net.kyori.adventure.text.Component;
 
-public class Messenger {
+class GenericSender<P> implements Sender {
 
-    private final SenderFactory senderFactory;
+    private final P player;
+    private final SendMessage<P> sendMessage;
 
-    public Messenger(final SenderFactory senderFactory) {
-        this.senderFactory = senderFactory;
+    GenericSender(final P player, final SendMessage<P> sendMessage) {
+        this.player = player;
+        this.sendMessage = sendMessage;
     }
 
-    public void sendMessage(final Chatter chatter, final Message message) {
-        senderFactory.createSender(chatter).sendMessage(message.getMessage());
+    @Override
+    public void sendMessage(final Component component) {
+        sendMessage.sendMessage(player, component);
     }
 }

@@ -17,15 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.message.source;
 
-import lombok.NonNull;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.message.target.MessageTarget;
+import net.silthus.schat.identity.Identity;
 
-public class DummyTarget implements MessageTarget {
+final class MessageSources {
 
-    @Override
-    public void sendMessage(final @NonNull Message message) {
+    static final MessageSource NIL = MessageSource.messageSource(Identity.nil());
+
+    private MessageSources() {
     }
 }

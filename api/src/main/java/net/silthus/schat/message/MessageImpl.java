@@ -19,21 +19,42 @@
 
 package net.silthus.schat.message;
 
+import java.time.Instant;
 import java.util.UUID;
-import lombok.EqualsAndHashCode;
+import lombok.Data;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.message.source.MessageSource;
+import net.silthus.schat.message.target.Targets;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
-@EqualsAndHashCode(of = {"id"})
 final class MessageImpl implements Message {
 
     private final UUID id = UUID.randomUUID();
-    private final String source;
-    private final Component message;
+    private final Instant timestamp = Instant.now();
+    private final MessageSource source;
+    private final Component text;
+    private final Targets targets;
 
-    MessageImpl(String source, Component message) {
+    private MessageImpl(final MessageSource source, final Component text, final Targets targets) {
         this.source = source;
-        this.message = message;
+        this.text = text;
+        this.targets = targets;
+    }
+
+    @Data
+    @Accessors(fluent = true)
+    static final class MessageBuilderImpl implements Builder {
+
+        private MessageSource source = MessageSource.nil();
+        private Component text = Component.empty();
+        private Targets targets = new Targets();
+
+        @Override
+        public @NotNull Message build() {
+            return new MessageImpl(source, text, Targets.unmodifiable(targets));
+        }
     }
 }

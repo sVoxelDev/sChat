@@ -23,8 +23,8 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.core.Sender;
-import net.silthus.schat.core.SenderFactory;
+import net.silthus.schat.core.sender.Sender;
+import net.silthus.schat.core.sender.SenderFactory;
 import org.jetbrains.annotations.NotNull;
 
 public final class BukkitAudiencesSenderFactory implements SenderFactory {

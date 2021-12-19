@@ -24,7 +24,7 @@ import java.util.Optional;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identified;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.message.target.MessageTarget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;

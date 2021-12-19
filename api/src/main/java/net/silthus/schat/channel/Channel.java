@@ -22,7 +22,7 @@ package net.silthus.schat.channel;
 import java.util.List;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.message.target.MessageTarget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 

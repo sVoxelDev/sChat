@@ -17,15 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.core.sender;
 
-import lombok.NonNull;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.message.target.MessageTarget;
+import net.kyori.adventure.text.Component;
 
-public class DummyTarget implements MessageTarget {
+public interface Sender {
 
-    @Override
-    public void sendMessage(final @NonNull Message message) {
+    void sendMessage(Component component);
+
+    @FunctionalInterface
+    interface SendMessage<T> {
+        void sendMessage(T sender, Component component);
     }
 }

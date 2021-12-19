@@ -35,6 +35,6 @@ public class TestBase {
 
     @NotNull
     protected Message randomMessage() {
-        return message(randomText());
+        return message(randomText()).build();
     }
 }

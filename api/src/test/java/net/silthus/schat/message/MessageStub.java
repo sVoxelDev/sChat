@@ -17,22 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.message;
 
+import net.bytebuddy.utility.RandomString;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.identity.IdentityStub;
+import net.silthus.schat.message.source.MessageSource;
 
-class GenericSender<P> implements Sender {
+public final class MessageStub {
 
-    private final P player;
-    private final SendMessage<P> sendMessage;
-
-    GenericSender(final P player, final SendMessage<P> sendMessage) {
-        this.player = player;
-        this.sendMessage = sendMessage;
+    public static Message.Builder randomMessage() {
+        return Message.message(MessageSource.messageSource(IdentityStub.randomIdentity()), Component.text(RandomString.make()));
     }
 
-    @Override
-    public void sendMessage(final Component component) {
-        sendMessage.sendMessage(player, component);
+    public static Message createRandomMessage() {
+        return randomMessage().build();
+    }
+
+    private MessageStub() {
     }
 }

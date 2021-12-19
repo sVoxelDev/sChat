@@ -30,7 +30,7 @@ import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.core.repository.Entity;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.message.target.MessageTarget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 

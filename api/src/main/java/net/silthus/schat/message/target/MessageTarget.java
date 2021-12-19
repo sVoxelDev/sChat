@@ -17,15 +17,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core;
+package net.silthus.schat.message.target;
 
-import lombok.NonNull;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.message.target.MessageTarget;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
-public class DummyTarget implements MessageTarget {
+/**
+ * The message target can receive and process messages.
+ *
+ * <p>A target can be anything from a player, to the console or a web application.</p>
+ *
+ * <p>The target implementation is responsible for processing the messages that are sent to it.</p>
+ *
+ * @since next
+ */
+public interface MessageTarget {
 
-    @Override
-    public void sendMessage(final @NonNull Message message) {
-    }
+    /**
+     * Sends a message to this target.
+     *
+     * <p>Override this method to add custom logic for processing messages.</p>
+     *
+     * @param message the message to send
+     * @since next
+     */
+    @ApiStatus.Internal
+    @ApiStatus.OverrideOnly
+    void sendMessage(@NotNull Message message);
 }
