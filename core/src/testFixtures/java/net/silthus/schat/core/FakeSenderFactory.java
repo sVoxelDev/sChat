@@ -19,24 +19,22 @@
 
 package net.silthus.schat.core;
 
-import net.silthus.schat.identity.PlayerOut;
+import net.silthus.schat.chatter.Chatter;
 
-public final class StubSenderFactory extends SenderFactory<FakePlayer> {
+public final class FakeSenderFactory implements SenderFactory {
 
-    public static StubSenderFactory createStubSenderFactory(FakePlayer player) {
-        return new StubSenderFactory(player);
+    public static FakeSenderFactory createStubSenderFactory(FakePlayer player) {
+        return new FakeSenderFactory(player);
     }
 
-    private StubSenderFactory(FakePlayer player) {
-        super(new FakePlayerOut(player));
-    }
+    private final FakePlayer player;
 
-    public StubSenderFactory(PlayerOut<FakePlayer> playerAdapter) {
-        super(playerAdapter);
+    private FakeSenderFactory(FakePlayer player) {
+        this.player = player;
     }
 
     @Override
-    protected Sender.SendMessage<FakePlayer> sendMessage() {
-        return FakePlayer::sendMessage;
+    public Sender createSender(final Chatter chatter) {
+        return new GenericSender<>(player, FakePlayer::sendMessage);
     }
 }

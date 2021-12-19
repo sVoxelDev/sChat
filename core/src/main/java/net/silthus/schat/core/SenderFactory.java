@@ -19,30 +19,9 @@
 
 package net.silthus.schat.core;
 
-import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.identity.PlayerOut;
 
-public abstract class SenderFactory<P> {
+public interface SenderFactory {
 
-    private final PlayerOut<P> playerAdapter;
-
-    public SenderFactory(final PlayerOut<P> playerAdapter) {
-        this.playerAdapter = playerAdapter;
-    }
-
-    protected abstract Sender.SendMessage<P> sendMessage();
-
-    public Sender createSender(final Chatter chatter) {
-        return playerAdapter.toPlayer(chatter.getIdentity())
-            .map(p -> (Sender) new GenericSender<>(p, sendMessage()))
-            .orElse(new EmptySender());
-    }
-
-    private static class EmptySender implements Sender {
-        @Override
-        public void sendMessage(final Component component) {
-
-        }
-    }
+    Sender createSender(final Chatter chatter);
 }

@@ -24,9 +24,9 @@ import net.silthus.schat.message.Message;
 
 public class Messenger {
 
-    private final SenderFactory<?> senderFactory;
+    private final SenderFactory senderFactory;
 
-    public Messenger(final SenderFactory<?> senderFactory) {
+    public Messenger(final SenderFactory senderFactory) {
         this.senderFactory = senderFactory;
     }
 

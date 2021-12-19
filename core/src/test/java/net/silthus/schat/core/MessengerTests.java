@@ -42,7 +42,7 @@ class MessengerTests {
 
     @Test
     void create() {
-        final Messenger messenger = new Messenger(StubSenderFactory.createStubSenderFactory(player));
+        final Messenger messenger = new Messenger(FakeSenderFactory.createStubSenderFactory(player));
         final ChatterEntity chatter = new ChatterEntity(Identity.identity(UUID.randomUUID()));
         final Message message = message(text("Hi"));
         messenger.sendMessage(chatter, message);
