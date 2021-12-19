@@ -17,27 +17,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter;
+package net.silthus.schat.core;
 
-import java.util.List;
-import java.util.Optional;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.identity.Identified;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
+import net.kyori.adventure.text.Component;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.identity.PlayerOut;
 
-public interface Chatter extends MessageTarget, Identified {
+public abstract class SenderFactory<P> {
 
-    @NotNull @Unmodifiable List<Message> getMessages();
+    private final PlayerOut<P> playerAdapter;
 
-    @NotNull Optional<Channel> getActiveChannel();
-
-    default boolean isActiveChannel(@Nullable Channel channel) {
-        return getActiveChannel().map(c -> c.equals(channel)).orElse(false);
+    public SenderFactory(final PlayerOut<P> playerAdapter) {
+        this.playerAdapter = playerAdapter;
     }
 
-    @NotNull @Unmodifiable List<Channel> getChannels();
+    protected abstract Sender.SendMessage<P> sendMessage();
+
+    public Sender createSender(final Chatter chatter) {
+        return playerAdapter.toPlayer(chatter.getIdentity())
+            .map(p -> (Sender) new GenericSender<>(p, sendMessage()))
+            .orElse(new EmptySender());
+    }
+
+    private static class EmptySender implements Sender {
+        @Override
+        public void sendMessage(final Component component) {
+
+        }
+    }
 }

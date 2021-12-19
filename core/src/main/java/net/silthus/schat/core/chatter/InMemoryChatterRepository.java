@@ -19,21 +19,12 @@
 
 package net.silthus.schat.core.chatter;
 
-import java.util.UUID;
-import net.silthus.schat.core.repository.InMemoryRepository;
 import net.silthus.schat.identity.PlayerIn;
 
-public final class InMemoryChatterRepository extends InMemoryRepository<UUID, ChatterEntity> implements ChatterRepository {
-
-    private final PlayerIn<?> playerAdapter;
+public final class InMemoryChatterRepository extends AbstractChatterRepository {
 
     public InMemoryChatterRepository(final PlayerIn<?> playerAdapter) {
-        this.playerAdapter = playerAdapter;
+        super(playerAdapter);
     }
 
-    public ChatterEntity getPlayerChatter(final UUID playerId) {
-        return playerAdapter.fromId(playerId)
-            .map(ChatterEntity::new)
-            .orElseThrow();
-    }
 }

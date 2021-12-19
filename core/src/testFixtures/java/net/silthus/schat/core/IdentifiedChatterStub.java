@@ -17,80 +17,57 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.core.api;
+package net.silthus.schat.core;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.NonNull;
-import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.core.chatter.ChatterEntity;
+import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-public final class ApiChatter implements Chatter {
+public final class IdentifiedChatterStub implements Chatter {
 
-    private final ChatterEntity handle;
-
-    public ApiChatter(ChatterEntity handle) {
-        this.handle = handle;
+    public static Chatter identifiedChatter(final Identity identity) {
+        return new IdentifiedChatterStub(identity);
     }
 
-    @Override
-    public UUID getId() {
-        return handle.getId();
+    public static Chatter identifiedChatter() {
+        return new IdentifiedChatterStub(Identity.identity(UUID.randomUUID(), "Stub"));
     }
 
-    @Override
-    public String getName() {
-        return handle.getName();
-    }
+    private final Identity identity;
 
-    @Override
-    public Component getDisplayName() {
-        return handle.getDisplayName();
+    private IdentifiedChatterStub(final Identity identity) {
+        this.identity = identity;
     }
 
     @Override
     public @NotNull @Unmodifiable List<Message> getMessages() {
-        return handle.getMessages();
+        return null;
     }
 
     @Override
     public @NotNull Optional<Channel> getActiveChannel() {
-        return handle.getActiveChannel();
+        return Optional.empty();
     }
 
     @Override
     public @NotNull @Unmodifiable List<Channel> getChannels() {
-        return handle.getChannels();
+        return null;
     }
 
     @Override
-    public void setActiveChannel(Channel channel) {
-        join(channel);
-        handle.setActiveChannel(channel);
+    public @NotNull Identity getIdentity() {
+        return identity;
     }
 
     @Override
-    public void join(Channel channel) {
-        handle.addChannel(channel);
-        channel.addTarget(this);
-    }
+    public void sendMessage(@NonNull final Message message) {
 
-    @Override
-    public void leave(Channel channel) {
-        handle.removeChannel(channel);
-        channel.removeTarget(this);
-        if (handle.isActiveChannel(channel))
-            handle.clearActiveChannel();
-    }
-
-    @Override
-    public void sendMessage(@NonNull Message message) {
-        handle.sendMessage(message);
     }
 }

@@ -17,27 +17,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter;
+package net.silthus.schat.bukkit;
 
-import java.util.List;
-import java.util.Optional;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.identity.Identified;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
+import be.seeseemelk.mockbukkit.MockBukkit;
+import be.seeseemelk.mockbukkit.ServerMock;
+import lombok.Getter;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
-public interface Chatter extends MessageTarget, Identified {
+@Getter
+public abstract class BukkitTestBase {
 
-    @NotNull @Unmodifiable List<Message> getMessages();
+    private ServerMock server;
+    private SChatBukkitPlugin plugin;
 
-    @NotNull Optional<Channel> getActiveChannel();
-
-    default boolean isActiveChannel(@Nullable Channel channel) {
-        return getActiveChannel().map(c -> c.equals(channel)).orElse(false);
+    @BeforeEach
+    void setUp() {
+        server = MockBukkit.mock();
+        plugin = MockBukkit.load(SChatBukkitPlugin.class);
     }
 
-    @NotNull @Unmodifiable List<Channel> getChannels();
+    @AfterEach
+    void tearDown() {
+        MockBukkit.unmock();
+    }
 }

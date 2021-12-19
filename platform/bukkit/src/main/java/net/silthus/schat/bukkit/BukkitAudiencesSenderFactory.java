@@ -17,27 +17,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter;
+package net.silthus.schat.bukkit;
 
-import java.util.List;
-import java.util.Optional;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.identity.Identified;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.silthus.schat.core.Sender;
+import net.silthus.schat.core.SenderFactory;
+import net.silthus.schat.identity.PlayerAdapter;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
-public interface Chatter extends MessageTarget, Identified {
+public final class BukkitAudiencesSenderFactory extends SenderFactory<Player> {
 
-    @NotNull @Unmodifiable List<Message> getMessages();
+    private final BukkitAudiences audiences;
 
-    @NotNull Optional<Channel> getActiveChannel();
-
-    default boolean isActiveChannel(@Nullable Channel channel) {
-        return getActiveChannel().map(c -> c.equals(channel)).orElse(false);
+    public BukkitAudiencesSenderFactory(final PlayerAdapter<Player> playerAdapter, final @NotNull BukkitAudiences audiences) {
+        super(playerAdapter);
+        this.audiences = audiences;
     }
 
-    @NotNull @Unmodifiable List<Channel> getChannels();
+    @Override
+    protected Sender.SendMessage<Player> sendMessage() {
+        return (sender, component) -> audiences.player(sender).sendMessage(component);
+    }
 }

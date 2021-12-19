@@ -17,27 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter;
+package net.silthus.schat.message;
 
-import java.util.List;
-import java.util.Optional;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.identity.Identified;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
+import org.junit.jupiter.api.Test;
 
-public interface Chatter extends MessageTarget, Identified {
+import static net.kyori.adventure.text.Component.text;
+import static org.assertj.core.api.Assertions.assertThat;
 
-    @NotNull @Unmodifiable List<Message> getMessages();
+class MessageTests {
 
-    @NotNull Optional<Channel> getActiveChannel();
-
-    default boolean isActiveChannel(@Nullable Channel channel) {
-        return getActiveChannel().map(c -> c.equals(channel)).orElse(false);
+    @Test
+    void twoMessages_withSameText_areNotEqual() {
+        final Message m1 = Message.message(null, text("Hi"));
+        final Message m2 = Message.message(null, text("Hi"));
+        assertThat(m1).isNotEqualTo(m2);
     }
-
-    @NotNull @Unmodifiable List<Channel> getChannels();
 }

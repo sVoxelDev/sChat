@@ -17,26 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.bukkit;
+package net.silthus.schat.core;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.ServerMock;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import net.kyori.adventure.text.Component;
 
-public class PluginTests {
+public interface Sender {
 
-    private ServerMock server;
-    private SChatBukkitPlugin plugin;
+    void sendMessage(Component component);
 
-    @BeforeEach
-    void setUp() {
-        server = MockBukkit.mock();
-        plugin = MockBukkit.load(SChatBukkitPlugin.class);
-    }
-
-    @AfterEach
-    void tearDown() {
-        MockBukkit.unmock();
+    @FunctionalInterface
+    interface SendMessage<T> {
+        void sendMessage(T sender, Component component);
     }
 }

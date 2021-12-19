@@ -19,7 +19,7 @@
 
 package net.silthus.schat.channel;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 public interface Channels {
 
-    @NotNull @Unmodifiable List<Channel> all();
+    @NotNull @Unmodifiable Collection<Channel> all();
 
     @NotNull Optional<Channel> get(@NonNull String alias);
 

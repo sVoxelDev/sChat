@@ -29,30 +29,32 @@ import java.util.WeakHashMap;
 import lombok.Getter;
 import lombok.NonNull;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.core.api.ApiChatter;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.core.Messenger;
 import net.silthus.schat.core.repository.Entity;
-import net.silthus.schat.identity.Identified;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-public final class ChatterEntity implements MessageTarget, Entity<UUID>, Identified {
-
-    @Getter
-    private final ApiChatter apiProxy = new ApiChatter(this);
+public final class ChatterEntity implements Chatter, Entity<UUID> {
 
     @Getter
     private final Identity identity;
+    private final @Nullable Messenger messenger;
     private final List<Message> messages = new ArrayList<>();
     private final Set<Channel> channels = Collections.newSetFromMap(new WeakHashMap<>());
 
     private Channel activeChannel;
 
     public ChatterEntity(final Identity identity) {
+        this(identity, null);
+    }
+
+    public ChatterEntity(final Identity identity, final @Nullable Messenger messenger) {
         this.identity = identity;
+        this.messenger = messenger;
     }
 
     @Override
@@ -62,6 +64,8 @@ public final class ChatterEntity implements MessageTarget, Entity<UUID>, Identif
 
     public void sendMessage(final @NonNull Message message) {
         this.messages.add(message);
+        if (messenger != null)
+            messenger.sendMessage(this, message);
     }
 
     public @NotNull @Unmodifiable List<Message> getMessages() {
@@ -72,8 +76,19 @@ public final class ChatterEntity implements MessageTarget, Entity<UUID>, Identif
         return Optional.ofNullable(activeChannel);
     }
 
-    public void setActiveChannel(final @NonNull Channel channel) {
+    public void setActiveChannel(Channel channel) {
+        addChannel(channel);
         this.activeChannel = channel;
+    }
+
+    public void addChannel(Channel channel) {
+        channels.add(channel);
+    }
+
+    public void removeChannel(Channel channel) {
+        channels.remove(channel);
+        if (isActiveChannel(channel))
+            clearActiveChannel();
     }
 
     public void clearActiveChannel() {
@@ -86,13 +101,5 @@ public final class ChatterEntity implements MessageTarget, Entity<UUID>, Identif
 
     public @NotNull @Unmodifiable List<Channel> getChannels() {
         return List.copyOf(channels);
-    }
-
-    public void addChannel(final @NotNull Channel channel) {
-        channels.add(channel);
-    }
-
-    public void removeChannel(final @NotNull Channel channel) {
-        channels.remove(channel);
     }
 }

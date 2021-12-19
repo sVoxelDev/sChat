@@ -83,6 +83,7 @@ dependencies {
 //    implementation 'com.sk89q.worldguard:worldguard-bukkit:7.0.6'
 
     testImplementation 'net.silthus:MockBukkit:v1.17-SNAPSHOT'
+    testImplementation(testFixtures(project(":core")))
 }
 
 shadowJar {
