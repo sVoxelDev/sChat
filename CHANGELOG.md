@@ -149,4 +149,4 @@
 
 * add icon to leave a conversation ([31db6dc](https://github.com/Silthus/sChat/commit/31db6dc47300f6061b25f87aeffec192a6fc68c7))
 * initial beta release ([8cac128](https://github.com/Silthus/sChat/commit/8cac1281e9530898bcef3c799455f61d6942a91a))
-* **view:** add unread message indicator to channels ([bf720d4](https://github.com/Silthus/sChat/commit/bf720d450184a7c6e51731fe2fbb6e31fba2adb4))
+* **viewer:** add unread message indicator to channels ([bf720d4](https://github.com/Silthus/sChat/commit/bf720d450184a7c6e51731fe2fbb6e31fba2adb4))
