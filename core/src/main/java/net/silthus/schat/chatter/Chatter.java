@@ -46,7 +46,7 @@ public class Chatter implements MessageTarget, Formatted {
     private final Formatter<Chatter> formatter = new ChatterFormatter();
 
     private final List<Channel> channels = new ArrayList<>();
-    private final Messenger messenger;
+    private final Messenger<Chatter> messenger;
 
     @Getter
     @Setter
@@ -54,7 +54,7 @@ public class Chatter implements MessageTarget, Formatted {
     private Channel activeChannel;
 
     public Chatter(final @NonNull Viewer viewer) {
-        this.messenger = Messenger.messenger((messenger1, message) -> viewer.updateView(this));
+        this.messenger = Messenger.messenger(Chatter.class, (target, messenger1, message) -> viewer.updateView(target));
     }
 
     public Chatter() {
@@ -96,7 +96,7 @@ public class Chatter implements MessageTarget, Formatted {
 
     @Override
     public void sendMessage(final Message message) {
-        messenger.sendMessage(message);
+        messenger.sendMessage(this, message);
     }
 
     private void validateChannel() {

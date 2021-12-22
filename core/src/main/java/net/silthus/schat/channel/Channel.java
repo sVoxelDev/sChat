@@ -19,9 +19,12 @@
 
 package net.silthus.schat.channel;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.format.Formatted;
 import net.silthus.schat.format.Formatter;
@@ -39,17 +42,29 @@ import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 public class Channel implements MessageTarget, Formatted {
 
     public static final String JOIN_COMMAND = "/schat channel join ";
+    private static final Pattern VALID_CHANNEL_ID = Pattern.compile("^[a-z0-9_-]+$");
 
     private final Formatter<Channel> formatter = new ChannelFormatter();
 
     @Getter
-    private final String identifier;
+    private final String key;
     private final Set<MessageTarget> targets = new HashSet<>();
-    private final Messenger messenger;
+    private Messenger<Channel> messenger;
 
-    public Channel(final String identifier) {
-        this.identifier = identifier;
-        this.messenger = Messenger.messenger((messenger1, message) -> targets.forEach(target -> target.sendMessage(message)));
+    @Getter
+    @Setter
+    private Component displayName;
+
+    public Channel(final String key) {
+        if (isInvalidChannelKey(key))
+            throw new InvalidKey();
+        this.key = key;
+        this.displayName = text(key);
+        this.messenger = Messenger.messenger(Channel.class, new DefaultChannelStrategy());
+    }
+
+    public Set<MessageTarget> getTargets() {
+        return Collections.unmodifiableSet(targets);
     }
 
     public @NotNull @Unmodifiable Messages getMessages() {
@@ -62,7 +77,7 @@ public class Channel implements MessageTarget, Formatted {
 
     @Override
     public void sendMessage(final Message message) {
-        messenger.sendMessage(message);
+        messenger.sendMessage(this, message);
     }
 
     @Override
@@ -70,11 +85,30 @@ public class Channel implements MessageTarget, Formatted {
         return formatter.format(this);
     }
 
+    private boolean isInvalidChannelKey(final String key) {
+        return VALID_CHANNEL_ID.asMatchPredicate().negate().test(key);
+    }
+
+    public void setMessengerStrategy(final Messenger.Strategy<Channel> strategy) {
+        this.messenger = Messenger.messenger(Channel.class, strategy);
+    }
+
     private static class ChannelFormatter implements Formatter<Channel> {
 
         public @NotNull Component format(Channel channel) {
-            return text(channel.getIdentifier())
-                .clickEvent(clickEvent(RUN_COMMAND, JOIN_COMMAND + channel.getIdentifier()));
+            return channel.getDisplayName()
+                .clickEvent(clickEvent(RUN_COMMAND, JOIN_COMMAND + channel.getKey()));
         }
+    }
+
+    private static class DefaultChannelStrategy implements Messenger.Strategy<Channel> {
+
+        @Override
+        public void processMessage(final Channel target, final Messenger<Channel> messenger, final Message message) {
+            target.getTargets().forEach(messageTarget -> messageTarget.sendMessage(message));
+        }
+    }
+
+    public static class InvalidKey extends RuntimeException {
     }
 }
