@@ -94,7 +94,7 @@ repositories {
 dependencies {
     implementation "io.papermc.paper:paper-api:${mcVersion}-R0.1-SNAPSHOT"
 
-    implementation "co.aikar:acf-paper:0.5.0-SNAPSHOT"
+    implementation "co.aikar:acf-paper:0.5.1-SNAPSHOT"
     implementation "com.github.MilkBowl:VaultAPI:1.7.1"
     implementation 'com.comphenix.protocol:ProtocolLib:4.7.0'
 
