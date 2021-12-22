@@ -95,7 +95,7 @@ subprojects {
     }
 
     dependencies {
-        api "net.kyori:adventure-api:4.10.0-SNAPSHOT"
+        api 'net.kyori:adventure-api:4.10.0-SNAPSHOT'
 
         implementation 'net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT'
         implementation 'net.kyori:adventure-text-serializer-plain:4.9.3'
@@ -107,6 +107,8 @@ subprojects {
         testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
         testImplementation 'org.mockito:mockito-core:4.0.0'
         testImplementation 'org.assertj:assertj-core:3.21.0'
+
+        testFixturesImplementation 'net.kyori:adventure-text-serializer-plain:4.9.3'
     }
 
     test {

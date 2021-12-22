@@ -24,8 +24,13 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.ComponentTestHelper.toText;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -85,5 +90,29 @@ class ChannelTests {
         sendMessage();
         message.delete();
         assertThat(channel.getMessages()).doesNotContain(message);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "",
+        "   ",
+        "AAAA",
+        "a b",
+        "*!"
+    })
+    void givenInvalidKey_throws(String key) {
+        assertThatExceptionOfType(Channel.InvalidKey.class)
+            .isThrownBy(() -> new Channel(key));
+    }
+
+    @Test
+    void givenNoDisplayName_usesKey() {
+        assertThat(channel.getDisplayName()).isEqualTo(text("test"));
+    }
+
+    @Test
+    void givenDisplayName_formatsUsingDisplayName() {
+        channel.setDisplayName(text("My Channel"));
+        assertThat(toText(channel.formatted())).isEqualTo("My Channel");
     }
 }

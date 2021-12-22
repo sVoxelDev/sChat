@@ -17,32 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.message.messenger;
+package net.silthus.schat.channel;
 
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.message.Messages;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
+import net.silthus.schat.message.messenger.Messenger;
 
-final class MessengerImpl<T> implements Messenger<T> {
-
-    private final Class<T> type;
-    private final Strategy<T> strategy;
-    private final Messages messages = new Messages();
-
-    MessengerImpl(final Class<T> type, Strategy<T> strategy) {
-        this.type = type;
-        this.strategy = strategy;
-    }
+public final class ActiveChannelStrategy implements Messenger.Strategy<Channel> {
 
     @Override
-    public @NotNull @Unmodifiable Messages getMessages() {
-        return messages.filter(Message.NOT_DELETED);
-    }
-
-    @Override
-    public void sendMessage(final T target, final Message message) {
-        this.messages.add(message);
-        strategy.processMessage(target, this, message);
+    public void processMessage(final Channel target, final Messenger<Channel> messenger, final Message message) {
+        target.getTargets().stream()
+            .filter(messageTarget -> messageTarget instanceof Chatter)
+            .map(messageTarget -> (Chatter) messageTarget)
+            .filter(chatter -> chatter.isActiveChannel(target))
+            .forEach(chatter -> chatter.sendMessage(message));
     }
 }

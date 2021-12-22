@@ -17,26 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.message.messenger;
+package net.silthus.schat;
 
-import net.silthus.schat.message.Message;
-import net.silthus.schat.message.Messages;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
-public interface Messenger<T> {
+public final class ComponentTestHelper {
 
-    static <T> Messenger<T> messenger(Class<T> targetType, Strategy<T> strategy) {
-        return new MessengerImpl<>(targetType, strategy);
+    public static String toText(Component component) {
+        return PlainTextComponentSerializer.plainText().serialize(component);
     }
 
-    @NotNull @Unmodifiable Messages getMessages();
-
-    void sendMessage(T target, Message message);
-
-    @FunctionalInterface
-    interface Strategy<T> {
-
-        void processMessage(T target, Messenger<T> messenger, Message message);
+    private ComponentTestHelper() {
     }
 }

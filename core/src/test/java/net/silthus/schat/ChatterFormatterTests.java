@@ -21,16 +21,15 @@ package net.silthus.schat;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.examination.string.StringExaminer;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.ComponentTestHelper.toText;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ChatterFormatterTests {
@@ -79,10 +78,5 @@ class ChatterFormatterTests {
         chatter.setActiveChannel(new Channel("test"));
         final Component format = chatter.formatted();
         assertThat(MiniMessage.miniMessage().serialize(format)).contains("<underlined>", "</underlined>");
-    }
-
-    @NotNull
-    private String toText(final Component format) {
-        return PlainTextComponentSerializer.plainText().serialize(format);
     }
 }
