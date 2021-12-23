@@ -23,14 +23,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
-import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.handler.ChatHandler;
 import net.silthus.schat.handler.Handler;
-import net.silthus.schat.handler.JoinHandler;
+import net.silthus.schat.handler.types.DefaultChatHandler;
+import net.silthus.schat.handler.types.DefaultJoinChannelHandler;
+import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.Messages;
 import net.silthus.schat.message.messenger.Messenger;
@@ -38,22 +38,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
+@EqualsAndHashCode(of = {"identity"})
 final class ChatterImpl implements Chatter {
 
     private final List<Channel> channels = new ArrayList<>();
     private final Messenger<Chatter> messenger;
-    private final Handler.Join join;
+    private final Handler.JoinChannel join;
     private final Handler.Chat chat;
 
     @Getter
-    @Setter
-    private Component displayName;
+    private final Identity identity;
     private Channel activeChannel;
 
-    private ChatterImpl(@NonNull Messenger<Chatter> messenger, @NonNull Handler.Join join, @NonNull Handler.Chat chat) {
-        this.messenger = messenger;
-        this.join = join;
-        this.chat = chat;
+    private ChatterImpl(ChatterBuilder builder) {
+        this.identity = builder.identity;
+        this.messenger = builder.messenger;
+        this.join = builder.join;
+        this.chat = builder.chat;
     }
 
     @Override
@@ -84,7 +85,7 @@ final class ChatterImpl implements Chatter {
 
     @Override
     public void join(final @NonNull Channel channel) {
-        join.execute(this, channel);
+        join.joinChannel(this, channel);
     }
 
     @Override
@@ -99,7 +100,7 @@ final class ChatterImpl implements Chatter {
 
     @Override
     public Message chat(final @Nullable String text) {
-        return chat.execute(this, text);
+        return chat.chat(this, text);
     }
 
     @Override
@@ -109,9 +110,18 @@ final class ChatterImpl implements Chatter {
 
     static class ChatterBuilder implements Builder {
 
+        private final Identity identity;
         private Messenger<Chatter> messenger = Messenger.messenger((message, context) -> {});
-        private Handler.Join join = new JoinHandler();
-        private Handler.Chat chat = new ChatHandler();
+        private Handler.JoinChannel join = new DefaultJoinChannelHandler();
+        private Handler.Chat chat = new DefaultChatHandler();
+
+        ChatterBuilder(Identity identity) {
+            this.identity = identity;
+        }
+
+        ChatterBuilder() {
+            this(Identity.nil());
+        }
 
         @Override
         public Builder messenger(@NonNull Messenger<Chatter> messenger) {
@@ -126,7 +136,7 @@ final class ChatterImpl implements Chatter {
         }
 
         @Override
-        public Builder joinHandler(@NonNull Handler.Join join) {
+        public Builder joinChannelHandler(@NonNull Handler.JoinChannel join) {
             this.join = join;
             return this;
         }
@@ -139,7 +149,7 @@ final class ChatterImpl implements Chatter {
 
         @Override
         public Chatter create() {
-            return new ChatterImpl(messenger, join, chat);
+            return new ChatterImpl(this);
         }
     }
 }

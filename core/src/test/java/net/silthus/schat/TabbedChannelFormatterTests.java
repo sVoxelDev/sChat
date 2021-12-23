@@ -24,12 +24,12 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.TabbedChannelFormatter;
+import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TabbedChannelFormatterTests {
@@ -43,16 +43,16 @@ class TabbedChannelFormatterTests {
 
     @BeforeEach
     void setUp() {
-        chatter = Chatter.create();
+        chatter = Chatter.createChatter();
         formatter = new TabbedChannelFormatter();
     }
 
     private void joinChannel(String channel) {
-        chatter.join(Channel.create(channel));
+        chatter.join(Channel.createChannel(channel));
     }
 
     private void setActiveChannel() {
-        chatter.setActiveChannel(Channel.create(CHANNEL_KEY));
+        chatter.setActiveChannel(Channel.createChannel(CHANNEL_KEY));
     }
 
     private void sendMessage() {
@@ -60,8 +60,7 @@ class TabbedChannelFormatterTests {
     }
 
     private void sendMessageWithSource() {
-        final Chatter chatterSource = Chatter.builder().create();
-        chatterSource.setDisplayName(text(SOURCE));
+        final Chatter chatterSource = Chatter.chatter(Identity.identity(SOURCE)).create();
         this.chatter.sendMessage(Message.message(chatterSource, MESSAGE));
     }
 

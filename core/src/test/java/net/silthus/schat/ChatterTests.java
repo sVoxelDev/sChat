@@ -43,7 +43,7 @@ class ChatterTests {
 
     @BeforeEach
     void setUp() {
-        chatter = Chatter.create();
+        chatter = Chatter.createChatter();
     }
 
     private @NotNull Message createMessage() {
@@ -51,7 +51,7 @@ class ChatterTests {
     }
 
     private Channel setActiveChannel() {
-        final Channel channel = Channel.create("test");
+        final Channel channel = Channel.createChannel("test");
         chatter.setActiveChannel(channel);
         return channel;
     }
@@ -100,7 +100,7 @@ class ChatterTests {
         @SuppressWarnings("unchecked")
         void updatesView() {
             final Messenger.Strategy<Chatter> out = mock(Messenger.Strategy.class);
-            chatter = Chatter.builder().messengerStrategy(out).create();
+            chatter = Chatter.chatter().messengerStrategy(out).create();
             final Message message = Message.message(MESSAGE_TEXT);
             chatter.sendMessage(message);
             verify(out).deliver(eq(message), any());
@@ -108,13 +108,13 @@ class ChatterTests {
     }
 
     @Nested
-    class Join {
+    class JoinChannel {
 
         private Channel channel;
 
         @BeforeEach
         void setUp() {
-            channel = Channel.create("test");
+            channel = Channel.createChannel("test");
         }
 
         @Test
@@ -127,11 +127,6 @@ class ChatterTests {
         void adds_chatter_to_channel() {
             chatter.join(channel);
             assertThat(channel.getTargets()).contains(chatter);
-        }
-
-        @Test
-        void join_checksChannelPermissions() {
-
         }
 
         @Test

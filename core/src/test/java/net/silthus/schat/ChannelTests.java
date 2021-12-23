@@ -41,7 +41,7 @@ class ChannelTests {
 
     @BeforeEach
     void setUp() {
-        channel = Channel.create("test");
+        channel = Channel.createChannel("test");
         message = Message.message("Hi!");
     }
 
@@ -102,7 +102,7 @@ class ChannelTests {
     })
     void givenInvalidKey_throws(String key) {
         assertThatExceptionOfType(Channel.InvalidKey.class)
-            .isThrownBy(() -> Channel.create(key));
+            .isThrownBy(() -> Channel.createChannel(key));
     }
 
     @Test
@@ -113,7 +113,8 @@ class ChannelTests {
     @Test
     void givenDisplayName_formatsUsingDisplayName() {
         final TextComponent displayName = text("My Channel");
-        channel = Channel.builder("test").displayName(displayName).create();
+        channel = Channel.channel("test").displayName(displayName).create();
         assertThat(channel.getDisplayName()).isEqualTo(displayName);
     }
+
 }
