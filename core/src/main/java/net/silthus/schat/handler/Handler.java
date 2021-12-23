@@ -17,11 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.format;
+package net.silthus.schat.handler;
 
-import net.kyori.adventure.text.Component;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.message.Message;
 
-public interface Formatted {
+public interface Handler {
 
-    Component formatted();
+    @FunctionalInterface
+    interface Join {
+        void execute(Chatter chatter, Channel channel);
+    }
+
+    @FunctionalInterface
+    interface Chat {
+        Message execute(Chatter chatter, String text);
+    }
 }

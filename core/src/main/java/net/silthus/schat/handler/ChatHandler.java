@@ -17,32 +17,34 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.message.messenger;
+package net.silthus.schat.handler;
 
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.message.Messages;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 
-final class MessengerImpl<T> implements Messenger<T> {
+import static net.silthus.schat.message.Message.message;
 
-    private final Class<T> type;
-    private final Strategy<T> strategy;
-    private final Messages messages = new Messages();
-
-    MessengerImpl(final Class<T> type, Strategy<T> strategy) {
-        this.type = type;
-        this.strategy = strategy;
-    }
+public class ChatHandler implements Handler.Chat {
 
     @Override
-    public @NotNull @Unmodifiable Messages getMessages() {
-        return messages.filter(Message.NOT_DELETED);
+    public Message execute(final Chatter chatter, final String text) {
+        validateChannel(chatter);
+        final Message message = createMessage(text, chatter);
+        sendToActiveChannel(message, chatter);
+        return message;
     }
 
-    @Override
-    public void sendMessage(final T target, final Message message) {
-        this.messages.add(message);
-        strategy.processMessage(target, this, message);
+    private void validateChannel(final Chatter chatter) {
+        if (chatter.getActiveChannel().isEmpty())
+            throw new Chatter.NoActiveChannel();
+    }
+
+    private @NotNull Message createMessage(final String text, final Chatter chatter) {
+        return message(chatter, text);
+    }
+
+    private void sendToActiveChannel(final Message message, final Chatter chatter) {
+        chatter.getActiveChannel().ifPresent(channel -> channel.sendMessage(message));
     }
 }

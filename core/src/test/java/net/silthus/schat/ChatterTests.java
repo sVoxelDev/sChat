@@ -22,7 +22,7 @@ package net.silthus.schat;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.view.Viewer;
+import net.silthus.schat.message.messenger.Messenger;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -30,8 +30,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 class ChatterTests {
@@ -42,7 +43,7 @@ class ChatterTests {
 
     @BeforeEach
     void setUp() {
-        chatter = new Chatter();
+        chatter = Chatter.create();
     }
 
     private @NotNull Message createMessage() {
@@ -50,7 +51,7 @@ class ChatterTests {
     }
 
     private Channel setActiveChannel() {
-        final Channel channel = spy(new Channel("test"));
+        final Channel channel = Channel.create("test");
         chatter.setActiveChannel(channel);
         return channel;
     }
@@ -80,7 +81,7 @@ class ChatterTests {
         void given_activeChannel_sendsChatMessage_toChannel() {
             final Channel channel = setActiveChannel();
             Message message = chat();
-            verify(channel).sendMessage(message);
+            assertThat(channel.getMessages()).contains(message);
         }
 
     }
@@ -96,28 +97,45 @@ class ChatterTests {
         }
 
         @Test
+        @SuppressWarnings("unchecked")
         void updatesView() {
-            final Viewer out = mock(Viewer.class);
-            chatter = new Chatter(out);
+            final Messenger.Strategy<Chatter> out = mock(Messenger.Strategy.class);
+            chatter = Chatter.builder().messengerStrategy(out).create();
             final Message message = Message.message(MESSAGE_TEXT);
             chatter.sendMessage(message);
-            verify(out).updateView(chatter);
+            verify(out).deliver(eq(message), any());
         }
     }
 
     @Nested
     class Join {
 
+        private Channel channel;
+
+        @BeforeEach
+        void setUp() {
+            channel = Channel.create("test");
+        }
+
         @Test
         void adds_channel_to_chatter() {
-            final Channel channel = new Channel("test");
             chatter.join(channel);
             assertThat(chatter.getChannels()).contains(channel);
         }
 
         @Test
+        void adds_chatter_to_channel() {
+            chatter.join(channel);
+            assertThat(channel.getTargets()).contains(chatter);
+        }
+
+        @Test
+        void join_checksChannelPermissions() {
+
+        }
+
+        @Test
         void setActiveChannel_joinsChannel() {
-            final Channel channel = new Channel("test");
             chatter.setActiveChannel(channel);
             assertThat(chatter.getChannels()).contains(channel);
         }

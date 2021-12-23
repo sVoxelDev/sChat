@@ -19,7 +19,9 @@
 
 package net.silthus.schat.message;
 
+import lombok.NonNull;
+
 public interface MessageTarget {
 
-    void sendMessage(Message message);
+    void sendMessage(@NonNull Message message);
 }

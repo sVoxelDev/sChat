@@ -23,17 +23,11 @@ import java.time.Instant;
 import java.util.function.Predicate;
 import lombok.Getter;
 import lombok.NonNull;
-import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.format.Formatted;
-import net.silthus.schat.format.Formatter;
 import org.jetbrains.annotations.NotNull;
 
-import static net.kyori.adventure.text.Component.empty;
-import static net.kyori.adventure.text.Component.text;
-
 @Getter
-public final class Message implements Comparable<Message>, Formatted {
+public final class Message implements Comparable<Message> {
 
     public static final @NonNull Predicate<Message> NOT_DELETED = message -> !message.isDeleted();
 
@@ -44,8 +38,6 @@ public final class Message implements Comparable<Message>, Formatted {
     public static Message message(Chatter source, String text) {
         return new Message(source, text);
     }
-
-    private final Formatter<Message> formatter = new MessageFormatter();
 
     private final Instant timestamp = Instant.now();
     private final Chatter source;
@@ -62,26 +54,8 @@ public final class Message implements Comparable<Message>, Formatted {
     }
 
     @Override
-    public Component formatted() {
-        return formatter.format(this);
-    }
-
-    @Override
     public int compareTo(@NotNull final Message o) {
         return getTimestamp().compareTo(o.getTimestamp());
     }
 
-    private static class MessageFormatter implements Formatter<Message> {
-
-        public Component format(Message message) {
-            return source(message).append(text(message.getText()));
-        }
-
-        private Component source(Message message) {
-            if (message.getSource() != null)
-                return message.getSource().getDisplayName().append(text(": "));
-            else
-                return empty();
-        }
-    }
 }
