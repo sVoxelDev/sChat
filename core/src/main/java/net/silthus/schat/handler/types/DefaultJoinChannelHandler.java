@@ -17,21 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.channel;
+package net.silthus.schat.handler.types;
 
+import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.message.messenger.Messenger;
-import org.jetbrains.annotations.NotNull;
+import net.silthus.schat.handler.Handler;
 
-public final class ActiveChannelStrategy implements Messenger.Strategy<Channel> {
+public class DefaultJoinChannelHandler implements Handler.JoinChannel {
 
     @Override
-    public void deliver(final @NotNull Message message, final Messenger.@NotNull Context<Channel> context) {
-        context.target().getTargets().stream()
-            .filter(messageTarget -> messageTarget instanceof Chatter)
-            .map(chatter -> (Chatter) chatter)
-            .filter(chatter -> chatter.isActiveChannel(context.target()))
-            .forEach(chatter -> chatter.sendMessage(message));
+    public void joinChannel(final Chatter chatter, final Channel channel) {
+        chatter.addChannel(channel);
+        channel.addTarget(chatter);
     }
 }

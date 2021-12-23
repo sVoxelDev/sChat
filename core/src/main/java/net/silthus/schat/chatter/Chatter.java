@@ -21,31 +21,43 @@ package net.silthus.schat.chatter;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.NonNull;
-import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.handler.Handler;
+import net.silthus.schat.identity.Identified;
+import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.message.Messages;
 import net.silthus.schat.message.messenger.Messenger;
+import net.silthus.schat.repository.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-public interface Chatter extends MessageTarget {
+public interface Chatter extends MessageTarget, Entity<UUID>, Identified {
 
-    static Builder builder() {
+    static Builder chatter() {
         return new ChatterImpl.ChatterBuilder();
     }
 
-    static Chatter create() {
-        return builder().create();
+    static Builder chatter(Identity identity) {
+        return new ChatterImpl.ChatterBuilder(identity);
     }
 
-    @NotNull Component getDisplayName();
+    static Chatter createChatter() {
+        return chatter().create();
+    }
 
-    void setDisplayName(@NonNull Component displayName);
+    static Chatter createChatter(Identity identity) {
+        return chatter(identity).create();
+    }
+
+    @Override
+    default @NotNull UUID getKey() {
+        return getUniqueId();
+    }
 
     @NotNull Optional<Channel> getActiveChannel();
 
@@ -55,15 +67,15 @@ public interface Chatter extends MessageTarget {
 
     boolean isActiveChannel(@Nullable Channel channel);
 
-    @NotNull @Unmodifiable List<Channel> getChannels();
-
     void join(@NonNull Channel channel);
 
     void addChannel(@NonNull Channel channel);
 
-    @NotNull @Unmodifiable Messages getMessages();
+    @NotNull @Unmodifiable List<Channel> getChannels();
 
     Message chat(@Nullable String text);
+
+    @NotNull @Unmodifiable Messages getMessages();
 
     interface Builder {
 
@@ -71,7 +83,7 @@ public interface Chatter extends MessageTarget {
 
         Builder messengerStrategy(@NonNull Messenger.Strategy<Chatter> strategy);
 
-        Builder joinHandler(@NonNull Handler.Join join);
+        Builder joinChannelHandler(@NonNull Handler.JoinChannel join);
 
         Builder chatHandler(@NonNull Handler.Chat chat);
 

@@ -30,26 +30,23 @@ import org.jetbrains.annotations.Unmodifiable;
 
 public interface Channel extends MessageTarget {
 
-    static Channel create(String key) {
-        return builder(key).create();
+    static Builder channel(String key) {
+        return new ChannelImpl.ChannelImplBuilder(key);
     }
 
-    static Builder builder(String key) {
-        return new ChannelImpl.ChannelImplBuilder(key);
+    static Channel createChannel(String key) {
+        return channel(key).create();
     }
 
     @NotNull String getKey();
 
     @NotNull Component getDisplayName();
 
+    void addTarget(@NonNull MessageTarget target);
+
     @NotNull @Unmodifiable Set<MessageTarget> getTargets();
 
     @NotNull @Unmodifiable Messages getMessages();
-
-    void addTarget(@NonNull MessageTarget target);
-
-    class InvalidKey extends RuntimeException {
-    }
 
     interface Builder {
 
@@ -58,5 +55,12 @@ public interface Channel extends MessageTarget {
         Builder messenger(@NonNull Messenger<Channel> messenger);
 
         Channel create();
+
+    }
+
+    class InvalidKey extends RuntimeException {
+    }
+
+    class AccessDenied extends RuntimeException {
     }
 }

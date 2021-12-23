@@ -17,18 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.handler;
+package net.silthus.schat.handler.types;
 
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.handler.Handler;
 import net.silthus.schat.message.Message;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.message.Message.message;
 
-public class ChatHandler implements Handler.Chat {
+public class DefaultChatHandler implements Handler.Chat {
 
     @Override
-    public Message execute(final Chatter chatter, final String text) {
+    public Message chat(final Chatter chatter, final String text) {
         validateChannel(chatter);
         final Message message = createMessage(text, chatter);
         sendToActiveChannel(message, chatter);
