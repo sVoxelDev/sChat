@@ -19,6 +19,7 @@
 
 package net.silthus.schat;
 
+import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
@@ -28,10 +29,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.ComponentTestHelper.toText;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class ChannelTests {
@@ -41,13 +41,13 @@ class ChannelTests {
 
     @BeforeEach
     void setUp() {
-        channel = new Channel("test");
+        channel = Channel.create("test");
         message = Message.message("Hi!");
     }
 
     private Chatter joinChatter() {
-        final Chatter chatter = spy(new Chatter());
-        chatter.join(channel);
+        final Chatter chatter = mock(Chatter.class);
+        channel.addTarget(chatter);
         return chatter;
     }
 
@@ -102,7 +102,7 @@ class ChannelTests {
     })
     void givenInvalidKey_throws(String key) {
         assertThatExceptionOfType(Channel.InvalidKey.class)
-            .isThrownBy(() -> new Channel(key));
+            .isThrownBy(() -> Channel.create(key));
     }
 
     @Test
@@ -112,7 +112,8 @@ class ChannelTests {
 
     @Test
     void givenDisplayName_formatsUsingDisplayName() {
-        channel.setDisplayName(text("My Channel"));
-        assertThat(toText(channel.formatted())).isEqualTo("My Channel");
+        final TextComponent displayName = text("My Channel");
+        channel = Channel.builder("test").displayName(displayName).create();
+        assertThat(channel.getDisplayName()).isEqualTo(displayName);
     }
 }

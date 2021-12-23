@@ -17,11 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.view;
+package net.silthus.schat.handler;
 
+import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 
-public interface Viewer {
+public class JoinHandler implements Handler.Join {
 
-    void updateView(Chatter chatter);
+    @Override
+    public void execute(final Chatter chatter, final Channel channel) {
+        chatter.addChannel(channel);
+        channel.addTarget(chatter);
+    }
 }

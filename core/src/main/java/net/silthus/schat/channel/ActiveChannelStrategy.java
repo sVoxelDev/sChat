@@ -22,15 +22,16 @@ package net.silthus.schat.channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.messenger.Messenger;
+import org.jetbrains.annotations.NotNull;
 
 public final class ActiveChannelStrategy implements Messenger.Strategy<Channel> {
 
     @Override
-    public void processMessage(final Channel target, final Messenger<Channel> messenger, final Message message) {
-        target.getTargets().stream()
+    public void deliver(final @NotNull Message message, final Messenger.@NotNull Context<Channel> context) {
+        context.target().getTargets().stream()
             .filter(messageTarget -> messageTarget instanceof Chatter)
-            .map(messageTarget -> (Chatter) messageTarget)
-            .filter(chatter -> chatter.isActiveChannel(target))
+            .map(chatter -> (Chatter) chatter)
+            .filter(chatter -> chatter.isActiveChannel(context.target()))
             .forEach(chatter -> chatter.sendMessage(message));
     }
 }

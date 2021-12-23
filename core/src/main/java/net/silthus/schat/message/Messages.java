@@ -27,21 +27,16 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Predicate;
 import lombok.NonNull;
-import net.kyori.adventure.text.Component;
-import net.silthus.schat.format.Formatted;
-import net.silthus.schat.format.Formatter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
-
-import static net.kyori.adventure.text.JoinConfiguration.newlines;
 
 /**
  * A container for messages that can be used to store and persist messages in memory.
  *
  * @since next
  */
-public final class Messages extends AbstractSequentialList<Message> implements Formatted {
+public final class Messages extends AbstractSequentialList<Message> {
 
     /**
      * <p>Returns an <a href="Collection.html#unmodview">unmodifiable view</a> of the
@@ -50,7 +45,7 @@ public final class Messages extends AbstractSequentialList<Message> implements F
      * iterator, result in an {@code UnsupportedOperationException}.</p>
      *
      * @param messages the messages for which an unmodifiable view is to be returned.
-     * @return an unmodifiable view of the message container.
+     * @return an unmodifiable view of the lastMessage container.
      * @since next
      */
     public static @NotNull @Unmodifiable Messages unmodifiable(final @NonNull Messages messages) {
@@ -58,9 +53,9 @@ public final class Messages extends AbstractSequentialList<Message> implements F
     }
 
     /**
-     * Creates an unmodifiable empty message container.
+     * Creates an unmodifiable empty lastMessage container.
      *
-     * @return an empty unmodifiable message container
+     * @return an empty unmodifiable lastMessage container
      * @see #unmodifiable(Messages)
      * @since next
      */
@@ -69,17 +64,16 @@ public final class Messages extends AbstractSequentialList<Message> implements F
     }
 
     /**
-     * Creates a new message container with the given initial messages.
+     * Creates a new lastMessage container with the given initial messages.
      *
      * @param messages the initial messages
-     * @return the new message container
+     * @return the new lastMessage container
      * @since next
      */
     public static Messages of(final @NonNull Message @NonNull ... messages) {
         return new Messages(new ArrayList<>(List.of(messages)));
     }
 
-    private final Formatter<Messages> formatter = new MessagesFormatter();
     private final List<Message> messages;
 
     private Messages(final @NonNull List<Message> messages) {
@@ -87,7 +81,7 @@ public final class Messages extends AbstractSequentialList<Message> implements F
     }
 
     /**
-     * Creates a new message container with the given initial messages.
+     * Creates a new lastMessage container with the given initial messages.
      *
      * @param messages the initial messages
      * @since next
@@ -97,7 +91,7 @@ public final class Messages extends AbstractSequentialList<Message> implements F
     }
 
     /**
-     * Creates a new empty but modifiable message container.
+     * Creates a new empty but modifiable lastMessage container.
      *
      * @since next
      */
@@ -142,9 +136,9 @@ public final class Messages extends AbstractSequentialList<Message> implements F
     }
 
     /**
-     * Gets the last message that was added or null if the collection is empty.
+     * Gets the last lastMessage that was added or null if the collection is empty.
      *
-     * @return the last added message or null
+     * @return the last added lastMessage or null
      * @since next
      */
     public @Nullable Message last() {
@@ -153,22 +147,4 @@ public final class Messages extends AbstractSequentialList<Message> implements F
         return null;
     }
 
-    @Override
-    public Component formatted() {
-        return formatter.format(this);
-    }
-
-    private static class MessagesFormatter implements Formatter<Messages> {
-
-        @Override
-        public Component format(final Messages messages) {
-            return Component.join(
-                newlines(),
-                messages
-                    .stream()
-                    .map(Message::formatted)
-                    .toList()
-            );
-        }
-    }
 }

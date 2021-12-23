@@ -25,22 +25,31 @@ import net.silthus.schat.message.Messages;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-public interface Messenger<T> {
+public class DefaultMessenger<T> implements Messenger<T> {
 
-    static <T> Messenger<T> messenger(@NonNull Strategy<T> strategy) {
-        return new DefaultMessenger<>(strategy);
+    private final Strategy<T> strategy;
+    private final Messages messages = new Messages();
+
+    protected DefaultMessenger(Strategy<T> strategy) {
+        this.strategy = strategy;
     }
 
-    @NotNull @Unmodifiable Messages getMessages();
-
-    void sendMessage(@NonNull T target, @NonNull Message message);
-
-    @FunctionalInterface
-    interface Strategy<T> {
-
-        void deliver(final @NotNull Message message, final @NotNull Context<T> context);
+    @Override
+    public final @NotNull @Unmodifiable Messages getMessages() {
+        return messages.filter(Message.NOT_DELETED);
     }
 
-    record Context<T>(@NonNull T target, @NonNull Messages messages) {
+    @Override
+    public void sendMessage(@NonNull T target, @NonNull Message message) {
+        addMessage(message);
+        deliver(target, message);
+    }
+
+    protected final void addMessage(Message message) {
+        this.messages.add(message);
+    }
+
+    protected final void deliver(T target, Message message) {
+        strategy.deliver(message, new Context<>(target, getMessages()));
     }
 }

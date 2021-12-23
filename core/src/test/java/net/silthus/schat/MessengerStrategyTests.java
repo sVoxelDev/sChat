@@ -25,21 +25,23 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
 import org.junit.jupiter.api.Test;
 
+import static net.silthus.schat.message.messenger.Messenger.messenger;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class MessengerStrategyTests {
 
     @Test
     void activeChannelStrategy_sendsMessageOnlyToTargetsWithActiveChannel() {
         final ActiveChannelStrategy strategy = new ActiveChannelStrategy();
-        final Channel channel = new Channel("test");
-        channel.setMessengerStrategy(strategy);
-        final Chatter active = spy(new Chatter());
-        active.setActiveChannel(channel);
-        final Chatter inactive = spy(new Chatter());
-        inactive.setActiveChannel(new Channel("foo"));
+        final Channel channel = Channel.builder("test").messenger(messenger(strategy)).create();
+        final Chatter active = mock(Chatter.class);
+        when(active.isActiveChannel(any())).thenReturn(true);
+        final Chatter inactive = mock(Chatter.class);
+        when(inactive.isActiveChannel(any())).thenReturn(false);
 
         channel.addTarget(active);
         channel.addTarget(inactive);
