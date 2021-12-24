@@ -19,15 +19,31 @@
 
 package net.silthus.schat.handler.types;
 
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.User;
+import net.silthus.schat.chatter.ChatterRegistry;
 import net.silthus.schat.handler.Handler;
+import net.silthus.schat.handler.HandlerFactory;
 
-public class DefaultJoinChannelHandler implements Handler.JoinChannel {
+import static net.silthus.schat.chatter.Chatter.chatter;
 
-    @Override
-    public void joinChannel(final Chatter chatter, final Channel channel) {
-        chatter.addChannel(channel);
-        channel.addTarget(chatter);
+@FunctionalInterface
+public interface JoinGameHandler extends Handler {
+
+    void joinGame(User user);
+
+    class Default implements JoinGameHandler {
+
+        private final ChatterRegistry registry;
+        private final HandlerFactory<User, JoinChannelHandler> joinChannelFactory;
+
+        public Default(ChatterRegistry registry, HandlerFactory<User, JoinChannelHandler> joinChannelFactory) {
+            this.registry = registry;
+            this.joinChannelFactory = joinChannelFactory;
+        }
+
+        @Override
+        public void joinGame(final User user) {
+            registry.add(chatter(user.getIdentity()).joinChannelHandler(joinChannelFactory.create(user)).create());
+        }
     }
 }

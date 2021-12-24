@@ -19,25 +19,6 @@
 
 package net.silthus.schat.handler;
 
-import net.silthus.schat.User;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.message.Message;
-
 public interface Handler {
 
-    @FunctionalInterface
-    interface JoinChannel extends Handler {
-        void joinChannel(Chatter chatter, Channel channel);
-    }
-
-    @FunctionalInterface
-    interface Chat extends Handler {
-        Message chat(Chatter chatter, String text);
-    }
-
-    @FunctionalInterface
-    interface JoinGame extends Handler {
-        void joinGame(User user);
-    }
 }

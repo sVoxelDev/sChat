@@ -26,26 +26,32 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.message.Message.message;
 
-public class DefaultChatHandler implements Handler.Chat {
+@FunctionalInterface
+public interface ChatHandler extends Handler {
 
-    @Override
-    public Message chat(final Chatter chatter, final String text) {
-        validateChannel(chatter);
-        final Message message = createMessage(text, chatter);
-        sendToActiveChannel(message, chatter);
-        return message;
-    }
+    Message chat(Chatter chatter, String text);
 
-    private void validateChannel(final Chatter chatter) {
-        if (chatter.getActiveChannel().isEmpty())
-            throw new Chatter.NoActiveChannel();
-    }
+    class Default implements ChatHandler {
 
-    private @NotNull Message createMessage(final String text, final Chatter chatter) {
-        return message(chatter, text);
-    }
+        @Override
+        public Message chat(final Chatter chatter, final String text) {
+            validateChannel(chatter);
+            final Message message = createMessage(text, chatter);
+            sendToActiveChannel(message, chatter);
+            return message;
+        }
 
-    private void sendToActiveChannel(final Message message, final Chatter chatter) {
-        chatter.getActiveChannel().ifPresent(channel -> channel.sendMessage(message));
+        private void validateChannel(final Chatter chatter) {
+            if (chatter.getActiveChannel().isEmpty())
+                throw new Chatter.NoActiveChannel();
+        }
+
+        private @NotNull Message createMessage(final String text, final Chatter chatter) {
+            return message(chatter, text);
+        }
+
+        private void sendToActiveChannel(final Message message, final Chatter chatter) {
+            chatter.getActiveChannel().ifPresent(channel -> channel.sendMessage(message));
+        }
     }
 }

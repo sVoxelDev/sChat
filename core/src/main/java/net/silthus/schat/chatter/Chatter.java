@@ -24,7 +24,8 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.NonNull;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.handler.Handler;
+import net.silthus.schat.handler.types.ChatHandler;
+import net.silthus.schat.handler.types.JoinChannelHandler;
 import net.silthus.schat.identity.Identified;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
@@ -83,9 +84,9 @@ public interface Chatter extends MessageTarget, Entity<UUID>, Identified {
 
         Builder messengerStrategy(@NonNull Messenger.Strategy<Chatter> strategy);
 
-        Builder joinChannelHandler(@NonNull Handler.JoinChannel join);
+        Builder joinChannelHandler(@NonNull JoinChannelHandler join);
 
-        Builder chatHandler(@NonNull Handler.Chat chat);
+        Builder chatHandler(@NonNull ChatHandler chat);
 
         Chatter create();
     }

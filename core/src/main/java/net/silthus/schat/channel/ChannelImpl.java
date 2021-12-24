@@ -22,6 +22,7 @@ package net.silthus.schat.channel;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.NonNull;
@@ -30,7 +31,10 @@ import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.message.Messages;
 import net.silthus.schat.message.messenger.Messenger;
+import net.silthus.schat.settings.Setting;
+import net.silthus.schat.settings.Settings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import static net.kyori.adventure.text.Component.text;
@@ -46,11 +50,14 @@ final class ChannelImpl implements Channel {
     private final Component displayName;
     private final Set<MessageTarget> targets = new HashSet<>();
     private final Messenger<Channel> messenger;
+    @Getter
+    private final Settings settings;
 
-    private ChannelImpl(@NonNull String key, @NonNull Component displayName, Messenger<Channel> messenger) {
-        this.key = key;
-        this.displayName = displayName;
-        this.messenger = messenger;
+    private ChannelImpl(ChannelImplBuilder builder) {
+        this.key = builder.key;
+        this.displayName = builder.displayName;
+        this.messenger = builder.messenger;
+        this.settings = builder.settings.build();
     }
 
     @Override
@@ -85,6 +92,7 @@ final class ChannelImpl implements Channel {
 
         private final String key;
         private Component displayName;
+        private Settings.Builder settings = Settings.builder();
         private Messenger<Channel> messenger = DEFAULT_MESSENGER;
 
         ChannelImplBuilder(String key) {
@@ -92,6 +100,25 @@ final class ChannelImpl implements Channel {
                 throw new InvalidKey();
             this.key = key;
             this.displayName = text(key);
+        }
+
+        @Override
+        public <V> @NotNull Builder setting(final @NonNull Setting<V> setting, final @Nullable V value) {
+            this.settings.withStatic(setting, value);
+            return this;
+        }
+
+        @Override
+        public @NotNull Builder settings(final @NonNull Settings settings) {
+            this.settings = settings.toBuilder();
+            return this;
+        }
+
+        @Override
+        public @NotNull Builder settings(final @NonNull Consumer<Settings.Builder> settings) {
+            final Settings.Builder builder = Settings.builder();
+            settings.accept(builder);
+            return this.settings(builder.build());
         }
 
         @Override
@@ -108,7 +135,7 @@ final class ChannelImpl implements Channel {
 
         @Override
         public Channel create() {
-            return new ChannelImpl(key, displayName, messenger);
+            return new ChannelImpl(this);
         }
 
         private boolean isInvalidChannelKey(final String key) {
