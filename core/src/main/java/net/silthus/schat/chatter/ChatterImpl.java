@@ -27,9 +27,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.handler.Handler;
-import net.silthus.schat.handler.types.DefaultChatHandler;
-import net.silthus.schat.handler.types.DefaultJoinChannelHandler;
+import net.silthus.schat.handler.types.ChatHandler;
+import net.silthus.schat.handler.types.JoinChannelHandler;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.Messages;
@@ -43,8 +42,8 @@ final class ChatterImpl implements Chatter {
 
     private final List<Channel> channels = new ArrayList<>();
     private final Messenger<Chatter> messenger;
-    private final Handler.JoinChannel join;
-    private final Handler.Chat chat;
+    private final JoinChannelHandler join;
+    private final ChatHandler chat;
 
     @Getter
     private final Identity identity;
@@ -112,8 +111,8 @@ final class ChatterImpl implements Chatter {
 
         private final Identity identity;
         private Messenger<Chatter> messenger = Messenger.messenger((message, context) -> {});
-        private Handler.JoinChannel join = new DefaultJoinChannelHandler();
-        private Handler.Chat chat = new DefaultChatHandler();
+        private JoinChannelHandler join = new JoinChannelHandler.Default();
+        private ChatHandler chat = new ChatHandler.Default();
 
         ChatterBuilder(Identity identity) {
             this.identity = identity;
@@ -136,13 +135,13 @@ final class ChatterImpl implements Chatter {
         }
 
         @Override
-        public Builder joinChannelHandler(@NonNull Handler.JoinChannel join) {
+        public Builder joinChannelHandler(@NonNull JoinChannelHandler join) {
             this.join = join;
             return this;
         }
 
         @Override
-        public Builder chatHandler(@NonNull Handler.Chat chat) {
+        public Builder chatHandler(@NonNull ChatHandler chat) {
             this.chat = chat;
             return this;
         }

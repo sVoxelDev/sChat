@@ -25,10 +25,14 @@ import net.kyori.adventure.text.Component;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.message.Messages;
 import net.silthus.schat.message.messenger.Messenger;
+import net.silthus.schat.settings.Configured;
+import net.silthus.schat.settings.Setting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-public interface Channel extends MessageTarget {
+public interface Channel extends MessageTarget, Configured {
+
+    Setting<Boolean> PUBLIC = Setting.setting(Boolean.class, "public", false);
 
     static Builder channel(String key) {
         return new ChannelImpl.ChannelImplBuilder(key);
@@ -48,7 +52,7 @@ public interface Channel extends MessageTarget {
 
     @NotNull @Unmodifiable Messages getMessages();
 
-    interface Builder {
+    interface Builder extends Configured.Builder<Builder> {
 
         Builder displayName(@NonNull Component displayName);
 

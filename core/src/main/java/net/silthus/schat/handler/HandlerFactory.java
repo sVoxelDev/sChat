@@ -17,24 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.handler.types;
+package net.silthus.schat.handler;
 
-import net.silthus.schat.User;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
+public interface HandlerFactory<T, H extends Handler> {
 
-public class UserJoinChannelHandler extends JoinChannelHandler.Default {
-
-    private final User user;
-
-    public UserJoinChannelHandler(User user) {
-        this.user = user;
-    }
-
-    @Override
-    public void joinChannel(Chatter chatter, Channel channel) {
-        if (!channel.get(Channel.PUBLIC) && !user.hasPermission("schat.channel." + channel.getKey() + ".join"))
-            throw new Channel.AccessDenied();
-        super.joinChannel(chatter, channel);
-    }
+    H create(T type);
 }

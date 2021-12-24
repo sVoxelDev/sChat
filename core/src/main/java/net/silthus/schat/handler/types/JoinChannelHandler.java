@@ -19,22 +19,21 @@
 
 package net.silthus.schat.handler.types;
 
-import net.silthus.schat.User;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.handler.Handler;
 
-public class UserJoinChannelHandler extends JoinChannelHandler.Default {
+@FunctionalInterface
+public interface JoinChannelHandler extends Handler {
 
-    private final User user;
+    void joinChannel(Chatter chatter, Channel channel);
 
-    public UserJoinChannelHandler(User user) {
-        this.user = user;
-    }
+    class Default implements JoinChannelHandler {
 
-    @Override
-    public void joinChannel(Chatter chatter, Channel channel) {
-        if (!channel.get(Channel.PUBLIC) && !user.hasPermission("schat.channel." + channel.getKey() + ".join"))
-            throw new Channel.AccessDenied();
-        super.joinChannel(chatter, channel);
+        @Override
+        public void joinChannel(final Chatter chatter, final Channel channel) {
+            chatter.addChannel(channel);
+            channel.addTarget(chatter);
+        }
     }
 }
