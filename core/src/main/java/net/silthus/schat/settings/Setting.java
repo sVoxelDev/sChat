@@ -83,13 +83,4 @@ public interface Setting<V> {
      * @since next
      */
     @Nullable V getDefaultValue();
-
-    /**
-     * Creates a new setting from this setting with the new default value.
-     *
-     * @param defaultValue the new default value
-     * @return the copied setting with the new default value
-     * @since next
-     */
-    @NotNull Setting<V> withDefaultValue(final @Nullable V defaultValue);
 }

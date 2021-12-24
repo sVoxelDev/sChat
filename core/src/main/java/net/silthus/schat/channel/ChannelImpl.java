@@ -57,7 +57,7 @@ final class ChannelImpl implements Channel {
         this.key = builder.key;
         this.displayName = builder.displayName;
         this.messenger = builder.messenger;
-        this.settings = builder.settings.build();
+        this.settings = builder.settings.create();
     }
 
     @Override
@@ -92,7 +92,7 @@ final class ChannelImpl implements Channel {
 
         private final String key;
         private Component displayName;
-        private Settings.Builder settings = Settings.builder();
+        private Settings.Builder settings = Settings.settings();
         private Messenger<Channel> messenger = DEFAULT_MESSENGER;
 
         ChannelImplBuilder(String key) {
@@ -110,15 +110,15 @@ final class ChannelImpl implements Channel {
 
         @Override
         public @NotNull Builder settings(final @NonNull Settings settings) {
-            this.settings = settings.toBuilder();
+            this.settings = settings.copy();
             return this;
         }
 
         @Override
         public @NotNull Builder settings(final @NonNull Consumer<Settings.Builder> settings) {
-            final Settings.Builder builder = Settings.builder();
+            final Settings.Builder builder = Settings.settings();
             settings.accept(builder);
-            return this.settings(builder.build());
+            return this.settings(builder.create());
         }
 
         @Override

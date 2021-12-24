@@ -30,15 +30,15 @@ class SettingsTest {
 
     @Test
     void create_isEmpty() {
-        assertThat(Settings.createSettings().settings()).isEmpty();
+        assertThat(Settings.createSettings().getSettings()).isEmpty();
     }
 
     @Test
     void populateWithInitialValues() {
-        final Settings settings = Settings.builder()
+        final Settings settings = Settings.settings()
             .withStatic(DEFAULT_VAL_TEST, "static")
             .withDynamic(DYNAMIC_TEST, () -> "dynamic")
-            .build();
+            .create();
         assertThat(settings.get(DEFAULT_VAL_TEST)).isEqualTo("static");
         assertThat(settings.get(DYNAMIC_TEST)).isEqualTo("dynamic");
     }
@@ -53,5 +53,33 @@ class SettingsTest {
     void givenNotSet_returnsProvidedDefault() {
         final Settings settings = Settings.createSettings();
         assertThat(settings.getOrDefault(DEFAULT_VAL_TEST, "foobar")).isEqualTo("foobar");
+    }
+
+    @Test
+    void getOrDefault_valueIsSet_returnsValue() {
+        final Settings settings = Settings.settings().withStatic(DEFAULT_VAL_TEST, "bob").create();
+        assertThat(settings.getOrDefaultFrom(DEFAULT_VAL_TEST, () -> "bobby")).isEqualTo("bob");
+    }
+
+    @Test
+    void set_updatesValue() {
+        final Settings settings = Settings.settings().withStatic(DEFAULT_VAL_TEST, "bob").create();
+        settings.set(DEFAULT_VAL_TEST, "bobby");
+        assertThat(settings.get(DEFAULT_VAL_TEST)).isEqualTo("bobby");
+    }
+
+    @Test
+    void copy_copiesAllSettings() {
+        final Settings original = Settings.settings()
+            .withStatic(DEFAULT_VAL_TEST, "static")
+            .withDynamic(DYNAMIC_TEST, () -> "dynamic")
+            .create();
+        final Settings settings = original.copy().withStatic(DEFAULT_VAL_TEST, "foobar").create();
+
+        assertThat(original.get(DEFAULT_VAL_TEST)).isEqualTo("static");
+        assertThat(original.get(DYNAMIC_TEST)).isEqualTo("dynamic");
+
+        assertThat(settings.get(DEFAULT_VAL_TEST)).isEqualTo("foobar");
+        assertThat(settings.get(DYNAMIC_TEST)).isEqualTo("dynamic");
     }
 }
