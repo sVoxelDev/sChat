@@ -39,7 +39,7 @@ final class SettingsImpl implements Settings {
     }
 
     @Override
-    public @NotNull Set<Setting<?>> settings() {
+    public @NotNull Set<Setting<?>> getSettings() {
         return Collections.unmodifiableSet(settings.keySet());
     }
 
@@ -78,7 +78,7 @@ final class SettingsImpl implements Settings {
     }
 
     @Override
-    public @NotNull Settings.Builder toBuilder() {
+    public @NotNull Settings.Builder copy() {
         return new BuilderImpl(this);
     }
 
@@ -101,7 +101,7 @@ final class SettingsImpl implements Settings {
         }
 
         @Override
-        public @NotNull Settings build() {
+        public @NotNull Settings create() {
             return new SettingsImpl(this);
         }
     }

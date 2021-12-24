@@ -25,7 +25,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import lombok.NonNull;
-import net.kyori.adventure.util.Buildable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
@@ -36,7 +35,7 @@ import org.jetbrains.annotations.Unmodifiable;
  *
  * @since next
  */
-public interface Settings extends Buildable<Settings, Settings.Builder> {
+public interface Settings {
     /**
      * Gets an empty settings collection.
      *
@@ -44,7 +43,7 @@ public interface Settings extends Buildable<Settings, Settings.Builder> {
      * @since next
      */
     static @NotNull Settings createSettings() {
-        return builder().build();
+        return settings().create();
     }
 
     /**
@@ -54,7 +53,7 @@ public interface Settings extends Buildable<Settings, Settings.Builder> {
      * @see Builder
      * @since next
      */
-    static @NotNull Builder builder() {
+    static @NotNull Builder settings() {
         return new SettingsImpl.BuilderImpl();
     }
 
@@ -67,9 +66,9 @@ public interface Settings extends Buildable<Settings, Settings.Builder> {
      * @since next
      */
     @SuppressWarnings("unchecked")
-    default <V> @NotNull @Unmodifiable Set<Setting<V>> settings(final @NonNull Class<V> valueType) {
+    default <V> @NotNull @Unmodifiable Set<Setting<V>> getSettings(final @NonNull Class<V> valueType) {
         final Set<Setting<V>> filteredSettings = new HashSet<>();
-        for (final Setting<?> setting : this.settings()) {
+        for (final Setting<?> setting : this.getSettings()) {
             if (valueType.isAssignableFrom(setting.getType()))
                 filteredSettings.add((Setting<V>) setting);
         }
@@ -83,9 +82,7 @@ public interface Settings extends Buildable<Settings, Settings.Builder> {
      * @throws UnsupportedOperationException if the implementing class does not support querying for settings
      * @since next
      */
-    default @NotNull @Unmodifiable Set<Setting<?>> settings() {
-        throw new UnsupportedOperationException("The underlying Settings implementation does not support querying for settings.");
-    }
+    @NotNull @Unmodifiable Set<Setting<?>> getSettings();
 
     /**
      * Gets the value of {@code setting}.
@@ -150,13 +147,15 @@ public interface Settings extends Buildable<Settings, Settings.Builder> {
      */
     <V> boolean supports(final @NotNull Setting<V> setting);
 
+    Builder copy();
+
     /**
      * A builder of settings.
      *
      * @see Settings
      * @since next
      */
-    interface Builder extends Buildable.Builder<Settings> {
+    interface Builder {
 
         /**
          * Adds a setting with a static, optional value.
@@ -181,5 +180,7 @@ public interface Settings extends Buildable<Settings, Settings.Builder> {
          * @since next
          */
         <V> @NotNull Builder withDynamic(final @NotNull Setting<V> setting, @NotNull Supplier<@Nullable V> value);
+
+        Settings create();
     }
 }

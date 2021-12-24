@@ -21,14 +21,12 @@ package net.silthus.schat.settings;
 
 import java.util.function.Supplier;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NonNull;
-import lombok.Value;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-@Value
+@Getter
 @EqualsAndHashCode(of = {"type", "key"})
-class SettingImpl<V> implements Setting<V> {
+final class SettingImpl<V> implements Setting<V> {
 
     Class<V> type;
     String key;
@@ -47,10 +45,5 @@ class SettingImpl<V> implements Setting<V> {
     @Override
     public V getDefaultValue() {
         return this.defaultValue.get();
-    }
-
-    @Override
-    public @NotNull Setting<V> withDefaultValue(final @Nullable V defaultValue) {
-        return new SettingImpl<>(getType(), getKey(), () -> defaultValue);
     }
 }
