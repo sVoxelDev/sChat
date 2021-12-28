@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -145,7 +146,7 @@ public interface Settings {
      * @return if the setting is supported
      * @since next
      */
-    <V> boolean supports(final @NotNull Setting<V> setting);
+    <V> boolean contains(final @NotNull Setting<V> setting);
 
     Builder copy();
 
@@ -180,6 +181,17 @@ public interface Settings {
          * @since next
          */
         <V> @NotNull Builder withDynamic(final @NotNull Setting<V> setting, @NotNull Supplier<@Nullable V> value);
+
+        /**
+         * Adds a setting which type is unknown and will be resolved based on the given key.
+         *
+         * @param key the key of the setting matched against the alias or keys of configured settings
+         * @param value the value that will be resolved by the setting
+         * @param <V> the type of the value
+         * @return this builder
+         * @since next
+         */
+        <V> @NotNull Builder withUnknownType(final @NotNull String key, @NotNull Function<Setting<?>, V> value);
 
         Settings create();
     }

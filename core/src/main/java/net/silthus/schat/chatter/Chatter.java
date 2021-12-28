@@ -55,11 +55,6 @@ public interface Chatter extends MessageTarget, Entity<UUID>, Identified {
         return chatter(identity).create();
     }
 
-    @Override
-    default @NotNull UUID getKey() {
-        return getUniqueId();
-    }
-
     @NotNull Optional<Channel> getActiveChannel();
 
     void setActiveChannel(@NonNull Channel channel);
@@ -68,7 +63,7 @@ public interface Chatter extends MessageTarget, Entity<UUID>, Identified {
 
     boolean isActiveChannel(@Nullable Channel channel);
 
-    void join(@NonNull Channel channel);
+    void join(@NonNull Channel channel) throws JoinChannelHandler.Error;
 
     void addChannel(@NonNull Channel channel);
 
@@ -84,7 +79,7 @@ public interface Chatter extends MessageTarget, Entity<UUID>, Identified {
 
         Builder messengerStrategy(@NonNull Messenger.Strategy<Chatter> strategy);
 
-        Builder joinChannelHandler(@NonNull JoinChannelHandler join);
+        Builder joinChannel(@NonNull JoinChannelHandler join);
 
         Builder chatHandler(@NonNull ChatHandler chat);
 

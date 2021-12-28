@@ -1,0 +1,6 @@
+channels:
+  test:
+    name: Test
+    settings:
+      protect: true
+  invalid: null

@@ -108,7 +108,7 @@ class ChatterTests {
     }
 
     @Nested
-    class JoinChannel {
+    class JoinChannelHandler {
 
         private Channel channel;
 
@@ -133,6 +133,12 @@ class ChatterTests {
         void setActiveChannel_joinsChannel() {
             chatter.setActiveChannel(channel);
             assertThat(chatter.getChannels()).contains(channel);
+        }
+
+        @Test
+        void given_no_activeChannel_getActiveChannel_returns_first_channel() {
+            chatter.join(channel);
+            assertThat(chatter.getActiveChannel()).isPresent().get().isEqualTo(channel);
         }
     }
 

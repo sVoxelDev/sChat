@@ -17,4 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.settings;
+package net.silthus.schat.platform.config;
+
+import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
+import net.silthus.schat.platform.config.key.KeyedConfiguration;
+
+public class SChatConfig extends KeyedConfiguration {
+
+    public SChatConfig(ConfigurationAdapter adapter) {
+        super(adapter, ConfigKeys.getKeys());
+
+        init();
+    }
+}

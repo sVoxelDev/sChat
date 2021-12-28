@@ -25,14 +25,22 @@ import net.kyori.adventure.text.Component;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.message.Messages;
 import net.silthus.schat.message.messenger.Messenger;
+import net.silthus.schat.repository.Entity;
 import net.silthus.schat.settings.Configured;
 import net.silthus.schat.settings.Setting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-public interface Channel extends MessageTarget, Configured {
+import static net.kyori.adventure.text.Component.empty;
+import static net.silthus.schat.settings.Setting.setting;
 
-    Setting<Boolean> PUBLIC = Setting.setting(Boolean.class, "public", false);
+public interface Channel extends MessageTarget, Configured, Entity<String> {
+
+    Setting<Component> DISPLAY_NAME = setting(Component.class, "name", empty());
+    Setting<Boolean> REQUIRES_JOIN_PERMISSION = setting(Boolean.class, "requires_join_permission", false)
+        .withAlias("protect");
+    Setting<String> JOIN_PERMISSION = setting(String.class, "permissions.join", "schat.admin.channel.join");
+    Setting<Boolean> AUTO_JOIN = setting(Boolean.class, "auto_join", false);
 
     static Builder channel(String key) {
         return new ChannelImpl.ChannelImplBuilder(key);
@@ -59,12 +67,9 @@ public interface Channel extends MessageTarget, Configured {
         Builder messenger(@NonNull Messenger<Channel> messenger);
 
         Channel create();
-
     }
 
     class InvalidKey extends RuntimeException {
     }
 
-    class AccessDenied extends RuntimeException {
-    }
 }

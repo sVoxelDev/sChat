@@ -23,27 +23,40 @@ import java.util.function.Supplier;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 @EqualsAndHashCode(of = {"type", "key"})
 final class SettingImpl<V> implements Setting<V> {
 
-    Class<V> type;
-    String key;
-    Supplier<V> defaultValue;
+    private final Class<V> type;
+    private final String key;
+    private final Supplier<V> defaultValue;
+    private final String[] alias;
 
     SettingImpl(
         final @NonNull Class<V> type,
         final @NonNull String key,
-        final @NonNull Supplier<V> defaultValue
-    ) {
+        final @NonNull Supplier<V> defaultValue,
+        final @NonNull String@NonNull... alias) {
         this.type = type;
         this.key = key;
         this.defaultValue = defaultValue;
+        this.alias = alias;
     }
 
     @Override
     public V getDefaultValue() {
         return this.defaultValue.get();
+    }
+
+    @Override
+    public @NotNull Setting<V> withAlias(@NonNull String @NonNull ... alias) {
+        return new SettingImpl<>(
+            type,
+            key,
+            defaultValue,
+            alias
+        );
     }
 }

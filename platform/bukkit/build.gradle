@@ -72,6 +72,8 @@ dependencies {
     // bStats: https://bstats.org/plugin/bukkit/sChat/13304
     implementation 'org.bstats:bstats-bukkit:2.2.1'
 
+    implementation "org.spongepowered:configurate-yaml:4.1.2"
+
     //
     // Optional Plugin Integrations
     //

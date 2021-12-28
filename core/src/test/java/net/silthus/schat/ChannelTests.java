@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -107,6 +108,12 @@ class ChannelTests {
 
     @Test
     void givenNoDisplayName_usesKey() {
+        assertThat(channel.getDisplayName()).isEqualTo(text("test"));
+    }
+
+    @Test
+    void givenEmptyDisplayName_usesKey() {
+        channel = Channel.channel("test").displayName(empty()).create();
         assertThat(channel.getDisplayName()).isEqualTo(text("test"));
     }
 

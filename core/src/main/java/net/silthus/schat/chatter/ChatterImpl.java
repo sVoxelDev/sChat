@@ -74,7 +74,8 @@ final class ChatterImpl implements Chatter {
 
     @Override
     public @NotNull Optional<Channel> getActiveChannel() {
-        return Optional.ofNullable(this.activeChannel);
+        return Optional.ofNullable(this.activeChannel)
+            .or(() -> getChannels().stream().findFirst());
     }
 
     @Override
@@ -83,7 +84,7 @@ final class ChatterImpl implements Chatter {
     }
 
     @Override
-    public void join(final @NonNull Channel channel) {
+    public void join(final @NonNull Channel channel) throws JoinChannelHandler.Error {
         join.joinChannel(this, channel);
     }
 
@@ -111,7 +112,7 @@ final class ChatterImpl implements Chatter {
 
         private final Identity identity;
         private Messenger<Chatter> messenger = Messenger.messenger((message, context) -> {});
-        private JoinChannelHandler join = new JoinChannelHandler.Default();
+        private JoinChannelHandler join = JoinChannelHandler.joinChannel();
         private ChatHandler chat = new ChatHandler.Default();
 
         ChatterBuilder(Identity identity) {
@@ -135,7 +136,7 @@ final class ChatterImpl implements Chatter {
         }
 
         @Override
-        public Builder joinChannelHandler(@NonNull JoinChannelHandler join) {
+        public Builder joinChannel(@NonNull JoinChannelHandler join) {
             this.join = join;
             return this;
         }
