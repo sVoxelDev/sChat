@@ -37,17 +37,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
+import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
 
 final class ChannelImpl implements Channel {
 
-    private static final Pattern VALID_CHANNEL_ID = Pattern.compile("^[a-z0-9_-]+$");
+    private static final Pattern CHANNEL_KEY_PATTERN = Pattern.compile("^[a-z0-9_-]+$");
     private static final Messenger<Channel> DEFAULT_MESSENGER = Messenger.messenger(new DefaultChannelStrategy());
 
     @Getter
     private final String key;
-    @Getter
-    private final Component displayName;
     private final Set<MessageTarget> targets = new HashSet<>();
     private final Messenger<Channel> messenger;
     @Getter
@@ -55,7 +54,6 @@ final class ChannelImpl implements Channel {
 
     private ChannelImpl(ChannelImplBuilder builder) {
         this.key = builder.key;
-        this.displayName = builder.displayName;
         this.messenger = builder.messenger;
         this.settings = builder.settings.create();
     }
@@ -68,6 +66,11 @@ final class ChannelImpl implements Channel {
     @Override
     public @NotNull @Unmodifiable Messages getMessages() {
         return messenger.getMessages();
+    }
+
+    @Override
+    public @NotNull Component getDisplayName() {
+        return getOrDefault(DISPLAY_NAME, text(key));
     }
 
     @Override
@@ -91,7 +94,6 @@ final class ChannelImpl implements Channel {
     static class ChannelImplBuilder implements Builder {
 
         private final String key;
-        private Component displayName;
         private Settings.Builder settings = Settings.settings();
         private Messenger<Channel> messenger = DEFAULT_MESSENGER;
 
@@ -99,7 +101,6 @@ final class ChannelImpl implements Channel {
             if (isInvalidChannelKey(key))
                 throw new InvalidKey();
             this.key = key;
-            this.displayName = text(key);
         }
 
         @Override
@@ -116,15 +117,15 @@ final class ChannelImpl implements Channel {
 
         @Override
         public @NotNull Builder settings(final @NonNull Consumer<Settings.Builder> settings) {
-            final Settings.Builder builder = Settings.settings();
-            settings.accept(builder);
-            return this.settings(builder.create());
+            settings.accept(this.settings);
+            return this;
         }
 
         @Override
         public Builder displayName(@NonNull Component displayName) {
-            this.displayName = displayName;
-            return this;
+            if (displayName.equals(empty()))
+                return this;
+            return setting(DISPLAY_NAME, displayName);
         }
 
         @Override
@@ -139,7 +140,7 @@ final class ChannelImpl implements Channel {
         }
 
         private boolean isInvalidChannelKey(final String key) {
-            return VALID_CHANNEL_ID.asMatchPredicate().negate().test(key);
+            return CHANNEL_KEY_PATTERN.asMatchPredicate().negate().test(key);
         }
     }
 }

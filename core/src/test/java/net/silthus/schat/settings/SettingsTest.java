@@ -27,6 +27,7 @@ class SettingsTest {
 
     static final Setting<String> DYNAMIC_TEST = Setting.setting(String.class, "dynamic", "foobar");
     static final Setting<String> DEFAULT_VAL_TEST = Setting.setting(String.class, "default", "test");
+    static final Setting<String> ALIAS_TEST = Setting.setting(String.class, "main", "empty").withAlias("alias-test");
 
     @Test
     void create_isEmpty() {
@@ -81,5 +82,17 @@ class SettingsTest {
 
         assertThat(settings.get(DEFAULT_VAL_TEST)).isEqualTo("foobar");
         assertThat(settings.get(DYNAMIC_TEST)).isEqualTo("dynamic");
+    }
+
+    @Test
+    void given_unknown_type() {
+        final Settings settings = Settings.settings().withUnknownType("default", setting -> "foobar").create();
+        assertThat(settings.get(DEFAULT_VAL_TEST)).isEqualTo("foobar");
+    }
+
+    @Test
+    void given_alias_usesAlias_ifMatched() {
+        final Settings settings = Settings.settings().withUnknownType("alias-test", setting -> "abc").create();
+        assertThat(settings.get(ALIAS_TEST)).isEqualTo("abc");
     }
 }

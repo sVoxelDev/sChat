@@ -56,7 +56,7 @@ public interface Configured {
      * @return the value
      * @since next
      */
-    default <V> @Nullable V getOrDefault(final @NonNull Setting<V> setting, final @Nullable V defaultValue) {
+    default <V> @UnknownNullability V getOrDefault(final @NonNull Setting<V> setting, final @Nullable V defaultValue) {
         return this.getSettings().getOrDefault(setting, defaultValue);
     }
 

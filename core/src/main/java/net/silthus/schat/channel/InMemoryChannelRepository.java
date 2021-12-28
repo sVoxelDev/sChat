@@ -17,14 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter;
+package net.silthus.schat.channel;
 
-import java.util.UUID;
-import net.silthus.schat.repository.Repository;
+import net.silthus.schat.repository.InMemoryRepository;
 
-public interface ChatterRegistry extends Repository<UUID, Chatter> {
-
-    static ChatterRegistry createInMemoryChatterRegistry() {
-        return new InMemoryChatterRegistry();
-    }
+final class InMemoryChannelRepository extends InMemoryRepository<String, Channel> implements ChannelRepository {
 }

@@ -24,18 +24,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
+@EqualsAndHashCode(of = {"settings"})
 final class SettingsImpl implements Settings {
 
     private final Map<Setting<?>, Supplier<?>> settings;
+    private final Map<String, Function<Setting<?>, ?>> unknowns;
 
     SettingsImpl(final @NotNull SettingsImpl.BuilderImpl builder) {
         this.settings = new HashMap<>(builder.settings);
+        this.unknowns = new HashMap<>(builder.unknowns);
     }
 
     @Override
@@ -45,16 +50,13 @@ final class SettingsImpl implements Settings {
 
     @Override
     public @NotNull <V> V get(final @NonNull Setting<V> setting) {
-        final Supplier<?> supplier = this.settings.get(setting);
-        return this.valueFromSupplier(setting, supplier);
+        return this.valueFromSupplier(setting, getValueSupplier(setting));
     }
 
     @Override
     public <V> @UnknownNullability V getOrDefaultFrom(@NotNull Setting<V> setting, @NotNull Supplier<? extends V> defaultValue) {
-        final Supplier<?> supplier = this.settings.get(setting);
-        if (supplier == null)
-            return defaultValue.get();
-        return this.valueFromSupplier(setting, supplier);
+        final Supplier<?> supplier = getValueSupplier(setting);
+        return supplier == null ? defaultValue.get() : this.valueFromSupplier(setting, supplier);
     }
 
     @Override
@@ -73,8 +75,60 @@ final class SettingsImpl implements Settings {
     }
 
     @Override
-    public <T> boolean supports(final @NonNull Setting<T> setting) {
+    public <T> boolean contains(final @NonNull Setting<T> setting) {
         return this.settings.containsKey(setting);
+    }
+
+    private <V> Supplier<?> getValueSupplier(@NotNull Setting<V> setting) {
+        return matchesUnknownValue(setting) ? getUnknownOrAliasValue(setting) : getConfiguredValue(setting);
+    }
+
+    private <V> Supplier<?> getConfiguredValue(@NotNull Setting<V> setting) {
+        return this.settings.get(setting);
+    }
+
+    private <V> Supplier<?> getUnknownOrAliasValue(@NotNull Setting<V> setting) {
+        return isUnknownKey(setting.getKey())
+            ? getUnknownValue(setting)
+            : getAliasValue(setting);
+    }
+
+    @NotNull
+    private <V> Supplier<Object> getUnknownValue(@NotNull Setting<V> setting) {
+        return () -> unknowns.get(setting.getKey()).apply(setting);
+    }
+
+    @Nullable
+    private <V> Supplier<Object> getAliasValue(@NotNull Setting<V> setting) {
+        for (final String alias : setting.getAlias()) {
+            if (isUnknownKey(alias))
+                return () -> unknowns.get(alias).apply(setting);
+        }
+        return null;
+    }
+
+    private <V> boolean notContains(@NotNull Setting<V> setting) {
+        return !contains(setting);
+    }
+
+    private <V> boolean matchesUnknownValue(@NotNull Setting<V> setting) {
+        return notContains(setting) && matchesUnknownKey(setting);
+    }
+
+    private <V> boolean matchesUnknownKey(@NotNull Setting<V> setting) {
+        return isUnknownKey(setting.getKey()) || matchesAlias(setting);
+    }
+
+    private boolean isUnknownKey(String key) {
+        return unknowns.containsKey(key);
+    }
+
+    private <V> boolean matchesAlias(Setting<V> setting) {
+        for (final String alias : setting.getAlias()) {
+            if (isUnknownKey(alias))
+                return true;
+        }
+        return false;
     }
 
     @Override
@@ -85,18 +139,27 @@ final class SettingsImpl implements Settings {
     static final class BuilderImpl implements Builder {
 
         private final Map<Setting<?>, Supplier<?>> settings;
+        private final Map<String, Function<Setting<?>, ?>> unknowns;
 
         BuilderImpl() {
             this.settings = new HashMap<>();
+            this.unknowns = new HashMap<>();
         }
 
         BuilderImpl(final @NotNull SettingsImpl settings) {
             this.settings = new HashMap<>(settings.settings);
+            this.unknowns = new HashMap<>(settings.unknowns);
         }
 
         @Override
         public @NotNull <T> Settings.Builder withDynamic(final @NonNull Setting<T> setting, final @NonNull Supplier<@Nullable T> value) {
             this.settings.put(setting, value);
+            return this;
+        }
+
+        @Override
+        public @NotNull <V> Builder withUnknownType(@NonNull String key, @NonNull Function<Setting<?>, V> value) {
+            this.unknowns.putIfAbsent(key, value);
             return this;
         }
 

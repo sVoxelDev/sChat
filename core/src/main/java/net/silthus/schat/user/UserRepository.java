@@ -17,25 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.user;
 
-import lombok.Getter;
-import net.silthus.schat.handler.types.PermissionHandler;
-import net.silthus.schat.identity.Identified;
-import net.silthus.schat.identity.Identity;
+import java.util.UUID;
+import net.silthus.schat.repository.Repository;
 
-@Getter
-public class User implements Identified {
+public interface UserRepository extends Repository<UUID, User> {
 
-    private final Identity identity;
-    private final PermissionHandler permissionHandler;
-
-    public User(Identity identity, PermissionHandler permissionHandler) {
-        this.identity = identity;
-        this.permissionHandler = permissionHandler;
-    }
-
-    public boolean hasPermission(String permission) {
-        return permissionHandler.hasPermission(permission);
+    static UserRepository createInMemoryUserRepository() {
+        return new InMemoryUserRepository();
     }
 }
