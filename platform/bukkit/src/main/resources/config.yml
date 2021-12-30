@@ -3,3 +3,4 @@ channels:
     name: Global
     settings:
       protect: false
+      auto_join: true

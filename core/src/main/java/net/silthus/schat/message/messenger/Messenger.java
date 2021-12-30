@@ -27,6 +27,10 @@ import org.jetbrains.annotations.Unmodifiable;
 
 public interface Messenger<T> {
 
+    static <T> Messenger<T> noDelivery() {
+        return new DefaultMessenger<>((message, context) -> {});
+    }
+
     static <T> Messenger<T> messenger(@NonNull Strategy<T> strategy) {
         return new DefaultMessenger<>(strategy);
     }

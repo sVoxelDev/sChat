@@ -17,24 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.commands;
+package net.silthus.schat.chatter;
 
-import cloud.commandframework.annotations.Argument;
-import cloud.commandframework.annotations.CommandMethod;
-import cloud.commandframework.annotations.ProxiedBy;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.handler.types.JoinChannelHandler;
+import lombok.Getter;
 
-public class ChannelCommands {
+public final class ChattersInteractor implements Chatters {
 
-    @ProxiedBy("ch")
-    @CommandMethod(value = "channel join <channel>")
-    public void joinChannel(Chatter chatter, @Argument Channel channel) {
-        try {
-            chatter.join(channel);
-        } catch (JoinChannelHandler.Error e) {
-            throw new RuntimeException(e);
-        }
+    @Getter
+    private final ChatterRepository repository;
+
+    ChattersInteractor(ChatterRepository repository) {
+        this.repository = repository;
     }
 }

@@ -19,9 +19,9 @@
 
 package net.silthus.schat.platform.commands.parsers;
 
+import cloud.commandframework.CommandManager;
 import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import cloud.commandframework.arguments.parser.ArgumentParser;
-import cloud.commandframework.arguments.parser.ParserRegistry;
 import cloud.commandframework.captions.Caption;
 import cloud.commandframework.captions.CaptionVariable;
 import cloud.commandframework.context.CommandContext;
@@ -41,8 +41,8 @@ import static cloud.commandframework.arguments.parser.ArgumentParseResult.succes
 
 public final class ChannelParser<C> implements ArgumentParser<C, Channel> {
 
-    public static <C> void register(ParserRegistry<C> registry, ChannelRepository repository) {
-        registry.registerParserSupplier(TypeToken.get(Channel.class), parserParameters -> new ChannelParser<>(repository));
+    public static <C> void register(CommandManager<C> commandManager, ChannelRepository repository) {
+        commandManager.getParserRegistry().registerParserSupplier(TypeToken.get(Channel.class), parserParameters -> new ChannelParser<>(repository));
     }
 
     /**

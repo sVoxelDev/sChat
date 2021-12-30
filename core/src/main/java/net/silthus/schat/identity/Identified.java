@@ -25,11 +25,11 @@ import net.silthus.schat.repository.Entity;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Marks an entity as identified requiring it to have an {@link Identity}.
+ * Marks an entity as identified requiring it to have an {@link IdentityImpl}.
  *
  * @since next
  */
-public interface Identified extends Entity<UUID> {
+public interface Identified extends Identity, Entity<UUID> {
 
     /**
      * Gets the identity of the identified entity.
@@ -39,34 +39,19 @@ public interface Identified extends Entity<UUID> {
      */
     @NotNull Identity getIdentity();
 
-    /**
-     * Gets the id of this entity.
-     *
-     * @return the id
-     * @since next
-     */
+    @Override
     default @NotNull java.util.UUID getUniqueId() {
-        return getIdentity().id();
+        return getIdentity().getUniqueId();
     }
 
-    /**
-     * Gets the name of this entity.
-     *
-     * @return the name
-     * @since next
-     */
+    @Override
     default @NotNull String getName() {
-        return getIdentity().name();
+        return getIdentity().getName();
     }
 
-    /**
-     * Gets the display name of this entity.
-     *
-     * @return the display name
-     * @since next
-     */
+    @Override
     default @NotNull Component getDisplayName() {
-        return getIdentity().displayName();
+        return getIdentity().getDisplayName();
     }
 
     @Override

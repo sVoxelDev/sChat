@@ -37,6 +37,7 @@ import net.silthus.schat.chatter.Chatters;
 import net.silthus.schat.handler.types.UserJoinHandler;
 import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.parsers.ChannelParser;
+import net.silthus.schat.platform.commands.parsers.ChatterParser;
 import net.silthus.schat.platform.config.SChatConfig;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.sender.Sender;
@@ -83,11 +84,12 @@ public abstract class AbstractPlugin implements SChatPlugin {
         users = provideUserManager(provideUserRepository());
 
         commandManager = provideCommandManager();
-        ChannelParser.register(commandManager.getParserRegistry(), channels);
+        ChannelParser.register(commandManager, channels);
+        ChatterParser.register(commandManager, chatters);
 
         final AnnotationParser<Sender> annotationParser = new AnnotationParser<>(commandManager, Sender.class, p -> CommandMeta.simple()
             .with(CommandMeta.DESCRIPTION, p.get(StandardParameters.DESCRIPTION, "No description")).build());
-        annotationParser.parse(new ChannelCommands(chatters));
+        annotationParser.parse(new ChannelCommands());
 
         registerListeners();
     }

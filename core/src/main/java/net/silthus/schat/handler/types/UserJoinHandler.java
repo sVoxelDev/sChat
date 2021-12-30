@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.Channel.AUTO_JOIN;
 import static net.silthus.schat.channel.Channel.REQUIRES_JOIN_PERMISSION;
-import static net.silthus.schat.handler.types.JoinChannelHandler.joinChannel;
+import static net.silthus.schat.handler.types.JoinChannelHandler.steps;
 
 public interface UserJoinHandler extends Handler {
 
@@ -74,11 +74,11 @@ public interface UserJoinHandler extends Handler {
 
         private Chatter createChatter(User user) {
             return Chatter.chatter(user.getIdentity())
-                .joinChannel(joinChannel(new JoinChannelPermissionCheck(user, channelPermissions)))
+                .joinChannel(steps(new JoinChannelPermissionCheck(user, channelPermissions)))
                 .create();
         }
 
-        private record JoinChannelPermissionCheck(User user, ChannelPermissionProvider permissions) implements JoinChannelHandler.Step {
+        private record JoinChannelPermissionCheck(User user, ChannelPermissionProvider permissions) implements JoinChannelHandler {
 
             @Override
             public void process(Chatter chatter, Channel channel) throws JoinChannelHandler.Error {
