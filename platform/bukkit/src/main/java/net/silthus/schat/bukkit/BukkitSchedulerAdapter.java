@@ -17,24 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform;
+package net.silthus.schat.bukkit;
 
-/**
- * Represents the logger instance being used by sChat on the platform.
- *
- * <p>Messages sent using the logger are sent prefixed with the sChat tag,
- * and on some implementations will be colored depending on the message type.</p>
- */
-public interface PluginLogger {
+import java.util.concurrent.Executor;
+import net.silthus.schat.platform.plugin.scheduler.AbstractJavaScheduler;
+import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
+import org.bukkit.plugin.java.JavaPlugin;
 
-    void info(String s);
+public final class BukkitSchedulerAdapter extends AbstractJavaScheduler implements SchedulerAdapter {
 
-    void warn(String s);
+    private final Executor sync;
 
-    void warn(String s, Throwable t);
+    public BukkitSchedulerAdapter(JavaPlugin loader) {
+        this.sync = r -> loader.getServer().getScheduler().scheduleSyncDelayedTask(loader, r);
+    }
 
-    void severe(String s);
-
-    void severe(String s, Throwable t);
+    @Override
+    public Executor sync() {
+        return this.sync;
+    }
 
 }

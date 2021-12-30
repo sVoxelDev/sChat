@@ -60,6 +60,10 @@ public interface UserJoinHandler extends Handler {
         public void join(User user) {
             final Chatter chatter = createChatter(user);
             chatterRepository.add(chatter);
+            autoJoinChannels(chatter);
+        }
+
+        private void autoJoinChannels(Chatter chatter) {
             for (final Channel channel : channels.filter(channel -> channel.get(AUTO_JOIN))) {
                 try {
                     chatter.join(channel);

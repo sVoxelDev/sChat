@@ -19,39 +19,60 @@
 
 package net.silthus.schat.bukkit;
 
-import java.io.File;
-import kr.entree.spigradle.annotations.PluginMain;
+import java.nio.file.Path;
 import lombok.Getter;
-import org.bukkit.plugin.PluginDescriptionFile;
+import net.silthus.schat.platform.PlayerAdapter;
+import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
+import net.silthus.schat.platform.plugin.bootstrap.LoaderBootstrap;
+import net.silthus.schat.platform.plugin.logging.JavaPluginLogger;
+import net.silthus.schat.platform.plugin.logging.PluginLogger;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.java.JavaPluginLoader;
-import org.jetbrains.annotations.NotNull;
 
-@PluginMain
-public final class SChatBukkitBootstrap extends JavaPlugin {
+@Getter
+public final class SChatBukkitBootstrap implements Bootstrap, LoaderBootstrap {
 
-    @Getter
+    private final JavaPlugin loader;
     private final SChatBukkitPlugin plugin;
-    @Getter
-    private final BukkitPlayerAdapter playerAdapter = new BukkitPlayerAdapter();
 
-    public SChatBukkitBootstrap() {
-        plugin = new SChatBukkitPlugin(this);
+    private final PluginLogger pluginLogger;
+    private final BukkitSchedulerAdapter scheduler;
+    private final BukkitPlayerAdapter playerAdapter;
+
+    public SChatBukkitBootstrap(JavaPlugin loader) {
+        this.loader = loader;
+
+        this.pluginLogger = new JavaPluginLogger(loader.getLogger());
+        this.scheduler = new BukkitSchedulerAdapter(loader);
+        this.playerAdapter = new BukkitPlayerAdapter();
+        this.plugin = new SChatBukkitPlugin(this);
     }
 
-    // testing constructor
-    public SChatBukkitBootstrap(@NotNull JavaPluginLoader loader,
-                                @NotNull PluginDescriptionFile description,
-                                @NotNull File dataFolder,
-                                @NotNull File file) {
-        super(loader, description, dataFolder, file);
-        plugin = new SChatBukkitPlugin(this);
+    @Override
+    public void onLoad() {
+        plugin.load();
     }
 
     @Override
     public void onEnable() {
-        saveDefaultConfig();
-
         plugin.enable();
+    }
+
+    @Override
+    public void onDisable() {
+        plugin.disable();
+    }
+
+    @Override
+    public Path getDataDirectory() {
+        return getLoader().getDataFolder().toPath().toAbsolutePath();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <P> PlayerAdapter<P> getPlayerAdapter(Class<P> playerClass) {
+        if (!playerClass.equals(Player.class))
+            throw new PlayerAdapter.InvalidPlayerType();
+        return (PlayerAdapter<P>) playerAdapter;
     }
 }

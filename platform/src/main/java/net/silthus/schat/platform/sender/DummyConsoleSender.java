@@ -17,37 +17,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.platform.sender;
 
-import net.silthus.schat.channel.ChannelPermissionProvider;
-import net.silthus.schat.channel.Channels;
-import net.silthus.schat.chatter.Chatters;
-import net.silthus.schat.platform.config.Config;
-import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
-import net.silthus.schat.platform.plugin.logging.PluginLogger;
-import net.silthus.schat.user.Users;
+import lombok.Getter;
+import net.silthus.schat.identity.Identity;
 
-public interface SChatPlugin {
+public abstract class DummyConsoleSender implements Sender {
 
-    void load();
+    @Getter
+    private final Identity identity;
 
-    void enable();
-
-    void disable();
-
-    Bootstrap getBootstrap();
-
-    default PluginLogger getLogger() {
-        return getBootstrap().getPluginLogger();
+    protected DummyConsoleSender() {
+        identity = Identity.identity(Sender.CONSOLE_UUID, Sender.CONSOLE_NAME);
     }
 
-    Config getConfig();
+    @Override
+    public boolean hasPermission(String permission) {
+        return true;
+    }
 
-    Channels getChannels();
+    @Override
+    public void performCommand(String commandLine) {
 
-    Chatters getChatters();
+    }
 
-    Users getUsers();
-
-    ChannelPermissionProvider getChannelPermissions();
+    @Override
+    public boolean isConsole() {
+        return true;
+    }
 }

@@ -21,6 +21,7 @@ package net.silthus.schat.repository;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.jetbrains.annotations.NotNull;
@@ -60,6 +61,11 @@ public abstract class InMemoryRepository<K, E extends Entity<K>> implements Repo
     @Override
     public @NotNull @Unmodifiable Collection<E> all() {
         return Collections.unmodifiableCollection(entities.values());
+    }
+
+    @Override
+    public @NotNull @Unmodifiable List<K> keys() {
+        return List.copyOf(entities.keySet());
     }
 
     @Override

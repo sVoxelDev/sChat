@@ -19,6 +19,14 @@
 
 package net.silthus.schat.platform.plugin;
 
+import cloud.commandframework.CommandManager;
+import cloud.commandframework.annotations.AnnotationParser;
+import cloud.commandframework.arguments.parser.StandardParameters;
+import cloud.commandframework.meta.CommandMeta;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import lombok.Getter;
 import lombok.Setter;
 import net.silthus.schat.channel.ChannelPermissionProvider;
@@ -27,8 +35,11 @@ import net.silthus.schat.channel.Channels;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.chatter.Chatters;
 import net.silthus.schat.handler.types.UserJoinHandler;
+import net.silthus.schat.platform.commands.ChannelCommands;
+import net.silthus.schat.platform.commands.parsers.ChannelParser;
 import net.silthus.schat.platform.config.SChatConfig;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
+import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.user.UserRepository;
 import net.silthus.schat.user.Users;
 import org.jetbrains.annotations.ApiStatus;
@@ -51,9 +62,17 @@ public abstract class AbstractPlugin implements SChatPlugin {
     @Getter
     @Setter
     private ChannelPermissionProvider channelPermissions = ChannelPermissionProvider.DEFAULT;
+    private CommandManager<Sender> commandManager;
+
+    @Override
+    public final void load() {
+
+    }
 
     @Override
     public final void enable() {
+        setupSenderFactory();
+
         config = provideConfiguration(provideConfigurationAdapter());
         config.load();
 
@@ -63,8 +82,22 @@ public abstract class AbstractPlugin implements SChatPlugin {
         chatters = provideChatterManager(provideChatterRepository());
         users = provideUserManager(provideUserRepository());
 
+        commandManager = provideCommandManager();
+        ChannelParser.register(commandManager.getParserRegistry(), channels);
+
+        final AnnotationParser<Sender> annotationParser = new AnnotationParser<>(commandManager, Sender.class, p -> CommandMeta.simple()
+            .with(CommandMeta.DESCRIPTION, p.get(StandardParameters.DESCRIPTION, "No description")).build());
+        annotationParser.parse(new ChannelCommands(chatters));
+
         registerListeners();
     }
+
+    @Override
+    public final void disable() {
+
+    }
+
+    protected abstract void setupSenderFactory();
 
     @ApiStatus.OverrideOnly
     protected @NotNull SChatConfig provideConfiguration(ConfigurationAdapter adapter) {
@@ -77,11 +110,10 @@ public abstract class AbstractPlugin implements SChatPlugin {
     }
 
     @ApiStatus.OverrideOnly
-    protected @NotNull ChannelManager provideChannelManager(ChannelRepository repository) {
-        return new ChannelManager(this, repository);
+    protected @NotNull Channels provideChannelManager(ChannelRepository repository) {
+        return new ChannelManager(getConfig(), repository);
     }
 
-    @ApiStatus.OverrideOnly
     protected abstract @NotNull ConfigurationAdapter provideConfigurationAdapter();
 
     @ApiStatus.OverrideOnly
@@ -95,12 +127,12 @@ public abstract class AbstractPlugin implements SChatPlugin {
     }
 
     @ApiStatus.OverrideOnly
-    protected @NotNull ChatterManager provideChatterManager(ChatterRepository repository) {
+    protected @NotNull Chatters provideChatterManager(ChatterRepository repository) {
         return new ChatterManager(repository);
     }
 
     @ApiStatus.OverrideOnly
-    protected @NotNull UserManager provideUserManager(UserRepository repository) {
+    protected @NotNull Users provideUserManager(UserRepository repository) {
         return new UserManager(repository, provideUserJoinHandler());
     }
 
@@ -109,5 +141,28 @@ public abstract class AbstractPlugin implements SChatPlugin {
         return UserJoinHandler.createUserJoinHandler(getChatters(), channels, getChannelPermissions());
     }
 
+    protected abstract CommandManager<Sender> provideCommandManager();
+
     protected abstract void registerListeners();
+
+    protected Path resolveConfig(String fileName) {
+        Path configFile = getBootstrap().getConfigDirectory().resolve(fileName);
+
+        // if the config doesn't exist, create it based on the template in the resources dir
+        if (!Files.exists(configFile)) {
+            try {
+                Files.createDirectories(configFile.getParent());
+            } catch (IOException e) {
+                // ignore
+            }
+
+            try (InputStream is = getBootstrap().getResourceStream(fileName)) {
+                Files.copy(is, configFile);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return configFile;
+    }
 }

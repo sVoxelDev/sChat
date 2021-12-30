@@ -17,37 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.platform.plugin.bootstrap;
 
-import net.silthus.schat.channel.ChannelPermissionProvider;
-import net.silthus.schat.channel.Channels;
-import net.silthus.schat.chatter.Chatters;
-import net.silthus.schat.platform.config.Config;
-import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
-import net.silthus.schat.platform.plugin.logging.PluginLogger;
-import net.silthus.schat.user.Users;
+/**
+ * Minimal bootstrap plugin, called by the loader plugin.
+ */
+public interface LoaderBootstrap {
 
-public interface SChatPlugin {
+    void onLoad();
 
-    void load();
+    void onEnable();
 
-    void enable();
+    void onDisable();
 
-    void disable();
-
-    Bootstrap getBootstrap();
-
-    default PluginLogger getLogger() {
-        return getBootstrap().getPluginLogger();
-    }
-
-    Config getConfig();
-
-    Channels getChannels();
-
-    Chatters getChatters();
-
-    Users getUsers();
-
-    ChannelPermissionProvider getChannelPermissions();
 }

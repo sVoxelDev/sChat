@@ -61,8 +61,7 @@ dependencies {
 
     implementation spigot(mcVersion)
 
-    implementation "co.aikar:acf-paper:0.5.0-SNAPSHOT"
-    implementation 'cloud.commandframework:cloud-bukkit:1.6.0'
+    implementation 'cloud.commandframework:cloud-paper:1.6.1'
     implementation 'com.comphenix.protocol:ProtocolLib:4.8.0-SNAPSHOT'
 
     //

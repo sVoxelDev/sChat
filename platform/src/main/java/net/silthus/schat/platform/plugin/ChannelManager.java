@@ -19,32 +19,30 @@
 
 package net.silthus.schat.platform.plugin;
 
-import java.util.Collection;
 import lombok.Getter;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.channel.Channels;
 import net.silthus.schat.platform.config.ChannelConfig;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
+import net.silthus.schat.platform.config.Config;
 
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 
 final class ChannelManager implements Channels {
 
     @Getter
-    private final SChatPlugin plugin;
+    private final Config config;
     @Getter
     private final ChannelRepository repository;
 
-    ChannelManager(SChatPlugin plugin, ChannelRepository repository) {
-        this.plugin = plugin;
+    ChannelManager(Config config, ChannelRepository repository) {
+        this.config = config;
         this.repository = repository;
     }
 
     @Override
     public void load() {
-        for (final ChannelConfig config : getPlugin().getConfig().get(CHANNELS).values()) {
+        for (final ChannelConfig config : getConfig().get(CHANNELS).values()) {
             getRepository().add(createChannelFromConfig(config));
         }
     }
@@ -54,30 +52,5 @@ final class ChannelManager implements Channels {
             .displayName(config.getName())
             .settings(config.getSettings())
             .create();
-    }
-
-    @Override
-    public @NotNull @Unmodifiable Collection<Channel> all() {
-        return getRepository().all();
-    }
-
-    @Override
-    public boolean contains(String key) {
-        return getRepository().contains(key);
-    }
-
-    @Override
-    public @NotNull Channel get(@NotNull String id) throws NotFound {
-        return getRepository().get(id);
-    }
-
-    @Override
-    public void add(@NotNull Channel entity) {
-        getRepository().add(entity);
-    }
-
-    @Override
-    public void remove(@NotNull String key) {
-        getRepository().remove(key);
     }
 }

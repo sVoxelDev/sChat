@@ -17,37 +17,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.platform.commands;
 
-import net.silthus.schat.channel.ChannelPermissionProvider;
-import net.silthus.schat.channel.Channels;
+import cloud.commandframework.annotations.Argument;
+import cloud.commandframework.annotations.CommandMethod;
+import cloud.commandframework.annotations.ProxiedBy;
+import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatters;
-import net.silthus.schat.platform.config.Config;
-import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
-import net.silthus.schat.platform.plugin.logging.PluginLogger;
-import net.silthus.schat.user.Users;
+import net.silthus.schat.handler.types.JoinChannelHandler;
+import net.silthus.schat.platform.sender.Sender;
 
-public interface SChatPlugin {
+public class ChannelCommands {
 
-    void load();
+    private final Chatters chatters;
 
-    void enable();
-
-    void disable();
-
-    Bootstrap getBootstrap();
-
-    default PluginLogger getLogger() {
-        return getBootstrap().getPluginLogger();
+    public ChannelCommands(Chatters chatters) {
+        this.chatters = chatters;
     }
 
-    Config getConfig();
-
-    Channels getChannels();
-
-    Chatters getChatters();
-
-    Users getUsers();
-
-    ChannelPermissionProvider getChannelPermissions();
+    @ProxiedBy("ch")
+    @CommandMethod("channel join <channel>")
+    public void joinChannel(Sender sender, @Argument Channel channel) {
+        try {
+            chatters.get(sender.asUser()).join(channel);
+        } catch (JoinChannelHandler.Error e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

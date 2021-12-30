@@ -34,6 +34,6 @@ public final class PlayerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        plugin.getUsers().join(plugin.getBootstrap().getPlayerAdapter().adapt(event.getPlayer()));
+        plugin.getUsers().join(plugin.adapt(event.getPlayer()));
     }
 }

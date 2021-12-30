@@ -19,7 +19,9 @@
 
 package net.silthus.schat.channel;
 
-public interface Channels extends ChannelRepository {
+import net.silthus.schat.repository.RepositoryHolder;
+
+public interface Channels extends RepositoryHolder<ChannelRepository, String, Channel>, ChannelRepository {
 
     void load();
 }
