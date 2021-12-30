@@ -19,5 +19,13 @@
 
 package net.silthus.schat.chatter;
 
-public interface Chatters extends ChatterRepository {
+import java.util.UUID;
+import net.silthus.schat.repository.RepositoryHolder;
+import net.silthus.schat.user.User;
+
+public interface Chatters extends RepositoryHolder<ChatterRepository, UUID, Chatter>, ChatterRepository {
+
+    default Chatter get(User user) {
+        return get(user.getUniqueId());
+    }
 }

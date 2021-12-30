@@ -19,41 +19,22 @@
 
 package net.silthus.schat.bukkit;
 
-import be.seeseemelk.mockbukkit.MockBukkit;
-import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BukkitTests {
-
-    private ServerMock server;
-    private SChatBukkitBootstrap bootstrap;
-    private SChatBukkitPlugin plugin;
-
-    @BeforeEach
-    void setUp() {
-        server = MockBukkit.mock();
-        bootstrap = MockBukkit.load(SChatBukkitBootstrap.class);
-        plugin = bootstrap.getPlugin();
-    }
-
-    @AfterEach
-    void tearDown() {
-        MockBukkit.unmock();
-    }
+class BukkitTests extends BukkitPluginTest {
 
     @Test
     void onEnable_loadsChannels_fromConfig() {
-        assertThat(plugin.getChannels().contains("global")).isTrue();
+        assertThat(plugin().getChannels().contains("global")).isTrue();
     }
 
     @Test
-    void onJoin_createsUser() {
-        final PlayerMock player = server.addPlayer();
-        assertThat(plugin.getUsers().get(player.getUniqueId())).isNotNull();
+    void onJoin_autoLoads_channels() {
+        final PlayerMock player = server().addPlayer();
+        assertThat(plugin().getChatters().get(player.getUniqueId()).getChannels())
+            .anyMatch(channel -> channel.getKey().equals("global"));
     }
 }

@@ -19,26 +19,29 @@
 
 package net.silthus.schat.platform.plugin;
 
-import lombok.Getter;
-import net.silthus.schat.handler.types.UserJoinHandler;
-import net.silthus.schat.user.User;
-import net.silthus.schat.user.UserRepository;
-import net.silthus.schat.user.Users;
+import java.io.File;
+import net.silthus.schat.platform.TestConfigurationAdapter;
+import net.silthus.schat.platform.config.SChatConfig;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-final class UserManager implements Users {
+import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
+import static org.assertj.core.api.Assertions.assertThat;
 
-    @Getter
-    private final UserRepository repository;
-    private final UserJoinHandler joinHandler;
+class ChannelManagerTests {
 
-    UserManager(UserRepository repository, UserJoinHandler joinHandler) {
-        this.repository = repository;
-        this.joinHandler = joinHandler;
+    private ChannelManager channelManager;
+
+    @BeforeEach
+    void setUp(@TempDir File temp) {
+        final SChatConfig config = new SChatConfig(new TestConfigurationAdapter(new File(temp, "config.yml")));
+        channelManager = new ChannelManager(config, createInMemoryChannelRepository());
     }
 
-    @Override
-    public void join(User user) {
-        joinHandler.join(user);
-        add(user);
+    @Test
+    void loads_channels_from_config() {
+        channelManager.load();
+        assertThat(channelManager.all()).isNotEmpty();
     }
 }

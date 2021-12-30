@@ -71,5 +71,4 @@ public interface Channel extends MessageTarget, Configured, Entity<String> {
 
     class InvalidKey extends RuntimeException {
     }
-
 }

@@ -26,7 +26,8 @@ import org.bukkit.entity.Player;
 
 import static net.kyori.adventure.text.Component.text;
 
-public class BukkitPlayerAdapter implements PlayerAdapter<Player> {
+public final class BukkitPlayerAdapter implements PlayerAdapter<Player> {
+
     @Override
     public User adapt(Player player) {
         return new User(

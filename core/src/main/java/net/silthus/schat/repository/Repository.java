@@ -47,6 +47,14 @@ public interface Repository<K, E extends Entity<K>> {
     @NotNull @Unmodifiable Collection<E> all();
 
     /**
+     * Gets a list of all keys stored in this repository.
+     *
+     * @return all keys
+     * @since next
+     */
+    @NotNull @Unmodifiable List<K> keys();
+
+    /**
      * Checks if the repository contains an entity with the given key.
      *
      * @param key the key of the entity

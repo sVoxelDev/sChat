@@ -17,28 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform;
+package net.silthus.schat.platform.plugin.logging;
 
-import java.io.File;
-import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
-import net.silthus.schat.platform.plugin.AbstractPlugin;
-import org.jetbrains.annotations.NotNull;
+/**
+ * Represents the logger instance being used by sChat on the platform.
+ *
+ * <p>Messages sent using the logger are sent prefixed with the sChat tag,
+ * and on some implementations will be colored depending on the message type.</p>
+ */
+public interface PluginLogger {
 
-public final class TestPlugin extends AbstractPlugin {
-    private final File dataDirectory;
+    void info(String s);
 
-    public TestPlugin(File dataDirectory) {
-        this.dataDirectory = dataDirectory;
-        enable();
-    }
+    void warn(String s);
 
-    @Override
-    protected @NotNull ConfigurationAdapter provideConfigurationAdapter() {
-        return new TestConfigurationAdapter(new File(dataDirectory, "config.yml"));
-    }
+    void warn(String s, Throwable t);
 
-    @Override
-    protected void registerListeners() {
+    void severe(String s);
 
-    }
+    void severe(String s, Throwable t);
+
 }

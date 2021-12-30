@@ -17,37 +17,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.bukkit;
 
-import net.silthus.schat.channel.ChannelPermissionProvider;
-import net.silthus.schat.channel.Channels;
-import net.silthus.schat.chatter.Chatters;
-import net.silthus.schat.platform.config.Config;
-import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
-import net.silthus.schat.platform.plugin.logging.PluginLogger;
-import net.silthus.schat.user.Users;
+import be.seeseemelk.mockbukkit.entity.PlayerMock;
+import net.silthus.schat.channel.Channel;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-public interface SChatPlugin {
+import static org.assertj.core.api.Assertions.assertThat;
 
-    void load();
+class BukkitCommandTests extends BukkitPluginTest {
 
-    void enable();
+    @Test
+    @DisplayName("/ch join <channel>")
+    void join_channel_command() {
+        final Channel channel = channelWith(Channel.REQUIRES_JOIN_PERMISSION, false);
+        final PlayerMock player = server().addPlayer();
+        player.performCommand("ch " + channel.getKey());
 
-    void disable();
-
-    Bootstrap getBootstrap();
-
-    default PluginLogger getLogger() {
-        return getBootstrap().getPluginLogger();
+        assertThat(chatter(player).getChannels()).contains(channel);
     }
 
-    Config getConfig();
-
-    Channels getChannels();
-
-    Chatters getChatters();
-
-    Users getUsers();
-
-    ChannelPermissionProvider getChannelPermissions();
 }

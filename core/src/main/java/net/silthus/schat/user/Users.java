@@ -19,7 +19,10 @@
 
 package net.silthus.schat.user;
 
-public interface Users extends UserRepository {
+import java.util.UUID;
+import net.silthus.schat.repository.RepositoryHolder;
+
+public interface Users extends RepositoryHolder<UserRepository, UUID, User>, UserRepository {
 
     void join(User user);
 }

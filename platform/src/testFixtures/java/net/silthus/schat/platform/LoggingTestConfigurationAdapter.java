@@ -20,6 +20,7 @@
 package net.silthus.schat.platform;
 
 import java.io.File;
+import net.silthus.schat.platform.plugin.logging.PluginLogger;
 
 public class LoggingTestConfigurationAdapter extends TestConfigurationAdapter {
 

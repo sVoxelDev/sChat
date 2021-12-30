@@ -24,4 +24,7 @@ import net.silthus.schat.user.User;
 public interface PlayerAdapter<P> {
 
     User adapt(P player);
+
+    class InvalidPlayerType extends RuntimeException {
+    }
 }

@@ -19,14 +19,9 @@
 
 package net.silthus.schat.platform.plugin;
 
-import java.util.Collection;
-import java.util.UUID;
 import lombok.Getter;
-import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.chatter.Chatters;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 
 final class ChatterManager implements Chatters {
 
@@ -35,30 +30,5 @@ final class ChatterManager implements Chatters {
 
     ChatterManager(ChatterRepository repository) {
         this.repository = repository;
-    }
-
-    @Override
-    public @NotNull @Unmodifiable Collection<Chatter> all() {
-        return getRepository().all();
-    }
-
-    @Override
-    public boolean contains(UUID key) {
-        return getRepository().contains(key);
-    }
-
-    @Override
-    public @NotNull Chatter get(@NotNull UUID id) throws NotFound {
-        return getRepository().get(id);
-    }
-
-    @Override
-    public void add(@NotNull Chatter chatter) {
-        getRepository().add(chatter);
-    }
-
-    @Override
-    public void remove(@NotNull UUID key) {
-        getRepository().remove(key);
     }
 }

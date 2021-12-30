@@ -19,27 +19,63 @@
 
 package net.silthus.schat.platform.plugin;
 
-import java.io.File;
-import net.silthus.schat.platform.TestPlugin;
+import cloud.commandframework.CommandManager;
+import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.channel.Channels;
+import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
+import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
+import net.silthus.schat.platform.sender.Sender;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class PluginTests {
 
-    private TestPlugin plugin;
+    private PluginMock plugin;
 
     @BeforeEach
-    void setUp(@TempDir File temp) {
-        plugin = new TestPlugin(temp);
-        plugin.enable();
+    void setUp() {
+        plugin = new PluginMock();
     }
 
     @Test
     void channels_are_loaded() {
-        assertThat(plugin.getChannels().all()).isNotEmpty();
+        plugin.enable();
+        verify(plugin.getChannels()).load();
     }
 
+    private static class PluginMock extends AbstractPlugin {
+        @Override
+        protected void setupSenderFactory() {
+        }
+
+        @Override
+        protected @NotNull Channels provideChannelManager(ChannelRepository repository) {
+            return mock(Channels.class);
+        }
+
+        @Override
+        protected @NotNull ConfigurationAdapter provideConfigurationAdapter() {
+            return mock(ConfigurationAdapter.class);
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        protected CommandManager<Sender> provideCommandManager() {
+            return mock(CommandManager.class);
+        }
+
+        @Override
+        protected void registerListeners() {
+
+        }
+
+        @Override
+        public Bootstrap getBootstrap() {
+            return mock(Bootstrap.class);
+        }
+    }
 }
