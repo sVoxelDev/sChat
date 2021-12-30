@@ -1,83 +1,48 @@
 /*
- * This file is part of sChat, licensed under the MIT License.
+ * sChat, a Supercharged Minecraft Chat Plugin
  * Copyright (C) Silthus <https://www.github.com/silthus>
  * Copyright (C) sChat team and contributors
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
- *  of this software and associated documentation files (the "Software"), to deal
- *  in the Software without restriction, including without limitation the rights
- *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  copies of the Software, and to permit persons to whom the Software is
- *  furnished to do so, subject to the following conditions:
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The above copyright notice and this permission notice shall be included in all
- *  copies or substantial portions of the Software.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package net.silthus.schat.identity;
 
 import java.util.UUID;
 import java.util.function.Supplier;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NonNull;
-import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
 
-/**
- * Holds the id, name and display name of an identified entity.
- *
- * <p>Identities could be players, channels, the console and so on.
- * If the identity is a player the id of the player in the platform matches the identity's id.</p>
- *
- * @since next
- */
-@Getter
-@Accessors(fluent = true)
-@EqualsAndHashCode(of = {"id"})
-public final class Identity {
-
-    private static final Identity NIL = Identity.identity("", Component.empty());
-
-    private final @NonNull UUID id;
-    private final @NonNull String name;
-    private final @NonNull Supplier<Component> displayName;
-
-    private Identity(
-        @NonNull UUID id,
-        @NonNull String name,
-        @NonNull Supplier<Component> displayName
-    ) {
-        this.id = id;
-        this.name = name;
-        this.displayName = displayName;
-    }
+public interface Identity {
 
     /**
      * Gets a {@code nil} identity.
      *
-     * <p>The identity will have an empty {@link #name()} and {@link #displayName()},
+     * <p>The identity will have an empty {@link #getName()} and {@link #getDisplayName()},
      * but no properties will actual be {@code null}.</p>
      *
-     * <p>The {@link #id()} of the nil identity will always be the same during the lifetime
+     * <p>The {@link #getUniqueId()} of the nil identity will always be the same during the lifetime
      * of the application, but changes for every lifecycle.</p>
      *
      * @return the nil identity
      * @since next
      */
-    public static @NotNull Identity nil() {
-        return NIL;
+    static @NotNull Identity nil() {
+        return IdentityImpl.NIL;
     }
 
     /**
@@ -87,21 +52,21 @@ public final class Identity {
      * @return the identity
      * @since next
      */
-    public static Identity identity(final UUID id) {
+    static Identity identity(final UUID id) {
         return identity(id, "");
     }
 
     /**
      * Creates a new identity using the provided id and name.
      *
-     * <p>The {@link #displayName()} will be the {@code name}.</p>
+     * <p>The {@link #getDisplayName()} will be the {@code name}.</p>
      *
      * @param id   the id
      * @param name the name
      * @return the identity
      * @since next
      */
-    public static @NotNull Identity identity(@NonNull UUID id, @NonNull String name) {
+    static @NotNull Identity identity(@NonNull UUID id, @NonNull String name) {
         return identity(id, name, text(name));
     }
 
@@ -109,13 +74,13 @@ public final class Identity {
      * Creates a new identity using the provided name.
      *
      * <p>A random {@code UUID} will be used for the id
-     * and the {@link #displayName()} will be the {@code name}.</p>
+     * and the {@link #getDisplayName()} will be the {@code name}.</p>
      *
      * @param name the name
      * @return the identity
      * @since next
      */
-    public static @NotNull Identity identity(@NonNull String name) {
+    static @NotNull Identity identity(@NonNull String name) {
         return identity(UUID.randomUUID(), name);
     }
 
@@ -129,7 +94,7 @@ public final class Identity {
      * @return the identity
      * @since next
      */
-    public static @NotNull Identity identity(@NonNull String name, @NonNull Component displayName) {
+    static @NotNull Identity identity(@NonNull String name, @NonNull Component displayName) {
         return identity(UUID.randomUUID(), name, displayName);
     }
 
@@ -142,7 +107,7 @@ public final class Identity {
      * @return the identity
      * @since next
      */
-    public static Identity identity(final UUID id, final String name, final Component displayName) {
+    static Identity identity(final UUID id, final String name, final Component displayName) {
         return identity(id, name, () -> displayName);
     }
 
@@ -155,17 +120,13 @@ public final class Identity {
      * @return the identity
      * @since next
      */
-    public static Identity identity(final UUID id, final String name, final Supplier<Component> displayName) {
-        return new Identity(id, name, displayName);
+    static Identity identity(final UUID id, final String name, final Supplier<Component> displayName) {
+        return new IdentityImpl(id, name, displayName);
     }
 
-    /**
-     * Gets the display of the identity.
-     *
-     * @return the display name
-     * @since next
-     */
-    public Component displayName() {
-        return displayName.get();
-    }
+    java.util.UUID getUniqueId();
+
+    String getName();
+
+    Component getDisplayName();
 }

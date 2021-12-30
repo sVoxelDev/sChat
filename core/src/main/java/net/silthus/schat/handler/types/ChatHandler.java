@@ -29,9 +29,16 @@ import static net.silthus.schat.message.Message.message;
 @FunctionalInterface
 public interface ChatHandler extends Handler {
 
+    static ChatHandler sendToActiveChannel() {
+        return new SendToActiveChannel();
+    }
+
     Message chat(Chatter chatter, String text);
 
-    class Default implements ChatHandler {
+    class SendToActiveChannel implements ChatHandler {
+
+        protected SendToActiveChannel() {
+        }
 
         @Override
         public Message chat(final Chatter chatter, final String text) {

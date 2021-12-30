@@ -37,6 +37,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
+import static net.silthus.schat.handler.types.ChatHandler.sendToActiveChannel;
+
 @EqualsAndHashCode(of = {"identity"})
 final class ChatterImpl implements Chatter {
 
@@ -85,7 +87,9 @@ final class ChatterImpl implements Chatter {
 
     @Override
     public void join(final @NonNull Channel channel) throws JoinChannelHandler.Error {
-        join.joinChannel(this, channel);
+        join.process(this, channel);
+        addChannel(channel);
+        channel.addTarget(this);
     }
 
     @Override
@@ -111,9 +115,9 @@ final class ChatterImpl implements Chatter {
     static class ChatterBuilder implements Builder {
 
         private final Identity identity;
-        private Messenger<Chatter> messenger = Messenger.messenger((message, context) -> {});
-        private JoinChannelHandler join = JoinChannelHandler.joinChannel();
-        private ChatHandler chat = new ChatHandler.Default();
+        private Messenger<Chatter> messenger = Messenger.noDelivery();
+        private JoinChannelHandler join = JoinChannelHandler.empty();
+        private ChatHandler chat = sendToActiveChannel();
 
         ChatterBuilder(Identity identity) {
             this.identity = identity;

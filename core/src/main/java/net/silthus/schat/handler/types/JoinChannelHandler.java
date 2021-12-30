@@ -26,35 +26,31 @@ import net.silthus.schat.handler.Handler;
 @FunctionalInterface
 public interface JoinChannelHandler extends Handler {
 
-    static JoinChannelHandler joinChannel(Step... steps) {
+    static JoinChannelHandler empty() {
+        return new Default();
+    }
+
+    static JoinChannelHandler steps(JoinChannelHandler... steps) {
         return new Default(steps);
     }
 
-    void joinChannel(Chatter chatter, Channel channel);
-
-    @FunctionalInterface
-    interface Step {
-
-        void process(Chatter chatter, Channel channel) throws Error;
-    }
+    void process(Chatter chatter, Channel channel);
 
     class Default implements JoinChannelHandler {
 
-        private final Step[] steps;
+        private final JoinChannelHandler[] steps;
 
-        protected Default(Step... steps) {
+        protected Default(JoinChannelHandler... steps) {
             this.steps = steps;
         }
 
         @Override
-        public void joinChannel(final Chatter chatter, final Channel channel) {
+        public void process(final Chatter chatter, final Channel channel) {
             processSteps(chatter, channel);
-            chatter.addChannel(channel);
-            channel.addTarget(chatter);
         }
 
         private void processSteps(Chatter chatter, Channel channel) {
-            for (final Step step : steps) {
+            for (final JoinChannelHandler step : steps) {
                 step.process(chatter, channel);
             }
         }

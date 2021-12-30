@@ -19,9 +19,9 @@
 
 package net.silthus.schat.platform.sender;
 
-import java.util.Objects;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * Factory class to make a thread-safe sender instance.
@@ -44,8 +44,7 @@ public abstract class SenderFactory<T> implements AutoCloseable, PlayerOnlineChe
 
     protected abstract boolean isConsole(T sender);
 
-    public final Sender wrap(T sender) {
-        Objects.requireNonNull(sender, "sender");
+    public final Sender wrap(@NonNull T sender) {
         return new GenericSender<>(this, sender);
     }
 
