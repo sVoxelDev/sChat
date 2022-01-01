@@ -20,8 +20,15 @@
 package net.silthus.schat.platform.plugin;
 
 import lombok.Getter;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.chatter.Chatters;
+import net.silthus.schat.chatter.checks.JoinChannelPermissionCheck;
+import net.silthus.schat.sender.Sender;
+import org.jetbrains.annotations.NotNull;
+
+import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.chatter.Chatter.JoinChannel.steps;
 
 final class ChatterManager implements Chatters {
 
@@ -31,4 +38,26 @@ final class ChatterManager implements Chatters {
     ChatterManager(ChatterRepository repository) {
         this.repository = repository;
     }
+
+    @Override
+    public Chatter get(Sender sender) {
+        if (contains(sender.getUniqueId()))
+            return get(sender.getUniqueId());
+        return createAndCacheChatterFor(sender);
+    }
+
+    @NotNull
+    private Chatter createAndCacheChatterFor(Sender sender) {
+        final Chatter chatter = createChatterFor(sender);
+        add(chatter);
+        return chatter;
+    }
+
+    private Chatter createChatterFor(Sender sender) {
+        return Chatter.chatter(sender.getIdentity())
+            .messengerStrategy((message, context) -> sender.sendMessage(text(message.getText())))
+            .joinChannel(steps(new JoinChannelPermissionCheck(sender)))
+            .create();
+    }
+
 }

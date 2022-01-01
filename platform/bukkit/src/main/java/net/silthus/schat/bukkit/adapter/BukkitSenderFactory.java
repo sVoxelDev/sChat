@@ -17,14 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.bukkit;
+package net.silthus.schat.bukkit.adapter;
 
 import java.util.UUID;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
-import net.silthus.schat.platform.sender.Sender;
-import net.silthus.schat.platform.sender.SenderFactory;
+import net.silthus.schat.sender.Sender;
+import net.silthus.schat.sender.SenderFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -92,14 +92,14 @@ public final class BukkitSenderFactory extends SenderFactory<CommandSender> {
     }
 
     @Override
-    public void close() {
-        super.close();
-        this.audiences.close();
-    }
-
-    @Override
     public boolean isPlayerOnline(UUID playerId) {
         final Player player = Bukkit.getPlayer(playerId);
         return player != null && player.isOnline();
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        this.audiences.close();
     }
 }

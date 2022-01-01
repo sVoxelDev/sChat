@@ -17,12 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.user;
+package net.silthus.schat.sender;
 
 import java.util.UUID;
-import net.silthus.schat.repository.RepositoryHolder;
 
-public interface Users extends RepositoryHolder<UserRepository, UUID, User>, UserRepository {
+@FunctionalInterface
+public interface PlayerOnlineChecker {
 
-    void join(User user);
+    boolean isPlayerOnline(UUID playerId);
 }

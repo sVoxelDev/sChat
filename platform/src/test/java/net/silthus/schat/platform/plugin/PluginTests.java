@@ -20,15 +20,24 @@
 package net.silthus.schat.platform.plugin;
 
 import cloud.commandframework.CommandManager;
+import cloud.commandframework.CommandTree;
+import cloud.commandframework.annotations.AnnotationParser;
+import cloud.commandframework.execution.CommandExecutionCoordinator;
+import cloud.commandframework.internal.CommandRegistrationHandler;
+import cloud.commandframework.meta.CommandMeta;
+import java.util.function.Function;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.channel.Channels;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
-import net.silthus.schat.platform.sender.Sender;
+import net.silthus.schat.sender.Sender;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static cloud.commandframework.execution.CommandExecutionCoordinator.simpleCoordinator;
+import static cloud.commandframework.internal.CommandRegistrationHandler.nullCommandRegistrationHandler;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -63,9 +72,13 @@ class PluginTests {
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         protected CommandManager<Sender> provideCommandManager() {
-            return mock(CommandManager.class);
+            return new FakeCommandManager(simpleCoordinator(), nullCommandRegistrationHandler());
+        }
+
+        @Override
+        protected void registerCommands(CommandManager<Sender> commandManager, AnnotationParser<Sender> annotationParser) {
+
         }
 
         @Override
@@ -76,6 +89,22 @@ class PluginTests {
         @Override
         public Bootstrap getBootstrap() {
             return mock(Bootstrap.class);
+        }
+
+        private static class FakeCommandManager extends CommandManager<Sender> {
+            protected FakeCommandManager(@NonNull Function<@NonNull CommandTree<Sender>, @NonNull CommandExecutionCoordinator<Sender>> commandExecutionCoordinator, @NonNull CommandRegistrationHandler commandRegistrationHandler) {
+                super(commandExecutionCoordinator, commandRegistrationHandler);
+            }
+
+            @Override
+            public boolean hasPermission(@NonNull Sender sender, @NonNull String permission) {
+                return sender.hasPermission(permission);
+            }
+
+            @Override
+            public @NonNull CommandMeta createDefaultCommandMeta() {
+                return CommandMeta.simple().build();
+            }
         }
     }
 }

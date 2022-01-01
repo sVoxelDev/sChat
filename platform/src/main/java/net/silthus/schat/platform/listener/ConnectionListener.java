@@ -17,28 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.platform.listener;
 
-import lombok.Getter;
-import net.silthus.schat.handler.types.UserJoinHandler;
-import net.silthus.schat.user.User;
-import net.silthus.schat.user.UserRepository;
-import net.silthus.schat.user.Users;
+import net.silthus.schat.sender.Sender;
 
-final class UserManager implements Users {
+public interface ConnectionListener {
 
-    @Getter
-    private final UserRepository repository;
-    private final UserJoinHandler joinHandler;
-
-    UserManager(UserRepository repository, UserJoinHandler joinHandler) {
-        this.repository = repository;
-        this.joinHandler = joinHandler;
-    }
-
-    @Override
-    public void join(User user) {
-        joinHandler.join(user);
-        add(user);
-    }
+    void join(Sender sender);
 }

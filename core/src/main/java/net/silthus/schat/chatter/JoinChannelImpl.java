@@ -19,14 +19,24 @@
 
 package net.silthus.schat.chatter;
 
-import lombok.Getter;
+import net.silthus.schat.channel.Channel;
 
-public final class ChattersInteractor implements Chatters {
+final class JoinChannelImpl implements Chatter.JoinChannel {
 
-    @Getter
-    private final ChatterRepository repository;
+    private final Chatter.JoinChannel[] steps;
 
-    ChattersInteractor(ChatterRepository repository) {
-        this.repository = repository;
+    JoinChannelImpl(Chatter.JoinChannel... steps) {
+        this.steps = steps;
+    }
+
+    @Override
+    public void joinChannel(final Chatter chatter, final Channel channel) {
+        processSteps(chatter, channel);
+    }
+
+    private void processSteps(Chatter chatter, Channel channel) {
+        for (final Chatter.JoinChannel step : steps) {
+            step.joinChannel(chatter, channel);
+        }
     }
 }

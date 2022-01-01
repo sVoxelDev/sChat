@@ -17,27 +17,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.channel;
+package net.silthus.schat.chatter.checks;
 
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.sender.Sender;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.Channel.JOIN_PERMISSION;
+import static net.silthus.schat.channel.Channel.REQUIRES_JOIN_PERMISSION;
 
-public interface ChannelPermissionProvider {
+public record JoinChannelPermissionCheck(Sender sender) implements Chatter.JoinChannel {
 
-    ChannelPermissionProvider DEFAULT = new Default();
+    @Override
+    public void joinChannel(Chatter chatter, Channel channel) throws Error {
+        if (requiresJoinPermission(channel) && hasNoJoinPermission(channel))
+            throw new AccessDenied();
+    }
 
-    @NotNull String joinChannel(Channel channel);
+    @NotNull
+    private Boolean requiresJoinPermission(Channel channel) {
+        return channel.get(REQUIRES_JOIN_PERMISSION);
+    }
 
-    class Default implements ChannelPermissionProvider {
-
-        public static final String BASE_PERMISSION = "schat.channel.";
-        public static final String JOIN_SUFFIX = ".join";
-
-        @Override
-        public @NotNull String joinChannel(Channel channel) {
-            final String defaultPermission = BASE_PERMISSION + channel.getKey() + JOIN_SUFFIX;
-            return channel.getOrDefault(JOIN_PERMISSION, defaultPermission);
-        }
+    private boolean hasNoJoinPermission(Channel channel) {
+        return !channel.get(JOIN_PERMISSION).test(sender);
     }
 }

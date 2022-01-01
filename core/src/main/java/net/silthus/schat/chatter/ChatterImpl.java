@@ -28,7 +28,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.handler.types.ChatHandler;
-import net.silthus.schat.handler.types.JoinChannelHandler;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.Messages;
@@ -44,7 +43,7 @@ final class ChatterImpl implements Chatter {
 
     private final List<Channel> channels = new ArrayList<>();
     private final Messenger<Chatter> messenger;
-    private final JoinChannelHandler join;
+    private final JoinChannel join;
     private final ChatHandler chat;
 
     @Getter
@@ -86,8 +85,8 @@ final class ChatterImpl implements Chatter {
     }
 
     @Override
-    public void join(final @NonNull Channel channel) throws JoinChannelHandler.Error {
-        join.process(this, channel);
+    public void join(final @NonNull Channel channel) throws JoinChannel.Error {
+        join.joinChannel(this, channel);
         addChannel(channel);
         channel.addTarget(this);
     }
@@ -116,7 +115,7 @@ final class ChatterImpl implements Chatter {
 
         private final Identity identity;
         private Messenger<Chatter> messenger = Messenger.noDelivery();
-        private JoinChannelHandler join = JoinChannelHandler.empty();
+        private JoinChannel join = JoinChannel.empty();
         private ChatHandler chat = sendToActiveChannel();
 
         ChatterBuilder(Identity identity) {
@@ -140,7 +139,7 @@ final class ChatterImpl implements Chatter {
         }
 
         @Override
-        public Builder joinChannel(@NonNull JoinChannelHandler join) {
+        public Builder joinChannel(@NonNull JoinChannel join) {
             this.join = join;
             return this;
         }

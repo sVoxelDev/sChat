@@ -17,14 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.user;
+package net.silthus.schat.bukkit.adapter;
 
-import java.util.UUID;
-import net.silthus.schat.repository.Repository;
+import java.util.concurrent.Executor;
+import net.silthus.schat.platform.plugin.scheduler.AbstractJavaScheduler;
+import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
+import org.bukkit.plugin.java.JavaPlugin;
 
-public interface UserRepository extends Repository<UUID, User> {
+public final class BukkitSchedulerAdapter extends AbstractJavaScheduler implements SchedulerAdapter {
 
-    static UserRepository createInMemoryUserRepository() {
-        return new InMemoryUserRepository();
+    private final Executor sync;
+
+    public BukkitSchedulerAdapter(JavaPlugin loader) {
+        this.sync = r -> loader.getServer().getScheduler().scheduleSyncDelayedTask(loader, r);
     }
+
+    @Override
+    public Executor sync() {
+        return this.sync;
+    }
+
 }

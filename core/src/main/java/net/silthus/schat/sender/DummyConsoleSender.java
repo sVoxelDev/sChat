@@ -17,24 +17,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.bukkit;
+package net.silthus.schat.sender;
 
-import java.util.concurrent.Executor;
-import net.silthus.schat.platform.plugin.scheduler.AbstractJavaScheduler;
-import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
-import org.bukkit.plugin.java.JavaPlugin;
+import lombok.Getter;
+import net.silthus.schat.identity.Identity;
 
-public final class BukkitSchedulerAdapter extends AbstractJavaScheduler implements SchedulerAdapter {
+public abstract class DummyConsoleSender implements Sender {
 
-    private final Executor sync;
+    @Getter
+    private final Identity identity;
 
-    public BukkitSchedulerAdapter(JavaPlugin loader) {
-        this.sync = r -> loader.getServer().getScheduler().scheduleSyncDelayedTask(loader, r);
+    protected DummyConsoleSender() {
+        identity = Identity.identity(CONSOLE_UUID, CONSOLE_NAME);
     }
 
     @Override
-    public Executor sync() {
-        return this.sync;
+    public boolean hasPermission(String permission) {
+        return true;
     }
 
+    @Override
+    public void performCommand(String commandLine) {
+
+    }
+
+    @Override
+    public boolean isConsole() {
+        return true;
+    }
 }

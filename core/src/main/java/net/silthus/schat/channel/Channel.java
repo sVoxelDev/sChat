@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import static net.kyori.adventure.text.Component.empty;
+import static net.silthus.schat.channel.Permission.of;
 import static net.silthus.schat.settings.Setting.setting;
 
 public interface Channel extends MessageTarget, Configured, Entity<String> {
@@ -39,7 +40,7 @@ public interface Channel extends MessageTarget, Configured, Entity<String> {
     Setting<Component> DISPLAY_NAME = setting(Component.class, "name", empty());
     Setting<Boolean> REQUIRES_JOIN_PERMISSION = setting(Boolean.class, "requires_join_permission", false)
         .withAlias("protect");
-    Setting<String> JOIN_PERMISSION = setting(String.class, "permissions.join", "schat.admin.channel.join");
+    Setting<Permission> JOIN_PERMISSION = setting(Permission.class, "permissions.join", of("schat.admin.channel.join"));
     Setting<Boolean> AUTO_JOIN = setting(Boolean.class, "auto_join", false);
 
     static Builder channel(String key) {

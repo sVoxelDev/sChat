@@ -88,6 +88,15 @@ public interface Configured {
     interface Builder<T> {
 
         /**
+         * Sets the default settings that are used if not overwritten.
+         *
+         * @param settings the settings builder to use as the default
+         * @return this builder
+         * @since next
+         */
+        @NotNull T defaultSettings(@NonNull Settings.Builder settings);
+
+        /**
          * Sets a setting of the channel to the given value.
          *
          * @param setting the setting

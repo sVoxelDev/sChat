@@ -27,15 +27,13 @@ import cloud.commandframework.paper.PaperCommandManager;
 import java.util.function.Function;
 import lombok.Getter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
 import net.silthus.schat.bukkit.listener.PlayerListener;
-import net.silthus.schat.platform.PlayerAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
 import net.silthus.schat.platform.plugin.AbstractPlugin;
-import net.silthus.schat.platform.sender.Sender;
-import net.silthus.schat.user.User;
+import net.silthus.schat.sender.Sender;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
@@ -68,7 +66,7 @@ public final class SChatBukkitPlugin extends AbstractPlugin {
                 getBootstrap().getLoader(),
                 executionCoordinatorFunction,
                 commandSender -> getSenderFactory().wrap(commandSender),
-                Sender::getHandle
+                sender -> getSenderFactory().unwrap(sender)
             );
         } catch (Exception e) {
             getLogger().severe("Failed to initialize the command manager.");
@@ -79,15 +77,7 @@ public final class SChatBukkitPlugin extends AbstractPlugin {
 
     @Override
     protected void registerListeners() {
-        final PlayerListener playerListener = new PlayerListener(this);
+        final PlayerListener playerListener = new PlayerListener(getSenderFactory(), getConnectionListener());
         Bukkit.getPluginManager().registerEvents(playerListener, getBootstrap().getLoader());
-    }
-
-    public PlayerAdapter<Player> getPlayerAdapter() {
-        return getBootstrap().getPlayerAdapter(Player.class);
-    }
-
-    public User adapt(Player player) {
-        return getPlayerAdapter().adapt(player);
     }
 }

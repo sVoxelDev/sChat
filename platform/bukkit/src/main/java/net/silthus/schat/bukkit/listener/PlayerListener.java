@@ -19,21 +19,27 @@
 
 package net.silthus.schat.bukkit.listener;
 
-import net.silthus.schat.bukkit.SChatBukkitPlugin;
+import net.silthus.schat.platform.listener.ConnectionListener;
+import net.silthus.schat.sender.Sender;
+import net.silthus.schat.sender.SenderFactory;
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public final class PlayerListener implements Listener {
 
-    private final SChatBukkitPlugin plugin;
+    private final SenderFactory<CommandSender> senderFactory;
+    private final ConnectionListener connectionListener;
 
-    public PlayerListener(SChatBukkitPlugin plugin) {
-        this.plugin = plugin;
+    public PlayerListener(SenderFactory<CommandSender> senderFactory, ConnectionListener connectionListener) {
+        this.senderFactory = senderFactory;
+        this.connectionListener = connectionListener;
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        plugin.getUsers().join(plugin.adapt(event.getPlayer()));
+        final Sender sender = senderFactory.wrap(event.getPlayer());
+        connectionListener.join(sender);
     }
 }

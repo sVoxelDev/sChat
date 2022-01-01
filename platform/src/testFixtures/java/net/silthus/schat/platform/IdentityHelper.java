@@ -17,25 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.bukkit;
+package net.silthus.schat.platform;
 
+import java.util.UUID;
 import net.silthus.schat.identity.Identity;
-import net.silthus.schat.platform.PlayerAdapter;
-import net.silthus.schat.user.User;
-import org.bukkit.entity.Player;
+import org.apache.commons.lang3.RandomStringUtils;
 
-import static net.kyori.adventure.text.Component.text;
+public final class IdentityHelper {
 
-public final class BukkitPlayerAdapter implements PlayerAdapter<Player> {
+    private IdentityHelper() {
+    }
 
-    @Override
-    public User adapt(Player player) {
-        return new User(
-            Identity.identity(
-                player.getUniqueId(),
-                player.getName(),
-                () -> text(player.getDisplayName())
-            ), player::hasPermission
-        );
+    public static Identity randomIdentity() {
+        return Identity.identity(UUID.randomUUID(), RandomStringUtils.randomAlphanumeric(10));
     }
 }

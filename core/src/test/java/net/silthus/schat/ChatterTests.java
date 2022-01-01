@@ -108,7 +108,7 @@ class ChatterTests {
     }
 
     @Nested
-    class JoinChannelHandler {
+    class JoinChannel {
 
         private Channel channel;
 
