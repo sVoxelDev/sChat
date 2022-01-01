@@ -17,10 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.user;
+package net.silthus.schat.channel;
 
-import java.util.UUID;
-import net.silthus.schat.repository.InMemoryRepository;
+import net.silthus.schat.sender.Sender;
 
-final class InMemoryUserRepository extends InMemoryRepository<UUID, User> implements UserRepository {
+public record Permission(String permission) {
+
+    public static Permission of(String permission) {
+        return new Permission(permission);
+    }
+
+    public boolean test(Sender sender) {
+        return sender.hasPermission(permission());
+    }
 }

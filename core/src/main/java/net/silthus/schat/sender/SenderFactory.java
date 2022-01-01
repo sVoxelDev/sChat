@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.sender;
+package net.silthus.schat.sender;
 
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
@@ -45,11 +45,21 @@ public abstract class SenderFactory<T> implements AutoCloseable, PlayerOnlineChe
     protected abstract boolean isConsole(T sender);
 
     public final Sender wrap(@NonNull T sender) {
-        return new GenericSender<>(this, sender);
+        return new FactorySender<>(this, sender);
+    }
+
+    @SuppressWarnings("unchecked")
+    public final T unwrap(@NonNull Sender sender) {
+        if (sender instanceof FactorySender<?> factorySender)
+            return (T) factorySender.getHandle();
+        throw new UnknownSenderType();
     }
 
     @Override
     public void close() {
 
+    }
+
+    public static final class UnknownSenderType extends RuntimeException {
     }
 }

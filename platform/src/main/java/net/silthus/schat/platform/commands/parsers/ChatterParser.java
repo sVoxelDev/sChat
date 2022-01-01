@@ -29,7 +29,7 @@ import io.leangen.geantyref.TypeToken;
 import java.util.Queue;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterRepository;
-import net.silthus.schat.platform.sender.Sender;
+import net.silthus.schat.sender.Sender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 

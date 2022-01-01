@@ -17,25 +17,56 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.user;
+package net.silthus.schat.platform;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.With;
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.handler.types.PermissionHandler;
-import net.silthus.schat.identity.Identified;
 import net.silthus.schat.identity.Identity;
+import net.silthus.schat.sender.Sender;
 
-@Getter
-public class User implements Identified {
+import static net.silthus.schat.platform.IdentityHelper.randomIdentity;
 
-    private final Identity identity;
-    private final PermissionHandler permissionHandler;
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class SenderMock implements Sender {
 
-    public User(Identity identity, PermissionHandler permissionHandler) {
-        this.identity = identity;
-        this.permissionHandler = permissionHandler;
+    public static SenderMock randomSenderMock() {
+        return senderMock(randomIdentity());
     }
 
+    public static SenderMock senderMock(Identity identity) {
+        return senderMock(identity, permission -> false);
+    }
+
+    public static SenderMock senderMock(Identity identity, PermissionHandler permissionHandler) {
+        return new SenderMock(identity, permissionHandler);
+    }
+
+    @Getter
+    private final Identity identity;
+    @With
+    private final PermissionHandler permissionHandler;
+
+    @Override
+    public void sendMessage(Component message) {
+
+    }
+
+    @Override
     public boolean hasPermission(String permission) {
         return permissionHandler.hasPermission(permission);
+    }
+
+    @Override
+    public void performCommand(String commandLine) {
+
+    }
+
+    @Override
+    public boolean isConsole() {
+        return false;
     }
 }

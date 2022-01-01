@@ -21,12 +21,11 @@ package net.silthus.schat.bukkit;
 
 import java.nio.file.Path;
 import lombok.Getter;
-import net.silthus.schat.platform.PlayerAdapter;
+import net.silthus.schat.bukkit.adapter.BukkitSchedulerAdapter;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.platform.plugin.bootstrap.LoaderBootstrap;
 import net.silthus.schat.platform.plugin.logging.JavaPluginLogger;
 import net.silthus.schat.platform.plugin.logging.PluginLogger;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
@@ -37,14 +36,12 @@ public final class SChatBukkitBootstrap implements Bootstrap, LoaderBootstrap {
 
     private final PluginLogger pluginLogger;
     private final BukkitSchedulerAdapter scheduler;
-    private final BukkitPlayerAdapter playerAdapter;
 
     public SChatBukkitBootstrap(JavaPlugin loader) {
         this.loader = loader;
 
         this.pluginLogger = new JavaPluginLogger(loader.getLogger());
         this.scheduler = new BukkitSchedulerAdapter(loader);
-        this.playerAdapter = new BukkitPlayerAdapter();
         this.plugin = new SChatBukkitPlugin(this);
     }
 
@@ -66,13 +63,5 @@ public final class SChatBukkitBootstrap implements Bootstrap, LoaderBootstrap {
     @Override
     public Path getDataDirectory() {
         return getLoader().getDataFolder().toPath().toAbsolutePath();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <P> PlayerAdapter<P> getPlayerAdapter(Class<P> playerClass) {
-        if (!playerClass.equals(Player.class))
-            throw new PlayerAdapter.InvalidPlayerType();
-        return (PlayerAdapter<P>) playerAdapter;
     }
 }

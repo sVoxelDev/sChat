@@ -17,12 +17,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.sender;
+package net.silthus.schat.platform;
 
-import java.util.UUID;
+import java.util.function.Function;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.settings.Setting;
 
-@FunctionalInterface
-public interface PlayerOnlineChecker {
+import static net.silthus.schat.channel.Channel.channel;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
-    boolean isPlayerOnline(UUID playerId);
+public final class ChannelHelper {
+
+    private ChannelHelper() {
+    }
+
+    public static <V> Channel channelWith(Setting<V> setting, V value) {
+        return createChannelWith(builder -> builder.setting(setting, value));
+    }
+
+    public static Channel createChannelWith(Function<Channel.Builder, Channel.Builder> config) {
+        return config.apply(channel(randomAlphabetic(10).toLowerCase())).create();
+    }
 }

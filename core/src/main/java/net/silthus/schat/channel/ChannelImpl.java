@@ -39,6 +39,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.channel.Permission.of;
 
 final class ChannelImpl implements Channel {
 
@@ -94,18 +95,26 @@ final class ChannelImpl implements Channel {
     static class ChannelImplBuilder implements Builder {
 
         private final String key;
-        private Settings.Builder settings = Settings.settings();
+        private Settings.Builder settings;
         private Messenger<Channel> messenger = DEFAULT_MESSENGER;
 
         ChannelImplBuilder(String key) {
             if (isInvalidChannelKey(key))
                 throw new InvalidKey();
             this.key = key;
+            defaultSettings(Settings.settings()
+                .withStatic(JOIN_PERMISSION, of("schat.channel." + key + ".join")));
         }
 
         @Override
         public <V> @NotNull Builder setting(final @NonNull Setting<V> setting, final @Nullable V value) {
             this.settings.withStatic(setting, value);
+            return this;
+        }
+
+        @Override
+        public @NotNull Builder defaultSettings(final @NonNull Settings.Builder settings) {
+            this.settings = settings;
             return this;
         }
 

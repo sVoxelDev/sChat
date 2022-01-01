@@ -25,7 +25,6 @@ import java.util.UUID;
 import lombok.NonNull;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.handler.types.ChatHandler;
-import net.silthus.schat.handler.types.JoinChannelHandler;
 import net.silthus.schat.identity.Identified;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
@@ -63,7 +62,7 @@ public interface Chatter extends MessageTarget, Entity<UUID>, Identified {
 
     boolean isActiveChannel(@Nullable Channel channel);
 
-    void join(@NonNull Channel channel) throws JoinChannelHandler.Error;
+    void join(@NonNull Channel channel) throws JoinChannel.Error;
 
     void addChannel(@NonNull Channel channel);
 
@@ -79,7 +78,7 @@ public interface Chatter extends MessageTarget, Entity<UUID>, Identified {
 
         Builder messengerStrategy(@NonNull Messenger.Strategy<Chatter> strategy);
 
-        Builder joinChannel(@NonNull JoinChannelHandler join);
+        Builder joinChannel(@NonNull JoinChannel join);
 
         Builder chatHandler(@NonNull ChatHandler chat);
 
@@ -88,4 +87,39 @@ public interface Chatter extends MessageTarget, Entity<UUID>, Identified {
 
     class NoActiveChannel extends RuntimeException {
     }
+
+    @FunctionalInterface
+    interface JoinChannel {
+
+        static JoinChannel empty() {
+            return new JoinChannelImpl();
+        }
+
+        static JoinChannel steps(JoinChannel... steps) {
+            return new JoinChannelImpl(steps);
+        }
+
+        void joinChannel(Chatter chatter, Channel channel);
+
+        class Error extends RuntimeException {
+            public Error() {
+            }
+
+            public Error(String message) {
+                super(message);
+            }
+
+            public Error(String message, Throwable cause) {
+                super(message, cause);
+            }
+
+            public Error(Throwable cause) {
+                super(cause);
+            }
+        }
+
+        class AccessDenied extends Error {
+        }
+    }
+
 }

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.sender;
+package net.silthus.schat.sender;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -39,10 +40,10 @@ import static net.kyori.adventure.text.JoinConfiguration.noSeparators;
  * @param <T> the command sender type
  */
 @EqualsAndHashCode(of = {"identity"})
-public final class GenericSender<T> implements Sender {
+final class FactorySender<T> implements Sender {
 
     private final SenderFactory<T> factory;
-    @Getter
+    @Getter(AccessLevel.PROTECTED)
     private final T handle;
 
     @Getter
@@ -50,7 +51,7 @@ public final class GenericSender<T> implements Sender {
     @Getter
     private final boolean console;
 
-    GenericSender(SenderFactory<T> factory, T sender) {
+    FactorySender(SenderFactory<T> factory, T sender) {
         this.factory = factory;
         this.handle = sender;
         this.identity = Identity.identity(

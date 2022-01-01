@@ -17,12 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.sender;
+package net.silthus.schat.sender;
 
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.identity.Identified;
-import net.silthus.schat.user.User;
 
 /**
  * Wrapper interface to represent a CommandSender/CommandSource within the common command implementations.
@@ -70,22 +69,5 @@ public interface Sender extends Identified {
      */
     default boolean isValid() {
         return true;
-    }
-
-    /**
-     * Gets the original handle that created the sender.
-     *
-     * @param <T> the type of the sender
-     * @return the original sender wrapped by this sender
-     */
-    <T> T getHandle();
-
-    /**
-     * Wraps this sender into a user object.
-     *
-     * @return the user related to this sender
-     */
-    default User asUser() {
-        return new User(getIdentity(), this::hasPermission);
     }
 }

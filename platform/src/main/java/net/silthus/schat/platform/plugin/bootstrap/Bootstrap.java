@@ -21,7 +21,6 @@ package net.silthus.schat.platform.plugin.bootstrap;
 
 import java.io.InputStream;
 import java.nio.file.Path;
-import net.silthus.schat.platform.PlayerAdapter;
 import net.silthus.schat.platform.plugin.logging.PluginLogger;
 import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
 
@@ -66,6 +65,4 @@ public interface Bootstrap {
     default InputStream getResourceStream(String path) {
         return getClass().getClassLoader().getResourceAsStream(path);
     }
-
-    <P> PlayerAdapter<P> getPlayerAdapter(Class<P> playerClass);
 }

@@ -24,7 +24,6 @@ import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.ProxiedBy;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.handler.types.JoinChannelHandler;
 
 public class ChannelCommands {
 
@@ -33,7 +32,7 @@ public class ChannelCommands {
     public void joinChannel(Chatter chatter, @Argument Channel channel) {
         try {
             chatter.join(channel);
-        } catch (JoinChannelHandler.Error e) {
+        } catch (Chatter.JoinChannel.Error e) {
             throw new RuntimeException(e);
         }
     }

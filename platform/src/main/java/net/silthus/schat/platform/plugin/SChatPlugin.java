@@ -19,13 +19,11 @@
 
 package net.silthus.schat.platform.plugin;
 
-import net.silthus.schat.channel.ChannelPermissionProvider;
 import net.silthus.schat.channel.Channels;
 import net.silthus.schat.chatter.Chatters;
 import net.silthus.schat.platform.config.Config;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.platform.plugin.logging.PluginLogger;
-import net.silthus.schat.user.Users;
 
 public interface SChatPlugin {
 
@@ -46,8 +44,4 @@ public interface SChatPlugin {
     Channels getChannels();
 
     Chatters getChatters();
-
-    Users getUsers();
-
-    ChannelPermissionProvider getChannelPermissions();
 }
