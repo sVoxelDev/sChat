@@ -17,11 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter;
+package net.silthus.schat.sender;
 
-import java.util.UUID;
-import net.silthus.schat.repository.RepositoryHolder;
+public interface PlayerAdapter<T> {
 
-public interface Chatters extends RepositoryHolder<ChatterRepository, UUID, Chatter>, ChatterRepository, SenderChatterLookup, ChatterStore {
-
+    Sender adapt(T sender);
 }

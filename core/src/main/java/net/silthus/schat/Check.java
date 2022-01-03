@@ -17,13 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.channel;
+package net.silthus.schat;
 
-import net.silthus.schat.repository.Repository;
-
-public interface ChannelRepository extends Repository<String, Channel> {
-
-    static ChannelRepository createInMemoryChannelRepository() {
-        return new InMemoryChannelRepository();
-    }
+public interface Check {
 }

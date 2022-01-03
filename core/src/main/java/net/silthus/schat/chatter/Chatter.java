@@ -31,12 +31,14 @@ import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.message.Messages;
 import net.silthus.schat.message.messenger.Messenger;
+import net.silthus.schat.permission.Permissable;
+import net.silthus.schat.permission.PermissionHandler;
 import net.silthus.schat.repository.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-public interface Chatter extends MessageTarget, Entity<UUID>, Identified {
+public interface Chatter extends MessageTarget, Entity<UUID>, Identified, Permissable {
 
     static Builder chatter() {
         return new ChatterImpl.ChatterBuilder();
@@ -62,7 +64,7 @@ public interface Chatter extends MessageTarget, Entity<UUID>, Identified {
 
     boolean isActiveChannel(@Nullable Channel channel);
 
-    void join(@NonNull Channel channel) throws JoinChannel.Error;
+    void join(@NonNull Channel channel);
 
     void addChannel(@NonNull Channel channel);
 
@@ -78,48 +80,14 @@ public interface Chatter extends MessageTarget, Entity<UUID>, Identified {
 
         Builder messengerStrategy(@NonNull Messenger.Strategy<Chatter> strategy);
 
-        Builder joinChannel(@NonNull JoinChannel join);
-
         Builder chatHandler(@NonNull ChatHandler chat);
+
+        Builder permissionHandler(@NonNull PermissionHandler permissionHandler);
 
         Chatter create();
     }
 
     class NoActiveChannel extends RuntimeException {
-    }
-
-    @FunctionalInterface
-    interface JoinChannel {
-
-        static JoinChannel empty() {
-            return new JoinChannelImpl();
-        }
-
-        static JoinChannel steps(JoinChannel... steps) {
-            return new JoinChannelImpl(steps);
-        }
-
-        void joinChannel(Chatter chatter, Channel channel);
-
-        class Error extends RuntimeException {
-            public Error() {
-            }
-
-            public Error(String message) {
-                super(message);
-            }
-
-            public Error(String message, Throwable cause) {
-                super(message, cause);
-            }
-
-            public Error(Throwable cause) {
-                super(cause);
-            }
-        }
-
-        class AccessDenied extends Error {
-        }
     }
 
 }

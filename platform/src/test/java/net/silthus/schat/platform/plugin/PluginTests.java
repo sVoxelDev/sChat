@@ -26,8 +26,9 @@ import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.internal.CommandRegistrationHandler;
 import cloud.commandframework.meta.CommandMeta;
 import java.util.function.Function;
-import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.channel.Channels;
+import net.silthus.schat.channel.repository.ChannelRepository;
+import net.silthus.schat.chatter.ChatterStore;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.sender.Sender;
@@ -38,6 +39,7 @@ import org.junit.jupiter.api.Test;
 
 import static cloud.commandframework.execution.CommandExecutionCoordinator.simpleCoordinator;
 import static cloud.commandframework.internal.CommandRegistrationHandler.nullCommandRegistrationHandler;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -53,7 +55,7 @@ class PluginTests {
     @Test
     void channels_are_loaded() {
         plugin.enable();
-        verify(plugin.getChannels()).load();
+        verify(plugin.getChannels()).load(any());
     }
 
     private static class PluginMock extends AbstractPlugin {
@@ -69,6 +71,11 @@ class PluginTests {
         @Override
         protected @NotNull ConfigurationAdapter provideConfigurationAdapter() {
             return mock(ConfigurationAdapter.class);
+        }
+
+        @Override
+        protected @NotNull ChatterStore provideChatterStore() {
+            return mock(ChatterStore.class);
         }
 
         @Override

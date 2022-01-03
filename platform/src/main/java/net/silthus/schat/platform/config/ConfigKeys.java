@@ -23,10 +23,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.silthus.schat.channel.usecases.ChannelConfig;
+import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.key.ConfigKey;
 import net.silthus.schat.platform.config.key.KeyedConfiguration;
 
-import static net.silthus.schat.platform.config.ChannelConfig.createChannelConfig;
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.key;
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.modifiable;
 
@@ -54,5 +55,17 @@ public final class ConfigKeys {
 
     public static List<? extends ConfigKey<?>> getKeys() {
         return KEYS;
+    }
+
+    private static ChannelConfig createChannelConfig(ConfigurationAdapter config, String path, String key) {
+        final ChannelConfig channelConfig = config.get(path, ChannelConfig.class);
+        if (channelConfig == null)
+            throw new InvalidConfig();
+
+        channelConfig.setKey(key);
+        return channelConfig;
+    }
+
+    public static final class InvalidConfig extends RuntimeException {
     }
 }

@@ -1,0 +1,5 @@
+  name: sChat-Example
+  main: net.silthus.schat.example.SChatExamplePlugin
+  version: 1.0.0
+  softdepend:
+    - sChat

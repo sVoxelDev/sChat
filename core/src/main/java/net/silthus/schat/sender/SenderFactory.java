@@ -28,7 +28,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  *
  * @param <T> the command sender type
  */
-public abstract class SenderFactory<T> implements AutoCloseable, PlayerOnlineChecker {
+public abstract class SenderFactory<T> implements AutoCloseable, PlayerOnlineChecker, PlayerAdapter<T> {
+
+    protected abstract Class<T> getSenderType();
 
     protected abstract UUID getUniqueId(T sender);
 
@@ -44,7 +46,10 @@ public abstract class SenderFactory<T> implements AutoCloseable, PlayerOnlineChe
 
     protected abstract boolean isConsole(T sender);
 
-    public final Sender wrap(@NonNull T sender) {
+    @Override
+    public final Sender adapt(@NonNull T sender) {
+        if (!getSenderType().isInstance(sender))
+            throw new IllegalSenderType();
         return new FactorySender<>(this, sender);
     }
 
@@ -52,7 +57,7 @@ public abstract class SenderFactory<T> implements AutoCloseable, PlayerOnlineChe
     public final T unwrap(@NonNull Sender sender) {
         if (sender instanceof FactorySender<?> factorySender)
             return (T) factorySender.getHandle();
-        throw new UnknownSenderType();
+        throw new IllegalSenderType();
     }
 
     @Override
@@ -60,6 +65,6 @@ public abstract class SenderFactory<T> implements AutoCloseable, PlayerOnlineChe
 
     }
 
-    public static final class UnknownSenderType extends RuntimeException {
+    public static final class IllegalSenderType extends RuntimeException {
     }
 }

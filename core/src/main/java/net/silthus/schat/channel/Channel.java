@@ -19,12 +19,15 @@
 
 package net.silthus.schat.channel;
 
+import java.util.Collection;
 import java.util.Set;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.Check;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.message.Messages;
 import net.silthus.schat.message.messenger.Messenger;
+import net.silthus.schat.permission.Permission;
 import net.silthus.schat.repository.Entity;
 import net.silthus.schat.settings.Configured;
 import net.silthus.schat.settings.Setting;
@@ -32,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import static net.kyori.adventure.text.Component.empty;
-import static net.silthus.schat.channel.Permission.of;
+import static net.silthus.schat.permission.Permission.of;
 import static net.silthus.schat.settings.Setting.setting;
 
 public interface Channel extends MessageTarget, Configured, Entity<String> {
@@ -61,11 +64,17 @@ public interface Channel extends MessageTarget, Configured, Entity<String> {
 
     @NotNull @Unmodifiable Messages getMessages();
 
+    <T extends Check> @NotNull @Unmodifiable Collection<T> getChecks(Class<T> checks);
+
     interface Builder extends Configured.Builder<Builder> {
 
         Builder displayName(@NonNull Component displayName);
 
         Builder messenger(@NonNull Messenger<Channel> messenger);
+
+        Builder clearChecks();
+
+        <T extends Check> Builder check(@NonNull T@NonNull... checks);
 
         Channel create();
     }

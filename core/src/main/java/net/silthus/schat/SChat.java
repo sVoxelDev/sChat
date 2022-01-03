@@ -17,17 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.channel;
+package net.silthus.schat;
 
-import net.silthus.schat.sender.Sender;
+import net.silthus.schat.channel.Channels;
+import net.silthus.schat.chatter.Chatters;
+import net.silthus.schat.sender.PlayerAdapter;
 
-public record Permission(String permission) {
+public interface SChat {
 
-    public static Permission of(String permission) {
-        return new Permission(permission);
-    }
+    Chatters getChatters();
 
-    public boolean test(Sender sender) {
-        return sender.hasPermission(permission());
-    }
+    Channels getChannels();
+
+    PlayerAdapter<?> getPlayerAdapter();
 }

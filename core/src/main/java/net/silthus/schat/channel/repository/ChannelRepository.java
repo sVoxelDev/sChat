@@ -17,26 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter;
+package net.silthus.schat.channel.repository;
 
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.repository.Repository;
 
-final class JoinChannelImpl implements Chatter.JoinChannel {
+public interface ChannelRepository extends Repository<String, Channel> {
 
-    private final Chatter.JoinChannel[] steps;
-
-    JoinChannelImpl(Chatter.JoinChannel... steps) {
-        this.steps = steps;
-    }
-
-    @Override
-    public void joinChannel(final Chatter chatter, final Channel channel) {
-        processSteps(chatter, channel);
-    }
-
-    private void processSteps(Chatter chatter, Channel channel) {
-        for (final Chatter.JoinChannel step : steps) {
-            step.joinChannel(chatter, channel);
-        }
+    static ChannelRepository createInMemoryChannelRepository() {
+        return new InMemoryChannelRepository();
     }
 }

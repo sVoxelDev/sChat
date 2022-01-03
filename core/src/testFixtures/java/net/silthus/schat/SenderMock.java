@@ -17,18 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform;
+package net.silthus.schat;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.With;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.handler.types.PermissionHandler;
 import net.silthus.schat.identity.Identity;
+import net.silthus.schat.permission.PermissionHandler;
 import net.silthus.schat.sender.Sender;
 
-import static net.silthus.schat.platform.IdentityHelper.randomIdentity;
+import static net.silthus.schat.IdentityHelper.randomIdentity;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class SenderMock implements Sender {

@@ -31,7 +31,7 @@ import io.leangen.geantyref.TypeToken;
 import java.util.List;
 import java.util.Queue;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.channel.repository.ChannelRepository;
 import net.silthus.schat.repository.Repository;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;

@@ -20,27 +20,30 @@
 package net.silthus.schat.platform.plugin;
 
 import lombok.Getter;
+import net.silthus.schat.SenderMock;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.channel.repository.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.chatter.ChatterStore;
 import net.silthus.schat.chatter.Chatters;
-import net.silthus.schat.chatter.checks.JoinChannelPermissionCheck;
-import net.silthus.schat.platform.SenderMock;
 import net.silthus.schat.sender.Sender;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static net.silthus.schat.ChannelHelper.ConfiguredSetting.set;
+import static net.silthus.schat.ChannelHelper.channelWith;
+import static net.silthus.schat.SenderMock.randomSenderMock;
 import static net.silthus.schat.channel.Channel.AUTO_JOIN;
 import static net.silthus.schat.channel.Channel.REQUIRES_JOIN_PERMISSION;
-import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
-import static net.silthus.schat.chatter.Chatter.JoinChannel.steps;
+import static net.silthus.schat.channel.Channel.createChannel;
+import static net.silthus.schat.channel.Channels.channels;
+import static net.silthus.schat.channel.repository.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
-import static net.silthus.schat.platform.ChannelHelper.channelWith;
-import static net.silthus.schat.platform.ChannelHelper.createChannelWith;
-import static net.silthus.schat.platform.SenderMock.randomSenderMock;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class ConnectionManagerTests {
 
@@ -48,12 +51,14 @@ class ConnectionManagerTests {
     private ChannelRepository channels;
     private ConnectionManager connectionManager;
     private SenderMock sender;
+    private ChatterStore store;
 
     @BeforeEach
     void setUp() {
         chatters = new ChattersStub();
         channels = createInMemoryChannelRepository();
-        connectionManager = new ConnectionManager(chatters, channels);
+        store = mock(ChatterStore.class);
+        connectionManager = new ConnectionManager(chatters, store, channels, channels().repository(channels).create());
         sender = randomSenderMock();
     }
 
@@ -69,7 +74,7 @@ class ConnectionManagerTests {
     }
 
     @Test
-    void autoJoins_channels() {
+    void join_autoJoins_channels() {
         final Channel channel = add(channelWith(AUTO_JOIN, true));
 
         connectionManager.join(sender);
@@ -78,13 +83,30 @@ class ConnectionManagerTests {
     }
 
     @Test
-    void autoJoins_joinable_channels_only() {
+    void join_autoJoins_joinable_channels_only() {
         final Channel channel = add(channelWith(AUTO_JOIN, true));
-        add(createChannelWith(builder -> builder.setting(AUTO_JOIN, true).setting(REQUIRES_JOIN_PERMISSION, true)));
+        add(channelWith(set(AUTO_JOIN, true), set(REQUIRES_JOIN_PERMISSION, true)));
 
         connectionManager.join(sender);
 
         assertThat(chatter().getChannels()).containsOnly(channel);
+    }
+
+    @Test
+    void quit_stores_chatter_data() {
+        connectionManager.join(sender);
+        chatter().join(createChannel("test"));
+        chatter().setActiveChannel(createChannel("active"));
+
+        connectionManager.leave(sender);
+        verify(store).save(chatter());
+    }
+
+    @Test
+    void join_loads_chatter_data() {
+        connectionManager.join(sender);
+
+        verify(store).load(chatter());
     }
 
     private static final class ChattersStub implements Chatters {
@@ -94,11 +116,19 @@ class ConnectionManagerTests {
 
         @Override
         public Chatter get(Sender sender) {
-            final Chatter chatter = Chatter.chatter(sender.getIdentity())
-                .joinChannel(steps(new JoinChannelPermissionCheck(sender)))
-                .create();
+            final Chatter chatter = Chatter.createChatter(sender.getIdentity());
             repository.add(chatter);
             return chatter;
+        }
+
+        @Override
+        public void load(Chatter chatter) {
+
+        }
+
+        @Override
+        public void save(Chatter chatter) {
+
         }
     }
 }

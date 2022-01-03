@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.function.Function;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.channel.usecases.ChannelConfig;
+import net.silthus.schat.platform.config.serializers.ChannelConfigSerializer;
 import net.silthus.schat.platform.config.serializers.MiniMessageComponentSerializer;
 import net.silthus.schat.platform.config.serializers.SettingsSerializer;
 import net.silthus.schat.settings.Settings;
@@ -37,6 +39,7 @@ public abstract class ConfigurateAdapter extends ConfigurateConfigSection implem
     private static final TypeSerializerCollection SERIALIZERS = TypeSerializerCollection.builder()
         .register(Component.class, new MiniMessageComponentSerializer())
         .register(Settings.class, new SettingsSerializer())
+        .register(ChannelConfig.class, new ChannelConfigSerializer())
         .build();
 
     private static final Function<ConfigurationOptions, ConfigurationOptions> DEFAULT_OPTIONS = options ->

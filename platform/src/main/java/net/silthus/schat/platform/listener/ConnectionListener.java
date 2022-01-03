@@ -24,4 +24,6 @@ import net.silthus.schat.sender.Sender;
 public interface ConnectionListener {
 
     void join(Sender sender);
+
+    void leave(Sender sender);
 }

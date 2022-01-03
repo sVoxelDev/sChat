@@ -19,9 +19,17 @@
 
 package net.silthus.schat.chatter;
 
-import java.util.UUID;
-import net.silthus.schat.repository.RepositoryHolder;
+import net.silthus.schat.sender.Sender;
 
-public interface Chatters extends RepositoryHolder<ChatterRepository, UUID, Chatter>, ChatterRepository, SenderChatterLookup, ChatterStore {
-
+public interface SenderChatterLookup {
+    /**
+     * Gets the sender for the given sender.
+     *
+     * <p>The chatter will be created if none exists for the sender.</p>
+     *
+     * @param sender the sender to get the chatter for
+     * @return the chatter of the sender
+     * @since next
+     */
+    Chatter get(Sender sender);
 }

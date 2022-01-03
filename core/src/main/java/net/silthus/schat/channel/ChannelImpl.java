@@ -19,14 +19,22 @@
 
 package net.silthus.schat.channel;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import lombok.Getter;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.Check;
+import net.silthus.schat.channel.checks.JoinChannelPermissionCheck;
+import net.silthus.schat.channel.usecases.JoinChannel;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.message.Messages;
@@ -39,7 +47,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.channel.Permission.of;
+import static net.silthus.schat.permission.Permission.of;
 
 final class ChannelImpl implements Channel {
 
@@ -52,11 +60,13 @@ final class ChannelImpl implements Channel {
     private final Messenger<Channel> messenger;
     @Getter
     private final Settings settings;
+    private final Map<Class<? extends Check>, List<? extends Check>> checks;
 
     private ChannelImpl(ChannelImplBuilder builder) {
         this.key = builder.key;
         this.messenger = builder.messenger;
         this.settings = builder.settings.create();
+        this.checks = builder.checks;
     }
 
     @Override
@@ -67,6 +77,12 @@ final class ChannelImpl implements Channel {
     @Override
     public @NotNull @Unmodifiable Messages getMessages() {
         return messenger.getMessages();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public @NotNull @Unmodifiable <T extends Check> Collection<T> getChecks(Class<T> checkType) {
+        return Collections.unmodifiableList((List<T>) this.checks.getOrDefault(checkType, new ArrayList<>()));
     }
 
     @Override
@@ -95,6 +111,11 @@ final class ChannelImpl implements Channel {
     static class ChannelImplBuilder implements Builder {
 
         private final String key;
+        private final Map<Class<? extends Check>, List<? extends Check>> checks = new HashMap<>(Map.of(
+            JoinChannel.Check.class, List.of(
+                new JoinChannelPermissionCheck()
+            )
+        ));
         private Settings.Builder settings;
         private Messenger<Channel> messenger = DEFAULT_MESSENGER;
 
@@ -140,6 +161,21 @@ final class ChannelImpl implements Channel {
         @Override
         public Builder messenger(@NonNull Messenger<Channel> messenger) {
             this.messenger = messenger;
+            return this;
+        }
+
+        @Override
+        public Builder clearChecks() {
+            this.checks.clear();
+            return this;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public <T extends Check> Builder check(T @NonNull ... checks) {
+            if (checks.length > 1) return this;
+            final List<T> checklist = (List<T>) this.checks.computeIfAbsent(checks[0].getClass(), c -> new ArrayList<>());
+            checklist.addAll(List.of(checks));
             return this;
         }
 

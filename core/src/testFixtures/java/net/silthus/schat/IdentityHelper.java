@@ -17,11 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.handler.types;
+package net.silthus.schat;
 
-import net.silthus.schat.handler.Handler;
+import java.util.UUID;
+import net.silthus.schat.identity.Identity;
+import org.apache.commons.lang3.RandomStringUtils;
 
-public interface PermissionHandler extends Handler {
+public final class IdentityHelper {
 
-    boolean hasPermission(String permission);
+    private IdentityHelper() {
+    }
+
+    public static Identity randomIdentity() {
+        return Identity.identity(UUID.randomUUID(), RandomStringUtils.randomAlphanumeric(10));
+    }
 }
