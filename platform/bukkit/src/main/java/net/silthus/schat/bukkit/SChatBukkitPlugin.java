@@ -20,21 +20,20 @@
 package net.silthus.schat.bukkit;
 
 import cloud.commandframework.CommandManager;
-import cloud.commandframework.CommandTree;
-import cloud.commandframework.execution.AsynchronousCommandExecutionCoordinator;
-import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.paper.PaperCommandManager;
-import java.util.function.Function;
 import lombok.Getter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
 import net.silthus.schat.bukkit.listener.PlayerListener;
+import net.silthus.schat.chatter.ChatterStore;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
 import net.silthus.schat.platform.plugin.AbstractPlugin;
 import net.silthus.schat.sender.Sender;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
+
+import static cloud.commandframework.execution.CommandExecutionCoordinator.simpleCoordinator;
 
 @Getter
 public final class SChatBukkitPlugin extends AbstractPlugin {
@@ -57,15 +56,17 @@ public final class SChatBukkitPlugin extends AbstractPlugin {
     }
 
     @Override
-    protected CommandManager<Sender> provideCommandManager() {
-        final Function<CommandTree<Sender>, CommandExecutionCoordinator<Sender>> executionCoordinatorFunction =
-            AsynchronousCommandExecutionCoordinator.<Sender>newBuilder().build();
+    protected @NotNull ChatterStore provideChatterStore() {
+        return null;
+    }
 
+    @Override
+    protected CommandManager<Sender> provideCommandManager() {
         try {
             return new PaperCommandManager<>(
                 getBootstrap().getLoader(),
-                executionCoordinatorFunction,
-                commandSender -> getSenderFactory().wrap(commandSender),
+                simpleCoordinator(),
+                commandSender -> getSenderFactory().adapt(commandSender),
                 sender -> getSenderFactory().unwrap(sender)
             );
         } catch (Exception e) {

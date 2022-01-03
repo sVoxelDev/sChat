@@ -17,18 +17,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform;
+package net.silthus.schat.channel;
 
-import java.util.UUID;
-import net.silthus.schat.identity.Identity;
-import org.apache.commons.lang3.RandomStringUtils;
+import lombok.Getter;
+import net.silthus.schat.channel.repository.ChannelRepository;
 
-public final class IdentityHelper {
+final class ChannelsImpl implements Channels {
 
-    private IdentityHelper() {
+    @Getter
+    private final ChannelRepository repository;
+
+    ChannelsImpl(ChannelRepository repository) {
+        this.repository = repository;
     }
 
-    public static Identity randomIdentity() {
-        return Identity.identity(UUID.randomUUID(), RandomStringUtils.randomAlphanumeric(10));
+    static final class ChannelManagerBuilder implements Builder {
+
+        private ChannelRepository repository = ChannelRepository.createInMemoryChannelRepository();
+
+        @Override
+        public Builder repository(ChannelRepository repository) {
+            this.repository = repository;
+            return this;
+        }
+
+        @Override
+        public Channels create() {
+            return new ChannelsImpl(repository);
+        }
     }
 }

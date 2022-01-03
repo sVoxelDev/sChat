@@ -193,6 +193,8 @@ public interface Settings {
          */
         <V> @NotNull Builder withUnknownType(final @NotNull String key, @NotNull Function<Setting<?>, V> value);
 
+        @NotNull Builder copy(Settings settings);
+
         Settings create();
     }
 }

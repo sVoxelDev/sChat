@@ -17,9 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.channel;
+apply plugin: 'kr.entree.spigradle'
 
-import net.silthus.schat.repository.InMemoryRepository;
+archivesBaseName = "${project.property("pluginName")}-example"
 
-final class InMemoryChannelRepository extends InMemoryRepository<String, Channel> implements ChannelRepository {
+dependencies {
+    implementation project(':core')
+
+    implementation spigot(mcVersion)
+
+    testImplementation 'net.silthus:MockBukkit:v1.17-SNAPSHOT'
 }
+
+shadowJar {
+    archiveClassifier.set("")
+}
+
+tasks.build.dependsOn(shadowJar)
+tasks.publish.dependsOn(shadowJar)

@@ -21,29 +21,46 @@ package net.silthus.schat.platform.plugin;
 
 import java.util.List;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.channel.repository.ChannelRepository;
+import net.silthus.schat.channel.usecases.JoinChannel;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.chatter.Chatters;
+import net.silthus.schat.chatter.ChatterStore;
+import net.silthus.schat.chatter.SenderChatterLookup;
 import net.silthus.schat.platform.listener.ConnectionListener;
 import net.silthus.schat.sender.Sender;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.Channel.AUTO_JOIN;
+import static net.silthus.schat.channel.usecases.JoinChannel.Args.of;
 
 final class ConnectionManager implements ConnectionListener {
 
-    private final Chatters chatters;
+    private final SenderChatterLookup chatterLookup;
     private final ChannelRepository channels;
+    private final ChatterStore store;
+    private final JoinChannel joinChannel;
 
-    ConnectionManager(Chatters chatters, ChannelRepository channels) {
-        this.chatters = chatters;
+    ConnectionManager(SenderChatterLookup chatterLookup,
+                      ChatterStore store,
+                      ChannelRepository channels,
+                      JoinChannel joinChannel) {
+        this.chatterLookup = chatterLookup;
         this.channels = channels;
+        this.store = store;
+        this.joinChannel = joinChannel;
     }
 
     @Override
     public void join(Sender sender) {
-        final Chatter chatter = chatters.get(sender);
+        final Chatter chatter = chatterLookup.get(sender);
+        store.load(chatter);
         autoJoinChannels(chatter);
+    }
+
+    @Override
+    public void leave(Sender sender) {
+        final Chatter chatter = chatterLookup.get(sender);
+        store.save(chatter);
     }
 
     private void autoJoinChannels(Chatter chatter) {
@@ -52,8 +69,8 @@ final class ConnectionManager implements ConnectionListener {
 
     private void autoJoinChannel(Chatter chatter, Channel channel) {
         try {
-            chatter.join(channel);
-        } catch (Chatter.JoinChannel.Error ignored) {
+            joinChannel.joinChannel(of(chatter, channel));
+        } catch (JoinChannel.Error ignored) {
         }
     }
 

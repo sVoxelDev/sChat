@@ -22,21 +22,22 @@ package net.silthus.schat.platform.plugin;
 import lombok.Getter;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.chatter.ChatterStore;
 import net.silthus.schat.chatter.Chatters;
-import net.silthus.schat.chatter.checks.JoinChannelPermissionCheck;
 import net.silthus.schat.sender.Sender;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.chatter.Chatter.JoinChannel.steps;
 
 final class ChatterManager implements Chatters {
 
     @Getter
     private final ChatterRepository repository;
+    private final ChatterStore store;
 
-    ChatterManager(ChatterRepository repository) {
+    ChatterManager(ChatterRepository repository, ChatterStore store) {
         this.repository = repository;
+        this.store = store;
     }
 
     @Override
@@ -44,6 +45,16 @@ final class ChatterManager implements Chatters {
         if (contains(sender.getUniqueId()))
             return get(sender.getUniqueId());
         return createAndCacheChatterFor(sender);
+    }
+
+    @Override
+    public void load(Chatter chatter) {
+        store.load(chatter);
+    }
+
+    @Override
+    public void save(Chatter chatter) {
+        store.save(chatter);
     }
 
     @NotNull
@@ -56,8 +67,7 @@ final class ChatterManager implements Chatters {
     private Chatter createChatterFor(Sender sender) {
         return Chatter.chatter(sender.getIdentity())
             .messengerStrategy((message, context) -> sender.sendMessage(text(message.getText())))
-            .joinChannel(steps(new JoinChannelPermissionCheck(sender)))
+            .permissionHandler(sender::hasPermission)
             .create();
     }
-
 }

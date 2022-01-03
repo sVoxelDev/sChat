@@ -17,30 +17,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter.checks;
+package net.silthus.schat.example;
 
+import lombok.Getter;
+import net.silthus.schat.SChat;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.sender.Sender;
-import org.jetbrains.annotations.NotNull;
+import net.silthus.schat.settings.Setting;
 
-import static net.silthus.schat.channel.Channel.JOIN_PERMISSION;
-import static net.silthus.schat.channel.Channel.REQUIRES_JOIN_PERMISSION;
+import static net.kyori.adventure.text.Component.text;
 
-public record JoinChannelPermissionCheck(Sender sender) implements Chatter.JoinChannel {
+final class SChatIntegration {
 
-    @Override
-    public void joinChannel(Chatter chatter, Channel channel) throws Error {
-        if (requiresJoinPermission(channel) && hasNoJoinPermission(channel))
-            throw new AccessDenied();
+    private static final Setting<Boolean> IS_FACTION_CHANNEL = Setting.setting(Boolean.class, "faction_channel", false);
+    private static final Setting<String> FACTION_NAME = Setting.setting(String.class, "faction", "global");
+
+    @Getter
+    private final SChat sChat;
+
+    SChatIntegration(SChat sChat) {
+        this.sChat = sChat;
     }
 
-    @NotNull
-    private Boolean requiresJoinPermission(Channel channel) {
-        return channel.get(REQUIRES_JOIN_PERMISSION);
+    void enable() {
+        Channel.channel("custom_example")
+            .displayName(text("Custom Channel"));
     }
 
-    private boolean hasNoJoinPermission(Channel channel) {
-        return !channel.get(JOIN_PERMISSION).test(sender);
+    void disable() {
+
     }
 }

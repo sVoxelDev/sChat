@@ -17,33 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.config;
+package net.silthus.schat.channel.usecases;
 
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.settings.Settings;
-import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @Getter
 @Setter
-@ConfigSerializable
 public final class ChannelConfig {
-
-    static ChannelConfig createChannelConfig(ConfigurationAdapter config, String path, String key) {
-        final ChannelConfig channelConfig = config.get(path, ChannelConfig.class);
-        if (channelConfig == null)
-            throw new Invalid();
-
-        channelConfig.setKey(key);
-        return channelConfig;
-    }
 
     private transient String key;
     private Component name = Component.empty();
     private Settings settings = Settings.createSettings();
-
-    public static final class Invalid extends RuntimeException {
-    }
 }

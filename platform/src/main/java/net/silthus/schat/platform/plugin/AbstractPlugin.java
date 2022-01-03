@@ -29,9 +29,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import lombok.AccessLevel;
 import lombok.Getter;
-import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.channel.Channels;
+import net.silthus.schat.channel.repository.ChannelRepository;
 import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.chatter.ChatterStore;
 import net.silthus.schat.chatter.Chatters;
 import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.parsers.ChannelParser;
@@ -43,8 +44,10 @@ import net.silthus.schat.sender.Sender;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.channel.repository.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.channel.usecases.LoadChannels.Args.of;
 import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
+import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 
 public abstract class AbstractPlugin implements SChatPlugin {
 
@@ -52,6 +55,8 @@ public abstract class AbstractPlugin implements SChatPlugin {
     private SChatConfig config;
     @Getter
     private Channels channels;
+    @Getter
+    private ChatterStore chatterStore;
     @Getter
     private Chatters chatters;
     @Getter(AccessLevel.PROTECTED)
@@ -71,8 +76,9 @@ public abstract class AbstractPlugin implements SChatPlugin {
         config.load();
 
         channels = provideChannelManager(provideChannelRepository());
-        channels.load();
+        channels.load(of(channels, config.get(CHANNELS).values()));
 
+        chatterStore = provideChatterStore();
         chatters = provideChatterManager(provideChatterRepository());
 
         commandManager = setupCommands();
@@ -100,7 +106,7 @@ public abstract class AbstractPlugin implements SChatPlugin {
 
     @ApiStatus.OverrideOnly
     protected @NotNull Channels provideChannelManager(ChannelRepository repository) {
-        return new ChannelManager(getConfig(), repository);
+        return Channels.channels().repository(repository).create();
     }
 
     protected abstract @NotNull ConfigurationAdapter provideConfigurationAdapter();
@@ -111,8 +117,11 @@ public abstract class AbstractPlugin implements SChatPlugin {
     }
 
     @ApiStatus.OverrideOnly
+    protected abstract @NotNull ChatterStore provideChatterStore();
+
+    @ApiStatus.OverrideOnly
     protected @NotNull Chatters provideChatterManager(ChatterRepository repository) {
-        return new ChatterManager(repository);
+        return new ChatterManager(repository, getChatterStore());
     }
 
     private CommandManager<Sender> setupCommands() {
@@ -143,12 +152,12 @@ public abstract class AbstractPlugin implements SChatPlugin {
 
     @ApiStatus.OverrideOnly
     protected void registerCommands(CommandManager<Sender> commandManager, AnnotationParser<Sender> annotationParser) {
-        annotationParser.parse(new ChannelCommands());
+        annotationParser.parse(new ChannelCommands(getChannels()));
     }
 
     @ApiStatus.OverrideOnly
     protected ConnectionListener provideConnectionListener() {
-        return new ConnectionManager(getChatters(), getChannels());
+        return new ConnectionManager(getChatters(), getChatters(), getChannels(), channels);
     }
 
     protected abstract void registerListeners();

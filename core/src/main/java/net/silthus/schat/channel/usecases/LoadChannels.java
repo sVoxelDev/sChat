@@ -17,40 +17,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.channel.usecases;
 
-import lombok.Getter;
+import java.util.Collection;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.channel.Channels;
-import net.silthus.schat.platform.config.ChannelConfig;
-import net.silthus.schat.platform.config.Config;
+import net.silthus.schat.channel.repository.ChannelRepository;
 
-import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
+public interface LoadChannels {
 
-final class ChannelManager implements Channels {
-
-    @Getter
-    private final Config config;
-    @Getter
-    private final ChannelRepository repository;
-
-    ChannelManager(Config config, ChannelRepository repository) {
-        this.config = config;
-        this.repository = repository;
-    }
-
-    @Override
-    public void load() {
-        for (final ChannelConfig config : getConfig().get(CHANNELS).values()) {
-            getRepository().add(createChannelFromConfig(config));
+    default void load(LoadChannels.Args args) {
+        final ChannelRepository repository = args.repository();
+        for (final ChannelConfig config : args.configs()) {
+            repository.add(createChannelFromConfig(config));
         }
     }
 
     private Channel createChannelFromConfig(ChannelConfig config) {
         return Channel.channel(config.getKey())
             .displayName(config.getName())
-            .settings(config.getSettings())
+            .settings(builder -> builder.copy(config.getSettings()))
             .create();
     }
+
+    record Args(ChannelRepository repository, Collection<ChannelConfig> configs) {
+
+        public static Args of(ChannelRepository repository, Collection<ChannelConfig> configs) {
+            return new Args(repository, configs);
+        }
+    }
+
 }

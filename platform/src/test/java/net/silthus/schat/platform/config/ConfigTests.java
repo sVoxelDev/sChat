@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.function.Function;
 import net.kyori.adventure.text.TextComponent;
+import net.silthus.schat.channel.usecases.ChannelConfig;
 import net.silthus.schat.platform.TestConfigurationAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurateAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;

@@ -17,14 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform;
+package net.silthus.schat;
 
 import java.util.function.Function;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.settings.Configured;
 import net.silthus.schat.settings.Setting;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import static net.silthus.schat.channel.Channel.channel;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public final class ChannelHelper {
 
@@ -35,7 +36,28 @@ public final class ChannelHelper {
         return createChannelWith(builder -> builder.setting(setting, value));
     }
 
-    public static Channel createChannelWith(Function<Channel.Builder, Channel.Builder> config) {
-        return config.apply(channel(randomAlphabetic(10).toLowerCase())).create();
+    public static Channel channelWith(ConfiguredSetting<?>... settings) {
+        return createChannelWith(builder -> {
+            for (final ConfiguredSetting<?> setting : settings) {
+                setting.configure(builder);
+            }
+            return builder;
+        });
     }
+
+    public static Channel createChannelWith(Function<Channel.Builder, Channel.Builder> config) {
+        return config.apply(channel(RandomStringUtils.randomAlphabetic(10).toLowerCase())).create();
+    }
+
+    public record ConfiguredSetting<V>(Setting<V> setting, V value) {
+
+        public static <V> ConfiguredSetting<V> set(Setting<V> setting, V value) {
+            return new ConfiguredSetting<>(setting, value);
+        }
+
+        public void configure(Configured.Builder<?> builder) {
+            builder.setting(setting(), value());
+        }
+    }
+
 }

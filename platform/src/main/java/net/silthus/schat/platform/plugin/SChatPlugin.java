@@ -19,9 +19,6 @@
 
 package net.silthus.schat.platform.plugin;
 
-import net.silthus.schat.channel.Channels;
-import net.silthus.schat.chatter.Chatters;
-import net.silthus.schat.platform.config.Config;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.platform.plugin.logging.PluginLogger;
 
@@ -38,10 +35,4 @@ public interface SChatPlugin {
     default PluginLogger getLogger() {
         return getBootstrap().getPluginLogger();
     }
-
-    Config getConfig();
-
-    Channels getChannels();
-
-    Chatters getChatters();
 }

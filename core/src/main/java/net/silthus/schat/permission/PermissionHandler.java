@@ -17,11 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter;
+package net.silthus.schat.permission;
 
-import java.util.UUID;
-import net.silthus.schat.repository.RepositoryHolder;
-
-public interface Chatters extends RepositoryHolder<ChatterRepository, UUID, Chatter>, ChatterRepository, SenderChatterLookup, ChatterStore {
-
+public interface PermissionHandler extends Permissable {
 }

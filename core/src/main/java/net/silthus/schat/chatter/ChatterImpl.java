@@ -32,6 +32,7 @@ import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.Messages;
 import net.silthus.schat.message.messenger.Messenger;
+import net.silthus.schat.permission.PermissionHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -43,8 +44,8 @@ final class ChatterImpl implements Chatter {
 
     private final List<Channel> channels = new ArrayList<>();
     private final Messenger<Chatter> messenger;
-    private final JoinChannel join;
     private final ChatHandler chat;
+    private final PermissionHandler permissionHandler;
 
     @Getter
     private final Identity identity;
@@ -53,8 +54,13 @@ final class ChatterImpl implements Chatter {
     private ChatterImpl(ChatterBuilder builder) {
         this.identity = builder.identity;
         this.messenger = builder.messenger;
-        this.join = builder.join;
         this.chat = builder.chat;
+        this.permissionHandler = builder.permissionHandler;
+    }
+
+    @Override
+    public boolean hasPermission(String permission) {
+        return permissionHandler.hasPermission(permission);
     }
 
     @Override
@@ -85,8 +91,7 @@ final class ChatterImpl implements Chatter {
     }
 
     @Override
-    public void join(final @NonNull Channel channel) throws JoinChannel.Error {
-        join.joinChannel(this, channel);
+    public void join(final @NonNull Channel channel) {
         addChannel(channel);
         channel.addTarget(this);
     }
@@ -115,8 +120,8 @@ final class ChatterImpl implements Chatter {
 
         private final Identity identity;
         private Messenger<Chatter> messenger = Messenger.noDelivery();
-        private JoinChannel join = JoinChannel.empty();
         private ChatHandler chat = sendToActiveChannel();
+        private PermissionHandler permissionHandler = permission -> false;
 
         ChatterBuilder(Identity identity) {
             this.identity = identity;
@@ -139,14 +144,14 @@ final class ChatterImpl implements Chatter {
         }
 
         @Override
-        public Builder joinChannel(@NonNull JoinChannel join) {
-            this.join = join;
+        public Builder chatHandler(@NonNull ChatHandler chat) {
+            this.chat = chat;
             return this;
         }
 
         @Override
-        public Builder chatHandler(@NonNull ChatHandler chat) {
-            this.chat = chat;
+        public Builder permissionHandler(@NonNull PermissionHandler permissionHandler) {
+            this.permissionHandler = permissionHandler;
             return this;
         }
 

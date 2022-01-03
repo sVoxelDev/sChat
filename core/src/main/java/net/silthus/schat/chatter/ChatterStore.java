@@ -19,9 +19,9 @@
 
 package net.silthus.schat.chatter;
 
-import java.util.UUID;
-import net.silthus.schat.repository.RepositoryHolder;
+public interface ChatterStore {
 
-public interface Chatters extends RepositoryHolder<ChatterRepository, UUID, Chatter>, ChatterRepository, SenderChatterLookup, ChatterStore {
+    void load(Chatter chatter);
 
+    void save(Chatter chatter);
 }

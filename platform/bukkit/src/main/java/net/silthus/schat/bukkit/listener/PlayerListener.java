@@ -39,7 +39,7 @@ public final class PlayerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        final Sender sender = senderFactory.wrap(event.getPlayer());
+        final Sender sender = senderFactory.adapt(event.getPlayer());
         connectionListener.join(sender);
     }
 }
