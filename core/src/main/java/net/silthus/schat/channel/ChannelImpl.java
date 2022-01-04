@@ -33,14 +33,14 @@ import lombok.Getter;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.checks.JoinChannelPermissionCheck;
+import net.silthus.schat.checks.Check;
+import net.silthus.schat.checks.JoinChannel;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.message.Messages;
 import net.silthus.schat.message.messenger.Messenger;
 import net.silthus.schat.settings.Setting;
 import net.silthus.schat.settings.Settings;
-import net.silthus.schat.usecases.Check;
-import net.silthus.schat.usecases.JoinChannel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -60,7 +60,7 @@ final class ChannelImpl implements Channel {
     private final Messenger<Channel> messenger;
     @Getter
     private final Settings settings;
-    private final Map<Class<? extends Check>, List<? extends Check>> checks;
+    private final Map<Class<? extends Check<?>>, List<? extends Check<?>>> checks;
 
     private ChannelImpl(ChannelImplBuilder builder) {
         this.key = builder.key;
@@ -111,8 +111,8 @@ final class ChannelImpl implements Channel {
     static class ChannelImplBuilder implements Builder {
 
         private final String key;
-        private final Map<Class<? extends Check>, List<? extends Check>> checks = new HashMap<>(Map.of(
-            JoinChannel.Check.class, List.of(
+        private final Map<Class<? extends Check<?>>, List<? extends Check<?>>> checks = new HashMap<>(Map.of(
+            JoinChannel.class, List.of(
                 new JoinChannelPermissionCheck()
             )
         ));
@@ -174,9 +174,9 @@ final class ChannelImpl implements Channel {
 
         @Override
         @SuppressWarnings("unchecked")
-        public <T extends Check> Builder check(T @NonNull ... checks) {
+        public <T extends Check<?>> Builder check(T @NonNull ... checks) {
             if (checks.length > 1) return this;
-            final List<T> checklist = (List<T>) this.checks.computeIfAbsent(checks[0].getClass(), c -> new ArrayList<>());
+            final List<T> checklist = (List<T>) this.checks.computeIfAbsent((Class<? extends Check<?>>) checks[0].getClass(), c -> new ArrayList<>());
             checklist.addAll(List.of(checks));
             return this;
         }

@@ -25,14 +25,13 @@ import net.silthus.schat.channel.repository.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterStore;
 import net.silthus.schat.chatter.SenderChatterLookup;
+import net.silthus.schat.checks.Check;
+import net.silthus.schat.checks.JoinChannel;
 import net.silthus.schat.platform.listener.ConnectionListener;
 import net.silthus.schat.sender.Sender;
-import net.silthus.schat.usecases.Check;
-import net.silthus.schat.usecases.JoinChannel;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.Channel.AUTO_JOIN;
-import static net.silthus.schat.usecases.JoinChannel.Args.of;
 
 final class ConnectionManager implements ConnectionListener {
 
@@ -70,7 +69,7 @@ final class ConnectionManager implements ConnectionListener {
 
     private void autoJoinChannel(Chatter chatter, Channel channel) {
         try {
-            joinChannel.joinChannel(of(chatter, channel));
+            chatter.join(channel);
         } catch (Check.Error ignored) {
         }
     }

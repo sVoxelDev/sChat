@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Set;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.checks.Check;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.message.Messages;
 import net.silthus.schat.message.messenger.Messenger;
@@ -30,7 +31,6 @@ import net.silthus.schat.permission.Permission;
 import net.silthus.schat.repository.Entity;
 import net.silthus.schat.settings.Configured;
 import net.silthus.schat.settings.Setting;
-import net.silthus.schat.usecases.Check;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -41,7 +41,7 @@ import static net.silthus.schat.settings.Setting.setting;
 public interface Channel extends MessageTarget, Configured, Entity<String> {
 
     Setting<Component> DISPLAY_NAME = setting(Component.class, "name", empty());
-    Setting<Boolean> REQUIRES_JOIN_PERMISSION = setting(Boolean.class, "protected", true);
+    Setting<Boolean> REQUIRES_JOIN_PERMISSION = setting(Boolean.class, "protected", false);
     Setting<Permission> JOIN_PERMISSION = setting(Permission.class, "permissions.join", of("schat.admin.channel.join"));
     Setting<Boolean> AUTO_JOIN = setting(Boolean.class, "auto_join", false);
 
@@ -73,7 +73,7 @@ public interface Channel extends MessageTarget, Configured, Entity<String> {
 
         Builder clearChecks();
 
-        <T extends Check> Builder check(@NonNull T@NonNull... checks);
+        <T extends Check<?>> Builder check(@NonNull T@NonNull... checks);
 
         Channel create();
     }

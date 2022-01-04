@@ -37,7 +37,6 @@ import static net.silthus.schat.ChannelHelper.channelWith;
 import static net.silthus.schat.SenderMock.randomSenderMock;
 import static net.silthus.schat.channel.Channel.AUTO_JOIN;
 import static net.silthus.schat.channel.Channel.REQUIRES_JOIN_PERMISSION;
-import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.Channels.channels;
 import static net.silthus.schat.channel.repository.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
@@ -95,10 +94,8 @@ class ConnectionManagerTests {
     @Test
     void quit_stores_chatter_data() {
         connectionManager.join(sender);
-        chatter().join(createChannel("test"));
-        chatter().setActiveChannel(createChannel("active"));
-
         connectionManager.leave(sender);
+
         verify(store).save(chatter());
     }
 

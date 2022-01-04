@@ -81,7 +81,7 @@ class ChannelTests {
     @Test
     void givenJoinedTwice_onlySendsOnce() {
         final Chatter chatter = joinChatter();
-        chatter.join(channel);
+        channel.addTarget(chatter);
         sendMessage();
         verify(chatter).sendMessage(message);
     }

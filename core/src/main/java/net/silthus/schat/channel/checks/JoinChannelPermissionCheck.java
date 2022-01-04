@@ -21,15 +21,15 @@ package net.silthus.schat.channel.checks;
 
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.usecases.JoinChannel;
+import net.silthus.schat.checks.JoinChannel;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.Channel.JOIN_PERMISSION;
 import static net.silthus.schat.channel.Channel.REQUIRES_JOIN_PERMISSION;
-import static net.silthus.schat.usecases.Check.failure;
-import static net.silthus.schat.usecases.Check.success;
+import static net.silthus.schat.checks.Check.failure;
+import static net.silthus.schat.checks.Check.success;
 
-public final class JoinChannelPermissionCheck implements JoinChannel.Check {
+public final class JoinChannelPermissionCheck implements JoinChannel {
 
     @Override
     public Result test(JoinChannel.Args args) {
