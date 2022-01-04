@@ -17,15 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter;
+package net.silthus.schat.format;
 
 import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.format.Formatter;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.message.Messages;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
@@ -88,12 +87,12 @@ public final class TabbedChannelFormatter implements Formatter<Chatter> {
         }
     }
 
-    private static class MessagesFormatter implements Formatter<Messages> {
+    private static class MessagesFormatter implements Formatter<List<Message>> {
 
         private final MessageFormatter messageFormatter = new MessageFormatter();
 
         @Override
-        public Component format(final Messages messages) {
+        public Component format(final List<Message> messages) {
             return Component.join(
                 newlines(),
                 messages

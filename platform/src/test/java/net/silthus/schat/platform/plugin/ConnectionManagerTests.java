@@ -57,7 +57,7 @@ class ConnectionManagerTests {
         chatters = new ChattersStub();
         channels = createInMemoryChannelRepository();
         store = mock(ChatterStore.class);
-        connectionManager = new ConnectionManager(chatters, store, channels, channels().repository(channels).create());
+        connectionManager = new ConnectionManager(chatters, store, channels().repository(channels).create());
         sender = randomSenderMock();
     }
 

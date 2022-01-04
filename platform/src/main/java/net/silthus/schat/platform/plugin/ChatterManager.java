@@ -66,7 +66,7 @@ final class ChatterManager implements Chatters {
 
     private Chatter createChatterFor(Sender sender) {
         return Chatter.chatter(sender.getIdentity())
-            .messengerStrategy((message, context) -> sender.sendMessage(text(message.getText())))
+            .messenger(context -> sender.sendMessage(text(context.message().getText())))
             .permissionHandler(sender::hasPermission)
             .create();
     }

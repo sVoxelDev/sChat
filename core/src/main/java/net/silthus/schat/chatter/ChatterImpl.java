@@ -31,8 +31,8 @@ import net.silthus.schat.checks.JoinChannel;
 import net.silthus.schat.handler.types.ChatHandler;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.message.Messages;
-import net.silthus.schat.message.messenger.Messenger;
+import net.silthus.schat.message.MessageRepository;
+import net.silthus.schat.message.Messenger;
 import net.silthus.schat.permission.PermissionHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,11 +40,13 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import static net.silthus.schat.checks.JoinChannel.Args.of;
 import static net.silthus.schat.handler.types.ChatHandler.sendToActiveChannel;
+import static net.silthus.schat.message.MessageRepository.createInMemoryMessageRepository;
 
 @EqualsAndHashCode(of = {"identity"})
 final class ChatterImpl implements Chatter {
 
     private final List<Channel> channels = new ArrayList<>();
+    private final MessageRepository messageRepository;
     private final Messenger<Chatter> messenger;
     private final ChatHandler chat;
     private final PermissionHandler permissionHandler;
@@ -55,6 +57,7 @@ final class ChatterImpl implements Chatter {
 
     private ChatterImpl(ChatterBuilder builder) {
         this.identity = builder.identity;
+        this.messageRepository = builder.messageRepository;
         this.messenger = builder.messenger;
         this.chat = builder.chat;
         this.permissionHandler = builder.permissionHandler;
@@ -66,8 +69,8 @@ final class ChatterImpl implements Chatter {
     }
 
     @Override
-    public @NotNull @Unmodifiable Messages getMessages() {
-        return messenger.getMessages();
+    public @NotNull @Unmodifiable List<Message> getMessages() {
+        return List.copyOf(messageRepository.all());
     }
 
     @Override
@@ -117,13 +120,15 @@ final class ChatterImpl implements Chatter {
 
     @Override
     public void sendMessage(final @NonNull Message message) {
-        messenger.sendMessage(this, message);
+        messageRepository.add(message);
+        messenger.sendMessage(Messenger.Context.of(this, message));
     }
 
     static class ChatterBuilder implements Builder {
 
         private final Identity identity;
-        private Messenger<Chatter> messenger = Messenger.noDelivery();
+        private MessageRepository messageRepository = createInMemoryMessageRepository();
+        private Messenger<Chatter> messenger = Messenger.nil();
         private ChatHandler chat = sendToActiveChannel();
         private PermissionHandler permissionHandler = permission -> false;
 
@@ -136,14 +141,14 @@ final class ChatterImpl implements Chatter {
         }
 
         @Override
-        public Builder messenger(@NonNull Messenger<Chatter> messenger) {
-            this.messenger = messenger;
+        public Builder messageRepository(@NonNull MessageRepository messageRepository) {
+            this.messageRepository = messageRepository;
             return this;
         }
 
         @Override
-        public Builder messengerStrategy(@NonNull Messenger.Strategy<Chatter> strategy) {
-            this.messenger = Messenger.messenger(strategy);
+        public Builder messenger(@NonNull Messenger<Chatter> messenger) {
+            this.messenger = messenger;
             return this;
         }
 

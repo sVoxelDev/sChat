@@ -20,13 +20,15 @@
 package net.silthus.schat.channel;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.checks.Check;
+import net.silthus.schat.message.Message;
+import net.silthus.schat.message.MessageRepository;
 import net.silthus.schat.message.MessageTarget;
-import net.silthus.schat.message.Messages;
-import net.silthus.schat.message.messenger.Messenger;
+import net.silthus.schat.message.Messenger;
 import net.silthus.schat.permission.Permission;
 import net.silthus.schat.repository.Entity;
 import net.silthus.schat.settings.Configured;
@@ -61,13 +63,15 @@ public interface Channel extends MessageTarget, Configured, Entity<String> {
 
     @NotNull @Unmodifiable Set<MessageTarget> getTargets();
 
-    @NotNull @Unmodifiable Messages getMessages();
+    @NotNull @Unmodifiable List<Message> getMessages();
 
-    <T extends Check> @NotNull @Unmodifiable Collection<T> getChecks(Class<T> checks);
+    <T extends Check<?>> @NotNull @Unmodifiable Collection<T> getChecks(Class<T> checks);
 
     interface Builder extends Configured.Builder<Builder> {
 
         Builder displayName(@NonNull Component displayName);
+
+        Builder messageRepository(MessageRepository messageRepository);
 
         Builder messenger(@NonNull Messenger<Channel> messenger);
 

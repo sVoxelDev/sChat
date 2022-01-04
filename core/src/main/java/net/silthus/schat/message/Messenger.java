@@ -17,22 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-plugins {
-    id 'java'
-}
+package net.silthus.schat.message;
 
-group 'net.silthus'
-version '1.0.0-beta.17'
+import lombok.NonNull;
 
-repositories {
-    mavenCentral()
-}
+public interface Messenger<T> {
 
-dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-}
+    static <T> Messenger<T> nil() {
+        return context -> {};
+    }
 
-test {
-    useJUnitPlatform()
+    void sendMessage(Context<T> context);
+
+    record Context<T>(@NonNull T target, Message message) {
+        public static <T> Context<T> of(T target, Message message) {
+            return new Context<>(target, message);
+        }
+    }
 }

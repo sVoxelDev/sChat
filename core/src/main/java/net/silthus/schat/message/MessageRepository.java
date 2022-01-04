@@ -17,24 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.commands;
+package net.silthus.schat.message;
 
-import cloud.commandframework.annotations.Argument;
-import cloud.commandframework.annotations.CommandMethod;
-import cloud.commandframework.annotations.ProxiedBy;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.checks.Check;
+import java.util.UUID;
+import net.silthus.schat.repository.Repository;
 
-public class ChannelCommands {
+public interface MessageRepository extends Repository<UUID, Message> {
 
-    @ProxiedBy("ch")
-    @CommandMethod(value = "channel join <channel>")
-    public void joinChannel(Chatter chatter, @Argument Channel channel) {
-        try {
-            chatter.join(channel);
-        } catch (Check.Error e) {
-            throw new RuntimeException(e);
-        }
+    static MessageRepository createInMemoryMessageRepository() {
+        return new InMemoryMessageRepository();
     }
 }
