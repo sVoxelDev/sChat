@@ -137,18 +137,6 @@ final class SettingsImpl implements Settings {
         }
 
         @Override
-        public @NotNull Builder copy(Settings settings) {
-            for (final Setting<?> setting : settings.getSettings()) {
-                copy(settings, setting);
-            }
-            return this;
-        }
-
-        private <V> void copy(Settings settings, Setting<V> setting) {
-            withStatic(setting, settings.get(setting));
-        }
-
-        @Override
         public @NotNull Settings create() {
             return new SettingsImpl(this);
         }

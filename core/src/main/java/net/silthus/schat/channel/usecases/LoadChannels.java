@@ -34,8 +34,8 @@ public interface LoadChannels {
 
     private Channel createChannelFromConfig(ChannelConfig config) {
         return Channel.channel(config.getKey())
+            .defaultSettings(config.getSettings().copy())
             .displayName(config.getName())
-            .settings(builder -> builder.copy(config.getSettings()))
             .create();
     }
 

@@ -38,6 +38,7 @@ import org.spongepowered.configurate.loader.ConfigurationLoader;
 import org.spongepowered.configurate.reference.ConfigurationReference;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.channel.Channel.AUTO_JOIN;
 import static net.silthus.schat.channel.Channel.REQUIRES_JOIN_PERMISSION;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,7 +50,7 @@ class ConfigTests {
 
     @BeforeEach
     void setUp(@TempDir File temp) {
-        final ConfigurationAdapter adapter = new TestConfigurationAdapter(new File(temp, "config.yml"));
+        final ConfigurationAdapter adapter = new TestConfigurationAdapter(new File(temp, "test-config.yml"));
         config = new SChatConfig(adapter);
         config.load();
     }
@@ -67,6 +68,7 @@ class ConfigTests {
     @Test
     void loads_defined_channel_settings() {
         assertThat(getTestChannelConfig().getSettings().get(REQUIRES_JOIN_PERMISSION)).isTrue();
+        assertThat(getTestChannelConfig().getSettings().get(AUTO_JOIN)).isTrue();
     }
 
     @Test

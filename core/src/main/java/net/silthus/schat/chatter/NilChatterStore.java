@@ -19,13 +19,17 @@
 
 package net.silthus.schat.chatter;
 
-public interface ChatterStore {
+final class NilChatterStore implements ChatterStore {
 
-    static ChatterStore nil() {
-        return NilChatterStore.NIL;
+    static final ChatterStore NIL = new NilChatterStore();
+
+    @Override
+    public void load(Chatter chatter) {
+
     }
 
-    void load(Chatter chatter);
+    @Override
+    public void save(Chatter chatter) {
 
-    void save(Chatter chatter);
+    }
 }

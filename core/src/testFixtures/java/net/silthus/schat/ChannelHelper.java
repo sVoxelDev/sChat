@@ -23,9 +23,9 @@ import java.util.function.Function;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.settings.Configured;
 import net.silthus.schat.settings.Setting;
-import org.apache.commons.lang3.RandomStringUtils;
 
 import static net.silthus.schat.channel.Channel.channel;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public final class ChannelHelper {
 
@@ -46,7 +46,7 @@ public final class ChannelHelper {
     }
 
     public static Channel createChannelWith(Function<Channel.Builder, Channel.Builder> config) {
-        return config.apply(channel(RandomStringUtils.randomAlphabetic(10).toLowerCase())).create();
+        return config.apply(channel(randomAlphabetic(10).toLowerCase())).create();
     }
 
     public record ConfiguredSetting<V>(Setting<V> setting, V value) {

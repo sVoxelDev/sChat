@@ -84,6 +84,14 @@ class SettingsTest {
     }
 
     @Test
+    void copy_copiesUnknown_Settings() {
+        final Settings original = Settings.settings().withUnknownType("test", setting -> "foobar").create();
+        final Settings copy = original.copy().create();
+
+        assertThat(copy.get(Setting.setting(String.class, "test", null))).isEqualTo("foobar");
+    }
+
+    @Test
     void given_unknown_type() {
         final Settings settings = Settings.settings().withUnknownType("default", setting -> "foobar").create();
         assertThat(settings.get(DEFAULT_VAL_TEST)).isEqualTo("foobar");

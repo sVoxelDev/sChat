@@ -117,7 +117,9 @@ public abstract class AbstractPlugin implements SChatPlugin {
     }
 
     @ApiStatus.OverrideOnly
-    protected abstract @NotNull ChatterStore provideChatterStore();
+    protected @NotNull ChatterStore provideChatterStore() {
+        return ChatterStore.nil();
+    }
 
     @ApiStatus.OverrideOnly
     protected @NotNull Chatters provideChatterManager(ChatterRepository repository) {
