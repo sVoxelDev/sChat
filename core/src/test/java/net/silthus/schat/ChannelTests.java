@@ -86,13 +86,6 @@ class ChannelTests {
         verify(chatter).sendMessage(message);
     }
 
-    @Test
-    void givenDeletedMessage_doesNotReturnMessage() {
-        sendMessage();
-        message.delete();
-        assertThat(channel.getMessages()).doesNotContain(message);
-    }
-
     @ParameterizedTest
     @ValueSource(strings = {
         "",

@@ -28,9 +28,9 @@ import net.silthus.schat.handler.types.ChatHandler;
 import net.silthus.schat.identity.Identified;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.message.MessageRepository;
 import net.silthus.schat.message.MessageTarget;
-import net.silthus.schat.message.Messages;
-import net.silthus.schat.message.messenger.Messenger;
+import net.silthus.schat.message.Messenger;
 import net.silthus.schat.permission.Permissable;
 import net.silthus.schat.permission.PermissionHandler;
 import net.silthus.schat.repository.Entity;
@@ -70,13 +70,13 @@ public interface Chatter extends MessageTarget, Entity<UUID>, Identified, Permis
 
     Message chat(@Nullable String text);
 
-    @NotNull @Unmodifiable Messages getMessages();
+    @NotNull @Unmodifiable List<Message> getMessages();
 
     interface Builder {
 
-        Builder messenger(@NonNull Messenger<Chatter> messenger);
+        Builder messageRepository(@NonNull MessageRepository messageRepository);
 
-        Builder messengerStrategy(@NonNull Messenger.Strategy<Chatter> strategy);
+        Builder messenger(@NonNull Messenger<Chatter> messenger);
 
         Builder chatHandler(@NonNull ChatHandler chat);
 

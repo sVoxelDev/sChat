@@ -23,7 +23,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.chatter.TabbedChannelFormatter;
+import net.silthus.schat.format.TabbedChannelFormatter;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import org.jetbrains.annotations.NotNull;

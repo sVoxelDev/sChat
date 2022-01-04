@@ -26,7 +26,6 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterStore;
 import net.silthus.schat.chatter.SenderChatterLookup;
 import net.silthus.schat.checks.Check;
-import net.silthus.schat.checks.JoinChannel;
 import net.silthus.schat.platform.listener.ConnectionListener;
 import net.silthus.schat.sender.Sender;
 import org.jetbrains.annotations.NotNull;
@@ -38,16 +37,13 @@ final class ConnectionManager implements ConnectionListener {
     private final SenderChatterLookup chatterLookup;
     private final ChannelRepository channels;
     private final ChatterStore store;
-    private final JoinChannel joinChannel;
 
     ConnectionManager(SenderChatterLookup chatterLookup,
                       ChatterStore store,
-                      ChannelRepository channels,
-                      JoinChannel joinChannel) {
+                      ChannelRepository channels) {
         this.chatterLookup = chatterLookup;
         this.channels = channels;
         this.store = store;
-        this.joinChannel = joinChannel;
     }
 
     @Override

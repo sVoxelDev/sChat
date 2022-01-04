@@ -154,12 +154,12 @@ public abstract class AbstractPlugin implements SChatPlugin {
 
     @ApiStatus.OverrideOnly
     protected void registerCommands(CommandManager<Sender> commandManager, AnnotationParser<Sender> annotationParser) {
-        annotationParser.parse(new ChannelCommands(getChannels()));
+        annotationParser.parse(new ChannelCommands());
     }
 
     @ApiStatus.OverrideOnly
     protected ConnectionListener provideConnectionListener() {
-        return new ConnectionManager(getChatters(), getChatters(), getChannels(), channels);
+        return new ConnectionManager(getChatters(), getChatters(), getChannels());
     }
 
     protected abstract void registerListeners();

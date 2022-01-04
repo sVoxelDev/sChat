@@ -36,9 +36,9 @@ import net.silthus.schat.channel.checks.JoinChannelPermissionCheck;
 import net.silthus.schat.checks.Check;
 import net.silthus.schat.checks.JoinChannel;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.message.MessageRepository;
 import net.silthus.schat.message.MessageTarget;
-import net.silthus.schat.message.Messages;
-import net.silthus.schat.message.messenger.Messenger;
+import net.silthus.schat.message.Messenger;
 import net.silthus.schat.settings.Setting;
 import net.silthus.schat.settings.Settings;
 import org.jetbrains.annotations.NotNull;
@@ -47,16 +47,18 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.message.MessageRepository.createInMemoryMessageRepository;
 import static net.silthus.schat.permission.Permission.of;
 
 final class ChannelImpl implements Channel {
 
     private static final Pattern CHANNEL_KEY_PATTERN = Pattern.compile("^[a-z0-9_-]+$");
-    private static final Messenger<Channel> DEFAULT_MESSENGER = Messenger.messenger(new DefaultChannelStrategy());
+    private static final Messenger<Channel> DEFAULT_MESSENGER = new DefaultChannelStrategy();
 
     @Getter
     private final String key;
     private final Set<MessageTarget> targets = new HashSet<>();
+    private final MessageRepository messageRepository;
     private final Messenger<Channel> messenger;
     @Getter
     private final Settings settings;
@@ -65,6 +67,7 @@ final class ChannelImpl implements Channel {
     private ChannelImpl(ChannelImplBuilder builder) {
         this.key = builder.key;
         this.messenger = builder.messenger;
+        this.messageRepository = builder.messageRepository;
         this.settings = builder.settings.create();
         this.checks = builder.checks;
     }
@@ -75,13 +78,13 @@ final class ChannelImpl implements Channel {
     }
 
     @Override
-    public @NotNull @Unmodifiable Messages getMessages() {
-        return messenger.getMessages();
+    public @NotNull @Unmodifiable List<Message> getMessages() {
+        return List.copyOf(messageRepository.all());
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public @NotNull @Unmodifiable <T extends Check> Collection<T> getChecks(Class<T> checkType) {
+    public @NotNull @Unmodifiable <T extends Check<?>> Collection<T> getChecks(Class<T> checkType) {
         return Collections.unmodifiableList((List<T>) this.checks.getOrDefault(checkType, new ArrayList<>()));
     }
 
@@ -97,14 +100,15 @@ final class ChannelImpl implements Channel {
 
     @Override
     public void sendMessage(final @NonNull Message message) {
-        messenger.sendMessage(this, message);
+        messageRepository.add(message);
+        messenger.sendMessage(Messenger.Context.of(this, message));
     }
 
-    private static class DefaultChannelStrategy implements Messenger.Strategy<Channel> {
+    private static class DefaultChannelStrategy implements Messenger<Channel> {
 
         @Override
-        public void deliver(final @NotNull Message message, final Messenger.@NotNull Context<Channel> context) {
-            context.target().getTargets().forEach(messageTarget -> messageTarget.sendMessage(message));
+        public void sendMessage(Context<Channel> context) {
+            context.target().getTargets().forEach(messageTarget -> messageTarget.sendMessage(context.message()));
         }
     }
 
@@ -119,6 +123,7 @@ final class ChannelImpl implements Channel {
         private Component displayName;
         private Settings.Builder settings;
         private Messenger<Channel> messenger = DEFAULT_MESSENGER;
+        private MessageRepository messageRepository = createInMemoryMessageRepository();
 
         ChannelImplBuilder(String key) {
             if (isInvalidChannelKey(key))
@@ -157,6 +162,12 @@ final class ChannelImpl implements Channel {
             if (displayName.equals(empty()))
                 return this;
             this.displayName = displayName;
+            return this;
+        }
+
+        @Override
+        public Builder messageRepository(MessageRepository messageRepository) {
+            this.messageRepository = messageRepository;
             return this;
         }
 

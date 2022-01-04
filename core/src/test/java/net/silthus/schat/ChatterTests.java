@@ -22,7 +22,7 @@ package net.silthus.schat;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.message.messenger.Messenger;
+import net.silthus.schat.message.Messenger;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -99,11 +98,11 @@ class ChatterTests {
         @Test
         @SuppressWarnings("unchecked")
         void updatesView() {
-            final Messenger.Strategy<Chatter> out = mock(Messenger.Strategy.class);
-            chatter = Chatter.chatter().messengerStrategy(out).create();
+            final Messenger<Chatter> out = mock(Messenger.class);
+            chatter = Chatter.chatter().messenger(out).create();
             final Message message = Message.message(MESSAGE_TEXT);
             chatter.sendMessage(message);
-            verify(out).deliver(eq(message), any());
+            verify(out).sendMessage(any());
         }
     }
 
@@ -112,31 +111,5 @@ class ChatterTests {
         Channel channel = Channel.createChannel("test");
         chatter.join(channel);
         assertThat(chatter.getActiveChannel()).isPresent().get().isEqualTo(channel);
-    }
-
-    @Test
-    void messages_are_sorted_by_time() throws InterruptedException {
-        final Message m1 = createMessage();
-        Thread.sleep(1L);
-        final Message m2 = createMessage();
-        Thread.sleep(1L);
-        final Message m3 = createMessage();
-        chatter.sendMessage(m3);
-        chatter.sendMessage(m1);
-        chatter.sendMessage(m2);
-
-        assertThat(chatter.getMessages()).containsExactly(
-            m1,
-            m2,
-            m3
-        );
-    }
-
-    @Test
-    void delete_message_excludes_message_from_list() {
-        final Message message = createMessage();
-        chatter.sendMessage(message);
-        message.delete();
-        assertThat(chatter.getMessages()).doesNotContain(message);
     }
 }
