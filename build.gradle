@@ -108,7 +108,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:4.0.0'
     testImplementation 'net.silthus:MockBukkit:v1.17-SNAPSHOT'
 //    testImplementation 'com.github.seeseemelk:MockBukkit-v1.17:1.10.3'
-    testImplementation 'org.assertj:assertj-core:3.21.0'
+    testImplementation 'org.assertj:assertj-core:3.22.0'
 }
 
 shadowJar {
