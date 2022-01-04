@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Set;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.Check;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.message.Messages;
 import net.silthus.schat.message.messenger.Messenger;
@@ -31,6 +30,7 @@ import net.silthus.schat.permission.Permission;
 import net.silthus.schat.repository.Entity;
 import net.silthus.schat.settings.Configured;
 import net.silthus.schat.settings.Setting;
+import net.silthus.schat.usecases.Check;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 

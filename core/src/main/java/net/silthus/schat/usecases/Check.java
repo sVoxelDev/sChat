@@ -17,50 +17,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.channel.usecases;
+package net.silthus.schat.usecases;
 
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
 import org.jetbrains.annotations.Nullable;
 
-public interface JoinChannel {
+public interface Check<T> {
 
-    default void joinChannel(Args args) throws Error {
-        performChecks(args);
-        args.chatter().addChannel(args.channel());
-        args.channel().addTarget(args.chatter());
+    static Result success() {
+        return new Result(true, null);
     }
 
-    private void performChecks(Args args) {
-        for (final Check check : args.channel().getChecks(Check.class)) {
-            check.testAndThrow(args);
-        }
+    static Result failure(Throwable error) {
+        return new Result(false, error);
     }
 
-    interface Check extends net.silthus.schat.Check {
+    Result test(T args);
 
-        static Result success() {
-            return new Result(true, null);
-        }
-
-        static Result failure(Throwable error) {
-            return new Result(false, error);
-        }
-
-        Result test(Args args);
-
-        default void testAndThrow(Args args) throws Error {
-            final Result result = test(args);
-            if (result.failure())
-                result.raiseError();
-        }
-    }
-
-    record Args(Chatter chatter, Channel channel) {
-
-        public static Args of(Chatter chatter, Channel channel) {
-            return new Args(chatter, channel);
-        }
+    default void testAndThrow(T args) throws Error {
+        final Result result = test(args);
+        if (result.failure())
+            result.raiseError();
     }
 
     record Result(boolean success, @Nullable Throwable error) {
@@ -93,7 +69,7 @@ public interface JoinChannel {
             super(cause);
         }
 
-        protected Error(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        public Error(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
             super(message, cause, enableSuppression, writableStackTrace);
         }
     }

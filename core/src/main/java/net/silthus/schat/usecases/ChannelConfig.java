@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.channel.usecases;
+package net.silthus.schat.usecases;
 
 import lombok.Getter;
 import lombok.Setter;
