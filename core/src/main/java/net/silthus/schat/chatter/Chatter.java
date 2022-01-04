@@ -66,8 +66,6 @@ public interface Chatter extends MessageTarget, Entity<UUID>, Identified, Permis
 
     void join(@NonNull Channel channel);
 
-    void addChannel(@NonNull Channel channel);
-
     @NotNull @Unmodifiable List<Channel> getChannels();
 
     Message chat(@Nullable String text);

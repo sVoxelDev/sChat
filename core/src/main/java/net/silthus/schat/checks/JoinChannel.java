@@ -17,32 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.usecases;
+package net.silthus.schat.checks;
 
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 
-public interface JoinChannel {
-
-    default void joinChannel(Args args) throws net.silthus.schat.usecases.Check.Error {
-        performChecks(args);
-        args.chatter().addChannel(args.channel());
-        args.channel().addTarget(args.chatter());
-    }
-
-    private void performChecks(Args args) {
-        for (final Check check : args.channel().getChecks(Check.class)) {
-            check.testAndThrow(args);
-        }
-    }
+public interface JoinChannel extends Check<JoinChannel.Args> {
 
     record Args(Chatter chatter, Channel channel) {
 
         public static Args of(Chatter chatter, Channel channel) {
             return new Args(chatter, channel);
         }
-    }
-
-    interface Check extends net.silthus.schat.usecases.Check<Args> {
     }
 }

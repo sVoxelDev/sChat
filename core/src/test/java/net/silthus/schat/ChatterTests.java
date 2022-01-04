@@ -107,39 +107,11 @@ class ChatterTests {
         }
     }
 
-    @Nested
-    class JoinChannelCheck {
-
-        private Channel channel;
-
-        @BeforeEach
-        void setUp() {
-            channel = Channel.createChannel("test");
-        }
-
-        @Test
-        void adds_channel_to_chatter() {
-            chatter.join(channel);
-            assertThat(chatter.getChannels()).contains(channel);
-        }
-
-        @Test
-        void adds_chatter_to_channel() {
-            chatter.join(channel);
-            assertThat(channel.getTargets()).contains(chatter);
-        }
-
-        @Test
-        void setActiveChannel_joinsChannel() {
-            chatter.setActiveChannel(channel);
-            assertThat(chatter.getChannels()).contains(channel);
-        }
-
-        @Test
-        void given_no_activeChannel_getActiveChannel_returns_first_channel() {
-            chatter.join(channel);
-            assertThat(chatter.getActiveChannel()).isPresent().get().isEqualTo(channel);
-        }
+    @Test
+    void given_no_activeChannel_getActiveChannel_returns_first_channel() {
+        Channel channel = Channel.createChannel("test");
+        chatter.join(channel);
+        assertThat(chatter.getActiveChannel()).isPresent().get().isEqualTo(channel);
     }
 
     @Test

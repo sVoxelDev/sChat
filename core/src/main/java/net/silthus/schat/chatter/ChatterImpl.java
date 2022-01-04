@@ -27,6 +27,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.checks.JoinChannel;
 import net.silthus.schat.handler.types.ChatHandler;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
@@ -37,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
+import static net.silthus.schat.checks.JoinChannel.Args.of;
 import static net.silthus.schat.handler.types.ChatHandler.sendToActiveChannel;
 
 @EqualsAndHashCode(of = {"identity"})
@@ -92,13 +94,15 @@ final class ChatterImpl implements Chatter {
 
     @Override
     public void join(final @NonNull Channel channel) {
-        addChannel(channel);
+        performChecks(channel);
+        channels.add(channel);
         channel.addTarget(this);
     }
 
-    @Override
-    public void addChannel(final @NonNull Channel channel) {
-        channels.add(channel);
+    private void performChecks(Channel channel) {
+        for (final JoinChannel check : channel.getChecks(JoinChannel.class)) {
+            check.testAndThrow(of(this, channel));
+        }
     }
 
     @Override

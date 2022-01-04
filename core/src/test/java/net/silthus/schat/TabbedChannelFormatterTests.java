@@ -47,7 +47,7 @@ class TabbedChannelFormatterTests {
         formatter = new TabbedChannelFormatter();
     }
 
-    private void joinChannel(String channel) {
+    private void addChannel(String channel) {
         chatter.join(Channel.createChannel(channel));
     }
 
@@ -84,15 +84,15 @@ class TabbedChannelFormatterTests {
 
     @Test
     void givenTwoChannels_listsChannels() {
-        joinChannel("one");
-        joinChannel("two");
+        addChannel("one");
+        addChannel("two");
 
         assertFormatContains("one", "two");
     }
 
     @Test
     void givenChannel_has_clickLink() {
-        joinChannel("test");
+        addChannel("test");
 
         assertFormatContains("/schat channel join test");
     }
