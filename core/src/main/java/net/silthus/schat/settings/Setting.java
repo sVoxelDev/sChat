@@ -83,16 +83,4 @@ public interface Setting<V> {
      * @since next
      */
     @Nullable V getDefaultValue();
-
-    @NotNull String[] getAlias();
-
-    /**
-     * Takes the setting and adds the given list of aliases to it.
-     *
-     * <p>Unknown values will be matched by the alias if no matching setting for the key is found.</p>
-     *
-     * @param alias the alias of the setting
-     * @return the alias of the setting
-     */
-    @NotNull Setting<V> withAlias(@NotNull String@NotNull... alias);
 }

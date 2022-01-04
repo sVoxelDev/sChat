@@ -80,17 +80,11 @@ final class SettingsImpl implements Settings {
     }
 
     private <V> Supplier<?> getValueSupplier(@NotNull Setting<V> setting) {
-        return matchesUnknownValue(setting) ? getUnknownOrAliasValue(setting) : getConfiguredValue(setting);
+        return matchesUnknownValue(setting) ? getUnknownValue(setting) : getConfiguredValue(setting);
     }
 
     private <V> Supplier<?> getConfiguredValue(@NotNull Setting<V> setting) {
         return this.settings.get(setting);
-    }
-
-    private <V> Supplier<?> getUnknownOrAliasValue(@NotNull Setting<V> setting) {
-        return isUnknownKey(setting.getKey())
-            ? getUnknownValue(setting)
-            : getAliasValue(setting);
     }
 
     @NotNull
@@ -98,37 +92,16 @@ final class SettingsImpl implements Settings {
         return () -> unknowns.get(setting.getKey()).apply(setting);
     }
 
-    @Nullable
-    private <V> Supplier<Object> getAliasValue(@NotNull Setting<V> setting) {
-        for (final String alias : setting.getAlias()) {
-            if (isUnknownKey(alias))
-                return () -> unknowns.get(alias).apply(setting);
-        }
-        return null;
-    }
-
     private <V> boolean notContains(@NotNull Setting<V> setting) {
         return !contains(setting);
     }
 
     private <V> boolean matchesUnknownValue(@NotNull Setting<V> setting) {
-        return notContains(setting) && matchesUnknownKey(setting);
-    }
-
-    private <V> boolean matchesUnknownKey(@NotNull Setting<V> setting) {
-        return isUnknownKey(setting.getKey()) || matchesAlias(setting);
+        return notContains(setting) && isUnknownKey(setting.getKey());
     }
 
     private boolean isUnknownKey(String key) {
         return unknowns.containsKey(key);
-    }
-
-    private <V> boolean matchesAlias(Setting<V> setting) {
-        for (final String alias : setting.getAlias()) {
-            if (isUnknownKey(alias))
-                return true;
-        }
-        return false;
     }
 
     @Override

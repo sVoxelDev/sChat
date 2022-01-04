@@ -2,5 +2,5 @@ channels:
   global:
     name: Global
     settings:
-      protect: false
+      protected: false
       auto_join: true

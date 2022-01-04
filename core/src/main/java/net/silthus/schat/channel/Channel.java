@@ -41,8 +41,7 @@ import static net.silthus.schat.settings.Setting.setting;
 public interface Channel extends MessageTarget, Configured, Entity<String> {
 
     Setting<Component> DISPLAY_NAME = setting(Component.class, "name", empty());
-    Setting<Boolean> REQUIRES_JOIN_PERMISSION = setting(Boolean.class, "requires_join_permission", false)
-        .withAlias("protect");
+    Setting<Boolean> REQUIRES_JOIN_PERMISSION = setting(Boolean.class, "protected", false);
     Setting<Permission> JOIN_PERMISSION = setting(Permission.class, "permissions.join", of("schat.admin.channel.join"));
     Setting<Boolean> AUTO_JOIN = setting(Boolean.class, "auto_join", false);
 
