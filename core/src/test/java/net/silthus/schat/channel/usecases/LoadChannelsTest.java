@@ -23,6 +23,8 @@ import java.util.List;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.repository.ChannelRepository;
 import net.silthus.schat.settings.Settings;
+import net.silthus.schat.usecases.ChannelConfig;
+import net.silthus.schat.usecases.LoadChannels;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

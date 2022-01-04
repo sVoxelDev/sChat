@@ -23,10 +23,11 @@ import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.ProxiedBy;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.channel.usecases.JoinChannel;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.usecases.Check;
+import net.silthus.schat.usecases.JoinChannel;
 
-import static net.silthus.schat.channel.usecases.JoinChannel.Args.of;
+import static net.silthus.schat.usecases.JoinChannel.Args.of;
 
 public class ChannelCommands {
 
@@ -41,7 +42,7 @@ public class ChannelCommands {
     public void joinChannel(Chatter chatter, @Argument Channel channel) {
         try {
             joinChannel.joinChannel(of(chatter, channel));
-        } catch (JoinChannel.Error e) {
+        } catch (Check.Error e) {
             throw new RuntimeException(e);
         }
     }

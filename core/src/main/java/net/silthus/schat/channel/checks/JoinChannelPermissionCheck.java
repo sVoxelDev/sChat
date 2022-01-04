@@ -20,19 +20,19 @@
 package net.silthus.schat.channel.checks;
 
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.channel.usecases.JoinChannel;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.usecases.JoinChannel;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.Channel.JOIN_PERMISSION;
 import static net.silthus.schat.channel.Channel.REQUIRES_JOIN_PERMISSION;
-import static net.silthus.schat.channel.usecases.JoinChannel.Check.failure;
-import static net.silthus.schat.channel.usecases.JoinChannel.Check.success;
+import static net.silthus.schat.usecases.Check.failure;
+import static net.silthus.schat.usecases.Check.success;
 
 public final class JoinChannelPermissionCheck implements JoinChannel.Check {
 
     @Override
-    public JoinChannel.Result test(JoinChannel.Args args) {
+    public Result test(JoinChannel.Args args) {
         if (requiresJoinPermission(args.channel()) && hasNoJoinPermission(args.chatter(), args.channel()))
             return failure(new AccessDenied());
         return success();
@@ -47,7 +47,7 @@ public final class JoinChannelPermissionCheck implements JoinChannel.Check {
         return !channel.get(JOIN_PERMISSION).test(chatter);
     }
 
-    public static class AccessDenied extends JoinChannel.Error {
+    public static class AccessDenied extends Error {
 
     }
 }

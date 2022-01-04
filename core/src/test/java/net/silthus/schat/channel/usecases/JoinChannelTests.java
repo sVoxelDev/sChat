@@ -24,6 +24,7 @@ import net.silthus.schat.channel.Channels;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.permission.Permission;
 import net.silthus.schat.permission.PermissionHandler;
+import net.silthus.schat.usecases.Check;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +35,7 @@ import static net.silthus.schat.channel.Channel.JOIN_PERMISSION;
 import static net.silthus.schat.channel.Channel.REQUIRES_JOIN_PERMISSION;
 import static net.silthus.schat.channel.Channels.channels;
 import static net.silthus.schat.channel.repository.ChannelRepository.createInMemoryChannelRepository;
-import static net.silthus.schat.channel.usecases.JoinChannel.Args.of;
+import static net.silthus.schat.usecases.JoinChannel.Args.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -63,7 +64,7 @@ class JoinChannelTests {
     }
 
     private void assertJoinError(Chatter chatter, Channel channel) {
-        assertThatExceptionOfType(JoinChannel.Error.class)
+        assertThatExceptionOfType(Check.Error.class)
             .isThrownBy(() -> channels.joinChannel(of(chatter, channel)));
     }
 

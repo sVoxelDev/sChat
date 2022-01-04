@@ -45,9 +45,9 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.repository.ChannelRepository.createInMemoryChannelRepository;
-import static net.silthus.schat.channel.usecases.LoadChannels.Args.of;
 import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
+import static net.silthus.schat.usecases.LoadChannels.Args.of;
 
 public abstract class AbstractPlugin implements SChatPlugin {
 

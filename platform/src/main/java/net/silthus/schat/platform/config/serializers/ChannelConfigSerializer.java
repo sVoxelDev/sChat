@@ -21,8 +21,8 @@ package net.silthus.schat.platform.config.serializers;
 
 import java.lang.reflect.Type;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.channel.usecases.ChannelConfig;
 import net.silthus.schat.settings.Settings;
+import net.silthus.schat.usecases.ChannelConfig;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;

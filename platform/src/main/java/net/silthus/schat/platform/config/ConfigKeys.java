@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.silthus.schat.channel.usecases.ChannelConfig;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.key.ConfigKey;
 import net.silthus.schat.platform.config.key.KeyedConfiguration;
+import net.silthus.schat.usecases.ChannelConfig;
 
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.key;
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.modifiable;

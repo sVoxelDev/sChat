@@ -20,9 +20,9 @@
 package net.silthus.schat.channel;
 
 import net.silthus.schat.channel.repository.ChannelRepository;
-import net.silthus.schat.channel.usecases.JoinChannel;
-import net.silthus.schat.channel.usecases.LoadChannels;
 import net.silthus.schat.repository.RepositoryHolder;
+import net.silthus.schat.usecases.JoinChannel;
+import net.silthus.schat.usecases.LoadChannels;
 
 public interface Channels extends RepositoryHolder<ChannelRepository, String, Channel>, ChannelRepository, JoinChannel, LoadChannels {
 
