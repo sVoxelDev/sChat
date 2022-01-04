@@ -3,4 +3,5 @@ channels:
     name: Test
     settings:
       protected: true
+      auto_join: true
   invalid: null

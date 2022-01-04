@@ -116,6 +116,7 @@ final class ChannelImpl implements Channel {
                 new JoinChannelPermissionCheck()
             )
         ));
+        private Component displayName;
         private Settings.Builder settings;
         private Messenger<Channel> messenger = DEFAULT_MESSENGER;
 
@@ -155,7 +156,8 @@ final class ChannelImpl implements Channel {
         public Builder displayName(@NonNull Component displayName) {
             if (displayName.equals(empty()))
                 return this;
-            return setting(DISPLAY_NAME, displayName);
+            this.displayName = displayName;
+            return this;
         }
 
         @Override
@@ -181,6 +183,8 @@ final class ChannelImpl implements Channel {
 
         @Override
         public Channel create() {
+            if (displayName != null)
+                setting(DISPLAY_NAME, displayName);
             return new ChannelImpl(this);
         }
 

@@ -25,7 +25,6 @@ import lombok.Getter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
 import net.silthus.schat.bukkit.listener.PlayerListener;
-import net.silthus.schat.chatter.ChatterStore;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
 import net.silthus.schat.platform.plugin.AbstractPlugin;
@@ -53,11 +52,6 @@ public final class SChatBukkitPlugin extends AbstractPlugin {
     @Override
     protected @NotNull ConfigurationAdapter provideConfigurationAdapter() {
         return ConfigurationAdapters.YAML.create(resolveConfig("config.yml").toFile());
-    }
-
-    @Override
-    protected @NotNull ChatterStore provideChatterStore() {
-        return null;
     }
 
     @Override

@@ -75,7 +75,7 @@ class ConnectionManagerTests {
 
     @Test
     void join_autoJoins_channels() {
-        final Channel channel = add(channelWith(AUTO_JOIN, true));
+        final Channel channel = add(channelWith(set(AUTO_JOIN, true), set(REQUIRES_JOIN_PERMISSION, false)));
 
         connectionManager.join(sender);
 
@@ -84,7 +84,7 @@ class ConnectionManagerTests {
 
     @Test
     void join_autoJoins_joinable_channels_only() {
-        final Channel channel = add(channelWith(AUTO_JOIN, true));
+        final Channel channel = add(channelWith(set(AUTO_JOIN, true), set(REQUIRES_JOIN_PERMISSION, false)));
         add(channelWith(set(AUTO_JOIN, true), set(REQUIRES_JOIN_PERMISSION, true)));
 
         connectionManager.join(sender);
