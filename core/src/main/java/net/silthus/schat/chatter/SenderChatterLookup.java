@@ -31,5 +31,5 @@ public interface SenderChatterLookup {
      * @return the chatter of the sender
      * @since next
      */
-    Chatter get(Sender sender);
+    Chatter getChatter(Sender sender);
 }

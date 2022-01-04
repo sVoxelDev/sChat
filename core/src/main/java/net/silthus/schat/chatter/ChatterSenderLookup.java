@@ -17,22 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.ui;
+package net.silthus.schat.chatter;
 
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.chatter.ChatterSenderLookup;
-import net.silthus.schat.message.Messenger;
+import java.util.Optional;
+import net.silthus.schat.sender.Sender;
 
-public class ChatterController implements Messenger<Chatter> {
+public interface ChatterSenderLookup {
 
-    private final ChatterSenderLookup senderLookup;
-
-    public ChatterController(ChatterSenderLookup senderLookup) {
-        this.senderLookup = senderLookup;
-    }
-
-    @Override
-    public void sendMessage(Context<Chatter> context) {
-        senderLookup.getSender(context.target());
-    }
+    Optional<Sender> getSender(Chatter chatter);
 }

@@ -106,13 +106,28 @@ class ConnectionManagerTests {
         verify(store).load(chatter());
     }
 
+    @Test
+    void getSender_after_join_returnsSender() {
+        connectionManager.join(sender);
+        assertThat(connectionManager.getSender(chatter()))
+            .isPresent().get()
+            .isSameAs(sender);
+    }
+
+    @Test
+    void getSender_isEmpty_afterQuit() {
+        connectionManager.join(sender);
+        connectionManager.leave(sender);
+        assertThat(connectionManager.getSender(chatter())).isEmpty();
+    }
+
     private static final class ChattersStub implements Chatters {
 
         @Getter
         private final ChatterRepository repository = createInMemoryChatterRepository();
 
         @Override
-        public Chatter get(Sender sender) {
+        public Chatter getChatter(Sender sender) {
             final Chatter chatter = Chatter.createChatter(sender.getIdentity());
             repository.add(chatter);
             return chatter;
