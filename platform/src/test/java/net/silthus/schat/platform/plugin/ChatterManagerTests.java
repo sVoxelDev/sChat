@@ -45,7 +45,7 @@ class ChatterManagerTests {
     void setUp() {
         chatters = new ChatterManager(createInMemoryChatterRepository(), mock(ChatterStore.class));
         sender = spy(senderMock(identity("test"), permission -> true));
-        chatter = chatters.get(sender);
+        chatter = chatters.getChatter(sender);
     }
 
     @Test
@@ -55,13 +55,13 @@ class ChatterManagerTests {
 
     @Test
     void create_twice_reuses_existingChatter() {
-        final Chatter chatter2 = chatters.get(sender);
+        final Chatter chatter2 = chatters.getChatter(sender);
         assertThat(chatter).isSameAs(chatter2);
     }
 
     @Test
     void sendMessage_usesSender() {
-        final Chatter chatter = chatters.get(sender);
+        final Chatter chatter = chatters.getChatter(sender);
         chatter.sendMessage(message("Hi"));
         verify(sender).sendMessage(any());
     }

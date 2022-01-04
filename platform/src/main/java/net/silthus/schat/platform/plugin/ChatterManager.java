@@ -41,7 +41,7 @@ final class ChatterManager implements Chatters {
     }
 
     @Override
-    public Chatter get(Sender sender) {
+    public Chatter getChatter(Sender sender) {
         if (contains(sender.getUniqueId()))
             return get(sender.getUniqueId());
         return createAndCacheChatterFor(sender);

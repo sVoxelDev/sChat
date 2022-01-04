@@ -19,10 +19,16 @@
 
 package net.silthus.schat.platform.plugin;
 
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.WeakHashMap;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.repository.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.ChatterSenderLookup;
 import net.silthus.schat.chatter.ChatterStore;
 import net.silthus.schat.chatter.SenderChatterLookup;
 import net.silthus.schat.checks.Check;
@@ -32,11 +38,12 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.Channel.AUTO_JOIN;
 
-final class ConnectionManager implements ConnectionListener {
+final class ConnectionManager implements ConnectionListener, ChatterSenderLookup {
 
     private final SenderChatterLookup chatterLookup;
     private final ChannelRepository channels;
     private final ChatterStore store;
+    private final Map<Chatter, WeakReference<Sender>> senders = new WeakHashMap<>();
 
     ConnectionManager(SenderChatterLookup chatterLookup,
                       ChatterStore store,
@@ -47,16 +54,23 @@ final class ConnectionManager implements ConnectionListener {
     }
 
     @Override
+    public Optional<Sender> getSender(Chatter chatter) {
+        return Optional.ofNullable(senders.get(chatter)).map(Reference::get);
+    }
+
+    @Override
     public void join(Sender sender) {
-        final Chatter chatter = chatterLookup.get(sender);
+        final Chatter chatter = chatterLookup.getChatter(sender);
         store.load(chatter);
         autoJoinChannels(chatter);
+        senders.put(chatter, new WeakReference<>(sender));
     }
 
     @Override
     public void leave(Sender sender) {
-        final Chatter chatter = chatterLookup.get(sender);
+        final Chatter chatter = chatterLookup.getChatter(sender);
         store.save(chatter);
+        senders.remove(chatter);
     }
 
     private void autoJoinChannels(Chatter chatter) {

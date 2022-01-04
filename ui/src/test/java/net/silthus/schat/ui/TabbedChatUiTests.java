@@ -19,12 +19,21 @@
 
 package net.silthus.schat.ui;
 
+import net.silthus.schat.chatter.ChatterSenderLookup;
 import org.junit.jupiter.api.Test;
+
+import static net.silthus.schat.IdentityHelper.randomIdentity;
+import static net.silthus.schat.chatter.Chatter.createChatter;
+import static net.silthus.schat.message.Message.message;
+import static net.silthus.schat.message.Messenger.Context.of;
+import static org.mockito.Mockito.mock;
 
 class TabbedChatUiTests {
 
     @Test
     void name() {
-        final ChatterController controller = new ChatterController();
+        final ChatterController controller = new ChatterController(mock(ChatterSenderLookup.class));
+        controller.sendMessage(of(createChatter(randomIdentity()), message("Hi")));
+
     }
 }

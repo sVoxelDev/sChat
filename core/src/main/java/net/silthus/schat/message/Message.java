@@ -22,6 +22,7 @@ package net.silthus.schat.message;
 import java.time.Instant;
 import java.util.UUID;
 import java.util.function.Predicate;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -30,6 +31,8 @@ import net.silthus.schat.repository.Entity;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
 public final class Message implements Comparable<Message>, Entity<UUID> {
 
     public static final @NonNull Predicate<Message> NOT_DELETED = message -> !message.isDeleted();
@@ -46,7 +49,6 @@ public final class Message implements Comparable<Message>, Entity<UUID> {
     private final Instant timestamp = Instant.now();
     private final Chatter source;
     private final String text;
-    @Setter
     private boolean deleted = false;
 
     private Message(Chatter source, String text) {
@@ -63,5 +65,4 @@ public final class Message implements Comparable<Message>, Entity<UUID> {
     public int compareTo(@NotNull final Message o) {
         return getTimestamp().compareTo(o.getTimestamp());
     }
-
 }
