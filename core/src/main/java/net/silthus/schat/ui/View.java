@@ -19,11 +19,15 @@
 
 package net.silthus.schat.ui;
 
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.sender.Sender;
 
 public interface View {
+
+    Key MESSAGE_MARKER_KEY = Key.key("schat", "message");
+    Component MESSAGE_MARKER = Component.storageNBT(MESSAGE_MARKER_KEY.asString(), MESSAGE_MARKER_KEY);
 
     static View chatterView(Sender sender, Chatter chatter, Renderer<Chatter> renderer) {
         return new ChatterView(sender, chatter, renderer);

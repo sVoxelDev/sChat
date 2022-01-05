@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import lombok.AccessLevel;
 import lombok.Getter;
 import net.silthus.schat.channel.Channels;
 import net.silthus.schat.channel.repository.ChannelRepository;
@@ -39,7 +38,8 @@ import net.silthus.schat.platform.commands.parsers.ChannelParser;
 import net.silthus.schat.platform.commands.parsers.ChatterParser;
 import net.silthus.schat.platform.config.SChatConfig;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
-import net.silthus.schat.platform.listener.ConnectionListener;
+import net.silthus.schat.sender.ConnectionListener;
+import net.silthus.schat.sender.PlayerAdapter;
 import net.silthus.schat.sender.Sender;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -52,6 +52,8 @@ import static net.silthus.schat.usecases.LoadChannels.Args.of;
 public abstract class AbstractPlugin implements SChatPlugin {
 
     @Getter
+    private PlayerAdapter<?> playerAdapter;
+    @Getter
     private SChatConfig config;
     @Getter
     private Channels channels;
@@ -59,7 +61,7 @@ public abstract class AbstractPlugin implements SChatPlugin {
     private ChatterStore chatterStore;
     @Getter
     private Chatters chatters;
-    @Getter(AccessLevel.PROTECTED)
+    @Getter
     private ConnectionListener connectionListener;
     private CommandManager<Sender> commandManager;
 
@@ -71,6 +73,7 @@ public abstract class AbstractPlugin implements SChatPlugin {
     @Override
     public final void enable() {
         setupSenderFactory();
+        playerAdapter = providePlayerAdapter();
 
         config = provideConfiguration(provideConfigurationAdapter());
         config.load();
@@ -93,6 +96,8 @@ public abstract class AbstractPlugin implements SChatPlugin {
     }
 
     protected abstract void setupSenderFactory();
+
+    protected abstract PlayerAdapter<?> providePlayerAdapter();
 
     @ApiStatus.OverrideOnly
     protected @NotNull SChatConfig provideConfiguration(ConfigurationAdapter adapter) {
@@ -123,7 +128,7 @@ public abstract class AbstractPlugin implements SChatPlugin {
 
     @ApiStatus.OverrideOnly
     protected @NotNull Chatters provideChatterManager(ChatterRepository repository) {
-        return new ChatterManager(repository, getChatterStore());
+        return new ChatterManager(repository, getChatterStore(), getPlayerAdapter());
     }
 
     private CommandManager<Sender> setupCommands() {
@@ -154,7 +159,7 @@ public abstract class AbstractPlugin implements SChatPlugin {
 
     @ApiStatus.OverrideOnly
     protected void registerCommands(CommandManager<Sender> commandManager, AnnotationParser<Sender> annotationParser) {
-        annotationParser.parse(new ChannelCommands());
+        annotationParser.parse(new ChannelCommands(getChatters()));
     }
 
     @ApiStatus.OverrideOnly

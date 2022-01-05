@@ -21,6 +21,9 @@ package net.silthus.schat.ui;
 
 import java.util.List;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.message.Message;
+
+import static net.silthus.schat.ui.TabbedChannelRenderer.MAX_LINES;
 
 final class ChatterViewModel {
     private final Chatter chatter;
@@ -37,10 +40,12 @@ final class ChatterViewModel {
     }
 
     public List<MessageViewModel> getMessages() {
-        return chatter.getMessages().stream()
+        final List<Message> messages = chatter.getMessages();
+        return messages.stream()
             .map(MessageViewModel::new)
             .filter(MessageViewModel::isIncluded)
             .sorted()
+            .skip(Math.max(0, messages.size() - MAX_LINES))
             .toList();
     }
 

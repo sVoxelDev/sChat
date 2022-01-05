@@ -22,6 +22,7 @@ package net.silthus.schat.platform.plugin;
 import net.silthus.schat.SenderMock;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterStore;
+import net.silthus.schat.sender.PlayerAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +44,7 @@ class ChatterManagerTests {
 
     @BeforeEach
     void setUp() {
-        chatters = new ChatterManager(createInMemoryChatterRepository(), mock(ChatterStore.class));
+        chatters = new ChatterManager(createInMemoryChatterRepository(), mock(ChatterStore.class), mock(PlayerAdapter.class));
         sender = spy(senderMock(identity("test"), permission -> true));
         chatter = chatters.getChatter(sender);
     }

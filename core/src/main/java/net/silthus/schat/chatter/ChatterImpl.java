@@ -121,8 +121,13 @@ final class ChatterImpl implements Chatter {
     }
 
     @Override
-    public void sendMessage(final @NonNull Message message) {
+    public void addMessage(Message message) {
         messageRepository.add(message);
+    }
+
+    @Override
+    public void sendMessage(final @NonNull Message message) {
+        addMessage(message);
         messenger.sendMessage(Messenger.Context.of(this, message));
     }
 

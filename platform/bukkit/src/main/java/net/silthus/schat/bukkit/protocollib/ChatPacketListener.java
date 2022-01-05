@@ -24,6 +24,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.google.gson.JsonParseException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -32,21 +33,15 @@ import java.util.Arrays;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.SenderChatterLookup;
 import net.silthus.schat.sender.PlayerAdapter;
-import net.silthus.schat.sender.Sender;
+import net.silthus.schat.ui.ViewProvider;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.Nullable;
-
-import static net.silthus.schat.message.Message.message;
 
 /**
  * Handles the player chat packet flow and rewrites non sChat packets into sChat packets.
@@ -56,8 +51,8 @@ import static net.silthus.schat.message.Message.message;
 @Log(topic = "sChat")
 public final class ChatPacketListener extends PacketAdapter {
 
-    static final Key MESSAGE_MARKER_KEY = Key.key("schat", "message");
-    static final Component MESSAGE_MARKER = Component.storageNBT(MESSAGE_MARKER_KEY.asString(), MESSAGE_MARKER_KEY);
+    private static final GsonComponentSerializer GSON_SERIALIZER = GsonComponentSerializer.gson();
+
     private static Object PAPER_GSON_SERIALIZER;
     private static Method PAPER_SERIALIZE;
 
@@ -75,14 +70,12 @@ public final class ChatPacketListener extends PacketAdapter {
         }
     }
 
-    private final PlayerAdapter<CommandSender> playerAdapter;
-    private final SenderChatterLookup chatterLookup;
     private final ProtocolManager protocolManager;
+    private final ChatPacketProcessor chatPacketProcessor;
 
-    public ChatPacketListener(final Plugin plugin, PlayerAdapter<CommandSender> playerAdapter, SenderChatterLookup chatterLookup) {
+    public ChatPacketListener(final Plugin plugin, PlayerAdapter<CommandSender> playerAdapter, SenderChatterLookup chatterLookup, ViewProvider viewProvider) {
         super(plugin, PacketType.Play.Server.CHAT);
-        this.playerAdapter = playerAdapter;
-        this.chatterLookup = chatterLookup;
+        this.chatPacketProcessor = new ChatPacketProcessor(playerAdapter, chatterLookup, viewProvider);
         this.protocolManager = ProtocolLibrary.getProtocolManager();
     }
 
@@ -105,26 +98,10 @@ public final class ChatPacketListener extends PacketAdapter {
     public void onPacketSending(final PacketEvent event) {
         if (event.getPacketType() != PacketType.Play.Server.CHAT) return;
 
-        if (processMessage(event.getPlayer(), messageFromPacket(event)))
-            event.setCancelled(true);
-    }
+        final Component render = chatPacketProcessor.processMessage(event.getPlayer(), messageFromPacket(event));
 
-    boolean processMessage(Player player, Component rawMessage) {
-        if (ignoredOrAlreadyProcessed(rawMessage)) return false;
-
-        sendMessage(player, rawMessage);
-        return true;
-    }
-
-    private void sendMessage(final Player player, final Component message) {
-        final Sender sender = playerAdapter.adapt(player);
-        final Chatter chatter = chatterLookup.getChatter(sender);
-        chatter.sendMessage(message(message.append(MESSAGE_MARKER)));
-    }
-
-    private boolean ignoredOrAlreadyProcessed(final @Nullable Component rawMessage) {
-        if (rawMessage == null) return true;
-        return rawMessage.children().contains(MESSAGE_MARKER);
+        final WrapperPlayServerChat chat = new WrapperPlayServerChat(event.getPacket());
+        chat.message(WrappedChatComponent.fromJson(GSON_SERIALIZER.serialize(render)));
     }
 
     @SneakyThrows

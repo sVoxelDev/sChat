@@ -17,48 +17,42 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.bukkit.listener;
+package net.silthus.schat.bukkit.protocollib;
 
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.SenderChatterLookup;
-import net.silthus.schat.sender.ConnectionListener;
+import net.silthus.schat.message.Message;
 import net.silthus.schat.sender.PlayerAdapter;
 import net.silthus.schat.sender.Sender;
+import net.silthus.schat.ui.View;
+import net.silthus.schat.ui.ViewProvider;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.jetbrains.annotations.Nullable;
 
-public final class PlayerListener implements Listener {
-
+public class ChatPacketProcessor {
     private final PlayerAdapter<CommandSender> playerAdapter;
-    private final ConnectionListener connectionListener;
     private final SenderChatterLookup chatterLookup;
+    private final ViewProvider viewProvider;
 
-    public PlayerListener(PlayerAdapter<CommandSender> playerAdapter,
-                          ConnectionListener connectionListener,
-                          SenderChatterLookup chatterLookup) {
+    public ChatPacketProcessor(PlayerAdapter<CommandSender> playerAdapter, SenderChatterLookup chatterLookup, ViewProvider viewProvider) {
         this.playerAdapter = playerAdapter;
-        this.connectionListener = connectionListener;
         this.chatterLookup = chatterLookup;
+        this.viewProvider = viewProvider;
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        final Sender sender = playerAdapter.adapt(event.getPlayer());
-        connectionListener.join(sender);
+    Component processMessage(Player player, Component rawMessage) {
+        if (ignoredOrAlreadyProcessed(rawMessage)) return rawMessage;
+
+        final Sender sender = playerAdapter.adapt(player);
+        final Chatter chatter = chatterLookup.getChatter(sender);
+        chatter.addMessage(Message.message(rawMessage));
+        return viewProvider.getView(sender).render();
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
-        final Chatter chatter = getChatter(event.getPlayer());
-        chatter.chat(event.getMessage());
-        event.setCancelled(true);
-    }
-
-    private Chatter getChatter(Player player) {
-        return chatterLookup.getChatter(playerAdapter.adapt(player));
+    boolean ignoredOrAlreadyProcessed(final @Nullable Component rawMessage) {
+        if (rawMessage == null) return true;
+        return rawMessage.contains(View.MESSAGE_MARKER) || rawMessage.children().contains(View.MESSAGE_MARKER);
     }
 }

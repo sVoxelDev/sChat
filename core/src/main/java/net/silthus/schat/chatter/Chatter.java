@@ -70,6 +70,8 @@ public interface Chatter extends MessageTarget, Entity<UUID>, Identified, Permis
 
     Message chat(@Nullable String text);
 
+    void addMessage(Message message);
+
     @NotNull @Unmodifiable List<Message> getMessages();
 
     interface Builder {

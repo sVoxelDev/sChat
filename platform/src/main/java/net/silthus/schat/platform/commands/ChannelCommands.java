@@ -24,17 +24,21 @@ import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.ProxiedBy;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.checks.Check;
+import net.silthus.schat.ui.ViewProvider;
 
 public class ChannelCommands {
+
+    private final ViewProvider viewProvider;
+
+    public ChannelCommands(ViewProvider viewProvider) {
+        this.viewProvider = viewProvider;
+    }
 
     @ProxiedBy("ch")
     @CommandMethod(value = "channel join <channel>")
     public void joinChannel(Chatter chatter, @Argument Channel channel) {
-        try {
-            chatter.join(channel);
-        } catch (Check.Error e) {
-            throw new RuntimeException(e);
-        }
+        chatter.join(channel);
+        chatter.setActiveChannel(channel);
+        viewProvider.getView(chatter).update();
     }
 }

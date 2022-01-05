@@ -4,3 +4,8 @@ channels:
     settings:
       protected: false
       auto_join: true
+  team:
+    name: Team
+    settings:
+      protected: true
+      auto_join: true

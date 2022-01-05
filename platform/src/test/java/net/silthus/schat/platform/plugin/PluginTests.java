@@ -31,6 +31,7 @@ import net.silthus.schat.channel.repository.ChannelRepository;
 import net.silthus.schat.chatter.ChatterStore;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
+import net.silthus.schat.sender.PlayerAdapter;
 import net.silthus.schat.sender.Sender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -61,6 +62,11 @@ class PluginTests {
     private static class PluginMock extends AbstractPlugin {
         @Override
         protected void setupSenderFactory() {
+        }
+
+        @Override
+        protected PlayerAdapter<?> providePlayerAdapter() {
+            return mock(PlayerAdapter.class);
         }
 
         @Override

@@ -19,7 +19,12 @@
 
 package net.silthus.schat.sender;
 
+import java.util.Optional;
+import java.util.UUID;
+
 public interface PlayerAdapter<T> {
+
+    Optional<Sender> getSender(UUID playerId);
 
     Sender adapt(T sender);
 }

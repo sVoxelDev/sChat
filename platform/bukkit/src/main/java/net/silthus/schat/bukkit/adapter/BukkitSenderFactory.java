@@ -19,6 +19,7 @@
 
 package net.silthus.schat.bukkit.adapter;
 
+import java.util.Optional;
 import java.util.UUID;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
@@ -94,6 +95,11 @@ public final class BukkitSenderFactory extends SenderFactory<CommandSender> {
     @Override
     protected boolean isConsole(CommandSender sender) {
         return sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender;
+    }
+
+    @Override
+    public Optional<Sender> getSender(UUID playerId) {
+        return Optional.ofNullable(Bukkit.getPlayer(playerId)).map(this::adapt);
     }
 
     @Override
