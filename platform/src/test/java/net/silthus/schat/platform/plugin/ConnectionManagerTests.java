@@ -108,21 +108,6 @@ class ConnectionManagerTests {
         verify(store).load(chatter());
     }
 
-    @Test
-    void getSender_after_join_returnsSender() {
-        connectionManager.join(sender);
-        assertThat(connectionManager.getSender(chatter()))
-            .isPresent().get()
-            .isSameAs(sender);
-    }
-
-    @Test
-    void getSender_isEmpty_afterQuit() {
-        connectionManager.join(sender);
-        connectionManager.leave(sender);
-        assertThat(connectionManager.getSender(chatter())).isEmpty();
-    }
-
     private static final class ChattersStub implements Chatters {
 
         @Getter
@@ -148,6 +133,11 @@ class ConnectionManagerTests {
         @Override
         public @NotNull View getView(@NotNull Sender sender) {
             return View.chatterView(sender, getChatter(sender), Renderer.TABBED_CHANNELS);
+        }
+
+        @Override
+        public @NotNull View getView(@NotNull Chatter chatter) {
+            return View.chatterView(mock(Sender.class), chatter, Renderer.TABBED_CHANNELS);
         }
     }
 }

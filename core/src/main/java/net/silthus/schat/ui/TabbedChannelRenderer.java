@@ -35,6 +35,7 @@ import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
 
 final class TabbedChannelRenderer implements Renderer<Chatter> {
 
+    public static final int MAX_LINES = 100;
     private static final @NotNull TextComponent LEFT_DIVIDER = text("| ");
     private static final @NotNull TextComponent DIVIDER = text(" | ");
     private static final @NotNull TextComponent RIGHT_DIVIDER = text(" |");
@@ -48,9 +49,18 @@ final class TabbedChannelRenderer implements Renderer<Chatter> {
             .append(channels(viewModel));
     }
 
+    private Component blankLines(int amount) {
+        final TextComponent.Builder builder = text();
+        for (int i = 0; i < amount; i++) {
+            builder.append(newline());
+        }
+        return builder.build();
+    }
+
     private Component messages(final ChatterViewModel chatter) {
         final List<MessageViewModel> messages = chatter.getMessages();
-        return messages.isEmpty() ? empty() : MESSAGES.render(messages).append(newline());
+        final Component blankLines = blankLines(Math.max(0, MAX_LINES - messages.size()));
+        return messages.isEmpty() ? blankLines.append(empty()) : blankLines.append(MESSAGES.render(messages)).append(newline());
     }
 
     @NotNull

@@ -55,7 +55,11 @@ class TabbedChannelRendererTests {
     }
 
     private void sendMessage() {
-        chatter.sendMessage(Message.message(MESSAGE));
+        sendMessage(MESSAGE);
+    }
+
+    private void sendMessage(String text) {
+        chatter.sendMessage(Message.message(text));
     }
 
     private void sendMessageWithSource() {
@@ -74,6 +78,10 @@ class TabbedChannelRendererTests {
 
     private void assertFormatContains(String... expected) {
         assertThat(serialize(format())).contains(expected);
+    }
+
+    private void assertFormatDoesNotContain(String... expected) {
+        assertThat(serialize(format())).doesNotContain(expected);
     }
 
     @Test
@@ -109,5 +117,20 @@ class TabbedChannelRendererTests {
         setActiveChannel();
 
         assertFormatContains("<underlined>", "</underlined>");
+    }
+
+    @Test
+    void renders_blank_lines() {
+        assertFormatContains("\n\n\n\n\n\n\n\n\n\n\n");
+    }
+
+    @Test
+    void given_more_then_100_messages_renders_last_100() throws InterruptedException {
+        sendMessage("one");
+        Thread.sleep(1L);
+        for (int i = 0; i < 100; i++) {
+            sendMessage();
+        }
+        assertFormatDoesNotContain("one");
     }
 }

@@ -17,9 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.listener;
-
-import net.silthus.schat.sender.Sender;
+package net.silthus.schat.sender;
 
 public interface ConnectionListener {
 

@@ -19,10 +19,13 @@
 
 package net.silthus.schat.ui;
 
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.sender.Sender;
 import org.jetbrains.annotations.NotNull;
 
 public interface ViewProvider {
 
     @NotNull View getView(@NotNull Sender sender);
+
+    @NotNull View getView(@NotNull Chatter chatter);
 }

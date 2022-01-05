@@ -20,28 +20,21 @@
 package net.silthus.schat.ui;
 
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.sender.Sender;
+import org.junit.jupiter.api.Test;
 
-final class ChatterView implements View {
+import static net.silthus.schat.IdentityHelper.randomIdentity;
+import static net.silthus.schat.chatter.Chatter.createChatter;
+import static net.silthus.schat.ui.Renderer.TABBED_CHANNELS;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
-    private final Sender sender;
-    private final Chatter chatter;
-    private final Renderer<Chatter> renderer;
+class ChatterViewTest {
 
-    ChatterView(Sender sender, Chatter chatter, Renderer<Chatter> renderer) {
-        this.sender = sender;
-        this.chatter = chatter;
-        this.renderer = renderer;
-    }
-
-    @Override
-    public void update() {
-        sender.sendMessage(render());
-    }
-
-    @Override
-    public Component render() {
-        return renderer.render(chatter).append(MESSAGE_MARKER);
+    @Test
+    void render_contains_marker() {
+        final ChatterView view = new ChatterView(mock(Sender.class), createChatter(randomIdentity()), TABBED_CHANNELS);
+        final Component render = view.render();
+        assertThat(render.contains(View.MESSAGE_MARKER)).isTrue();
     }
 }

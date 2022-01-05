@@ -27,6 +27,7 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.chatter.ChatterStore;
 import net.silthus.schat.chatter.Chatters;
+import net.silthus.schat.sender.PlayerAdapter;
 import net.silthus.schat.sender.Sender;
 import net.silthus.schat.ui.View;
 import org.jetbrains.annotations.NotNull;
@@ -38,11 +39,13 @@ final class ChatterManager implements Chatters {
     @Getter
     private final ChatterRepository repository;
     private final ChatterStore store;
+    private final PlayerAdapter<?> playerAdapter;
     private final Map<Sender, View> viewCache = new WeakHashMap<>();
 
-    ChatterManager(ChatterRepository repository, ChatterStore store) {
+    ChatterManager(ChatterRepository repository, ChatterStore store, PlayerAdapter<?> playerAdapter) {
         this.repository = repository;
         this.store = store;
+        this.playerAdapter = playerAdapter;
     }
 
     @Override
@@ -55,6 +58,11 @@ final class ChatterManager implements Chatters {
     @Override
     public @NotNull View getView(@NonNull Sender sender) {
         return viewCache.computeIfAbsent(sender, c -> View.chatterView(sender, getChatter(sender), TABBED_CHANNELS));
+    }
+
+    @Override
+    public @NotNull View getView(@NotNull Chatter chatter) {
+        return getView(playerAdapter.getSender(chatter.getUniqueId()).orElseThrow());
     }
 
     @Override
