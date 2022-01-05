@@ -19,20 +19,12 @@
 
 package net.silthus.schat.ui;
 
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.chatter.ChatterSenderLookup;
-import net.silthus.schat.message.Messenger;
 
-public class ChatterController implements Messenger<Chatter> {
+public interface Renderer<T> {
 
-    private final ChatterSenderLookup senderLookup;
+    Renderer<Chatter> TABBED_CHANNELS = new TabbedChannelRenderer();
 
-    public ChatterController(ChatterSenderLookup senderLookup) {
-        this.senderLookup = senderLookup;
-    }
-
-    @Override
-    public void sendMessage(Context<Chatter> context) {
-        senderLookup.getSender(context.target());
-    }
+    Component render(T chatter);
 }

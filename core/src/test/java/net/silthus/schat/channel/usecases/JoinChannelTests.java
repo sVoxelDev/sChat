@@ -20,7 +20,6 @@
 package net.silthus.schat.channel.usecases;
 
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.channel.Channels;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.checks.Check;
 import net.silthus.schat.permission.Permission;
@@ -33,8 +32,7 @@ import static net.silthus.schat.ChannelHelper.createChannelWith;
 import static net.silthus.schat.IdentityHelper.randomIdentity;
 import static net.silthus.schat.channel.Channel.JOIN_PERMISSION;
 import static net.silthus.schat.channel.Channel.REQUIRES_JOIN_PERMISSION;
-import static net.silthus.schat.channel.Channels.channels;
-import static net.silthus.schat.channel.repository.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.channel.Channel.createChannel;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -43,14 +41,12 @@ import static org.mockito.Mockito.when;
 
 class JoinChannelTests {
 
-    private Channels channels;
     private PermissionHandler permission;
     private Chatter chatter;
 
     @BeforeEach
     void setUp() {
         permission = mock(PermissionHandler.class);
-        channels = channels().repository(createInMemoryChannelRepository()).create();
         chatter = Chatter.chatter(randomIdentity()).permissionHandler(permission).create();
     }
 
@@ -103,5 +99,13 @@ class JoinChannelTests {
     void given_unprotected_channel_all_users_can_join() {
         mockNoPermission();
         assertJoinChannel(chatter, channelWith(REQUIRES_JOIN_PERMISSION, false));
+    }
+
+    @Test
+    void given_already_joined_silently_ignores_join() {
+        final Channel channel = createChannel("test");
+        chatter.join(channel);
+        chatter.join(channel);
+        assertThat(chatter.getChannels()).containsOnlyOnce(channel);
     }
 }

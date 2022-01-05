@@ -17,34 +17,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.settings;
+package net.silthus.schat.ui;
 
-import java.util.function.Supplier;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.ToString;
+import net.kyori.adventure.text.Component;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.sender.Sender;
 
-@Data
-@ToString(of = {"key", "type"})
-@EqualsAndHashCode(of = {"type", "key"})
-final class SettingImpl<V> implements Setting<V> {
+final class ChatterView implements View {
 
-    private final Class<V> type;
-    private final String key;
-    private final Supplier<V> defaultValue;
+    private final Sender sender;
+    private final Chatter chatter;
+    private final Renderer<Chatter> renderer;
 
-    SettingImpl(
-        final @NonNull Class<V> type,
-        final @NonNull String key,
-        final @NonNull Supplier<V> defaultValue) {
-        this.type = type;
-        this.key = key;
-        this.defaultValue = defaultValue;
+    ChatterView(Sender sender, Chatter chatter, Renderer<Chatter> renderer) {
+        this.sender = sender;
+        this.chatter = chatter;
+        this.renderer = renderer;
     }
 
     @Override
-    public V getDefaultValue() {
-        return this.defaultValue.get();
+    public void update() {
+        sender.sendMessage(render());
+    }
+
+    @Override
+    public Component render() {
+        return renderer.render(chatter);
     }
 }

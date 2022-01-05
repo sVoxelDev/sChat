@@ -19,27 +19,46 @@
 
 package net.silthus.schat.bukkit.listener;
 
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.SenderChatterLookup;
 import net.silthus.schat.platform.listener.ConnectionListener;
+import net.silthus.schat.sender.PlayerAdapter;
 import net.silthus.schat.sender.Sender;
-import net.silthus.schat.sender.SenderFactory;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public final class PlayerListener implements Listener {
 
-    private final SenderFactory<CommandSender> senderFactory;
+    private final PlayerAdapter<CommandSender> playerAdapter;
     private final ConnectionListener connectionListener;
+    private final SenderChatterLookup chatterLookup;
 
-    public PlayerListener(SenderFactory<CommandSender> senderFactory, ConnectionListener connectionListener) {
-        this.senderFactory = senderFactory;
+    public PlayerListener(PlayerAdapter<CommandSender> playerAdapter,
+                          ConnectionListener connectionListener,
+                          SenderChatterLookup chatterLookup) {
+        this.playerAdapter = playerAdapter;
         this.connectionListener = connectionListener;
+        this.chatterLookup = chatterLookup;
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerJoin(PlayerJoinEvent event) {
-        final Sender sender = senderFactory.adapt(event.getPlayer());
+        final Sender sender = playerAdapter.adapt(event.getPlayer());
         connectionListener.join(sender);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
+        final Chatter chatter = getChatter(event.getPlayer());
+        chatter.chat(event.getMessage());
+        event.setCancelled(true);
+    }
+
+    private Chatter getChatter(Player player) {
+        return chatterLookup.getChatter(playerAdapter.adapt(player));
     }
 }

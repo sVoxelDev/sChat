@@ -21,37 +21,45 @@ package net.silthus.schat.message;
 
 import java.time.Instant;
 import java.util.UUID;
-import java.util.function.Predicate;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.repository.Entity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import static net.kyori.adventure.text.Component.text;
 
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"id"})
 public final class Message implements Comparable<Message>, Entity<UUID> {
 
-    public static final @NonNull Predicate<Message> NOT_DELETED = message -> !message.isDeleted();
-
     public static Message message(final String text) {
         return message(null, text);
     }
 
     public static Message message(Chatter source, String text) {
+        return message(source, text(text));
+    }
+
+    public static Message message(Component text) {
+        return message(null, text);
+    }
+
+    public static Message message(Chatter source, Component text) {
         return new Message(source, text);
     }
 
     private final UUID id = UUID.randomUUID();
     private final Instant timestamp = Instant.now();
-    private final Chatter source;
-    private final String text;
+    private final @Nullable Chatter source;
+    private final @NotNull Component text;
     private boolean deleted = false;
 
-    private Message(Chatter source, String text) {
+    private Message(@Nullable Chatter source, @NotNull Component text) {
         this.source = source;
         this.text = text;
     }

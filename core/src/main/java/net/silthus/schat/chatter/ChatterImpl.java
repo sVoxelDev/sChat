@@ -97,6 +97,8 @@ final class ChatterImpl implements Chatter {
 
     @Override
     public void join(final @NonNull Channel channel) {
+        if (channels.contains(channel))
+            return;
         performChecks(channel);
         channels.add(channel);
         channel.addTarget(this);

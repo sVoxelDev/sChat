@@ -17,34 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.settings;
+package net.silthus.schat.ui;
 
-import java.util.function.Supplier;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.ToString;
+import net.silthus.schat.sender.Sender;
+import org.jetbrains.annotations.NotNull;
 
-@Data
-@ToString(of = {"key", "type"})
-@EqualsAndHashCode(of = {"type", "key"})
-final class SettingImpl<V> implements Setting<V> {
+public interface ViewProvider {
 
-    private final Class<V> type;
-    private final String key;
-    private final Supplier<V> defaultValue;
-
-    SettingImpl(
-        final @NonNull Class<V> type,
-        final @NonNull String key,
-        final @NonNull Supplier<V> defaultValue) {
-        this.type = type;
-        this.key = key;
-        this.defaultValue = defaultValue;
-    }
-
-    @Override
-    public V getDefaultValue() {
-        return this.defaultValue.get();
-    }
+    @NotNull View getView(@NotNull Sender sender);
 }

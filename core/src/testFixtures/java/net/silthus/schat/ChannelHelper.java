@@ -32,6 +32,10 @@ public final class ChannelHelper {
     private ChannelHelper() {
     }
 
+    public static <V> Channel channelWith(String key, Setting<V> setting, V value) {
+        return createChannelWith(key, builder -> builder.setting(setting, value));
+    }
+
     public static <V> Channel channelWith(Setting<V> setting, V value) {
         return createChannelWith(builder -> builder.setting(setting, value));
     }
@@ -45,8 +49,12 @@ public final class ChannelHelper {
         });
     }
 
+    public static Channel createChannelWith(String key, Function<Channel.Builder, Channel.Builder> config) {
+        return config.apply(channel(key)).create();
+    }
+
     public static Channel createChannelWith(Function<Channel.Builder, Channel.Builder> config) {
-        return config.apply(channel(randomAlphabetic(10).toLowerCase())).create();
+        return createChannelWith(randomAlphabetic(10).toLowerCase(), config);
     }
 
     public record ConfiguredSetting<V>(Setting<V> setting, V value) {

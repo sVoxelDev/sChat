@@ -17,11 +17,34 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.format;
+package net.silthus.schat.ui;
 
-import net.kyori.adventure.text.Component;
+import java.util.List;
+import net.silthus.schat.chatter.Chatter;
 
-public interface Formatter<T> {
+final class ChatterViewModel {
+    private final Chatter chatter;
 
-    Component format(T chatter);
+    ChatterViewModel(Chatter chatter) {
+        this.chatter = chatter;
+    }
+
+    public List<ChannelViewModel> getChannels() {
+        return chatter.getChannels().stream()
+            .map(ChannelViewModel::new)
+            .sorted()
+            .toList();
+    }
+
+    public List<MessageViewModel> getMessages() {
+        return chatter.getMessages().stream()
+            .map(MessageViewModel::new)
+            .filter(MessageViewModel::isIncluded)
+            .sorted()
+            .toList();
+    }
+
+    public boolean isActiveChannel(ChannelViewModel channel) {
+        return chatter.isActiveChannel(channel.getChannel());
+    }
 }
