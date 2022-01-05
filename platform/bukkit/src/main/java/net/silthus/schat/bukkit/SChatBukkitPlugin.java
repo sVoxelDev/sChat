@@ -25,6 +25,7 @@ import lombok.Getter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
 import net.silthus.schat.bukkit.listener.PlayerListener;
+import net.silthus.schat.bukkit.protocollib.ChatPacketListener;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
 import net.silthus.schat.platform.plugin.AbstractPlugin;
@@ -72,7 +73,9 @@ public final class SChatBukkitPlugin extends AbstractPlugin {
 
     @Override
     protected void registerListeners() {
-        final PlayerListener playerListener = new PlayerListener(getSenderFactory(), getConnectionListener());
+        final PlayerListener playerListener = new PlayerListener(getSenderFactory(), getConnectionListener(), getChatters());
         Bukkit.getPluginManager().registerEvents(playerListener, getBootstrap().getLoader());
+        final ChatPacketListener packetListener = new ChatPacketListener(getBootstrap().getLoader(), getSenderFactory(), getChatters());
+        packetListener.enable();
     }
 }

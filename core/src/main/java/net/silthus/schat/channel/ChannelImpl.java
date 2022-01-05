@@ -29,8 +29,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
-import lombok.Getter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import lombok.ToString;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.checks.JoinChannelPermissionCheck;
 import net.silthus.schat.checks.Check;
@@ -50,17 +52,18 @@ import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.message.MessageRepository.createInMemoryMessageRepository;
 import static net.silthus.schat.permission.Permission.of;
 
+@Data
+@ToString(of = {"key", "settings"})
+@EqualsAndHashCode(of = "key")
 final class ChannelImpl implements Channel {
 
     private static final Pattern CHANNEL_KEY_PATTERN = Pattern.compile("^[a-z0-9_-]+$");
     private static final Messenger<Channel> DEFAULT_MESSENGER = new DefaultChannelStrategy();
 
-    @Getter
     private final String key;
     private final Set<MessageTarget> targets = new HashSet<>();
     private final MessageRepository messageRepository;
     private final Messenger<Channel> messenger;
-    @Getter
     private final Settings settings;
     private final Map<Class<? extends Check<?>>, List<? extends Check<?>>> checks;
 

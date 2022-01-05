@@ -19,21 +19,26 @@
 
 package net.silthus.schat.platform.plugin;
 
+import java.util.Map;
+import java.util.WeakHashMap;
 import lombok.Getter;
+import lombok.NonNull;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.chatter.ChatterStore;
 import net.silthus.schat.chatter.Chatters;
 import net.silthus.schat.sender.Sender;
+import net.silthus.schat.ui.View;
 import org.jetbrains.annotations.NotNull;
 
-import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.ui.Renderer.TABBED_CHANNELS;
 
 final class ChatterManager implements Chatters {
 
     @Getter
     private final ChatterRepository repository;
     private final ChatterStore store;
+    private final Map<Sender, View> viewCache = new WeakHashMap<>();
 
     ChatterManager(ChatterRepository repository, ChatterStore store) {
         this.repository = repository;
@@ -45,6 +50,11 @@ final class ChatterManager implements Chatters {
         if (contains(sender.getUniqueId()))
             return get(sender.getUniqueId());
         return createAndCacheChatterFor(sender);
+    }
+
+    @Override
+    public @NotNull View getView(@NonNull Sender sender) {
+        return viewCache.computeIfAbsent(sender, c -> View.chatterView(sender, getChatter(sender), TABBED_CHANNELS));
     }
 
     @Override
@@ -66,7 +76,7 @@ final class ChatterManager implements Chatters {
 
     private Chatter createChatterFor(Sender sender) {
         return Chatter.chatter(sender.getIdentity())
-            .messenger(context -> sender.sendMessage(text(context.message().getText())))
+            .messenger(context -> getView(sender).update())
             .permissionHandler(sender::hasPermission)
             .create();
     }

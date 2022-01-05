@@ -109,6 +109,13 @@ final class SettingsImpl implements Settings {
         return new BuilderImpl(this);
     }
 
+    @Override
+    public String toString() {
+        return "SettingsImpl{" +
+            "settings=" + settings.keySet() +
+            '}';
+    }
+
     static final class BuilderImpl implements Builder {
 
         private final Map<Setting<?>, Supplier<?>> settings;

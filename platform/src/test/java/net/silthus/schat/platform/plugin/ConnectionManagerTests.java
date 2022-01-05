@@ -28,6 +28,8 @@ import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.chatter.ChatterStore;
 import net.silthus.schat.chatter.Chatters;
 import net.silthus.schat.sender.Sender;
+import net.silthus.schat.ui.Renderer;
+import net.silthus.schat.ui.View;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -141,6 +143,11 @@ class ConnectionManagerTests {
         @Override
         public void save(Chatter chatter) {
 
+        }
+
+        @Override
+        public @NotNull View getView(@NotNull Sender sender) {
+            return View.chatterView(sender, getChatter(sender), Renderer.TABBED_CHANNELS);
         }
     }
 }
