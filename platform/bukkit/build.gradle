@@ -62,7 +62,7 @@ dependencies {
     implementation spigot(mcVersion)
 
     implementation 'cloud.commandframework:cloud-paper:1.6.1'
-    implementation 'com.comphenix.protocol:ProtocolLib:4.8.0-SNAPSHOT'
+    implementation 'com.comphenix.protocol:ProtocolLib:4.8.0'
 
     //
     // Shaded Dependencies
