@@ -24,10 +24,10 @@ import lombok.NonNull;
 public interface Messenger<T> {
 
     static <T> Messenger<T> nil() {
-        return context -> {};
+        return (message, context) -> {};
     }
 
-    void sendMessage(Context<T> context);
+    void sendMessage(Message message, Context<T> context);
 
     record Context<T>(@NonNull T target, Message message) {
         public static <T> Context<T> of(T target, Message message) {

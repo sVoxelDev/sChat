@@ -24,34 +24,39 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
-import net.silthus.schat.message.Message;
+import net.silthus.schat.sender.Sender;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static net.silthus.schat.channel.Channel.createChannel;
+import static net.silthus.schat.message.Message.message;
+import static net.silthus.schat.ui.Renderer.TABBED_CHANNELS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
-class TabbedChannelRendererTests {
+class ViewTests {
 
     private static final String CHANNEL_KEY = "test";
     private static final String MESSAGE = "Hi";
     private static final String SOURCE = "Player";
 
     private Chatter chatter;
-    private TabbedChannelRenderer formatter;
+    private View view;
 
     @BeforeEach
     void setUp() {
         chatter = Chatter.createChatter();
-        formatter = new TabbedChannelRenderer();
+        view = View.chatterView(mock(Sender.class), chatter, TABBED_CHANNELS);
     }
 
     private void addChannel(String channel) {
-        chatter.join(Channel.createChannel(channel));
+        chatter.join(createChannel(channel));
     }
 
     private void setActiveChannel() {
-        chatter.setActiveChannel(Channel.createChannel(CHANNEL_KEY));
+        chatter.setActiveChannel(createChannel(CHANNEL_KEY));
     }
 
     private void sendMessage() {
@@ -59,16 +64,16 @@ class TabbedChannelRendererTests {
     }
 
     private void sendMessage(String text) {
-        chatter.sendMessage(Message.message(text));
+        chatter.sendMessage(message(text));
     }
 
     private void sendMessageWithSource() {
         final Chatter chatterSource = Chatter.chatter(Identity.identity(SOURCE)).create();
-        this.chatter.sendMessage(Message.message(chatterSource, MESSAGE));
+        this.chatter.sendMessage(message(chatterSource, MESSAGE));
     }
 
     private Component format() {
-        return formatter.render(chatter);
+        return view.render();
     }
 
     @NotNull
@@ -76,17 +81,17 @@ class TabbedChannelRendererTests {
         return MiniMessage.miniMessage().serialize(format);
     }
 
-    private void assertFormatContains(String... expected) {
+    private void assertRenderContains(String... expected) {
         assertThat(serialize(format())).contains(expected);
     }
 
-    private void assertFormatDoesNotContain(String... expected) {
+    private void assertRenderDoesNotContain(String... expected) {
         assertThat(serialize(format())).doesNotContain(expected);
     }
 
     @Test
     void givenNoChannels_printsNoAvailableChannels() {
-        assertFormatContains("No joined channels!");
+        assertRenderContains("No joined channels!");
     }
 
     @Test
@@ -94,14 +99,14 @@ class TabbedChannelRendererTests {
         addChannel("one");
         addChannel("two");
 
-        assertFormatContains("one", "two");
+        assertRenderContains("one", "two");
     }
 
     @Test
     void givenChannel_has_clickLink() {
         addChannel("test");
 
-        assertFormatContains("/channel join test");
+        assertRenderContains("/channel join test");
     }
 
     @Test
@@ -109,19 +114,19 @@ class TabbedChannelRendererTests {
         sendMessage();
         sendMessageWithSource();
 
-        assertFormatContains("Hi\n", "Player: Hi");
+        assertRenderContains("Hi\n", "Player: Hi");
     }
 
     @Test
     void givenActiveChannel_underlinesChannel() {
         setActiveChannel();
 
-        assertFormatContains("<underlined>", "</underlined>");
+        assertRenderContains("<underlined>", "</underlined>");
     }
 
     @Test
     void renders_blank_lines() {
-        assertFormatContains("\n\n\n\n\n\n\n\n\n\n\n");
+        assertRenderContains("\n\n\n\n\n\n\n\n\n\n\n");
     }
 
     @Test
@@ -131,6 +136,27 @@ class TabbedChannelRendererTests {
         for (int i = 0; i < 100; i++) {
             sendMessage();
         }
-        assertFormatDoesNotContain("one");
+        assertRenderDoesNotContain("one");
+    }
+
+    @Test
+    void render_contains_marker() {
+        final Component render = view.render();
+        assertThat(render.contains(View.MESSAGE_MARKER)).isTrue();
+    }
+
+    @Test
+    @Disabled
+    void given_multiple_channels_only_displays_messages_from_active() {
+        final Channel passive = createChannel("one");
+        chatter.join(passive);
+        final Channel active = createChannel("active");
+        chatter.setActiveChannel(active);
+
+        passive.sendMessage(message("Hidden"));
+        active.sendMessage(message("Visible"));
+
+        assertRenderContains("Visible");
+        assertRenderDoesNotContain("Hidden");
     }
 }

@@ -25,7 +25,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.identity.Identity;
 import net.silthus.schat.repository.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +41,7 @@ public final class Message implements Comparable<Message>, Entity<UUID> {
         return message(null, text);
     }
 
-    public static Message message(Chatter source, String text) {
+    public static Message message(Identity source, String text) {
         return message(source, text(text));
     }
 
@@ -49,17 +49,17 @@ public final class Message implements Comparable<Message>, Entity<UUID> {
         return message(null, text);
     }
 
-    public static Message message(Chatter source, Component text) {
+    public static Message message(Identity source, Component text) {
         return new Message(source, text);
     }
 
     private final UUID id = UUID.randomUUID();
     private final Instant timestamp = Instant.now();
-    private final @Nullable Chatter source;
+    private final @Nullable Identity source;
     private final @NotNull Component text;
     private boolean deleted = false;
 
-    private Message(@Nullable Chatter source, @NotNull Component text) {
+    private Message(@Nullable Identity source, @NotNull Component text) {
         this.source = source;
         this.text = text;
     }
