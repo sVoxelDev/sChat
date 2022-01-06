@@ -27,9 +27,10 @@ import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.repository.Entity;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
 
 @Getter
@@ -37,8 +38,12 @@ import static net.kyori.adventure.text.Component.text;
 @EqualsAndHashCode(of = {"id"})
 public final class Message implements Comparable<Message>, Entity<UUID> {
 
+    public static Builder message() {
+        return new Builder();
+    }
+
     public static Message message(final String text) {
-        return message(null, text);
+        return message(text(text));
     }
 
     public static Message message(Identity source, String text) {
@@ -46,22 +51,24 @@ public final class Message implements Comparable<Message>, Entity<UUID> {
     }
 
     public static Message message(Component text) {
-        return message(null, text);
+        return message().text(text).create();
     }
 
     public static Message message(Identity source, Component text) {
-        return new Message(source, text);
+        return message().source(source).text(text).create();
     }
 
     private final UUID id = UUID.randomUUID();
     private final Instant timestamp = Instant.now();
-    private final @Nullable Identity source;
+    private final @NotNull Identity source;
     private final @NotNull Component text;
+    private final Type type;
     private boolean deleted = false;
 
-    private Message(@Nullable Identity source, @NotNull Component text) {
+    private Message(@NotNull Identity source, @NotNull Component text, Type type) {
         this.source = source;
         this.text = text;
+        this.type = type;
     }
 
     @Override
@@ -72,5 +79,52 @@ public final class Message implements Comparable<Message>, Entity<UUID> {
     @Override
     public int compareTo(@NotNull final Message o) {
         return getTimestamp().compareTo(o.getTimestamp());
+    }
+
+    public final static class Builder {
+
+        private @NotNull Identity source = Identity.nil();
+        private @NotNull Component text = empty();
+        private Type type;
+
+        private Builder() {
+        }
+
+        public Builder source(@NonNull Identity source) {
+            this.source = source;
+            return this;
+        }
+
+        public Builder text(@NonNull Component text) {
+            this.text = text;
+            return this;
+        }
+
+        public Builder type(@NonNull Type type) {
+            this.type = type;
+            return this;
+        }
+
+        public Message create() {
+            if (type == null) {
+                if (source == Identity.nil())
+                    type = Type.SYSTEM;
+                else
+                    type = Type.CHAT;
+            }
+            return new Message(source, text, type);
+        }
+
+        public Message send(MessageTarget target) {
+            final Message message = create();
+            target.sendMessage(message);
+            return message;
+        }
+
+    }
+
+    public enum Type {
+        CHAT,
+        SYSTEM
     }
 }

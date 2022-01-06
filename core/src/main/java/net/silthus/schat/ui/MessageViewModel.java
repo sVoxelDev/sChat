@@ -22,13 +22,16 @@ package net.silthus.schat.ui;
 import java.time.Instant;
 import java.util.Comparator;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import org.jetbrains.annotations.NotNull;
 
 @EqualsAndHashCode(of = {"message"})
 final class MessageViewModel implements Comparable<MessageViewModel> {
 
+    @Getter
     private final Message message;
 
     MessageViewModel(Message message) {
@@ -40,11 +43,11 @@ final class MessageViewModel implements Comparable<MessageViewModel> {
     }
 
     public boolean hasSource() {
-        return message.getSource() != null;
+        return message.getSource() != Identity.nil();
     }
 
     public Component getSource() {
-        return message.getSource() != null ? message.getSource().getDisplayName() : Component.empty();
+        return message.getSource().getDisplayName();
     }
 
     private Instant getTimestamp() {
@@ -58,7 +61,11 @@ final class MessageViewModel implements Comparable<MessageViewModel> {
             .compare(this, o);
     }
 
-    public boolean isIncluded() {
-        return !message.isDeleted();
+    public boolean isSystemMessage() {
+        return message.getType() == Message.Type.SYSTEM;
+    }
+
+    public boolean isExcluded() {
+        return message.isDeleted();
     }
 }
