@@ -43,7 +43,7 @@ final class ChatterViewModel {
         final List<Message> messages = chatter.getMessages();
         return messages.stream()
             .map(MessageViewModel::new)
-            .filter(MessageViewModel::isIncluded)
+            .filter(this::isIncludedMessage)
             .sorted()
             .skip(Math.max(0, messages.size() - MAX_LINES))
             .toList();
@@ -51,5 +51,13 @@ final class ChatterViewModel {
 
     public boolean isActiveChannel(ChannelViewModel channel) {
         return chatter.isActiveChannel(channel.getChannel());
+    }
+
+    public boolean isIncludedMessage(MessageViewModel message) {
+        if (message.isExcluded()) return false;
+        if (message.isSystemMessage()) return true;
+        return chatter.getActiveChannel()
+            .map(channel -> channel.getMessages().contains(message.getMessage()))
+            .orElse(true);
     }
 }

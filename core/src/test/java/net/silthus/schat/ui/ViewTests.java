@@ -24,12 +24,14 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
+import net.silthus.schat.message.Message;
 import net.silthus.schat.sender.Sender;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.IdentityHelper.randomIdentity;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.ui.Renderer.TABBED_CHANNELS;
@@ -95,6 +97,12 @@ class ViewTests {
     }
 
     @Test
+    void givenNoSender_printsMessage_without_colon() {
+        sendMessage("test");
+        assertRenderDoesNotContain(": test");
+    }
+
+    @Test
     void givenTwoChannels_listsChannels() {
         addChannel("one");
         addChannel("two");
@@ -146,15 +154,14 @@ class ViewTests {
     }
 
     @Test
-    @Disabled
     void given_multiple_channels_only_displays_messages_from_active() {
         final Channel passive = createChannel("one");
         chatter.join(passive);
         final Channel active = createChannel("active");
         chatter.setActiveChannel(active);
 
-        passive.sendMessage(message("Hidden"));
-        active.sendMessage(message("Visible"));
+        passive.sendMessage(message().text(text("Hidden")).type(Message.Type.CHAT).create());
+        active.sendMessage(message(randomIdentity(), "Visible"));
 
         assertRenderContains("Visible");
         assertRenderDoesNotContain("Hidden");

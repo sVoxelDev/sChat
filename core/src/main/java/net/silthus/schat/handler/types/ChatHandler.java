@@ -23,6 +23,7 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.handler.Handler;
 import net.silthus.schat.message.Message;
 
+import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.message.Message.message;
 
 @FunctionalInterface
@@ -40,20 +41,19 @@ public interface ChatHandler extends Handler {
         }
 
         @Override
+        @SuppressWarnings("OptionalGetWithoutIsPresent")
         public Message chat(final Chatter chatter, final String text) {
             validateChannel(chatter);
-            final Message message = message(chatter, text);
-            sendToActiveChannel(message, chatter);
-            return message;
+            return message()
+                .source(chatter)
+                .text(text(text))
+                .type(Message.Type.CHAT)
+                .send(chatter.getActiveChannel().get());
         }
 
         private void validateChannel(final Chatter chatter) {
             if (chatter.getActiveChannel().isEmpty())
                 throw new Chatter.NoActiveChannel();
-        }
-
-        private void sendToActiveChannel(final Message message, final Chatter chatter) {
-            chatter.getActiveChannel().ifPresent(channel -> channel.sendMessage(message));
         }
     }
 }
