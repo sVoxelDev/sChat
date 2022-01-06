@@ -58,7 +58,7 @@ import static net.silthus.schat.permission.Permission.of;
 final class ChannelImpl implements Channel {
 
     private static final Pattern CHANNEL_KEY_PATTERN = Pattern.compile("^[a-z0-9_-]+$");
-    private static final Messenger<Channel> DEFAULT_MESSENGER = new DefaultChannelStrategy();
+    private static final Messenger<Channel> DEFAULT_MESSENGER = new DefaultChannelMessenger();
 
     private final String key;
     private final Set<MessageTarget> targets = new HashSet<>();
@@ -104,13 +104,13 @@ final class ChannelImpl implements Channel {
     @Override
     public void sendMessage(final @NonNull Message message) {
         messageRepository.add(message);
-        messenger.sendMessage(Messenger.Context.of(this, message));
+        messenger.sendMessage(message, Messenger.Context.of(this, message));
     }
 
-    private static class DefaultChannelStrategy implements Messenger<Channel> {
+    private static class DefaultChannelMessenger implements Messenger<Channel> {
 
         @Override
-        public void sendMessage(Context<Channel> context) {
+        public void sendMessage(Message message, Context<Channel> context) {
             context.target().getTargets().forEach(messageTarget -> messageTarget.sendMessage(context.message()));
         }
     }

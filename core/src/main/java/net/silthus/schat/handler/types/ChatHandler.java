@@ -22,7 +22,6 @@ package net.silthus.schat.handler.types;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.handler.Handler;
 import net.silthus.schat.message.Message;
-import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.message.Message.message;
 
@@ -43,7 +42,7 @@ public interface ChatHandler extends Handler {
         @Override
         public Message chat(final Chatter chatter, final String text) {
             validateChannel(chatter);
-            final Message message = createMessage(text, chatter);
+            final Message message = message(chatter, text);
             sendToActiveChannel(message, chatter);
             return message;
         }
@@ -51,10 +50,6 @@ public interface ChatHandler extends Handler {
         private void validateChannel(final Chatter chatter) {
             if (chatter.getActiveChannel().isEmpty())
                 throw new Chatter.NoActiveChannel();
-        }
-
-        private @NotNull Message createMessage(final String text, final Chatter chatter) {
-            return message(chatter, text);
         }
 
         private void sendToActiveChannel(final Message message, final Chatter chatter) {
