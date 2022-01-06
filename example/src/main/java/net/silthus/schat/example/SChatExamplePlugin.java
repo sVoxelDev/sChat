@@ -19,8 +19,6 @@
 
 package net.silthus.schat.example;
 
-import net.silthus.schat.SChat;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class SChatExamplePlugin extends JavaPlugin {
@@ -31,21 +29,21 @@ public final class SChatExamplePlugin extends JavaPlugin {
     public void onEnable() {
         setupSChatIntegration();
 
-        if (sChatIntegration != null) sChatIntegration.enable();
+//        if (sChatIntegration != null) sChatIntegration.enable();
     }
 
     @Override
     public void onDisable() {
-        if (sChatIntegration != null) sChatIntegration.disable();
+//        if (sChatIntegration != null) sChatIntegration.disable();
     }
 
     private void setupSChatIntegration() {
-        final RegisteredServiceProvider<SChat> registration = getServer().getServicesManager().getRegistration(SChat.class);
-        if (registration == null) {
-            getLogger().warning("sChat API not found. Not using sChat integration...");
-            return;
-        }
-        final SChat sChat = registration.getProvider();
-        this.sChatIntegration = new SChatIntegration(sChat);
+//        final RegisteredServiceProvider<SChat> registration = getServer().getServicesManager().getRegistration(SChat.class);
+//        if (registration == null) {
+//            getLogger().warning("sChat API not found. Not using sChat integration...");
+//            return;
+//        }
+//        final SChat sChat = registration.getProvider();
+//        this.sChatIntegration = new SChatIntegration(sChat);
     }
 }

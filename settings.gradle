@@ -19,7 +19,7 @@
 
 rootProject.name = 'sChat'
 include 'core'
-include 'ui'
+include 'api'
 include 'platform'
 include 'platform:bukkit'
 include 'example'
