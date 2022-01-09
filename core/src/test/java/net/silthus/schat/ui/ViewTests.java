@@ -23,11 +23,13 @@ import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.user.User;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
@@ -77,70 +79,116 @@ class ViewTests {
         assertEquals(expected, COMPONENT_SERIALIZER.serialize(view.render()));
     }
 
-    @Test
-    @SuppressWarnings("ConstantConditions")
-    void createGivenNullChatter_throws() {
-        assertNPE(() -> new View(null));
+    @Nested class given_null_chatter {
+
+        @Test
+        @SuppressWarnings("ConstantConditions")
+        void throws_npe() {
+            assertNPE(() -> new View(null));
+        }
     }
 
-    @Test
-    void givenNoMessagesAndNoChannels_renders_empty() {
-        assertViewRenders("");
+    @Nested class given_no_messages_and_no_channels {
+
+        @Test
+        void renders_empty_string() {
+            assertViewRenders("");
+        }
     }
 
-    @Test
-    void givenSingleMessage_rendersMessage() {
-        final Message message = addMessage(randomMessage());
-        assertViewRenders(text(message));
+    @Nested class given_single_message {
+
+        @Test
+        void renders_message_text() {
+            final Message message = addMessage(randomMessage());
+            assertViewRenders(text(message));
+        }
     }
 
-    @Test
-    void givenSingleMessageWithSource_rendersSourceAndText() {
-        addMessageWithSource("Bob", "Hi");
-        assertViewRenders("Bob: Hi");
+    @Nested class given_single_message_with_source {
+
+        @Test
+        void renders_source_name_with_message_text() {
+            addMessageWithSource("Bob", "Hi");
+            assertViewRenders("Bob: Hi");
+        }
     }
 
-    @Test
-    void givenTwoMessages_rendersBoth() {
-        addMessage("Hey");
-        addMessageWithSource("Silthus", "Yo");
-        assertViewRenders("""
+    @Nested class given_two_messages {
+
+        @Test
+        void renders_both_messages() {
+            addMessage("Hey");
+            addMessageWithSource("Silthus", "Yo");
+            assertViewRenders("""
             Hey
             Silthus: Yo"""
-        );
+            );
+        }
     }
 
-    @Test
-    void givenSingleChannel_rendersChannel() {
-        user.addChannel(createChannel("test"));
-        assertViewRenders("| test |");
+    @Nested class given_single_channel {
+
+        private Channel channel;
+
+        @BeforeEach
+        void setUp() {
+            channel = createChannel("test");
+            user.addChannel(channel);
+        }
+
+        @Test
+        void renders_channel_name() {
+            assertViewRenders("| test |");
+        }
+
+        @Nested class when_it_is_active {
+
+            @BeforeEach
+            void setUp() {
+                user.setActiveChannel(channel);
+            }
+
+            @Test
+            void underlines_channel() {
+                assertViewRenders("| <underlined>test</underlined> |");
+            }
+
+            @Nested class and_different_format_is_used {
+                @BeforeEach
+                void setUp() {
+                    view = new View(user, viewConfig().activeChannelFormat(component -> ViewConfig.DEFAULT_ACTIVE_CHANNEL_FORMAT.format(component).color(GREEN)).create());
+                }
+
+                @Test
+                void uses_custom_format() {
+                    assertViewRenders("| <green><underlined>test</underlined></green> |");
+                }
+            }
+        }
     }
 
-    @Test
-    void givenTwoChannels_rendersChannel() {
-        user.addChannel(createChannel("one"));
-        user.addChannel(createChannel("two"));
-        assertViewRenders("| one | two |");
-    }
+    @Nested class given_two_channels {
 
-    @Test
-    void givenTwoChannelsWithDifferentPriority_rendersHigherPriorityChannelFirst() {
-        user.addChannel(channelWith("zzz", PRIORITY, 1));
-        user.addChannel(createChannel("test"));
-        assertViewRenders("| zzz | test |");
-    }
+        @Test
+        void renders_both_seperated_by_a_divider() {
+            user.addChannel(createChannel("one"));
+            user.addChannel(createChannel("two"));
+            assertViewRenders("| one | two |");
+        }
 
-    @Test
-    void givenActiveChannel_underlinesChannel() {
-        user.setActiveChannel(createChannel("test"));
-        assertViewRenders("| <underlined>test</underlined> |");
-    }
+        @Nested class with_different_priorities {
+            @BeforeEach
+            void setUp() {
+                user.addChannel(channelWith("zzz", PRIORITY, 1));
+                user.addChannel(createChannel("test"));
+            }
 
-    @Test
-    void givenDifferentActiveChannelFormat_usesFormat() {
-        view = new View(user, viewConfig().activeChannelFormat(component -> ViewConfig.DEFAULT_ACTIVE_CHANNEL_FORMAT.format(component).color(GREEN)).create());
-        user.setActiveChannel(createChannel("test"));
-        assertViewRenders("| <green><underlined>test</underlined></green> |");
+            @Test
+            void renders_higher_priority_channel_first() {
+                assertViewRenders("| zzz | test |");
+            }
+        }
     }
 
     @Test
