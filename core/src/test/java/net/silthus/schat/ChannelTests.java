@@ -21,6 +21,8 @@ package net.silthus.schat;
 
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -43,45 +45,64 @@ class ChannelTests {
         assertThatExceptionOfType(exceptionType).isThrownBy(() -> createChannel(key));
     }
 
-    @Test
-    void givenNullKey_throws() {
-        assertInvalidKey(null);
+    @Nested class create_channel {
+
+        private Channel channel = randomChannel();
+
+        @BeforeEach
+        void setUp() {
+            channel = randomChannel();
+        }
+
+        @Test
+        void given_null_key_throws() {
+            assertInvalidKey(null);
+        }
+
+        @ParameterizedTest()
+        @ValueSource(strings = {
+            "",
+            "  ",
+            "ab cd"
+        })
+        void given_invalid_key_throws(String key) {
+            assertInvalidKey(key);
+        }
+
+        @Test
+        void targets_are_empty() {
+            assertThat(channel.getTargets()).isEmpty();
+        }
+
+        @Nested class given_no_display_name {
+            @Test
+            void uses_key_as_display_name() {
+                assertThat(channel.getDisplayName()).isEqualTo(text(channel.getKey()));
+            }
+        }
+
+        @Nested class given_display_name {
+            private final TextComponent name = text("Test Channel");
+
+            @BeforeEach
+            void setUp() {
+                channel = channelWith(builder -> builder.name(name));
+            }
+
+            @Test
+            void uses_display_name() {
+                assertThat(channel.getDisplayName()).isEqualTo(name);
+            }
+        }
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {
-        "",
-        "  ",
-        "ab cd"
-    })
-    void givenInvalidKey_throws(String key) {
-        assertInvalidKey(key);
-    }
+    @Nested class given_channel_with_same_key {
+        private final Channel channel1 = createChannel("test");
+        private final Channel channel2 = createChannel("test");
 
-    @Test
-    void givenSameKey_areEquals() {
-        final Channel channel1 = createChannel("test");
-        final Channel channel2 = createChannel("test");
-
-        assertThat(channel1).isEqualTo(channel2);
-    }
-
-    @Test
-    void givenNoDisplayName_usesKey() {
-        final Channel channel = randomChannel();
-        assertThat(channel.getDisplayName()).isEqualTo(text(channel.getKey()));
-    }
-
-    @Test
-    void givenDisplayName_usesDisplayName() {
-        final TextComponent name = text("Test Channel");
-        final Channel channel = channelWith(builder -> builder.name(name));
-        assertThat(channel.getDisplayName()).isEqualTo(name);
-    }
-
-    @Test
-    void givenNewChannel_targetsAreEmpty() {
-        final Channel channel = randomChannel();
-        assertThat(channel.getTargets()).isEmpty();
+        @Test
+        void channels_are_equal() {
+            assertThat(channel1).isEqualTo(channel2);
+        }
     }
 }
