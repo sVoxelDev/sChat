@@ -19,5 +19,80 @@
 
 package net.silthus.schat.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+import lombok.NonNull;
+import net.kyori.adventure.text.Component;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.message.Message;
+
+import static net.kyori.adventure.text.Component.empty;
+import static net.kyori.adventure.text.Component.join;
+import static net.kyori.adventure.text.JoinConfiguration.newlines;
+import static net.silthus.schat.ui.ViewConfig.defaultViewConfig;
+
 public class View {
+
+    private final ViewModel model;
+    private final ViewConfig config;
+
+    public View(@NonNull Chatter chatter, ViewConfig config) {
+        this.model = new ViewModel(chatter);
+        this.config = config;
+    }
+
+    public View(@NonNull Chatter chatter) {
+        this(chatter, defaultViewConfig());
+    }
+
+    public Component render() {
+        return renderMessages().append(renderChannels());
+    }
+
+    private Component renderMessages() {
+        return join(newlines(), getRenderedMessages());
+    }
+
+    private Component renderChannels() {
+        if (model.getChannels().isEmpty())
+            return empty();
+        else
+            return join(config.getChannelJoinConfig(), getRenderedChannels());
+    }
+
+    private List<Component> getRenderedMessages() {
+        final ArrayList<Component> messages = new ArrayList<>();
+        for (final Message message : model.getMessages()) {
+            messages.add(renderMessage(message));
+        }
+        return messages;
+    }
+
+    private Component renderMessage(Message message) {
+        return source(message).append(message.getText());
+    }
+
+    private Component source(Message message) {
+        if (message.hasSource())
+            return config.getMessageSourceFormat().format(message.getSource().getDisplayName());
+        else
+            return empty();
+    }
+
+    private List<Component> getRenderedChannels() {
+        final ArrayList<Component> channels = new ArrayList<>();
+        for (final Channel channel : model.getChannels()) {
+            channels.add(renderChannel(channel));
+        }
+        return channels;
+    }
+
+    private Component renderChannel(Channel channel) {
+        if (model.isActiveChannel(channel))
+            return config.getActiveChannelFormat().format(channel.getDisplayName());
+        else
+            return channel.getDisplayName();
+    }
+
 }

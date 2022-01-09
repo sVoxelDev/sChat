@@ -21,28 +21,32 @@ package net.silthus.schat.ui;
 
 import java.util.List;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.user.User;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 public class ViewModel {
 
-    private final User user;
+    private final Chatter chatter;
 
-    public ViewModel(User user) {
-        this.user = user;
+    public ViewModel(Chatter chatter) {
+        this.chatter = chatter;
     }
 
     public @NotNull @Unmodifiable List<Message> getMessages() {
-        return user.getMessages().stream()
+        return chatter.getMessages().stream()
             .sorted()
             .toList();
     }
 
     public @NotNull @Unmodifiable List<Channel> getChannels() {
-        return user.getChannels().stream()
+        return chatter.getChannels().stream()
             .sorted()
             .toList();
+    }
+
+    public boolean isActiveChannel(Channel channel) {
+        return chatter.isActiveChannel(channel);
     }
 }

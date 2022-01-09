@@ -19,7 +19,6 @@
 
 package net.silthus.schat.chatter;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +32,7 @@ import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 @Getter
@@ -41,16 +41,29 @@ import org.jetbrains.annotations.Unmodifiable;
 public abstract class Chatter implements MessageTarget, Identified {
 
     private final Identity identity;
-    private final List<Channel> channels = new ArrayList<>();
+    private final Set<Channel> channels = new HashSet<>();
     private final Set<Message> messages = new HashSet<>();
-    private Channel activeChannel;
+    private @Nullable Channel activeChannel;
 
     protected Chatter(Identity identity) {
         this.identity = identity;
     }
 
+    public void setActiveChannel(@Nullable Channel activeChannel) {
+        addChannel(activeChannel);
+        this.activeChannel = activeChannel;
+    }
+
     public Optional<Channel> getActiveChannel() {
         return Optional.ofNullable(activeChannel);
+    }
+
+    public boolean isActiveChannel(Channel channel) {
+        return activeChannel != null && activeChannel.equals(channel);
+    }
+
+    public @NotNull @Unmodifiable List<Channel> getChannels() {
+        return List.copyOf(channels);
     }
 
     public void addChannel(Channel channel) {

@@ -17,40 +17,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.user;
+package net.silthus.schat;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.ui.View;
+import org.apache.commons.lang3.RandomStringUtils;
 
-@Getter
-@Setter
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public class User extends Chatter {
+import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.message.Message.message;
 
-    private @NonNull View view;
+public final class MessageHelper {
 
-    public User(Identity identity) {
-        super(identity);
-        this.view = new View(this);
+    private MessageHelper() {
     }
 
-    public boolean hasPermission(String permission) {
-        return false;
+    public static Component randomText() {
+        return text(RandomStringUtils.random(30));
     }
 
-    @Override
-    protected void processMessage(Message message) {
-        sendRawMessage(getView().render());
-    }
-
-    public void sendRawMessage(Component message) {
-
+    public static Message randomMessage() {
+        return message(randomText()).create();
     }
 }

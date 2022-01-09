@@ -46,7 +46,7 @@ public interface Channel extends Configured, MessageTarget, Comparable<Channel> 
      *
      * <p>Default: {@code 'schat.admin.channel.join'}</p>
      */
-    Setting<String> JOIN_PERMISSION = Setting.setting(String.class, "permissions.join", "schat.admin.channel.join");
+    Setting<String> JOIN_PERMISSION = Setting.setting(String.class, "permissions.join", "schat.channel.default.join");
 
     static Channel createChannel(String key) {
         return channel(key).create();

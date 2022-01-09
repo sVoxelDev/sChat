@@ -17,40 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.user;
+package net.silthus.schat.ui;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.identity.Identity;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.ui.View;
 
-@Getter
-@Setter
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public class User extends Chatter {
+@FunctionalInterface
+public interface Format {
 
-    private @NonNull View view;
-
-    public User(Identity identity) {
-        super(identity);
-        this.view = new View(this);
-    }
-
-    public boolean hasPermission(String permission) {
-        return false;
-    }
-
-    @Override
-    protected void processMessage(Message message) {
-        sendRawMessage(getView().render());
-    }
-
-    public void sendRawMessage(Component message) {
-
-    }
+    Component format(Component component);
 }

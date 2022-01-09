@@ -25,7 +25,9 @@ import net.silthus.schat.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static net.silthus.schat.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.ChannelHelper.channelWith;
+import static net.silthus.schat.ChannelHelper.randomChannel;
 import static net.silthus.schat.channel.Channel.JOIN_PERMISSION;
 import static net.silthus.schat.channel.Channel.PROTECTED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,22 +45,39 @@ class PoliciesTests {
         user = mock(User.class);
     }
 
+    private void assertCanJoin(Channel channel, boolean expected) {
+        assertThat(policies.canJoinChannel(user, channel)).isEqualTo(expected);
+    }
+
+    private void mockHasPermission(String permission) {
+        when(user.hasPermission(permission)).thenReturn(true);
+    }
+
+    @Test
+    void givenChannelWithoutProtectionSetting_usesDefaultSetting() {
+        assertCanJoin(randomChannel(), true);
+    }
+
     @Test
     void givenUnprotectedChannel_canJoinChannel_succeeds() {
-        final Channel channel = channelWith(PROTECTED, false);
-        assertThat(policies.canJoinChannel(user, channel)).isTrue();
+        assertCanJoin(channelWith(PROTECTED, false), true);
     }
 
     @Test
     void givenProtectedChannel_canJoinChannel_fails() {
-        final Channel channel = channelWith(PROTECTED, true);
-        assertThat(policies.canJoinChannel(user, channel)).isFalse();
+        assertCanJoin(channelWith(PROTECTED, true), false);
     }
 
     @Test
     void givenProtectedChannel_and_UserWithPermission_canJoinChannel_succeeds() {
         final Channel channel = channelWith(PROTECTED, true);
-        when(user.hasPermission(channel.get(JOIN_PERMISSION))).thenReturn(true);
-        assertThat(policies.canJoinChannel(user, channel)).isTrue();
+        mockHasPermission(channel.get(JOIN_PERMISSION));
+        assertCanJoin(channel, true);
+    }
+
+    @Test
+    void givenChannelWithExplicitJoinPermission_and_UserWithoutPermission_canJoinChannel() {
+        mockHasPermission("my-permission");
+        assertCanJoin(channelWith(set(PROTECTED, true), set(JOIN_PERMISSION, "my-permission")), true);
     }
 }
