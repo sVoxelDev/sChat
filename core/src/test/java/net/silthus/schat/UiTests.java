@@ -29,12 +29,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.ChannelHelper.channelWith;
 import static net.silthus.schat.ChannelHelper.randomChannel;
 import static net.silthus.schat.TestHelper.assertNPE;
 import static net.silthus.schat.UserHelper.randomUser;
-import static net.silthus.schat.channel.Channel.PROTECTED;
-import static net.silthus.schat.message.Message.emptyMessage;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -78,7 +75,7 @@ class UiTests {
         return channel;
     }
 
-    private void assertJoin(Channel channel) {
+    private void assertJoinSuccess(Channel channel) {
         assertJoinedChannel(join(channel));
     }
 
@@ -97,60 +94,74 @@ class UiTests {
     }
 
     @Nested
-    class JoinChannelTests {
+    class joinChannel {
+
+        private Channel channel;
+
+        @BeforeEach
+        void setUp() {
+            channel = randomChannel();
+        }
 
         @Test
         @SuppressWarnings("ConstantConditions")
-        void joinChannel_givenNullUserOrChannel_throws() {
+        void given_null_user_pr_channel_throws() {
             assertNPE(() -> ui.joinChannel(null, null));
             assertNPE(() -> ui.joinChannel(user, null));
         }
 
         @Test
-        void joinChannel_givenUnprotectedChannel_addsUserToChannel() {
-            assertJoin(channelWith(PROTECTED, false));
-        }
-
-        @Test
-        void joinChannel_checksPolicies() {
+        void checks_policies() {
             joinChannel();
             verify(policies).canJoinChannel(any(), any());
         }
 
-        @Test
-        void joinChannel_givenCanJoinChannelFails_throws() {
-            mockCanJoin(false);
-            assertJoinError();
+        @Nested class given_successful_can_join_check {
+
+            @BeforeEach
+            void setUp() {
+                mockCanJoin(true);
+            }
+
+            @Test
+            void join_succeeds() {
+                assertJoinSuccess(channel);
+            }
+
+            @Test
+            void adds_channel_to_user() {
+                final Channel channel = joinChannel();
+                assertThat(user.getChannels()).contains(channel);
+            }
         }
 
-        @Test
-        void joinChannel_addsChannelToUser() {
-            final Channel channel = joinChannel();
-            assertThat(user.getChannels()).contains(channel);
-        }
+        @Nested class given_failed_can_join_check {
+            @BeforeEach
+            void setUp() {
+                mockCanJoin(false);
+            }
 
-        @Test
-        void givenJoinedChannel_sendsChannelMessage_sendsToUser() {
-            final Channel channel = joinChannel();
-            final Message message = emptyMessage();
-            channel.sendMessage(message);
-            verify(user).sendMessage(message);
+            @Test
+            void throws_join_error() {
+                assertJoinError();
+            }
         }
     }
 
-    @Nested
-    class SetActiveChannelTests {
+    @Nested class setActive {
 
         @Test
         @SuppressWarnings("ConstantConditions")
-        void setActiveChannel_givenNullUserOrChannel_throws() {
+        void given_null_inputs_throws() {
             assertNPE(() -> ui.setActiveChannel(null, null));
             assertNPE(() -> ui.setActiveChannel(user, null));
         }
 
         @Test
-        void setActiveChannel_joinsChannel() {
-            assertJoinedChannel(setActive(randomChannel()));
+        void joins_channel() {
+            final Channel channel = randomChannel();
+            assertJoinedChannel(setActive(channel));
+            assertThat(user.getActiveChannel()).isPresent().get().isEqualTo(channel);
         }
     }
 

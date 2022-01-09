@@ -107,10 +107,23 @@ class ViewTests {
 
     @Nested class given_single_message_with_source {
 
+        @BeforeEach
+        void setUp() {
+            addMessageWithSource("Bob", "Hi");
+        }
+
         @Test
         void renders_source_name_with_message_text() {
-            addMessageWithSource("Bob", "Hi");
             assertViewRenders("Bob: Hi");
+        }
+
+        @Nested class and_custom_message_source_format {
+
+            @Test
+            void uses_format() {
+                view = new View(user, viewConfig().messageSourceFormat(component -> Component.text("<").append(component).append(Component.text("> "))).create());
+                assertViewRenders("<Bob> Hi");
+            }
         }
     }
 
@@ -170,10 +183,14 @@ class ViewTests {
 
     @Nested class given_two_channels {
 
-        @Test
-        void renders_both_seperated_by_a_divider() {
+        @BeforeEach
+        void setUp() {
             user.addChannel(createChannel("one"));
             user.addChannel(createChannel("two"));
+        }
+
+        @Test
+        void renders_both_seperated_by_a_divider() {
             assertViewRenders("| one | two |");
         }
 
@@ -186,23 +203,21 @@ class ViewTests {
 
             @Test
             void renders_higher_priority_channel_first() {
-                assertViewRenders("| zzz | test |");
+                assertViewRenders("| zzz | one | test | two |");
             }
         }
-    }
 
-    @Test
-    void givenDifferentMessageSourceFormat_usesFormat() {
-        view = new View(user, viewConfig().messageSourceFormat(component -> Component.text("<").append(component).append(Component.text("> "))).create());
-        addMessageWithSource("Bob", "hey");
-        assertViewRenders("<Bob> hey");
-    }
+        @Nested class with_custom_channel_join_config_format {
 
-    @Test
-    void givenDifferentChannelJoinConfig_usesConfig() {
-        view = new View(user, viewConfig().channelJoinConfig(JoinConfiguration.builder().separator(Component.text(" - ")).build()).create());
-        user.addChannel(createChannel("foo"));
-        user.addChannel(createChannel("bar"));
-        assertViewRenders("bar - foo");
+            @BeforeEach
+            void setUp() {
+                view = new View(user, viewConfig().channelJoinConfig(JoinConfiguration.builder().separator(Component.text(" - ")).build()).create());
+            }
+
+            @Test
+            void uses_custom_format() {
+                assertViewRenders("one - two");
+            }
+        }
     }
 }

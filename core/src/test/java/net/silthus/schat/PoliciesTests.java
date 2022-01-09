@@ -23,6 +23,7 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.policies.ChannelPolicies;
 import net.silthus.schat.user.User;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.ChannelHelper.ConfiguredSetting.set;
@@ -53,31 +54,70 @@ class PoliciesTests {
         when(user.hasPermission(permission)).thenReturn(true);
     }
 
-    @Test
-    void givenChannelWithoutProtectionSetting_usesDefaultSetting() {
-        assertCanJoin(randomChannel(), true);
+    @Nested class given_protected_channel {
+        private Channel channel;
+
+        @BeforeEach
+        void setUp() {
+            channel = channelWith(PROTECTED, true);
+        }
+
+        @Test
+        void can_join_fails() {
+            assertCanJoin(channel, false);
+        }
+
+        @Nested class given_user_has_permission {
+            @BeforeEach
+            void setUp() {
+                mockHasPermission(channel.get(JOIN_PERMISSION));
+            }
+
+            @Test
+            void can_join_succeeds() {
+                assertCanJoin(channel, true);
+            }
+
+            @Nested class with_explicit_join_permission {
+                @BeforeEach
+                void setUp() {
+                    channel = channelWith(set(PROTECTED, true), set(JOIN_PERMISSION, "my-permission"));
+                    mockHasPermission("my-permission");
+                }
+
+                @Test
+                void can_join_succeeds() {
+                    assertCanJoin(channel, true);
+                }
+            }
+        }
     }
 
-    @Test
-    void givenUnprotectedChannel_canJoinChannel_succeeds() {
-        assertCanJoin(channelWith(PROTECTED, false), true);
+    @Nested class given_unprotected_channel {
+        private Channel channel;
+
+        @BeforeEach
+        void setUp() {
+            channel = channelWith(PROTECTED, false);
+        }
+
+        @Test
+        void can_join_channel_succeeds() {
+            assertCanJoin(channel, true);
+        }
     }
 
-    @Test
-    void givenProtectedChannel_canJoinChannel_fails() {
-        assertCanJoin(channelWith(PROTECTED, true), false);
-    }
+    @Nested class given_channel_without_explicit_protection_setting {
+        private Channel channel;
 
-    @Test
-    void givenProtectedChannel_and_UserWithPermission_canJoinChannel_succeeds() {
-        final Channel channel = channelWith(PROTECTED, true);
-        mockHasPermission(channel.get(JOIN_PERMISSION));
-        assertCanJoin(channel, true);
-    }
+        @BeforeEach
+        void setUp() {
+            channel = randomChannel();
+        }
 
-    @Test
-    void givenChannelWithExplicitJoinPermission_and_UserWithoutPermission_canJoinChannel() {
-        mockHasPermission("my-permission");
-        assertCanJoin(channelWith(set(PROTECTED, true), set(JOIN_PERMISSION, "my-permission")), true);
+        @Test
+        void can_join_succeeds() {
+            assertCanJoin(channel, true);
+        }
     }
 }

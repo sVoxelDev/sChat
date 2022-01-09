@@ -24,10 +24,10 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.IdentityHelper.randomIdentity;
 import static net.silthus.schat.TestHelper.assertNPE;
 import static net.silthus.schat.UserHelper.randomUser;
 import static net.silthus.schat.message.Message.emptyMessage;
@@ -48,73 +48,68 @@ class MessageTests {
         }
     }
 
-    @Test
-    void givenEmptyMessage_textIsNotNull() {
-        final Message message = emptyMessage();
-        assertThat(message.getText()).isEqualTo(Component.empty());
-    }
+    @Nested class given_empty_message {
 
-    @Test
-    void givenEmptyMessage_sourceIsNil() {
-        final Message message = emptyMessage();
-        assertThat(message.getSource()).isEqualTo(Identity.nil());
+        private Message message;
+
+        @BeforeEach
+        void setUp() {
+            message = emptyMessage();
+        }
+
+        @Test
+        void text_is_not_null() {
+            assertThat(message.getText()).isEqualTo(Component.empty());
+        }
+
+        @Test
+        void source_is_nil_source() {
+            assertThat(message.getSource()).isEqualTo(Identity.nil());
+        }
+
+        @Test
+        void send_does_nothing() {
+            assertThatCode(() -> message.send()).doesNotThrowAnyException();
+        }
+
+        @Test
+        void type_is_system() {
+            assertThat(message.getType()).isEqualTo(Message.Type.SYSTEM);
+        }
     }
 
     @Test
     @SuppressWarnings("ConstantConditions")
-    void givenNullSource_throws() {
+    void given_null_source_throws() {
         assertNPE(() -> message().source(null));
     }
 
     @Test
     @SuppressWarnings("ConstantConditions")
-    void givenMessageWithNullText_throws() {
+    void given_null_text_throws() {
         assertNPE(() -> message().text((Component) null));
         assertNPE(() -> message().text((String) null));
     }
 
     @Test
-    void givenMessageWithText_textIsSet() {
-        final Message message = message("Hi").create();
-        assertThat(message.getText()).isEqualTo(text("Hi"));
-    }
-
-    @Test
-    void givenMessageWithSource_sourceIsSet() {
-        final Identity source = randomIdentity();
-        final Message message = message().source(source).create();
-        assertThat(message.getSource()).isEqualTo(source);
-    }
-
-    @Test
     @SuppressWarnings("ConstantConditions")
-    void givenNullTarget_throws() {
+    void given_null_target_throws() {
         assertNPE(() -> message().to((MessageTarget[]) null));
         assertNPE(() -> message().to((MessageTarget) null));
     }
 
     @Test
-    void givenMessageWithNoTarget_send_doesNothing() {
-        assertThatCode(() -> emptyMessage().send()).doesNotThrowAnyException();
-    }
-
-    @Test
-    void givenMessageWithChannelTarget_sendsMessageToTarget() {
+    void given_message_with_channel_target_sends_message_to_channel() {
         assertMessageSent(mock(Channel.class));
     }
 
     @Test
-    void givenMessageWithTwoChannelTargets_sendsMessageToBoth() {
+    void given_message_with_two_channel_targets_sends_message_to_both() {
         assertMessageSent(mock(Channel.class), mock(Channel.class));
     }
 
     @Test
-    void givenMessageWithOneChannelAndOneUserTarget_sendsMessageToBoth() {
+    void given_message_with_one_user_and_one_channel_sends_message_to_both() {
         assertMessageSent(spy(randomUser()), mock(Channel.class));
-    }
-
-    @Test
-    void givenMessageWithoutType_usesSystemType() {
-        assertThat(emptyMessage().getType()).isEqualTo(Message.Type.SYSTEM);
     }
 }

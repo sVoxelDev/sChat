@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.ChannelHelper.channelWith;
-import static net.silthus.schat.ChannelHelper.randomChannel;
 import static net.silthus.schat.UserHelper.randomUser;
 import static net.silthus.schat.channel.Channel.PRIORITY;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,35 +58,38 @@ class ViewModelTests {
         return one;
     }
 
-    @NotNull
-    private Message sendMessage() {
-        return Message.message().to(user).send();
-    }
-
     private void sendMessage(Message message) {
         user.sendMessage(message);
     }
 
-    @Nested
-    class GetMessagesTests {
+    @Nested class given_empty_view_model {
 
         @Test
-        void givenEmptyViewModel_getMessages_isEmpty() {
+        void messages_are_empty() {
             assertThat(model.getMessages()).isEmpty();
         }
 
         @Test
-        void givenUserWithMessages_getMessages_listsMessages() {
-            final Message message = sendMessage();
-            assertThat(model.getMessages()).contains(message);
+        void channels_are_empty() {
+            assertThat(model.getChannels()).isEmpty();
+        }
+    }
+
+    @Nested class given_user_with_messages {
+
+        private Message one;
+        private Message two;
+
+        @BeforeEach
+        void setUp() {
+            one = createMessage();
+            two = createMessage();
+            sendMessage(two);
+            sendMessage(one);
         }
 
         @Test
-        void givenUnsortedMessages_getMessages_sortsByTime() {
-            final Message one = createMessage();
-            final Message two = createMessage();
-            sendMessage(two);
-            sendMessage(one);
+        void messages_are_sorted_by_time() {
             assertThat(model.getMessages()).containsExactly(
                 one,
                 two
@@ -95,40 +97,48 @@ class ViewModelTests {
         }
     }
 
-    @Nested
-    class GetChannelsTests {
+    @Nested class given_user_joined_channels {
 
-        @Test
-        void givenEmptyViewModel_getChannels_isEmpty() {
-            assertThat(model.getChannels()).isEmpty();
+        private Channel two;
+        private Channel one;
+
+        @BeforeEach
+        void setUp() {
+            two = join(channelWith("efg"));
+            one = join(channelWith("abc"));
         }
 
         @Test
-        void givenUserJoinedChannel_getChannels_listsChannels() {
-            final Channel channel = join(randomChannel());
-            assertThat(model.getChannels()).contains(channel);
-        }
-
-        @Test
-        void givenMultipleChannels_getChannels_areSortedByName() {
-            final Channel two = join(channelWith("efg"));
-            final Channel one = join(channelWith("abc"));
+        void channels_are_sorted_by_name() {
             assertThat(model.getChannels()).containsExactly(
                 one,
                 two
             );
         }
 
-        @Test
-        void givenMultipleChannelsWithPriority_areSortedByPriorityThenName() {
-            final Channel two = join(channelWith("abc", set(PRIORITY, 10)));
-            final Channel one = join(channelWith("def", set(PRIORITY, 5)));
-            final Channel three = join(channelWith("bcd", set(PRIORITY, 10)));
-            assertThat(model.getChannels()).containsExactly(
-                one,
-                two,
-                three
-            );
+        @Nested class with_priority {
+
+            private Channel second;
+            private Channel first;
+            private Channel third;
+
+            @BeforeEach
+            void setUp() {
+                second = join(channelWith("ab", set(PRIORITY, 10)));
+                first = join(channelWith("def", set(PRIORITY, 5)));
+                third = join(channelWith("bcd", set(PRIORITY, 10)));
+            }
+
+            @Test
+            void channels_are_sorted_by_priority_and_than_name() {
+                assertThat(model.getChannels()).containsExactly(
+                    first,
+                    second,
+                    third,
+                    one,
+                    two
+                );
+            }
         }
     }
 }
