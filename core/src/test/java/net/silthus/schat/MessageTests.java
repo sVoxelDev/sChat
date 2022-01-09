@@ -40,7 +40,7 @@ import static org.mockito.Mockito.verify;
 
 class MessageTests {
 
-    private void assertSendMessage(MessageTarget... channels) {
+    private void assertMessageSent(MessageTarget... channels) {
         final Message message = message().to(channels).send();
         assertThat(message).isNotNull();
         for (final MessageTarget channel : channels) {
@@ -100,16 +100,21 @@ class MessageTests {
 
     @Test
     void givenMessageWithChannelTarget_sendsMessageToTarget() {
-        assertSendMessage(mock(Channel.class));
+        assertMessageSent(mock(Channel.class));
     }
 
     @Test
     void givenMessageWithTwoChannelTargets_sendsMessageToBoth() {
-        assertSendMessage(mock(Channel.class), mock(Channel.class));
+        assertMessageSent(mock(Channel.class), mock(Channel.class));
     }
 
     @Test
     void givenMessageWithOneChannelAndOneUserTarget_sendsMessageToBoth() {
-        assertSendMessage(spy(randomUser()), mock(Channel.class));
+        assertMessageSent(spy(randomUser()), mock(Channel.class));
+    }
+
+    @Test
+    void givenMessageWithoutType_usesSystemType() {
+        assertThat(emptyMessage().getType()).isEqualTo(Message.Type.SYSTEM);
     }
 }

@@ -22,11 +22,14 @@ package net.silthus.schat;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.ui.View;
 import net.silthus.schat.user.User;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.IdentityHelper.randomIdentity;
+import static net.silthus.schat.TestHelper.assertNPE;
 import static net.silthus.schat.message.Message.emptyMessage;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
@@ -38,7 +41,20 @@ class UserTests {
 
     @BeforeEach
     void setUp() {
-        user = spy(UserHelper.randomUser());
+        user = spy(new User(randomIdentity()));
+    }
+
+    @NotNull
+    private Message sendMessage() {
+        final Message message = emptyMessage();
+        user.sendMessage(message);
+        return message;
+    }
+
+    @NotNull
+    private View setView(View view) {
+        user.setView(view);
+        return view;
     }
 
     @Test
@@ -49,22 +65,38 @@ class UserTests {
 
     @Test
     void sendMessage_sendsRawMessage() {
-        user.sendMessage(emptyMessage());
+        sendMessage();
         verify(user).sendRawMessage(Component.empty());
     }
 
     @Test
     void sendMessage_addsMessageToCache() {
-        final Message message = emptyMessage();
-        user.sendMessage(message);
+        final Message message = sendMessage();
         assertThat(user.getMessages()).contains(message);
     }
 
     @Test
     void sendSameMessageTwice_cachesOnlyOnce() {
-        final Message message = emptyMessage();
-        user.sendMessage(message);
+        final Message message = sendMessage();
         user.sendMessage(message);
         assertThat(user.getMessages()).containsOnlyOnce(message);
+    }
+
+    @Test
+    void givenFreshUser_viewIsNotNull() {
+        assertThat(user.getView()).isNotNull();
+    }
+
+    @Test
+    @SuppressWarnings("ConstantConditions")
+    void setView_givenNullView_throwsNPE() {
+        assertNPE(() -> user.setView(null));
+    }
+
+    @Test
+    void sendMessage_rendersView() {
+        final View view = setView(spy(new View(user)));
+        sendMessage();
+        verify(view).render();
     }
 }

@@ -24,13 +24,15 @@ import net.silthus.schat.message.Message;
 import net.silthus.schat.policies.ChannelPolicies;
 import net.silthus.schat.ui.Ui;
 import net.silthus.schat.user.User;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.ChannelHelper.channelWith;
 import static net.silthus.schat.ChannelHelper.randomChannel;
 import static net.silthus.schat.TestHelper.assertNPE;
+import static net.silthus.schat.UserHelper.randomUser;
 import static net.silthus.schat.channel.Channel.PROTECTED;
 import static net.silthus.schat.message.Message.emptyMessage;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,97 +52,149 @@ class UiTests {
     @BeforeEach
     void setUp() {
         policies = mock(ChannelPolicies.class);
-        when(policies.canJoinChannel(any(), any())).thenReturn(true);
+        mockCanJoin(true);
+        user = spy(randomUser());
         ui = new Ui(policies);
-        user = spy(UserHelper.randomUser());
     }
 
     private void assertJoinedChannel(Channel channel) {
         assertThat(channel.getTargets()).contains(user);
     }
 
-    @Test
-    @SuppressWarnings("ConstantConditions")
-    void joinChannel_givenNullUserOrChannel_throws() {
-        assertNPE(() -> ui.joinChannel(null, null));
-        assertNPE(() -> ui.joinChannel(user, null));
+    @NotNull
+    private Message chat() {
+        return ui.chat(user, MessageHelper.randomText());
     }
 
-    @Test
-    void joinChannel_givenUnprotectedChannel_addsUserToChannel() {
-        final Channel channel = channelWith(PROTECTED, false);
-        ui.joinChannel(user, channel);
-        assertJoinedChannel(channel);
-    }
-
-    @Test
-    void joinChannel_checksPolicies() {
-        ui.joinChannel(user, randomChannel());
-        verify(policies).canJoinChannel(any(), any());
-    }
-
-    @Test
-    void joinChannel_givenCanJoinChannelFails_throws() {
-        when(policies.canJoinChannel(any(), any())).thenReturn(false);
-        assertThatExceptionOfType(Ui.JoinChannelError.class).isThrownBy(() -> ui.joinChannel(user, randomChannel()));
-    }
-
-    @Test
-    void joinChannel_addsChannelToUser() {
+    @NotNull
+    private Channel joinChannel() {
         final Channel channel = randomChannel();
         ui.joinChannel(user, channel);
-        assertThat(user.getChannels()).contains(channel);
+        return channel;
     }
 
-    @Test
-    void givenJoinedChannel_sendsChannelMessage_sendsToUser() {
-        final Channel channel = randomChannel();
+    private Channel join(Channel channel) {
         ui.joinChannel(user, channel);
-        final Message message = emptyMessage();
-        channel.sendMessage(message);
-        verify(user).sendMessage(message);
+        return channel;
     }
 
-    @Test
-    @SuppressWarnings("ConstantConditions")
-    void setActiveChannel_givenNullUserOrChannel_throws() {
-        assertNPE(() -> ui.setActiveChannel(null, null));
-        assertNPE(() -> ui.setActiveChannel(user, null));
+    private void assertJoin(Channel channel) {
+        assertJoinedChannel(join(channel));
     }
 
-    @Test
-    void setActiveChannel_joinsChannel() {
-        final Channel channel = randomChannel();
+    private void assertJoinError() {
+        assertThatExceptionOfType(Ui.JoinChannelError.class).isThrownBy(this::joinChannel);
+    }
+
+    private void mockCanJoin(boolean result) {
+        when(policies.canJoinChannel(any(), any())).thenReturn(result);
+    }
+
+    @NotNull
+    private Channel setActive(Channel channel) {
         ui.setActiveChannel(user, channel);
-        assertJoinedChannel(channel);
+        return channel;
     }
 
-    @Test
-    @SuppressWarnings("ConstantConditions")
-    void chat_givenNullUserOrText_throws() {
-        assertNPE(() -> ui.chat(null, null));
-        assertNPE(() -> ui.chat(user, null));
+    @Nested
+    class JoinChannelTests {
+
+        @Test
+        @SuppressWarnings("ConstantConditions")
+        void joinChannel_givenNullUserOrChannel_throws() {
+            assertNPE(() -> ui.joinChannel(null, null));
+            assertNPE(() -> ui.joinChannel(user, null));
+        }
+
+        @Test
+        void joinChannel_givenUnprotectedChannel_addsUserToChannel() {
+            assertJoin(channelWith(PROTECTED, false));
+        }
+
+        @Test
+        void joinChannel_checksPolicies() {
+            joinChannel();
+            verify(policies).canJoinChannel(any(), any());
+        }
+
+        @Test
+        void joinChannel_givenCanJoinChannelFails_throws() {
+            mockCanJoin(false);
+            assertJoinError();
+        }
+
+        @Test
+        void joinChannel_addsChannelToUser() {
+            final Channel channel = joinChannel();
+            assertThat(user.getChannels()).contains(channel);
+        }
+
+        @Test
+        void givenJoinedChannel_sendsChannelMessage_sendsToUser() {
+            final Channel channel = joinChannel();
+            final Message message = emptyMessage();
+            channel.sendMessage(message);
+            verify(user).sendMessage(message);
+        }
     }
 
-    @Test
-    void chat_givenNoActiveChannel_throws() {
-        assertThatExceptionOfType(Ui.NoActiveChannel.class)
-            .isThrownBy(() -> ui.chat(user, text("Hi there!")));
+    @Nested
+    class SetActiveChannelTests {
+
+        @Test
+        @SuppressWarnings("ConstantConditions")
+        void setActiveChannel_givenNullUserOrChannel_throws() {
+            assertNPE(() -> ui.setActiveChannel(null, null));
+            assertNPE(() -> ui.setActiveChannel(user, null));
+        }
+
+        @Test
+        void setActiveChannel_joinsChannel() {
+            assertJoinedChannel(setActive(randomChannel()));
+        }
     }
 
-    @Test
-    void chat_givenActiveChannel_sendsMessageToChannel() {
-        final Channel channel = mock(Channel.class);
-        ui.setActiveChannel(user, channel);
-        final Message message = ui.chat(user, text("Hi"));
-        verify(channel).sendMessage(message);
-    }
+    @Nested
+    class ChatTests {
 
-    @Test
-    void chat_setsSourceToUser() {
-        final Channel channel = mock(Channel.class);
-        ui.setActiveChannel(user, channel);
-        Message message = ui.chat(user, text("Hi"));
-        assertThat(message.getSource()).isEqualTo(user);
+        @Test
+        @SuppressWarnings("ConstantConditions")
+        void chat_givenNullUserOrText_throws() {
+            assertNPE(() -> ui.chat(null, null));
+            assertNPE(() -> ui.chat(user, null));
+        }
+
+        @Test
+        void chat_givenNoActiveChannel_throws() {
+            assertThatExceptionOfType(Ui.NoActiveChannel.class)
+                .isThrownBy(UiTests.this::chat);
+        }
+
+        @Nested
+        class GivenActiveChannelTests {
+
+            private Channel channel;
+
+            @BeforeEach
+            void setUp() {
+                channel = setActive(mock(Channel.class));
+            }
+
+            @Test
+            void chat_givenActiveChannel_sendsMessageToChannel() {
+                final Message message = chat();
+                verify(channel).sendMessage(message);
+            }
+
+            @Test
+            void chat_setsSourceToUser() {
+                assertThat(chat().getSource()).isEqualTo(user);
+            }
+
+            @Test
+            void chat_setsMessageTypeToChat() {
+                assertThat(chat().getType()).isEqualTo(Message.Type.CHAT);
+            }
+        }
     }
 }

@@ -54,7 +54,7 @@ public class Ui {
         final Optional<Channel> channel = user.getActiveChannel();
         if (channel.isEmpty())
             throw new NoActiveChannel();
-        return message(text).source(user).to(channel.get()).send();
+        return message(text).source(user).to(channel.get()).type(Message.Type.CHAT).send();
     }
 
     public static final class JoinChannelError extends RuntimeException {

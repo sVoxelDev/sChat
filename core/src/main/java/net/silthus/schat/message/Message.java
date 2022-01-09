@@ -45,7 +45,7 @@ public final class Message implements Comparable<Message> {
         return message().text(text);
     }
 
-    public static Message.Builder message(Component text) {
+    public static Builder message(Component text) {
         return message().text(text);
     }
 
@@ -54,11 +54,17 @@ public final class Message implements Comparable<Message> {
     private final Identity source;
     private final Component text;
     private final MessageTarget[] targets;
+    private final Type type;
 
     private Message(Builder builder) {
         this.source = builder.source;
         this.text = builder.text;
         this.targets = builder.targets;
+        this.type = builder.type;
+    }
+
+    public boolean hasSource() {
+        return !Identity.nil().equals(getSource());
     }
 
     public void send() {
@@ -77,6 +83,7 @@ public final class Message implements Comparable<Message> {
         private Identity source = Identity.nil();
         private Component text = Component.empty();
         private MessageTarget[] targets = new MessageTarget[0];
+        private Type type = Type.SYSTEM;
 
         public Builder source(@NonNull Identity source) {
             this.source = source;
@@ -98,6 +105,11 @@ public final class Message implements Comparable<Message> {
             return this;
         }
 
+        public Builder type(@NonNull Type type) {
+            this.type = type;
+            return this;
+        }
+
         public Message create() {
             return new Message(this);
         }
@@ -113,5 +125,10 @@ public final class Message implements Comparable<Message> {
                 Objects.requireNonNull(target);
             }
         }
+    }
+
+    public enum Type {
+        CHAT,
+        SYSTEM
     }
 }

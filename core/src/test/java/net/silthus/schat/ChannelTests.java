@@ -80,7 +80,7 @@ class ChannelTests {
     }
 
     @Test
-    void givenNewChannel_usersIsEmpty() {
+    void givenNewChannel_targetsAreEmpty() {
         final Channel channel = randomChannel();
         assertThat(channel.getTargets()).isEmpty();
     }
