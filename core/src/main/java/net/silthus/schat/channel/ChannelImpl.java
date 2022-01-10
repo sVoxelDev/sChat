@@ -22,7 +22,6 @@ package net.silthus.schat.channel;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Consumer;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
@@ -76,7 +75,7 @@ final class ChannelImpl implements Channel {
 
         private final String key;
         private Component displayName;
-        private Settings.Builder settings = Settings.settings();
+        private final Settings.Builder settings = Settings.settings();
 
         Builder(String key) {
             if (isInvalidKey(key))
@@ -93,26 +92,8 @@ final class ChannelImpl implements Channel {
         }
 
         @Override
-        public @NotNull Builder defaultSettings(final @NonNull Settings.Builder settings) {
-            this.settings = settings;
-            return this;
-        }
-
-        @Override
         public <V> @NotNull Builder set(final @NonNull Setting<V> setting, final @Nullable V value) {
             this.settings.withStatic(setting, value);
-            return this;
-        }
-
-        @Override
-        public @NotNull Builder settings(final @NonNull Settings settings) {
-            this.settings = settings.copy();
-            return this;
-        }
-
-        @Override
-        public @NotNull Builder settings(final @NonNull Consumer<Settings.Builder> settings) {
-            settings.accept(this.settings);
             return this;
         }
 

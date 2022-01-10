@@ -26,6 +26,7 @@ import net.silthus.schat.ui.View;
 import net.silthus.schat.user.User;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.IdentityHelper.randomIdentity;
@@ -58,45 +59,51 @@ class UserTests {
     }
 
     @Test
-    void givenSameIdentity_isEqual() {
+    void two_users_given_the_same_identity_are_equal() {
         final Identity identity = randomIdentity();
         assertThat(new User(identity)).isEqualTo(new User(identity));
     }
 
-    @Test
-    void sendMessage_sendsRawMessage() {
-        sendMessage();
-        verify(user).sendRawMessage(Component.empty());
+    @Nested class when_sendMessage_is_called {
+        private @NotNull Message message;
+        private View view;
+
+        @BeforeEach
+        void setUp() {
+            view = setView(spy(new View(user)));
+            message = sendMessage();
+        }
+
+        @Test
+        void then_sendRawMessage_is_invoked() {
+            verify(user).sendRawMessage(Component.empty());
+        }
+
+        @Test
+        void then_message_is_added_to_user_message_cache() {
+            assertThat(user.getMessages()).contains(message);
+        }
+
+        @Test
+        void twice_then_message_is_cached_only_once() {
+            user.sendMessage(message);
+            assertThat(user.getMessages()).containsOnlyOnce(message);
+        }
+
+        @Test
+        void then_render_view_is_called() {
+            verify(view).render();
+        }
     }
 
     @Test
-    void sendMessage_addsMessageToCache() {
-        final Message message = sendMessage();
-        assertThat(user.getMessages()).contains(message);
-    }
-
-    @Test
-    void sendSameMessageTwice_cachesOnlyOnce() {
-        final Message message = sendMessage();
-        user.sendMessage(message);
-        assertThat(user.getMessages()).containsOnlyOnce(message);
-    }
-
-    @Test
-    void givenFreshUser_viewIsNotNull() {
+    void view_is_not_null() {
         assertThat(user.getView()).isNotNull();
     }
 
     @Test
     @SuppressWarnings("ConstantConditions")
-    void setView_givenNullView_throwsNPE() {
+    void when_setView_is_given_null_an_npe_is_thrown() {
         assertNPE(() -> user.setView(null));
-    }
-
-    @Test
-    void sendMessage_rendersView() {
-        final View view = setView(spy(new View(user)));
-        sendMessage();
-        verify(view).render();
     }
 }
