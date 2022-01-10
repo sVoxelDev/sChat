@@ -17,9 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation 'net.kyori:adventure-platform-api:4.0.1'
+package net.silthus.schat.platform;
 
-    testFixturesImplementation 'net.kyori:adventure-platform-api:4.0.1'
-    testFixturesImplementation 'org.apache.commons:commons-lang3:3.12.0'
+import lombok.NonNull;
+
+public abstract class SChatPlugin {
+
+    private UserFactory<?> userFactory;
+
+    public final void enable() {
+        userFactory = provideUserFactory();
+    }
+
+    protected abstract UserFactory<?> provideUserFactory();
+
+    @SuppressWarnings("unchecked")
+    public final <T> UserFactory<T> getUserFactory(@NonNull Class<T> playerClass) {
+        userFactory.checkPlayerType(playerClass);
+        return (UserFactory<T>) userFactory;
+    }
 }

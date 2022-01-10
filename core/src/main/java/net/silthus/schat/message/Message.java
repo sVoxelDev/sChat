@@ -68,7 +68,7 @@ public final class Message implements Comparable<Message> {
     }
 
     public void send() {
-        for (final MessageTarget target : targets) {
+        for (final MessageTarget target : getTargets()) {
             target.sendMessage(this);
         }
     }

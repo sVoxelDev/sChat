@@ -25,7 +25,6 @@ import java.util.List;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.ToString;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
@@ -37,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
 import static net.kyori.adventure.text.Component.text;
 
 @Getter
-@ToString(of = {"key", "settings"})
 @EqualsAndHashCode(of = {"key"})
 final class ChannelImpl implements Channel {
 

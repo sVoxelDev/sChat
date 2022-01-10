@@ -17,9 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation 'net.kyori:adventure-platform-api:4.0.1'
+package net.silthus.schat.bukkit;
 
-    testFixturesImplementation 'net.kyori:adventure-platform-api:4.0.1'
-    testFixturesImplementation 'org.apache.commons:commons-lang3:3.12.0'
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.silthus.schat.bukkit.adapter.BukkitUserFactory;
+import net.silthus.schat.platform.SChatPlugin;
+import net.silthus.schat.platform.UserFactory;
+
+public final class SChatBukkitPlugin extends SChatPlugin {
+    private final SChatBukkitPluginBootstrap bootstrap;
+
+    SChatBukkitPlugin(SChatBukkitPluginBootstrap bootstrap) {
+        this.bootstrap = bootstrap;
+    }
+
+    @Override
+    protected UserFactory<?> provideUserFactory() {
+        return new BukkitUserFactory(BukkitAudiences.create(bootstrap));
+    }
 }

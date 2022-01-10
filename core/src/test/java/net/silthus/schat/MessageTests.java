@@ -40,11 +40,11 @@ import static org.mockito.Mockito.verify;
 
 class MessageTests {
 
-    private void assertMessageSent(MessageTarget... channels) {
-        final Message message = message().to(channels).send();
+    private void assertMessageSent(MessageTarget... targets) {
+        final Message message = message().to(targets).send();
         assertThat(message).isNotNull();
-        for (final MessageTarget channel : channels) {
-            verify(channel).sendMessage(message);
+        for (final MessageTarget target : targets) {
+            verify(target).sendMessage(message);
         }
     }
 

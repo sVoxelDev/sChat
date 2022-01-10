@@ -33,12 +33,16 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
+import static net.silthus.schat.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.ChannelHelper.channelWith;
 import static net.silthus.schat.MessageHelper.randomMessage;
 import static net.silthus.schat.TestHelper.assertNPE;
 import static net.silthus.schat.UserHelper.randomUser;
 import static net.silthus.schat.channel.Channel.PRIORITY;
 import static net.silthus.schat.channel.Channel.createChannel;
+import static net.silthus.schat.ui.ViewConfig.ACTIVE_CHANNEL_FORMAT;
+import static net.silthus.schat.ui.ViewConfig.CHANNEL_JOIN_CONFIG;
+import static net.silthus.schat.ui.ViewConfig.MESSAGE_SOURCE_FORMAT;
 import static net.silthus.schat.ui.ViewConfig.viewConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -121,7 +125,7 @@ class ViewTests {
 
             @Test
             void uses_format() {
-                view = new View(user, viewConfig().messageSourceFormat(component -> Component.text("<").append(component).append(Component.text("> "))).create());
+                view = new View(user, viewConfig().set(MESSAGE_SOURCE_FORMAT, component -> Component.text("<").append(component).append(Component.text("> "))).create());
                 assertViewRenders("<Bob> Hi");
             }
         }
@@ -170,7 +174,7 @@ class ViewTests {
             @Nested class and_different_format_is_used {
                 @BeforeEach
                 void setUp() {
-                    view = new View(user, viewConfig().activeChannelFormat(component -> ViewConfig.DEFAULT_ACTIVE_CHANNEL_FORMAT.format(component).color(GREEN)).create());
+                    view = new View(user, viewConfig().set(ACTIVE_CHANNEL_FORMAT, component -> ACTIVE_CHANNEL_FORMAT.getDefaultValue().format(component).color(GREEN)).create());
                 }
 
                 @Test
@@ -211,13 +215,33 @@ class ViewTests {
 
             @BeforeEach
             void setUp() {
-                view = new View(user, viewConfig().channelJoinConfig(JoinConfiguration.builder().separator(Component.text(" - ")).build()).create());
+                view = new View(user, viewConfig().set(CHANNEL_JOIN_CONFIG, JoinConfiguration.builder().separator(Component.text(" - ")).build()).create());
             }
 
             @Test
             void uses_custom_format() {
                 assertViewRenders("one - two");
             }
+        }
+    }
+
+    @Nested class given_messages_and_channels {
+        @BeforeEach
+        void setUp() {
+            user.addChannel(createChannel("aaa"));
+            user.setActiveChannel(channelWith("zzz", set(PRIORITY, 10)));
+            addMessage("No Source!");
+            addMessageWithSource("Player", "Hey");
+            addMessageWithSource("Player2", "Hello");
+        }
+
+        @Test
+        void renders_full_view() {
+            assertViewRenders("""
+                No Source!
+                Player: Hey
+                Player2: Hello
+                | <underlined>zzz</underlined> | aaa |""");
         }
     }
 }

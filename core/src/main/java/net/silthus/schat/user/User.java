@@ -23,26 +23,32 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.ui.View;
 
-@Getter
 @Setter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class User extends Chatter {
 
+    private final PermissionHandler permissionHandler;
+    private final AudienceProvider audienceProvider;
+
+    @Getter
     private @NonNull View view;
 
-    public User(Identity identity) {
+    public User(Identity identity, PermissionHandler permissionHandler, AudienceProvider audienceProvider) {
         super(identity);
+        this.permissionHandler = permissionHandler;
+        this.audienceProvider = audienceProvider;
         this.view = new View(this);
     }
 
     public boolean hasPermission(String permission) {
-        return false;
+        return permissionHandler.hasPermission(permission);
     }
 
     @Override
@@ -51,6 +57,6 @@ public class User extends Chatter {
     }
 
     public void sendRawMessage(Component message) {
-
+        audienceProvider.player(getUniqueId()).sendMessage(message);
     }
 }

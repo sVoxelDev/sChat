@@ -17,9 +17,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation 'net.kyori:adventure-platform-api:4.0.1'
+package net.silthus.schat.channel;
 
-    testFixturesImplementation 'net.kyori:adventure-platform-api:4.0.1'
-    testFixturesImplementation 'org.apache.commons:commons-lang3:3.12.0'
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+final class InMemoryChannelRepository implements ChannelRepository {
+
+    private final Map<String, Channel> channels = new HashMap<>();
+
+    @Override
+    public List<Channel> all() {
+        return List.copyOf(channels.values());
+    }
+
+    @Override
+    public void add(Channel channel) {
+        if (channels.containsKey(channel.getKey()))
+            throw new DuplicateChannel();
+        this.channels.put(channel.getKey(), channel);
+    }
+
+    @Override
+    public boolean contains(String key) {
+        return channels.containsKey(key);
+    }
+
 }

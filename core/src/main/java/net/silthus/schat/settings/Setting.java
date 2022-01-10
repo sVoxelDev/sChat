@@ -82,5 +82,5 @@ public interface Setting<V> {
      * @return the default value
      * @since next
      */
-    @Nullable V getDefaultValue();
+    V getDefaultValue();
 }

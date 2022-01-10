@@ -17,9 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation 'net.kyori:adventure-platform-api:4.0.1'
+package net.silthus.schat.platform.commands;
 
-    testFixturesImplementation 'net.kyori:adventure-platform-api:4.0.1'
-    testFixturesImplementation 'org.apache.commons:commons-lang3:3.12.0'
+import cloud.commandframework.annotations.Argument;
+import cloud.commandframework.annotations.CommandMethod;
+import cloud.commandframework.annotations.ProxiedBy;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.user.User;
+
+public class ChannelCommands {
+
+    @ProxiedBy("ch")
+    @CommandMethod("channel join <channel>")
+    public void joinChannel(User user, @Argument("channel") Channel channel) {
+
+    }
 }

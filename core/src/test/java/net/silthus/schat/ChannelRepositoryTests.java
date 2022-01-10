@@ -31,49 +31,48 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class ChannelRepositoryTests {
 
-    private ChannelRepository repository;
-
-    @BeforeEach
-    void setUp() {
-        repository = new ChannelRepository();
-    }
-
-    @Nested class given_new_repository {
-        @Test
-        void it_is_empty() {
-            assertThat(repository.getAll()).isEmpty();
-        }
-    }
-
-    @Nested class given_one_added_channel {
-
-        private Channel channel;
+    @Nested class given_a_new_channel_repository {
+        private ChannelRepository repository;
 
         @BeforeEach
         void setUp() {
-            channel = randomChannel();
-            repository.add(channel);
+            repository = ChannelRepository.createInMemoryChannelRepository();
         }
 
         @Test
-        void the_channel_is_stored_in_the_repository() {
-            assertThat(repository.getAll()).contains(channel);
-            assertThat(repository.contains(channel.getKey())).isTrue();
+        void then_it_is_empty() {
+            assertThat(repository.all()).isEmpty();
         }
 
-        @Nested class and_channel_with_same_key_is_added {
-
-            private Channel channel2;
+        @Nested class when_one_channel_is_added {
+            private Channel channel;
 
             @BeforeEach
             void setUp() {
-                channel2 = Channel.createChannel(channel.getKey());
+                channel = randomChannel();
+                repository.add(channel);
             }
 
             @Test
-            void add_throws_duplicate_channel_exception() {
-                assertThatExceptionOfType(ChannelRepository.DuplicateChannel.class)
-                    .isThrownBy(() -> repository.add(channel2));
+            void then_the_channel_is_stored_in_the_repository() {
+                assertThat(repository.all()).contains(channel);
+                assertThat(repository.contains(channel.getKey())).isTrue();
+            }
+
+            @Nested class when_a_channel_with_the_same_key_is_added {
+
+                private Channel channel2;
+
+                @BeforeEach
+                void setUp() {
+                    channel2 = Channel.createChannel(channel.getKey());
+                }
+
+                @Test
+                void then_add_throws_duplicate_channel_exception() {
+                    assertThatExceptionOfType(ChannelRepository.DuplicateChannel.class)
+                        .isThrownBy(() -> repository.add(channel2));
+                }
             }
         }
     }

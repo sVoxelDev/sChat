@@ -49,28 +49,28 @@ public abstract class Chatter implements MessageTarget, Identified {
         this.identity = identity;
     }
 
-    public void setActiveChannel(@Nullable Channel activeChannel) {
+    public final void setActiveChannel(@Nullable Channel activeChannel) {
         addChannel(activeChannel);
         this.activeChannel = activeChannel;
     }
 
-    public Optional<Channel> getActiveChannel() {
+    public final Optional<Channel> getActiveChannel() {
         return Optional.ofNullable(activeChannel);
     }
 
-    public boolean isActiveChannel(Channel channel) {
+    public final boolean isActiveChannel(Channel channel) {
         return activeChannel != null && activeChannel.equals(channel);
     }
 
-    public @NotNull @Unmodifiable List<Channel> getChannels() {
+    public final @NotNull @Unmodifiable List<Channel> getChannels() {
         return List.copyOf(channels);
     }
 
-    public void addChannel(Channel channel) {
+    public final void addChannel(Channel channel) {
         this.channels.add(channel);
     }
 
-    public @NotNull @Unmodifiable List<Message> getMessages() {
+    public final @NotNull @Unmodifiable List<Message> getMessages() {
         return List.copyOf(messages);
     }
 
