@@ -105,13 +105,13 @@ class UiTests {
 
         @Test
         @SuppressWarnings("ConstantConditions")
-        void given_null_user_pr_channel_throws() {
+        void given_null_user_or_channel_throws() {
             assertNPE(() -> ui.joinChannel(null, null));
             assertNPE(() -> ui.joinChannel(user, null));
         }
 
         @Test
-        void checks_policies() {
+        void calls_policy_module() {
             joinChannel();
             verify(policies).canJoinChannel(any(), any());
         }
@@ -158,7 +158,7 @@ class UiTests {
         }
 
         @Test
-        void joins_channel() {
+        void when_not_joined_channel_joins_channel() {
             final Channel channel = randomChannel();
             assertJoinedChannel(setActive(channel));
             assertThat(user.getActiveChannel()).isPresent().get().isEqualTo(channel);
@@ -170,19 +170,18 @@ class UiTests {
 
         @Test
         @SuppressWarnings("ConstantConditions")
-        void chat_givenNullUserOrText_throws() {
+        void given_null_inputs_throws() {
             assertNPE(() -> ui.chat(null, null));
             assertNPE(() -> ui.chat(user, null));
         }
 
         @Test
-        void chat_givenNoActiveChannel_throws() {
+        void given_no_active_channel_throws() {
             assertThatExceptionOfType(Ui.NoActiveChannel.class)
                 .isThrownBy(UiTests.this::chat);
         }
 
-        @Nested
-        class GivenActiveChannelTests {
+        @Nested class given_active_channel {
 
             private Channel channel;
 
@@ -192,18 +191,18 @@ class UiTests {
             }
 
             @Test
-            void chat_givenActiveChannel_sendsMessageToChannel() {
+            void then_sends_message_to_channel() {
                 final Message message = chat();
                 verify(channel).sendMessage(message);
             }
 
             @Test
-            void chat_setsSourceToUser() {
+            void then_sets_message_source_to_user() {
                 assertThat(chat().getSource()).isEqualTo(user);
             }
 
             @Test
-            void chat_setsMessageTypeToChat() {
+            void then_sets_message_type_to_chat() {
                 assertThat(chat().getType()).isEqualTo(Message.Type.CHAT);
             }
         }

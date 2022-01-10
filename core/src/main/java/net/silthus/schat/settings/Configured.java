@@ -19,7 +19,6 @@
 
 package net.silthus.schat.settings;
 
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -88,15 +87,6 @@ public interface Configured {
     interface Builder<T> {
 
         /**
-         * Sets the default settings that are used if not overwritten.
-         *
-         * @param settings the settings builder to use as the default
-         * @return this builder
-         * @since next
-         */
-        @NotNull T defaultSettings(@NonNull Settings.Builder settings);
-
-        /**
          * Sets a setting of the channel to the given value.
          *
          * @param setting the setting
@@ -106,31 +96,5 @@ public interface Configured {
          * @since next
          */
         <V> @NotNull T set(@NonNull Setting<V> setting, @Nullable V value);
-
-        /**
-         * Sets the settings container to use for this channel.
-         *
-         * <p>By default an {@link Settings#createSettings()} container is used and can be populated
-         * during the builder stage or afterwards.</p>
-         *
-         * <p>Using this builder method after settings have been set will reset those settings and replace them with the new container.
-         * All subsequent calls to set settings will be directed to the new settings container.</p>
-         *
-         * @param settings the settings container to use
-         * @return this builder
-         * @since next
-         */
-        @NotNull T settings(@NotNull Settings settings);
-
-        /**
-         * Sets settings in the existing settings container.
-         *
-         * <p>Setting settings this way is additive and uses the default or explicit settings container.</p>
-         *
-         * @param settings the settings
-         * @return this builder
-         * @since next
-         */
-        @NotNull T settings(@NotNull Consumer<Settings.Builder> settings);
     }
 }
