@@ -19,10 +19,11 @@
 
 package net.silthus.schat;
 
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.platform.AudienceProvider;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.ui.View;
+import net.silthus.schat.user.PermissionHandler;
 import net.silthus.schat.user.User;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,18 +32,25 @@ import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.IdentityHelper.randomIdentity;
 import static net.silthus.schat.TestHelper.assertNPE;
+import static net.silthus.schat.UserHelper.mockAudienceProvider;
 import static net.silthus.schat.message.Message.emptyMessage;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 class UserTests {
 
     private User user;
+    private PermissionHandler permissionHandler;
+    private AudienceProvider audienceProvider;
 
     @BeforeEach
     void setUp() {
-        user = spy(new User(randomIdentity()));
+        permissionHandler = mock(PermissionHandler.class);
+        audienceProvider = mockAudienceProvider();
+        user = spy(new User(randomIdentity(), permissionHandler, audienceProvider));
     }
 
     @NotNull
@@ -61,7 +69,7 @@ class UserTests {
     @Test
     void two_users_given_the_same_identity_are_equal() {
         final Identity identity = randomIdentity();
-        assertThat(new User(identity)).isEqualTo(new User(identity));
+        assertThat(new User(identity, permissionHandler, audienceProvider)).isEqualTo(new User(identity, permissionHandler, audienceProvider));
     }
 
     @Nested class when_sendMessage_is_called {
@@ -76,7 +84,7 @@ class UserTests {
 
         @Test
         void then_sendRawMessage_is_invoked() {
-            verify(user).sendRawMessage(Component.empty());
+            verify(user).sendRawMessage(any());
         }
 
         @Test
@@ -94,10 +102,15 @@ class UserTests {
         void then_render_view_is_called() {
             verify(view).render();
         }
+
+        @Test
+        void then_audience_provider_is_invoked() {
+            verify(audienceProvider).player(user.getUniqueId());
+        }
     }
 
     @Test
-    void view_is_not_null() {
+    void given_a_new_user_getView_is_not_null() {
         assertThat(user.getView()).isNotNull();
     }
 
@@ -105,5 +118,11 @@ class UserTests {
     @SuppressWarnings("ConstantConditions")
     void when_setView_is_given_null_an_npe_is_thrown() {
         assertNPE(() -> user.setView(null));
+    }
+
+    @Test
+    void when_hasPermission_is_called_then_permission_handler_is_invoked() {
+        user.hasPermission("foobar");
+        verify(permissionHandler).hasPermission("foobar");
     }
 }

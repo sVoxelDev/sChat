@@ -19,8 +19,11 @@
 
 package net.silthus.schat;
 
+import java.util.List;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.message.Message;
+import net.silthus.schat.message.MessageTarget;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,9 +33,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.ChannelHelper.channelWith;
 import static net.silthus.schat.ChannelHelper.randomChannel;
+import static net.silthus.schat.MessageHelper.randomMessage;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class ChannelTests {
 
@@ -46,7 +52,6 @@ class ChannelTests {
     }
 
     @Nested class create_channel {
-
         private Channel channel = randomChannel();
 
         @BeforeEach
@@ -103,6 +108,35 @@ class ChannelTests {
         @Test
         void channels_are_equal() {
             assertThat(channel1).isEqualTo(channel2);
+        }
+    }
+
+    @Nested class given_channel_with_targets {
+        private Channel channel;
+        private List<MessageTarget> targets;
+
+        @BeforeEach
+        void setUp() {
+            channel = randomChannel();
+            targets = List.of(mock(MessageTarget.class), mock(MessageTarget.class), mock(MessageTarget.class));
+            targets.forEach(target -> channel.addTarget(target));
+        }
+
+        @Nested class when_sendMessage_is_called {
+            private Message message;
+
+            @BeforeEach
+            void setUp() {
+                message = randomMessage();
+                channel.sendMessage(message);
+            }
+
+            @Test
+            void then_sendMessage_is_called_on_all_targets() {
+                for (final MessageTarget target : targets) {
+                    verify(target).sendMessage(message);
+                }
+            }
         }
     }
 }

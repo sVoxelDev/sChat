@@ -19,28 +19,20 @@
 
 package net.silthus.schat.channel;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class ChannelRepository {
+public interface ChannelRepository {
 
-    private final Map<String, Channel> channels = new HashMap<>();
-
-    public List<Channel> getAll() {
-        return List.copyOf(channels.values());
+    static ChannelRepository createInMemoryChannelRepository() {
+        return new InMemoryChannelRepository();
     }
 
-    public void add(Channel channel) {
-        if (channels.containsKey(channel.getKey()))
-            throw new DuplicateChannel();
-        this.channels.put(channel.getKey(), channel);
-    }
+    List<Channel> all();
 
-    public boolean contains(String key) {
-        return channels.containsKey(key);
-    }
+    void add(Channel channel);
 
-    public static final class DuplicateChannel extends RuntimeException {
+    boolean contains(String key);
+
+    final class DuplicateChannel extends RuntimeException {
     }
 }

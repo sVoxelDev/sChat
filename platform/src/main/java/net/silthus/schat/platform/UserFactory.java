@@ -17,32 +17,35 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.platform;
 
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.AudienceProvider;
+import net.silthus.schat.identity.Identity;
 import net.silthus.schat.user.PermissionHandler;
 import net.silthus.schat.user.User;
-import org.jetbrains.annotations.NotNull;
 
-import static net.silthus.schat.IdentityHelper.randomIdentity;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+public abstract class UserFactory<T> {
 
-public final class UserHelper {
-
-    private UserHelper() {
+    public final User getUser(T player) {
+        return new User(getIdentity(player),
+            getPermissionHandler(player),
+            getAudienceProvider(player)
+        );
     }
 
-    @NotNull
-    public static User randomUser() {
-        return new User(randomIdentity(), mock(PermissionHandler.class), mockAudienceProvider());
+    public final void checkPlayerType(Class<?> playerType) {
+        if (!getType().isAssignableFrom(playerType))
+            throw new InvalidPlayerType();
     }
 
-    public static AudienceProvider mockAudienceProvider() {
-        final AudienceProvider audienceProvider = mock(AudienceProvider.class);
-        when(audienceProvider.player(any())).thenReturn(mock(Audience.class));
-        return audienceProvider;
+    protected abstract Class<T> getType();
+
+    protected abstract Identity getIdentity(T player);
+
+    protected abstract PermissionHandler getPermissionHandler(T player);
+
+    protected abstract AudienceProvider getAudienceProvider(T player);
+
+    public static class InvalidPlayerType extends RuntimeException {
     }
 }

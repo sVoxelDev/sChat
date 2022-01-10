@@ -17,9 +17,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation 'net.kyori:adventure-platform-api:4.0.1'
+package net.silthus.schat.bukkit;
 
-    testFixturesImplementation 'net.kyori:adventure-platform-api:4.0.1'
-    testFixturesImplementation 'org.apache.commons:commons-lang3:3.12.0'
+import be.seeseemelk.mockbukkit.MockBukkit;
+import be.seeseemelk.mockbukkit.MockPlugin;
+import be.seeseemelk.mockbukkit.ServerMock;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+
+public abstract class BukkitTests {
+    protected static ServerMock server;
+    protected static MockPlugin mockPlugin;
+    protected static BukkitAudiences audiences;
+
+    @BeforeAll
+    static void beforeAll() {
+        server = MockBukkit.mock();
+        mockPlugin = MockBukkit.createMockPlugin();
+        audiences = BukkitAudiences.create(mockPlugin);
+    }
+
+    @AfterAll
+    static void afterAll() {
+        MockBukkit.unmock();
+        audiences.close();
+    }
 }

@@ -20,22 +20,28 @@
 package net.silthus.schat.ui;
 
 import lombok.Getter;
+import lombok.NonNull;
 import net.kyori.adventure.text.JoinConfiguration;
+import net.silthus.schat.settings.Configured;
+import net.silthus.schat.settings.Setting;
+import net.silthus.schat.settings.Settings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
+import static net.silthus.schat.settings.Setting.setting;
 
 @Getter
-public final class ViewConfig {
+public final class ViewConfig implements Configured {
 
-    public static final Format DEFAULT_ACTIVE_CHANNEL_FORMAT = name -> name.decorate(UNDERLINED);
-    public static final @NotNull JoinConfiguration DEFAULT_CHANNEL_JOIN_CONFIG = JoinConfiguration.builder()
+    public static final Setting<Format> ACTIVE_CHANNEL_FORMAT = setting(Format.class, "format.active_channel", name -> name.decorate(UNDERLINED));
+    public static final Setting<JoinConfiguration> CHANNEL_JOIN_CONFIG = setting(JoinConfiguration.class, "format.channel_join_config", JoinConfiguration.builder()
         .prefix(text("| "))
         .separator(text(" | "))
         .suffix(text(" |"))
-        .build();
-    public static final Format DEFAULT_MESSAGE_SOURCE_FORMAT = name -> name.append(text(": "));
+        .build());
+    public static final Setting<Format> MESSAGE_SOURCE_FORMAT = setting(Format.class, "format.message_source", name -> name.append(text(": ")));
 
     public static ViewConfig defaultViewConfig() {
         return viewConfig().create();
@@ -45,37 +51,21 @@ public final class ViewConfig {
         return new Builder();
     }
 
-    private final Format activeChannelFormat;
-    private final JoinConfiguration channelJoinConfig;
-    private final Format messageSourceFormat;
+    private final Settings settings;
 
     private ViewConfig(Builder builder) {
-        this.activeChannelFormat = builder.activeChannelFormat;
-        this.channelJoinConfig = builder.channelJoinConfig;
-        this.messageSourceFormat = builder.messageSourceFormat;
+        this.settings = builder.settings.create();
     }
 
-    public static final class Builder {
-
-        private Format activeChannelFormat = DEFAULT_ACTIVE_CHANNEL_FORMAT;
-        private JoinConfiguration channelJoinConfig = DEFAULT_CHANNEL_JOIN_CONFIG;
-        private Format messageSourceFormat = DEFAULT_MESSAGE_SOURCE_FORMAT;
+    public static final class Builder implements Configured.Builder<Builder> {
+        private final Settings.Builder settings = Settings.settings();
 
         private Builder() {
         }
 
-        public Builder activeChannelFormat(Format activeChannelFormat) {
-            this.activeChannelFormat = activeChannelFormat;
-            return this;
-        }
-
-        public Builder channelJoinConfig(JoinConfiguration channelJoinConfig) {
-            this.channelJoinConfig = channelJoinConfig;
-            return this;
-        }
-
-        public Builder messageSourceFormat(Format messageSourceFormat) {
-            this.messageSourceFormat = messageSourceFormat;
+        @Override
+        public @NotNull <V> Builder set(@NonNull Setting<V> setting, @Nullable V value) {
+            this.settings.withStatic(setting, value);
             return this;
         }
 

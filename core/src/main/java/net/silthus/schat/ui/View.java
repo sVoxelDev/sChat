@@ -26,10 +26,15 @@ import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
+import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.join;
+import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.JoinConfiguration.newlines;
+import static net.silthus.schat.ui.ViewConfig.ACTIVE_CHANNEL_FORMAT;
+import static net.silthus.schat.ui.ViewConfig.CHANNEL_JOIN_CONFIG;
+import static net.silthus.schat.ui.ViewConfig.MESSAGE_SOURCE_FORMAT;
 import static net.silthus.schat.ui.ViewConfig.defaultViewConfig;
 
 public class View {
@@ -47,7 +52,15 @@ public class View {
     }
 
     public Component render() {
-        return renderMessages().append(renderChannels());
+        return combineMessagesAndChannels(renderMessages(), renderChannels());
+    }
+
+    @NotNull
+    private Component combineMessagesAndChannels(Component messages, Component channels) {
+        if (model.getMessages().isEmpty() || model.getChannels().isEmpty())
+            return messages.append(channels);
+        else
+            return messages.append(newline()).append(channels);
     }
 
     private Component renderMessages() {
@@ -58,7 +71,7 @@ public class View {
         if (model.getChannels().isEmpty())
             return empty();
         else
-            return join(config.getChannelJoinConfig(), getRenderedChannels());
+            return join(config.get(CHANNEL_JOIN_CONFIG), getRenderedChannels());
     }
 
     private List<Component> getRenderedMessages() {
@@ -75,7 +88,7 @@ public class View {
 
     private Component source(Message message) {
         if (message.hasSource())
-            return config.getMessageSourceFormat().format(message.getSource().getDisplayName());
+            return config.get(MESSAGE_SOURCE_FORMAT).format(message.getSource().getDisplayName());
         else
             return empty();
     }
@@ -90,7 +103,7 @@ public class View {
 
     private Component renderChannel(Channel channel) {
         if (model.isActiveChannel(channel))
-            return config.getActiveChannelFormat().format(channel.getDisplayName());
+            return config.get(ACTIVE_CHANNEL_FORMAT).format(channel.getDisplayName());
         else
             return channel.getDisplayName();
     }

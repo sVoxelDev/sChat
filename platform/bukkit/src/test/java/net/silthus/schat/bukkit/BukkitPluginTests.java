@@ -17,9 +17,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation 'net.kyori:adventure-platform-api:4.0.1'
+package net.silthus.schat.bukkit;
 
-    testFixturesImplementation 'net.kyori:adventure-platform-api:4.0.1'
-    testFixturesImplementation 'org.apache.commons:commons-lang3:3.12.0'
+import be.seeseemelk.mockbukkit.MockBukkit;
+import org.bukkit.entity.Player;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class BukkitPluginTests extends BukkitTests {
+
+    private SChatBukkitPluginBootstrap plugin;
+
+    @BeforeEach
+    void setUp() {
+        plugin = MockBukkit.load(SChatBukkitPluginBootstrap.class);
+    }
+
+    @Nested class given_enabled_bukkit_plugin {
+        @Test
+        void then_SChat_plugin_is_enabled() {
+            assertThat(plugin.getSChatPlugin().getUserFactory(Player.class)).isNotNull();
+        }
+    }
 }
