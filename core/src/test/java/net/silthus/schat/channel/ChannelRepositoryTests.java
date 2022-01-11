@@ -17,10 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.channel;
 
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.channel.ChannelRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class ChannelRepositoryTests {
 
-    @Nested class given_a_new_channel_repository {
+    @Nested class given_an_empty_channel_repository {
         private ChannelRepository repository;
 
         @BeforeEach
@@ -40,11 +38,16 @@ class ChannelRepositoryTests {
         }
 
         @Test
-        void then_it_is_empty() {
+        void then_all_returns_empty_list() {
             assertThat(repository.all()).isEmpty();
         }
 
-        @Nested class when_one_channel_is_added {
+        @Test
+        void then_get_throws_ChannelNotFound() {
+            assertThatExceptionOfType(ChannelRepository.ChannelNotFound.class).isThrownBy(() -> repository.get("foobar"));
+        }
+
+        @Nested class given_one_channel_is_added {
             private Channel channel;
 
             @BeforeEach
@@ -57,6 +60,11 @@ class ChannelRepositoryTests {
             void then_the_channel_is_stored_in_the_repository() {
                 assertThat(repository.all()).contains(channel);
                 assertThat(repository.contains(channel.getKey())).isTrue();
+            }
+
+            @Test
+            void then_get_returns_the_channel_by_key() {
+                assertThat(repository.get(channel.getKey())).isNotNull();
             }
 
             @Nested class when_a_channel_with_the_same_key_is_added {

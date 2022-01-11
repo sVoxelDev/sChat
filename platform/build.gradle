@@ -29,6 +29,8 @@ dependencies {
     implementation 'org.spongepowered:configurate-yaml:4.1.2'
 
     testImplementation(testFixtures(project(':core')))
+
+    testFixturesImplementation(testFixtures(project(':core')))
     testFixturesImplementation 'org.spongepowered:configurate-yaml:4.1.2'
     testFixturesImplementation 'cloud.commandframework:cloud-core:1.6.1'
     testFixturesImplementation 'org.apache.commons:commons-lang3:3.12.0'

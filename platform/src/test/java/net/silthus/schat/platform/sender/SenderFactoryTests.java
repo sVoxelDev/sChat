@@ -17,38 +17,37 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.channel;
+package net.silthus.schat.platform.sender;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import net.silthus.schat.platform.FakeSenderFactory;
+import net.silthus.schat.platform.TestPlayer;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
-final class InMemoryChannelRepository implements ChannelRepository {
+import static org.assertj.core.api.Assertions.assertThat;
 
-    private final Map<String, Channel> channels = new HashMap<>();
+class SenderFactoryTests {
 
-    @Override
-    public List<Channel> all() {
-        return List.copyOf(channels.values());
+    private FakeSenderFactory factory;
+
+    @BeforeEach
+    void setUp() {
+        factory = new FakeSenderFactory();
     }
 
-    @Override
-    public Channel get(String key) {
-        if (!contains(key))
-            throw new ChannelNotFound();
-        return channels.get(key);
-    }
+    @Nested class given_player {
 
-    @Override
-    public void add(Channel channel) {
-        if (channels.containsKey(channel.getKey()))
-            throw new DuplicateChannel();
-        this.channels.put(channel.getKey(), channel);
-    }
+        private TestPlayer player;
 
-    @Override
-    public boolean contains(String key) {
-        return channels.containsKey(key);
-    }
+        @BeforeEach
+        void setUp() {
+            player = new TestPlayer();
+        }
 
+        @Test
+        void when_getSender_is_called_then_factory_uses_player_identity() {
+            assertThat(factory.getSender(player).getIdentity()).isEqualTo(player.getIdentity());
+        }
+    }
 }

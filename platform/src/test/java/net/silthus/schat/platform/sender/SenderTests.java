@@ -17,14 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.platform.sender;
 
-import net.kyori.adventure.platform.AudienceProvider;
+import net.silthus.schat.chatter.MessageHandler;
+import net.silthus.schat.chatter.PermissionHandler;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.ui.View;
-import net.silthus.schat.user.PermissionHandler;
-import net.silthus.schat.user.User;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -32,7 +31,6 @@ import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.IdentityHelper.randomIdentity;
 import static net.silthus.schat.TestHelper.assertNPE;
-import static net.silthus.schat.UserHelper.mockAudienceProvider;
 import static net.silthus.schat.message.Message.emptyMessage;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,36 +38,40 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-class UserTests {
+class SenderTests {
 
-    private User user;
+    private Sender sender;
     private PermissionHandler permissionHandler;
-    private AudienceProvider audienceProvider;
+    private MessageHandler messageHandler;
 
     @BeforeEach
     void setUp() {
         permissionHandler = mock(PermissionHandler.class);
-        audienceProvider = mockAudienceProvider();
-        user = spy(new User(randomIdentity(), permissionHandler, audienceProvider));
+        messageHandler = mock(MessageHandler.class);
+        sender = createSender(randomIdentity());
+    }
+
+    private Sender createSender(Identity identity) {
+        return new Sender(identity, permissionHandler, messageHandler);
     }
 
     @NotNull
     private Message sendMessage() {
         final Message message = emptyMessage();
-        user.sendMessage(message);
+        sender.sendMessage(message);
         return message;
     }
 
     @NotNull
     private View setView(View view) {
-        user.setView(view);
+        sender.setView(view);
         return view;
     }
 
     @Test
     void two_users_given_the_same_identity_are_equal() {
         final Identity identity = randomIdentity();
-        assertThat(new User(identity, permissionHandler, audienceProvider)).isEqualTo(new User(identity, permissionHandler, audienceProvider));
+        assertThat(createSender(identity)).isEqualTo(createSender(identity));
     }
 
     @Nested class when_sendMessage_is_called {
@@ -78,51 +80,46 @@ class UserTests {
 
         @BeforeEach
         void setUp() {
-            view = setView(spy(new View(user)));
+            view = setView(spy(new View(sender)));
             message = sendMessage();
         }
 
         @Test
-        void then_sendRawMessage_is_invoked() {
-            verify(user).sendRawMessage(any());
+        void then_message_handler_is_invoked() {
+            verify(messageHandler).sendMessage(any());
         }
 
         @Test
         void then_message_is_added_to_user_message_cache() {
-            assertThat(user.getMessages()).contains(message);
+            assertThat(sender.getMessages()).contains(message);
         }
 
         @Test
         void twice_then_message_is_cached_only_once() {
-            user.sendMessage(message);
-            assertThat(user.getMessages()).containsOnlyOnce(message);
+            sender.sendMessage(message);
+            assertThat(sender.getMessages()).containsOnlyOnce(message);
         }
 
         @Test
         void then_render_view_is_called() {
             verify(view).render();
         }
-
-        @Test
-        void then_audience_provider_is_invoked() {
-            verify(audienceProvider).player(user.getUniqueId());
-        }
     }
 
     @Test
     void given_a_new_user_getView_is_not_null() {
-        assertThat(user.getView()).isNotNull();
+        assertThat(sender.getView()).isNotNull();
     }
 
     @Test
     @SuppressWarnings("ConstantConditions")
     void when_setView_is_given_null_an_npe_is_thrown() {
-        assertNPE(() -> user.setView(null));
+        assertNPE(() -> sender.setView(null));
     }
 
     @Test
     void when_hasPermission_is_called_then_permission_handler_is_invoked() {
-        user.hasPermission("foobar");
+        sender.hasPermission("foobar");
         verify(permissionHandler).hasPermission("foobar");
     }
 }

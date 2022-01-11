@@ -17,21 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.ui;
 
+import net.silthus.schat.MessageHelper;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.policies.ChannelPolicies;
-import net.silthus.schat.ui.Ui;
-import net.silthus.schat.user.User;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.ChannelHelper.randomChannel;
+import static net.silthus.schat.ChatterMock.randomChatter;
 import static net.silthus.schat.TestHelper.assertNPE;
-import static net.silthus.schat.UserHelper.randomUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,35 +43,35 @@ import static org.mockito.Mockito.when;
 class UiTests {
 
     private Ui ui;
-    private User user;
+    private Chatter chatter;
     private ChannelPolicies policies;
 
     @BeforeEach
     void setUp() {
         policies = mock(ChannelPolicies.class);
         mockCanJoin(true);
-        user = spy(randomUser());
+        chatter = spy(randomChatter());
         ui = new Ui(policies);
     }
 
     private void assertJoinedChannel(Channel channel) {
-        assertThat(channel.getTargets()).contains(user);
+        assertThat(channel.getTargets()).contains(chatter);
     }
 
     @NotNull
     private Message chat() {
-        return ui.chat(user, MessageHelper.randomText());
+        return ui.chat(chatter, MessageHelper.randomText());
     }
 
     @NotNull
     private Channel joinChannel() {
         final Channel channel = randomChannel();
-        ui.joinChannel(user, channel);
+        ui.joinChannel(chatter, channel);
         return channel;
     }
 
     private Channel join(Channel channel) {
-        ui.joinChannel(user, channel);
+        ui.joinChannel(chatter, channel);
         return channel;
     }
 
@@ -89,7 +89,7 @@ class UiTests {
 
     @NotNull
     private Channel setActive(Channel channel) {
-        ui.setActiveChannel(user, channel);
+        ui.setActiveChannel(chatter, channel);
         return channel;
     }
 
@@ -107,7 +107,7 @@ class UiTests {
         @SuppressWarnings("ConstantConditions")
         void given_null_user_or_channel_throws() {
             assertNPE(() -> ui.joinChannel(null, null));
-            assertNPE(() -> ui.joinChannel(user, null));
+            assertNPE(() -> ui.joinChannel(chatter, null));
         }
 
         @Test
@@ -131,7 +131,7 @@ class UiTests {
             @Test
             void adds_channel_to_user() {
                 final Channel channel = joinChannel();
-                assertThat(user.getChannels()).contains(channel);
+                assertThat(chatter.getChannels()).contains(channel);
             }
         }
 
@@ -154,14 +154,14 @@ class UiTests {
         @SuppressWarnings("ConstantConditions")
         void given_null_inputs_throws() {
             assertNPE(() -> ui.setActiveChannel(null, null));
-            assertNPE(() -> ui.setActiveChannel(user, null));
+            assertNPE(() -> ui.setActiveChannel(chatter, null));
         }
 
         @Test
         void when_not_joined_channel_joins_channel() {
             final Channel channel = randomChannel();
             assertJoinedChannel(setActive(channel));
-            assertThat(user.getActiveChannel()).isPresent().get().isEqualTo(channel);
+            assertThat(chatter.getActiveChannel()).isPresent().get().isEqualTo(channel);
         }
     }
 
@@ -172,7 +172,7 @@ class UiTests {
         @SuppressWarnings("ConstantConditions")
         void given_null_inputs_throws() {
             assertNPE(() -> ui.chat(null, null));
-            assertNPE(() -> ui.chat(user, null));
+            assertNPE(() -> ui.chat(chatter, null));
         }
 
         @Test
@@ -198,7 +198,7 @@ class UiTests {
 
             @Test
             void then_sets_message_source_to_user() {
-                assertThat(chat().getSource()).isEqualTo(user);
+                assertThat(chat().getSource()).isEqualTo(chatter);
             }
 
             @Test

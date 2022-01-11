@@ -21,28 +21,37 @@ package net.silthus.schat.ui;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.settings.Configured;
+import net.silthus.schat.settings.Setting;
+import net.silthus.schat.settings.Settings;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.join;
 import static net.kyori.adventure.text.Component.newline;
+import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.JoinConfiguration.newlines;
-import static net.silthus.schat.ui.ViewConfig.ACTIVE_CHANNEL_FORMAT;
-import static net.silthus.schat.ui.ViewConfig.CHANNEL_JOIN_CONFIG;
-import static net.silthus.schat.ui.ViewConfig.MESSAGE_SOURCE_FORMAT;
-import static net.silthus.schat.ui.ViewConfig.defaultViewConfig;
+import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
+import static net.silthus.schat.settings.Setting.setting;
+import static net.silthus.schat.ui.View.Config.ACTIVE_CHANNEL_FORMAT;
+import static net.silthus.schat.ui.View.Config.CHANNEL_JOIN_CONFIG;
+import static net.silthus.schat.ui.View.Config.MESSAGE_SOURCE_FORMAT;
+import static net.silthus.schat.ui.View.Config.defaultViewConfig;
 
 public class View {
 
     private final ViewModel model;
-    private final ViewConfig config;
+    private final Config config;
 
-    public View(@NonNull Chatter chatter, ViewConfig config) {
+    public View(@NonNull Chatter chatter, Config config) {
         this.model = new ViewModel(chatter);
         this.config = config;
     }
@@ -108,4 +117,46 @@ public class View {
             return channel.getDisplayName();
     }
 
+    @Getter
+    public static final class Config implements Configured {
+
+        public static final Setting<Format> ACTIVE_CHANNEL_FORMAT = setting(Format.class, "format.active_channel", name -> name.decorate(UNDERLINED));
+        public static final Setting<JoinConfiguration> CHANNEL_JOIN_CONFIG = setting(JoinConfiguration.class, "format.channel_join_config", JoinConfiguration.builder()
+            .prefix(text("| "))
+            .separator(text(" | "))
+            .suffix(text(" |"))
+            .build());
+        public static final Setting<Format> MESSAGE_SOURCE_FORMAT = setting(Format.class, "format.message_source", name -> name.append(text(": ")));
+
+        public static Config defaultViewConfig() {
+            return viewConfig().create();
+        }
+
+        public static Builder viewConfig() {
+            return new Builder();
+        }
+
+        private final Settings settings;
+
+        private Config(Builder builder) {
+            this.settings = builder.settings.create();
+        }
+
+        public static final class Builder implements Configured.Builder<Builder> {
+            private final Settings.Builder settings = Settings.settings();
+
+            private Builder() {
+            }
+
+            @Override
+            public @NotNull <V> View.Config.Builder set(@NonNull Setting<V> setting, @Nullable V value) {
+                this.settings.withStatic(setting, value);
+                return this;
+            }
+
+            public Config create() {
+                return new Config(this);
+            }
+        }
+    }
 }

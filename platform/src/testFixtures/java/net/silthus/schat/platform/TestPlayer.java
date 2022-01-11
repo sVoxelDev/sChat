@@ -17,10 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.user;
+package net.silthus.schat.platform;
 
-@FunctionalInterface
-public interface PermissionHandler {
+public class TestPlayer extends TestCommandSender {
 
-    boolean hasPermission(String permission);
+    public static TestPlayer randomPlayer() {
+        return new TestPlayer();
+    }
 }

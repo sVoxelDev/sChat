@@ -74,6 +74,8 @@ public abstract class Chatter implements MessageTarget, Identified {
         return List.copyOf(messages);
     }
 
+    public abstract boolean hasPermission(String permission);
+
     @Override
     public final void sendMessage(Message message) {
         messages.add(message);

@@ -20,25 +20,25 @@
 package net.silthus.schat.bukkit.adapter;
 
 import lombok.Getter;
-import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.silthus.schat.chatter.MessageHandler;
+import net.silthus.schat.chatter.PermissionHandler;
 import net.silthus.schat.identity.Identity;
-import net.silthus.schat.platform.UserFactory;
-import net.silthus.schat.user.PermissionHandler;
+import net.silthus.schat.platform.sender.SenderFactory;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.identity.Identity.identity;
 
-public final class BukkitUserFactory extends UserFactory<Player> {
+public final class BukkitSenderFactory extends SenderFactory<Player> {
 
     private static final @NotNull LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
 
     @Getter
     private final BukkitAudiences audienceProvider;
 
-    public BukkitUserFactory(BukkitAudiences audienceProvider) {
+    public BukkitSenderFactory(BukkitAudiences audienceProvider) {
         this.audienceProvider = audienceProvider;
     }
 
@@ -48,20 +48,20 @@ public final class BukkitUserFactory extends UserFactory<Player> {
     }
 
     @NotNull
-    protected Identity getIdentity(Player player) {
-        return identity(player.getUniqueId(),
-            player.getName(),
-            () -> LEGACY_SERIALIZER.deserialize(player.getDisplayName())
+    protected Identity getIdentity(Player sender) {
+        return identity(sender.getUniqueId(),
+            sender.getName(),
+            () -> LEGACY_SERIALIZER.deserialize(sender.getDisplayName())
         );
     }
 
     @Override
-    protected PermissionHandler getPermissionHandler(Player player) {
-        return player::hasPermission;
+    protected PermissionHandler getPermissionHandler(Player sender) {
+        return sender::hasPermission;
     }
 
     @Override
-    protected AudienceProvider getAudienceProvider(Player player) {
-        return audienceProvider;
+    protected MessageHandler getMessageHandler(Player sender) {
+        return message -> getAudienceProvider().player(sender).sendMessage(message);
     }
 }

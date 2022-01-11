@@ -20,8 +20,8 @@
 package net.silthus.schat;
 
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.policies.ChannelPolicies;
-import net.silthus.schat.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -38,20 +38,20 @@ import static org.mockito.Mockito.when;
 class PoliciesTests {
 
     private ChannelPolicies policies;
-    private User user;
+    private Chatter chatter;
 
     @BeforeEach
     void setUp() {
         policies = new ChannelPolicies();
-        user = mock(User.class);
+        chatter = mock(Chatter.class);
     }
 
     private void assertCanJoin(Channel channel, boolean expected) {
-        assertThat(policies.canJoinChannel(user, channel)).isEqualTo(expected);
+        assertThat(policies.canJoinChannel(chatter, channel)).isEqualTo(expected);
     }
 
     private void mockHasPermission(String permission) {
-        when(user.hasPermission(permission)).thenReturn(true);
+        when(chatter.hasPermission(permission)).thenReturn(true);
     }
 
     @Nested class given_protected_channel {
@@ -78,7 +78,7 @@ class PoliciesTests {
                 assertCanJoin(channel, true);
             }
 
-            @Nested class with_explicit_join_permission {
+            @Nested class given_explicit_join_permission {
                 @BeforeEach
                 void setUp() {
                     channel = channelWith(set(PROTECTED, true), set(JOIN_PERMISSION, "my-permission"));
