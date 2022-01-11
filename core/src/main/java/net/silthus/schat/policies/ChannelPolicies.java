@@ -20,16 +20,16 @@
 package net.silthus.schat.policies;
 
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.user.User;
+import net.silthus.schat.chatter.Chatter;
 
 public class ChannelPolicies {
 
     public ChannelPolicies() {
     }
 
-    public boolean canJoinChannel(User user, Channel channel) {
+    public boolean canJoinChannel(Chatter chatter, Channel channel) {
         if (!channel.get(Channel.PROTECTED))
             return true;
-        return user.hasPermission(channel.get(Channel.JOIN_PERMISSION));
+        return chatter.hasPermission(channel.get(Channel.JOIN_PERMISSION));
     }
 }

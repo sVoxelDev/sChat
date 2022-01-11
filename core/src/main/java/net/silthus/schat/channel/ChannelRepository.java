@@ -29,9 +29,14 @@ public interface ChannelRepository {
 
     List<Channel> all();
 
+    Channel get(String key) throws ChannelNotFound;
+
     void add(Channel channel);
 
     boolean contains(String key);
+
+    final class ChannelNotFound extends RuntimeException {
+    }
 
     final class DuplicateChannel extends RuntimeException {
     }

@@ -17,22 +17,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.bukkit;
+package net.silthus.schat.chatter;
 
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
-import net.silthus.schat.platform.SChatPlugin;
-import net.silthus.schat.platform.sender.SenderFactory;
+@FunctionalInterface
+public interface PermissionHandler {
 
-public final class SChatBukkitPlugin extends SChatPlugin {
-    private final SChatBukkitPluginBootstrap bootstrap;
-
-    SChatBukkitPlugin(SChatBukkitPluginBootstrap bootstrap) {
-        this.bootstrap = bootstrap;
-    }
-
-    @Override
-    protected SenderFactory<?> provideUserFactory() {
-        return new BukkitSenderFactory(BukkitAudiences.create(bootstrap));
-    }
+    boolean hasPermission(String permission);
 }

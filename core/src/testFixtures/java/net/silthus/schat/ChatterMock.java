@@ -19,30 +19,39 @@
 
 package net.silthus.schat;
 
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.platform.AudienceProvider;
-import net.silthus.schat.user.PermissionHandler;
-import net.silthus.schat.user.User;
+import lombok.Getter;
+import lombok.Setter;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.MessageHandler;
+import net.silthus.schat.chatter.PermissionHandler;
+import net.silthus.schat.identity.Identity;
+import net.silthus.schat.message.Message;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.IdentityHelper.randomIdentity;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-public final class UserHelper {
+@Getter
+@Setter
+public class ChatterMock extends Chatter {
 
-    private UserHelper() {
+    public static @NotNull Chatter randomChatter() {
+        return new ChatterMock(randomIdentity());
     }
 
-    @NotNull
-    public static User randomUser() {
-        return new User(randomIdentity(), mock(PermissionHandler.class), mockAudienceProvider());
+    private PermissionHandler permissionHandler = permission -> false;
+    private MessageHandler messageHandler = message -> {};
+
+    ChatterMock(Identity identity) {
+        super(identity);
     }
 
-    public static AudienceProvider mockAudienceProvider() {
-        final AudienceProvider audienceProvider = mock(AudienceProvider.class);
-        when(audienceProvider.player(any())).thenReturn(mock(Audience.class));
-        return audienceProvider;
+    @Override
+    public boolean hasPermission(String permission) {
+        return permissionHandler.hasPermission(permission);
+    }
+
+    @Override
+    protected void processMessage(Message message) {
+        messageHandler.sendMessage(message.getText());
     }
 }

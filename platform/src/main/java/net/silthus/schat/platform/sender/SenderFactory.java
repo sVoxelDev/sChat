@@ -17,34 +17,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform;
+package net.silthus.schat.platform.sender;
 
-import net.kyori.adventure.platform.AudienceProvider;
+import net.silthus.schat.chatter.MessageHandler;
+import net.silthus.schat.chatter.PermissionHandler;
 import net.silthus.schat.identity.Identity;
-import net.silthus.schat.user.PermissionHandler;
-import net.silthus.schat.user.User;
 
-public abstract class UserFactory<T> {
+public abstract class SenderFactory<T> {
 
-    public final User getUser(T player) {
-        return new User(getIdentity(player),
-            getPermissionHandler(player),
-            getAudienceProvider(player)
+    public final Sender getSender(T sender) {
+        return new Sender(getIdentity(sender),
+            getPermissionHandler(sender),
+            getMessageHandler(sender)
         );
     }
 
-    public final void checkPlayerType(Class<?> playerType) {
-        if (!getType().isAssignableFrom(playerType))
+    public final void checkSenderType(Class<?> senderType) {
+        if (!getType().isAssignableFrom(senderType))
             throw new InvalidPlayerType();
     }
 
     protected abstract Class<T> getType();
 
-    protected abstract Identity getIdentity(T player);
+    protected abstract Identity getIdentity(T sender);
 
-    protected abstract PermissionHandler getPermissionHandler(T player);
+    protected abstract PermissionHandler getPermissionHandler(T sender);
 
-    protected abstract AudienceProvider getAudienceProvider(T player);
+    protected abstract MessageHandler getMessageHandler(T sender);
 
     public static class InvalidPlayerType extends RuntimeException {
     }

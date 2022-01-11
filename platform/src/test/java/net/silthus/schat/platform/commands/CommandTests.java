@@ -17,34 +17,42 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform;
+package net.silthus.schat.platform.commands;
 
 import cloud.commandframework.CommandManager;
 import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.arguments.parser.StandardParameters;
 import cloud.commandframework.execution.CommandResult;
 import cloud.commandframework.meta.CommandMeta;
-import net.silthus.schat.platform.commands.ChannelCommands;
-import net.silthus.schat.user.User;
+import io.leangen.geantyref.TypeToken;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.platform.commands.parser.ChannelParser;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.UserHelper.randomUser;
-import static net.silthus.schat.platform.CommandTestUtils.createCommandManager;
+import static net.silthus.schat.ChatterMock.randomChatter;
+import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.platform.commands.CommandTestUtils.createCommandManager;
 
 class CommandTests {
 
+    private final ChannelRepository channelRepository = createInMemoryChannelRepository();
+
     @Test
     void name() {
-        final CommandManager<User> commandManager = createCommandManager();
-        final AnnotationParser<User> parser = new AnnotationParser<>(
+        final CommandManager<Chatter> commandManager = createCommandManager();
+        final AnnotationParser<Chatter> parser = new AnnotationParser<>(
             commandManager,
-            User.class,
+            Chatter.class,
             p -> CommandMeta.simple()
                 .with(CommandMeta.DESCRIPTION, p.get(StandardParameters.DESCRIPTION, "No description"))
                 .build()
         );
+        commandManager.getParserRegistry().registerParserSupplier(TypeToken.get(Channel.class), parserParameters -> new ChannelParser(channelRepository));
         parser.parse(new ChannelCommands());
 
-        final CommandResult<User> result = commandManager.executeCommand(randomUser(), "ch global").join();
+        channelRepository.add(Channel.createChannel("global"));
+        final CommandResult<Chatter> result = commandManager.executeCommand(randomChatter(), "ch global").join();
     }
 }

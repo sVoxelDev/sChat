@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform;
+package net.silthus.schat.platform.commands;
 
 import cloud.commandframework.CommandManager;
 import cloud.commandframework.CommandTree;
@@ -25,7 +25,7 @@ import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.internal.CommandRegistrationHandler;
 import cloud.commandframework.meta.SimpleCommandMeta;
 import java.util.function.Function;
-import net.silthus.schat.user.User;
+import net.silthus.schat.chatter.Chatter;
 import org.mockito.Mockito;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -45,10 +45,10 @@ public final class CommandTestUtils {
     private CommandTestUtils() {
     }
 
-    private abstract static class TestCommandSenderCommandManager extends CommandManager<User> {
+    private abstract static class TestCommandSenderCommandManager extends CommandManager<Chatter> {
 
         protected TestCommandSenderCommandManager(
-            final Function<CommandTree<User>, CommandExecutionCoordinator<User>> commandExecutionCoordinator,
+            final Function<CommandTree<Chatter>, CommandExecutionCoordinator<Chatter>> commandExecutionCoordinator,
             final CommandRegistrationHandler commandRegistrationHandler
         ) {
             super(commandExecutionCoordinator, commandRegistrationHandler);
@@ -56,8 +56,8 @@ public final class CommandTestUtils {
 
     }
 
-    public static CommandManager<User> createCommandManager() {
-        final CommandManager<User> manager = mock(
+    public static CommandManager<Chatter> createCommandManager() {
+        final CommandManager<Chatter> manager = mock(
             TestCommandSenderCommandManager.class,
             withSettings().useConstructor(
                 CommandExecutionCoordinator.simpleCoordinator(),

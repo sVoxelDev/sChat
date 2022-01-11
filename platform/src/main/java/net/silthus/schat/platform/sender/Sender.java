@@ -17,46 +17,43 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.user;
+package net.silthus.schat.platform.sender;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import net.kyori.adventure.platform.AudienceProvider;
-import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.MessageHandler;
+import net.silthus.schat.chatter.PermissionHandler;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.ui.View;
 
 @Setter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public class User extends Chatter {
+public final class Sender extends Chatter {
 
     private final PermissionHandler permissionHandler;
-    private final AudienceProvider audienceProvider;
+    private final MessageHandler messageHandler;
 
     @Getter
     private @NonNull View view;
 
-    public User(Identity identity, PermissionHandler permissionHandler, AudienceProvider audienceProvider) {
+    public Sender(Identity identity, PermissionHandler permissionHandler, MessageHandler messageHandler) {
         super(identity);
         this.permissionHandler = permissionHandler;
-        this.audienceProvider = audienceProvider;
+        this.messageHandler = messageHandler;
         this.view = new View(this);
     }
 
+    @Override
     public boolean hasPermission(String permission) {
         return permissionHandler.hasPermission(permission);
     }
 
     @Override
     protected void processMessage(Message message) {
-        sendRawMessage(getView().render());
-    }
-
-    public void sendRawMessage(Component message) {
-        audienceProvider.player(getUniqueId()).sendMessage(message);
+        messageHandler.sendMessage(getView().render());
     }
 }

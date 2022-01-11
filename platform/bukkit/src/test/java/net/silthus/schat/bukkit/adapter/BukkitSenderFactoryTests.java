@@ -17,13 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.bukkit;
+package net.silthus.schat.bukkit.adapter;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.bukkit.adapter.BukkitUserFactory;
+import net.silthus.schat.bukkit.BukkitTests;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.user.User;
+import net.silthus.schat.platform.sender.Sender;
 import org.bukkit.ChatColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -35,26 +35,26 @@ import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BukkitUserFactoryTests extends BukkitTests {
+class BukkitSenderFactoryTests extends BukkitTests {
 
-    private BukkitUserFactory factory;
+    private BukkitSenderFactory factory;
     private PlayerMock player;
 
     @BeforeEach
     void setUp() {
-        factory = new BukkitUserFactory(audiences);
+        factory = new BukkitSenderFactory(audiences);
         player = server.addPlayer();
     }
 
-    private User user() {
-        return factory.getUser(player);
+    private Sender user() {
+        return factory.getSender(player);
     }
 
     private void assertDisplayName(Component name) {
         assertThat(user().getDisplayName()).isEqualTo(name);
     }
 
-    @Nested class getUser {
+    @Nested class getSender {
 
         @Test
         void is_not_null() {

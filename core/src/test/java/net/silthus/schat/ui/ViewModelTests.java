@@ -21,8 +21,8 @@ package net.silthus.schat.ui;
 
 import lombok.SneakyThrows;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.user.User;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -30,36 +30,36 @@ import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.ChannelHelper.channelWith;
-import static net.silthus.schat.UserHelper.randomUser;
+import static net.silthus.schat.ChatterMock.randomChatter;
 import static net.silthus.schat.channel.Channel.PRIORITY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ViewModelTests {
 
-    private User user;
+    private Chatter chatter;
     private ViewModel model;
 
     @BeforeEach
     void setUp() {
-        user = randomUser();
-        model = new ViewModel(user);
+        chatter = randomChatter();
+        model = new ViewModel(chatter);
     }
 
     private Channel join(Channel channel) {
-        user.addChannel(channel);
+        chatter.addChannel(channel);
         return channel;
     }
 
     @SneakyThrows
     @NotNull
     private Message createMessage() {
-        final Message one = Message.message().to(user).create();
+        final Message one = Message.message().to(chatter).create();
         Thread.sleep(1L);
         return one;
     }
 
     private void sendMessage(Message message) {
-        user.sendMessage(message);
+        chatter.sendMessage(message);
     }
 
     @Nested class given_empty_view_model {

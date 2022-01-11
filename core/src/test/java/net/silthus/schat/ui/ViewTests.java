@@ -24,9 +24,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.user.User;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -35,27 +35,27 @@ import org.junit.jupiter.api.Test;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.silthus.schat.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.ChannelHelper.channelWith;
+import static net.silthus.schat.ChatterMock.randomChatter;
 import static net.silthus.schat.MessageHelper.randomMessage;
 import static net.silthus.schat.TestHelper.assertNPE;
-import static net.silthus.schat.UserHelper.randomUser;
 import static net.silthus.schat.channel.Channel.PRIORITY;
 import static net.silthus.schat.channel.Channel.createChannel;
-import static net.silthus.schat.ui.ViewConfig.ACTIVE_CHANNEL_FORMAT;
-import static net.silthus.schat.ui.ViewConfig.CHANNEL_JOIN_CONFIG;
-import static net.silthus.schat.ui.ViewConfig.MESSAGE_SOURCE_FORMAT;
-import static net.silthus.schat.ui.ViewConfig.viewConfig;
+import static net.silthus.schat.ui.View.Config.ACTIVE_CHANNEL_FORMAT;
+import static net.silthus.schat.ui.View.Config.CHANNEL_JOIN_CONFIG;
+import static net.silthus.schat.ui.View.Config.MESSAGE_SOURCE_FORMAT;
+import static net.silthus.schat.ui.View.Config.viewConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ViewTests {
 
     private static final @NotNull MiniMessage COMPONENT_SERIALIZER = MiniMessage.miniMessage();
-    private User user;
+    private Chatter chatter;
     private View view;
 
     @BeforeEach
     void setUp() {
-        user = randomUser();
-        view = new View(user);
+        chatter = randomChatter();
+        view = new View(chatter);
     }
 
     @NotNull
@@ -66,7 +66,7 @@ class ViewTests {
     @SneakyThrows
     @NotNull
     private Message addMessage(Message message) {
-        user.sendMessage(message);
+        chatter.sendMessage(message);
         Thread.sleep(1L); // required to order messages by time
         return message;
     }
@@ -125,7 +125,7 @@ class ViewTests {
 
             @Test
             void uses_format() {
-                view = new View(user, viewConfig().set(MESSAGE_SOURCE_FORMAT, component -> Component.text("<").append(component).append(Component.text("> "))).create());
+                view = new View(chatter, viewConfig().set(MESSAGE_SOURCE_FORMAT, component -> Component.text("<").append(component).append(Component.text("> "))).create());
                 assertViewRenders("<Bob> Hi");
             }
         }
@@ -151,7 +151,7 @@ class ViewTests {
         @BeforeEach
         void setUp() {
             channel = createChannel("test");
-            user.addChannel(channel);
+            chatter.addChannel(channel);
         }
 
         @Test
@@ -163,7 +163,7 @@ class ViewTests {
 
             @BeforeEach
             void setUp() {
-                user.setActiveChannel(channel);
+                chatter.setActiveChannel(channel);
             }
 
             @Test
@@ -174,7 +174,7 @@ class ViewTests {
             @Nested class and_different_format_is_used {
                 @BeforeEach
                 void setUp() {
-                    view = new View(user, viewConfig().set(ACTIVE_CHANNEL_FORMAT, component -> ACTIVE_CHANNEL_FORMAT.getDefaultValue().format(component).color(GREEN)).create());
+                    view = new View(chatter, viewConfig().set(ACTIVE_CHANNEL_FORMAT, component -> ACTIVE_CHANNEL_FORMAT.getDefaultValue().format(component).color(GREEN)).create());
                 }
 
                 @Test
@@ -189,8 +189,8 @@ class ViewTests {
 
         @BeforeEach
         void setUp() {
-            user.addChannel(createChannel("one"));
-            user.addChannel(createChannel("two"));
+            chatter.addChannel(createChannel("one"));
+            chatter.addChannel(createChannel("two"));
         }
 
         @Test
@@ -201,8 +201,8 @@ class ViewTests {
         @Nested class with_different_priorities {
             @BeforeEach
             void setUp() {
-                user.addChannel(channelWith("zzz", PRIORITY, 1));
-                user.addChannel(createChannel("test"));
+                chatter.addChannel(channelWith("zzz", PRIORITY, 1));
+                chatter.addChannel(createChannel("test"));
             }
 
             @Test
@@ -215,7 +215,7 @@ class ViewTests {
 
             @BeforeEach
             void setUp() {
-                view = new View(user, viewConfig().set(CHANNEL_JOIN_CONFIG, JoinConfiguration.builder().separator(Component.text(" - ")).build()).create());
+                view = new View(chatter, viewConfig().set(CHANNEL_JOIN_CONFIG, JoinConfiguration.builder().separator(Component.text(" - ")).build()).create());
             }
 
             @Test
@@ -228,8 +228,8 @@ class ViewTests {
     @Nested class given_messages_and_channels {
         @BeforeEach
         void setUp() {
-            user.addChannel(createChannel("aaa"));
-            user.setActiveChannel(channelWith("zzz", set(PRIORITY, 10)));
+            chatter.addChannel(createChannel("aaa"));
+            chatter.setActiveChannel(channelWith("zzz", set(PRIORITY, 10)));
             addMessage("No Source!");
             addMessageWithSource("Player", "Hey");
             addMessageWithSource("Player2", "Hello");

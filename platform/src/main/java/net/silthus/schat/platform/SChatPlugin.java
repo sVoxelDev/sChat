@@ -20,20 +20,21 @@
 package net.silthus.schat.platform;
 
 import lombok.NonNull;
+import net.silthus.schat.platform.sender.SenderFactory;
 
 public abstract class SChatPlugin {
 
-    private UserFactory<?> userFactory;
+    private SenderFactory<?> senderFactory;
 
     public final void enable() {
-        userFactory = provideUserFactory();
+        senderFactory = provideUserFactory();
     }
 
-    protected abstract UserFactory<?> provideUserFactory();
+    protected abstract SenderFactory<?> provideUserFactory();
 
     @SuppressWarnings("unchecked")
-    public final <T> UserFactory<T> getUserFactory(@NonNull Class<T> playerClass) {
-        userFactory.checkPlayerType(playerClass);
-        return (UserFactory<T>) userFactory;
+    public final <T> SenderFactory<T> getUserFactory(@NonNull Class<T> playerClass) {
+        senderFactory.checkSenderType(playerClass);
+        return (SenderFactory<T>) senderFactory;
     }
 }

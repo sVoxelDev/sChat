@@ -17,11 +17,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.channel;
 
 import java.util.List;
 import net.kyori.adventure.text.TextComponent;
-import net.silthus.schat.channel.Channel;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import org.junit.jupiter.api.BeforeEach;

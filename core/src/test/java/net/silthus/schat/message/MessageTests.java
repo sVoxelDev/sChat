@@ -17,19 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.message;
 
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identity;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.silthus.schat.ChatterMock.randomChatter;
 import static net.silthus.schat.TestHelper.assertNPE;
-import static net.silthus.schat.UserHelper.randomUser;
 import static net.silthus.schat.message.Message.emptyMessage;
 import static net.silthus.schat.message.Message.message;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -110,6 +108,6 @@ class MessageTests {
 
     @Test
     void given_message_with_one_user_and_one_channel_sends_message_to_both() {
-        assertMessageSent(spy(randomUser()), mock(Channel.class));
+        assertMessageSent(spy(randomChatter()), mock(Channel.class));
     }
 }

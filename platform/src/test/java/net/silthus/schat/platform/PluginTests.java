@@ -19,18 +19,12 @@
 
 package net.silthus.schat.platform;
 
-import lombok.Getter;
-import lombok.Setter;
-import net.kyori.adventure.platform.AudienceProvider;
-import net.silthus.schat.identity.Identity;
-import net.silthus.schat.user.PermissionHandler;
+import net.silthus.schat.platform.sender.SenderFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.IdentityHelper.randomIdentity;
 import static net.silthus.schat.TestHelper.assertNPE;
-import static net.silthus.schat.UserHelper.mockAudienceProvider;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -50,7 +44,7 @@ class PluginTests {
                 plugin.enable();
             }
 
-            @Nested class then_getUserFactory {
+            @Nested class then_getSenderFactory {
 
                 @Test
                 void is_not_null() {
@@ -65,7 +59,7 @@ class PluginTests {
 
                 @Test
                 void given_invalid_player_class_throws() {
-                    assertThatExceptionOfType(UserFactory.InvalidPlayerType.class).isThrownBy(() -> plugin.getUserFactory(String.class));
+                    assertThatExceptionOfType(SenderFactory.InvalidPlayerType.class).isThrownBy(() -> plugin.getUserFactory(String.class));
                 }
 
                 @Test
@@ -79,47 +73,16 @@ class PluginTests {
 
     private static class TestPlugin extends SChatPlugin {
 
-        private final FakeUserFactory userFactory;
+        private final FakeSenderFactory userFactory;
 
         TestPlugin() {
-            userFactory = new FakeUserFactory();
+            userFactory = new FakeSenderFactory();
         }
 
         @Override
-        protected UserFactory<?> provideUserFactory() {
+        protected SenderFactory<?> provideUserFactory() {
             return userFactory;
         }
     }
 
-    private static class FakeUserFactory extends UserFactory<TestCommandSender> {
-        @Override
-        protected Class<TestCommandSender> getType() {
-            return TestCommandSender.class;
-        }
-
-        @Override
-        protected Identity getIdentity(TestCommandSender player) {
-            return player.getIdentity();
-        }
-
-        @Override
-        protected PermissionHandler getPermissionHandler(TestCommandSender player) {
-            return player.getPermissionHandler();
-        }
-
-        @Override
-        protected AudienceProvider getAudienceProvider(TestCommandSender player) {
-            return mockAudienceProvider();
-        }
-    }
-
-    @Getter
-    @Setter
-    private static class TestCommandSender {
-        private final Identity identity = randomIdentity();
-        private PermissionHandler permissionHandler = permission -> false;
-    }
-
-    private static class TestPlayer extends TestCommandSender {
-    }
 }

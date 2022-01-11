@@ -23,9 +23,9 @@ import java.util.Optional;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.policies.ChannelPolicies;
-import net.silthus.schat.user.User;
 
 import static net.silthus.schat.message.Message.message;
 
@@ -37,24 +37,24 @@ public class Ui {
         this.channelPolicies = channelPolicies;
     }
 
-    public final void joinChannel(@NonNull User user, @NonNull Channel channel) throws JoinChannelError {
-        if (!channelPolicies.canJoinChannel(user, channel)) {
+    public final void joinChannel(@NonNull Chatter chatter, @NonNull Channel channel) throws JoinChannelError {
+        if (!channelPolicies.canJoinChannel(chatter, channel)) {
             throw new JoinChannelError();
         }
-        channel.addTarget(user);
-        user.addChannel(channel);
+        channel.addTarget(chatter);
+        chatter.addChannel(channel);
     }
 
-    public final void setActiveChannel(@NonNull User user, @NonNull Channel channel) {
-        joinChannel(user, channel);
-        user.setActiveChannel(channel);
+    public final void setActiveChannel(@NonNull Chatter chatter, @NonNull Channel channel) {
+        joinChannel(chatter, channel);
+        chatter.setActiveChannel(channel);
     }
 
-    public final Message chat(@NonNull User user, @NonNull Component text) throws NoActiveChannel {
-        final Optional<Channel> channel = user.getActiveChannel();
+    public final Message chat(@NonNull Chatter chatter, @NonNull Component text) throws NoActiveChannel {
+        final Optional<Channel> channel = chatter.getActiveChannel();
         if (channel.isEmpty())
             throw new NoActiveChannel();
-        return message(text).source(user).to(channel.get()).type(Message.Type.CHAT).send();
+        return message(text).source(chatter).to(channel.get()).type(Message.Type.CHAT).send();
     }
 
     public static final class JoinChannelError extends RuntimeException {

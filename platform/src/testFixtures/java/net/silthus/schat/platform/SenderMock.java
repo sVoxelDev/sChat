@@ -17,38 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.channel;
+package net.silthus.schat.platform;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import net.silthus.schat.identity.Identity;
 
-final class InMemoryChannelRepository implements ChannelRepository {
-
-    private final Map<String, Channel> channels = new HashMap<>();
-
-    @Override
-    public List<Channel> all() {
-        return List.copyOf(channels.values());
+public class SenderMock {
+    public SenderMock(Identity identity) {
     }
-
-    @Override
-    public Channel get(String key) {
-        if (!contains(key))
-            throw new ChannelNotFound();
-        return channels.get(key);
-    }
-
-    @Override
-    public void add(Channel channel) {
-        if (channels.containsKey(channel.getKey()))
-            throw new DuplicateChannel();
-        this.channels.put(channel.getKey(), channel);
-    }
-
-    @Override
-    public boolean contains(String key) {
-        return channels.containsKey(key);
-    }
-
 }
