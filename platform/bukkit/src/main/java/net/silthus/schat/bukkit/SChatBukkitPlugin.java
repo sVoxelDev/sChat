@@ -21,10 +21,10 @@ package net.silthus.schat.bukkit;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
-import net.silthus.schat.platform.SChatPlugin;
+import net.silthus.schat.platform.AbstractSChatPlugin;
 import net.silthus.schat.platform.sender.SenderFactory;
 
-public final class SChatBukkitPlugin extends SChatPlugin {
+public final class SChatBukkitPlugin extends AbstractSChatPlugin {
     private final SChatBukkitPluginBootstrap bootstrap;
 
     SChatBukkitPlugin(SChatBukkitPluginBootstrap bootstrap) {

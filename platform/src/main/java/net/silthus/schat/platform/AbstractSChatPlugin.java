@@ -19,13 +19,37 @@
 
 package net.silthus.schat.platform;
 
+import lombok.Getter;
 import lombok.NonNull;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.platform.sender.SenderFactory;
+import org.jetbrains.annotations.ApiStatus;
 
-public interface SChatPlugin {
+import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 
-    ChannelRepository getChannelRepository();
+@Getter
+public abstract class AbstractSChatPlugin implements SChatPlugin {
 
-    <T> SenderFactory<T> getUserFactory(@NonNull Class<T> playerClass);
+    private ChannelRepository channelRepository;
+    private SenderFactory<?> senderFactory;
+
+    public final void enable() {
+        senderFactory = provideUserFactory();
+
+        channelRepository = provideChannelRepository();
+    }
+
+    @ApiStatus.OverrideOnly
+    protected ChannelRepository provideChannelRepository() {
+        return createInMemoryChannelRepository();
+    }
+
+    protected abstract SenderFactory<?> provideUserFactory();
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public final <T> SenderFactory<T> getUserFactory(@NonNull Class<T> playerClass) {
+        senderFactory.checkSenderType(playerClass);
+        return (SenderFactory<T>) senderFactory;
+    }
 }

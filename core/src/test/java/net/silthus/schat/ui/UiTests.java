@@ -80,7 +80,7 @@ class UiTests {
     }
 
     private void assertJoinError() {
-        assertThatExceptionOfType(Ui.JoinChannelError.class).isThrownBy(this::joinChannel);
+        assertThatExceptionOfType(JoinChannel.Error.class).isThrownBy(this::joinChannel);
     }
 
     private void mockCanJoin(boolean result) {
