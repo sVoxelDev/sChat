@@ -151,7 +151,7 @@ class ViewTests {
         @BeforeEach
         void setUp() {
             channel = createChannel("test");
-            chatter.addChannel(channel);
+            chatter.join(channel);
         }
 
         @Test
@@ -189,8 +189,8 @@ class ViewTests {
 
         @BeforeEach
         void setUp() {
-            chatter.addChannel(createChannel("one"));
-            chatter.addChannel(createChannel("two"));
+            chatter.join(createChannel("one"));
+            chatter.join(createChannel("two"));
         }
 
         @Test
@@ -201,8 +201,8 @@ class ViewTests {
         @Nested class with_different_priorities {
             @BeforeEach
             void setUp() {
-                chatter.addChannel(channelWith("zzz", PRIORITY, 1));
-                chatter.addChannel(createChannel("test"));
+                chatter.join(channelWith("zzz", PRIORITY, 1));
+                chatter.join(createChannel("test"));
             }
 
             @Test
@@ -228,7 +228,7 @@ class ViewTests {
     @Nested class given_messages_and_channels {
         @BeforeEach
         void setUp() {
-            chatter.addChannel(createChannel("aaa"));
+            chatter.join(createChannel("aaa"));
             chatter.setActiveChannel(channelWith("zzz", set(PRIORITY, 10)));
             addMessage("No Source!");
             addMessageWithSource("Player", "Hey");

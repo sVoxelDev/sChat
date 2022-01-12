@@ -46,7 +46,7 @@ class ViewModelTests {
     }
 
     private Channel join(Channel channel) {
-        chatter.addChannel(channel);
+        chatter.join(channel);
         return channel;
     }
 

@@ -26,7 +26,6 @@ import java.util.Optional;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.AbstractChatter;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.policies.ChannelPolicies;
@@ -55,13 +54,13 @@ public final class ChannelCommands implements JoinChannel, SetActiveChannel, Cha
         if (!channelPolicies.canJoinChannel(chatter, channel))
             throw new Error();
         channel.addTarget(chatter);
-        ((AbstractChatter) chatter).addChannel(channel);
+        chatter.join(channel);
     }
 
     @Override
     public void setActiveChannel(@NonNull Chatter chatter, @NonNull Channel channel) {
         joinChannel(chatter, channel);
-        ((AbstractChatter) chatter).setActiveChannel(channel);
+        chatter.setActiveChannel(channel);
     }
 
     @Override
