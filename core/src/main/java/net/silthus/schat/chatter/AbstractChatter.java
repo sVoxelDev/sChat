@@ -47,8 +47,9 @@ public abstract class AbstractChatter implements Chatter {
         this.identity = identity;
     }
 
+    @Override
     public final void setActiveChannel(@Nullable Channel activeChannel) {
-        addChannel(activeChannel);
+        join(activeChannel);
         this.activeChannel = activeChannel;
     }
 
@@ -67,7 +68,13 @@ public abstract class AbstractChatter implements Chatter {
         return List.copyOf(channels);
     }
 
-    public final void addChannel(Channel channel) {
+    @Override
+    public final void join(Channel channel) {
+        channel.addTarget(this);
+        addChannel(channel);
+    }
+
+    protected final void addChannel(Channel channel) {
         this.channels.add(channel);
     }
 

@@ -19,27 +19,20 @@
 
 package net.silthus.schat.chatter;
 
-import java.util.List;
-import java.util.Optional;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.identity.Identified;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
+import org.apache.commons.lang3.NotImplementedException;
+import org.junit.jupiter.api.Test;
 
-public interface Chatter extends MessageTarget, Identified, Permissable {
+class AbstractChatterTest {
 
-    void setActiveChannel(@Nullable Channel activeChannel);
+    @Test
+    void given_null_identity_then_create_throws() {
+        throw new NotImplementedException();
+    }
 
-    @NotNull Optional<Channel> getActiveChannel();
+    @Test
+    void when_setActiveChannel_is_called_given_null_channel_does_not_throw() {
+        throw new NotImplementedException();
+    }
 
-    boolean isActiveChannel(@Nullable Channel channel);
-
-    @NotNull @Unmodifiable List<Channel> getChannels();
-
-    void join(Channel channel);
-
-    @NotNull @Unmodifiable List<Message> getMessages();
+    // TODO: test all chatter functions
 }
