@@ -19,52 +19,32 @@
 
 package net.silthus.schat.platform.commands.parser;
 
-import cloud.commandframework.arguments.parser.ArgumentParseResult;
-import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.exceptions.parsing.NoInputProvidedException;
-import java.util.ArrayDeque;
-import java.util.List;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.chatter.Chatter;
-import org.jetbrains.annotations.NotNull;
+import net.silthus.schat.platform.commands.ParserTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.ChatterMock.randomChatter;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
-import static net.silthus.schat.platform.commands.CommandTestUtils.createCommandManager;
+import static net.silthus.schat.platform.commands.parser.ChannelParser.ARGUMENT_PARSE_FAILURE_CHANNEL;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
-class ChannelParserTests {
+class ChannelParserTests extends ParserTest<Channel> {
 
-    private ChannelParser parser;
     private ChannelRepository channelRepository;
 
     @BeforeEach
     void setUp() {
         channelRepository = createInMemoryChannelRepository();
-        parser = new ChannelParser(channelRepository);
+        setParser(new ChannelParser(channelRepository));
     }
 
-    private ArgumentParseResult<Channel> parse(String... input) {
-        return parser.parse(createContext(), new ArrayDeque<>(List.of(input)));
-    }
-
-    @NotNull
-    private CommandContext<Chatter> createContext() {
-        return new CommandContext<>(randomChatter(), createCommandManager());
-    }
-
-    private void assertParseFailure(Class<? extends Throwable> exception, String... input) {
-        final ArgumentParseResult<Channel> result = parse(input);
-        assertThat(result.getFailure()).isPresent().get().isInstanceOf(exception);
-    }
-
-    private void assertParseSuccessful(String input, Channel expected) {
-        assertThat(parse(input).getParsedValue()).isPresent().get().isEqualTo(expected);
+    private void registerChannelParser() {
+        ChannelParser.registerChannelParser(getCommandManager(), mock(ChannelRepository.class));
     }
 
     @Test
@@ -94,6 +74,21 @@ class ChannelParserTests {
         @Test
         void then_parse_returns_channel() {
             assertParseSuccessful("test", channel);
+        }
+    }
+    
+    @Nested class registerChannelParser {
+
+        @Test
+        void when_ChannelParser_is_registered_then_captions_are_registered() {
+            registerChannelParser();
+            assertThat(getCaption(ARGUMENT_PARSE_FAILURE_CHANNEL)).isNotNull();
+        }
+
+        @Test
+        void when_ChannelParser_is_registered_then_parser_is_registered() {
+            registerChannelParser();
+            assertThat(getParser(Channel.class)).isPresent();
         }
     }
 }

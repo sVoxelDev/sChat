@@ -17,15 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform;
+package net.silthus.schat.ui;
 
 import lombok.NonNull;
-import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.platform.sender.SenderFactory;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
 
-public interface SChatPlugin {
+public interface JoinChannel {
 
-    ChannelRepository getChannelRepository();
+    void joinChannel(@NonNull Chatter chatter, @NonNull Channel channel) throws Error;
 
-    <T> SenderFactory<T> getUserFactory(@NonNull Class<T> playerClass);
+    final class Error extends RuntimeException {
+    }
 }

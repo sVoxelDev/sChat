@@ -24,12 +24,20 @@ import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.ProxiedBy;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.ui.JoinChannel;
 
 public final class ChannelCommands {
+
+    private final JoinChannel joinChannel;
+
+    public ChannelCommands(JoinChannel joinChannel) {
+        this.joinChannel = joinChannel;
+    }
 
     @ProxiedBy("ch")
     @CommandMethod("channel join <channel>")
     public void joinChannel(Chatter chatter, @Argument("channel") Channel channel) {
-
+        // TODO: pull join channel logic into this function
+        joinChannel.joinChannel(chatter, channel);
     }
 }

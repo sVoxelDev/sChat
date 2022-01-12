@@ -29,7 +29,7 @@ import net.silthus.schat.policies.ChannelPolicies;
 
 import static net.silthus.schat.message.Message.message;
 
-public class Ui {
+public class Ui implements JoinChannel {
 
     private final ChannelPolicies channelPolicies;
 
@@ -37,9 +37,10 @@ public class Ui {
         this.channelPolicies = channelPolicies;
     }
 
-    public final void joinChannel(@NonNull Chatter chatter, @NonNull Channel channel) throws JoinChannelError {
+    @Override
+    public final void joinChannel(@NonNull Chatter chatter, @NonNull Channel channel) throws Error {
         if (!channelPolicies.canJoinChannel(chatter, channel)) {
-            throw new JoinChannelError();
+            throw new Error();
         }
         channel.addTarget(chatter);
         chatter.addChannel(channel);
@@ -55,9 +56,6 @@ public class Ui {
         if (channel.isEmpty())
             throw new NoActiveChannel();
         return message(text).source(chatter).to(channel.get()).type(Message.Type.CHAT).send();
-    }
-
-    public static final class JoinChannelError extends RuntimeException {
     }
 
     public static final class NoActiveChannel extends RuntimeException {

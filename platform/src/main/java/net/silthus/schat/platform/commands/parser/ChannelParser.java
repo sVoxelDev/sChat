@@ -19,13 +19,16 @@
 
 package net.silthus.schat.platform.commands.parser;
 
+import cloud.commandframework.CommandManager;
 import cloud.commandframework.arguments.parser.ArgumentParseResult;
 import cloud.commandframework.arguments.parser.ArgumentParser;
 import cloud.commandframework.captions.Caption;
 import cloud.commandframework.captions.CaptionVariable;
+import cloud.commandframework.captions.FactoryDelegatingCaptionRegistry;
 import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.exceptions.parsing.NoInputProvidedException;
 import cloud.commandframework.exceptions.parsing.ParserException;
+import io.leangen.geantyref.TypeToken;
 import java.util.Queue;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
@@ -39,6 +42,24 @@ import static cloud.commandframework.arguments.parser.ArgumentParseResult.succes
 public final class ChannelParser implements ArgumentParser<Chatter, Channel> {
 
     public static final Caption ARGUMENT_PARSE_FAILURE_CHANNEL = Caption.of("argument.parse.failure.channel");
+
+    public static void registerChannelParser(CommandManager<Chatter> commandManager, ChannelRepository repository) {
+        registerArgumentParser(commandManager, repository);
+        registerCaptions(commandManager);
+    }
+
+    private static void registerArgumentParser(CommandManager<Chatter> commandManager, ChannelRepository repository) {
+        commandManager.getParserRegistry().registerParserSupplier(TypeToken.get(Channel.class), parserParameters -> new ChannelParser(repository));
+    }
+
+    private static void registerCaptions(CommandManager<Chatter> commandManager) {
+        if (commandManager.getCaptionRegistry() instanceof FactoryDelegatingCaptionRegistry<Chatter> registry) {
+            registry.registerMessageFactory(
+                ChannelParser.ARGUMENT_PARSE_FAILURE_CHANNEL,
+                (context, key) -> "'{input}' is not a channel."
+            );
+        }
+    }
 
     private final ChannelRepository repository;
 
@@ -73,7 +94,7 @@ public final class ChannelParser implements ArgumentParser<Chatter, Channel> {
     }
 
     public static final class ChannelParseException extends ParserException {
-        private ChannelParseException(@NonNull CommandContext<?> context, String input) {
+        public ChannelParseException(@NonNull CommandContext<?> context, String input) {
             super(ChannelParser.class,
                 context,
                 ARGUMENT_PARSE_FAILURE_CHANNEL,

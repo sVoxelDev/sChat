@@ -71,7 +71,7 @@ class PluginTests {
 
     }
 
-    private static class TestPlugin extends SChatPlugin {
+    private static class TestPlugin extends AbstractSChatPlugin {
 
         private final FakeSenderFactory userFactory;
 

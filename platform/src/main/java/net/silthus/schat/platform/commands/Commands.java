@@ -22,37 +22,40 @@ package net.silthus.schat.platform.commands;
 import cloud.commandframework.CommandManager;
 import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.arguments.parser.StandardParameters;
-import cloud.commandframework.execution.CommandResult;
 import cloud.commandframework.meta.CommandMeta;
-import io.leangen.geantyref.TypeToken;
-import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.commands.parser.ChannelParser;
-import org.junit.jupiter.api.Test;
+import net.silthus.schat.ui.JoinChannel;
+import org.jetbrains.annotations.NotNull;
 
-import static net.silthus.schat.ChatterMock.randomChatter;
-import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
-import static net.silthus.schat.platform.commands.CommandTestUtils.createCommandManager;
+public final class Commands {
 
-class CommandTests {
+    private final CommandManager<Chatter> commandManager;
+    private final ChannelRepository channelRepository;
+    private final AnnotationParser<Chatter> parser;
+    private final JoinChannel joinChannel;
 
-    private final ChannelRepository channelRepository = createInMemoryChannelRepository();
+    public Commands(CommandManager<Chatter> commandManager, ChannelRepository channelRepository, JoinChannel joinChannel) {
+        this.commandManager = commandManager;
+        this.channelRepository = channelRepository;
+        this.joinChannel = joinChannel;
+        this.parser = createAnnotationParser();
+    }
 
-    @Test
-    void name() {
-        final CommandManager<Chatter> commandManager = createCommandManager();
-        final AnnotationParser<Chatter> parser = new AnnotationParser<>(
-            commandManager,
+    public void register() {
+        ChannelParser.registerChannelParser(commandManager, channelRepository);
+        parser.parse(new ChannelCommands(joinChannel));
+    }
+
+    @NotNull
+    private AnnotationParser<Chatter> createAnnotationParser() {
+        return new AnnotationParser<>(
+            this.commandManager,
             Chatter.class,
             p -> CommandMeta.simple()
                 .with(CommandMeta.DESCRIPTION, p.get(StandardParameters.DESCRIPTION, "No description"))
                 .build()
         );
-        commandManager.getParserRegistry().registerParserSupplier(TypeToken.get(Channel.class), parserParameters -> new ChannelParser(channelRepository));
-        parser.parse(new ChannelCommands());
-
-        channelRepository.add(Channel.createChannel("global"));
-        final CommandResult<Chatter> result = commandManager.executeCommand(randomChatter(), "ch global").join();
     }
 }
