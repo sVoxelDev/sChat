@@ -17,13 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.ui;
+package net.silthus.schat.platform.commands;
 
 import net.silthus.schat.MessageHelper;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.platform.commands.parser.ChannelParser;
 import net.silthus.schat.policies.ChannelPolicies;
+import net.silthus.schat.usecases.ChatListener;
+import net.silthus.schat.usecases.JoinChannel;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -32,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import static net.silthus.schat.ChannelHelper.randomChannel;
 import static net.silthus.schat.ChatterMock.randomChatter;
 import static net.silthus.schat.TestHelper.assertNPE;
+import static net.silthus.schat.channel.Channel.createChannel;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,47 +44,21 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class UiTests {
+class ChannelCommandsTests extends CommandTest {
 
-    private Ui ui;
+    private ChannelCommands channelCommands;
     private Chatter chatter;
-    private ChannelPolicies policies;
 
     @BeforeEach
     void setUp() {
         policies = mock(ChannelPolicies.class);
         mockCanJoin(true);
         chatter = spy(randomChatter());
-        ui = new Ui(policies);
+        channelCommands = new ChannelCommands(policies);
     }
 
     private void assertJoinedChannel(Channel channel) {
         assertThat(channel.getTargets()).contains(chatter);
-    }
-
-    @NotNull
-    private Message chat() {
-        return ui.chat(chatter, MessageHelper.randomText());
-    }
-
-    @NotNull
-    private Channel joinChannel() {
-        final Channel channel = randomChannel();
-        ui.joinChannel(chatter, channel);
-        return channel;
-    }
-
-    private Channel join(Channel channel) {
-        ui.joinChannel(chatter, channel);
-        return channel;
-    }
-
-    private void assertJoinSuccess(Channel channel) {
-        assertJoinedChannel(join(channel));
-    }
-
-    private void assertJoinError() {
-        assertThatExceptionOfType(JoinChannel.Error.class).isThrownBy(this::joinChannel);
     }
 
     private void mockCanJoin(boolean result) {
@@ -89,8 +67,14 @@ class UiTests {
 
     @NotNull
     private Channel setActive(Channel channel) {
-        ui.setActiveChannel(chatter, channel);
+        channelCommands.setActiveChannel(chatter, channel);
         return channel;
+    }
+
+    private Channel addChannel(String channel) {
+        final Channel c = createChannel(channel);
+        channelRepository.add(c);
+        return c;
     }
 
     @Nested
@@ -103,11 +87,32 @@ class UiTests {
             channel = randomChannel();
         }
 
+        @NotNull
+        @SuppressWarnings("MethodNameSameAsClassName")
+        private Channel joinChannel() {
+            final Channel channel = randomChannel();
+            channelCommands.joinChannel(chatter, channel);
+            return channel;
+        }
+
+        private Channel join(Channel channel) {
+            channelCommands.joinChannel(chatter, channel);
+            return channel;
+        }
+
+        private void assertJoinSuccess(Channel channel) {
+            assertJoinedChannel(join(channel));
+        }
+
+        private void assertJoinError() {
+            assertThatExceptionOfType(JoinChannel.Error.class).isThrownBy(this::joinChannel);
+        }
+
         @Test
         @SuppressWarnings("ConstantConditions")
         void given_null_user_or_channel_throws() {
-            assertNPE(() -> ui.joinChannel(null, null));
-            assertNPE(() -> ui.joinChannel(chatter, null));
+            assertNPE(() -> channelCommands.joinChannel(null, null));
+            assertNPE(() -> channelCommands.joinChannel(chatter, null));
         }
 
         @Test
@@ -135,15 +140,40 @@ class UiTests {
             }
         }
 
-        @Nested class given_failed_can_join_check {
+        @Test
+        void given_invalid_chanel_join_command_fails() {
+            cmdFails("channel join test", ChannelParser.ChannelParseException.class);
+        }
+
+        @Nested class given_valid_channel {
+            private Channel channel;
+
             @BeforeEach
             void setUp() {
-                mockCanJoin(false);
+                channel = addChannel("test");
             }
 
             @Test
-            void throws_join_error() {
-                assertJoinError();
+            void then_join_command_succeeds() {
+                final Chatter chatter = cmd("channel join test");
+                assertThat(chatter.getChannels()).contains(channel);
+            }
+
+            @Nested class given_failed_can_join_check {
+                @BeforeEach
+                void setUp() {
+                    mockCanJoin(false);
+                }
+
+                @Test
+                void then_throws_JoinChannelError() {
+                    assertJoinError();
+                }
+
+                @Test
+                void then_join_command_fails_with_message() {
+                    cmd("channel join test");
+                }
             }
         }
     }
@@ -153,8 +183,8 @@ class UiTests {
         @Test
         @SuppressWarnings("ConstantConditions")
         void given_null_inputs_throws() {
-            assertNPE(() -> ui.setActiveChannel(null, null));
-            assertNPE(() -> ui.setActiveChannel(chatter, null));
+            assertNPE(() -> channelCommands.setActiveChannel(null, null));
+            assertNPE(() -> channelCommands.setActiveChannel(chatter, null));
         }
 
         @Test
@@ -168,17 +198,22 @@ class UiTests {
     @Nested
     class ChatTests {
 
+        @NotNull
+        private Message chat() {
+            return channelCommands.onChat(chatter, MessageHelper.randomText());
+        }
+
         @Test
         @SuppressWarnings("ConstantConditions")
         void given_null_inputs_throws() {
-            assertNPE(() -> ui.chat(null, null));
-            assertNPE(() -> ui.chat(chatter, null));
+            assertNPE(() -> channelCommands.onChat(null, null));
+            assertNPE(() -> channelCommands.onChat(chatter, null));
         }
 
         @Test
         void given_no_active_channel_throws() {
-            assertThatExceptionOfType(Ui.NoActiveChannel.class)
-                .isThrownBy(UiTests.this::chat);
+            assertThatExceptionOfType(ChatListener.NoActiveChannel.class)
+                .isThrownBy(this::chat);
         }
 
         @Nested class given_active_channel {

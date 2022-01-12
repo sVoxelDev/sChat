@@ -21,7 +21,7 @@ package net.silthus.schat;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.AbstractChatter;
 import net.silthus.schat.chatter.MessageHandler;
 import net.silthus.schat.chatter.PermissionHandler;
 import net.silthus.schat.identity.Identity;
@@ -32,9 +32,9 @@ import static net.silthus.schat.IdentityHelper.randomIdentity;
 
 @Getter
 @Setter
-public class ChatterMock extends Chatter {
+public class ChatterMock extends AbstractChatter {
 
-    public static @NotNull Chatter randomChatter() {
+    public static @NotNull AbstractChatter randomChatter() {
         return new ChatterMock(randomIdentity());
     }
 

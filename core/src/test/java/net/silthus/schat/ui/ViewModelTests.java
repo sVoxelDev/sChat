@@ -21,7 +21,7 @@ package net.silthus.schat.ui;
 
 import lombok.SneakyThrows;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.AbstractChatter;
 import net.silthus.schat.message.Message;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ViewModelTests {
 
-    private Chatter chatter;
+    private AbstractChatter chatter;
     private ViewModel model;
 
     @BeforeEach

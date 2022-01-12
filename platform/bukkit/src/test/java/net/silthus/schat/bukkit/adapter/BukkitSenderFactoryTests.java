@@ -47,7 +47,7 @@ class BukkitSenderFactoryTests extends BukkitTests {
     }
 
     private Sender user() {
-        return factory.getSender(player);
+        return factory.createCommandSender(player);
     }
 
     private void assertDisplayName(Component name) {

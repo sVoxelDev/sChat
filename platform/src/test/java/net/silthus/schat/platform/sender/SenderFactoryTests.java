@@ -26,6 +26,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 class SenderFactoryTests {
 
@@ -33,7 +35,7 @@ class SenderFactoryTests {
 
     @BeforeEach
     void setUp() {
-        factory = new FakeSenderFactory();
+        factory = spy(new FakeSenderFactory());
     }
 
     @Nested class given_player {
@@ -47,7 +49,13 @@ class SenderFactoryTests {
 
         @Test
         void when_getSender_is_called_then_factory_uses_player_identity() {
-            assertThat(factory.getSender(player).getIdentity()).isEqualTo(player.getIdentity());
+            assertThat(factory.createCommandSender(player).getIdentity()).isEqualTo(player.getIdentity());
+        }
+
+        @Test
+        void when_adapt_is_called_then_creates_sender_chatter() {
+            factory.adapt(player);
+            verify(factory).createCommandSender(player);
         }
     }
 }

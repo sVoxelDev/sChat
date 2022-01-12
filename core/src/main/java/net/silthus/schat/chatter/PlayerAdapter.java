@@ -19,8 +19,7 @@
 
 package net.silthus.schat.chatter;
 
-@FunctionalInterface
-public interface PermissionHandler extends Permissable {
+public interface PlayerAdapter<T> {
 
-    boolean hasPermission(String permission);
+    Chatter adapt(T player);
 }

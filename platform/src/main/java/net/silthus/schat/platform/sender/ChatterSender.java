@@ -17,8 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform;
+package net.silthus.schat.platform.sender;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -28,25 +29,23 @@ import net.silthus.schat.chatter.MessageHandler;
 import net.silthus.schat.chatter.PermissionHandler;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
-import net.silthus.schat.platform.sender.Sender;
+import net.silthus.schat.ui.View;
 
-import static net.silthus.schat.IdentityHelper.randomIdentity;
-
-@Getter
 @Setter
-public final class SenderMock extends AbstractChatter implements Sender {
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+final class ChatterSender extends AbstractChatter implements Sender {
 
-    public static SenderMock randomSender() {
-        return new SenderMock(randomIdentity());
-    }
+    private final PermissionHandler permissionHandler;
+    private final MessageHandler messageHandler;
 
-    private @NonNull PermissionHandler permissionHandler = permission -> false;
-    private @NonNull MessageTarget messageTarget = message -> {};
-    private @NonNull MessageHandler messageHandler = message -> {};
+    @Getter
+    private @NonNull View view;
 
-    private SenderMock(Identity identity) {
+    ChatterSender(Identity identity, PermissionHandler permissionHandler, MessageHandler messageHandler) {
         super(identity);
+        this.permissionHandler = permissionHandler;
+        this.messageHandler = messageHandler;
+        this.view = new View(this);
     }
 
     @Override
@@ -56,8 +55,7 @@ public final class SenderMock extends AbstractChatter implements Sender {
 
     @Override
     protected void processMessage(Message message) {
-        messageTarget.sendMessage(message);
-        sendRawMessage(message.getText());
+        sendRawMessage(getView().render());
     }
 
     @Override

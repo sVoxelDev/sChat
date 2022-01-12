@@ -48,20 +48,20 @@ public final class BukkitSenderFactory extends SenderFactory<Player> {
     }
 
     @NotNull
-    protected Identity getIdentity(Player sender) {
-        return identity(sender.getUniqueId(),
-            sender.getName(),
-            () -> LEGACY_SERIALIZER.deserialize(sender.getDisplayName())
+    protected Identity getIdentity(Player player) {
+        return identity(player.getUniqueId(),
+            player.getName(),
+            () -> LEGACY_SERIALIZER.deserialize(player.getDisplayName())
         );
     }
 
     @Override
-    protected PermissionHandler getPermissionHandler(Player sender) {
-        return sender::hasPermission;
+    protected PermissionHandler getPermissionHandler(Player player) {
+        return player::hasPermission;
     }
 
     @Override
-    protected MessageHandler getMessageHandler(Player sender) {
-        return message -> getAudienceProvider().player(sender).sendMessage(message);
+    protected MessageHandler getMessageHandler(Player player) {
+        return message -> getAudienceProvider().player(player).sendMessage(message);
     }
 }

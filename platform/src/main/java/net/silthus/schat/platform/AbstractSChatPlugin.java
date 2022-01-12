@@ -49,7 +49,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     @Override
     @SuppressWarnings("unchecked")
     public final <T> SenderFactory<T> getUserFactory(@NonNull Class<T> playerClass) {
-        senderFactory.checkSenderType(playerClass);
+        senderFactory.checkPlayerType(playerClass);
         return (SenderFactory<T>) senderFactory;
     }
 }
