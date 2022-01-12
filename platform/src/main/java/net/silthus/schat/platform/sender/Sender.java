@@ -19,41 +19,10 @@
 
 package net.silthus.schat.platform.sender;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.chatter.MessageHandler;
-import net.silthus.schat.chatter.PermissionHandler;
-import net.silthus.schat.identity.Identity;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.ui.View;
 
-@Setter
-@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-public final class Sender extends Chatter {
+public interface Sender extends Chatter {
 
-    private final PermissionHandler permissionHandler;
-    private final MessageHandler messageHandler;
-
-    @Getter
-    private @NonNull View view;
-
-    public Sender(Identity identity, PermissionHandler permissionHandler, MessageHandler messageHandler) {
-        super(identity);
-        this.permissionHandler = permissionHandler;
-        this.messageHandler = messageHandler;
-        this.view = new View(this);
-    }
-
-    @Override
-    public boolean hasPermission(String permission) {
-        return permissionHandler.hasPermission(permission);
-    }
-
-    @Override
-    protected void processMessage(Message message) {
-        messageHandler.sendMessage(getView().render());
-    }
+    void sendRawMessage(Component message);
 }

@@ -19,68 +19,23 @@
 
 package net.silthus.schat.chatter;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identified;
-import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-@Getter
-@Setter
-@EqualsAndHashCode(of = {"identity"})
-public abstract class Chatter implements MessageTarget, Identified {
+public interface Chatter extends MessageTarget, Identified, Permissable {
 
-    private final Identity identity;
-    private final Set<Channel> channels = new HashSet<>();
-    private final Set<Message> messages = new HashSet<>();
-    private @Nullable Channel activeChannel;
+    @NotNull Optional<Channel> getActiveChannel();
 
-    protected Chatter(Identity identity) {
-        this.identity = identity;
-    }
+    boolean isActiveChannel(@Nullable Channel channel);
 
-    public final void setActiveChannel(@Nullable Channel activeChannel) {
-        addChannel(activeChannel);
-        this.activeChannel = activeChannel;
-    }
+    @NotNull @Unmodifiable List<Channel> getChannels();
 
-    public final Optional<Channel> getActiveChannel() {
-        return Optional.ofNullable(activeChannel);
-    }
-
-    public final boolean isActiveChannel(Channel channel) {
-        return activeChannel != null && activeChannel.equals(channel);
-    }
-
-    public final @NotNull @Unmodifiable List<Channel> getChannels() {
-        return List.copyOf(channels);
-    }
-
-    public final void addChannel(Channel channel) {
-        this.channels.add(channel);
-    }
-
-    public final @NotNull @Unmodifiable List<Message> getMessages() {
-        return List.copyOf(messages);
-    }
-
-    public abstract boolean hasPermission(String permission);
-
-    @Override
-    public final void sendMessage(Message message) {
-        messages.add(message);
-        processMessage(message);
-    }
-
-    protected abstract void processMessage(Message message);
+    @NotNull @Unmodifiable List<Message> getMessages();
 }

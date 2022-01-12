@@ -17,10 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter;
+package net.silthus.schat.usecases;
 
-@FunctionalInterface
-public interface PermissionHandler extends Permissable {
+import lombok.NonNull;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
 
-    boolean hasPermission(String permission);
+public interface JoinChannel {
+
+    void joinChannel(@NonNull Chatter chatter, @NonNull Channel channel) throws Error;
+
+    final class Error extends RuntimeException {
+    }
 }

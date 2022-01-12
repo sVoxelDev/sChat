@@ -17,16 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.ui;
+package net.silthus.schat.usecases;
 
 import lombok.NonNull;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 
-public interface JoinChannel {
+public interface SetActiveChannel {
 
-    void joinChannel(@NonNull Chatter chatter, @NonNull Channel channel) throws Error;
-
-    final class Error extends RuntimeException {
-    }
+    void setActiveChannel(@NonNull Chatter chatter, @NonNull Channel channel);
 }

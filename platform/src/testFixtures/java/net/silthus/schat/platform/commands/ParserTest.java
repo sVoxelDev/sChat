@@ -29,28 +29,28 @@ import java.util.List;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
-import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.platform.sender.Sender;
 import org.jetbrains.annotations.NotNull;
 
 import static cloud.commandframework.arguments.parser.ParserParameters.empty;
 import static io.leangen.geantyref.TypeToken.get;
-import static net.silthus.schat.ChatterMock.randomChatter;
+import static net.silthus.schat.platform.SenderMock.randomSender;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Getter
 @Setter
 public abstract class ParserTest<T> {
 
-    private final CommandManager<Chatter> commandManager;
-    private ArgumentParser<Chatter, T> parser;
+    private final CommandManager<Sender> commandManager;
+    private ArgumentParser<Sender, T> parser;
 
     protected ParserTest() {
         this.commandManager = CommandTestUtils.createCommandManager();
     }
 
     @NotNull
-    private CommandContext<Chatter> createContext() {
-        return new CommandContext<>(randomChatter(), commandManager);
+    private CommandContext<Sender> createContext() {
+        return new CommandContext<>(randomSender(), commandManager);
     }
 
     protected ArgumentParseResult<T> parse(String... input) {
@@ -68,11 +68,11 @@ public abstract class ParserTest<T> {
 
     @NotNull
     protected String getCaption(Caption caption) {
-        return commandManager.getCaptionRegistry().getCaption(caption, randomChatter());
+        return commandManager.getCaptionRegistry().getCaption(caption, randomSender());
     }
 
     @NotNull
-    protected Optional<ArgumentParser<Chatter, T>> getParser(Class<T> type) {
+    protected Optional<ArgumentParser<Sender, T>> getParser(Class<T> type) {
         return commandManager.getParserRegistry().createParser(get(type), empty());
     }
 }

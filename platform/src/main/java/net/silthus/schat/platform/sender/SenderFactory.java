@@ -19,31 +19,38 @@
 
 package net.silthus.schat.platform.sender;
 
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.MessageHandler;
 import net.silthus.schat.chatter.PermissionHandler;
+import net.silthus.schat.chatter.PlayerAdapter;
 import net.silthus.schat.identity.Identity;
 
-public abstract class SenderFactory<T> {
+public abstract class SenderFactory<T> implements PlayerAdapter<T> {
 
-    public final Sender getSender(T sender) {
-        return new Sender(getIdentity(sender),
-            getPermissionHandler(sender),
-            getMessageHandler(sender)
+    @Override
+    public final Chatter adapt(T player) {
+        return createCommandSender(player);
+    }
+
+    public final ChatterSender createCommandSender(T player) {
+        return new ChatterSender(getIdentity(player),
+            getPermissionHandler(player),
+            getMessageHandler(player)
         );
     }
 
-    public final void checkSenderType(Class<?> senderType) {
-        if (!getType().isAssignableFrom(senderType))
+    public final void checkPlayerType(Class<?> playerType) {
+        if (!getType().isAssignableFrom(playerType))
             throw new InvalidPlayerType();
     }
 
     protected abstract Class<T> getType();
 
-    protected abstract Identity getIdentity(T sender);
+    protected abstract Identity getIdentity(T player);
 
-    protected abstract PermissionHandler getPermissionHandler(T sender);
+    protected abstract PermissionHandler getPermissionHandler(T player);
 
-    protected abstract MessageHandler getMessageHandler(T sender);
+    protected abstract MessageHandler getMessageHandler(T player);
 
     public static class InvalidPlayerType extends RuntimeException {
     }

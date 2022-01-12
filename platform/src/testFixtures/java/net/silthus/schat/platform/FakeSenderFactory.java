@@ -26,7 +26,7 @@ import net.silthus.schat.platform.sender.SenderFactory;
 
 import static org.mockito.Mockito.mock;
 
-public final class FakeSenderFactory extends SenderFactory<TestCommandSender> {
+public class FakeSenderFactory extends SenderFactory<TestCommandSender> {
 
     @Override
     protected Class<TestCommandSender> getType() {
@@ -34,17 +34,17 @@ public final class FakeSenderFactory extends SenderFactory<TestCommandSender> {
     }
 
     @Override
-    protected Identity getIdentity(TestCommandSender sender) {
-        return sender.getIdentity();
+    protected Identity getIdentity(TestCommandSender player) {
+        return player.getIdentity();
     }
 
     @Override
-    protected PermissionHandler getPermissionHandler(TestCommandSender sender) {
-        return sender.getPermissionHandler();
+    protected PermissionHandler getPermissionHandler(TestCommandSender player) {
+        return player.getPermissionHandler();
     }
 
     @Override
-    protected MessageHandler getMessageHandler(TestCommandSender sender) {
+    protected MessageHandler getMessageHandler(TestCommandSender player) {
         return mock(MessageHandler.class);
     }
 }

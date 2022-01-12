@@ -24,35 +24,35 @@ import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.arguments.parser.StandardParameters;
 import cloud.commandframework.meta.CommandMeta;
 import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.commands.parser.ChannelParser;
-import net.silthus.schat.ui.JoinChannel;
+import net.silthus.schat.platform.sender.Sender;
+import net.silthus.schat.policies.ChannelPolicies;
 import org.jetbrains.annotations.NotNull;
 
 public final class Commands {
 
-    private final CommandManager<Chatter> commandManager;
+    private final CommandManager<Sender> commandManager;
     private final ChannelRepository channelRepository;
-    private final AnnotationParser<Chatter> parser;
-    private final JoinChannel joinChannel;
+    private final AnnotationParser<Sender> parser;
+    private final ChannelPolicies channelPolicies;
 
-    public Commands(CommandManager<Chatter> commandManager, ChannelRepository channelRepository, JoinChannel joinChannel) {
+    public Commands(CommandManager<Sender> commandManager, ChannelRepository channelRepository, ChannelPolicies channelPolicies) {
         this.commandManager = commandManager;
         this.channelRepository = channelRepository;
-        this.joinChannel = joinChannel;
+        this.channelPolicies = channelPolicies;
         this.parser = createAnnotationParser();
     }
 
     public void register() {
         ChannelParser.registerChannelParser(commandManager, channelRepository);
-        parser.parse(new ChannelCommands(joinChannel));
+        parser.parse(new ChannelCommands(channelPolicies));
     }
 
     @NotNull
-    private AnnotationParser<Chatter> createAnnotationParser() {
+    private AnnotationParser<Sender> createAnnotationParser() {
         return new AnnotationParser<>(
             this.commandManager,
-            Chatter.class,
+            Sender.class,
             p -> CommandMeta.simple()
                 .with(CommandMeta.DESCRIPTION, p.get(StandardParameters.DESCRIPTION, "No description"))
                 .build()

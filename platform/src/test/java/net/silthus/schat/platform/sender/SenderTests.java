@@ -40,7 +40,7 @@ import static org.mockito.Mockito.verify;
 
 class SenderTests {
 
-    private Sender sender;
+    private ChatterSender commandSender;
     private PermissionHandler permissionHandler;
     private MessageHandler messageHandler;
 
@@ -48,23 +48,23 @@ class SenderTests {
     void setUp() {
         permissionHandler = mock(PermissionHandler.class);
         messageHandler = mock(MessageHandler.class);
-        sender = createSender(randomIdentity());
+        commandSender = createSender(randomIdentity());
     }
 
-    private Sender createSender(Identity identity) {
-        return new Sender(identity, permissionHandler, messageHandler);
+    private ChatterSender createSender(Identity identity) {
+        return new ChatterSender(identity, permissionHandler, messageHandler);
     }
 
     @NotNull
     private Message sendMessage() {
         final Message message = emptyMessage();
-        sender.sendMessage(message);
+        commandSender.sendMessage(message);
         return message;
     }
 
     @NotNull
     private View setView(View view) {
-        sender.setView(view);
+        commandSender.setView(view);
         return view;
     }
 
@@ -80,7 +80,7 @@ class SenderTests {
 
         @BeforeEach
         void setUp() {
-            view = setView(spy(new View(sender)));
+            view = setView(spy(new View(commandSender)));
             message = sendMessage();
         }
 
@@ -91,13 +91,13 @@ class SenderTests {
 
         @Test
         void then_message_is_added_to_user_message_cache() {
-            assertThat(sender.getMessages()).contains(message);
+            assertThat(commandSender.getMessages()).contains(message);
         }
 
         @Test
         void twice_then_message_is_cached_only_once() {
-            sender.sendMessage(message);
-            assertThat(sender.getMessages()).containsOnlyOnce(message);
+            commandSender.sendMessage(message);
+            assertThat(commandSender.getMessages()).containsOnlyOnce(message);
         }
 
         @Test
@@ -108,18 +108,18 @@ class SenderTests {
 
     @Test
     void given_a_new_user_getView_is_not_null() {
-        assertThat(sender.getView()).isNotNull();
+        assertThat(commandSender.getView()).isNotNull();
     }
 
     @Test
     @SuppressWarnings("ConstantConditions")
     void when_setView_is_given_null_an_npe_is_thrown() {
-        assertNPE(() -> sender.setView(null));
+        assertNPE(() -> commandSender.setView(null));
     }
 
     @Test
     void when_hasPermission_is_called_then_permission_handler_is_invoked() {
-        sender.hasPermission("foobar");
+        commandSender.hasPermission("foobar");
         verify(permissionHandler).hasPermission("foobar");
     }
 }
