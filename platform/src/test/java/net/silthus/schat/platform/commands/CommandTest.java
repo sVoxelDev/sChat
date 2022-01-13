@@ -21,32 +21,23 @@ package net.silthus.schat.platform.commands;
 
 import cloud.commandframework.CommandManager;
 import lombok.SneakyThrows;
-import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.policies.ChannelPolicies;
 import org.junit.jupiter.api.BeforeEach;
 
 import static net.silthus.schat.ChatterMock.randomChatter;
-import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.platform.commands.CommandTestUtils.createCommandManager;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public abstract class CommandTest {
 
-    protected final ChannelRepository channelRepository = createInMemoryChannelRepository();
     protected CommandManager<Chatter> commandManager;
-    protected ChannelPolicies policies;
     protected Chatter chatter;
+    protected Commands commands;
 
     @BeforeEach
     void setUpBase() {
         commandManager = createCommandManager();
-        policies = mock(ChannelPolicies.class);
-        when(policies.canJoinChannel(any(), any())).thenReturn(true);
-        new Commands(commandManager, channelRepository, policies).register();
+        commands = new Commands(commandManager);
         chatter = randomChatter();
     }
 

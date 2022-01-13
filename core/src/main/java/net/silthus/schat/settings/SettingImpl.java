@@ -23,10 +23,8 @@ import java.util.function.Supplier;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import lombok.ToString;
 
 @Data
-@ToString(of = {"key", "type"})
 @EqualsAndHashCode(of = {"type", "key"})
 final class SettingImpl<V> implements Setting<V> {
 

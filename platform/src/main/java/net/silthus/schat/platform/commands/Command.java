@@ -21,35 +21,9 @@ package net.silthus.schat.platform.commands;
 
 import cloud.commandframework.CommandManager;
 import cloud.commandframework.annotations.AnnotationParser;
-import cloud.commandframework.arguments.parser.StandardParameters;
-import cloud.commandframework.meta.CommandMeta;
 import net.silthus.schat.chatter.Chatter;
-import org.jetbrains.annotations.NotNull;
 
-public final class Commands {
+public interface Command {
 
-    private final CommandManager<Chatter> commandManager;
-    private final AnnotationParser<Chatter> parser;
-
-    public Commands(CommandManager<Chatter> commandManager) {
-        this.commandManager = commandManager;
-        this.parser = createAnnotationParser();
-    }
-
-    public void register(Command... commands) {
-        for (final Command command : commands) {
-            command.register(commandManager, parser);
-        }
-    }
-
-    @NotNull
-    private AnnotationParser<Chatter> createAnnotationParser() {
-        return new AnnotationParser<>(
-            this.commandManager,
-            Chatter.class,
-            p -> CommandMeta.simple()
-                .with(CommandMeta.DESCRIPTION, p.get(StandardParameters.DESCRIPTION, "No description"))
-                .build()
-        );
-    }
+    void register(CommandManager<Chatter> commandManager, AnnotationParser<Chatter> parser);
 }

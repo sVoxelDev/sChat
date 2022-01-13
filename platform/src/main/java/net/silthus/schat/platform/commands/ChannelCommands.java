@@ -19,15 +19,20 @@
 
 package net.silthus.schat.platform.commands;
 
+import cloud.commandframework.CommandManager;
+import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.ProxiedBy;
+import io.leangen.geantyref.TypeToken;
 import java.util.Optional;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.platform.commands.parser.ChannelParser;
 import net.silthus.schat.policies.ChannelPolicies;
 import net.silthus.schat.usecases.ChatListener;
 import net.silthus.schat.usecases.JoinChannel;
@@ -35,12 +40,20 @@ import net.silthus.schat.usecases.SetActiveChannel;
 
 import static net.silthus.schat.message.Message.message;
 
-public final class ChannelCommands implements JoinChannel, SetActiveChannel, ChatListener {
+public final class ChannelCommands implements JoinChannel, SetActiveChannel, ChatListener, Command {
 
     private final ChannelPolicies channelPolicies;
+    private ChannelRepository channelRepository;
 
-    public ChannelCommands(ChannelPolicies channelPolicies) {
+    public ChannelCommands(ChannelPolicies channelPolicies, ChannelRepository channelRepository) {
         this.channelPolicies = channelPolicies;
+        this.channelRepository = channelRepository;
+    }
+
+    @Override
+    public void register(CommandManager<Chatter> commandManager, AnnotationParser<Chatter> parser) {
+        commandManager.getParserRegistry().registerParserSupplier(TypeToken.get(Channel.class), parserParameters -> new ChannelParser(channelRepository));
+        parser.parse(this);
     }
 
     @ProxiedBy("ch")
@@ -58,7 +71,8 @@ public final class ChannelCommands implements JoinChannel, SetActiveChannel, Cha
     }
 
     @Override
-    public void setActiveChannel(@NonNull Chatter chatter, @NonNull Channel channel) {
+    @CommandMethod("channel set-active <channel>")
+    public void setActiveChannel(@NonNull Chatter chatter, @NonNull @Argument("channel") Channel channel) {
         joinChannel(chatter, channel);
         chatter.setActiveChannel(channel);
     }
