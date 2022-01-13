@@ -22,11 +22,11 @@ package net.silthus.schat.platform;
 import net.silthus.schat.chatter.MessageHandler;
 import net.silthus.schat.chatter.PermissionHandler;
 import net.silthus.schat.identity.Identity;
-import net.silthus.schat.platform.sender.SenderFactory;
+import net.silthus.schat.platform.sender.ChatterFactory;
 
 import static org.mockito.Mockito.mock;
 
-public class FakeSenderFactory extends SenderFactory<TestCommandSender> {
+public class FakeChatterFactory extends ChatterFactory<TestCommandSender> {
 
     @Override
     protected Class<TestCommandSender> getType() {

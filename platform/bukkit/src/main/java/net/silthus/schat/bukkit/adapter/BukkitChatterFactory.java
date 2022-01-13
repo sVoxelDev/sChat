@@ -25,20 +25,20 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.silthus.schat.chatter.MessageHandler;
 import net.silthus.schat.chatter.PermissionHandler;
 import net.silthus.schat.identity.Identity;
-import net.silthus.schat.platform.sender.SenderFactory;
+import net.silthus.schat.platform.sender.ChatterFactory;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.identity.Identity.identity;
 
-public final class BukkitSenderFactory extends SenderFactory<Player> {
+public final class BukkitChatterFactory extends ChatterFactory<Player> {
 
     private static final @NotNull LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
 
     @Getter
     private final BukkitAudiences audienceProvider;
 
-    public BukkitSenderFactory(BukkitAudiences audienceProvider) {
+    public BukkitChatterFactory(BukkitAudiences audienceProvider) {
         this.audienceProvider = audienceProvider;
     }
 

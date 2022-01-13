@@ -22,8 +22,8 @@ package net.silthus.schat.bukkit.adapter;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.bukkit.BukkitTests;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.platform.sender.Sender;
 import org.bukkit.ChatColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -35,40 +35,40 @@ import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BukkitSenderFactoryTests extends BukkitTests {
+class BukkitChatterFactoryTests extends BukkitTests {
 
-    private BukkitSenderFactory factory;
+    private BukkitChatterFactory factory;
     private PlayerMock player;
 
     @BeforeEach
     void setUp() {
-        factory = new BukkitSenderFactory(audiences);
+        factory = new BukkitChatterFactory(audiences);
         player = server.addPlayer();
     }
 
-    private Sender user() {
-        return factory.createCommandSender(player);
+    private Chatter chatter() {
+        return factory.createChatter(player);
     }
 
     private void assertDisplayName(Component name) {
-        assertThat(user().getDisplayName()).isEqualTo(name);
+        assertThat(chatter().getDisplayName()).isEqualTo(name);
     }
 
     @Nested class getSender {
 
         @Test
         void is_not_null() {
-            assertThat(user()).isNotNull();
+            assertThat(chatter()).isNotNull();
         }
 
         @Test
         void has_same_id_as_player() {
-            assertThat(user().getUniqueId()).isEqualTo(player.getUniqueId());
+            assertThat(chatter().getUniqueId()).isEqualTo(player.getUniqueId());
         }
 
         @Test
         void has_same_name_as_player() {
-            assertThat(user().getName()).isEqualTo(player.getName());
+            assertThat(chatter().getName()).isEqualTo(player.getName());
         }
 
         @Test
@@ -104,7 +104,7 @@ class BukkitSenderFactoryTests extends BukkitTests {
         @Nested class given_player_with_no_permissions {
             @Test
             void then_hasPermission_returns_false() {
-                assertThat(user().hasPermission("foobar")).isFalse();
+                assertThat(chatter().hasPermission("foobar")).isFalse();
             }
         }
 
@@ -116,14 +116,14 @@ class BukkitSenderFactoryTests extends BukkitTests {
 
             @Test
             void then_user_hasPermission_returns_true() {
-                assertThat(user().hasPermission("foobar")).isTrue();
+                assertThat(chatter().hasPermission("foobar")).isTrue();
             }
         }
 
         @Nested class when_sendMessage_is_called {
             @BeforeEach
             void setUp() {
-                user().sendMessage(Message.message("Hi").create());
+                chatter().sendMessage(Message.message("Hi").create());
             }
 
             @Test

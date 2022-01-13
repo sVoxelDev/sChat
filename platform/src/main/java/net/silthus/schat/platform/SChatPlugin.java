@@ -21,11 +21,11 @@ package net.silthus.schat.platform;
 
 import lombok.NonNull;
 import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.platform.sender.SenderFactory;
+import net.silthus.schat.platform.sender.ChatterFactory;
 
 public interface SChatPlugin {
 
     ChannelRepository getChannelRepository();
 
-    <T> SenderFactory<T> getUserFactory(@NonNull Class<T> playerClass);
+    <T> ChatterFactory<T> getUserFactory(@NonNull Class<T> playerClass);
 }

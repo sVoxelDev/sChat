@@ -17,22 +17,38 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter;
+package net.silthus.schat.platform.sender;
 
-import org.apache.commons.lang3.NotImplementedException;
+import net.silthus.schat.platform.FakeChatterFactory;
+import net.silthus.schat.platform.TestPlayer;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class AbstractChatterTest {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.spy;
 
-    @Test
-    void given_null_identity_then_create_throws() {
-        throw new NotImplementedException();
+class ChatterFactoryTests {
+
+    private FakeChatterFactory factory;
+
+    @BeforeEach
+    void setUp() {
+        factory = spy(new FakeChatterFactory());
     }
 
-    @Test
-    void when_setActiveChannel_is_called_given_null_channel_does_not_throw() {
-        throw new NotImplementedException();
-    }
+    @Nested class given_player {
 
-    // TODO: test all chatter functions
+        private TestPlayer player;
+
+        @BeforeEach
+        void setUp() {
+            player = new TestPlayer();
+        }
+
+        @Test
+        void when_createChatter_is_called_then_factory_uses_player_identity() {
+            assertThat(factory.createChatter(player).getIdentity()).isEqualTo(player.getIdentity());
+        }
+    }
 }

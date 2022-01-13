@@ -19,7 +19,7 @@
 
 package net.silthus.schat.platform;
 
-import net.silthus.schat.platform.sender.SenderFactory;
+import net.silthus.schat.platform.sender.ChatterFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ class PluginTests {
                 plugin.enable();
             }
 
-            @Nested class then_getSenderFactory {
+            @Nested class then_getChatterFactory {
 
                 @Test
                 void is_not_null() {
@@ -59,7 +59,7 @@ class PluginTests {
 
                 @Test
                 void given_invalid_player_class_throws() {
-                    assertThatExceptionOfType(SenderFactory.InvalidPlayerType.class).isThrownBy(() -> plugin.getUserFactory(String.class));
+                    assertThatExceptionOfType(ChatterFactory.InvalidPlayerType.class).isThrownBy(() -> plugin.getUserFactory(String.class));
                 }
 
                 @Test
@@ -73,14 +73,14 @@ class PluginTests {
 
     private static class TestPlugin extends AbstractSChatPlugin {
 
-        private final FakeSenderFactory userFactory;
+        private final FakeChatterFactory userFactory;
 
         TestPlugin() {
-            userFactory = new FakeSenderFactory();
+            userFactory = new FakeChatterFactory();
         }
 
         @Override
-        protected SenderFactory<?> provideUserFactory() {
+        protected ChatterFactory<?> provideUserFactory() {
             return userFactory;
         }
     }

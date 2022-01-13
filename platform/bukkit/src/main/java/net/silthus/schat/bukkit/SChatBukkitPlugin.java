@@ -20,9 +20,9 @@
 package net.silthus.schat.bukkit;
 
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
+import net.silthus.schat.bukkit.adapter.BukkitChatterFactory;
 import net.silthus.schat.platform.AbstractSChatPlugin;
-import net.silthus.schat.platform.sender.SenderFactory;
+import net.silthus.schat.platform.sender.ChatterFactory;
 
 public final class SChatBukkitPlugin extends AbstractSChatPlugin {
     private final SChatBukkitPluginBootstrap bootstrap;
@@ -32,7 +32,7 @@ public final class SChatBukkitPlugin extends AbstractSChatPlugin {
     }
 
     @Override
-    protected SenderFactory<?> provideUserFactory() {
-        return new BukkitSenderFactory(BukkitAudiences.create(bootstrap));
+    protected ChatterFactory<?> provideUserFactory() {
+        return new BukkitChatterFactory(BukkitAudiences.create(bootstrap));
     }
 }

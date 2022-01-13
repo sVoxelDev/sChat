@@ -19,9 +19,10 @@
 
 package net.silthus.schat.channel;
 
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
@@ -32,6 +33,7 @@ import net.silthus.schat.settings.Setting;
 import net.silthus.schat.settings.Settings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
 import static net.kyori.adventure.text.Component.text;
 
@@ -44,7 +46,7 @@ final class ChannelImpl implements Channel {
     private final String key;
     private final Component displayName;
     private final Settings settings;
-    private final List<MessageTarget> targets = new ArrayList<>();
+    private final Set<MessageTarget> targets = new HashSet<>();
 
     private ChannelImpl(Builder builder) {
         this.key = builder.key;
@@ -53,12 +55,17 @@ final class ChannelImpl implements Channel {
     }
 
     @Override
+    public @NotNull @Unmodifiable List<MessageTarget> getTargets() {
+        return List.copyOf(targets);
+    }
+
+    @Override
     public void addTarget(MessageTarget user) {
         targets.add(user);
     }
 
     @Override
-    public void sendMessage(Message message) {
+    public void sendMessage(@NotNull Message message) {
         getTargets().forEach(messageTarget -> messageTarget.sendMessage(message));
     }
 
