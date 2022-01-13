@@ -19,10 +19,33 @@
 
 package net.silthus.schat.platform.sender;
 
-import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.MessageHandler;
+import net.silthus.schat.chatter.PermissionHandler;
+import net.silthus.schat.identity.Identity;
 
-public interface Sender extends Chatter {
+public abstract class ChatterFactory<T> {
 
-    void sendRawMessage(Component message);
+    public final Chatter createChatter(T player) {
+        return new ChatterSender(getIdentity(player),
+            getPermissionHandler(player),
+            getMessageHandler(player)
+        );
+    }
+
+    public final void checkPlayerType(Class<?> playerType) {
+        if (!getType().isAssignableFrom(playerType))
+            throw new InvalidPlayerType();
+    }
+
+    protected abstract Class<T> getType();
+
+    protected abstract Identity getIdentity(T player);
+
+    protected abstract PermissionHandler getPermissionHandler(T player);
+
+    protected abstract MessageHandler getMessageHandler(T player);
+
+    public static class InvalidPlayerType extends RuntimeException {
+    }
 }

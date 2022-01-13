@@ -32,28 +32,28 @@ import io.leangen.geantyref.TypeToken;
 import java.util.Queue;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.platform.sender.Sender;
+import net.silthus.schat.chatter.Chatter;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import static cloud.commandframework.arguments.parser.ArgumentParseResult.failure;
 import static cloud.commandframework.arguments.parser.ArgumentParseResult.success;
 
-public final class ChannelParser implements ArgumentParser<Sender, Channel> {
+public final class ChannelParser implements ArgumentParser<Chatter, Channel> {
 
     public static final Caption ARGUMENT_PARSE_FAILURE_CHANNEL = Caption.of("argument.parse.failure.channel");
 
-    public static void registerChannelParser(CommandManager<Sender> commandManager, ChannelRepository repository) {
+    public static void registerChannelParser(CommandManager<Chatter> commandManager, ChannelRepository repository) {
         registerArgumentParser(commandManager, repository);
         registerCaptions(commandManager);
     }
 
-    private static void registerArgumentParser(CommandManager<Sender> commandManager, ChannelRepository repository) {
+    private static void registerArgumentParser(CommandManager<Chatter> commandManager, ChannelRepository repository) {
         commandManager.getParserRegistry().registerParserSupplier(TypeToken.get(Channel.class), parserParameters -> new ChannelParser(repository));
     }
 
-    private static void registerCaptions(CommandManager<Sender> commandManager) {
-        if (commandManager.getCaptionRegistry() instanceof FactoryDelegatingCaptionRegistry<Sender> registry) {
+    private static void registerCaptions(CommandManager<Chatter> commandManager) {
+        if (commandManager.getCaptionRegistry() instanceof FactoryDelegatingCaptionRegistry<Chatter> registry) {
             registry.registerMessageFactory(
                 ChannelParser.ARGUMENT_PARSE_FAILURE_CHANNEL,
                 (context, key) -> "'{input}' is not a channel."
@@ -68,7 +68,7 @@ public final class ChannelParser implements ArgumentParser<Sender, Channel> {
     }
 
     @Override
-    public @NonNull ArgumentParseResult<@NonNull Channel> parse(@NonNull CommandContext<@NonNull Sender> commandContext, @NonNull Queue<@NonNull String> inputQueue) {
+    public @NonNull ArgumentParseResult<@NonNull Channel> parse(@NonNull CommandContext<@NonNull Chatter> commandContext, @NonNull Queue<@NonNull String> inputQueue) {
         try {
             return getChannel(commandContext, validateAndGetInput(commandContext, inputQueue));
         } catch (Exception e) {
@@ -77,7 +77,7 @@ public final class ChannelParser implements ArgumentParser<Sender, Channel> {
     }
 
     @NotNull
-    private ArgumentParseResult<@NonNull Channel> getChannel(@NotNull CommandContext<@NonNull Sender> commandContext, String input) {
+    private ArgumentParseResult<@NonNull Channel> getChannel(@NotNull CommandContext<@NonNull Chatter> commandContext, String input) {
         try {
             return success(repository.get(input));
         } catch (ChannelRepository.ChannelNotFound e) {
@@ -86,7 +86,7 @@ public final class ChannelParser implements ArgumentParser<Sender, Channel> {
     }
 
     @NotNull
-    private String validateAndGetInput(@NotNull CommandContext<@NonNull Sender> commandContext, @NotNull Queue<@NonNull String> inputQueue) {
+    private String validateAndGetInput(@NotNull CommandContext<@NonNull Chatter> commandContext, @NotNull Queue<@NonNull String> inputQueue) {
         final String input = inputQueue.peek();
         if (input == null || input.isBlank())
             throw new NoInputProvidedException(ChannelParser.class, commandContext);

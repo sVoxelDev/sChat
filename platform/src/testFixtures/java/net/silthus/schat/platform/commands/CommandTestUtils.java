@@ -25,7 +25,7 @@ import cloud.commandframework.execution.CommandExecutionCoordinator;
 import cloud.commandframework.internal.CommandRegistrationHandler;
 import cloud.commandframework.meta.SimpleCommandMeta;
 import java.util.function.Function;
-import net.silthus.schat.platform.sender.Sender;
+import net.silthus.schat.chatter.Chatter;
 import org.mockito.Mockito;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -45,10 +45,10 @@ public final class CommandTestUtils {
     private CommandTestUtils() {
     }
 
-    private abstract static class TestCommandSenderCommandManager extends CommandManager<Sender> {
+    private abstract static class TestCommandSenderCommandManager extends CommandManager<Chatter> {
 
         protected TestCommandSenderCommandManager(
-            final Function<CommandTree<Sender>, CommandExecutionCoordinator<Sender>> commandExecutionCoordinator,
+            final Function<CommandTree<Chatter>, CommandExecutionCoordinator<Chatter>> commandExecutionCoordinator,
             final CommandRegistrationHandler commandRegistrationHandler
         ) {
             super(commandExecutionCoordinator, commandRegistrationHandler);
@@ -56,8 +56,8 @@ public final class CommandTestUtils {
 
     }
 
-    public static CommandManager<Sender> createCommandManager() {
-        final CommandManager<Sender> manager = mock(
+    public static CommandManager<Chatter> createCommandManager() {
+        final CommandManager<Chatter> manager = mock(
             TestCommandSenderCommandManager.class,
             withSettings().useConstructor(
                 CommandExecutionCoordinator.simpleCoordinator(),

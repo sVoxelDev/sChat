@@ -24,6 +24,8 @@ import net.kyori.adventure.text.Component;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.settings.Configured;
 import net.silthus.schat.settings.Setting;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 public interface Channel extends Configured, MessageTarget, Comparable<Channel> {
 
@@ -48,19 +50,19 @@ public interface Channel extends Configured, MessageTarget, Comparable<Channel> 
      */
     Setting<String> JOIN_PERMISSION = Setting.setting(String.class, "permissions.join", "schat.channel.default.join");
 
-    static Channel createChannel(String key) {
+    static @NotNull Channel createChannel(String key) {
         return channel(key).create();
     }
 
-    static Builder channel(String key) {
+    static @NotNull Builder channel(String key) {
         return new ChannelImpl.Builder(key);
     }
 
-    String getKey();
+    @NotNull String getKey();
 
-    Component getDisplayName();
+    @NotNull Component getDisplayName();
 
-    List<MessageTarget> getTargets();
+    @NotNull @Unmodifiable List<MessageTarget> getTargets();
 
     void addTarget(MessageTarget target);
 

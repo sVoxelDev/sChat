@@ -20,7 +20,6 @@
 package net.silthus.schat;
 
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.AbstractChatter;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.policies.ChannelPolicies;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +43,7 @@ class PoliciesTests {
     @BeforeEach
     void setUp() {
         policies = new ChannelPolicies();
-        chatter = mock(AbstractChatter.class);
+        chatter = mock(Chatter.class);
     }
 
     private void assertCanJoin(Channel channel, boolean expected) {

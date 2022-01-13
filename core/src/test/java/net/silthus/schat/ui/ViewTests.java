@@ -24,7 +24,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.AbstractChatter;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ViewTests {
 
     private static final @NotNull MiniMessage COMPONENT_SERIALIZER = MiniMessage.miniMessage();
-    private AbstractChatter chatter;
+    private Chatter chatter;
     private View view;
 
     @BeforeEach

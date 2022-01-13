@@ -23,8 +23,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import net.kyori.adventure.text.Component;
-import net.silthus.schat.chatter.AbstractChatter;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.MessageHandler;
 import net.silthus.schat.chatter.PermissionHandler;
 import net.silthus.schat.identity.Identity;
@@ -33,7 +32,7 @@ import net.silthus.schat.ui.View;
 
 @Setter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-final class ChatterSender extends AbstractChatter implements Sender {
+final class ChatterSender extends Chatter {
 
     private final PermissionHandler permissionHandler;
     private final MessageHandler messageHandler;
@@ -55,11 +54,6 @@ final class ChatterSender extends AbstractChatter implements Sender {
 
     @Override
     protected void processMessage(Message message) {
-        sendRawMessage(getView().render());
-    }
-
-    @Override
-    public void sendRawMessage(Component message) {
-        messageHandler.sendMessage(message);
+        messageHandler.sendMessage(getView().render());
     }
 }

@@ -33,27 +33,23 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.ChannelHelper.randomChannel;
-import static net.silthus.schat.ChatterMock.randomChatter;
 import static net.silthus.schat.TestHelper.assertNPE;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ChannelCommandsTests extends CommandTest {
 
     private ChannelCommands channelCommands;
-    private Chatter chatter;
 
     @BeforeEach
     void setUp() {
         policies = mock(ChannelPolicies.class);
         mockCanJoin(true);
-        chatter = spy(randomChatter());
         channelCommands = new ChannelCommands(policies);
     }
 

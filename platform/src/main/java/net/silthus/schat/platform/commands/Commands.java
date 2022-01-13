@@ -24,19 +24,19 @@ import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.arguments.parser.StandardParameters;
 import cloud.commandframework.meta.CommandMeta;
 import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.commands.parser.ChannelParser;
-import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.policies.ChannelPolicies;
 import org.jetbrains.annotations.NotNull;
 
 public final class Commands {
 
-    private final CommandManager<Sender> commandManager;
+    private final CommandManager<Chatter> commandManager;
     private final ChannelRepository channelRepository;
-    private final AnnotationParser<Sender> parser;
+    private final AnnotationParser<Chatter> parser;
     private final ChannelPolicies channelPolicies;
 
-    public Commands(CommandManager<Sender> commandManager, ChannelRepository channelRepository, ChannelPolicies channelPolicies) {
+    public Commands(CommandManager<Chatter> commandManager, ChannelRepository channelRepository, ChannelPolicies channelPolicies) {
         this.commandManager = commandManager;
         this.channelRepository = channelRepository;
         this.channelPolicies = channelPolicies;
@@ -49,10 +49,10 @@ public final class Commands {
     }
 
     @NotNull
-    private AnnotationParser<Sender> createAnnotationParser() {
+    private AnnotationParser<Chatter> createAnnotationParser() {
         return new AnnotationParser<>(
             this.commandManager,
-            Sender.class,
+            Chatter.class,
             p -> CommandMeta.simple()
                 .with(CommandMeta.DESCRIPTION, p.get(StandardParameters.DESCRIPTION, "No description"))
                 .build()

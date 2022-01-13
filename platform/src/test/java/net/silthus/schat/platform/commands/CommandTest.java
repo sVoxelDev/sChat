@@ -22,12 +22,12 @@ package net.silthus.schat.platform.commands;
 import cloud.commandframework.CommandManager;
 import lombok.SneakyThrows;
 import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.platform.sender.Sender;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.policies.ChannelPolicies;
 import org.junit.jupiter.api.BeforeEach;
 
+import static net.silthus.schat.ChatterMock.randomChatter;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
-import static net.silthus.schat.platform.SenderMock.randomSender;
 import static net.silthus.schat.platform.commands.CommandTestUtils.createCommandManager;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,9 +37,9 @@ import static org.mockito.Mockito.when;
 public abstract class CommandTest {
 
     protected final ChannelRepository channelRepository = createInMemoryChannelRepository();
-    protected CommandManager<Sender> commandManager;
+    protected CommandManager<Chatter> commandManager;
     protected ChannelPolicies policies;
-    protected Sender commandSender;
+    protected Chatter chatter;
 
     @BeforeEach
     void setUpBase() {
@@ -47,12 +47,12 @@ public abstract class CommandTest {
         policies = mock(ChannelPolicies.class);
         when(policies.canJoinChannel(any(), any())).thenReturn(true);
         new Commands(commandManager, channelRepository, policies).register();
-        commandSender = randomSender();
+        chatter = randomChatter();
     }
 
     @SneakyThrows
-    protected Sender cmd(String command) {
-        return commandManager.executeCommand(commandSender, command).get().getCommandContext().getSender();
+    protected Chatter cmd(String command) {
+        return commandManager.executeCommand(chatter, command).get().getCommandContext().getSender();
     }
 
     protected void cmdFails(String command, Class<? extends Exception> expectedException) {

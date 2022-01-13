@@ -22,7 +22,7 @@ package net.silthus.schat.platform;
 import lombok.Getter;
 import lombok.NonNull;
 import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.platform.sender.SenderFactory;
+import net.silthus.schat.platform.sender.ChatterFactory;
 import org.jetbrains.annotations.ApiStatus;
 
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
@@ -31,10 +31,10 @@ import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelR
 public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     private ChannelRepository channelRepository;
-    private SenderFactory<?> senderFactory;
+    private ChatterFactory<?> chatterFactory;
 
     public final void enable() {
-        senderFactory = provideUserFactory();
+        chatterFactory = provideUserFactory();
 
         channelRepository = provideChannelRepository();
     }
@@ -44,12 +44,12 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
         return createInMemoryChannelRepository();
     }
 
-    protected abstract SenderFactory<?> provideUserFactory();
+    protected abstract ChatterFactory<?> provideUserFactory();
 
     @Override
     @SuppressWarnings("unchecked")
-    public final <T> SenderFactory<T> getUserFactory(@NonNull Class<T> playerClass) {
-        senderFactory.checkPlayerType(playerClass);
-        return (SenderFactory<T>) senderFactory;
+    public final <T> ChatterFactory<T> getUserFactory(@NonNull Class<T> playerClass) {
+        chatterFactory.checkPlayerType(playerClass);
+        return (ChatterFactory<T>) chatterFactory;
     }
 }
