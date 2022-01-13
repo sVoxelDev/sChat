@@ -21,6 +21,7 @@ package net.silthus.schat.platform.commands;
 
 import net.silthus.schat.MessageHelper;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.commands.parser.ChannelParser;
@@ -35,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import static net.silthus.schat.ChannelHelper.randomChannel;
 import static net.silthus.schat.TestHelper.assertNPE;
 import static net.silthus.schat.channel.Channel.createChannel;
+import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -45,12 +47,17 @@ import static org.mockito.Mockito.when;
 class ChannelCommandsTests extends CommandTest {
 
     private ChannelCommands channelCommands;
+    private ChannelPolicies policies;
+    private ChannelRepository channelRepository;
 
     @BeforeEach
     void setUp() {
         policies = mock(ChannelPolicies.class);
+        when(policies.canJoinChannel(any(), any())).thenReturn(true);
         mockCanJoin(true);
-        channelCommands = new ChannelCommands(policies);
+        channelRepository = createInMemoryChannelRepository();
+        channelCommands = new ChannelCommands(policies, channelRepository);
+        commands.register(channelCommands);
     }
 
     private void assertJoinedChannel(Channel channel) {
@@ -73,9 +80,24 @@ class ChannelCommandsTests extends CommandTest {
         return c;
     }
 
+    private Channel addRandomChannel() {
+        final Channel channel = randomChannel();
+        channelRepository.add(channel);
+        return channel;
+    }
+
+    private void assertNoActiveChannel() {
+        assertThat(chatter.getActiveChannel()).isNotPresent();
+    }
+
+    private void assertActiveChannel(Channel channel) {
+        assertThat(chatter.getActiveChannel())
+            .isPresent().get().isEqualTo(channel);
+    }
+
     @Nested
     class joinChannel {
-
+        private static final String JOIN_CHANNEL_CMD = "channel join test";
         private Channel channel;
 
         @BeforeEach
@@ -102,6 +124,10 @@ class ChannelCommandsTests extends CommandTest {
 
         private void assertJoinError() {
             assertThatExceptionOfType(JoinChannel.Error.class).isThrownBy(this::joinChannel);
+        }
+
+        private Chatter executeJoinCommand() {
+            return cmd(JOIN_CHANNEL_CMD);
         }
 
         @Test
@@ -132,13 +158,13 @@ class ChannelCommandsTests extends CommandTest {
             @Test
             void adds_channel_to_user() {
                 final Channel channel = joinChannel();
-                assertThat(chatter.getChannels()).contains(channel);
+                assertJoinedChannel(channel);
             }
         }
 
         @Test
         void given_invalid_chanel_join_command_fails() {
-            cmdFails("channel join test", ChannelParser.ChannelParseException.class);
+            cmdFails(JOIN_CHANNEL_CMD, ChannelParser.ChannelParseException.class);
         }
 
         @Nested class given_valid_channel {
@@ -146,13 +172,14 @@ class ChannelCommandsTests extends CommandTest {
 
             @BeforeEach
             void setUp() {
+                mockCanJoin(true);
                 channel = addChannel("test");
             }
 
             @Test
             void then_join_command_succeeds() {
-                final Chatter chatter = cmd("channel join test");
-                assertThat(chatter.getChannels()).contains(channel);
+                executeJoinCommand();
+                assertJoinedChannel(channel);
             }
 
             @Nested class given_failed_can_join_check {
@@ -167,14 +194,15 @@ class ChannelCommandsTests extends CommandTest {
                 }
 
                 @Test
-                void then_join_command_fails_with_message() {
-                    cmd("channel join test");
+                void then_join_command_does_not_throw() {
+                    executeJoinCommand();
+                    assertThat(chatter.getChannels()).doesNotContain(channel);
                 }
             }
         }
     }
 
-    @Nested class setActive {
+    @Nested class setActiveChannel {
 
         @Test
         @SuppressWarnings("ConstantConditions")
@@ -183,11 +211,43 @@ class ChannelCommandsTests extends CommandTest {
             assertNPE(() -> channelCommands.setActiveChannel(chatter, null));
         }
 
-        @Test
-        void when_not_joined_channel_joins_channel() {
-            final Channel channel = randomChannel();
-            assertJoinedChannel(setActive(channel));
-            assertThat(chatter.getActiveChannel()).isPresent().get().isEqualTo(channel);
+        @Nested class given_valid_channel {
+            private Channel channel;
+
+            @BeforeEach
+            void setUp() {
+                channel = addRandomChannel();
+            }
+
+            private void executeSetActiveChannelCommand() {
+                cmd("channel set-active " + channel.getKey());
+            }
+
+            @Test
+            void when_not_joined_channel_joins_channel_and_sets_active() {
+                setActive(channel);
+                assertJoinedChannel(channel);
+                assertActiveChannel(channel);
+            }
+
+            @Test
+            void then_setActiveChannel_command_succeeds() {
+                executeSetActiveChannelCommand();
+                assertActiveChannel(channel);
+            }
+
+            @Nested class given_join_channel_fails {
+                @BeforeEach
+                void setUp() {
+                    mockCanJoin(false);
+                }
+
+                @Test
+                void then_setActiveChannel_command_does_not_throw() {
+                    executeSetActiveChannelCommand();
+                    assertNoActiveChannel();
+                }
+            }
         }
     }
 

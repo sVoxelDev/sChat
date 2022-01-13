@@ -26,13 +26,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
-@EqualsAndHashCode(of = {"settings"})
 final class SettingsImpl implements Settings {
 
     private final Map<Setting<?>, Supplier<?>> settings;
