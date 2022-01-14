@@ -19,20 +19,38 @@
 
 package net.silthus.schat.bukkit;
 
+import cloud.commandframework.CommandManager;
+import cloud.commandframework.bukkit.BukkitCommandManager;
+import lombok.SneakyThrows;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.silthus.schat.bukkit.adapter.BukkitChatterFactory;
-import net.silthus.schat.platform.AbstractSChatPlugin;
-import net.silthus.schat.platform.sender.ChatterFactory;
+import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.platform.plugin.AbstractSChatPlugin;
+
+import static cloud.commandframework.execution.CommandExecutionCoordinator.simpleCoordinator;
 
 public final class SChatBukkitPlugin extends AbstractSChatPlugin {
+
     private final SChatBukkitPluginBootstrap bootstrap;
+    private BukkitSenderFactory chatterFactory;
 
     SChatBukkitPlugin(SChatBukkitPluginBootstrap bootstrap) {
         this.bootstrap = bootstrap;
     }
 
     @Override
-    protected ChatterFactory<?> provideUserFactory() {
-        return new BukkitChatterFactory(BukkitAudiences.create(bootstrap));
+    protected void setupChatterFactory() {
+        chatterFactory = new BukkitSenderFactory(BukkitAudiences.create(bootstrap));
+    }
+
+    @Override
+    @SneakyThrows
+    protected CommandManager<Chatter> provideCommandManager() {
+        return new BukkitCommandManager<>(
+            bootstrap,
+            simpleCoordinator(),
+            sender -> chatterFactory.wrap(sender),
+            chatter -> chatterFactory.unwrap(chatter)
+        );
     }
 }

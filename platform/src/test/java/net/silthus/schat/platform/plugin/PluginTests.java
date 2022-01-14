@@ -17,16 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform;
+package net.silthus.schat.platform.plugin;
 
-import net.silthus.schat.platform.sender.ChatterFactory;
+import cloud.commandframework.CommandManager;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.platform.commands.Command;
+import net.silthus.schat.platform.commands.Commands;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.TestHelper.assertNPE;
+import static net.silthus.schat.platform.commands.CommandTestUtils.createCommandManager;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class PluginTests {
 
@@ -44,45 +49,35 @@ class PluginTests {
                 plugin.enable();
             }
 
-            @Nested class then_getChatterFactory {
+            @Test
+            void then_ChannelRepository_is_not_null() {
+                assertThat(plugin.getChannelRepository()).isNotNull();
+            }
 
-                @Test
-                void is_not_null() {
-                    assertThat(plugin.getUserFactory(TestPlayer.class)).isNotNull();
-                }
-
-                @Test
-                @SuppressWarnings({"ConstantConditions"})
-                void given_null_player_class_throws() {
-                    assertNPE(() -> plugin.getUserFactory(null));
-                }
-
-                @Test
-                void given_invalid_player_class_throws() {
-                    assertThatExceptionOfType(ChatterFactory.InvalidPlayerType.class).isThrownBy(() -> plugin.getUserFactory(String.class));
-                }
-
-                @Test
-                void given_super_type_does_not_throw() {
-                    assertThat(plugin.getUserFactory(TestCommandSender.class)).isNotNull();
-                }
+            @Test
+            void then_commands_are_registered() {
+                verify(TestPlugin.command).register(any(), any());
             }
         }
-
     }
 
     private static class TestPlugin extends AbstractSChatPlugin {
 
-        private final FakeChatterFactory userFactory;
+        static Command command = mock(Command.class);
 
-        TestPlugin() {
-            userFactory = new FakeChatterFactory();
+        @Override
+        protected void setupChatterFactory() {
+
         }
 
         @Override
-        protected ChatterFactory<?> provideUserFactory() {
-            return userFactory;
+        protected CommandManager<Chatter> provideCommandManager() {
+            return createCommandManager();
+        }
+
+        @Override
+        protected void registerCustomCommands(Commands commands) {
+            commands.register(command);
         }
     }
-
 }

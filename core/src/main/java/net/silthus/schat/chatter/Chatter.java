@@ -27,11 +27,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identified;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.ui.View;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -45,9 +47,11 @@ public abstract class Chatter implements MessageTarget, Identified, Permissable 
     private final Set<Channel> channels = new HashSet<>();
     private final Set<Message> messages = new HashSet<>();
     private @Nullable Channel activeChannel;
+    private @NonNull View view;
 
     protected Chatter(@NonNull Identity identity) {
         this.identity = identity;
+        this.view = new View(this);
     }
 
     public final void setActiveChannel(@Nullable Channel activeChannel) {
@@ -91,8 +95,8 @@ public abstract class Chatter implements MessageTarget, Identified, Permissable 
     @Override
     public final void sendMessage(@NonNull Message message) {
         messages.add(message);
-        processMessage(message);
+        sendRawMessage(getView().render());
     }
 
-    protected abstract void processMessage(Message message);
+    protected abstract void sendRawMessage(Component component);
 }

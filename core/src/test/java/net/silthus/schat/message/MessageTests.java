@@ -26,14 +26,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.ChatterMock.randomChatter;
 import static net.silthus.schat.TestHelper.assertNPE;
 import static net.silthus.schat.message.Message.emptyMessage;
 import static net.silthus.schat.message.Message.message;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 class MessageTests {
@@ -108,6 +106,6 @@ class MessageTests {
 
     @Test
     void given_message_with_one_user_and_one_channel_sends_message_to_both() {
-        assertMessageSent(spy(randomChatter()), mock(Channel.class));
+        assertMessageSent(mock(MessageTarget.class), mock(Channel.class));
     }
 }

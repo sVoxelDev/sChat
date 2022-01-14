@@ -17,19 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.policies;
+package net.silthus.schat.platform.plugin;
 
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.channel.ChannelRepository;
 
-public class ChannelPolicies {
+public interface SChatPlugin {
 
-    public ChannelPolicies() {
-    }
-
-    public boolean canJoinChannel(Chatter chatter, Channel channel) {
-        if (!channel.get(Channel.PROTECTED))
-            return true;
-        return chatter.hasPermission(channel.get(Channel.JOIN_PERMISSION));
-    }
+    ChannelRepository getChannelRepository();
 }

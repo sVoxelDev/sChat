@@ -25,43 +25,43 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.silthus.schat.chatter.MessageHandler;
 import net.silthus.schat.chatter.PermissionHandler;
 import net.silthus.schat.identity.Identity;
-import net.silthus.schat.platform.sender.ChatterFactory;
+import net.silthus.schat.platform.plugin.adapter.SenderFactory;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.identity.Identity.identity;
 
-public final class BukkitChatterFactory extends ChatterFactory<Player> {
+public final class BukkitSenderFactory extends SenderFactory<CommandSender> {
 
     private static final @NotNull LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
 
     @Getter
     private final BukkitAudiences audienceProvider;
 
-    public BukkitChatterFactory(BukkitAudiences audienceProvider) {
+    public BukkitSenderFactory(BukkitAudiences audienceProvider) {
         this.audienceProvider = audienceProvider;
     }
 
-    @Override
-    protected Class<Player> getType() {
-        return Player.class;
-    }
-
     @NotNull
-    protected Identity getIdentity(Player player) {
-        return identity(player.getUniqueId(),
-            player.getName(),
-            () -> LEGACY_SERIALIZER.deserialize(player.getDisplayName())
-        );
+    protected Identity getIdentity(CommandSender sender) {
+        if (sender instanceof Player player) {
+            return identity(player.getUniqueId(),
+                player.getName(),
+                () -> LEGACY_SERIALIZER.deserialize(player.getDisplayName())
+            );
+        } else {
+            return Identity.nil();
+        }
     }
 
     @Override
-    protected PermissionHandler getPermissionHandler(Player player) {
-        return player::hasPermission;
+    protected PermissionHandler getPermissionHandler(CommandSender sender) {
+        return sender::hasPermission;
     }
 
     @Override
-    protected MessageHandler getMessageHandler(Player player) {
-        return message -> getAudienceProvider().player(player).sendMessage(message);
+    protected MessageHandler getMessageHandler(CommandSender sender) {
+        return message -> getAudienceProvider().sender(sender).sendMessage(message);
     }
 }

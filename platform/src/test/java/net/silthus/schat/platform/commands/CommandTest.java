@@ -21,7 +21,9 @@ package net.silthus.schat.platform.commands;
 
 import cloud.commandframework.CommandManager;
 import lombok.SneakyThrows;
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.message.Message;
 import org.junit.jupiter.api.BeforeEach;
 
 import static net.silthus.schat.ChatterMock.randomChatter;
@@ -52,5 +54,13 @@ public abstract class CommandTest {
         } catch (Exception e) {
             assertThat(e).getRootCause().isInstanceOf(expectedException);
         }
+    }
+
+    protected void assertLastMessageIs(Component component) {
+        assertThat(chatter.getMessages())
+            .isNotEmpty()
+            .last()
+            .extracting(Message::getText)
+            .isEqualTo(component);
     }
 }

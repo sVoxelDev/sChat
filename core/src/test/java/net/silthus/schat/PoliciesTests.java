@@ -21,7 +21,8 @@ package net.silthus.schat;
 
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.policies.ChannelPolicies;
+import net.silthus.schat.policies.Policies;
+import net.silthus.schat.policies.PoliciesImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,12 +38,12 @@ import static org.mockito.Mockito.when;
 
 class PoliciesTests {
 
-    private ChannelPolicies policies;
+    private Policies policies;
     private Chatter chatter;
 
     @BeforeEach
     void setUp() {
-        policies = new ChannelPolicies();
+        policies = new PoliciesImpl();
         chatter = mock(Chatter.class);
     }
 

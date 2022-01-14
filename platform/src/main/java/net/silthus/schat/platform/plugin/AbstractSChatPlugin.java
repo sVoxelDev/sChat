@@ -17,12 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform;
+package net.silthus.schat.platform.plugin;
 
+import cloud.commandframework.CommandManager;
 import lombok.Getter;
-import lombok.NonNull;
 import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.platform.sender.ChatterFactory;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.platform.commands.ChannelCommands;
+import net.silthus.schat.platform.commands.Commands;
+import net.silthus.schat.policies.Policies;
+import net.silthus.schat.policies.PoliciesImpl;
 import org.jetbrains.annotations.ApiStatus;
 
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
@@ -30,26 +34,40 @@ import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelR
 @Getter
 public abstract class AbstractSChatPlugin implements SChatPlugin {
 
+    private Policies policies;
     private ChannelRepository channelRepository;
-    private ChatterFactory<?> chatterFactory;
+    private Commands commands;
 
     public final void enable() {
-        chatterFactory = provideUserFactory();
+        setupChatterFactory();
 
+        policies = provideChannelPolicies();
         channelRepository = provideChannelRepository();
+
+        commands = new Commands(provideCommandManager());
+        registerNativeCommands();
+        registerCustomCommands(commands);
     }
+
+    protected abstract void setupChatterFactory();
 
     @ApiStatus.OverrideOnly
     protected ChannelRepository provideChannelRepository() {
         return createInMemoryChannelRepository();
     }
 
-    protected abstract ChatterFactory<?> provideUserFactory();
+    @ApiStatus.OverrideOnly
+    protected Policies provideChannelPolicies() {
+        return new PoliciesImpl();
+    }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public final <T> ChatterFactory<T> getUserFactory(@NonNull Class<T> playerClass) {
-        chatterFactory.checkPlayerType(playerClass);
-        return (ChatterFactory<T>) chatterFactory;
+    protected abstract CommandManager<Chatter> provideCommandManager();
+
+    private void registerNativeCommands() {
+        commands.register(new ChannelCommands(policies, channelRepository));
+    }
+
+    @ApiStatus.OverrideOnly
+    protected void registerCustomCommands(Commands commands) {
     }
 }

@@ -17,15 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform;
+package net.silthus.schat.policies;
 
-import lombok.NonNull;
-import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.platform.sender.ChatterFactory;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
 
-public interface SChatPlugin {
+public final class PoliciesImpl implements Policies {
 
-    ChannelRepository getChannelRepository();
+    public PoliciesImpl() {
+    }
 
-    <T> ChatterFactory<T> getUserFactory(@NonNull Class<T> playerClass);
+    @Override
+    public boolean canJoinChannel(Chatter chatter, Channel channel) {
+        if (!channel.get(Channel.PROTECTED))
+            return true;
+        return chatter.hasPermission(channel.get(Channel.JOIN_PERMISSION));
+    }
 }

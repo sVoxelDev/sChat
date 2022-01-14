@@ -20,12 +20,7 @@
 package net.silthus.schat.bukkit;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
-import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class BukkitPluginTests extends BukkitTests {
 
@@ -34,12 +29,5 @@ class BukkitPluginTests extends BukkitTests {
     @BeforeEach
     void setUp() {
         plugin = MockBukkit.load(SChatBukkitPluginBootstrap.class);
-    }
-
-    @Nested class given_enabled_bukkit_plugin {
-        @Test
-        void then_SChat_plugin_is_enabled() {
-            assertThat(plugin.getSChatPlugin().getUserFactory(Player.class)).isNotNull();
-        }
     }
 }

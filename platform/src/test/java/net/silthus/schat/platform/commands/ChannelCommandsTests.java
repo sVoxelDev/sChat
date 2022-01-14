@@ -25,7 +25,7 @@ import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.commands.parser.ChannelParser;
-import net.silthus.schat.policies.ChannelPolicies;
+import net.silthus.schat.policies.Policies;
 import net.silthus.schat.usecases.ChatListener;
 import net.silthus.schat.usecases.JoinChannel;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +37,7 @@ import static net.silthus.schat.ChannelHelper.randomChannel;
 import static net.silthus.schat.TestHelper.assertNPE;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.locale.Messages.JOIN_CHANNEL_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,12 +48,12 @@ import static org.mockito.Mockito.when;
 class ChannelCommandsTests extends CommandTest {
 
     private ChannelCommands channelCommands;
-    private ChannelPolicies policies;
+    private Policies policies;
     private ChannelRepository channelRepository;
 
     @BeforeEach
     void setUp() {
-        policies = mock(ChannelPolicies.class);
+        policies = mock(Policies.class);
         when(policies.canJoinChannel(any(), any())).thenReturn(true);
         mockCanJoin(true);
         channelRepository = createInMemoryChannelRepository();
@@ -197,6 +198,7 @@ class ChannelCommandsTests extends CommandTest {
                 void then_join_command_does_not_throw() {
                     executeJoinCommand();
                     assertThat(chatter.getChannels()).doesNotContain(channel);
+                    assertLastMessageIs(JOIN_CHANNEL_ERROR.build(channel));
                 }
             }
         }
@@ -246,6 +248,7 @@ class ChannelCommandsTests extends CommandTest {
                 void then_setActiveChannel_command_does_not_throw() {
                     executeSetActiveChannelCommand();
                     assertNoActiveChannel();
+                    assertLastMessageIs(JOIN_CHANNEL_ERROR.build(channel));
                 }
             }
         }
