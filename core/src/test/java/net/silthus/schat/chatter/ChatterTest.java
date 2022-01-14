@@ -19,20 +19,29 @@
 
 package net.silthus.schat.chatter;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identified;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.ui.View;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.kyori.adventure.text.Component.empty;
+import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.ChannelHelper.randomChannel;
+import static net.silthus.schat.ChatterMock.chatterMock;
 import static net.silthus.schat.IdentityHelper.randomIdentity;
 import static net.silthus.schat.MessageHelper.randomMessage;
 import static net.silthus.schat.TestHelper.assertNPE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class ChatterTest {
     private Chatter chatter;
@@ -41,12 +50,27 @@ class ChatterTest {
     @BeforeEach
     void setUp() {
         identity = randomIdentity();
-        chatter = spy(new TestChatter(identity));
+        chatter = spy(chatterMock(identity));
+    }
+
+    private View mockView(Component render) {
+        final View view = mock(View.class);
+        when(view.render()).thenReturn(render);
+        chatter.setView(view);
+        return view;
+    }
+
+    private View mockView() {
+        return mockView(empty());
+    }
+
+    private void sendRandomMessage() {
+        chatter.sendMessage(randomMessage());
     }
 
     @Test
     void given_null_identity_then_create_throws() {
-        assertNPE(() -> new TestChatter(null));
+        assertNPE(() -> chatterMock(null));
     }
 
     @Test
@@ -189,20 +213,18 @@ class ChatterTest {
         assertThat(chatter.getMessages()).contains(message);
     }
 
-    private static class TestChatter extends Chatter {
+    @Test
+    void when_sendMessage_is_called_then_view_is_rendered() {
+        final View view = mockView();
+        sendRandomMessage();
+        verify(view).render();
+    }
 
-        protected TestChatter(Identity identity) {
-            super(identity);
-        }
-
-        @Override
-        public boolean hasPermission(String permission) {
-            return false;
-        }
-
-        @Override
-        protected void processMessage(Message message) {
-
-        }
+    @Test
+    void when_sendMessage_is_called_then_sendRawMessage_is_called_with_rendered_view() {
+        final TextComponent text = text("TEST");
+        mockView(text);
+        sendRandomMessage();
+        verify(chatter).sendRawMessage(text);
     }
 }

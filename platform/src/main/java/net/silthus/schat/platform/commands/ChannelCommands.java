@@ -33,20 +33,21 @@ import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.commands.parser.ChannelParser;
-import net.silthus.schat.policies.ChannelPolicies;
+import net.silthus.schat.policies.Policies;
 import net.silthus.schat.usecases.ChatListener;
 import net.silthus.schat.usecases.JoinChannel;
 import net.silthus.schat.usecases.SetActiveChannel;
 
+import static net.silthus.schat.locale.Messages.JOIN_CHANNEL_ERROR;
 import static net.silthus.schat.message.Message.message;
 
 public final class ChannelCommands implements JoinChannel, SetActiveChannel, ChatListener, Command {
 
-    private final ChannelPolicies channelPolicies;
-    private ChannelRepository channelRepository;
+    private final Policies policies;
+    private final ChannelRepository channelRepository;
 
-    public ChannelCommands(ChannelPolicies channelPolicies, ChannelRepository channelRepository) {
-        this.channelPolicies = channelPolicies;
+    public ChannelCommands(Policies policies, ChannelRepository channelRepository) {
+        this.policies = policies;
         this.channelRepository = channelRepository;
     }
 
@@ -59,12 +60,16 @@ public final class ChannelCommands implements JoinChannel, SetActiveChannel, Cha
     @ProxiedBy("ch")
     @CommandMethod("channel join <channel>")
     public void joinChannelCmd(@NonNull Chatter chatter, @NonNull @Argument("channel") Channel channel) {
-        joinChannel(chatter, channel);
+        try {
+            joinChannel(chatter, channel);
+        } catch (Error e) {
+            JOIN_CHANNEL_ERROR.send(chatter, channel);
+        }
     }
 
     @Override
     public void joinChannel(@NonNull Chatter chatter, @NonNull Channel channel) throws Error {
-        if (!channelPolicies.canJoinChannel(chatter, channel))
+        if (!policies.canJoinChannel(chatter, channel))
             throw new Error();
         channel.addTarget(chatter);
         chatter.join(channel);
@@ -73,8 +78,12 @@ public final class ChannelCommands implements JoinChannel, SetActiveChannel, Cha
     @Override
     @CommandMethod("channel set-active <channel>")
     public void setActiveChannel(@NonNull Chatter chatter, @NonNull @Argument("channel") Channel channel) {
-        joinChannel(chatter, channel);
-        chatter.setActiveChannel(channel);
+        try {
+            joinChannel(chatter, channel);
+            chatter.setActiveChannel(channel);
+        } catch (Error e) {
+            JOIN_CHANNEL_ERROR.send(chatter, channel);
+        }
     }
 
     @Override

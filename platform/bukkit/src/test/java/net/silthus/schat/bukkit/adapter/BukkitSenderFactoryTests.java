@@ -35,19 +35,19 @@ import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BukkitChatterFactoryTests extends BukkitTests {
+class BukkitSenderFactoryTests extends BukkitTests {
 
-    private BukkitChatterFactory factory;
+    private BukkitSenderFactory factory;
     private PlayerMock player;
 
     @BeforeEach
     void setUp() {
-        factory = new BukkitChatterFactory(audiences);
+        factory = new BukkitSenderFactory(audiences);
         player = server.addPlayer();
     }
 
     private Chatter chatter() {
-        return factory.createChatter(player);
+        return factory.wrap(player);
     }
 
     private void assertDisplayName(Component name) {

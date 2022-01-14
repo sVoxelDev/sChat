@@ -17,9 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.sender;
+package net.silthus.schat.platform.plugin.adapter;
 
-import net.silthus.schat.platform.FakeChatterFactory;
+import net.silthus.schat.platform.FakeSenderFactory;
 import net.silthus.schat.platform.TestPlayer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -28,13 +28,13 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
 
-class ChatterFactoryTests {
+class SenderFactoryTests {
 
-    private FakeChatterFactory factory;
+    private FakeSenderFactory factory;
 
     @BeforeEach
     void setUp() {
-        factory = spy(new FakeChatterFactory());
+        factory = spy(new FakeSenderFactory());
     }
 
     @Nested class given_player {
@@ -48,7 +48,7 @@ class ChatterFactoryTests {
 
         @Test
         void when_createChatter_is_called_then_factory_uses_player_identity() {
-            assertThat(factory.createChatter(player).getIdentity()).isEqualTo(player.getIdentity());
+            assertThat(factory.wrap(player).getIdentity()).isEqualTo(player.getIdentity());
         }
     }
 }

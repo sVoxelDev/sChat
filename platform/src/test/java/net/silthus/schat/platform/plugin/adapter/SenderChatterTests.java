@@ -17,12 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.sender;
+package net.silthus.schat.platform.plugin.adapter;
 
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.MessageHandler;
 import net.silthus.schat.chatter.PermissionHandler;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.platform.TestCommandSender;
 import net.silthus.schat.ui.View;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,9 +40,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-class SenderTests {
+class SenderChatterTests {
 
-    private ChatterSender commandSender;
+    private Chatter chatter;
     private PermissionHandler permissionHandler;
     private MessageHandler messageHandler;
 
@@ -48,23 +50,23 @@ class SenderTests {
     void setUp() {
         permissionHandler = mock(PermissionHandler.class);
         messageHandler = mock(MessageHandler.class);
-        commandSender = createSender(randomIdentity());
+        chatter = createSender(randomIdentity());
     }
 
-    private ChatterSender createSender(Identity identity) {
-        return new ChatterSender(identity, permissionHandler, messageHandler);
+    private SenderFactory.SenderChatter<TestCommandSender> createSender(Identity identity) {
+        return new SenderFactory.SenderChatter<>(new TestCommandSender(), identity, permissionHandler, messageHandler);
     }
 
     @NotNull
     private Message sendMessage() {
         final Message message = emptyMessage();
-        commandSender.sendMessage(message);
+        chatter.sendMessage(message);
         return message;
     }
 
     @NotNull
     private View setView(View view) {
-        commandSender.setView(view);
+        chatter.setView(view);
         return view;
     }
 
@@ -80,7 +82,7 @@ class SenderTests {
 
         @BeforeEach
         void setUp() {
-            view = setView(spy(new View(commandSender)));
+            view = setView(spy(new View(chatter)));
             message = sendMessage();
         }
 
@@ -91,13 +93,13 @@ class SenderTests {
 
         @Test
         void then_message_is_added_to_user_message_cache() {
-            assertThat(commandSender.getMessages()).contains(message);
+            assertThat(chatter.getMessages()).contains(message);
         }
 
         @Test
         void twice_then_message_is_cached_only_once() {
-            commandSender.sendMessage(message);
-            assertThat(commandSender.getMessages()).containsOnlyOnce(message);
+            chatter.sendMessage(message);
+            assertThat(chatter.getMessages()).containsOnlyOnce(message);
         }
 
         @Test
@@ -108,18 +110,18 @@ class SenderTests {
 
     @Test
     void given_a_new_user_getView_is_not_null() {
-        assertThat(commandSender.getView()).isNotNull();
+        assertThat(chatter.getView()).isNotNull();
     }
 
     @Test
     @SuppressWarnings("ConstantConditions")
     void when_setView_is_given_null_an_npe_is_thrown() {
-        assertNPE(() -> commandSender.setView(null));
+        assertNPE(() -> chatter.setView(null));
     }
 
     @Test
     void when_hasPermission_is_called_then_permission_handler_is_invoked() {
-        commandSender.hasPermission("foobar");
+        chatter.hasPermission("foobar");
         verify(permissionHandler).hasPermission("foobar");
     }
 }

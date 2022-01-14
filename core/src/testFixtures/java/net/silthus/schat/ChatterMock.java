@@ -21,11 +21,11 @@ package net.silthus.schat;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.MessageHandler;
 import net.silthus.schat.chatter.PermissionHandler;
 import net.silthus.schat.identity.Identity;
-import net.silthus.schat.message.Message;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.IdentityHelper.randomIdentity;
@@ -34,8 +34,12 @@ import static net.silthus.schat.IdentityHelper.randomIdentity;
 @Setter
 public class ChatterMock extends Chatter {
 
+    public static @NotNull Chatter chatterMock(Identity identity) {
+        return new ChatterMock(identity);
+    }
+
     public static @NotNull Chatter randomChatter() {
-        return new ChatterMock(randomIdentity());
+        return chatterMock(randomIdentity());
     }
 
     private PermissionHandler permissionHandler = permission -> false;
@@ -51,7 +55,7 @@ public class ChatterMock extends Chatter {
     }
 
     @Override
-    protected void processMessage(Message message) {
-        messageHandler.sendMessage(message.getText());
+    protected void sendRawMessage(Component component) {
+        messageHandler.sendMessage(component);
     }
 }

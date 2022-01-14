@@ -22,29 +22,24 @@ package net.silthus.schat.platform;
 import net.silthus.schat.chatter.MessageHandler;
 import net.silthus.schat.chatter.PermissionHandler;
 import net.silthus.schat.identity.Identity;
-import net.silthus.schat.platform.sender.ChatterFactory;
+import net.silthus.schat.platform.plugin.adapter.SenderFactory;
 
 import static org.mockito.Mockito.mock;
 
-public class FakeChatterFactory extends ChatterFactory<TestCommandSender> {
+public class FakeSenderFactory extends SenderFactory<TestCommandSender> {
 
     @Override
-    protected Class<TestCommandSender> getType() {
-        return TestCommandSender.class;
+    protected Identity getIdentity(TestCommandSender sender) {
+        return sender.getIdentity();
     }
 
     @Override
-    protected Identity getIdentity(TestCommandSender player) {
-        return player.getIdentity();
+    protected PermissionHandler getPermissionHandler(TestCommandSender sender) {
+        return sender.getPermissionHandler();
     }
 
     @Override
-    protected PermissionHandler getPermissionHandler(TestCommandSender player) {
-        return player.getPermissionHandler();
-    }
-
-    @Override
-    protected MessageHandler getMessageHandler(TestCommandSender player) {
+    protected MessageHandler getMessageHandler(TestCommandSender sender) {
         return mock(MessageHandler.class);
     }
 }
