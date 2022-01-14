@@ -23,11 +23,14 @@ import cloud.commandframework.CommandManager;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.commands.Command;
 import net.silthus.schat.platform.commands.Commands;
+import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
+import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.platform.commands.CommandTestUtils.createCommandManager;
+import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -58,12 +61,23 @@ class PluginTests {
             void then_commands_are_registered() {
                 verify(TestPlugin.command).register(any(), any());
             }
+
+            @Test
+            void then_config_is_loaded() {
+                assertThat(plugin.getConfig()).isNotNull();
+                assertThat(plugin.getConfig().get(CHANNELS)).isNotNull();
+            }
         }
     }
 
     private static class TestPlugin extends AbstractSChatPlugin {
 
         static Command command = mock(Command.class);
+
+        @Override
+        protected ConfigurationAdapter provideConfigurationAdapter() {
+            return mock(ConfigurationAdapter.class);
+        }
 
         @Override
         protected void setupChatterFactory() {
@@ -78,6 +92,11 @@ class PluginTests {
         @Override
         protected void registerCustomCommands(Commands commands) {
             commands.register(command);
+        }
+
+        @Override
+        public Bootstrap getBootstrap() {
+            return mock(Bootstrap.class);
         }
     }
 }

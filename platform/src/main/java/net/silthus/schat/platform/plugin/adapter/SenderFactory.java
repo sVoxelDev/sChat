@@ -19,15 +19,24 @@
 
 package net.silthus.schat.platform.plugin.adapter;
 
+import java.util.UUID;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.MessageHandler;
 import net.silthus.schat.chatter.PermissionHandler;
 import net.silthus.schat.identity.Identity;
+import net.silthus.schat.message.Message;
+
+import static net.kyori.adventure.text.Component.text;
 
 public abstract class SenderFactory<T> {
+
+    public static final UUID CONSOLE_UUID = new UUID(0, 0);
+    public static final String CONSOLE_NAME = "Console";
+    public static final Component CONSOLE_DISPLAY_NAME = text(CONSOLE_NAME);
 
     public final Chatter wrap(T sender) {
         return new SenderChatter<>(sender,
@@ -66,9 +75,21 @@ public abstract class SenderFactory<T> {
             this.messageHandler = messageHandler;
         }
 
+        public boolean isConsole() {
+            return getUniqueId().equals(CONSOLE_UUID);
+        }
+
         @Override
         public boolean hasPermission(String permission) {
             return permissionHandler.hasPermission(permission);
+        }
+
+        @Override
+        protected void processMessage(@NonNull Message message) {
+            if (isConsole())
+                sendRawMessage(message.getText());
+            else
+                super.processMessage(message);
         }
 
         @Override

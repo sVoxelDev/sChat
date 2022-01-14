@@ -21,30 +21,41 @@ package net.silthus.schat.bukkit;
 
 import java.io.File;
 import kr.entree.spigradle.annotations.PluginMain;
-import lombok.Getter;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
 
 @PluginMain
-public final class SChatBukkitPluginBootstrap extends JavaPlugin {
+public final class BukkitLoader extends JavaPlugin {
 
-    @Getter
-    private final SChatBukkitPlugin sChatPlugin;
+    private final SChatBukkitBootstrap bootstrap;
 
-    SChatBukkitPluginBootstrap() {
-        sChatPlugin = new SChatBukkitPlugin(this);
+    public BukkitLoader() {
+        this.bootstrap = new SChatBukkitBootstrap(this);
     }
 
     // testing constructor
-    SChatBukkitPluginBootstrap(@NotNull JavaPluginLoader loader, @NotNull PluginDescriptionFile description, @NotNull File dataFolder, @NotNull File file) {
+    public BukkitLoader(@NotNull JavaPluginLoader loader,
+                        @NotNull PluginDescriptionFile description,
+                        @NotNull File dataFolder,
+                        @NotNull File file) {
         super(loader, description, dataFolder, file);
-        sChatPlugin = new SChatBukkitPlugin(this);
+        this.bootstrap = new SChatBukkitBootstrap(this);
+    }
+
+    @Override
+    public void onLoad() {
+        bootstrap.onLoad();
     }
 
     @Override
     public void onEnable() {
-        getSChatPlugin().enable();
+        bootstrap.onEnable();
+    }
+
+    @Override
+    public void onDisable() {
+        bootstrap.onDisable();
     }
 }

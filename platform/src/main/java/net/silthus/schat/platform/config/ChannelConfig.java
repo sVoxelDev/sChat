@@ -17,28 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.platform.config;
 
-import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.platform.config.SChatConfig;
-import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
-import net.silthus.schat.platform.plugin.logging.PluginLogger;
+import lombok.Getter;
+import lombok.Setter;
+import net.kyori.adventure.text.Component;
+import net.silthus.schat.settings.Settings;
 
-public interface SChatPlugin {
+@Getter
+@Setter
+public final class ChannelConfig {
 
-    void load();
-
-    void enable();
-
-    void disable();
-
-    Bootstrap getBootstrap();
-
-    default PluginLogger getLogger() {
-        return getBootstrap().getPluginLogger();
-    }
-
-    SChatConfig getConfig();
-
-    ChannelRepository getChannelRepository();
+    private transient String key;
+    private Component name = Component.empty();
+    private Settings settings = Settings.createSettings();
 }

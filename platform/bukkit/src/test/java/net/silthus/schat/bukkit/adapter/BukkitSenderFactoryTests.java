@@ -19,13 +19,17 @@
 
 package net.silthus.schat.bukkit.adapter;
 
+import be.seeseemelk.mockbukkit.command.ConsoleCommandSenderMock;
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.bukkit.BukkitTests;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.message.Message;
+import net.silthus.schat.identity.Identified;
+import net.silthus.schat.platform.plugin.adapter.SenderFactory;
+import net.silthus.schat.ui.View;
 import org.bukkit.ChatColor;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +37,12 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
+import static net.silthus.schat.MessageHelper.randomMessage;
+import static net.silthus.schat.message.Message.message;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 class BukkitSenderFactoryTests extends BukkitTests {
 
@@ -54,7 +63,7 @@ class BukkitSenderFactoryTests extends BukkitTests {
         assertThat(chatter().getDisplayName()).isEqualTo(name);
     }
 
-    @Nested class getSender {
+    @Nested class wrap {
 
         @Test
         void is_not_null() {
@@ -123,12 +132,57 @@ class BukkitSenderFactoryTests extends BukkitTests {
         @Nested class when_sendMessage_is_called {
             @BeforeEach
             void setUp() {
-                chatter().sendMessage(Message.message("Hi").create());
+                chatter().sendMessage(message("Hi").create());
             }
 
             @Test
             void then_player_receives_message() {
                 assertThat(player.nextMessage()).isEqualTo("Hi");
+            }
+        }
+
+        @Nested class given_console_sender {
+            private ConsoleCommandSenderMock consoleSender;
+            private Chatter console;
+
+            @BeforeEach
+            void setUp() {
+                consoleSender = (ConsoleCommandSenderMock) server.getConsoleSender();
+                console = factory.wrap(consoleSender);
+            }
+
+            @Test
+            void then_uses_console_properties() {
+                assertThat(console)
+                    .extracting(
+                        Identified::getUniqueId,
+                        Identified::getName,
+                        Identified::getDisplayName
+                    ).contains(
+                        SenderFactory.CONSOLE_UUID,
+                        SenderFactory.CONSOLE_NAME,
+                        SenderFactory.CONSOLE_DISPLAY_NAME
+                    );
+            }
+
+            @Test
+            @Disabled("MockBukkit Console.hasPermission(...) not implemented")
+            void then_hasPermission_always_returns_true() {
+                assertThat(console.hasPermission("abc")).isTrue();
+            }
+
+            @Test
+            void then_sendMessage_sends_message_to_console() {
+                console.sendMessage(message("Hi").create());
+                assertThat(consoleSender.nextMessage()).isEqualTo("Hi");
+            }
+
+            @Test
+            void then_does_not_use_view() {
+                final View view = mock(View.class);
+                console.setView(view);
+                console.sendMessage(randomMessage());
+                verify(view, never()).render();
             }
         }
     }

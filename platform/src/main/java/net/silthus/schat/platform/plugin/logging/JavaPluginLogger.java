@@ -17,28 +17,41 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.platform.plugin.logging;
 
-import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.platform.config.SChatConfig;
-import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
-import net.silthus.schat.platform.plugin.logging.PluginLogger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public interface SChatPlugin {
+public class JavaPluginLogger implements PluginLogger {
 
-    void load();
+    private final Logger logger;
 
-    void enable();
-
-    void disable();
-
-    Bootstrap getBootstrap();
-
-    default PluginLogger getLogger() {
-        return getBootstrap().getPluginLogger();
+    public JavaPluginLogger(Logger logger) {
+        this.logger = logger;
     }
 
-    SChatConfig getConfig();
+    @Override
+    public void info(String s) {
+        this.logger.info(s);
+    }
 
-    ChannelRepository getChannelRepository();
+    @Override
+    public void warn(String s) {
+        this.logger.warning(s);
+    }
+
+    @Override
+    public void warn(String s, Throwable t) {
+        this.logger.log(Level.WARNING, s, t);
+    }
+
+    @Override
+    public void severe(String s) {
+        this.logger.severe(s);
+    }
+
+    @Override
+    public void severe(String s, Throwable t) {
+        this.logger.log(Level.SEVERE, s, t);
+    }
 }

@@ -17,28 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.platform.plugin.logging;
 
-import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.platform.config.SChatConfig;
-import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
-import net.silthus.schat.platform.plugin.logging.PluginLogger;
+/**
+ * Represents the logger instance being used by sChat on the platform.
+ *
+ * <p>Messages sent using the logger are sent prefixed with the sChat tag,
+ * and on some implementations will be colored depending on the message type.</p>
+ */
+public interface PluginLogger {
 
-public interface SChatPlugin {
+    void info(String s);
 
-    void load();
+    void warn(String s);
 
-    void enable();
+    void warn(String s, Throwable t);
 
-    void disable();
+    void severe(String s);
 
-    Bootstrap getBootstrap();
+    void severe(String s, Throwable t);
 
-    default PluginLogger getLogger() {
-        return getBootstrap().getPluginLogger();
-    }
-
-    SChatConfig getConfig();
-
-    ChannelRepository getChannelRepository();
 }

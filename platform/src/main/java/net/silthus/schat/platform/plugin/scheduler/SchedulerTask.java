@@ -17,28 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.platform.plugin.scheduler;
 
-import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.platform.config.SChatConfig;
-import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
-import net.silthus.schat.platform.plugin.logging.PluginLogger;
+/**
+ * Represents a scheduled task.
+ */
+public interface SchedulerTask {
 
-public interface SChatPlugin {
-
-    void load();
-
-    void enable();
-
-    void disable();
-
-    Bootstrap getBootstrap();
-
-    default PluginLogger getLogger() {
-        return getBootstrap().getPluginLogger();
-    }
-
-    SChatConfig getConfig();
-
-    ChannelRepository getChannelRepository();
+    /**
+     * Cancels the task.
+     */
+    void cancel();
 }

@@ -20,37 +20,53 @@
 package net.silthus.schat.bukkit;
 
 import cloud.commandframework.CommandManager;
-import cloud.commandframework.bukkit.BukkitCommandManager;
+import cloud.commandframework.paper.PaperCommandManager;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
+import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
 import net.silthus.schat.platform.plugin.AbstractSChatPlugin;
+import org.bukkit.Bukkit;
 
 import static cloud.commandframework.execution.CommandExecutionCoordinator.simpleCoordinator;
 
+@Getter
 public final class SChatBukkitPlugin extends AbstractSChatPlugin {
 
-    private final SChatBukkitPluginBootstrap bootstrap;
+    private final SChatBukkitBootstrap bootstrap;
     private BukkitSenderFactory chatterFactory;
 
-    SChatBukkitPlugin(SChatBukkitPluginBootstrap bootstrap) {
+    SChatBukkitPlugin(SChatBukkitBootstrap bootstrap) {
         this.bootstrap = bootstrap;
     }
 
     @Override
+    protected ConfigurationAdapter provideConfigurationAdapter() {
+        return ConfigurationAdapters.YAML.create(resolveConfig("config.yml").toFile());
+    }
+
+    @Override
     protected void setupChatterFactory() {
-        chatterFactory = new BukkitSenderFactory(BukkitAudiences.create(bootstrap));
+        chatterFactory = new BukkitSenderFactory(BukkitAudiences.create(getBootstrap().getLoader()));
     }
 
     @Override
     @SneakyThrows
     protected CommandManager<Chatter> provideCommandManager() {
-        return new BukkitCommandManager<>(
-            bootstrap,
-            simpleCoordinator(),
-            sender -> chatterFactory.wrap(sender),
-            chatter -> chatterFactory.unwrap(chatter)
-        );
+        try {
+            return new PaperCommandManager<>(
+                getBootstrap().getLoader(),
+                simpleCoordinator(),
+                commandSender -> getChatterFactory().wrap(commandSender),
+                sender -> getChatterFactory().unwrap(sender)
+            );
+        } catch (Exception e) {
+            getLogger().severe("Failed to initialize the command manager.");
+            Bukkit.getPluginManager().disablePlugin(getBootstrap().getLoader());
+            throw new RuntimeException(e);
+        }
     }
 }

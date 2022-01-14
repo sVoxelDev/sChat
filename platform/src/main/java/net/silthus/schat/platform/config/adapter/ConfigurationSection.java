@@ -17,28 +17,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.platform.config.adapter;
 
-import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.platform.config.SChatConfig;
-import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
-import net.silthus.schat.platform.plugin.logging.PluginLogger;
+import java.util.List;
+import net.kyori.adventure.text.Component;
+import net.silthus.schat.settings.Settings;
+import org.jetbrains.annotations.Nullable;
 
-public interface SChatPlugin {
+public interface ConfigurationSection {
 
-    void load();
+    ConfigurationSection scoped(String path);
 
-    void enable();
+    <V> @Nullable V get(String path, Class<V> type);
 
-    void disable();
+    void set(String path, Object value);
 
-    Bootstrap getBootstrap();
+    String getString(String path, String def);
 
-    default PluginLogger getLogger() {
-        return getBootstrap().getPluginLogger();
-    }
+    int getInteger(String path, int def);
 
-    SChatConfig getConfig();
+    boolean getBoolean(String path, boolean def);
 
-    ChannelRepository getChannelRepository();
+    List<String> getStringList(String path, List<String> def);
+
+    List<String> getKeys(String path, List<String> def);
+
+    Component getParsedString(String path, Component def);
+
+    Settings getSettings(String path);
 }

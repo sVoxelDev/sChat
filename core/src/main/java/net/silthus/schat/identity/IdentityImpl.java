@@ -38,7 +38,7 @@ import net.kyori.adventure.text.Component;
 @EqualsAndHashCode(of = {"uniqueId"})
 final class IdentityImpl implements Identity {
 
-    static final Identity NIL = Identity.identity(new UUID(0, 0), "", Component.empty());
+    static final Identity NIL = Identity.identity(UUID.randomUUID(), "", Component.empty());
 
     private final @NonNull UUID uniqueId;
     private final @NonNull String name;

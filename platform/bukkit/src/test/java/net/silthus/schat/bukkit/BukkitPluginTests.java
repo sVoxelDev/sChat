@@ -24,10 +24,10 @@ import org.junit.jupiter.api.BeforeEach;
 
 class BukkitPluginTests extends BukkitTests {
 
-    private SChatBukkitPluginBootstrap plugin;
+    private BukkitLoader plugin;
 
     @BeforeEach
     void setUp() {
-        plugin = MockBukkit.load(SChatBukkitPluginBootstrap.class);
+        plugin = MockBukkit.load(BukkitLoader.class);
     }
 }

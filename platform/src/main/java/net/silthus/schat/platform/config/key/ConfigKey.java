@@ -17,28 +17,36 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.platform.config.key;
 
-import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.platform.config.SChatConfig;
-import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
-import net.silthus.schat.platform.plugin.logging.PluginLogger;
+import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 
-public interface SChatPlugin {
+/**
+ * Represents a key in the configuration.
+ *
+ * @param <T> the value type
+ */
+public interface ConfigKey<T> {
 
-    void load();
+    /**
+     * Gets the position of this key within the keys enum.
+     *
+     * @return the position
+     */
+    int ordinal();
 
-    void enable();
+    /**
+     * Gets if the config key can be reloaded.
+     *
+     * @return the if the key can be reloaded
+     */
+    boolean reloadable();
 
-    void disable();
-
-    Bootstrap getBootstrap();
-
-    default PluginLogger getLogger() {
-        return getBootstrap().getPluginLogger();
-    }
-
-    SChatConfig getConfig();
-
-    ChannelRepository getChannelRepository();
+    /**
+     * Resolves and returns the value mapped to this key using the given config instance.
+     *
+     * @param adapter the config adapter instance
+     * @return the value mapped to this key
+     */
+    T get(ConfigurationAdapter adapter);
 }
