@@ -17,28 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.platform.config;
 
-import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.platform.config.SChatConfig;
-import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
-import net.silthus.schat.platform.plugin.logging.PluginLogger;
+import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
+import net.silthus.schat.platform.config.key.KeyedConfiguration;
 
-public interface SChatPlugin {
+public final class SChatConfig extends KeyedConfiguration {
 
-    void load();
+    public SChatConfig(ConfigurationAdapter adapter) {
+        super(adapter, ConfigKeys.getKeys());
 
-    void enable();
-
-    void disable();
-
-    Bootstrap getBootstrap();
-
-    default PluginLogger getLogger() {
-        return getBootstrap().getPluginLogger();
+        init();
     }
-
-    SChatConfig getConfig();
-
-    ChannelRepository getChannelRepository();
 }

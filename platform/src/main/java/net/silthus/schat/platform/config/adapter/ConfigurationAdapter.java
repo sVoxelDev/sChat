@@ -17,28 +17,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.platform.config.adapter;
 
-import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.platform.config.SChatConfig;
-import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
-import net.silthus.schat.platform.plugin.logging.PluginLogger;
+import java.io.File;
 
-public interface SChatPlugin {
+public interface ConfigurationAdapter extends ConfigurationSection {
 
-    void load();
+    void save() throws SaveFailed;
 
-    void enable();
+    void load() throws LoadFailed;
 
-    void disable();
-
-    Bootstrap getBootstrap();
-
-    default PluginLogger getLogger() {
-        return getBootstrap().getPluginLogger();
+    interface Factory {
+        ConfigurationAdapter create(File config);
     }
 
-    SChatConfig getConfig();
+    class LoadFailed extends RuntimeException {
 
-    ChannelRepository getChannelRepository();
+        public LoadFailed(Throwable cause) {
+            super(cause);
+        }
+    }
+
+    class SaveFailed extends RuntimeException {
+
+        public SaveFailed(Throwable cause) {
+            super(cause);
+        }
+    }
 }

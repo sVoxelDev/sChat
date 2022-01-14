@@ -17,28 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.platform.config.key;
 
-import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.platform.config.SChatConfig;
-import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
-import net.silthus.schat.platform.plugin.logging.PluginLogger;
+import java.util.function.BiConsumer;
+import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 
-public interface SChatPlugin {
+final class SimpleModifiableConfigKey<T> extends SimpleConfigKey<T> implements ModifiableConfigKey<T> {
 
-    void load();
+    private final BiConsumer<ConfigurationAdapter, T> setter;
 
-    void enable();
-
-    void disable();
-
-    Bootstrap getBootstrap();
-
-    default PluginLogger getLogger() {
-        return getBootstrap().getPluginLogger();
+    SimpleModifiableConfigKey(SimpleConfigKey<T> key, BiConsumer<ConfigurationAdapter, T> setter) {
+        super(key.getFunction());
+        this.setter = setter;
     }
 
-    SChatConfig getConfig();
-
-    ChannelRepository getChannelRepository();
+    @Override
+    public void set(ConfigurationAdapter adapter, T value) {
+        this.setter.accept(adapter, value);
+    }
 }

@@ -17,28 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.bukkit.adapter;
 
-import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.platform.config.SChatConfig;
-import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
-import net.silthus.schat.platform.plugin.logging.PluginLogger;
+import java.util.concurrent.Executor;
+import net.silthus.schat.platform.plugin.scheduler.AbstractJavaScheduler;
+import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
+import org.bukkit.plugin.java.JavaPlugin;
 
-public interface SChatPlugin {
+public final class BukkitSchedulerAdapter extends AbstractJavaScheduler implements SchedulerAdapter {
 
-    void load();
+    private final Executor sync;
 
-    void enable();
-
-    void disable();
-
-    Bootstrap getBootstrap();
-
-    default PluginLogger getLogger() {
-        return getBootstrap().getPluginLogger();
+    public BukkitSchedulerAdapter(JavaPlugin loader) {
+        this.sync = r -> loader.getServer().getScheduler().scheduleSyncDelayedTask(loader, r);
     }
 
-    SChatConfig getConfig();
+    @Override
+    public Executor sync() {
+        return this.sync;
+    }
 
-    ChannelRepository getChannelRepository();
 }

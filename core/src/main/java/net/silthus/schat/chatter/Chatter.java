@@ -34,6 +34,7 @@ import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.ui.View;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -95,6 +96,18 @@ public abstract class Chatter implements MessageTarget, Identified, Permissable 
     @Override
     public final void sendMessage(@NonNull Message message) {
         messages.add(message);
+        processMessage(message);
+    }
+
+    /**
+     * Processes the last received message.
+     *
+     * <p>By default this renders the view and sends the result as a raw message.</p>
+     *
+     * @param message the message that is being sent
+     */
+    @ApiStatus.OverrideOnly
+    protected void processMessage(@NonNull Message message) {
         sendRawMessage(getView().render());
     }
 

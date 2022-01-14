@@ -17,28 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.platform.config.key;
 
-import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.platform.config.SChatConfig;
-import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
-import net.silthus.schat.platform.plugin.logging.PluginLogger;
+import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 
-public interface SChatPlugin {
+public interface ModifiableConfigKey<T> extends ConfigKey<T> {
 
-    void load();
-
-    void enable();
-
-    void disable();
-
-    Bootstrap getBootstrap();
-
-    default PluginLogger getLogger() {
-        return getBootstrap().getPluginLogger();
-    }
-
-    SChatConfig getConfig();
-
-    ChannelRepository getChannelRepository();
+    /**
+     * Sets a new value of the key using the given config instance.
+     *
+     * @param adapter the config adapter instance
+     * @param value the value to set
+     */
+    void set(ConfigurationAdapter adapter, T value);
 }

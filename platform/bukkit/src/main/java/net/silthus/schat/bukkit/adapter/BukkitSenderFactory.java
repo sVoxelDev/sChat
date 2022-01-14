@@ -19,6 +19,7 @@
 
 package net.silthus.schat.bukkit.adapter;
 
+import java.util.UUID;
 import lombok.Getter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -35,6 +36,10 @@ import static net.silthus.schat.identity.Identity.identity;
 public final class BukkitSenderFactory extends SenderFactory<CommandSender> {
 
     private static final @NotNull LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
+    private static final @NotNull Identity CONSOLE = Identity.identity(
+        new UUID(0, 0),
+        "Console"
+    );
 
     @Getter
     private final BukkitAudiences audienceProvider;
@@ -51,7 +56,7 @@ public final class BukkitSenderFactory extends SenderFactory<CommandSender> {
                 () -> LEGACY_SERIALIZER.deserialize(player.getDisplayName())
             );
         } else {
-            return Identity.nil();
+            return CONSOLE;
         }
     }
 
