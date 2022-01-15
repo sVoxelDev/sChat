@@ -26,7 +26,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.TestHelper.assertNPE;
+import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.message.Message.emptyMessage;
 import static net.silthus.schat.message.Message.message;
 import static org.assertj.core.api.Assertions.assertThat;
