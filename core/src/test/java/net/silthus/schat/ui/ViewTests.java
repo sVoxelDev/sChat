@@ -33,11 +33,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
+import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.ChannelHelper.channelWith;
 import static net.silthus.schat.ChatterMock.randomChatter;
 import static net.silthus.schat.MessageHelper.randomMessage;
-import static net.silthus.schat.TestHelper.assertNPE;
 import static net.silthus.schat.channel.Channel.PRIORITY;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.ui.View.Config.ACTIVE_CHANNEL_FORMAT;

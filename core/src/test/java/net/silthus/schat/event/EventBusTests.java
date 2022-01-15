@@ -17,18 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.event;
 
-import org.assertj.core.api.ThrowableAssert;
+import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+class EventBusTests {
 
-public final class TestHelper {
+    @Test
+    void create() {
 
-    private TestHelper() {
-    }
-
-    public static void assertNPE(ThrowableAssert.ThrowingCallable call) {
-        assertThatNullPointerException().isThrownBy(call);
     }
 }

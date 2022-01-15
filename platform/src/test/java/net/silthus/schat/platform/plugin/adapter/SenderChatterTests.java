@@ -31,8 +31,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.IdentityHelper.randomIdentity;
-import static net.silthus.schat.TestHelper.assertNPE;
 import static net.silthus.schat.message.Message.emptyMessage;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;

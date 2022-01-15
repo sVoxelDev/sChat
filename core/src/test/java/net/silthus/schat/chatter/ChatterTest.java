@@ -32,11 +32,11 @@ import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.ChannelHelper.randomChannel;
 import static net.silthus.schat.ChatterMock.chatterMock;
 import static net.silthus.schat.IdentityHelper.randomIdentity;
 import static net.silthus.schat.MessageHelper.randomMessage;
-import static net.silthus.schat.TestHelper.assertNPE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;

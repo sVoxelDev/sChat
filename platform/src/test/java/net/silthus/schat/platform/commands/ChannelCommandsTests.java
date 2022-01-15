@@ -33,8 +33,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.ChannelHelper.randomChannel;
-import static net.silthus.schat.TestHelper.assertNPE;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.locale.Messages.JOIN_CHANNEL_ERROR;
