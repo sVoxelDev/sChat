@@ -19,36 +19,15 @@
 
 package net.silthus.schat.channel;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import net.silthus.schat.repository.InMemoryRepository;
+import org.jetbrains.annotations.NotNull;
 
-final class InMemoryChannelRepository implements ChannelRepository {
-
-    private final Map<String, Channel> channels = new HashMap<>();
+final class InMemoryChannelRepository extends InMemoryRepository<String, Channel> implements ChannelRepository {
 
     @Override
-    public List<Channel> all() {
-        return List.copyOf(channels.values());
-    }
-
-    @Override
-    public Channel get(String key) {
-        if (!contains(key))
-            throw new ChannelNotFound();
-        return channels.get(key);
-    }
-
-    @Override
-    public void add(Channel channel) {
-        if (channels.containsKey(channel.getKey()))
+    public void add(@NotNull Channel channel) {
+        if (contains(channel.getKey()))
             throw new DuplicateChannel();
-        this.channels.put(channel.getKey(), channel);
+        super.add(channel);
     }
-
-    @Override
-    public boolean contains(String key) {
-        return channels.containsKey(key);
-    }
-
 }

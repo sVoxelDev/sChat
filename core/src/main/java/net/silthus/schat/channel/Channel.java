@@ -22,12 +22,13 @@ package net.silthus.schat.channel;
 import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.repository.Entity;
 import net.silthus.schat.settings.Configured;
 import net.silthus.schat.settings.Setting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-public interface Channel extends Configured, MessageTarget, Comparable<Channel> {
+public interface Channel extends Entity<String>, Configured, MessageTarget, Comparable<Channel> {
 
     /**
      * The priority of the channel may determine the position in the view.
@@ -65,6 +66,8 @@ public interface Channel extends Configured, MessageTarget, Comparable<Channel> 
     @NotNull @Unmodifiable List<MessageTarget> getTargets();
 
     void addTarget(MessageTarget target);
+
+    void removeTarget(MessageTarget target);
 
     interface Builder extends Configured.Builder<Builder> {
 

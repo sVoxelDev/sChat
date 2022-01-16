@@ -19,11 +19,12 @@
 
 package net.silthus.schat.channel;
 
+import net.silthus.schat.repository.Repository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.ChannelHelper.randomChannel;
+import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
@@ -44,7 +45,7 @@ class ChannelRepositoryTests {
 
         @Test
         void then_get_throws_ChannelNotFound() {
-            assertThatExceptionOfType(ChannelRepository.ChannelNotFound.class).isThrownBy(() -> repository.get("foobar"));
+            assertThatExceptionOfType(Repository.NotFound.class).isThrownBy(() -> repository.get("foobar"));
         }
 
         @Nested class given_one_channel_is_added {

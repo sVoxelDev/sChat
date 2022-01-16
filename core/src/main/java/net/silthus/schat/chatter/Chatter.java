@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
@@ -33,6 +34,7 @@ import net.silthus.schat.identity.Identified;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.repository.Entity;
 import net.silthus.schat.ui.View;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +44,7 @@ import org.jetbrains.annotations.Unmodifiable;
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"identity"})
-public abstract class Chatter implements MessageTarget, Identified, Permissable {
+public abstract class Chatter implements Entity<UUID>, MessageTarget, Identified, Permissable {
 
     private final Identity identity;
     private final Set<Channel> channels = new HashSet<>();
@@ -53,6 +55,11 @@ public abstract class Chatter implements MessageTarget, Identified, Permissable 
     protected Chatter(@NonNull Identity identity) {
         this.identity = identity;
         this.view = new View(this);
+    }
+
+    @Override
+    public @NotNull UUID getKey() {
+        return getUniqueId();
     }
 
     public final void setActiveChannel(@Nullable Channel activeChannel) {
@@ -83,8 +90,12 @@ public abstract class Chatter implements MessageTarget, Identified, Permissable 
         return channels.contains(channel);
     }
 
-    protected final void addChannel(Channel channel) {
+    public final void addChannel(Channel channel) {
         this.channels.add(channel);
+    }
+
+    public final void removeChannel(Channel channel) {
+        this.channels.remove(channel);
     }
 
     public final @NotNull @Unmodifiable List<Message> getMessages() {

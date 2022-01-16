@@ -29,6 +29,9 @@ import static net.kyori.adventure.text.Component.text;
 
 public interface Identity {
 
+    // TODO: revert back to record and remove ambiguous implementations, e.g. chatter extends identity
+    // TODO: make identity use pointers for name and display name
+
     /**
      * Gets a {@code nil} identity.
      *

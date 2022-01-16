@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static cloud.commandframework.arguments.parser.ParserParameters.empty;
 import static io.leangen.geantyref.TypeToken.get;
-import static net.silthus.schat.ChatterMock.randomChatter;
+import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Getter

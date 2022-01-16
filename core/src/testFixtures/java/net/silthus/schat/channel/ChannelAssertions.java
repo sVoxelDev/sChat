@@ -19,14 +19,24 @@
 
 package net.silthus.schat.channel;
 
-import net.silthus.schat.repository.Repository;
+import net.silthus.schat.message.MessageTarget;
 
-public interface ChannelRepository extends Repository<String, Channel> {
+import static org.assertj.core.api.Assertions.assertThat;
 
-    static ChannelRepository createInMemoryChannelRepository() {
-        return new InMemoryChannelRepository();
+public final class ChannelAssertions {
+
+    public static void assertChannelHasTarget(Channel channel, MessageTarget target) {
+        assertThat(channel.getTargets()).contains(target);
     }
 
-    final class DuplicateChannel extends RuntimeException {
+    public static void assertChannelHasOnlyTarget(Channel channel, MessageTarget target) {
+        assertThat(channel.getTargets()).containsExactly(target);
+    }
+
+    public static void assertChannelHasNoTargets(Channel channel) {
+        assertThat(channel.getTargets()).isEmpty();
+    }
+
+    private ChannelAssertions() {
     }
 }

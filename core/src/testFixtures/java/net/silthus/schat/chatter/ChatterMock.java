@@ -17,14 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.chatter;
 
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.chatter.MessageHandler;
-import net.silthus.schat.chatter.PermissionHandler;
 import net.silthus.schat.identity.Identity;
 import org.jetbrains.annotations.NotNull;
 

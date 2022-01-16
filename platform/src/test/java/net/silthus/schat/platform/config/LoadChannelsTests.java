@@ -19,8 +19,8 @@
 
 package net.silthus.schat.platform.config;
 
-import net.silthus.schat.ChannelHelper;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.channel.ChannelHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

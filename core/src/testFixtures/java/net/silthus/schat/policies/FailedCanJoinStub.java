@@ -17,16 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.channel;
+package net.silthus.schat.policies;
 
-import net.silthus.schat.repository.Repository;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
 
-public interface ChannelRepository extends Repository<String, Channel> {
+public final class FailedCanJoinStub implements CanJoinChannel {
 
-    static ChannelRepository createInMemoryChannelRepository() {
-        return new InMemoryChannelRepository();
+    public static FailedCanJoinStub stubCanJoinFailure() {
+        return new FailedCanJoinStub();
     }
 
-    final class DuplicateChannel extends RuntimeException {
+    @Override
+    public boolean canJoinChannel(Chatter chatter, Channel channel) {
+        return false;
     }
 }
