@@ -17,16 +17,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.channel;
+package net.silthus.schat.chatter;
 
-import net.silthus.schat.repository.Repository;
+import net.silthus.schat.channel.Channel;
 
-public interface ChannelRepository extends Repository<String, Channel> {
+import static org.assertj.core.api.Assertions.assertThat;
 
-    static ChannelRepository createInMemoryChannelRepository() {
-        return new InMemoryChannelRepository();
+public final class ChatterAssertions {
+
+    public static void assertChatterHasChannel(Chatter chatter, Channel channel) {
+        assertThat(chatter.getChannels()).contains(channel);
     }
 
-    final class DuplicateChannel extends RuntimeException {
+    public static void assertChatterHasOnlyChannel(Chatter chatter, Channel channel) {
+        assertThat(chatter.getChannels()).containsExactly(channel);
+    }
+
+    public static void assertChatterHasNoChannels(Chatter chatter) {
+        assertThat(chatter.getChannels()).isEmpty();
+    }
+
+    private ChatterAssertions() {
     }
 }

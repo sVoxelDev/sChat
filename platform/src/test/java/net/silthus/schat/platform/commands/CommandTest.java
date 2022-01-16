@@ -26,7 +26,7 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
 import org.junit.jupiter.api.BeforeEach;
 
-import static net.silthus.schat.ChatterMock.randomChatter;
+import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.platform.commands.CommandTestUtils.createCommandManager;
 import static org.assertj.core.api.Assertions.assertThat;
 

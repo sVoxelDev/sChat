@@ -17,10 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.channel;
 
 import java.util.function.Function;
-import net.silthus.schat.channel.Channel;
 import net.silthus.schat.settings.Configured;
 import net.silthus.schat.settings.Setting;
 

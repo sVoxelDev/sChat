@@ -35,19 +35,16 @@ import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.commands.parser.ChannelParser;
 import net.silthus.schat.policies.Policies;
 import net.silthus.schat.usecases.ChatListener;
-import net.silthus.schat.usecases.JoinChannel;
-import net.silthus.schat.usecases.SetActiveChannel;
 
 import static net.silthus.schat.locale.Messages.JOIN_CHANNEL_ERROR;
 import static net.silthus.schat.message.Message.message;
 
-public final class ChannelCommands implements JoinChannel, SetActiveChannel, ChatListener, Command {
+public final class ChannelCommands extends ChannelInteractor implements ChatListener, Command {
 
-    private final Policies policies;
     private final ChannelRepository channelRepository;
 
     public ChannelCommands(Policies policies, ChannelRepository channelRepository) {
-        this.policies = policies;
+        super(policies);
         this.channelRepository = channelRepository;
     }
 
@@ -62,25 +59,6 @@ public final class ChannelCommands implements JoinChannel, SetActiveChannel, Cha
     public void joinChannelCmd(@NonNull Chatter chatter, @NonNull @Argument("channel") Channel channel) {
         try {
             joinChannel(chatter, channel);
-        } catch (Error e) {
-            JOIN_CHANNEL_ERROR.send(chatter, channel);
-        }
-    }
-
-    @Override
-    public void joinChannel(@NonNull Chatter chatter, @NonNull Channel channel) throws Error {
-        if (!policies.canJoinChannel(chatter, channel))
-            throw new Error();
-        channel.addTarget(chatter);
-        chatter.join(channel);
-    }
-
-    @Override
-    @CommandMethod("channel set-active <channel>")
-    public void setActiveChannel(@NonNull Chatter chatter, @NonNull @Argument("channel") Channel channel) {
-        try {
-            joinChannel(chatter, channel);
-            chatter.setActiveChannel(channel);
         } catch (Error e) {
             JOIN_CHANNEL_ERROR.send(chatter, channel);
         }

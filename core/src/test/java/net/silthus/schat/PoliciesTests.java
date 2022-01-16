@@ -27,11 +27,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.ChannelHelper.ConfiguredSetting.set;
-import static net.silthus.schat.ChannelHelper.channelWith;
-import static net.silthus.schat.ChannelHelper.randomChannel;
 import static net.silthus.schat.channel.Channel.JOIN_PERMISSION;
 import static net.silthus.schat.channel.Channel.PROTECTED;
+import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
+import static net.silthus.schat.channel.ChannelHelper.channelWith;
+import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

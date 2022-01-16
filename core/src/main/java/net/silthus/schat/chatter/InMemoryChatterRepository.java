@@ -17,16 +17,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.channel;
+package net.silthus.schat.chatter;
 
-import net.silthus.schat.repository.Repository;
+import java.util.UUID;
+import net.silthus.schat.repository.InMemoryRepository;
 
-public interface ChannelRepository extends Repository<String, Channel> {
-
-    static ChannelRepository createInMemoryChannelRepository() {
-        return new InMemoryChannelRepository();
-    }
-
-    final class DuplicateChannel extends RuntimeException {
-    }
+final class InMemoryChatterRepository extends InMemoryRepository<UUID, Chatter> implements ChatterRepository {
 }

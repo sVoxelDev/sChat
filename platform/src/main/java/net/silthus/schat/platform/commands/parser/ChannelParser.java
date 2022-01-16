@@ -33,6 +33,7 @@ import java.util.Queue;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.repository.Repository;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
@@ -80,7 +81,7 @@ public final class ChannelParser implements ArgumentParser<Chatter, Channel> {
     private ArgumentParseResult<@NonNull Channel> getChannel(@NotNull CommandContext<@NonNull Chatter> commandContext, String input) {
         try {
             return success(repository.get(input));
-        } catch (ChannelRepository.ChannelNotFound e) {
+        } catch (Repository.NotFound e) {
             throw new ChannelParseException(commandContext, input);
         }
     }

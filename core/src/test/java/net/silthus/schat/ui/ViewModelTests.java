@@ -28,10 +28,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.ChannelHelper.ConfiguredSetting.set;
-import static net.silthus.schat.ChannelHelper.channelWith;
-import static net.silthus.schat.ChatterMock.randomChatter;
 import static net.silthus.schat.channel.Channel.PRIORITY;
+import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
+import static net.silthus.schat.channel.ChannelHelper.channelWith;
+import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ViewModelTests {

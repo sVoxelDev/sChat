@@ -30,10 +30,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.ChannelHelper.channelWith;
-import static net.silthus.schat.ChannelHelper.randomChannel;
 import static net.silthus.schat.MessageHelper.randomMessage;
 import static net.silthus.schat.channel.Channel.createChannel;
+import static net.silthus.schat.channel.ChannelHelper.channelWith;
+import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;

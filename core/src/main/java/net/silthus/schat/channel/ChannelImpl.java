@@ -65,6 +65,11 @@ final class ChannelImpl implements Channel {
     }
 
     @Override
+    public void removeTarget(MessageTarget target) {
+        targets.remove(target);
+    }
+
+    @Override
     public void sendMessage(@NotNull Message message) {
         getTargets().forEach(messageTarget -> messageTarget.sendMessage(message));
     }

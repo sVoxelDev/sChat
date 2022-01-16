@@ -17,16 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.channel;
+package net.silthus.schat.repository;
 
-import net.silthus.schat.repository.Repository;
+import org.jetbrains.annotations.NotNull;
 
-public interface ChannelRepository extends Repository<String, Channel> {
+/**
+ * Represents an entity that can be stored in a {@link Repository} by its key.
+ *
+ * @param <K> the type of the key
+ * @since next
+ */
+public interface Entity<K> {
 
-    static ChannelRepository createInMemoryChannelRepository() {
-        return new InMemoryChannelRepository();
-    }
-
-    final class DuplicateChannel extends RuntimeException {
-    }
+    /**
+     * Gets the unique key of the entity.
+     *
+     * @return the unique key
+     * @since next
+     */
+    @NotNull K getKey();
 }
