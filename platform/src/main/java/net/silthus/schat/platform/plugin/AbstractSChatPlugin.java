@@ -25,8 +25,10 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import lombok.Getter;
+import net.silthus.schat.channel.ChannelInteractorImpl;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.config.SChatConfig;
@@ -36,13 +38,16 @@ import net.silthus.schat.policies.PoliciesImpl;
 import org.jetbrains.annotations.ApiStatus;
 
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
 
 @Getter
 public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     private SChatConfig config;
     private Policies policies;
+    private ChatterRepository chatterRepository;
     private ChannelRepository channelRepository;
+    private ChannelInteractorImpl channelInteractor;
     private Commands commands;
 
     @Override
@@ -58,7 +63,13 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
         config.load();
 
         policies = provideChannelPolicies();
+        chatterRepository = provideChatterRepository();
         channelRepository = provideChannelRepository();
+
+        channelInteractor = new ChannelInteractorImpl()
+            .channelRepository(channelRepository)
+            .chatterRepository(chatterRepository)
+            .canJoinChannel(policies);
 
         commands = new Commands(provideCommandManager());
         registerCommands();
@@ -72,6 +83,11 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     protected abstract ConfigurationAdapter provideConfigurationAdapter();
 
     protected abstract void setupChatterFactory();
+
+    @ApiStatus.OverrideOnly
+    protected ChatterRepository provideChatterRepository() {
+        return createInMemoryChatterRepository();
+    }
 
     @ApiStatus.OverrideOnly
     protected ChannelRepository provideChannelRepository() {
@@ -91,7 +107,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     }
 
     private void registerNativeCommands() {
-        commands.register(new ChannelCommands(policies, channelRepository));
+        commands.register(new ChannelCommands(channelInteractor, channelRepository));
     }
 
     @ApiStatus.OverrideOnly

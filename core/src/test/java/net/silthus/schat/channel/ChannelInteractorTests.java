@@ -19,6 +19,7 @@
 
 package net.silthus.schat.channel;
 
+import java.util.UUID;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.repository.Repository;
@@ -41,6 +42,7 @@ import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
 import static net.silthus.schat.policies.FailedCanJoinStub.stubCanJoinFailure;
 import static net.silthus.schat.policies.SuccessfulCanJoinStub.stubCanJoinSuccess;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -50,13 +52,13 @@ class ChannelInteractorTests {
     private final ChatterRepository chatterRepository = createInMemoryChatterRepository();
     private final JoinChannel.Presenter joinChannelPresenter = mock(JoinChannel.Presenter.class);
 
-    private ChannelInteractor interactor;
+    private ChannelInteractorImpl interactor;
     private Chatter chatter;
     private Channel channel;
 
     @BeforeEach
     void setUp() {
-        interactor = new ChannelInteractor()
+        interactor = new ChannelInteractorImpl()
             .chatterRepository(chatterRepository)
             .channelRepository(channelRepository)
             .canJoinChannel(stubCanJoinSuccess())
@@ -91,13 +93,29 @@ class ChannelInteractorTests {
             interactor.canJoinChannel(stubCanJoinFailure());
     }
 
+    private void assertJoinChannelError() {
+        assertThatExceptionOfType(JoinChannel.Error.class)
+            .isThrownBy(ChannelInteractorTests.this::joinChannel);
+    }
+
+    @Test
+    void given_interactor_without_presenter_then_presenter_is_not_null() {
+        assertThat(new ChannelInteractorImpl().joinChannelPresenter()).isNotNull();
+    }
+
+    @Test
+    void given_interactor_without_can_join_check_then_can_join_is_always_true() {
+        final ChannelInteractorImpl interactor = new ChannelInteractorImpl();
+        assertThat(interactor.canJoinChannel()).isNotNull();
+        assertThat(interactor.canJoinChannel().canJoinChannel(chatter, channel)).isTrue();
+    }
+
     @Nested class joinChannel {
 
         @Test
         @SuppressWarnings("ConstantConditions")
         void given_null_chatter_id_throws_npe() {
-            final ChannelInteractor channelInteractor = new ChannelInteractor();
-            assertNPE(() -> channelInteractor.joinChannel(null, null));
+            assertNPE(() -> interactor.joinChannel((UUID) null, null));
         }
 
         @Test
@@ -158,11 +176,6 @@ class ChannelInteractorTests {
                     canJoin(false);
                 }
 
-                private void assertJoinChannelError() {
-                    assertThatExceptionOfType(JoinChannel.Error.class)
-                        .isThrownBy(ChannelInteractorTests.this::joinChannel);
-                }
-
                 @Test
                 void then_throws_access_defined_exception() {
                     assertJoinChannelError();
@@ -186,6 +199,84 @@ class ChannelInteractorTests {
                         assertJoinChannelError();
                         assertChatterHasNoChannels(chatter);
                     }
+                }
+            }
+        }
+    }
+
+    @Nested class setActiveChannel {
+        private void setActiveChannel(UUID chatterId, String channelId) {
+            interactor.setActiveChannel(chatterId, channelId);
+        }
+
+        private void setActiveChannel(String channelId) {
+            interactor.setActiveChannel(chatter.getKey(), channelId);
+        }
+
+        private void setActiveChannel() {
+            interactor.setActiveChannel(chatter.getKey(), channel.getKey());
+        }
+
+        @Test
+        @SuppressWarnings("ConstantConditions")
+        void given_null_chatter_throws_npe() {
+            assertNPE(() -> interactor.setActiveChannel((UUID) null, null));
+        }
+
+        @Test
+        void given_null_channel_throws_npe() {
+            assertNPE(() -> setActiveChannel(null));
+        }
+
+        @Test
+        void given_unknown_chatter_throws_not_found() {
+            assertThatExceptionOfType(Repository.NotFound.class)
+                .isThrownBy(() -> setActiveChannel(UUID.randomUUID(), channel.getKey()));
+        }
+
+        @Test
+        void given_unknown_channel_throws_not_found() {
+            assertThatExceptionOfType(Repository.NotFound.class)
+                .isThrownBy(() -> setActiveChannel("test"));
+        }
+
+        @Nested class given_valid_channel {
+            private void setActiveChannel() {
+                interactor.setActiveChannel(chatter.getKey(), channel.getKey());
+            }
+
+            @Test
+            void then_chatter_has_active_channel() {
+                setActiveChannel();
+                assertThat(chatter.isActiveChannel(channel)).isTrue();
+                assertThat(chatter.getActiveChannel()).isPresent().get().isEqualTo(channel);
+            }
+
+            @Nested class given_chatter_has_not_joined_channel {
+                @BeforeEach
+                void setUp() {
+                    interactor = new SpyingChannelInteractor()
+                        .chatterRepository(chatterRepository)
+                        .channelRepository(channelRepository);
+                }
+
+                @Test
+                void then_joins_chatter() {
+                    setActiveChannel();
+                    assertThat(((SpyingChannelInteractor) interactor).isJoinChannelCalled()).isTrue();
+                }
+            }
+
+            @Nested class given_join_fails {
+                @BeforeEach
+                void setUp() {
+                    canJoin(false);
+                }
+
+                @Test
+                void then_channel_is_not_set_active() {
+                    assertJoinChannelError();
+                    assertThat(chatter.getActiveChannel()).isNotPresent();
                 }
             }
         }
