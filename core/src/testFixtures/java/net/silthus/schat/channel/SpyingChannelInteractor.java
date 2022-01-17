@@ -19,14 +19,23 @@
 
 package net.silthus.schat.channel;
 
-import java.util.UUID;
-import lombok.NonNull;
-import net.silthus.schat.repository.Repository;
+import lombok.Getter;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.usecases.JoinChannel;
 
-public interface ChannelInteractor {
+@Getter
+public class SpyingChannelInteractor extends ChannelInteractorImpl {
 
-    void joinChannel(@NonNull UUID chatterId, @NonNull String channelId) throws Repository.NotFound, JoinChannel.Error;
+    private boolean joinChannelCalled = false;
+    private boolean setActiveChannelCalled = false;
 
-    void setActiveChannel(@NonNull UUID chatterId, @NonNull String channelId) throws Repository.NotFound, JoinChannel.Error;
+    @Override
+    protected void joinChannel(Chatter chatter, Channel channel) throws JoinChannel.Error {
+        this.joinChannelCalled = true;
+    }
+
+    @Override
+    protected void setActiveChannel(Chatter chatter, Channel channel) {
+        this.setActiveChannelCalled = true;
+    }
 }

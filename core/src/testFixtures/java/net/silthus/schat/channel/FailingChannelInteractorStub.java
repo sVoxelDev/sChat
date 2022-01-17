@@ -24,9 +24,15 @@ import lombok.NonNull;
 import net.silthus.schat.repository.Repository;
 import net.silthus.schat.usecases.JoinChannel;
 
-public interface ChannelInteractor {
+public class FailingChannelInteractorStub implements ChannelInteractor {
 
-    void joinChannel(@NonNull UUID chatterId, @NonNull String channelId) throws Repository.NotFound, JoinChannel.Error;
+    @Override
+    public void joinChannel(@NonNull UUID chatterId, @NonNull String channelId) throws Repository.NotFound, JoinChannel.Error {
+        throw new JoinChannel.Error();
+    }
 
-    void setActiveChannel(@NonNull UUID chatterId, @NonNull String channelId) throws Repository.NotFound, JoinChannel.Error;
+    @Override
+    public void setActiveChannel(@NonNull UUID chatterId, @NonNull String channelId) throws Repository.NotFound, JoinChannel.Error {
+        throw new JoinChannel.Error();
+    }
 }
