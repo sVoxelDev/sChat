@@ -30,6 +30,8 @@ import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +40,8 @@ import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.IdentityHelper.randomIdentity;
+import static net.silthus.schat.channel.ChannelHelper.randomChannel;
+import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.message.MessengerTests.MessageOutMock.MessageOutAssert.to;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -89,14 +93,6 @@ class MessengerTests {
                 sendMessage();
                 assertMessageSent();
             }
-
-            @Test
-            void then_message_has_unique_id() {
-                sendMessage();
-                assertThat(messageOut.getLastMessage())
-                    .isNotNull().extracting(NewMessage::getId)
-                    .isNotNull();
-            }
         }
 
         @Nested class given_multiple_targets {
@@ -134,6 +130,41 @@ class MessengerTests {
                 }
             }
         }
+
+        @Nested class given_single_channel_target {
+            private Channel channel;
+
+            @BeforeEach
+            void setUp() {
+                channel = randomChannel();
+            }
+
+            private void sendMessageToChannel() {
+                interactor.sendMessageTo(text, channel);
+            }
+
+            @Test
+            void given_channel_has_no_targets_then_out_is_not_called() {
+                sendMessageToChannel();
+                assertThat(messageOut.isOnMessageSentCalled()).isFalse();
+            }
+
+            @Nested class given_channel_has_single_target {
+                private Chatter target;
+
+                @BeforeEach
+                void setUp() {
+                    target = randomChatter();
+                    channel.addTarget(target);
+                }
+
+                @Test
+                void then_message_is_sent_to_target() {
+                    sendMessageToChannel();
+                    messageOut.assertMessageSent(to(target.getIdentity(), text));
+                }
+            }
+        }
     }
 
     @Getter
@@ -142,9 +173,11 @@ class MessengerTests {
 
         private final List<String> calls = new ArrayList<>();
         private final Queue<NewMessage> messages = new ArrayDeque<>();
+        private boolean onMessageSentCalled = false;
 
         @Override
         public void onMessageSent(NewMessage newMessage) {
+            onMessageSentCalled = true;
             messages.add(newMessage);
             calls.add(toSpyFormat(newMessage.getTarget(), newMessage.getText()));
         }
