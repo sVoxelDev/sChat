@@ -17,31 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.message;
+package net.silthus.schat.usecases;
 
-import java.util.Collection;
+import java.util.Optional;
 import lombok.NonNull;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.identity.Identity;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.message.Message;
 
-import static net.silthus.schat.message.NewMessage.message;
+import static net.silthus.schat.message.Message.message;
 
-@Setter
-@Accessors(fluent = true)
-public class Messenger {
-    private MessageOut out;
-
-    public void sendMessageTo(@NonNull Component message, @NonNull Identity identity) {
-        out.onMessageSent(message(identity, message));
-    }
-
-    public void sendMessageTo(@NonNull Component message, @NonNull Collection<Identity> targets) {
-        for (final Identity target : targets) {
-            if (target != null)
-                sendMessageTo(message, target);
-        }
+public class ChatListenerImpl implements ChatListener {
+    @Override
+    public Message onChat(@NonNull Chatter chatter, @NonNull Component text) throws NoActiveChannel {
+        final Optional<Channel> channel = chatter.getActiveChannel();
+        if (channel.isEmpty())
+            throw new NoActiveChannel();
+        return message(text).source(chatter).to(channel.get()).type(Message.Type.CHAT).send();
     }
 }
-

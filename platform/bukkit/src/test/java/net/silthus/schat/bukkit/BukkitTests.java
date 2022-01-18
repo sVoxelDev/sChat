@@ -22,9 +22,14 @@ package net.silthus.schat.bukkit;
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.MockPlugin;
 import be.seeseemelk.mockbukkit.ServerMock;
+import be.seeseemelk.mockbukkit.command.ConsoleCommandSenderMock;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class BukkitTests {
     protected static ServerMock server;
@@ -35,12 +40,29 @@ public abstract class BukkitTests {
     static void beforeAll() {
         server = MockBukkit.mock();
         mockPlugin = MockBukkit.createMockPlugin();
-        audiences = BukkitAudiences.create(mockPlugin);
     }
 
     @AfterAll
     static void afterAll() {
         MockBukkit.unmock();
+    }
+
+    @BeforeEach
+    void setup() {
+        audiences = BukkitAudiences.create(mockPlugin);
+    }
+
+    @AfterEach
+    void teardown() {
         audiences.close();
+    }
+
+    protected void assertLastMessage(ConsoleCommandSenderMock mock, String message) {
+        String nextMessage;
+        String lastMessage = null;
+        while ((nextMessage = mock.nextMessage()) != null) {
+            lastMessage = nextMessage;
+        }
+        assertThat(message).isEqualTo(lastMessage);
     }
 }

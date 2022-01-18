@@ -31,11 +31,13 @@ public class SpyingChannelInteractor extends ChannelInteractorImpl {
 
     @Override
     protected void joinChannel(Chatter chatter, Channel channel) throws JoinChannel.Error {
+        super.joinChannel(chatter, channel);
         this.joinChannelCalled = true;
     }
 
     @Override
     protected void setActiveChannel(Chatter chatter, Channel channel) {
+        super.setActiveChannel(chatter, channel);
         this.setActiveChannelCalled = true;
     }
 }

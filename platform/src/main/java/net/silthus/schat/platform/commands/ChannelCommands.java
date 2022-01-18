@@ -25,28 +25,23 @@ import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.ProxiedBy;
 import io.leangen.geantyref.TypeToken;
-import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelInteractor;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.commands.parser.ChannelParser;
 import net.silthus.schat.repository.Repository;
-import net.silthus.schat.usecases.ChatListener;
 import net.silthus.schat.usecases.JoinChannel;
 
 import static net.silthus.schat.locale.Messages.JOIN_CHANNEL_ERROR;
-import static net.silthus.schat.message.Message.message;
 
 @Setter(AccessLevel.PROTECTED)
 @Accessors(fluent = true)
-public final class ChannelCommands implements ChatListener, Command {
+public final class ChannelCommands implements Command {
 
     private final ChannelRepository repository;
     private ChannelInteractor interactor;
@@ -74,14 +69,10 @@ public final class ChannelCommands implements ChatListener, Command {
 
     @CommandMethod("channel set-active <channel>")
     void setActiveChannel(@NonNull Chatter chatter, @NonNull @Argument("channel") Channel channel) {
-        interactor.setActiveChannel(chatter.getKey(), channel.getKey());
-    }
-
-    @Override
-    public Message onChat(@NonNull Chatter chatter, @NonNull Component text) throws NoActiveChannel {
-        final Optional<Channel> channel = chatter.getActiveChannel();
-        if (channel.isEmpty())
-            throw new NoActiveChannel();
-        return message(text).source(chatter).to(channel.get()).type(Message.Type.CHAT).send();
+        try {
+            interactor.setActiveChannel(chatter.getKey(), channel.getKey());
+        } catch (Repository.NotFound | JoinChannel.Error e) {
+            JOIN_CHANNEL_ERROR.send(chatter, channel);
+        }
     }
 }
