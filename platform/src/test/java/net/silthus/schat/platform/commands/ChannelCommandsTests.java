@@ -19,29 +19,22 @@
 
 package net.silthus.schat.platform.commands;
 
-import net.silthus.schat.MessageHelper;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.channel.FailingChannelInteractorStub;
 import net.silthus.schat.channel.SpyingChannelInteractorStub;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.commands.parser.ChannelParser;
-import net.silthus.schat.usecases.ChatListener;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.locale.Messages.JOIN_CHANNEL_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.verify;
 
 class ChannelCommandsTests extends CommandTest {
 
@@ -138,47 +131,6 @@ class ChannelCommandsTests extends CommandTest {
                     executeSetActiveChannelCommand();
                     assertLastMessageIs(JOIN_CHANNEL_ERROR.build(channel));
                 }
-            }
-        }
-    }
-
-    @Nested
-    class ChatTests {
-
-        @NotNull
-        private Message chat() {
-            return channelCommands.onChat(chatter, MessageHelper.randomText());
-        }
-
-        @Test
-        @SuppressWarnings("ConstantConditions")
-        void given_null_inputs_throws() {
-            assertNPE(() -> channelCommands.onChat(null, null));
-            assertNPE(() -> channelCommands.onChat(chatter, null));
-        }
-
-        @Test
-        void given_no_active_channel_throws() {
-            assertThatExceptionOfType(ChatListener.NoActiveChannel.class)
-                .isThrownBy(this::chat);
-        }
-
-        @Nested class given_active_channel {
-
-            @Test
-            void then_sends_message_to_channel() {
-                final Message message = chat();
-                verify(channel).sendMessage(message);
-            }
-
-            @Test
-            void then_sets_message_source_to_user() {
-                assertThat(chat().getSource()).isEqualTo(chatter);
-            }
-
-            @Test
-            void then_sets_message_type_to_chat() {
-                assertThat(chat().getType()).isEqualTo(Message.Type.CHAT);
             }
         }
     }

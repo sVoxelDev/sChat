@@ -33,6 +33,7 @@ import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.config.SChatConfig;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
+import net.silthus.schat.platform.plugin.adapter.Presenter;
 import net.silthus.schat.policies.Policies;
 import net.silthus.schat.policies.PoliciesImpl;
 import org.jetbrains.annotations.ApiStatus;
@@ -48,6 +49,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     private ChatterRepository chatterRepository;
     private ChannelRepository channelRepository;
     private ChannelInteractorImpl channelInteractor;
+    private Presenter presenter;
     private Commands commands;
 
     @Override
@@ -70,6 +72,8 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
             .channelRepository(channelRepository)
             .chatterRepository(chatterRepository)
             .canJoinChannel(policies);
+
+        presenter = providePresenter();
 
         commands = new Commands(provideCommandManager());
         registerCommands();
@@ -98,6 +102,8 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     protected Policies provideChannelPolicies() {
         return new PoliciesImpl();
     }
+
+    protected abstract Presenter providePresenter();
 
     protected abstract CommandManager<Chatter> provideCommandManager();
 

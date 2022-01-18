@@ -174,7 +174,7 @@ class BukkitSenderFactoryTests extends BukkitTests {
             @Test
             void then_sendMessage_sends_message_to_console() {
                 console.sendMessage(message("Hi").create());
-                assertThat(consoleSender.nextMessage()).isEqualTo("Hi");
+                assertLastMessage(consoleSender, "Hi");
             }
 
             @Test

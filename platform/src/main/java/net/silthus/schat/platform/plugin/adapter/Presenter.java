@@ -17,31 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.message;
+package net.silthus.schat.platform.plugin.adapter;
 
-import java.util.Collection;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-import net.kyori.adventure.text.Component;
-import net.silthus.schat.identity.Identity;
+import net.silthus.schat.usecases.JoinChannel;
 
-import static net.silthus.schat.message.NewMessage.message;
-
-@Setter
-@Accessors(fluent = true)
-public class Messenger {
-    private MessageOut out;
-
-    public void sendMessageTo(@NonNull Component message, @NonNull Identity identity) {
-        out.onMessageSent(message(identity, message));
-    }
-
-    public void sendMessageTo(@NonNull Component message, @NonNull Collection<Identity> targets) {
-        for (final Identity target : targets) {
-            if (target != null)
-                sendMessageTo(message, target);
-        }
-    }
+public interface Presenter extends JoinChannel.Presenter {
 }
-
