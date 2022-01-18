@@ -24,6 +24,8 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.identity.Identified;
 import net.silthus.schat.identity.Identity;
 
 import static net.silthus.schat.message.NewMessage.message;
@@ -41,6 +43,13 @@ public class Messenger {
         for (final Identity target : targets) {
             if (target != null)
                 sendMessageTo(message, target);
+        }
+    }
+
+    public void sendMessageTo(Component text, Channel channel) {
+        for (final MessageTarget target : channel.getTargets()) {
+            if (target instanceof Identified identified)
+                sendMessageTo(text, identified);
         }
     }
 }
