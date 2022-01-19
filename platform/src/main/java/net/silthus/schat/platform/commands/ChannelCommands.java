@@ -37,7 +37,7 @@ import net.silthus.schat.platform.commands.parser.ChannelParser;
 import net.silthus.schat.repository.Repository;
 import net.silthus.schat.usecases.JoinChannel;
 
-import static net.silthus.schat.locale.Messages.JOIN_CHANNEL_ERROR;
+import static net.silthus.schat.platform.locale.Messages.JOIN_CHANNEL_ERROR;
 
 @Setter(AccessLevel.PROTECTED)
 @Accessors(fluent = true)

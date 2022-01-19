@@ -92,12 +92,12 @@ public class View {
     }
 
     private Component renderMessage(Message message) {
-        return source(message).append(message.getText());
+        return source(message).append(message.text());
     }
 
     private Component source(Message message) {
         if (message.hasSource())
-            return config.get(MESSAGE_SOURCE_FORMAT).format(message.getSource().getDisplayName());
+            return config.get(MESSAGE_SOURCE_FORMAT).format(message.source().getDisplayName());
         else
             return empty();
     }

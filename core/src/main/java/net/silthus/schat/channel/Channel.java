@@ -28,7 +28,7 @@ import net.silthus.schat.settings.Setting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-public interface Channel extends Entity<String>, Configured, MessageTarget, Comparable<Channel> {
+public interface Channel extends Entity<String>, Configured, Comparable<Channel> {
 
     /**
      * The priority of the channel may determine the position in the view.

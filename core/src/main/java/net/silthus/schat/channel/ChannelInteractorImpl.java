@@ -50,12 +50,12 @@ public class ChannelInteractorImpl implements ChannelInteractor {
 
     @NotNull
     private Chatter getChatter(@NotNull UUID chatterId) {
-        return chatterRepository.get(chatterId);
+        return chatterRepository().get(chatterId);
     }
 
     @NotNull
     private Channel getChannel(@NotNull String channelId) {
-        return channelRepository.get(channelId);
+        return channelRepository().get(channelId);
     }
 
     protected void joinChannel(Chatter chatter, Channel channel) throws JoinChannel.Error {
@@ -72,7 +72,7 @@ public class ChannelInteractorImpl implements ChannelInteractor {
     }
 
     private void notifyJoinChannelPresenter(Chatter chatter, Channel channel) {
-        joinChannelPresenter.joinedChannel(new JoinChannel.Result(chatter.getIdentity(), channel.getKey(), channel.getDisplayName()));
+        joinChannelPresenter().joinedChannel(new JoinChannel.Result(chatter.getIdentity(), channel.getKey(), channel.getDisplayName()));
     }
 
     private void handleJoinChannelError(Chatter chatter, Channel channel) {

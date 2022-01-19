@@ -20,9 +20,7 @@
 package net.silthus.schat.channel;
 
 import java.util.List;
-import lombok.NonNull;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -57,10 +55,5 @@ public class DummyChannel implements Channel {
     @Override
     public int compareTo(@NotNull Channel o) {
         return 0;
-    }
-
-    @Override
-    public void sendMessage(@NonNull Message message) {
-
     }
 }

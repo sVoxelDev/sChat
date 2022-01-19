@@ -21,19 +21,27 @@ package net.silthus.schat.usecases;
 
 import java.util.Optional;
 import lombok.NonNull;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.message.Messenger;
 
 import static net.silthus.schat.message.Message.message;
 
+@Setter
+@Accessors(fluent = true)
 public class ChatListenerImpl implements ChatListener {
+
+    private Messenger messenger = Messenger.nil();
+
     @Override
     public Message onChat(@NonNull Chatter chatter, @NonNull Component text) throws NoActiveChannel {
         final Optional<Channel> channel = chatter.getActiveChannel();
         if (channel.isEmpty())
             throw new NoActiveChannel();
-        return message(text).source(chatter).to(channel.get()).type(Message.Type.CHAT).send();
+        return message(text).source(chatter).to(channel.get()).type(Message.Type.CHAT).send(messenger);
     }
 }

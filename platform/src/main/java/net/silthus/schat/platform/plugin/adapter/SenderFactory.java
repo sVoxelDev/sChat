@@ -87,7 +87,7 @@ public abstract class SenderFactory<T> {
         @Override
         protected void processMessage(@NonNull Message message) {
             if (isConsole())
-                sendRawMessage(message.getText());
+                sendRawMessage(message.text());
             else
                 super.processMessage(message);
         }

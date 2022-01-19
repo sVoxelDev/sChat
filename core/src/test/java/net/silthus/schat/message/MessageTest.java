@@ -21,23 +21,31 @@ package net.silthus.schat.message;
 
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static java.time.Instant.now;
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static net.silthus.schat.AssertionHelper.assertNPE;
+import static net.silthus.schat.MessageHelper.randomText;
+import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
-import static net.silthus.schat.message.NewMessage.message;
+import static net.silthus.schat.message.Message.message;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 
-class NewMessageTest implements Messenger {
+class MessageTest implements Messenger {
 
     private boolean processCalled = false;
     private boolean deliverCalled = false;
 
     @Test
     void has_unique_id() {
-        final NewMessage message = message();
+        final Message message = message();
         assertThat(message.id()).isNotNull();
         assertThat(message.id()).isNotEqualTo(message().id());
     }
@@ -45,19 +53,44 @@ class NewMessageTest implements Messenger {
     @Test
     void given_same_id_are_equal() {
         final UUID id = UUID.randomUUID();
-        final NewMessage message = message().id(id).send(this);
-        final NewMessage message2 = message().id(id).send(this);
+        final Message message = message().id(id).send(this);
+        final Message message2 = message().id(id).send(this);
         assertThat(message).isEqualTo(message2);
     }
 
+    @Nested class given_empty_message {
+        private Message.Draft message;
+
+        @BeforeEach
+        void setUp() {
+            message = message();
+        }
+
+        @Test
+        void then_source_is_nil_source() {
+            assertThat(message.source()).isEqualTo(Identity.nil());
+        }
+
+        @Test
+        void then_has_timestamp() {
+            assertThat(message.timestamp()).isCloseTo(now(), within(100L, MILLIS));
+        }
+    }
+
     @Test
-    void given_no_target_uses_nil_identity() {
-        assertThat(message().target()).isEqualTo(Identity.nil());
+    void given_null_text_uses_empty_component() {
+        assertThat(message().text(null).text()).isEqualTo(Component.empty());
     }
 
     @Test
     void given_no_text_uses_empty_component() {
         assertThat(message().text()).isEqualTo(Component.empty());
+    }
+
+    @Test
+    void given_text_sets_text() {
+        Component text = randomText();
+        assertThat(message().text(text).text()).isEqualTo(text);
     }
 
     @Test
@@ -74,13 +107,13 @@ class NewMessageTest implements Messenger {
 
     @Test
     void send_creates_message() {
-        final NewMessage message = message().send(this);
+        final Message message = message().send(this);
         assertThat(message).isNotNull();
     }
 
     @Test
     void given_process_returns_different_message_then_send_uses_returned_processed_message() {
-        final NewMessage message = message().send(new ProcessedMessageMessengerStub());
+        final Message message = message().send(new ProcessedMessageMessengerStub());
         assertThat(message.id()).isEqualTo(ProcessedMessageMessengerStub.STUB_ID);
     }
 
@@ -93,25 +126,51 @@ class NewMessageTest implements Messenger {
     @Test
     @SuppressWarnings("ConstantConditions")
     void to_given_null_throws_npe() {
-        assertNPE(() -> message().to(null));
+        assertNPE(() -> message().to((MessageTarget) null));
+    }
+
+    @Test
+    void given_no_targets_targets_are_empty() {
+        assertThat(message().targets()).isEmpty();
     }
 
     @Test
     void to_given_chatter_adds_target() {
         final Chatter chatter = randomChatter();
-        final NewMessage.Draft draft = message().to(chatter);
-        assertThat(draft.target()).isEqualTo(chatter.getIdentity());
+        final Message.Draft draft = message().to(chatter);
+        assertThat(draft.targets()).contains(chatter);
+    }
+
+    @Test
+    void to_same_chatter_twice_adds_target_once() {
+        Chatter chatter = randomChatter();
+        Message.Draft draft = message().to(chatter).to(chatter);
+        assertThat(draft.targets()).containsOnlyOnce(chatter);
+    }
+
+    @Test
+    void given_channel_target_adds_channels_targets_to_message() {
+        Channel channel = randomChannel();
+        MessageTarget target = message -> {};
+        channel.addTarget(target);
+        message().to(channel);
+    }
+
+    @Test
+    void given_channel_stores_channel_in_message() {
+        Channel channel = randomChannel();
+        Message.Draft message = message().to(channel);
+        assertThat(message.channels()).contains(channel);
     }
 
     @Override
-    public NewMessage.Draft process(NewMessage.Draft message) {
+    public Message.Draft process(Message.Draft message) {
         processCalled = true;
         return message;
     }
 
     @Override
-    public NewMessage deliver(NewMessage message) {
+    public void deliver(Message message) {
         deliverCalled = true;
-        return message;
     }
 }

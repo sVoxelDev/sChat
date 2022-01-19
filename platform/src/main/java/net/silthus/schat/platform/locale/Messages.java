@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.locale;
+package net.silthus.schat.platform.locale;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -92,7 +92,7 @@ public interface Messages {
         return bool ? text("true", GREEN) : text("false", RED);
     }
 
-    static Message.Builder toMessage(Component text) {
+    static Message toMessage(Component text) {
         return Message.message(text).type(Message.Type.SYSTEM);
     }
 

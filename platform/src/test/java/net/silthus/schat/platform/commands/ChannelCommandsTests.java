@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
-import static net.silthus.schat.locale.Messages.JOIN_CHANNEL_ERROR;
+import static net.silthus.schat.platform.locale.Messages.JOIN_CHANNEL_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ChannelCommandsTests extends CommandTest {

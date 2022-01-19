@@ -60,7 +60,7 @@ class ViewTests {
 
     @NotNull
     private String text(Message message) {
-        return COMPONENT_SERIALIZER.serialize(message.getText());
+        return COMPONENT_SERIALIZER.serialize(message.text());
     }
 
     @SneakyThrows
@@ -72,11 +72,11 @@ class ViewTests {
     }
 
     private void addMessage(String text) {
-        addMessage(Message.message(text).create());
+        addMessage(Message.message(text));
     }
 
     private void addMessageWithSource(String source, String text) {
-        addMessage(Message.message(text).source(Identity.identity(source)).create());
+        addMessage(Message.message(text).source(Identity.identity(source)));
     }
 
     private void assertViewRenders(String expected) {

@@ -20,114 +20,76 @@
 package net.silthus.schat.message;
 
 import java.time.Instant;
-import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
-@Getter
-@EqualsAndHashCode(of = {"id"})
-public final class Message implements Comparable<Message> {
+import static java.util.Comparator.comparing;
 
-    public static Message emptyMessage() {
-        return message().create();
+public interface Message extends Comparable<Message> {
+
+    static @NotNull Draft message() {
+        return MessageImpl.builder();
     }
 
-    public static Builder message() {
-        return new Builder();
+    static @NotNull Draft message(@NonNull String text) {
+        return message(Component.text(text));
     }
 
-    public static Builder message(String text) {
+    static @NotNull Draft message(@NonNull Component text) {
         return message().text(text);
     }
 
-    public static Builder message(Component text) {
-        return message().text(text);
-    }
+    @NotNull UUID id();
 
-    private final UUID id = UUID.randomUUID();
-    private final Instant timestamp = Instant.now();
-    private final Identity source;
-    private final Component text;
-    private final MessageTarget[] targets;
-    private final Type type;
+    @NotNull Instant timestamp();
 
-    private Message(Builder builder) {
-        this.source = builder.source;
-        this.text = builder.text;
-        this.targets = builder.targets;
-        this.type = builder.type;
-    }
+    @NotNull Identity source();
 
-    public boolean hasSource() {
-        return !Identity.nil().equals(getSource());
-    }
+    @NotNull @Unmodifiable Set<Channel> channels();
 
-    public void send() {
-        for (final MessageTarget target : getTargets()) {
-            target.sendMessage(this);
-        }
+    @NotNull @Unmodifiable Set<MessageTarget> targets();
+
+    @NotNull Component text();
+
+    @NotNull Type type();
+
+    default boolean hasSource() {
+        return !source().equals(Identity.nil());
     }
 
     @Override
-    public int compareTo(@NotNull Message o) {
-        return getTimestamp().compareTo(o.getTimestamp());
+    default int compareTo(@NotNull Message o) {
+        return comparing(Message::timestamp)
+            .compare(this, o);
     }
 
-    public static final class Builder {
+    interface Draft extends Message {
 
-        private Identity source = Identity.nil();
-        private Component text = Component.empty();
-        private MessageTarget[] targets = new MessageTarget[0];
-        private Type type = Type.SYSTEM;
+        @NotNull Draft id(@NonNull UUID id);
 
-        public Builder source(@NonNull Identity source) {
-            this.source = source;
-            return this;
-        }
+        @NotNull Draft timestamp(@NonNull Instant timestamp);
 
-        public Builder text(@NonNull Component text) {
-            this.text = text;
-            return this;
-        }
+        @NotNull Draft source(@Nullable Identity identity);
 
-        public Builder text(@NonNull String text) {
-            return text(Component.text(text));
-        }
+        @NotNull Draft to(@NonNull MessageTarget target);
 
-        public Builder to(@NonNull MessageTarget... targets) {
-            checkForNullTargets(targets);
-            this.targets = targets;
-            return this;
-        }
+        @NotNull Draft to(@NonNull Channel channel);
 
-        public Builder type(@NonNull Type type) {
-            this.type = type;
-            return this;
-        }
+        @NotNull Draft text(@Nullable Component text);
 
-        public Message create() {
-            return new Message(this);
-        }
+        @NotNull Draft type(@NonNull Type type);
 
-        public Message send() {
-            final Message message = create();
-            message.send();
-            return message;
-        }
-
-        private void checkForNullTargets(@NonNull MessageTarget[] targets) {
-            for (final MessageTarget target : targets) {
-                Objects.requireNonNull(target);
-            }
-        }
+        @NotNull Message send(@NonNull Messenger messenger);
     }
 
-    public enum Type {
+    enum Type {
         CHAT,
         SYSTEM
     }
