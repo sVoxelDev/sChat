@@ -20,38 +20,17 @@
 package net.silthus.schat.message;
 
 import java.util.UUID;
-import lombok.NonNull;
-import net.kyori.adventure.text.Component;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.identity.Identity;
-import org.jetbrains.annotations.NotNull;
 
-public interface NewMessage {
+public class ProcessedMessageMessengerStub implements Messenger {
+    public static final UUID STUB_ID = UUID.randomUUID();
 
-    static @NotNull Draft message() {
-        return NewMessageImpl.builder();
+    @Override
+    public NewMessage.Draft process(NewMessage.Draft message) {
+        return message.id(STUB_ID);
     }
 
-    static @NotNull Draft message(@NonNull Component text) {
-        return message().text(text);
-    }
-
-    @NotNull UUID id();
-
-    @NotNull Identity target();
-
-    @NotNull Component text();
-
-    interface Draft extends NewMessage {
-
-        @NotNull Draft id(@NonNull UUID id);
-
-        @NotNull Draft target(@NonNull Identity target);
-
-        @NotNull Draft to(@NonNull Chatter chatter);
-
-        @NotNull Draft text(@NonNull Component text);
-
-        @NotNull NewMessage send(@NonNull Messenger messenger);
+    @Override
+    public NewMessage deliver(NewMessage message) {
+        return null;
     }
 }
