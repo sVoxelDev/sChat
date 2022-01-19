@@ -19,47 +19,36 @@
 
 package net.silthus.schat.message;
 
-import java.util.Collection;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import net.kyori.adventure.text.Component;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.identity.Identified;
-import net.silthus.schat.identity.Identity;
 
 @Setter
 @Accessors(fluent = true)
 public class MessengerImpl implements Messenger {
-    private MessageOut out;
 
-    public void sendMessageTo(@NonNull Component message, @NonNull Identity identity) {
-//        out.onMessageSent(message(identity, message));
-    }
-
-    public void sendMessageTo(@NonNull Component message, @NonNull Collection<Identity> targets) {
-        for (final Identity target : targets) {
-            if (target != null)
-                sendMessageTo(message, target);
-        }
-    }
-
-    public void sendMessageTo(Component text, Channel channel) {
-        for (final MessageTarget target : channel.getTargets()) {
-            if (target instanceof Identified identified)
-                sendMessageTo(text, identified);
-        }
-    }
+    static final Messenger NIL = new NilMessenger();
 
     @Override
-    public NewMessage.Draft process(@NonNull NewMessage.Draft message) {
+    public Message.Draft process(@NonNull Message.Draft message) {
         return message;
     }
 
     @Override
-    public NewMessage deliver(@NonNull NewMessage message) {
-        out.onMessageSent(message);
-        return null;
+    public void deliver(@NonNull Message message) {
+        message.targets().forEach(target -> target.sendMessage(message));
+    }
+
+    static final class NilMessenger implements Messenger {
+
+        @Override
+        public Message.Draft process(Message.Draft message) {
+            return message;
+        }
+
+        @Override
+        public void deliver(Message message) {
+        }
     }
 }
 

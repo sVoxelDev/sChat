@@ -53,7 +53,7 @@ class ViewModelTests {
     @SneakyThrows
     @NotNull
     private Message createMessage() {
-        final Message one = Message.message().to(chatter).create();
+        final Message one = Message.message().to(chatter);
         Thread.sleep(1L);
         return one;
     }

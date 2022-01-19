@@ -25,12 +25,11 @@ public class ProcessedMessageMessengerStub implements Messenger {
     public static final UUID STUB_ID = UUID.randomUUID();
 
     @Override
-    public NewMessage.Draft process(NewMessage.Draft message) {
+    public Message.Draft process(Message.Draft message) {
         return message.id(STUB_ID);
     }
 
     @Override
-    public NewMessage deliver(NewMessage message) {
-        return null;
+    public void deliver(Message message) {
     }
 }

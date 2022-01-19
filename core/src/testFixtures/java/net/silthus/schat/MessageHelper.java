@@ -36,6 +36,6 @@ public final class MessageHelper {
     }
 
     public static Message randomMessage() {
-        return message(randomText()).create();
+        return message(randomText());
     }
 }

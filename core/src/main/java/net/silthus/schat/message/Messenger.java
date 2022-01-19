@@ -21,7 +21,11 @@ package net.silthus.schat.message;
 
 public interface Messenger {
 
-    NewMessage.Draft process(NewMessage.Draft message);
+    static Messenger nil() {
+        return MessengerImpl.NIL;
+    }
 
-    NewMessage deliver(NewMessage message);
+    Message.Draft process(Message.Draft message);
+
+    void deliver(Message message);
 }

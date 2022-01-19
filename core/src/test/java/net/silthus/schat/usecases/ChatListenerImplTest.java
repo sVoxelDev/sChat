@@ -20,15 +20,16 @@
 package net.silthus.schat.usecases;
 
 import net.silthus.schat.MessageHelper;
-import net.silthus.schat.channel.SpyingSendMessageChannelDummy;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.message.Messenger;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.AssertionHelper.assertNPE;
+import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -37,13 +38,24 @@ class ChatListenerImplTest {
 
     private ChatListenerImpl listener;
     private Chatter chatter;
-    private SpyingSendMessageChannelDummy channel;
+    private Message deliveredMessage;
+    private boolean messageDelivered = false;
 
     @BeforeEach
     void setUp() {
-        listener = new ChatListenerImpl();
+        listener = new ChatListenerImpl().messenger(new Messenger() {
+            @Override
+            public Message.Draft process(Message.Draft message) {
+                return message;
+            }
+
+            @Override
+            public void deliver(Message message) {
+                deliveredMessage = message;
+                messageDelivered = true;
+            }
+        });
         chatter = randomChatter();
-        channel = new SpyingSendMessageChannelDummy();
     }
 
     @NotNull
@@ -69,23 +81,24 @@ class ChatListenerImplTest {
 
         @BeforeEach
         void setUp() {
-            chatter.setActiveChannel(channel);
+            chatter.setActiveChannel(randomChannel());
         }
 
         @Test
         void then_sends_message_to_channel() {
             final Message message = chat();
-            assertThat(channel.isSendMessageCalledWith(message)).isTrue();
+            assertThat(messageDelivered).isTrue();
+            assertThat(deliveredMessage).isEqualTo(message);
         }
 
         @Test
         void then_sets_message_source_to_user() {
-            assertThat(chat().getSource()).isEqualTo(chatter);
+            assertThat(chat().source()).isEqualTo(chatter);
         }
 
         @Test
         void then_sets_message_type_to_chat() {
-            assertThat(chat().getType()).isEqualTo(Message.Type.CHAT);
+            assertThat(chat().type()).isEqualTo(Message.Type.CHAT);
         }
     }
 }

@@ -23,7 +23,6 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.MessageHandler;
 import net.silthus.schat.chatter.PermissionHandler;
 import net.silthus.schat.identity.Identity;
-import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.TestCommandSender;
 import net.silthus.schat.ui.View;
 import org.jetbrains.annotations.NotNull;
