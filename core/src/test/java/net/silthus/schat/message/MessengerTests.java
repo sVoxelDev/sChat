@@ -35,41 +35,98 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.kyori.adventure.text.Component.empty;
 import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.IdentityHelper.randomIdentity;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.message.MessengerTests.MessageOutMock.MessageOutAssert.to;
+import static net.silthus.schat.message.NewMessage.message;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MessengerTests {
 
-    private Messenger interactor;
+    private MessengerImpl messenger;
     private MessageOutMock messageOut;
     private TextComponent text;
 
     @BeforeEach
     void setUp() {
         messageOut = new MessageOutMock();
-        interactor = new Messenger().out(messageOut);
+        messenger = new MessengerImpl().out(messageOut);
         text = Component.text("Hi");
     }
 
+    @Nested class process {
+        @Test
+        @SuppressWarnings("ConstantConditions")
+        void given_null_draft_throws_npe() {
+            assertNPE(() -> messenger.process(null));
+        }
+
+        @Test
+        void given_draft_returns_draft() {
+            final NewMessage.Draft draft = message();
+            assertThat(messenger.process(draft)).isSameAs(draft);
+        }
+    }
+
+    @Nested class deliver {
+        @Test
+        @SuppressWarnings("ConstantConditions")
+        void given_null_message_throws_npe() {
+            assertNPE(() -> messenger.deliver(null));
+        }
+
+        // TODO - tests to write:
+        // - message returned by deliver is message sent to target
+        // - multiple targets
+        // - querying targets
+        // - modifying targets after send not possible
+
+        @Nested class given_valid_message {
+            private NewMessageImpl.Draft draft;
+
+            @BeforeEach
+            void setUp() {
+                draft = NewMessageImpl.builder();
+            }
+
+            @Nested class given_one_target {
+                private Chatter target;
+
+                @BeforeEach
+                void setUp() {
+                    target = randomChatter();
+                    draft.to(target);
+                }
+
+                @Test
+                void then_delivers_message_to_chatter() {
+                    draft.send(messenger);
+                    messageOut.assertMessageSent(to(target, empty()));
+                }
+            }
+        }
+    }
+
+    @Disabled
     @Nested class send {
 
         @Test
         @SuppressWarnings("ConstantConditions")
         void given_null_target_throws_npe() {
-            assertNPE(() -> interactor.sendMessageTo(Component.empty(), (Identity) null));
+            assertNPE(() -> messenger.sendMessageTo(empty(), (Identity) null));
         }
 
         @Test
         @SuppressWarnings("ConstantConditions")
         void given_null_message_throws_npe() {
-            assertNPE(() -> interactor.sendMessageTo(null, randomIdentity()));
+            assertNPE(() -> messenger.sendMessageTo(null, randomIdentity()));
         }
 
         @Nested class given_one_target {
@@ -81,7 +138,7 @@ class MessengerTests {
             }
 
             private void sendMessage() {
-                interactor.sendMessageTo(text, identity);
+                messenger.sendMessageTo(text, identity);
             }
 
             private void assertMessageSent() {
@@ -104,7 +161,7 @@ class MessengerTests {
             }
 
             private void sendMessageToAll() {
-                interactor.sendMessageTo(text, targets);
+                messenger.sendMessageTo(text, targets);
             }
 
             private void assertMessageSentToAll() {
@@ -140,7 +197,7 @@ class MessengerTests {
             }
 
             private void sendMessageToChannel() {
-                interactor.sendMessageTo(text, channel);
+                messenger.sendMessageTo(text, channel);
             }
 
             @Test
@@ -179,7 +236,7 @@ class MessengerTests {
         public void onMessageSent(NewMessage newMessage) {
             onMessageSentCalled = true;
             messages.add(newMessage);
-            calls.add(toSpyFormat(newMessage.getTarget(), newMessage.getText()));
+            calls.add(toSpyFormat(newMessage.target(), newMessage.text()));
         }
 
         private NewMessage getLastMessage() {
