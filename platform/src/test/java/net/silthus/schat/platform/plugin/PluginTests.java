@@ -20,11 +20,12 @@
 package net.silthus.schat.platform.plugin;
 
 import cloud.commandframework.CommandManager;
-import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.commands.Command;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
+import net.silthus.schat.platform.plugin.adapter.Presenter;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
+import net.silthus.schat.platform.sender.Sender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -85,7 +86,12 @@ class PluginTests {
         }
 
         @Override
-        protected CommandManager<Chatter> provideCommandManager() {
+        protected Presenter providePresenter() {
+            return null;
+        }
+
+        @Override
+        protected CommandManager<Sender> provideCommandManager() {
             return createCommandManager();
         }
 

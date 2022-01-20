@@ -19,40 +19,21 @@
 
 package net.silthus.schat.chatter;
 
-import lombok.Getter;
-import lombok.Setter;
-import net.kyori.adventure.text.Component;
 import net.silthus.schat.identity.Identity;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.IdentityHelper.randomIdentity;
 
-@Getter
-@Setter
-public class ChatterMock extends Chatter {
+public final class ChatterMock {
 
     public static @NotNull Chatter chatterMock(Identity identity) {
-        return new ChatterMock(identity);
+        return Chatter.createChatter(identity);
     }
 
     public static @NotNull Chatter randomChatter() {
         return chatterMock(randomIdentity());
     }
 
-    private PermissionHandler permissionHandler = permission -> false;
-    private MessageHandler messageHandler = message -> {};
-
-    ChatterMock(Identity identity) {
-        super(identity);
-    }
-
-    @Override
-    public boolean hasPermission(String permission) {
-        return permissionHandler.hasPermission(permission);
-    }
-
-    @Override
-    protected void sendRawMessage(Component component) {
-        messageHandler.sendMessage(component);
+    private ChatterMock() {
     }
 }

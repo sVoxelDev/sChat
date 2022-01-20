@@ -20,44 +20,29 @@
 package net.silthus.schat.platform.commands;
 
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.channel.FailingChannelInteractorStub;
 import net.silthus.schat.channel.SpyingChannelInteractorStub;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.platform.commands.parser.ChannelParser;
+import net.silthus.schat.platform.commands.parser.ChannelArgument;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
-import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.platform.locale.Messages.JOIN_CHANNEL_ERROR;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ChannelCommandsTests extends CommandTest {
-
     private ChannelCommands channelCommands;
-    private ChannelRepository channelRepository;
-
     private Channel channel;
     private SpyingChannelInteractorStub interactor;
 
     @BeforeEach
     void setUp() {
-        channelRepository = createInMemoryChannelRepository();
         interactor = new SpyingChannelInteractorStub();
-        channelCommands = new ChannelCommands(interactor, channelRepository);
+        channelCommands = new ChannelCommands(interactor);
         commands.register(channelCommands);
-
         channel = addRandomChannel();
-    }
-
-    private Channel addChannel(String channel) {
-        final Channel c = createChannel(channel);
-        channelRepository.add(c);
-        return c;
     }
 
     private Channel addRandomChannel() {
@@ -71,13 +56,13 @@ class ChannelCommandsTests extends CommandTest {
     class joinChannel {
         private static final String JOIN_CHANNEL_CMD = "channel join ";
 
-        private Chatter executeJoinCommand() {
-            return cmd(JOIN_CHANNEL_CMD + channel.getKey());
+        private void executeJoinCommand() {
+            cmd(JOIN_CHANNEL_CMD + channel.getKey());
         }
 
         @Test
         void given_invalid_chanel_join_command_fails() {
-            cmdFails(JOIN_CHANNEL_CMD + "foobar", ChannelParser.ChannelParseException.class);
+            cmdFails(JOIN_CHANNEL_CMD + "foobar", ChannelArgument.ChannelParseException.class);
         }
 
         @Nested class given_valid_channel {
@@ -98,7 +83,6 @@ class ChannelCommandsTests extends CommandTest {
                 @Test
                 void then_join_command_prints_error_message() {
                     executeJoinCommand();
-                    assertThat(chatter.getChannels()).doesNotContain(channel);
                     assertLastMessageIs(JOIN_CHANNEL_ERROR.build(channel));
                 }
             }

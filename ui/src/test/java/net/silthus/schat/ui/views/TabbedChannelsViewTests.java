@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.ui;
+package net.silthus.schat.ui.views;
 
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
@@ -27,6 +27,7 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.ui.View;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -40,13 +41,14 @@ import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
-import static net.silthus.schat.ui.View.Config.ACTIVE_CHANNEL_FORMAT;
-import static net.silthus.schat.ui.View.Config.CHANNEL_JOIN_CONFIG;
-import static net.silthus.schat.ui.View.Config.MESSAGE_SOURCE_FORMAT;
-import static net.silthus.schat.ui.View.Config.viewConfig;
+import static net.silthus.schat.ui.View.ACTIVE_CHANNEL_FORMAT;
+import static net.silthus.schat.ui.View.CHANNEL_JOIN_CONFIG;
+import static net.silthus.schat.ui.View.MESSAGE_SOURCE_FORMAT;
+import static net.silthus.schat.ui.ViewModel.of;
+import static net.silthus.schat.ui.views.Views.tabbedChannels;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ViewTests {
+class TabbedChannelsViewTests {
 
     private static final @NotNull MiniMessage COMPONENT_SERIALIZER = MiniMessage.miniMessage();
     private Chatter chatter;
@@ -55,7 +57,7 @@ class ViewTests {
     @BeforeEach
     void setUp() {
         chatter = randomChatter();
-        view = new View(chatter);
+        view = tabbedChannels(of(chatter));
     }
 
     @NotNull
@@ -88,7 +90,7 @@ class ViewTests {
         @Test
         @SuppressWarnings("ConstantConditions")
         void throws_npe() {
-            assertNPE(() -> new View(null));
+            assertNPE(() -> tabbedChannels(null));
         }
     }
 
@@ -125,7 +127,8 @@ class ViewTests {
 
             @Test
             void uses_format() {
-                view = new View(chatter, viewConfig().set(MESSAGE_SOURCE_FORMAT, component -> Component.text("<").append(component).append(Component.text("> "))).create());
+                view = tabbedChannels(of(chatter))
+                    .set(MESSAGE_SOURCE_FORMAT, component -> Component.text("<").append(component).append(Component.text("> ")));
                 assertViewRenders("<Bob> Hi");
             }
         }
@@ -174,7 +177,8 @@ class ViewTests {
             @Nested class and_different_format_is_used {
                 @BeforeEach
                 void setUp() {
-                    view = new View(chatter, viewConfig().set(ACTIVE_CHANNEL_FORMAT, component -> ACTIVE_CHANNEL_FORMAT.getDefaultValue().format(component).color(GREEN)).create());
+                    view = tabbedChannels(of(chatter))
+                        .set(ACTIVE_CHANNEL_FORMAT, component -> ACTIVE_CHANNEL_FORMAT.getDefaultValue().format(component).color(GREEN));
                 }
 
                 @Test
@@ -215,7 +219,8 @@ class ViewTests {
 
             @BeforeEach
             void setUp() {
-                view = new View(chatter, viewConfig().set(CHANNEL_JOIN_CONFIG, JoinConfiguration.builder().separator(Component.text(" - ")).build()).create());
+                view = tabbedChannels(of(chatter))
+                    .set(CHANNEL_JOIN_CONFIG, JoinConfiguration.builder().separator(Component.text(" - ")).build());
             }
 
             @Test

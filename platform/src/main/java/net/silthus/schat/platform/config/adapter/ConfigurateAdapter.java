@@ -31,10 +31,11 @@ import net.silthus.schat.settings.Settings;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.ConfigurationOptions;
+import org.spongepowered.configurate.loader.AbstractConfigurationLoader;
 import org.spongepowered.configurate.loader.ConfigurationLoader;
 import org.spongepowered.configurate.serialize.TypeSerializerCollection;
 
-public abstract class ConfigurateAdapter extends ConfigurateConfigSection implements ConfigurationAdapter {
+public abstract class ConfigurateAdapter<T extends AbstractConfigurationLoader.Builder<T, L>, L extends AbstractConfigurationLoader<?>> extends ConfigurateConfigSection implements ConfigurationAdapter {
 
     private static final TypeSerializerCollection SERIALIZERS = TypeSerializerCollection.builder()
         .register(Component.class, new MiniMessageComponentSerializer())
@@ -48,10 +49,11 @@ public abstract class ConfigurateAdapter extends ConfigurateConfigSection implem
     private final ConfigurationLoader<? extends ConfigurationNode> loader;
 
     protected ConfigurateAdapter(Path path) {
-        this.loader = createLoader(path, DEFAULT_OPTIONS);
+        final AbstractConfigurationLoader.Builder<T, L> loader = createLoader(path);
+        this.loader = loader.defaultOptions(DEFAULT_OPTIONS.apply(loader.defaultOptions())).build();
     }
 
-    protected abstract ConfigurationLoader<? extends ConfigurationNode> createLoader(Path path, Function<ConfigurationOptions, ConfigurationOptions> defaultOptions);
+    protected abstract AbstractConfigurationLoader.Builder<T, L> createLoader(Path path);
 
     @Override
     public void save() {

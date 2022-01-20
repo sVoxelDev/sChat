@@ -184,8 +184,7 @@ class ChannelInteractorTests {
                 @Nested class given_already_joined {
                     @BeforeEach
                     void setUp() {
-                        chatter.addChannel(channel);
-                        channel.addTarget(chatter);
+                        chatter.join(channel);
                     }
 
                     @Test

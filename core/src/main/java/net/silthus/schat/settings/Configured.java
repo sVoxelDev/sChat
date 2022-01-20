@@ -87,7 +87,7 @@ public interface Configured {
     interface Builder<T> {
 
         /**
-         * Sets a setting of the channel to the given value.
+         * Sets a setting of the configured type to the given value.
          *
          * @param setting the setting
          * @param value   the value of the setting
@@ -96,5 +96,23 @@ public interface Configured {
          * @since next
          */
         <V> @NotNull T set(@NonNull Setting<V> setting, @Nullable V value);
+    }
+
+    interface Modifiable<T> extends Configured {
+        /**
+         * Sets a setting of the configured type to the given value.
+         *
+         * @param setting the setting
+         * @param value   the value of the setting
+         * @param <V>     the type of the setting
+         * @return this builder
+         * @since next
+         */
+        @SuppressWarnings("unchecked")
+        default <V> @NotNull T set(@NonNull Setting<V> setting, @Nullable V value) {
+            final T type = (T) this;
+            getSettings().set(setting, value);
+            return type;
+        }
     }
 }

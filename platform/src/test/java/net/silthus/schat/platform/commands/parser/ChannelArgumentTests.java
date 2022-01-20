@@ -29,22 +29,22 @@ import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
-import static net.silthus.schat.platform.commands.parser.ChannelParser.ARGUMENT_PARSE_FAILURE_CHANNEL;
+import static net.silthus.schat.platform.commands.parser.ChannelArgument.ARGUMENT_PARSE_FAILURE_CHANNEL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-class ChannelParserTests extends ParserTest<Channel> {
+class ChannelArgumentTests extends ParserTest<Channel> {
 
     private ChannelRepository channelRepository;
 
     @BeforeEach
     void setUp() {
         channelRepository = createInMemoryChannelRepository();
-        setParser(new ChannelParser(channelRepository));
+        setParser(new ChannelArgument(channelRepository));
     }
 
     private void registerChannelParser() {
-        ChannelParser.registerChannelParser(getCommandManager(), mock(ChannelRepository.class));
+        ChannelArgument.registerChannelParser(getCommandManager(), mock(ChannelRepository.class));
     }
 
     @Test
@@ -59,7 +59,7 @@ class ChannelParserTests extends ParserTest<Channel> {
 
     @Test
     void given_unknown_channel_then_ChannelNotFound_is_thrown() {
-        assertParseFailure(ChannelParser.ChannelParseException.class, "foobar");
+        assertParseFailure(ChannelArgument.ChannelParseException.class, "foobar");
     }
 
     @Nested class given_channel_in_repository {
@@ -77,7 +77,7 @@ class ChannelParserTests extends ParserTest<Channel> {
         }
     }
     
-    @Nested class registerChannelParser {
+    @Nested class registerChannelArgument {
 
         @Test
         void when_ChannelParser_is_registered_then_captions_are_registered() {

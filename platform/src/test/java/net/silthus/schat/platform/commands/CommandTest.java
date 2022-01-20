@@ -22,29 +22,41 @@ package net.silthus.schat.platform.commands;
 import cloud.commandframework.CommandManager;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.platform.sender.Sender;
+import net.silthus.schat.platform.sender.SenderMock;
 import org.junit.jupiter.api.BeforeEach;
 
+import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
+import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
 import static net.silthus.schat.platform.commands.CommandTestUtils.createCommandManager;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class CommandTest {
 
-    protected CommandManager<Chatter> commandManager;
-    protected Chatter chatter;
+    protected CommandManager<Sender> commandManager;
+    protected SenderMock sender;
     protected Commands commands;
+    protected ChatterRepository chatterRepository;
+    protected ChannelRepository channelRepository;
 
     @BeforeEach
     void setUpBase() {
         commandManager = createCommandManager();
-        commands = new Commands(commandManager);
-        chatter = randomChatter();
+        chatterRepository = createInMemoryChatterRepository();
+        channelRepository = createInMemoryChannelRepository();
+        commands = new Commands(commandManager, new Commands.Context(chatterRepository, channelRepository));
+        final Chatter chatter = randomChatter();
+        chatterRepository.add(chatter);
+        sender = new SenderMock(chatter.getIdentity());
     }
 
     @SneakyThrows
-    protected Chatter cmd(String command) {
-        return commandManager.executeCommand(chatter, command).get().getCommandContext().getSender();
+    protected Sender cmd(String command) {
+        return commandManager.executeCommand(sender, command).get().getCommandContext().getSender();
     }
 
     protected void cmdFails(String command, Class<? extends Exception> expectedException) {
@@ -56,10 +68,7 @@ public abstract class CommandTest {
     }
 
     protected void assertLastMessageIs(Component component) {
-        assertThat(chatter.getMessages())
-            .isNotEmpty()
-            .last()
-            .extracting(Message::getText)
-            .isEqualTo(component);
+        sender.assertLastMessageIs(component);
     }
+
 }

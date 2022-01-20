@@ -92,7 +92,7 @@ class ConfigurateConfigSection implements ConfigurationSection {
         final Settings.Builder builder = Settings.settings();
         final ConfigurateConfigSection scoped = scoped(path);
         for (final String key : getKeys(path, new ArrayList<>())) {
-            builder.withUnknownType(key, setting -> scoped.get(key, setting.getType()));
+            builder.setUnknown(key, setting -> scoped.get(key, setting.getType()));
         }
         return builder.create();
     }

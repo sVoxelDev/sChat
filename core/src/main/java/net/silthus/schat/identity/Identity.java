@@ -29,6 +29,8 @@ import static net.kyori.adventure.text.Component.text;
 
 public interface Identity {
 
+    UUID NIL_IDENTITY_ID = new UUID(0, 0); // 00000000-0000-0000-0000-000000000000
+
     // TODO: revert back to record and remove ambiguous implementations, e.g. chatter extends identity
     // TODO: make identity use pointers for name and display name
 
@@ -46,17 +48,6 @@ public interface Identity {
      */
     static @NotNull Identity nil() {
         return IdentityImpl.NIL;
-    }
-
-    /**
-     * Creates a new identity using the provided id and an empty name.
-     *
-     * @param id the id of the entity
-     * @return the identity
-     * @since next
-     */
-    static Identity identity(final UUID id) {
-        return identity(id, "");
     }
 
     /**
@@ -85,20 +76,6 @@ public interface Identity {
      */
     static @NotNull Identity identity(@NonNull String name) {
         return identity(UUID.randomUUID(), name);
-    }
-
-    /**
-     * Creates a new identity using the given name and display name.
-     *
-     * <p>A random {@code UUID} will be used for the id.</p>
-     *
-     * @param name        the name
-     * @param displayName the display name
-     * @return the identity
-     * @since next
-     */
-    static @NotNull Identity identity(@NonNull String name, @NonNull Component displayName) {
-        return identity(UUID.randomUUID(), name, displayName);
     }
 
     /**

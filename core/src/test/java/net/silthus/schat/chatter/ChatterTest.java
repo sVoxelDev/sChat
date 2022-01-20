@@ -19,29 +19,21 @@
 
 package net.silthus.schat.chatter;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identified;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.ui.View;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.kyori.adventure.text.Component.empty;
-import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.IdentityHelper.randomIdentity;
 import static net.silthus.schat.MessageHelper.randomMessage;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
-import static net.silthus.schat.chatter.ChatterMock.chatterMock;
+import static net.silthus.schat.chatter.Chatter.chatter;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 class ChatterTest {
     private Chatter chatter;
@@ -50,27 +42,13 @@ class ChatterTest {
     @BeforeEach
     void setUp() {
         identity = randomIdentity();
-        chatter = spy(chatterMock(identity));
-    }
-
-    private View mockView(Component render) {
-        final View view = mock(View.class);
-        when(view.render()).thenReturn(render);
-        chatter.setView(view);
-        return view;
-    }
-
-    private View mockView() {
-        return mockView(empty());
-    }
-
-    private void sendRandomMessage() {
-        chatter.sendMessage(randomMessage());
+        chatter = Chatter.createChatter(identity);
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
     void given_null_identity_then_create_throws() {
-        assertNPE(() -> chatterMock(null));
+        assertNPE(() -> Chatter.createChatter(null));
     }
 
     @Test
@@ -200,31 +178,78 @@ class ChatterTest {
         }
     }
 
-    @Test
-    @SuppressWarnings("ConstantConditions")
-    void when_sendMessage_is_called_given_null_then_npe_is_thrown() {
-        assertNPE(() -> chatter.sendMessage(null));
+    @Nested class sendMessage {
+
+        private void sendRandomMessage() {
+            chatter.sendMessage(randomMessage());
+        }
+
+        @Test
+        @SuppressWarnings("ConstantConditions")
+        void given_null_message_then_throws_npe() {
+            assertNPE(() -> chatter.sendMessage(null));
+        }
+
+        @Test
+        void given_no_message_handler_then_does_not_throw() {
+            assertThatCode(this::sendRandomMessage)
+                .doesNotThrowAnyException();
+        }
+
+        @Test
+        void then_message_is_added() {
+            final Message message = randomMessage();
+            chatter.sendMessage(message);
+            assertThat(chatter.getMessages()).contains(message);
+        }
+
+        @Nested class given_valid_message_handler {
+            private boolean messageHandlerCalled = false;
+
+            @BeforeEach
+            void setUp() {
+                chatter = chatter(randomIdentity())
+                    .messageHandler(message -> messageHandlerCalled = true)
+                    .create();
+            }
+
+            @Test
+            void then_message_handler_is_called() {
+                sendRandomMessage();
+                assertThat(messageHandlerCalled).isTrue();
+            }
+        }
     }
 
-    @Test
-    void when_sendMessage_is_called_then_message_is_returned_by_getMessages() {
-        final Message message = randomMessage();
-        chatter.sendMessage(message);
-        assertThat(chatter.getMessages()).contains(message);
-    }
+    @Nested class hasPermission {
+        @Test
+        void given_null_returns_false() {
+            assertThat(chatter.hasPermission(null)).isFalse();
+        }
 
-    @Test
-    void when_sendMessage_is_called_then_view_is_rendered() {
-        final View view = mockView();
-        sendRandomMessage();
-        verify(view).render();
-    }
+        @Test
+        void given_no_permission_handler_does_not_throw() {
+            assertThatCode(() -> chatter.hasPermission("abc"))
+                .doesNotThrowAnyException();
+        }
 
-    @Test
-    void when_sendMessage_is_called_then_sendRawMessage_is_called_with_rendered_view() {
-        final TextComponent text = text("TEST");
-        mockView(text);
-        sendRandomMessage();
-        verify(chatter).sendRawMessage(text);
+        @Nested class given_permission_handler {
+
+            private boolean permissionHandlerCalled = false;
+
+            @BeforeEach
+            void setUp() {
+                chatter = chatter(randomIdentity()).permissionHandler(permission -> {
+                    permissionHandlerCalled = true;
+                    return false;
+                }).create();
+            }
+
+            @Test
+            void then_handler_is_called() {
+                chatter.hasPermission("test");
+                assertThat(permissionHandlerCalled).isTrue();
+            }
+        }
     }
 }

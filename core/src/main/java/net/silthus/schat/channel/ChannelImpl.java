@@ -97,7 +97,7 @@ final class ChannelImpl implements Channel {
 
         @Override
         public <V> @NotNull Builder set(final @NonNull Setting<V> setting, final @Nullable V value) {
-            this.settings.withStatic(setting, value);
+            this.settings.set(setting, value);
             return this;
         }
 

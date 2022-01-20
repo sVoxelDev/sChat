@@ -36,8 +36,8 @@ class SettingsTest {
     @Test
     void populateWithInitialValues() {
         final Settings settings = Settings.settings()
-            .withStatic(DEFAULT_VAL_TEST, "static")
-            .withDynamic(DYNAMIC_TEST, () -> "dynamic")
+            .set(DEFAULT_VAL_TEST, "static")
+            .setDynamic(DYNAMIC_TEST, () -> "dynamic")
             .create();
         assertThat(settings.get(DEFAULT_VAL_TEST)).isEqualTo("static");
         assertThat(settings.get(DYNAMIC_TEST)).isEqualTo("dynamic");
@@ -57,13 +57,13 @@ class SettingsTest {
 
     @Test
     void getOrDefault_valueIsSet_returnsValue() {
-        final Settings settings = Settings.settings().withStatic(DEFAULT_VAL_TEST, "bob").create();
+        final Settings settings = Settings.settings().set(DEFAULT_VAL_TEST, "bob").create();
         assertThat(settings.getOrDefaultFrom(DEFAULT_VAL_TEST, () -> "bobby")).isEqualTo("bob");
     }
 
     @Test
     void set_updatesValue() {
-        final Settings settings = Settings.settings().withStatic(DEFAULT_VAL_TEST, "bob").create();
+        final Settings settings = Settings.settings().set(DEFAULT_VAL_TEST, "bob").create();
         settings.set(DEFAULT_VAL_TEST, "bobby");
         assertThat(settings.get(DEFAULT_VAL_TEST)).isEqualTo("bobby");
     }
@@ -71,10 +71,10 @@ class SettingsTest {
     @Test
     void copy_copiesAllSettings() {
         final Settings original = Settings.settings()
-            .withStatic(DEFAULT_VAL_TEST, "static")
-            .withDynamic(DYNAMIC_TEST, () -> "dynamic")
+            .set(DEFAULT_VAL_TEST, "static")
+            .setDynamic(DYNAMIC_TEST, () -> "dynamic")
             .create();
-        final Settings settings = original.copy().withStatic(DEFAULT_VAL_TEST, "foobar").create();
+        final Settings settings = original.copy().set(DEFAULT_VAL_TEST, "foobar").create();
 
         assertThat(original.get(DEFAULT_VAL_TEST)).isEqualTo("static");
         assertThat(original.get(DYNAMIC_TEST)).isEqualTo("dynamic");
@@ -85,7 +85,7 @@ class SettingsTest {
 
     @Test
     void copy_copiesUnknown_Settings() {
-        final Settings original = Settings.settings().withUnknownType("test", setting -> "foobar").create();
+        final Settings original = Settings.settings().setUnknown("test", setting -> "foobar").create();
         final Settings copy = original.copy().create();
 
         assertThat(copy.get(Setting.setting(String.class, "test", null))).isEqualTo("foobar");
@@ -93,7 +93,7 @@ class SettingsTest {
 
     @Test
     void given_unknown_type() {
-        final Settings settings = Settings.settings().withUnknownType("default", setting -> "foobar").create();
+        final Settings settings = Settings.settings().setUnknown("default", setting -> "foobar").create();
         assertThat(settings.get(DEFAULT_VAL_TEST)).isEqualTo("foobar");
     }
 }

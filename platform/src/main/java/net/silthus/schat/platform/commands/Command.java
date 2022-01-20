@@ -21,9 +21,9 @@ package net.silthus.schat.platform.commands;
 
 import cloud.commandframework.CommandManager;
 import cloud.commandframework.annotations.AnnotationParser;
-import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.platform.sender.Sender;
 
 public interface Command {
 
-    void register(CommandManager<Chatter> commandManager, AnnotationParser<Chatter> parser);
+    void register(CommandManager<Sender> commandManager, AnnotationParser<Sender> parser);
 }
