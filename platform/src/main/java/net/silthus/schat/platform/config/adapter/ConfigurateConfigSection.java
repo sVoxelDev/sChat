@@ -28,7 +28,7 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.silthus.schat.settings.Settings;
+import net.silthus.schat.pointer.Settings;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
@@ -92,7 +92,7 @@ class ConfigurateConfigSection implements ConfigurationSection {
         final Settings.Builder builder = Settings.settings();
         final ConfigurateConfigSection scoped = scoped(path);
         for (final String key : getKeys(path, new ArrayList<>())) {
-            builder.setUnknown(key, setting -> scoped.get(key, setting.getType()));
+            builder.withUnknown(key, setting -> scoped.get(key, setting.getType()));
         }
         return builder.create();
     }

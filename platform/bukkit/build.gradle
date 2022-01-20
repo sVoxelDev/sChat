@@ -83,7 +83,7 @@ dependencies {
     // WorldGuard: https://github.com/EngineHub/WorldGuard
 //    implementation 'com.sk89q.worldguard:worldguard-bukkit:7.0.6'
 
-    testImplementation 'net.silthus:MockBukkit:v1.17-SNAPSHOT'
+    testImplementation 'com.github.seeseemelk:MockBukkit-v1.18:1.15.5'
     testImplementation(testFixtures(project(":core")))
 }
 

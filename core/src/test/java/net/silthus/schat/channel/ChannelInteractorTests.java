@@ -21,7 +21,7 @@ package net.silthus.schat.channel;
 
 import java.util.UUID;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.repository.Repository;
 import net.silthus.schat.usecases.JoinChannel;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +39,7 @@ import static net.silthus.schat.chatter.ChatterAssertions.assertChatterHasChanne
 import static net.silthus.schat.chatter.ChatterAssertions.assertChatterHasNoChannels;
 import static net.silthus.schat.chatter.ChatterAssertions.assertChatterHasOnlyChannel;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
-import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
+import static net.silthus.schat.chatter.ChatterProviderStub.chatterProviderStub;
 import static net.silthus.schat.policies.FailedCanJoinStub.stubCanJoinFailure;
 import static net.silthus.schat.policies.SuccessfulCanJoinStub.stubCanJoinSuccess;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,28 +49,24 @@ import static org.mockito.Mockito.verify;
 
 class ChannelInteractorTests {
     private final ChannelRepository channelRepository = createInMemoryChannelRepository();
-    private final ChatterRepository chatterRepository = createInMemoryChatterRepository();
     private final JoinChannel.Presenter joinChannelPresenter = mock(JoinChannel.Presenter.class);
 
+    private ChatterProvider chatterProvider;
     private ChannelInteractorImpl interactor;
     private Chatter chatter;
     private Channel channel;
 
     @BeforeEach
     void setUp() {
+        chatter = randomChatter();
+        channel = addChannel(randomChannel());
+        chatterProvider = chatterProviderStub(chatter);
+
         interactor = new ChannelInteractorImpl()
-            .chatterRepository(chatterRepository)
+            .chatterProvider(chatterProvider)
             .channelRepository(channelRepository)
             .canJoinChannel(stubCanJoinSuccess())
             .joinChannelPresenter(joinChannelPresenter);
-
-        chatter = addChatter(randomChatter());
-        channel = addChannel(randomChannel());
-    }
-
-    private Chatter addChatter(@NotNull Chatter chatter) {
-        chatterRepository.add(chatter);
-        return chatter;
     }
 
     private Channel addChannel(@NotNull Channel channel) {
@@ -204,16 +200,8 @@ class ChannelInteractorTests {
     }
 
     @Nested class setActiveChannel {
-        private void setActiveChannel(UUID chatterId, String channelId) {
-            interactor.setActiveChannel(chatterId, channelId);
-        }
-
         private void setActiveChannel(String channelId) {
             interactor.setActiveChannel(chatter.getKey(), channelId);
-        }
-
-        private void setActiveChannel() {
-            interactor.setActiveChannel(chatter.getKey(), channel.getKey());
         }
 
         @Test
@@ -225,12 +213,6 @@ class ChannelInteractorTests {
         @Test
         void given_null_channel_throws_npe() {
             assertNPE(() -> setActiveChannel(null));
-        }
-
-        @Test
-        void given_unknown_chatter_throws_not_found() {
-            assertThatExceptionOfType(Repository.NotFound.class)
-                .isThrownBy(() -> setActiveChannel(UUID.randomUUID(), channel.getKey()));
         }
 
         @Test
@@ -255,7 +237,7 @@ class ChannelInteractorTests {
                 @BeforeEach
                 void setUp() {
                     interactor = new SpyingChannelInteractor()
-                        .chatterRepository(chatterRepository)
+                        .chatterProvider(chatterProvider)
                         .channelRepository(channelRepository);
                 }
 

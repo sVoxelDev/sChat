@@ -21,7 +21,7 @@ package net.silthus.schat.platform.config.adapter;
 
 import java.util.List;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.settings.Settings;
+import net.silthus.schat.pointer.Settings;
 import org.jetbrains.annotations.Nullable;
 
 public interface ConfigurationSection {

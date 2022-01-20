@@ -28,8 +28,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.message.MessageTarget;
-import net.silthus.schat.settings.Setting;
-import net.silthus.schat.settings.Settings;
+import net.silthus.schat.pointer.Setting;
+import net.silthus.schat.pointer.Settings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -97,7 +97,7 @@ final class ChannelImpl implements Channel {
 
         @Override
         public <V> @NotNull Builder set(final @NonNull Setting<V> setting, final @Nullable V value) {
-            this.settings.set(setting, value);
+            this.settings.withStatic(setting, value);
             return this;
         }
 

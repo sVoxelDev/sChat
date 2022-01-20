@@ -26,7 +26,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.policies.CanJoinChannel;
 import net.silthus.schat.repository.Repository;
 import net.silthus.schat.usecases.JoinChannel;
@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter(AccessLevel.PROTECTED)
 @Accessors(fluent = true)
 public class ChannelInteractorImpl implements ChannelInteractor {
-    private ChatterRepository chatterRepository;
+    private ChatterProvider chatterProvider;
     private ChannelRepository channelRepository;
     private JoinChannel.Presenter joinChannelPresenter = result -> {};
     private CanJoinChannel canJoinChannel = (chatter, channel) -> true;
@@ -50,7 +50,7 @@ public class ChannelInteractorImpl implements ChannelInteractor {
 
     @NotNull
     private Chatter getChatter(@NotNull UUID chatterId) {
-        return chatterRepository().get(chatterId);
+        return chatterProvider().get(chatterId);
     }
 
     @NotNull

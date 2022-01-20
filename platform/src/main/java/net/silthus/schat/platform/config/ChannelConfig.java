@@ -22,7 +22,7 @@ package net.silthus.schat.platform.config;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.settings.Settings;
+import net.silthus.schat.pointer.Settings;
 
 @Getter
 @Setter

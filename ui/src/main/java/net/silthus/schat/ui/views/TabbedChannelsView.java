@@ -24,9 +24,10 @@ import java.util.List;
 import lombok.Getter;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.settings.Settings;
+import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.ui.View;
 import net.silthus.schat.ui.ViewModel;
 import org.jetbrains.annotations.NotNull;
@@ -34,8 +35,9 @@ import org.jetbrains.annotations.NotNull;
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.join;
 import static net.kyori.adventure.text.Component.newline;
+import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.JoinConfiguration.newlines;
-import static net.silthus.schat.settings.Settings.createSettings;
+import static net.silthus.schat.pointer.Settings.createSettings;
 
 @Getter
 final class TabbedChannelsView implements View {
@@ -49,7 +51,21 @@ final class TabbedChannelsView implements View {
 
     @Override
     public Component render() {
-        return combineMessagesAndChannels(renderMessages(), renderChannels());
+        return renderBlankLines()
+            .append(combineMessagesAndChannels(renderMessages(), renderChannels()));
+    }
+
+    private Component renderBlankLines() {
+        final int blankLineAmount = Math.max(0, get(VIEW_HEIGHT) - viewModel.getMessages().size());
+        return blankLines(blankLineAmount);
+    }
+
+    private Component blankLines(int amount) {
+        final TextComponent.Builder builder = text();
+        for (int i = 0; i < amount; i++) {
+            builder.append(newline());
+        }
+        return builder.build();
     }
 
     @NotNull

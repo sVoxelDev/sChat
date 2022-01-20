@@ -92,8 +92,8 @@ class ChatListenerImplTest {
         }
 
         @Test
-        void then_sets_message_source_to_user() {
-            assertThat(chat().source()).isEqualTo(chatter);
+        void then_sets_message_source_to_chatter_identity() {
+            assertThat(chat().source()).isEqualTo(chatter.getIdentity());
         }
 
         @Test

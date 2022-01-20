@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.settings;
+package net.silthus.schat.pointer;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Unmodifiable;
  *
  * @since next
  */
-public interface Settings {
+public sealed interface Settings extends Pointers permits SettingsImpl {
     /**
      * Gets an empty settings collection.
      *
@@ -136,18 +136,6 @@ public interface Settings {
      */
     <V> @NotNull Optional<V> set(@NotNull Setting<V> setting, @Nullable V value);
 
-    /**
-     * Checks if a given setting is supported.
-     *
-     * <p>This will return {@code true} when a mapping for the provided setting exists, even if the value for the setting is {@code null}.</p>
-     *
-     * @param setting the setting
-     * @param <V>     the type
-     * @return if the setting is supported
-     * @since next
-     */
-    <V> boolean contains(final @NotNull Setting<V> setting);
-
     Builder copy();
 
     /**
@@ -156,31 +144,7 @@ public interface Settings {
      * @see Settings
      * @since next
      */
-    interface Builder {
-
-        /**
-         * Adds a setting with a static, optional value.
-         *
-         * @param setting the setting
-         * @param value   the optional value
-         * @param <V>     the type
-         * @return this builder
-         * @since next
-         */
-        default <V> @NotNull Builder set(final @NonNull Setting<V> setting, final @Nullable V value) {
-            return this.setDynamic(setting, () -> value);
-        }
-
-        /**
-         * Adds a setting with a dynamic value provided by a supplier.
-         *
-         * @param setting the setting
-         * @param value   the value supplier
-         * @param <V>     the type
-         * @return this builder
-         * @since next
-         */
-        <V> @NotNull Builder setDynamic(final @NotNull Setting<V> setting, @NotNull Supplier<@Nullable V> value);
+    interface Builder extends Pointers.Builder {
 
         /**
          * Adds a setting which type is unknown and will be resolved based on the given key.
@@ -191,7 +155,22 @@ public interface Settings {
          * @return this builder
          * @since next
          */
-        <V> @NotNull Builder setUnknown(final @NotNull String key, @NotNull Function<Setting<?>, V> value);
+        <V> @NotNull Builder withUnknown(final @NotNull String key, @NotNull Function<Setting<?>, V> value);
+
+        @Override
+        default <T> @NotNull Builder withStatic(final @NonNull Pointer<T> pointer, @Nullable final T value) {
+            Pointers.Builder.super.withStatic(pointer, value);
+            return this;
+        }
+
+        @Override
+        <T> @NotNull Builder withDynamic(final @NonNull Pointer<T> pointer, @NonNull Supplier<@Nullable T> value);
+
+        @Override
+        default <T> @NotNull Builder withForward(final @NonNull Pointer<T> pointer, final @NonNull Pointered target, final @NonNull Pointer<T> targetPointer) {
+            Pointers.Builder.super.withForward(pointer, target, targetPointer);
+            return this;
+        }
 
         Settings create();
     }

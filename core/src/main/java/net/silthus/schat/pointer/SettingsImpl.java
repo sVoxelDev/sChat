@@ -17,10 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.settings;
+package net.silthus.schat.pointer;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -31,19 +32,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
-final class SettingsImpl implements Settings {
+final class SettingsImpl extends PointersImpl implements Settings {
 
-    private final Map<Setting<?>, Supplier<?>> settings;
     private final Map<String, Function<Setting<?>, ?>> unknowns;
 
     SettingsImpl(final @NotNull SettingsImpl.BuilderImpl builder) {
-        this.settings = new HashMap<>(builder.settings);
+        super(builder.pointers);
         this.unknowns = new HashMap<>(builder.unknowns);
     }
 
     @Override
     public @NotNull Set<Setting<?>> getSettings() {
-        return Collections.unmodifiableSet(settings.keySet());
+        final HashSet<Setting<?>> settings = new HashSet<>();
+        for (Pointer<?> pointer : pointers.keySet()) {
+            if (pointer instanceof Setting<?> setting)
+                settings.add(setting);
+        }
+        return Collections.unmodifiableSet(settings);
     }
 
     @Override
@@ -59,7 +64,7 @@ final class SettingsImpl implements Settings {
 
     @Override
     public @NotNull <V> Optional<V> set(final @NonNull Setting<V> setting, final @Nullable V value) {
-        return Optional.ofNullable(this.valueFromSupplier(setting, this.settings.put(setting, () -> value)));
+        return Optional.ofNullable(this.valueFromSupplier(setting, this.pointers.put(setting, () -> value)));
     }
 
     @SuppressWarnings("unchecked") // all values are checked on entry
@@ -72,17 +77,12 @@ final class SettingsImpl implements Settings {
         }
     }
 
-    @Override
-    public <T> boolean contains(final @NonNull Setting<T> setting) {
-        return this.settings.containsKey(setting);
-    }
-
     private <V> Supplier<?> getValueSupplier(@NotNull Setting<V> setting) {
         return matchesUnknownValue(setting) ? getUnknownValue(setting) : getConfiguredValue(setting);
     }
 
     private <V> Supplier<?> getConfiguredValue(@NotNull Setting<V> setting) {
-        return this.settings.get(setting);
+        return this.pointers.get(setting);
     }
 
     @NotNull
@@ -91,7 +91,7 @@ final class SettingsImpl implements Settings {
     }
 
     private <V> boolean notContains(@NotNull Setting<V> setting) {
-        return !contains(setting);
+        return !supports(setting);
     }
 
     private <V> boolean matchesUnknownValue(@NotNull Setting<V> setting) {
@@ -116,30 +116,29 @@ final class SettingsImpl implements Settings {
         return "SettingsImpl{" + keyValueMap + '}';
     }
 
-    static final class BuilderImpl implements Builder {
-
-        private final Map<Setting<?>, Supplier<?>> settings;
+    static final class BuilderImpl implements Settings.Builder {
+        private final Map<Pointer<?>, Supplier<?>> pointers;
         private final Map<String, Function<Setting<?>, ?>> unknowns;
 
         BuilderImpl() {
-            this.settings = new HashMap<>();
+            this.pointers = new HashMap<>();
             this.unknowns = new HashMap<>();
         }
 
         BuilderImpl(final @NotNull SettingsImpl settings) {
-            this.settings = new HashMap<>(settings.settings);
+            this.pointers = new HashMap<>(settings.pointers);
             this.unknowns = new HashMap<>(settings.unknowns);
         }
 
         @Override
-        public @NotNull <T> Settings.Builder setDynamic(final @NonNull Setting<T> setting, final @NonNull Supplier<@Nullable T> value) {
-            this.settings.put(setting, value);
+        public @NotNull <V> Settings.Builder withUnknown(@NonNull String key, @NonNull Function<Setting<?>, V> value) {
+            this.unknowns.putIfAbsent(key, value);
             return this;
         }
 
         @Override
-        public @NotNull <V> Builder setUnknown(@NonNull String key, @NonNull Function<Setting<?>, V> value) {
-            this.unknowns.putIfAbsent(key, value);
+        public @NotNull <V> Settings.Builder withDynamic(@NonNull Pointer<V> pointer, @NonNull Supplier<@Nullable V> value) {
+            this.pointers.put(pointer, value);
             return this;
         }
 

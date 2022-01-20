@@ -24,14 +24,17 @@ import cloud.commandframework.paper.PaperCommandManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.silthus.schat.bukkit.adapter.BukkitChatterFactory;
 import net.silthus.schat.bukkit.adapter.BukkitSchedulerAdapter;
 import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
+import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
 import net.silthus.schat.platform.plugin.AbstractSChatPlugin;
 import net.silthus.schat.platform.plugin.adapter.Presenter;
 import net.silthus.schat.platform.sender.Sender;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 
 import static cloud.commandframework.execution.CommandExecutionCoordinator.simpleCoordinator;
 
@@ -39,7 +42,7 @@ import static cloud.commandframework.execution.CommandExecutionCoordinator.simpl
 public final class SChatBukkitPlugin extends AbstractSChatPlugin {
 
     private final SChatBukkitBootstrap bootstrap;
-    private BukkitSenderFactory chatterFactory;
+    private BukkitSenderFactory senderFactory;
 
     SChatBukkitPlugin(SChatBukkitBootstrap bootstrap) {
         this.bootstrap = bootstrap;
@@ -51,8 +54,18 @@ public final class SChatBukkitPlugin extends AbstractSChatPlugin {
     }
 
     @Override
-    protected void setupChatterFactory() {
-        chatterFactory = new BukkitSenderFactory(BukkitAudiences.create(getBootstrap().getLoader()), new BukkitSchedulerAdapter(bootstrap.getLoader()));
+    protected void setupSenderFactory() {
+        senderFactory = new BukkitSenderFactory(getAudiences(), new BukkitSchedulerAdapter(bootstrap.getLoader()));
+    }
+
+    @Override
+    protected ChatterFactory provideChatterFactory() {
+        return new BukkitChatterFactory(getAudiences());
+    }
+
+    @NotNull
+    private BukkitAudiences getAudiences() {
+        return BukkitAudiences.create(getBootstrap().getLoader());
     }
 
     @Override
@@ -67,8 +80,8 @@ public final class SChatBukkitPlugin extends AbstractSChatPlugin {
             return new PaperCommandManager<>(
                 getBootstrap().getLoader(),
                 simpleCoordinator(),
-                commandSender -> getChatterFactory().wrap(commandSender),
-                sender -> getChatterFactory().unwrap(sender)
+                commandSender -> getSenderFactory().wrap(commandSender),
+                sender -> getSenderFactory().unwrap(sender)
             );
         } catch (Exception e) {
             getLogger().severe("Failed to initialize the command manager.");

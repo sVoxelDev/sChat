@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.settings;
+package net.silthus.schat.pointer;
 
 import java.util.function.Supplier;
 import lombok.NonNull;
@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> the type of the value
  * @since next
  */
-public interface Setting<V> {
+public sealed interface Setting<V> extends Pointer<V> permits SettingImpl {
 
     /**
      * Creates a new setting for the given type and key with the given default value.
@@ -59,22 +59,6 @@ public interface Setting<V> {
     static @NotNull <V> Setting<V> dynamicSetting(final @NonNull Class<V> type, final @NonNull String key, final @NonNull Supplier<@Nullable V> defaultValue) {
         return new SettingImpl<>(type, key, defaultValue);
     }
-
-    /**
-     * Gets the value type.
-     *
-     * @return the value type
-     * @since next
-     */
-    @NotNull Class<V> getType();
-
-    /**
-     * Gets the key.
-     *
-     * @return the key
-     * @since next
-     */
-    @NotNull String getKey();
 
     /**
      * The default value of the setting that is used if the setting is not set.

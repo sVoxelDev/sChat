@@ -24,11 +24,11 @@ import lombok.Getter;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.settings.Settings;
+import net.silthus.schat.pointer.Settings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-import static net.silthus.schat.settings.Settings.createSettings;
+import static net.silthus.schat.pointer.Settings.createSettings;
 
 @Getter
 final class ChatterViewModel implements ViewModel {

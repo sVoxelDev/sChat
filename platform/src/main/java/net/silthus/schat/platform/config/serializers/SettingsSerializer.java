@@ -21,8 +21,8 @@ package net.silthus.schat.platform.config.serializers;
 
 import java.lang.reflect.Type;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
-import net.silthus.schat.settings.Setting;
-import net.silthus.schat.settings.Settings;
+import net.silthus.schat.pointer.Setting;
+import net.silthus.schat.pointer.Settings;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
@@ -33,7 +33,7 @@ public final class SettingsSerializer implements TypeSerializer<Settings> {
     public Settings deserialize(Type type, ConfigurationNode node) {
         final Settings.Builder builder = Settings.settings();
         for (final String key : node.childrenMap().keySet().stream().map(Object::toString).toList()) {
-            builder.setUnknown(key, setting -> {
+            builder.withUnknown(key, setting -> {
                 try {
                     return node.node(key).get(setting.getType());
                 } catch (SerializationException e) {

@@ -22,6 +22,7 @@ package net.silthus.schat.platform.sender;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.identity.Identified;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Wrapper interface to represent a CommandSender/CommandSource within the common command implementations.
@@ -32,6 +33,18 @@ public interface Sender extends Identified {
     UUID CONSOLE_UUID = new UUID(0, 0); // 00000000-0000-0000-0000-000000000000
     /** The name used by the console sender. */
     String CONSOLE_NAME = "Console";
+
+    default @NotNull UUID getUniqueId() {
+        return getIdentity().getUniqueId();
+    }
+
+    default @NotNull String getName() {
+        return getIdentity().getName();
+    }
+
+    default @NotNull Component getDisplayName() {
+        return getIdentity().getDisplayName();
+    }
 
     /**
      * Send a json message to the Sender.

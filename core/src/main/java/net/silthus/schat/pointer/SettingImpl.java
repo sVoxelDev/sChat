@@ -17,14 +17,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter;
+package net.silthus.schat.pointer;
 
-import java.util.UUID;
-import net.silthus.schat.repository.Repository;
+import java.util.function.Supplier;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 
-public interface ChatterRepository extends Repository<UUID, Chatter> {
+@Data
+@EqualsAndHashCode(of = {"type", "key"})
+final class SettingImpl<V> implements Setting<V> {
 
-    static ChatterRepository createInMemoryChatterRepository() {
-        return new InMemoryChatterRepository();
+    private final Class<V> type;
+    private final String key;
+    private final Supplier<V> defaultValue;
+
+    SettingImpl(
+        final @NonNull Class<V> type,
+        final @NonNull String key,
+        final @NonNull Supplier<V> defaultValue) {
+        this.type = type;
+        this.key = key;
+        this.defaultValue = defaultValue;
+    }
+
+    @Override
+    public V getDefaultValue() {
+        return this.defaultValue.get();
     }
 }

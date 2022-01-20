@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.settings;
+package net.silthus.schat.pointer;
 
 import java.util.function.Supplier;
 import lombok.NonNull;
@@ -30,7 +30,12 @@ import org.jetbrains.annotations.UnknownNullability;
  *
  * @since next
  */
-public interface Configured {
+public interface Configured extends Pointered {
+
+    @Override
+    default @NotNull Pointers getPointers() {
+        return Pointered.super.getPointers();
+    }
 
     /**
      * Gets the value of {@code setting} or the setting's default value if the value is not present.

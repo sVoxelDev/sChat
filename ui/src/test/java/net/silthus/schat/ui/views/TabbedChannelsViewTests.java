@@ -44,6 +44,7 @@ import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.ui.View.ACTIVE_CHANNEL_FORMAT;
 import static net.silthus.schat.ui.View.CHANNEL_JOIN_CONFIG;
 import static net.silthus.schat.ui.View.MESSAGE_SOURCE_FORMAT;
+import static net.silthus.schat.ui.View.VIEW_HEIGHT;
 import static net.silthus.schat.ui.ViewModel.of;
 import static net.silthus.schat.ui.views.Views.tabbedChannels;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -82,7 +83,7 @@ class TabbedChannelsViewTests {
     }
 
     private void assertViewRenders(String expected) {
-        assertEquals(expected, COMPONENT_SERIALIZER.serialize(view.render()));
+        assertEquals(expected, COMPONENT_SERIALIZER.serialize(view.render()).trim());
     }
 
     @Nested class given_null_chatter {
@@ -97,8 +98,8 @@ class TabbedChannelsViewTests {
     @Nested class given_no_messages_and_no_channels {
 
         @Test
-        void renders_empty_string() {
-            assertViewRenders("");
+        void renders_view_with_only_empty_lines() {
+            assertEquals("\n".repeat(Math.max(0, view.get(VIEW_HEIGHT))), COMPONENT_SERIALIZER.serialize(view.render()));
         }
     }
 

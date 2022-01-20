@@ -27,7 +27,7 @@ import net.silthus.schat.platform.config.ChannelConfig;
 import net.silthus.schat.platform.config.serializers.ChannelSerializer;
 import net.silthus.schat.platform.config.serializers.MiniMessageComponentSerializer;
 import net.silthus.schat.platform.config.serializers.SettingsSerializer;
-import net.silthus.schat.settings.Settings;
+import net.silthus.schat.pointer.Settings;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.ConfigurationOptions;

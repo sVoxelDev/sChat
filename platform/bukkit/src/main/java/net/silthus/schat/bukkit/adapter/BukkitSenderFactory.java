@@ -22,21 +22,19 @@ package net.silthus.schat.bukkit.adapter;
 import java.util.UUID;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
 import net.silthus.schat.platform.sender.SenderFactory;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import static net.silthus.schat.identity.Identity.identity;
+import static net.silthus.schat.bukkit.adapter.BukkitIdentityAdapter.identity;
 
 public final class BukkitSenderFactory extends SenderFactory<CommandSender> {
-
-    private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
 
     private final BukkitAudiences audiences;
     private final SchedulerAdapter scheduler;
@@ -53,19 +51,15 @@ public final class BukkitSenderFactory extends SenderFactory<CommandSender> {
 
     @Override
     protected Identity getIdentity(CommandSender sender) {
-        if (sender instanceof Player player)
-            return identity(
-                player.getUniqueId(),
-                player.getName(),
-                () -> LEGACY_SERIALIZER.deserialize(player.getDisplayName())
-            );
+        if (sender instanceof OfflinePlayer player)
+            return identity(player);
         return CONSOLE;
     }
 
     @Override
     protected void sendMessage(CommandSender sender, Component message) {
         if (canSendAsync(sender))
-            this.audiences.sender(sender).sendMessage(message);
+            audiences.sender(sender).sendMessage(message);
         else
             scheduler.executeSync(() -> this.audiences.sender(sender).sendMessage(message));
     }
