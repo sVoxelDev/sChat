@@ -23,7 +23,10 @@ import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.MockPlugin;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.command.ConsoleCommandSenderMock;
+import be.seeseemelk.mockbukkit.entity.PlayerMock;
+import java.util.function.Supplier;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -57,12 +60,27 @@ public abstract class BukkitTests {
         audiences.close();
     }
 
-    protected void assertLastMessage(ConsoleCommandSenderMock mock, String message) {
+    protected void assertLastMessageIs(ConsoleCommandSenderMock mock, String message) {
+        assertTrimmedEquals(getLastMessage(mock::nextMessage), message);
+    }
+
+    protected void assertLastMessageIs(PlayerMock player, String message) {
+        assertTrimmedEquals(getLastMessage(player::nextMessage), message);
+    }
+
+    @Nullable
+    private String getLastMessage(Supplier<String> nextMessageSupplier) {
         String nextMessage;
         String lastMessage = null;
-        while ((nextMessage = mock.nextMessage()) != null) {
+        while ((nextMessage = nextMessageSupplier.get()) != null) {
             lastMessage = nextMessage;
         }
-        assertThat(message).isEqualTo(lastMessage);
+        return lastMessage;
+    }
+
+    private void assertTrimmedEquals(String lastMessage, String message) {
+        if (lastMessage == null && message == null) return;
+        assertThat(lastMessage).isNotNull();
+        assertThat(lastMessage.trim()).isEqualTo(message.trim());
     }
 }

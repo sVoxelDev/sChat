@@ -24,7 +24,7 @@ import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.arguments.parser.StandardParameters;
 import cloud.commandframework.meta.CommandMeta;
 import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.platform.sender.Sender;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +39,7 @@ public final class Commands {
     public Commands(CommandManager<Sender> commandManager, Context context) {
         this.commandManager = commandManager;
         this.annotationParser = createAnnotationParser();
-        registerChatterArgument(commandManager, context.chatterRepository());
+        registerChatterArgument(commandManager, context.chatterProvider());
         registerChannelParser(commandManager, context.channelRepository());
     }
 
@@ -60,6 +60,6 @@ public final class Commands {
         );
     }
 
-    public record Context(ChatterRepository chatterRepository, ChannelRepository channelRepository) {
+    public record Context(ChatterProvider chatterProvider, ChannelRepository channelRepository) {
     }
 }

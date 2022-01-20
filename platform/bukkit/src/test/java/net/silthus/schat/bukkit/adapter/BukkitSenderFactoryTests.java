@@ -153,7 +153,7 @@ class BukkitSenderFactoryTests extends BukkitTests {
             @Test
             void then_sendMessage_sends_message_to_console() {
                 console.sendMessage(text("Hi"));
-                assertLastMessage(consoleSender, "Hi");
+                assertLastMessageIs(consoleSender, "Hi");
             }
         }
     }

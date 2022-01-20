@@ -61,26 +61,26 @@ final class FactorySender<T> implements Sender {
     public void sendMessage(Component message) {
         if (isConsole()) {
             for (Component line : splitNewlines(message)) {
-                this.factory.sendMessage(this.handle, line);
+                factory.sendMessage(handle, line);
             }
         } else {
-            this.factory.sendMessage(this.handle, message);
+            factory.sendMessage(handle, message);
         }
     }
 
     @Override
     public boolean hasPermission(String permission) {
-        return isConsole() || this.factory.hasPermission(this.handle, permission);
+        return isConsole() || factory.hasPermission(handle, permission);
     }
 
     @Override
     public void performCommand(String commandLine) {
-        this.factory.performCommand(this.handle, commandLine);
+        factory.performCommand(handle, commandLine);
     }
 
     @Override
     public boolean isValid() {
-        return isConsole() || factory.isPlayerOnline(this.getUniqueId());
+        return isConsole() || factory.isPlayerOnline(getUniqueId());
     }
 
     // A small utility method which splits components built using

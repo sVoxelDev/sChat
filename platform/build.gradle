@@ -19,6 +19,7 @@
 
 dependencies {
     api project(':core')
+    api project(':ui')
 
     implementation 'cloud.commandframework:cloud-core:1.6.1'
     implementation 'cloud.commandframework:cloud-annotations:1.6.1'

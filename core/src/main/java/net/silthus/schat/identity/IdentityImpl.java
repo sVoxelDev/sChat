@@ -20,11 +20,11 @@
 package net.silthus.schat.identity;
 
 import java.util.UUID;
-import java.util.function.Supplier;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.pointer.Pointers;
 
 /**
  * Holds the id, name and display name of an identified entity.
@@ -41,27 +41,12 @@ final class IdentityImpl implements Identity {
     static final Identity NIL = Identity.identity(NIL_IDENTITY_ID, "", Component.empty());
 
     private final @NonNull UUID uniqueId;
-    private final @NonNull String name;
-    private final @NonNull Supplier<Component> displayName;
+    private final Pointers pointers;
 
     IdentityImpl(
         @NonNull UUID uniqueId,
-        @NonNull String name,
-        @NonNull Supplier<Component> displayName
-    ) {
+        @NonNull Pointers pointers) {
         this.uniqueId = uniqueId;
-        this.name = name;
-        this.displayName = displayName;
-    }
-
-    /**
-     * Gets the display of the identity.
-     *
-     * @return the display name
-     * @since next
-     */
-    @Override
-    public Component getDisplayName() {
-        return displayName.get();
+        this.pointers = pointers;
     }
 }

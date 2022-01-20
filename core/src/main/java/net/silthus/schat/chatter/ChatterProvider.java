@@ -20,7 +20,13 @@
 package net.silthus.schat.chatter;
 
 import java.util.UUID;
-import net.silthus.schat.repository.InMemoryRepository;
+import lombok.NonNull;
 
-final class InMemoryChatterRepository extends InMemoryRepository<UUID, Chatter> implements ChatterRepository {
+public interface ChatterProvider {
+
+    static ChatterProvider createChatterProvider(ChatterFactory factory) {
+        return new ChatterProviderImpl(factory);
+    }
+
+    Chatter get(@NonNull UUID id);
 }

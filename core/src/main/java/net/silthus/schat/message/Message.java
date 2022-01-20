@@ -25,6 +25,7 @@ import java.util.UUID;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -77,6 +78,10 @@ public sealed interface Message extends Comparable<Message> permits Message.Draf
         @NotNull Draft timestamp(@NonNull Instant timestamp);
 
         @NotNull Draft source(@Nullable Identity identity);
+
+        default @NotNull Draft source(@NonNull Chatter chatter) {
+            return source(chatter.getIdentity());
+        }
 
         @NotNull Draft to(@NonNull MessageTarget target);
 

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.settings;
+package net.silthus.schat.pointer;
 
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +27,7 @@ class SettingsTest {
 
     static final Setting<String> DYNAMIC_TEST = Setting.setting(String.class, "dynamic", "foobar");
     static final Setting<String> DEFAULT_VAL_TEST = Setting.setting(String.class, "default", "test");
+    static final Pointer<String> TEST_POINTER = Pointer.pointer(String.class, "test");
 
     @Test
     void create_isEmpty() {
@@ -36,8 +37,8 @@ class SettingsTest {
     @Test
     void populateWithInitialValues() {
         final Settings settings = Settings.settings()
-            .set(DEFAULT_VAL_TEST, "static")
-            .setDynamic(DYNAMIC_TEST, () -> "dynamic")
+            .withStatic(DEFAULT_VAL_TEST, "static")
+            .withDynamic(DYNAMIC_TEST, () -> "dynamic")
             .create();
         assertThat(settings.get(DEFAULT_VAL_TEST)).isEqualTo("static");
         assertThat(settings.get(DYNAMIC_TEST)).isEqualTo("dynamic");
@@ -57,13 +58,13 @@ class SettingsTest {
 
     @Test
     void getOrDefault_valueIsSet_returnsValue() {
-        final Settings settings = Settings.settings().set(DEFAULT_VAL_TEST, "bob").create();
+        final Settings settings = Settings.settings().withStatic(DEFAULT_VAL_TEST, "bob").create();
         assertThat(settings.getOrDefaultFrom(DEFAULT_VAL_TEST, () -> "bobby")).isEqualTo("bob");
     }
 
     @Test
     void set_updatesValue() {
-        final Settings settings = Settings.settings().set(DEFAULT_VAL_TEST, "bob").create();
+        final Settings settings = Settings.settings().withStatic(DEFAULT_VAL_TEST, "bob").create();
         settings.set(DEFAULT_VAL_TEST, "bobby");
         assertThat(settings.get(DEFAULT_VAL_TEST)).isEqualTo("bobby");
     }
@@ -71,10 +72,10 @@ class SettingsTest {
     @Test
     void copy_copiesAllSettings() {
         final Settings original = Settings.settings()
-            .set(DEFAULT_VAL_TEST, "static")
-            .setDynamic(DYNAMIC_TEST, () -> "dynamic")
+            .withStatic(DEFAULT_VAL_TEST, "static")
+            .withDynamic(DYNAMIC_TEST, () -> "dynamic")
             .create();
-        final Settings settings = original.copy().set(DEFAULT_VAL_TEST, "foobar").create();
+        final Settings settings = original.copy().withStatic(DEFAULT_VAL_TEST, "foobar").create();
 
         assertThat(original.get(DEFAULT_VAL_TEST)).isEqualTo("static");
         assertThat(original.get(DYNAMIC_TEST)).isEqualTo("dynamic");
@@ -85,7 +86,7 @@ class SettingsTest {
 
     @Test
     void copy_copiesUnknown_Settings() {
-        final Settings original = Settings.settings().setUnknown("test", setting -> "foobar").create();
+        final Settings original = Settings.settings().withUnknown("test", setting -> "foobar").create();
         final Settings copy = original.copy().create();
 
         assertThat(copy.get(Setting.setting(String.class, "test", null))).isEqualTo("foobar");
@@ -93,7 +94,17 @@ class SettingsTest {
 
     @Test
     void given_unknown_type() {
-        final Settings settings = Settings.settings().setUnknown("default", setting -> "foobar").create();
+        final Settings settings = Settings.settings().withUnknown("default", setting -> "foobar").create();
         assertThat(settings.get(DEFAULT_VAL_TEST)).isEqualTo("foobar");
+    }
+
+    @Test
+    void given_point_in_settings_retrieves_pointer_value() {
+        final Settings settings = Settings.settings()
+            .withStatic(TEST_POINTER, "foobar")
+            .withDynamic(DYNAMIC_TEST, () -> "barfoo")
+            .create();
+        assertThat(settings.get(TEST_POINTER)).isPresent().get().isEqualTo("foobar");
+        assertThat(settings.get(DYNAMIC_TEST)).isEqualTo("barfoo");
     }
 }

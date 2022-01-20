@@ -20,6 +20,7 @@
 package net.silthus.schat.platform.plugin;
 
 import cloud.commandframework.CommandManager;
+import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.platform.commands.Command;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.platform.commands.CommandTestUtils.createCommandManager;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -81,8 +83,13 @@ class PluginTests {
         }
 
         @Override
-        protected void setupChatterFactory() {
+        protected void setupSenderFactory() {
 
+        }
+
+        @Override
+        protected ChatterFactory provideChatterFactory() {
+            return id -> randomChatter();
         }
 
         @Override

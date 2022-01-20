@@ -23,16 +23,22 @@ import java.util.UUID;
 import java.util.function.Supplier;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.pointer.Pointer;
+import net.silthus.schat.pointer.Pointered;
 import org.jetbrains.annotations.NotNull;
 
+import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.pointer.Pointer.pointer;
+import static net.silthus.schat.pointer.Pointers.pointers;
 
-public interface Identity {
+public sealed interface Identity extends Pointered permits IdentityImpl {
 
     UUID NIL_IDENTITY_ID = new UUID(0, 0); // 00000000-0000-0000-0000-000000000000
 
-    // TODO: revert back to record and remove ambiguous implementations, e.g. chatter extends identity
-    // TODO: make identity use pointers for name and display name
+    Pointer<UUID> ID = pointer(UUID.class, "id");
+    Pointer<String> NAME = pointer(String.class, "name");
+    Pointer<Component> DISPLAY_NAME = pointer(Component.class, "display_name");
 
     /**
      * Gets a {@code nil} identity.
@@ -101,12 +107,21 @@ public interface Identity {
      * @since next
      */
     static Identity identity(final UUID id, final String name, final Supplier<Component> displayName) {
-        return new IdentityImpl(id, name, displayName);
+        return new IdentityImpl(id, pointers()
+            .withStatic(ID, id)
+            .withStatic(NAME, name)
+            .withDynamic(DISPLAY_NAME, displayName)
+            .create()
+        );
     }
 
     UUID getUniqueId();
 
-    String getName();
+    default String getName() {
+        return getOrDefault(NAME, "");
+    }
 
-    Component getDisplayName();
+    default Component getDisplayName() {
+        return getOrDefault(DISPLAY_NAME, empty());
+    }
 }

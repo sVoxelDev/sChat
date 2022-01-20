@@ -20,8 +20,8 @@
 package net.silthus.schat.channel;
 
 import java.util.function.Function;
-import net.silthus.schat.settings.Configured;
-import net.silthus.schat.settings.Setting;
+import net.silthus.schat.pointer.Configured;
+import net.silthus.schat.pointer.Setting;
 
 import static net.silthus.schat.channel.Channel.channel;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;

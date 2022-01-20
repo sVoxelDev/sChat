@@ -27,7 +27,8 @@ import java.nio.file.Path;
 import lombok.Getter;
 import net.silthus.schat.channel.ChannelInteractorImpl;
 import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.chatter.ChatterFactory;
+import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.config.SChatConfig;
@@ -39,14 +40,14 @@ import net.silthus.schat.policies.PoliciesImpl;
 import org.jetbrains.annotations.ApiStatus;
 
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
-import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
+import static net.silthus.schat.chatter.ChatterProvider.createChatterProvider;
 
 @Getter
 public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     private SChatConfig config;
     private Policies policies;
-    private ChatterRepository chatterRepository;
+    private ChatterProvider chatterProvider;
     private ChannelRepository channelRepository;
     private ChannelInteractorImpl channelInteractor;
     private Presenter presenter;
@@ -59,23 +60,23 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     @Override
     public final void enable() {
-        setupChatterFactory();
+        setupSenderFactory();
 
         config = new SChatConfig(provideConfigurationAdapter());
         config.load();
 
         policies = provideChannelPolicies();
-        chatterRepository = provideChatterRepository();
+        chatterProvider = createChatterProvider(provideChatterFactory());
         channelRepository = provideChannelRepository();
 
         channelInteractor = new ChannelInteractorImpl()
             .channelRepository(channelRepository)
-            .chatterRepository(chatterRepository)
+            .chatterProvider(chatterProvider)
             .canJoinChannel(policies);
 
         presenter = providePresenter();
 
-        commands = new Commands(provideCommandManager(), new Commands.Context(chatterRepository, channelRepository));
+        commands = new Commands(provideCommandManager(), new Commands.Context(chatterProvider, channelRepository));
         registerCommands();
     }
 
@@ -86,12 +87,9 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     protected abstract ConfigurationAdapter provideConfigurationAdapter();
 
-    protected abstract void setupChatterFactory();
+    protected abstract void setupSenderFactory();
 
-    @ApiStatus.OverrideOnly
-    protected ChatterRepository provideChatterRepository() {
-        return createInMemoryChatterRepository();
-    }
+    protected abstract ChatterFactory provideChatterFactory();
 
     @ApiStatus.OverrideOnly
     protected ChannelRepository provideChannelRepository() {

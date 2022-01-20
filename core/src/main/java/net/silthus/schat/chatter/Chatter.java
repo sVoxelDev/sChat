@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import lombok.NonNull;
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identified;
 import net.silthus.schat.identity.Identity;
@@ -23,6 +24,23 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified 
 
     static Builder chatter(@NonNull Identity identity) {
         return ChatterImpl.builder(identity);
+    }
+
+    @Override
+    default @NotNull UUID getKey() {
+        return getUniqueId();
+    }
+
+    default @NotNull UUID getUniqueId() {
+        return getIdentity().getUniqueId();
+    }
+
+    default @NotNull String getName() {
+        return getIdentity().getName();
+    }
+
+    default @NotNull Component getDisplayName() {
+        return getIdentity().getDisplayName();
     }
 
     @NotNull @Unmodifiable List<Channel> getChannels();
@@ -52,7 +70,10 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified 
     }
 
     interface MessageHandler {
-        void handleMessage(Message message);
+        void handleMessage(Message message, Context context);
+
+        record Context(Chatter chatter) {
+        }
     }
 
     interface PermissionHandler {

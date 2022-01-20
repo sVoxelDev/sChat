@@ -24,14 +24,14 @@ import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.platform.sender.SenderMock;
 import org.junit.jupiter.api.BeforeEach;
 
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
-import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
+import static net.silthus.schat.chatter.ChatterProviderStub.chatterProviderStub;
 import static net.silthus.schat.platform.commands.CommandTestUtils.createCommandManager;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,17 +40,16 @@ public abstract class CommandTest {
     protected CommandManager<Sender> commandManager;
     protected SenderMock sender;
     protected Commands commands;
-    protected ChatterRepository chatterRepository;
+    protected ChatterProvider chatterProvider;
     protected ChannelRepository channelRepository;
 
     @BeforeEach
     void setUpBase() {
         commandManager = createCommandManager();
-        chatterRepository = createInMemoryChatterRepository();
         channelRepository = createInMemoryChannelRepository();
-        commands = new Commands(commandManager, new Commands.Context(chatterRepository, channelRepository));
         final Chatter chatter = randomChatter();
-        chatterRepository.add(chatter);
+        chatterProvider = chatterProviderStub(chatter);
+        commands = new Commands(commandManager, new Commands.Context(chatterProvider, channelRepository));
         sender = new SenderMock(chatter.getIdentity());
     }
 

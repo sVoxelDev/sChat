@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
@@ -59,11 +58,6 @@ final class ChatterImpl implements Chatter {
         this.identity = builder.identity();
         this.messageHandler = builder.messageHandler();
         this.permissionHandler = builder.permissionHandler();
-    }
-
-    @Override
-    public @NotNull UUID getKey() {
-        return getUniqueId();
     }
 
     @Override
@@ -118,7 +112,7 @@ final class ChatterImpl implements Chatter {
     @Override
     public void sendMessage(@NonNull Message message) {
         messages.add(message);
-        messageHandler.handleMessage(message);
+        messageHandler.handleMessage(message, new MessageHandler.Context(this));
     }
 
     @Getter
@@ -127,7 +121,7 @@ final class ChatterImpl implements Chatter {
     static final class Builder implements Chatter.Builder {
 
         private final Identity identity;
-        private MessageHandler messageHandler = message -> {};
+        private MessageHandler messageHandler = (message, context) -> {};
         private PermissionHandler permissionHandler = permission -> false;
 
         private Builder(Identity identity) {

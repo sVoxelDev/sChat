@@ -20,7 +20,6 @@
 package net.silthus.schat.chatter;
 
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.identity.Identified;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,9 +53,9 @@ class ChatterTest {
     @Test
     void given_valid_identity_uses_identity_properties() {
         assertThat(chatter).extracting(
-            Identified::getUniqueId,
-            Identified::getName,
-            Identified::getDisplayName
+            Chatter::getUniqueId,
+            Chatter::getName,
+            Chatter::getDisplayName
         ).contains(
             identity.getUniqueId(),
             identity.getName(),
@@ -209,7 +208,7 @@ class ChatterTest {
             @BeforeEach
             void setUp() {
                 chatter = chatter(randomIdentity())
-                    .messageHandler(message -> messageHandlerCalled = true)
+                    .messageHandler((message, context) -> messageHandlerCalled = true)
                     .create();
             }
 

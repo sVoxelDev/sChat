@@ -24,25 +24,25 @@ import cloud.commandframework.annotations.AnnotationAccessor;
 import cloud.commandframework.annotations.injection.ParameterInjector;
 import cloud.commandframework.context.CommandContext;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.platform.sender.Sender;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public final class ChatterArgument implements ParameterInjector<Sender, Chatter> {
 
-    public static void registerChatterArgument(CommandManager<Sender> commandManager, ChatterRepository repository) {
+    public static void registerChatterArgument(CommandManager<Sender> commandManager, ChatterProvider repository) {
         final ChatterArgument parser = new ChatterArgument(repository);
         commandManager.parameterInjectorRegistry().registerInjector(Chatter.class, parser);
     }
 
-    private final ChatterRepository repository;
+    private final ChatterProvider chatterProvider;
 
-    public ChatterArgument(ChatterRepository repository) {
-        this.repository = repository;
+    public ChatterArgument(ChatterProvider chatterProvider) {
+        this.chatterProvider = chatterProvider;
     }
 
     @Override
     public Chatter create(@NonNull CommandContext<Sender> context, @NonNull AnnotationAccessor annotationAccessor) {
-        return repository.get(context.getSender().getUniqueId());
+        return chatterProvider.get(context.getSender().getUniqueId());
     }
 }
