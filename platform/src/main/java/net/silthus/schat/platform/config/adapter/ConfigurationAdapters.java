@@ -20,10 +20,7 @@
 package net.silthus.schat.platform.config.adapter;
 
 import java.nio.file.Path;
-import java.util.function.Function;
-import org.spongepowered.configurate.ConfigurationNode;
-import org.spongepowered.configurate.ConfigurationOptions;
-import org.spongepowered.configurate.loader.ConfigurationLoader;
+import org.spongepowered.configurate.loader.AbstractConfigurationLoader;
 import org.spongepowered.configurate.loader.HeaderMode;
 import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
@@ -35,21 +32,18 @@ public final class ConfigurationAdapters {
     private ConfigurationAdapters() {
     }
 
-    private static final class YamlConfigurateAdapter extends ConfigurateAdapter {
-
+    private static final class YamlConfigurateAdapter extends ConfigurateAdapter<YamlConfigurationLoader.Builder, YamlConfigurationLoader> {
         private YamlConfigurateAdapter(Path path) {
             super(path);
         }
 
         @Override
-        protected ConfigurationLoader<? extends ConfigurationNode> createLoader(Path path, Function<ConfigurationOptions, ConfigurationOptions> defaultOptions) {
+        protected AbstractConfigurationLoader.Builder<YamlConfigurationLoader.Builder, YamlConfigurationLoader> createLoader(Path path) {
             return YamlConfigurationLoader.builder()
                 .path(path)
                 .indent(4)
                 .nodeStyle(NodeStyle.BLOCK)
-                .headerMode(HeaderMode.PRESERVE)
-                .defaultOptions(defaultOptions::apply)
-                .build();
+                .headerMode(HeaderMode.PRESERVE);
         }
     }
 }

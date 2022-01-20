@@ -27,13 +27,13 @@ import java.nio.file.Path;
 import lombok.Getter;
 import net.silthus.schat.channel.ChannelInteractorImpl;
 import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.config.SChatConfig;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.plugin.adapter.Presenter;
+import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.policies.Policies;
 import net.silthus.schat.policies.PoliciesImpl;
 import org.jetbrains.annotations.ApiStatus;
@@ -75,7 +75,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
         presenter = providePresenter();
 
-        commands = new Commands(provideCommandManager());
+        commands = new Commands(provideCommandManager(), new Commands.Context(chatterRepository, channelRepository));
         registerCommands();
     }
 
@@ -105,7 +105,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     protected abstract Presenter providePresenter();
 
-    protected abstract CommandManager<Chatter> provideCommandManager();
+    protected abstract CommandManager<Sender> provideCommandManager();
 
     private void registerCommands() {
         registerNativeCommands();
@@ -113,7 +113,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     }
 
     private void registerNativeCommands() {
-        commands.register(new ChannelCommands(channelInteractor, channelRepository));
+        commands.register(new ChannelCommands(channelInteractor));
     }
 
     @ApiStatus.OverrideOnly

@@ -27,24 +27,27 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.silthus.schat.IdentityHelper.randomIdentity;
 import static net.silthus.schat.channel.Channel.JOIN_PERMISSION;
 import static net.silthus.schat.channel.Channel.PROTECTED;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
+import static net.silthus.schat.chatter.Chatter.chatter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class PoliciesTests {
-
+    private Chatter.PermissionHandler permissionHandler;
     private Policies policies;
     private Chatter chatter;
 
     @BeforeEach
     void setUp() {
         policies = new PoliciesImpl();
-        chatter = mock(Chatter.class);
+        permissionHandler = mock(Chatter.PermissionHandler.class);
+        chatter = chatter(randomIdentity()).permissionHandler(permissionHandler).create();
     }
 
     private void assertCanJoin(Channel channel, boolean expected) {
@@ -52,7 +55,7 @@ class PoliciesTests {
     }
 
     private void mockHasPermission(String permission) {
-        when(chatter.hasPermission(permission)).thenReturn(true);
+        when(permissionHandler.hasPermission(permission)).thenReturn(true);
     }
 
     @Nested class given_protected_channel {

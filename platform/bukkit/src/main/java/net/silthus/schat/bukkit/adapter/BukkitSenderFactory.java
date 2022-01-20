@@ -20,53 +20,84 @@
 package net.silthus.schat.bukkit.adapter;
 
 import java.util.UUID;
-import lombok.Getter;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.silthus.schat.chatter.MessageHandler;
-import net.silthus.schat.chatter.PermissionHandler;
 import net.silthus.schat.identity.Identity;
-import net.silthus.schat.platform.plugin.adapter.SenderFactory;
+import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
+import net.silthus.schat.platform.sender.SenderFactory;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.identity.Identity.identity;
 
 public final class BukkitSenderFactory extends SenderFactory<CommandSender> {
 
-    private static final @NotNull LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
-    private static final @NotNull Identity CONSOLE = Identity.identity(
-        new UUID(0, 0),
-        "Console"
-    );
+    private static final LegacyComponentSerializer LEGACY_SERIALIZER = LegacyComponentSerializer.legacySection();
 
-    @Getter
-    private final BukkitAudiences audienceProvider;
+    private final BukkitAudiences audiences;
+    private final SchedulerAdapter scheduler;
 
-    public BukkitSenderFactory(BukkitAudiences audienceProvider) {
-        this.audienceProvider = audienceProvider;
+    public BukkitSenderFactory(BukkitAudiences audiences, SchedulerAdapter scheduler) {
+        this.audiences = audiences;
+        this.scheduler = scheduler;
     }
 
-    @NotNull
+    @Override
+    protected Class<CommandSender> getSenderType() {
+        return CommandSender.class;
+    }
+
+    @Override
     protected Identity getIdentity(CommandSender sender) {
-        if (sender instanceof Player player) {
-            return identity(player.getUniqueId(),
+        if (sender instanceof Player player)
+            return identity(
+                player.getUniqueId(),
                 player.getName(),
                 () -> LEGACY_SERIALIZER.deserialize(player.getDisplayName())
             );
-        } else {
-            return CONSOLE;
-        }
+        return CONSOLE;
     }
 
     @Override
-    protected PermissionHandler getPermissionHandler(CommandSender sender) {
-        return sender::hasPermission;
+    protected void sendMessage(CommandSender sender, Component message) {
+        if (canSendAsync(sender))
+            this.audiences.sender(sender).sendMessage(message);
+        else
+            scheduler.executeSync(() -> this.audiences.sender(sender).sendMessage(message));
+    }
+
+    private boolean canSendAsync(CommandSender sender) {
+        return sender instanceof Player || sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender;
     }
 
     @Override
-    protected MessageHandler getMessageHandler(CommandSender sender) {
-        return message -> getAudienceProvider().sender(sender).sendMessage(message);
+    protected boolean hasPermission(CommandSender sender, String node) {
+        return sender.hasPermission(node);
+    }
+
+    @Override
+    protected void performCommand(CommandSender sender, String command) {
+        Bukkit.getServer().dispatchCommand(sender, command);
+    }
+
+    @Override
+    protected boolean isConsole(CommandSender sender) {
+        return sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender;
+    }
+
+    @Override
+    public boolean isPlayerOnline(UUID playerId) {
+        final Player player = Bukkit.getPlayer(playerId);
+        return player != null && player.isOnline();
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        this.audiences.close();
     }
 }

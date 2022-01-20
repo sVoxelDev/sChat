@@ -17,11 +17,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter;
+package net.silthus.schat.platform.sender;
 
-import net.kyori.adventure.text.Component;
+import lombok.Getter;
+import net.silthus.schat.identity.Identity;
 
-public interface MessageHandler {
+public abstract class DummyConsoleSender implements Sender {
 
-    void sendMessage(Component message);
+    @Getter
+    private final Identity identity;
+
+    protected DummyConsoleSender() {
+        identity = Identity.identity(CONSOLE_UUID, CONSOLE_NAME);
+    }
+
+    @Override
+    public boolean hasPermission(String permission) {
+        return true;
+    }
+
+    @Override
+    public void performCommand(String commandLine) {
+
+    }
+
+    @Override
+    public boolean isConsole() {
+        return true;
+    }
 }

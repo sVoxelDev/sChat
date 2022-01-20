@@ -66,8 +66,7 @@ public class ChannelInteractorImpl implements ChannelInteractor {
     }
 
     private void joinChannelAndNotifyPresenter(Chatter chatter, Channel channel) {
-        channel.addTarget(chatter);
-        chatter.addChannel(channel);
+        chatter.join(channel);
         notifyJoinChannelPresenter(chatter, channel);
     }
 
@@ -81,8 +80,7 @@ public class ChannelInteractorImpl implements ChannelInteractor {
     }
 
     private void leaveChannel(Chatter chatter, Channel channel) {
-        channel.removeTarget(chatter);
-        chatter.removeChannel(channel);
+        chatter.leave(channel);
     }
 
     @Override

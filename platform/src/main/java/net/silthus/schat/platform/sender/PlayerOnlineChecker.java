@@ -17,11 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform;
+package net.silthus.schat.platform.sender;
 
-public class TestPlayer extends TestCommandSender {
+import java.util.UUID;
 
-    public static TestPlayer randomPlayer() {
-        return new TestPlayer();
-    }
+@FunctionalInterface
+public interface PlayerOnlineChecker {
+
+    boolean isPlayerOnline(UUID playerId);
 }

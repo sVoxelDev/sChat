@@ -25,8 +25,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.platform.sender.Sender;
 
 import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
@@ -92,63 +91,59 @@ public interface Messages {
         return bool ? text("true", GREEN) : text("false", RED);
     }
 
-    static Message toMessage(Component text) {
-        return Message.message(text).type(Message.Type.SYSTEM);
-    }
-
     interface Args0 {
         Component build();
 
-        default void send(MessageTarget sender) {
-            toMessage(build()).to(sender).send();
+        default void send(Sender sender) {
+            sender.sendMessage(build());
         }
     }
 
     interface Args1<A0> {
         Component build(A0 arg0);
 
-        default void send(MessageTarget sender, A0 arg0) {
-            toMessage(build(arg0)).to(sender).send();
+        default void send(Sender sender, A0 arg0) {
+            sender.sendMessage(build(arg0));
         }
     }
 
     interface Args2<A0, A1> {
         Component build(A0 arg0, A1 arg1);
 
-        default void send(MessageTarget sender, A0 arg0, A1 arg1) {
-            toMessage(build(arg0, arg1)).to(sender).send();
+        default void send(Sender sender, A0 arg0, A1 arg1) {
+            sender.sendMessage(build(arg0, arg1));
         }
     }
 
     interface Args3<A0, A1, A2> {
         Component build(A0 arg0, A1 arg1, A2 arg2);
 
-        default void send(MessageTarget sender, A0 arg0, A1 arg1, A2 arg2) {
-            toMessage(build(arg0, arg1, arg2)).to(sender).send();
+        default void send(Sender sender, A0 arg0, A1 arg1, A2 arg2) {
+            sender.sendMessage(build(arg0, arg1, arg2));
         }
     }
 
     interface Args4<A0, A1, A2, A3> {
         Component build(A0 arg0, A1 arg1, A2 arg2, A3 arg3);
 
-        default void send(MessageTarget sender, A0 arg0, A1 arg1, A2 arg2, A3 arg3) {
-            toMessage(build(arg0, arg1, arg2, arg3)).to(sender).send();
+        default void send(Sender sender, A0 arg0, A1 arg1, A2 arg2, A3 arg3) {
+            sender.sendMessage(build(arg0, arg1, arg2, arg3));
         }
     }
 
     interface Args5<A0, A1, A2, A3, A4> {
         Component build(A0 arg0, A1 arg1, A2 arg2, A3 arg3, A4 arg4);
 
-        default void send(MessageTarget sender, A0 arg0, A1 arg1, A2 arg2, A3 arg3, A4 arg4) {
-            toMessage(build(arg0, arg1, arg2, arg3, arg4)).to(sender).send();
+        default void send(Sender sender, A0 arg0, A1 arg1, A2 arg2, A3 arg3, A4 arg4) {
+            sender.sendMessage(build(arg0, arg1, arg2, arg3, arg4));
         }
     }
 
     interface Args6<A0, A1, A2, A3, A4, A5> {
         Component build(A0 arg0, A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5);
 
-        default void send(MessageTarget sender, A0 arg0, A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5) {
-            toMessage(build(arg0, arg1, arg2, arg3, arg4, arg5)).to(sender).send();
+        default void send(Sender sender, A0 arg0, A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5) {
+            sender.sendMessage(build(arg0, arg1, arg2, arg3, arg4, arg5));
         }
     }
 }

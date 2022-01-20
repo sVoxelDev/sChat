@@ -20,32 +20,56 @@
 package net.silthus.schat.ui;
 
 import java.util.List;
+import lombok.Getter;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.settings.Settings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-public class ViewModel {
+import static net.silthus.schat.settings.Settings.createSettings;
+
+@Getter
+final class ChatterViewModel implements ViewModel {
 
     private final Chatter chatter;
+    private final Settings settings = createSettings();
 
-    public ViewModel(Chatter chatter) {
+    ChatterViewModel(Chatter chatter) {
         this.chatter = chatter;
     }
 
+    @Override
     public @NotNull @Unmodifiable List<Message> getMessages() {
         return chatter.getMessages().stream()
+            .filter(this::isMessageDisplayed)
             .sorted()
             .toList();
     }
 
+    private boolean isMessageDisplayed(Message message) {
+        return notSentToChannel(message) || hasActiveChannel() && sentToActiveChannel(message);
+    }
+
+    private boolean notSentToChannel(Message message) {
+        return message.channels().isEmpty();
+    }
+
+    private boolean hasActiveChannel() {
+        return chatter.getActiveChannel().isPresent();
+    }
+
+    private boolean sentToActiveChannel(Message message) {
+        return chatter.getActiveChannel().map(channel -> message.channels().contains(channel)).orElse(false);
+    }
+
+    @Override
     public @NotNull @Unmodifiable List<Channel> getChannels() {
-        return chatter.getChannels().stream()
-            .sorted()
-            .toList();
+        return chatter.getChannels().stream().sorted().toList();
     }
 
+    @Override
     public boolean isActiveChannel(Channel channel) {
         return chatter.isActiveChannel(channel);
     }

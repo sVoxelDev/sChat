@@ -20,26 +20,18 @@
 package net.silthus.schat.platform.config;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.Map;
-import java.util.function.Function;
 import net.kyori.adventure.text.TextComponent;
-import net.silthus.schat.platform.config.adapter.ConfigurateAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.spongepowered.configurate.ConfigurateException;
-import org.spongepowered.configurate.ConfigurationNode;
-import org.spongepowered.configurate.ConfigurationOptions;
-import org.spongepowered.configurate.loader.ConfigurationLoader;
-import org.spongepowered.configurate.reference.ConfigurationReference;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.channel.Channel.PROTECTED;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
+import static net.silthus.schat.platform.config.TestConfigurationAdapter.testConfigAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class ConfigTests {
 
@@ -47,7 +39,7 @@ class ConfigTests {
 
     @BeforeEach
     void setUp(@TempDir File temp) {
-        final ConfigurationAdapter adapter = new TestConfigurationAdapter(new File(temp, "test-config.yml"));
+        final ConfigurationAdapter adapter = testConfigAdapter(new File(temp, "test-config.yml"));
         config = new SChatConfig(adapter);
         config.load();
     }
@@ -81,43 +73,4 @@ class ConfigTests {
     void invalid_channel_does_not_throw() {
         assertThat(config.get(CHANNELS)).doesNotContainKey("invalid");
     }
-
-    @Test
-    void throws_when_loading_fails() {
-        assertThatExceptionOfType(ConfigurationAdapter.LoadFailed.class)
-            .isThrownBy(() -> new ErrorTest(null).load());
-    }
-
-    private static class ErrorTest extends ConfigurateAdapter {
-
-        protected ErrorTest(Path path) {
-            super(path);
-        }
-
-        @Override
-        protected ConfigurationLoader<? extends ConfigurationNode> createLoader(Path path, Function<ConfigurationOptions, ConfigurationOptions> defaultOptions) {
-            return new ConfigurationLoader<>() {
-                @Override
-                public ConfigurationNode load(ConfigurationOptions options) throws ConfigurateException {
-                    throw new ConfigurateException("");
-                }
-
-                @Override
-                public ConfigurationReference<ConfigurationNode> loadToReference() {
-                    return null;
-                }
-
-                @Override
-                public void save(ConfigurationNode node) {
-
-                }
-
-                @Override
-                public ConfigurationNode createNode(ConfigurationOptions options) {
-                    return null;
-                }
-            };
-        }
-    }
-
 }

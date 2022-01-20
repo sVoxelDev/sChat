@@ -33,7 +33,7 @@ public final class SettingsSerializer implements TypeSerializer<Settings> {
     public Settings deserialize(Type type, ConfigurationNode node) {
         final Settings.Builder builder = Settings.settings();
         for (final String key : node.childrenMap().keySet().stream().map(Object::toString).toList()) {
-            builder.withUnknownType(key, setting -> {
+            builder.setUnknown(key, setting -> {
                 try {
                     return node.node(key).get(setting.getType());
                 } catch (SerializationException e) {

@@ -167,8 +167,8 @@ public interface Settings {
          * @return this builder
          * @since next
          */
-        default <V> @NotNull Builder withStatic(final @NonNull Setting<V> setting, final @Nullable V value) {
-            return this.withDynamic(setting, () -> value);
+        default <V> @NotNull Builder set(final @NonNull Setting<V> setting, final @Nullable V value) {
+            return this.setDynamic(setting, () -> value);
         }
 
         /**
@@ -180,7 +180,7 @@ public interface Settings {
          * @return this builder
          * @since next
          */
-        <V> @NotNull Builder withDynamic(final @NotNull Setting<V> setting, @NotNull Supplier<@Nullable V> value);
+        <V> @NotNull Builder setDynamic(final @NotNull Setting<V> setting, @NotNull Supplier<@Nullable V> value);
 
         /**
          * Adds a setting which type is unknown and will be resolved based on the given key.
@@ -191,7 +191,7 @@ public interface Settings {
          * @return this builder
          * @since next
          */
-        <V> @NotNull Builder withUnknownType(final @NotNull String key, @NotNull Function<Setting<?>, V> value);
+        <V> @NotNull Builder setUnknown(final @NotNull String key, @NotNull Function<Setting<?>, V> value);
 
         Settings create();
     }

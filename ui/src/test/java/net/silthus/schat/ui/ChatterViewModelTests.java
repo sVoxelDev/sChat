@@ -31,10 +31,12 @@ import org.junit.jupiter.api.Test;
 import static net.silthus.schat.channel.Channel.PRIORITY;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
+import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
+import static net.silthus.schat.ui.ViewModel.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ViewModelTests {
+class ChatterViewModelTests {
 
     private Chatter chatter;
     private ViewModel model;
@@ -42,7 +44,7 @@ class ViewModelTests {
     @BeforeEach
     void setUp() {
         chatter = randomChatter();
-        model = new ViewModel(chatter);
+        model = of(chatter);
     }
 
     private Channel join(Channel channel) {
@@ -52,8 +54,8 @@ class ViewModelTests {
 
     @SneakyThrows
     @NotNull
-    private Message createMessage() {
-        final Message one = Message.message().to(chatter);
+    private Message.Draft createMessage() {
+        final Message.Draft one = Message.message().to(chatter);
         Thread.sleep(1L);
         return one;
     }
@@ -76,7 +78,6 @@ class ViewModelTests {
     }
 
     @Nested class given_user_with_messages {
-
         private Message one;
         private Message two;
 
@@ -89,11 +90,42 @@ class ViewModelTests {
         }
 
         @Test
-        void messages_are_sorted_by_time() {
+        void then_messages_are_sorted_by_time() {
             assertThat(model.getMessages()).containsExactly(
                 one,
                 two
             );
+        }
+
+        @Nested class given_message_sent_to_channel {
+            private Channel channel;
+            private Message.Draft message;
+
+            @BeforeEach
+            void setUp() {
+                channel = randomChannel();
+                message = createMessage().to(channel);
+                sendMessage(message);
+            }
+
+            @Nested class given_channel_is_inactive {
+                @Test
+                void then_message_is_not_displayed() {
+                    assertThat(model.getMessages()).doesNotContain(message);
+                }
+            }
+
+            @Nested class given_channel_is_active {
+                @BeforeEach
+                void setUp() {
+                    chatter.setActiveChannel(channel);
+                }
+
+                @Test
+                void then_message_is_displayed() {
+                    assertThat(model.getMessages()).contains(message);
+                }
+            }
         }
     }
 

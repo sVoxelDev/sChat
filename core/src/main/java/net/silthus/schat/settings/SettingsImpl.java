@@ -132,13 +132,13 @@ final class SettingsImpl implements Settings {
         }
 
         @Override
-        public @NotNull <T> Settings.Builder withDynamic(final @NonNull Setting<T> setting, final @NonNull Supplier<@Nullable T> value) {
+        public @NotNull <T> Settings.Builder setDynamic(final @NonNull Setting<T> setting, final @NonNull Supplier<@Nullable T> value) {
             this.settings.put(setting, value);
             return this;
         }
 
         @Override
-        public @NotNull <V> Builder withUnknownType(@NonNull String key, @NonNull Function<Setting<?>, V> value) {
+        public @NotNull <V> Builder setUnknown(@NonNull String key, @NonNull Function<Setting<?>, V> value) {
             this.unknowns.putIfAbsent(key, value);
             return this;
         }

@@ -24,16 +24,13 @@ import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.ProxiedBy;
-import io.leangen.geantyref.TypeToken;
 import lombok.AccessLevel;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelInteractor;
-import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.platform.commands.parser.ChannelParser;
+import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.repository.Repository;
 import net.silthus.schat.usecases.JoinChannel;
 
@@ -43,36 +40,33 @@ import static net.silthus.schat.platform.locale.Messages.JOIN_CHANNEL_ERROR;
 @Accessors(fluent = true)
 public final class ChannelCommands implements Command {
 
-    private final ChannelRepository repository;
     private ChannelInteractor interactor;
 
-    public ChannelCommands(ChannelInteractor interactor, ChannelRepository repository) {
+    public ChannelCommands(ChannelInteractor interactor) {
         this.interactor = interactor;
-        this.repository = repository;
     }
 
     @Override
-    public void register(CommandManager<Chatter> commandManager, AnnotationParser<Chatter> parser) {
-        commandManager.getParserRegistry().registerParserSupplier(TypeToken.get(Channel.class), parserParameters -> new ChannelParser(repository));
+    public void register(CommandManager<Sender> commandManager, AnnotationParser<Sender> parser) {
         parser.parse(this);
     }
 
     @ProxiedBy("ch")
     @CommandMethod("channel join <channel>")
-    void joinChannel(@NonNull Chatter chatter, @NonNull @Argument("channel") Channel channel) {
+    void joinChannel(Sender sender, Chatter chatter, @Argument("channel") Channel channel) {
         try {
             interactor.joinChannel(chatter.getKey(), channel.getKey());
         } catch (Repository.NotFound | JoinChannel.Error e) {
-            JOIN_CHANNEL_ERROR.send(chatter, channel);
+            JOIN_CHANNEL_ERROR.send(sender, channel);
         }
     }
 
     @CommandMethod("channel set-active <channel>")
-    void setActiveChannel(@NonNull Chatter chatter, @NonNull @Argument("channel") Channel channel) {
+    void setActiveChannel(Sender sender, Chatter chatter, @Argument("channel") Channel channel) {
         try {
             interactor.setActiveChannel(chatter.getKey(), channel.getKey());
         } catch (Repository.NotFound | JoinChannel.Error e) {
-            JOIN_CHANNEL_ERROR.send(chatter, channel);
+            JOIN_CHANNEL_ERROR.send(sender, channel);
         }
     }
 }

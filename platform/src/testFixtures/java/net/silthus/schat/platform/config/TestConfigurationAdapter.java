@@ -23,46 +23,35 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Objects;
-import java.util.function.Function;
 import lombok.SneakyThrows;
-import net.silthus.schat.platform.config.adapter.ConfigurateAdapter;
-import org.spongepowered.configurate.ConfigurationNode;
-import org.spongepowered.configurate.ConfigurationOptions;
-import org.spongepowered.configurate.loader.ConfigurationLoader;
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
+import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
+import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
 
-public class TestConfigurationAdapter extends ConfigurateAdapter {
+public final class TestConfigurationAdapter {
 
     public static final String TEST_CONFIG_NAME = "test-config.yml";
 
     @SneakyThrows
-    public TestConfigurationAdapter(InputStream source, File target) {
-        super(target.toPath());
-        copyConfig(source, target);
+    public static ConfigurationAdapter testConfigAdapter(File target) {
+        return testConfigAdapter(getTestConfigAsStream(), target);
     }
 
     @SneakyThrows
-    public TestConfigurationAdapter(File target) {
-        super(target.toPath());
-        copyConfig(getTestConfigAsStream(), target);
+    public static ConfigurationAdapter testConfigAdapter(InputStream source, File target) {
+        copyConfig(source, target);
+        return ConfigurationAdapters.YAML.create(target);
     }
 
-    @Override
-    protected ConfigurationLoader<? extends ConfigurationNode> createLoader(Path path, Function<ConfigurationOptions, ConfigurationOptions> defaultOptions) {
-        return YamlConfigurationLoader.builder()
-            .path(path)
-            .defaultOptions(defaultOptions::apply)
-            .build();
+    private static InputStream getTestConfigAsStream() {
+        return Objects.requireNonNull(TestConfigurationAdapter.class.getClassLoader().getResourceAsStream(TEST_CONFIG_NAME));
     }
 
-    private InputStream getTestConfigAsStream() {
-        return Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(TEST_CONFIG_NAME));
-    }
-
-    private void copyConfig(InputStream source, File target) throws IOException {
+    private static void copyConfig(InputStream source, File target) throws IOException {
         Files.copy(source, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    private TestConfigurationAdapter() {
     }
 }

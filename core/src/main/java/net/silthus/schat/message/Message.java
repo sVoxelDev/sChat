@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import static java.util.Comparator.comparing;
 
-public interface Message extends Comparable<Message> {
+public sealed interface Message extends Comparable<Message> permits Message.Draft, MessageImpl {
 
     static @NotNull Draft message() {
         return MessageImpl.builder();
@@ -70,7 +70,7 @@ public interface Message extends Comparable<Message> {
             .compare(this, o);
     }
 
-    interface Draft extends Message {
+    sealed interface Draft extends Message permits MessageImpl.Draft {
 
         @NotNull Draft id(@NonNull UUID id);
 

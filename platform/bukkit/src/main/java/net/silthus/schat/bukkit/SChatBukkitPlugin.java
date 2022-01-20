@@ -24,11 +24,13 @@ import cloud.commandframework.paper.PaperCommandManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.silthus.schat.bukkit.adapter.BukkitSchedulerAdapter;
 import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
-import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
 import net.silthus.schat.platform.plugin.AbstractSChatPlugin;
+import net.silthus.schat.platform.plugin.adapter.Presenter;
+import net.silthus.schat.platform.sender.Sender;
 import org.bukkit.Bukkit;
 
 import static cloud.commandframework.execution.CommandExecutionCoordinator.simpleCoordinator;
@@ -50,12 +52,17 @@ public final class SChatBukkitPlugin extends AbstractSChatPlugin {
 
     @Override
     protected void setupChatterFactory() {
-        chatterFactory = new BukkitSenderFactory(BukkitAudiences.create(getBootstrap().getLoader()));
+        chatterFactory = new BukkitSenderFactory(BukkitAudiences.create(getBootstrap().getLoader()), new BukkitSchedulerAdapter(bootstrap.getLoader()));
+    }
+
+    @Override
+    protected Presenter providePresenter() {
+        return null;
     }
 
     @Override
     @SneakyThrows
-    protected CommandManager<Chatter> provideCommandManager() {
+    protected CommandManager<Sender> provideCommandManager() {
         try {
             return new PaperCommandManager<>(
                 getBootstrap().getLoader(),
