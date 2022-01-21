@@ -97,7 +97,7 @@ public final class SChatBukkitPlugin extends AbstractSChatPlugin {
 
     @Override
     protected void registerListeners() {
-        chatPacketListener = new ChatPacketListener(getBootstrap().getLoader(), getChatterProvider(), getViewProvider());
+        chatPacketListener = new ChatPacketListener(getBootstrap().getLoader(), getChatterProvider(), getViewProvider(), getMessenger());
         chatPacketListener.enable();
     }
 }

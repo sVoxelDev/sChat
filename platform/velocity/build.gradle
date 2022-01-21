@@ -1,10 +1,13 @@
 repositories {
     maven { url = "https://nexus.velocitypowered.com/repository/maven-public/" }
+    maven { url = "https://mvn.exceptionflug.de/repository/exceptionflug-public/" }
 }
 
 dependencies {
     implementation 'com.velocitypowered:velocity-api:3.0.1'
+    implementation 'com.velocitypowered:velocity-proxy:3.0.1'
     implementation 'cloud.commandframework:cloud-velocity:1.6.1'
+    implementation 'dev.simplix:protocolize-api:2.1.0'
 
     annotationProcessor 'com.velocitypowered:velocity-api:3.0.1'
 }
