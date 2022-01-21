@@ -32,7 +32,7 @@ public final class MessageHelper {
     }
 
     public static Component randomText() {
-        return text(RandomStringUtils.random(30));
+        return text(RandomStringUtils.randomAlphanumeric(30));
     }
 
     public static Message randomMessage() {

@@ -38,7 +38,8 @@ import org.jetbrains.annotations.NotNull;
 public class ChannelInteractorImpl implements ChannelInteractor {
     private ChatterProvider chatterProvider;
     private ChannelRepository channelRepository;
-    private JoinChannel.Presenter joinChannelPresenter = result -> {};
+    private JoinChannel.Out joinChannelOut = result -> {
+    };
     private CanJoinChannel canJoinChannel = (chatter, channel) -> true;
 
     @Override
@@ -71,7 +72,7 @@ public class ChannelInteractorImpl implements ChannelInteractor {
     }
 
     private void notifyJoinChannelPresenter(Chatter chatter, Channel channel) {
-        joinChannelPresenter().joinedChannel(new JoinChannel.Result(chatter.getIdentity(), channel.getKey(), channel.getDisplayName()));
+        joinChannelOut().joinedChannel(new JoinChannel.Result(chatter, channel));
     }
 
     private void handleJoinChannelError(Chatter chatter, Channel channel) {

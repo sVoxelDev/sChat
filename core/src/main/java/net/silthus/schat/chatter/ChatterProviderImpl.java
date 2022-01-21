@@ -7,6 +7,8 @@ import lombok.NonNull;
 
 final class ChatterProviderImpl implements ChatterProvider {
 
+    static final ChatterProvider NIL = new NilChatterProvider();
+
     private final ChatterFactory factory;
     private final Map<UUID, Chatter> chatters = new HashMap<>();
 
@@ -17,5 +19,13 @@ final class ChatterProviderImpl implements ChatterProvider {
     @Override
     public Chatter get(@NonNull UUID id) {
         return chatters.computeIfAbsent(id, uuid -> factory.createChatter(id));
+    }
+
+    static final class NilChatterProvider implements ChatterProvider {
+
+        @Override
+        public Chatter get(@NonNull UUID id) {
+            return Chatter.empty();
+        }
     }
 }

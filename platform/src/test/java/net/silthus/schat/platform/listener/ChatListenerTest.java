@@ -17,33 +17,41 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.usecases;
+package net.silthus.schat.platform.listener;
 
-import net.silthus.schat.MessageHelper;
+import java.util.UUID;
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.Messenger;
+import net.silthus.schat.usecases.OnChat;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static java.util.UUID.randomUUID;
 import static net.silthus.schat.AssertionHelper.assertNPE;
+import static net.silthus.schat.MessageHelper.randomText;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
+import static net.silthus.schat.chatter.ChatterProviderStub.chatterProviderStub;
+import static net.silthus.schat.platform.locale.Messages.CANNOT_CHAT_NO_ACTIVE_CHANNEL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-class ChatListenerImplTest {
+class ChatListenerTest {
 
-    private ChatListenerImpl listener;
-    private Chatter chatter;
+    private ChatListener listener;
+    private ChatterMock chatter;
     private Message deliveredMessage;
     private boolean messageDelivered = false;
 
     @BeforeEach
     void setUp() {
-        listener = new ChatListenerImpl().messenger(new Messenger() {
+        chatter = randomChatter();
+        listener = new ChatListener().messenger(new Messenger() {
             @Override
             public Message.Draft process(Message.Draft message) {
                 return message;
@@ -54,26 +62,46 @@ class ChatListenerImplTest {
                 deliveredMessage = message;
                 messageDelivered = true;
             }
-        });
-        chatter = randomChatter();
+        }).chatterProvider(chatterProviderStub(chatter));
     }
 
     @NotNull
     private Message chat() {
-        return listener.onChat(chatter, MessageHelper.randomText());
+        return listener.onChat(chatter, randomText());
+    }
+
+    private Component chatWithId() {
+        final Component text = randomText();
+        listener.onChat(chatter.getUniqueId(), text);
+        return text;
     }
 
     @Test
     @SuppressWarnings("ConstantConditions")
     void given_null_inputs_throws() {
-        assertNPE(() -> listener.onChat(null, null));
+        assertNPE(() -> listener.onChat((Chatter) null, null));
         assertNPE(() -> listener.onChat(chatter, null));
+        assertNPE(() -> listener.onChat((UUID) null, null));
+        assertNPE(() -> listener.onChat(randomUUID(), null));
     }
 
-    @Test
-    void given_no_active_channel_throws() {
-        assertThatExceptionOfType(ChatListener.NoActiveChannel.class)
-            .isThrownBy(this::chat);
+    @Nested class given_no_active_channel {
+        @BeforeEach
+        void setUp() {
+            chatter.setActiveChannel(null);
+        }
+
+        @Test
+        void then_chat_throws() {
+            assertThatExceptionOfType(OnChat.NoActiveChannel.class)
+                .isThrownBy(ChatListenerTest.this::chat);
+        }
+
+        @Test
+        void then_chat_with_id_sends_error_message() {
+            chatWithId();
+            chatter.assertReceivedMessage(CANNOT_CHAT_NO_ACTIVE_CHANNEL.build());
+        }
     }
 
     @Nested
@@ -99,6 +127,12 @@ class ChatListenerImplTest {
         @Test
         void then_sets_message_type_to_chat() {
             assertThat(chat().type()).isEqualTo(Message.Type.CHAT);
+        }
+
+        @Test
+        void when_chat_with_id_is_called_then_sends_message_to_chatters_channel() {
+            final Component text = chatWithId();
+            assertThat(deliveredMessage.text()).isEqualTo(text);
         }
     }
 }

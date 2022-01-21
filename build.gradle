@@ -31,23 +31,6 @@ plugins {
     id 'org.cadixdev.licenser' version '0.6.1' apply false
 }
 
-allprojects {
-    apply plugin: 'checkstyle'
-
-    dependencies {
-        checkstyle("ca.stellardrift:stylecheck:0.1")
-    }
-
-    checkstyle {
-        configFile = rootProject.file('config/checkstyle/checkstyle.xml')
-        configProperties.checkstyleSuppressionsPath = rootProject.file('config/checkstyle/supressions.xml')
-    }
-
-    tasks.withType(Checkstyle) {
-        exclude 'net/silthus/schat/common/**'
-    }
-}
-
 subprojects {
     apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: 'io.freefair.lombok'

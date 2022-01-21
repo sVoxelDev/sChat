@@ -16,7 +16,16 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified permits ChatterImpl {
+public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified permits ChatterImpl, ChatterImpl.EmptyChatter {
+
+    /**
+     * Gets a chatter with no functionality and the {@link Identity#nil()}.
+     *
+     * @return an empty chatter
+     */
+    static Chatter empty() {
+        return ChatterImpl.EMPTY;
+    }
 
     static Chatter createChatter(@NonNull Identity identity) {
         return chatter(identity).create();

@@ -39,7 +39,9 @@ import org.jetbrains.annotations.Unmodifiable;
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"identity"})
-final class ChatterImpl implements Chatter {
+non-sealed class ChatterImpl implements Chatter {
+
+    static final Chatter EMPTY = new EmptyChatter();
 
     static ChatterImpl.Builder builder(Identity identity) {
         return new Builder(identity);
@@ -54,7 +56,7 @@ final class ChatterImpl implements Chatter {
 
     private @Nullable Channel activeChannel;
 
-    private ChatterImpl(Builder builder) {
+    protected ChatterImpl(Builder builder) {
         this.identity = builder.identity();
         this.messageHandler = builder.messageHandler();
         this.permissionHandler = builder.permissionHandler();
@@ -131,6 +133,64 @@ final class ChatterImpl implements Chatter {
         @Override
         public Chatter create() {
             return new ChatterImpl(this);
+        }
+    }
+
+    static final class EmptyChatter implements Chatter {
+
+        @Override
+        public @NotNull @Unmodifiable List<Channel> getChannels() {
+            return List.of();
+        }
+
+        @Override
+        public @NotNull Optional<Channel> getActiveChannel() {
+            return Optional.empty();
+        }
+
+        @Override
+        public boolean isActiveChannel(@Nullable Channel channel) {
+            return false;
+        }
+
+        @Override
+        public void setActiveChannel(@Nullable Channel activeChannel) {
+
+        }
+
+        @Override
+        public void join(@NonNull Channel channel) {
+
+        }
+
+        @Override
+        public boolean isJoined(@Nullable Channel channel) {
+            return false;
+        }
+
+        @Override
+        public void leave(Channel channel) {
+
+        }
+
+        @Override
+        public @NotNull @Unmodifiable Set<Message> getMessages() {
+            return Set.of();
+        }
+
+        @Override
+        public boolean hasPermission(String permission) {
+            return false;
+        }
+
+        @Override
+        public @NotNull Identity getIdentity() {
+            return Identity.nil();
+        }
+
+        @Override
+        public void sendMessage(@NonNull Message message) {
+
         }
     }
 }

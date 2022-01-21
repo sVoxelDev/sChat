@@ -24,14 +24,15 @@ import cloud.commandframework.paper.PaperCommandManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.silthus.schat.bukkit.adapter.BukkitChatListener;
 import net.silthus.schat.bukkit.adapter.BukkitChatterFactory;
 import net.silthus.schat.bukkit.adapter.BukkitSchedulerAdapter;
 import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
 import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
+import net.silthus.schat.platform.listener.ChatListener;
 import net.silthus.schat.platform.plugin.AbstractSChatPlugin;
-import net.silthus.schat.platform.plugin.adapter.Presenter;
 import net.silthus.schat.platform.sender.Sender;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -69,8 +70,10 @@ public final class SChatBukkitPlugin extends AbstractSChatPlugin {
     }
 
     @Override
-    protected Presenter providePresenter() {
-        return null;
+    protected ChatListener provideChatListener() {
+        final BukkitChatListener listener = new BukkitChatListener();
+        Bukkit.getPluginManager().registerEvents(listener, getBootstrap().getLoader());
+        return listener;
     }
 
     @Override
