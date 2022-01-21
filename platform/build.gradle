@@ -23,6 +23,7 @@ allprojects {
         api project(':ui')
 
         testImplementation(testFixtures(project(":core")))
+        testImplementation(testFixtures(project(":ui")))
 
         testFixturesImplementation(testFixtures(project(':api')))
         testFixturesImplementation(testFixtures(project(':core')))

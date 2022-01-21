@@ -1,7 +1,7 @@
 /*
- * This file is part of multi-platform-template, licensed under the MIT License.
+ * This file is part of sChat, licensed under the MIT License.
  * Copyright (C) Silthus <https://www.github.com/silthus>
- * Copyright (C) multi-platform-template team and contributors
+ * Copyright (C) sChat team and contributors
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
