@@ -61,7 +61,7 @@ public final class SChatBukkitPlugin extends AbstractSChatPlugin {
 
     @Override
     protected ChatterFactory provideChatterFactory() {
-        return new BukkitChatterFactory(getAudiences());
+        return new BukkitChatterFactory(getAudiences(), getViewProvider());
     }
 
     @NotNull

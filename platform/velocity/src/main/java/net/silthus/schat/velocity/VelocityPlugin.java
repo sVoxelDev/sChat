@@ -38,7 +38,7 @@ public final class VelocityPlugin extends AbstractSChatPlugin {
 
     @Override
     protected ChatterFactory provideChatterFactory() {
-        return new VelocityChatterFactory(getBootstrap().getProxy());
+        return new VelocityChatterFactory(getBootstrap().getProxy(), getViewProvider());
     }
 
     @Override

@@ -6,18 +6,18 @@ import java.util.Optional;
 import java.util.UUID;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterFactory;
-import net.silthus.schat.ui.View;
-import net.silthus.schat.ui.ViewModel;
-import net.silthus.schat.ui.views.Views;
+import net.silthus.schat.ui.ViewProvider;
 
 import static net.silthus.schat.velocity.adapter.VelocitySenderFactory.identity;
 
 public class VelocityChatterFactory implements ChatterFactory {
 
     private final ProxyServer proxy;
+    private final ViewProvider viewProvider;
 
-    public VelocityChatterFactory(ProxyServer proxy) {
+    public VelocityChatterFactory(ProxyServer proxy, ViewProvider viewProvider) {
         this.proxy = proxy;
+        this.viewProvider = viewProvider;
     }
 
     @Override
@@ -27,10 +27,9 @@ public class VelocityChatterFactory implements ChatterFactory {
             return Chatter.empty();
         final Player player = optionalPlayer.get();
         return Chatter.chatter(identity(player))
-            .messageHandler((message, context) -> {
-                final View view = Views.tabbedChannels(ViewModel.of(context.chatter()));
-                player.sendMessage(view.render());
-            }).permissionHandler(player::hasPermission)
+            .messageHandler(
+                (message, context) -> viewProvider.updateView(context.chatter(), player::sendMessage)
+            ).permissionHandler(player::hasPermission)
             .create();
     }
 }
