@@ -40,12 +40,14 @@ import net.silthus.schat.platform.locale.TranslationManager;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.policies.Policies;
 import net.silthus.schat.policies.PoliciesImpl;
+import net.silthus.schat.ui.ViewProvider;
 import net.silthus.schat.usecases.OnChat;
 import org.jetbrains.annotations.ApiStatus;
 
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.chatter.ChatterProvider.createChatterProvider;
 import static net.silthus.schat.platform.locale.Presenter.defaultPresenter;
+import static net.silthus.schat.ui.ViewProvider.simpleViewProvider;
 
 @Getter
 public abstract class AbstractSChatPlugin implements SChatPlugin {
@@ -54,11 +56,12 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     private SChatConfig config;
     private Messenger messenger;
+    private Presenter presenter;
+    private ViewProvider viewProvider;
     private Policies policies;
     private ChatterProvider chatterProvider;
     private ChannelRepository channelRepository;
     private ChannelInteractorImpl channelInteractor;
-    private Presenter presenter;
     private OnChat chatListener;
     private Commands commands;
 
@@ -76,6 +79,8 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
         config.load();
 
         messenger = provideMessenger();
+        presenter = providePresenter();
+        viewProvider = provideViewProvider();
 
         policies = provideChannelPolicies();
         chatterProvider = createChatterProvider(provideChatterFactory());
@@ -85,8 +90,6 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
             .channelRepository(channelRepository)
             .chatterProvider(chatterProvider)
             .canJoinChannel(policies);
-
-        presenter = providePresenter();
 
         chatListener = provideChatListener()
             .chatterProvider(getChatterProvider())
@@ -110,6 +113,16 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
         return Messenger.defaultMessenger();
     }
 
+    @ApiStatus.OverrideOnly
+    protected Presenter providePresenter() {
+        return defaultPresenter();
+    }
+
+    @ApiStatus.OverrideOnly
+    protected ViewProvider provideViewProvider() {
+        return simpleViewProvider();
+    }
+
     protected abstract ChatterFactory provideChatterFactory();
 
     @ApiStatus.OverrideOnly
@@ -120,11 +133,6 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     @ApiStatus.OverrideOnly
     protected Policies provideChannelPolicies() {
         return new PoliciesImpl();
-    }
-
-    @ApiStatus.OverrideOnly
-    protected Presenter providePresenter() {
-        return defaultPresenter();
     }
 
     protected abstract ChatListener provideChatListener();

@@ -19,7 +19,7 @@ class BukkitChatterFactoryTests extends BukkitTests {
 
     @BeforeEach
     void setUp() {
-        factory = new BukkitChatterFactory(audiences);
+        factory = new BukkitChatterFactory(audiences, viewProvider);
     }
 
     private Chatter create(UUID id) {
