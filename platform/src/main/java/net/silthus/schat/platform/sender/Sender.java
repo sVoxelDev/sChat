@@ -29,11 +29,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Sender extends Identified {
 
-    /** The uuid used by the console sender. */
-    UUID CONSOLE_UUID = new UUID(0, 0); // 00000000-0000-0000-0000-000000000000
-    /** The name used by the console sender. */
-    String CONSOLE_NAME = "Console";
-
     default @NotNull UUID getUniqueId() {
         return getIdentity().getUniqueId();
     }

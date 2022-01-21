@@ -24,4 +24,6 @@ include 'ui'
 include 'platform'
 include 'platform:bukkit'
 include 'example'
+include 'platform:velocity'
+findProject(':platform:velocity')?.name = 'velocity'
 

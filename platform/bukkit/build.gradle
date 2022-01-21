@@ -57,8 +57,6 @@ spigot {
 }
 
 dependencies {
-    implementation project(':platform')
-
     implementation spigot(mcVersion)
 
     implementation 'cloud.commandframework:cloud-paper:1.6.1'
