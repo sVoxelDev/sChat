@@ -88,8 +88,10 @@ dependencies {
 shadowJar {
     archiveClassifier.set("")
     dependencies {
+        include(project(':api'))
         include(project(':core'))
         include(project(':platform'))
+        include(project(':ui'))
         include(dependency('cloud.commandframework::'))
         include(dependency('io.leangen.geantyref::'))
         include(dependency('org.spongepowered::'))

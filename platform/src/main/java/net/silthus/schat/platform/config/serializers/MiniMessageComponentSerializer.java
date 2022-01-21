@@ -34,7 +34,7 @@ import org.spongepowered.configurate.serialize.TypeSerializer;
 
 public final class MiniMessageComponentSerializer implements TypeSerializer<Component> {
 
-    private final MiniMessage serializer = MiniMessage.miniMessage();
+    private final MiniMessage serializer = MiniMessage.get();
 
     @Override
     public Component deserialize(Type type, ConfigurationNode node) {
