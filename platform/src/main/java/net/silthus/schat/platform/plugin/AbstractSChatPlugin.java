@@ -97,6 +97,8 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
         commands = new Commands(provideCommandManager(), new Commands.Context(chatterProvider, channelRepository));
         registerCommands();
+
+        registerListeners();
     }
 
     @Override
@@ -150,6 +152,10 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     @ApiStatus.OverrideOnly
     protected void registerCustomCommands(Commands commands) {
+    }
+
+    @ApiStatus.OverrideOnly
+    protected void registerListeners() {
     }
 
     protected final Path resolveConfig(String fileName) {
