@@ -1,25 +1,20 @@
 /*
- * This file is part of sChat, licensed under the MIT License.
+ * sChat, a Supercharged Minecraft Chat Plugin
  * Copyright (C) Silthus <https://www.github.com/silthus>
  * Copyright (C) sChat team and contributors
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
- *  of this software and associated documentation files (the "Software"), to deal
- *  in the Software without restriction, including without limitation the rights
- *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  copies of the Software, and to permit persons to whom the Software is
- *  furnished to do so, subject to the following conditions:
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The above copyright notice and this permission notice shall be included in all
- *  copies or substantial portions of the Software.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package net.silthus.schat.platform.locale;
@@ -31,15 +26,21 @@ import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.platform.sender.Sender;
 
+import static net.kyori.adventure.text.Component.empty;
+import static net.kyori.adventure.text.Component.join;
 import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
+import static net.kyori.adventure.text.JoinConfiguration.newlines;
 import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
 import static net.kyori.adventure.text.event.HoverEvent.showText;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.DARK_AQUA;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
@@ -65,6 +66,40 @@ public interface Messages {
         .append(text(']'))
         .build();
 
+    Args1<Bootstrap> STARTUP_BANNER = bootstrap -> {
+        Component infoLine1 = text()
+            .append(text("sChat", DARK_GREEN))
+            .append(space())
+            .append(text("v" + bootstrap.getVersion(), AQUA))
+            .build();
+
+        Component infoLine2 = text()
+            .color(DARK_GRAY)
+            .append(text("Running on "))
+            .append(text(bootstrap.getType().getFriendlyName()))
+            .append(text(" - "))
+            .append(text(bootstrap.getServerBrand()))
+            .build();
+
+        //        _________ .__            __
+        //   _____\_   ___ \|  |__ _____ _/  |_
+        //  /  ___/    \  \/|  |  \\__  \\   __\
+        //  \___ \\     \___|   Y  \/ __ \|  |
+        // /____  >\______  |___|  (____  |__|
+        //      \/        \/     \/     \/
+
+        return join(newlines(),
+            empty(),
+            text("       _________ .__            __   "),
+            text("  _____\\_   ___ \\|  |__ _____ _/  |_ "),
+            text(" /  ___/    \\  \\/|  |  \\\\__  \\\\   __\\").append(space()).append(infoLine1),
+            text(" \\___ \\\\     \\___|   Y  \\/ __ \\|  |  ").append(space()).append(infoLine2),
+            text("/____  >\\______  |___|  (____  |__|  "),
+            text("     \\/        \\/     \\/     \\/      "),
+            empty()
+        );
+    };
+
     // Unable to join the channel: {0}.
     Args1<Channel> JOIN_CHANNEL_ERROR = channel -> prefixed(translatable()
         .key("schat.command.channel.join.error")
@@ -85,8 +120,8 @@ public interface Messages {
     Args0 JOIN_CHANNEL_COMMAND = () -> translatable()
         .key("schat.suggest.command.join-channel")
         .color(RED)
-        .args(text("/channel join <channel>", GOLD)
-            .clickEvent(suggestCommand("/channel join "))
+        .args(text("/ch <channel>", GOLD)
+            .clickEvent(suggestCommand("/ch "))
             .hoverEvent(showText(translatable("schat.hover.join-channel").color(GRAY)))
         ).append(FULL_STOP)
         .build();

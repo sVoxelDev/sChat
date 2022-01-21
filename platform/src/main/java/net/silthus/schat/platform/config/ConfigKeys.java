@@ -1,36 +1,32 @@
 /*
- * This file is part of sChat, licensed under the MIT License.
+ * sChat, a Supercharged Minecraft Chat Plugin
  * Copyright (C) Silthus <https://www.github.com/silthus>
  * Copyright (C) sChat team and contributors
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
- *  of this software and associated documentation files (the "Software"), to deal
- *  in the Software without restriction, including without limitation the rights
- *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  copies of the Software, and to permit persons to whom the Software is
- *  furnished to do so, subject to the following conditions:
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The above copyright notice and this permission notice shall be included in all
- *  copies or substantial portions of the Software.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package net.silthus.schat.platform.config;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
+import net.kyori.adventure.text.Component;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.platform.config.adapter.ConfigurationSection;
 import net.silthus.schat.platform.config.key.ConfigKey;
 import net.silthus.schat.platform.config.key.KeyedConfiguration;
+import net.silthus.schat.pointer.Settings;
 
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.key;
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.modifiable;
@@ -40,15 +36,16 @@ public final class ConfigKeys {
     private ConfigKeys() {
     }
 
-    public static final ConfigKey<Map<String, ChannelConfig>> CHANNELS = modifiable(key(config -> {
-        final Map<String, ChannelConfig> configs = new HashMap<>();
+    public static final ConfigKey<List<Channel>> CHANNELS = modifiable(key(config -> {
+        final ArrayList<Channel> channels = new ArrayList<>();
         for (final String key : config.getKeys("channels", new ArrayList<>())) {
-            configs.putIfAbsent(key, createChannelConfig(config, "channels." + key, key));
+            channels.add(createFromConfig(config.scoped("channels." + key), key));
         }
-        return configs;
+        return channels;
     }), (c, value) -> {
-        for (final Map.Entry<String, ChannelConfig> entry : value.entrySet()) {
-            c.set("channels." + entry.getKey(), entry.getValue());
+        for (final Channel channel : value) {
+            c.set("channels." + channel.getKey() + ".name", channel.getDisplayName());
+            c.set("channels." + channel.getKey() + ".settings", channel.getSettings());
         }
     });
 
@@ -61,13 +58,12 @@ public final class ConfigKeys {
         return KEYS;
     }
 
-    private static ChannelConfig createChannelConfig(ConfigurationAdapter config, String path, String key) {
-        final ChannelConfig channelConfig = config.get(path, ChannelConfig.class);
-        if (channelConfig == null)
-            throw new InvalidConfig();
-
-        channelConfig.setKey(key);
-        return channelConfig;
+    private static Channel createFromConfig(ConfigurationSection config, String key) {
+        final Component name = config.get("name", Component.class);
+        Settings settings = config.get("settings", Settings.class);
+        if (settings == null)
+            settings = Settings.createSettings();
+        return Channel.channel(key).name(name).settings(settings).create();
     }
 
     public static final class InvalidConfig extends RuntimeException {

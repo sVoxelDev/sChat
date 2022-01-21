@@ -17,19 +17,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.policies;
+package net.silthus.schat.util;
 
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.util.Permissable;
+public interface Permissable {
 
-public final class FailedCanJoinStub implements CanJoinChannel {
-
-    public static FailedCanJoinStub stubCanJoinFailure() {
-        return new FailedCanJoinStub();
-    }
-
-    @Override
-    public boolean canJoinChannel(Permissable chatter, Channel channel) {
-        return false;
-    }
+    /**
+     * Check if the entity has a permission.
+     *
+     * @param permission the permission to check for
+     * @return true if the entity has the permission
+     */
+    boolean hasPermission(String permission);
 }
