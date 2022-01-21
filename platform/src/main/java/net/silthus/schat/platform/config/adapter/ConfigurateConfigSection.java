@@ -40,7 +40,7 @@ import org.spongepowered.configurate.serialize.SerializationException;
 
 class ConfigurateConfigSection implements ConfigurationSection {
 
-    private final MiniMessage parser = MiniMessage.miniMessage();
+    private final MiniMessage parser = MiniMessage.get();
     @Getter
     @Setter
     private ConfigurationNode root;
