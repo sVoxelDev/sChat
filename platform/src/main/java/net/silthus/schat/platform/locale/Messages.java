@@ -25,11 +25,14 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.sender.Sender;
 
 import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
+import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
+import static net.kyori.adventure.text.event.HoverEvent.showText;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.DARK_AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.GOLD;
@@ -38,6 +41,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
+import static net.silthus.schat.message.Message.message;
 
 public interface Messages {
 
@@ -56,14 +60,6 @@ public interface Messages {
         .append(text(']'))
         .build();
 
-    static TextComponent prefixed(ComponentLike component) {
-        return text()
-            .append(PREFIX_COMPONENT)
-            .append(space())
-            .append(component)
-            .build();
-    }
-
     // Unable to join the channel: {0}.
     Args1<Channel> JOIN_CHANNEL_ERROR = channel -> prefixed(translatable()
         .key("schat.command.channel.join.error")
@@ -71,6 +67,41 @@ public interface Messages {
         .args(channel.getDisplayName())
         .append(FULL_STOP)
     );
+
+    // Joined the channel: {0}.
+    Args1<Channel> JOINED_CHANNEL = channel -> prefixed(translatable()
+        .key("schat.command.channel.join.success")
+        .color(GREEN)
+        .args(channel.getDisplayName())
+        .append(FULL_STOP)
+    );
+
+    // Join a channel with /channel join <channel>.
+    Args0 JOIN_CHANNEL_COMMAND = () -> translatable()
+        .key("schat.suggest.command.join-channel")
+        .color(RED)
+        .args(text("/channel join <channel>", GOLD)
+            .clickEvent(suggestCommand("/channel join "))
+            .hoverEvent(showText(translatable("schat.hover.join-channel").color(GRAY)))
+        ).append(FULL_STOP)
+        .build();
+
+    // No active channel to send message to. Join a channel with /channel join <channel>.
+    Args0 CANNOT_CHAT_NO_ACTIVE_CHANNEL = () -> prefixed(translatable()
+        .key("schat.chat.no-active-channel")
+        .color(RED)
+        .append(FULL_STOP).append(space())
+        .append(JOIN_CHANNEL_COMMAND.build())
+        .build()
+    );
+
+    static TextComponent prefixed(ComponentLike component) {
+        return text()
+            .append(PREFIX_COMPONENT)
+            .append(space())
+            .append(component)
+            .build();
+    }
 
     static Component formatStringList(Collection<String> strings) {
         Iterator<String> it = strings.iterator();
@@ -92,58 +123,66 @@ public interface Messages {
     }
 
     interface Args0 {
-        Component build();
-
         default void send(Sender sender) {
             sender.sendMessage(build());
         }
+
+        default void send(Chatter chatter) {
+            chatter.sendMessage(message(build()));
+        }
+
+        Component build();
     }
 
     interface Args1<A0> {
-        Component build(A0 arg0);
-
         default void send(Sender sender, A0 arg0) {
             sender.sendMessage(build(arg0));
         }
+
+        default void send(Chatter chatter, A0 arg0) {
+            chatter.sendMessage(message(build(arg0)));
+        }
+
+        Component build(A0 arg0);
     }
 
     interface Args2<A0, A1> {
-        Component build(A0 arg0, A1 arg1);
-
         default void send(Sender sender, A0 arg0, A1 arg1) {
             sender.sendMessage(build(arg0, arg1));
         }
+
+        Component build(A0 arg0, A1 arg1);
     }
 
     interface Args3<A0, A1, A2> {
-        Component build(A0 arg0, A1 arg1, A2 arg2);
-
         default void send(Sender sender, A0 arg0, A1 arg1, A2 arg2) {
             sender.sendMessage(build(arg0, arg1, arg2));
         }
+
+        Component build(A0 arg0, A1 arg1, A2 arg2);
     }
 
     interface Args4<A0, A1, A2, A3> {
-        Component build(A0 arg0, A1 arg1, A2 arg2, A3 arg3);
-
         default void send(Sender sender, A0 arg0, A1 arg1, A2 arg2, A3 arg3) {
             sender.sendMessage(build(arg0, arg1, arg2, arg3));
         }
+
+        Component build(A0 arg0, A1 arg1, A2 arg2, A3 arg3);
     }
 
     interface Args5<A0, A1, A2, A3, A4> {
-        Component build(A0 arg0, A1 arg1, A2 arg2, A3 arg3, A4 arg4);
-
         default void send(Sender sender, A0 arg0, A1 arg1, A2 arg2, A3 arg3, A4 arg4) {
             sender.sendMessage(build(arg0, arg1, arg2, arg3, arg4));
         }
+
+        Component build(A0 arg0, A1 arg1, A2 arg2, A3 arg3, A4 arg4);
     }
 
     interface Args6<A0, A1, A2, A3, A4, A5> {
-        Component build(A0 arg0, A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5);
-
         default void send(Sender sender, A0 arg0, A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5) {
             sender.sendMessage(build(arg0, arg1, arg2, arg3, arg4, arg5));
         }
+
+        Component build(A0 arg0, A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5);
     }
 }

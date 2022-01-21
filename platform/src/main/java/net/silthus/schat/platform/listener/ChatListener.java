@@ -17,28 +17,42 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.usecases;
+package net.silthus.schat.platform.listener;
 
 import java.util.Optional;
+import java.util.UUID;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.Messenger;
+import net.silthus.schat.usecases.OnChat;
 
 import static net.silthus.schat.message.Message.message;
+import static net.silthus.schat.platform.locale.Messages.CANNOT_CHAT_NO_ACTIVE_CHANNEL;
 
 @Setter
 @Accessors(fluent = true)
-public class ChatListenerImpl implements ChatListener {
+public class ChatListener implements OnChat {
 
+    private ChatterProvider chatterProvider = ChatterProvider.nil();
     private Messenger messenger = Messenger.nil();
 
+    protected final void onChat(@NonNull UUID chatterId, @NonNull Component text) {
+        final Chatter chatter = chatterProvider.get(chatterId);
+        try {
+            onChat(chatter, text);
+        } catch (NoActiveChannel e) {
+            CANNOT_CHAT_NO_ACTIVE_CHANNEL.send(chatter);
+        }
+    }
+
     @Override
-    public Message onChat(@NonNull Chatter chatter, @NonNull Component text) throws NoActiveChannel {
+    public final Message onChat(@NonNull Chatter chatter, @NonNull Component text) throws NoActiveChannel {
         final Optional<Channel> channel = chatter.getActiveChannel();
         if (channel.isEmpty())
             throw new NoActiveChannel();

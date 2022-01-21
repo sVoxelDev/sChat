@@ -12,7 +12,7 @@ import static net.silthus.schat.bukkit.adapter.BukkitIdentityAdapter.identity;
 import static net.silthus.schat.chatter.Chatter.chatter;
 import static org.bukkit.Bukkit.getOfflinePlayer;
 
-public class BukkitChatterFactory implements ChatterFactory {
+public final class BukkitChatterFactory implements ChatterFactory {
 
     private final BukkitAudiences audiences;
 

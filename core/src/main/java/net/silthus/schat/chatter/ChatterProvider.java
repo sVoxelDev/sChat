@@ -21,8 +21,19 @@ package net.silthus.schat.chatter;
 
 import java.util.UUID;
 import lombok.NonNull;
+import net.silthus.schat.identity.Identity;
 
 public interface ChatterProvider {
+
+    /**
+     * Gets a null chatter provider that always returns a chatter with no functionality
+     * that has the {@link Identity#nil()}.
+     *
+     * @return the null chatter provider
+     */
+    static ChatterProvider nil() {
+        return ChatterProviderImpl.NIL;
+    }
 
     static ChatterProvider createChatterProvider(ChatterFactory factory) {
         return new ChatterProviderImpl(factory);

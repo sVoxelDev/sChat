@@ -25,6 +25,10 @@ public interface Messenger {
         return MessengerImpl.NIL;
     }
 
+    static Messenger defaultMessenger() {
+        return new MessengerImpl();
+    }
+
     Message.Draft process(Message.Draft message);
 
     void deliver(Message message);

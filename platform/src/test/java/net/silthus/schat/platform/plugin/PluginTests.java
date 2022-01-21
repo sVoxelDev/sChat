@@ -24,7 +24,7 @@ import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.platform.commands.Command;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
-import net.silthus.schat.platform.plugin.adapter.Presenter;
+import net.silthus.schat.platform.listener.ChatListener;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.platform.sender.Sender;
 import org.junit.jupiter.api.BeforeEach;
@@ -93,8 +93,8 @@ class PluginTests {
         }
 
         @Override
-        protected Presenter providePresenter() {
-            return null;
+        protected ChatListener provideChatListener() {
+            return new ChatListener();
         }
 
         @Override

@@ -49,7 +49,7 @@ import static org.mockito.Mockito.verify;
 
 class ChannelInteractorTests {
     private final ChannelRepository channelRepository = createInMemoryChannelRepository();
-    private final JoinChannel.Presenter joinChannelPresenter = mock(JoinChannel.Presenter.class);
+    private final JoinChannel.Out joinChannelOut = mock(JoinChannel.Out.class);
 
     private ChatterProvider chatterProvider;
     private ChannelInteractorImpl interactor;
@@ -66,7 +66,7 @@ class ChannelInteractorTests {
             .chatterProvider(chatterProvider)
             .channelRepository(channelRepository)
             .canJoinChannel(stubCanJoinSuccess())
-            .joinChannelPresenter(joinChannelPresenter);
+            .joinChannelOut(joinChannelOut);
     }
 
     private Channel addChannel(@NotNull Channel channel) {
@@ -96,7 +96,7 @@ class ChannelInteractorTests {
 
     @Test
     void given_interactor_without_presenter_then_presenter_is_not_null() {
-        assertThat(new ChannelInteractorImpl().joinChannelPresenter()).isNotNull();
+        assertThat(new ChannelInteractorImpl().joinChannelOut()).isNotNull();
     }
 
     @Test
@@ -148,7 +148,7 @@ class ChannelInteractorTests {
                 @Test
                 void then_presenter_is_called() {
                     joinChannel();
-                    verify(joinChannelPresenter).joinedChannel(new JoinChannel.Result(chatter.getIdentity(), channel.getKey(), channel.getDisplayName()));
+                    verify(joinChannelOut).joinedChannel(new JoinChannel.Result(chatter, channel));
                 }
 
                 @Nested class given_already_joined {

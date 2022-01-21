@@ -20,20 +20,18 @@
 package net.silthus.schat.usecases;
 
 import lombok.NonNull;
-import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.identity.Identity;
 
 public interface JoinChannel {
 
     void joinChannel(@NonNull Chatter chatter, @NonNull Channel channel) throws Error;
 
-    interface Presenter {
+    interface Out {
         void joinedChannel(Result result);
     }
 
-    record Result(Identity chatter, String channelId, Component channelName) {
+    record Result(Chatter chatter, Channel channel) {
     }
 
     class Error extends RuntimeException {

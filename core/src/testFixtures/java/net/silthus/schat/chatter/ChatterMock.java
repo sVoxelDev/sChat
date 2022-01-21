@@ -19,21 +19,31 @@
 
 package net.silthus.schat.chatter;
 
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.identity.Identity;
+import net.silthus.schat.message.Message;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.IdentityHelper.randomIdentity;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public final class ChatterMock {
+public final class ChatterMock extends ChatterImpl {
 
-    public static @NotNull Chatter chatterMock(Identity identity) {
-        return Chatter.createChatter(identity);
+    private ChatterMock(Builder builder) {
+        super(builder);
     }
 
-    public static @NotNull Chatter randomChatter() {
+    public static @NotNull ChatterMock randomChatter() {
         return chatterMock(randomIdentity());
     }
 
-    private ChatterMock() {
+    public static @NotNull ChatterMock chatterMock(Identity identity) {
+        return new ChatterMock((Builder) Chatter.chatter(identity));
+    }
+
+    public void assertReceivedMessage(Component text) {
+        assertThat(getMessages())
+            .extracting(Message::text)
+            .contains(text);
     }
 }
