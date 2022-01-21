@@ -12,5 +12,6 @@ public final class BukkitChatListener extends ChatListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         onChat(event.getPlayer().getUniqueId(), text(event.getMessage()));
+        event.setCancelled(true);
     }
 }
