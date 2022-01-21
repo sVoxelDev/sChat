@@ -7,6 +7,8 @@ import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.ui.View;
 import net.silthus.schat.ui.ViewModel;
 import net.silthus.schat.ui.views.Views;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import static net.silthus.schat.bukkit.adapter.BukkitIdentityAdapter.identity;
 import static net.silthus.schat.chatter.Chatter.chatter;
@@ -26,6 +28,10 @@ public final class BukkitChatterFactory implements ChatterFactory {
             .messageHandler((message, context) -> {
                 final View view = Views.tabbedChannels(ViewModel.of(context.chatter()));
                 audiences.player(id).sendMessage(view.render());
+            })
+            .permissionHandler(permission -> {
+                final Player player = Bukkit.getPlayer(id);
+                return player != null && player.hasPermission(permission);
             })
             .create();
     }

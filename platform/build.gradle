@@ -17,10 +17,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    api project(':core')
-    api project(':ui')
+allprojects {
+    dependencies {
+        api project(':core')
+        api project(':ui')
 
+        testImplementation(testFixtures(project(":core")))
+
+        testFixturesImplementation(testFixtures(project(':api')))
+        testFixturesImplementation(testFixtures(project(':core')))
+
+        testFixturesImplementation 'org.spongepowered:configurate-core:4.1.2'
+    }
+}
+
+subprojects {
+    dependencies {
+        implementation project(':platform')
+
+        testImplementation(testFixtures(project(":platform")))
+
+        testFixturesImplementation(testFixtures(project(':platform')))
+    }
+}
+
+dependencies {
     implementation 'cloud.commandframework:cloud-core:1.6.1'
     implementation 'cloud.commandframework:cloud-annotations:1.6.1'
 
@@ -28,10 +49,10 @@ dependencies {
 
     implementation 'org.spongepowered:configurate-core:4.1.2'
     implementation 'org.spongepowered:configurate-yaml:4.1.2'
+    implementation 'org.spongepowered:configurate-xml:4.1.2'
+    implementation 'org.spongepowered:configurate-hocon:4.1.2'
+    implementation 'org.spongepowered:configurate-gson:4.1.2'
 
-    testImplementation(testFixtures(project(':core')))
-
-    testFixturesImplementation(testFixtures(project(':core')))
     testFixturesImplementation 'org.spongepowered:configurate-yaml:4.1.2'
     testFixturesImplementation 'cloud.commandframework:cloud-core:1.6.1'
     testFixturesImplementation 'org.apache.commons:commons-lang3:3.12.0'
