@@ -82,6 +82,7 @@ subprojects {
 
         implementation 'net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT'
         implementation 'net.kyori:adventure-text-serializer-plain:4.9.3'
+        implementation 'net.kyori:adventure-text-serializer-gson:4.9.3'
         implementation 'net.kyori:event-api:3.0.0'
 
         implementation 'org.jetbrains:annotations:22.0.0'

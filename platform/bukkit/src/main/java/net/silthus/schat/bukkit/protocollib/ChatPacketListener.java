@@ -24,7 +24,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.google.gson.JsonParseException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -39,9 +38,13 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterProvider;
+import net.silthus.schat.message.Message;
+import net.silthus.schat.message.Messenger;
 import net.silthus.schat.ui.View;
 import net.silthus.schat.ui.ViewProvider;
 import org.bukkit.plugin.Plugin;
+
+import static net.silthus.schat.message.Message.message;
 
 /**
  * Handles the player chat packet flow and rewrites non sChat packets into sChat packets.
@@ -73,11 +76,13 @@ public final class ChatPacketListener extends PacketAdapter {
     private final ProtocolManager protocolManager;
     private final ChatterProvider chatterProvider;
     private final ViewProvider viewProvider;
+    private final Messenger messenger;
 
-    public ChatPacketListener(final Plugin plugin, ChatterProvider chatterProvider, ViewProvider viewProvider) {
+    public ChatPacketListener(final Plugin plugin, ChatterProvider chatterProvider, ViewProvider viewProvider, Messenger messenger) {
         super(plugin, PacketType.Play.Server.CHAT);
         this.chatterProvider = chatterProvider;
         this.viewProvider = viewProvider;
+        this.messenger = messenger;
         this.protocolManager = ProtocolLibrary.getProtocolManager();
     }
 
@@ -110,8 +115,8 @@ public final class ChatPacketListener extends PacketAdapter {
         if (view.isRenderedView(rawMessage))
             return;
 
-        final WrapperPlayServerChat chat = new WrapperPlayServerChat(event.getPacket());
-        chat.message(WrappedChatComponent.fromJson(GSON_SERIALIZER.serialize(view.render())));
+        message(rawMessage).type(Message.Type.SYSTEM).send(messenger);
+        event.setCancelled(true);
     }
 
     @SneakyThrows

@@ -2,6 +2,7 @@ package net.silthus.schat.velocity;
 
 import cloud.commandframework.CommandManager;
 import cloud.commandframework.velocity.VelocityCommandManager;
+import dev.simplix.protocolize.api.Protocolize;
 import java.io.File;
 import lombok.Getter;
 import net.silthus.schat.chatter.ChatterFactory;
@@ -13,6 +14,7 @@ import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.velocity.adapter.VelocityChatListener;
 import net.silthus.schat.velocity.adapter.VelocityChatterFactory;
 import net.silthus.schat.velocity.adapter.VelocitySenderFactory;
+import net.silthus.schat.velocity.protocolize.ChatPacketListener;
 
 import static cloud.commandframework.execution.CommandExecutionCoordinator.simpleCoordinator;
 
@@ -21,6 +23,7 @@ public final class VelocityPlugin extends AbstractSChatPlugin {
 
     private final VelocityBootstrap bootstrap;
     private VelocitySenderFactory senderFactory;
+    private ChatPacketListener chatPacketListener;
 
     public VelocityPlugin(VelocityBootstrap bootstrap) {
         this.bootstrap = bootstrap;
@@ -57,5 +60,11 @@ public final class VelocityPlugin extends AbstractSChatPlugin {
             commandSource -> getSenderFactory().wrap(commandSource),
             sender -> getSenderFactory().unwrap(sender)
         );
+    }
+
+    @Override
+    protected void registerListeners() {
+        chatPacketListener = new ChatPacketListener(getChatterProvider(), getViewProvider(), getMessenger());
+        Protocolize.listenerProvider().registerListener(chatPacketListener);
     }
 }

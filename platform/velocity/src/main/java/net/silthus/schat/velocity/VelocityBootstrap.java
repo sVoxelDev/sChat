@@ -5,6 +5,7 @@ import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
@@ -22,10 +23,12 @@ import org.slf4j.Logger;
         version = "1.0.0",
         url = "https://github.com/sVoxelDev/sChat",
         description = "Supercharge your Minecraft Chat Experience!",
-        authors = {"Silthus"}
+        authors = {"Silthus"},
+        dependencies = {@Dependency(id = "Protocolize")}
 )
+
 @Getter
-public class VelocityBootstrap implements Bootstrap {
+public final class VelocityBootstrap implements Bootstrap {
 
     private final PluginLogger pluginLogger;
     private final VelocitySchedulerAdapter scheduler;
