@@ -52,7 +52,8 @@ final class TabbedChannelsView implements View {
     @Override
     public Component render() {
         return renderBlankLines()
-            .append(combineMessagesAndChannels(renderMessages(), renderChannels()));
+            .append(combineMessagesAndChannels(renderMessages(), renderChannels()))
+            .append(VIEW_MARKER);
     }
 
     private Component renderBlankLines() {

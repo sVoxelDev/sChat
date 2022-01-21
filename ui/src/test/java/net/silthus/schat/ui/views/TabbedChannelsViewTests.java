@@ -47,6 +47,7 @@ import static net.silthus.schat.ui.View.MESSAGE_SOURCE_FORMAT;
 import static net.silthus.schat.ui.View.VIEW_HEIGHT;
 import static net.silthus.schat.ui.ViewModel.of;
 import static net.silthus.schat.ui.views.Views.tabbedChannels;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TabbedChannelsViewTests {
@@ -248,6 +249,20 @@ class TabbedChannelsViewTests {
                 Player: Hey
                 Player2: Hello
                 | <underlined>zzz</underlined> | aaa |""");
+        }
+    }
+
+    @Nested class given_rendered_view {
+        private Component render;
+
+        @BeforeEach
+        void setUp() {
+            render = view.render();
+        }
+
+        @Test
+        void isRenderedView_returns_true() {
+            assertThat(view.isRenderedView(render)).isTrue();
         }
     }
 }
