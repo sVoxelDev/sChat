@@ -1,25 +1,20 @@
 /*
- * This file is part of sChat, licensed under the MIT License.
+ * sChat, a Supercharged Minecraft Chat Plugin
  * Copyright (C) Silthus <https://www.github.com/silthus>
  * Copyright (C) sChat team and contributors
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
- *  of this software and associated documentation files (the "Software"), to deal
- *  in the Software without restriction, including without limitation the rights
- *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  copies of the Software, and to permit persons to whom the Software is
- *  furnished to do so, subject to the following conditions:
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The above copyright notice and this permission notice shall be included in all
- *  copies or substantial portions of the Software.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package net.silthus.schat.chatter;
@@ -27,15 +22,16 @@ package net.silthus.schat.chatter;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.view.ViewConnector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.AssertionHelper.assertNPE;
-import static net.silthus.schat.IdentityHelper.randomIdentity;
-import static net.silthus.schat.MessageHelper.randomMessage;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.chatter.Chatter.chatter;
+import static net.silthus.schat.identity.IdentityHelper.randomIdentity;
+import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
@@ -184,8 +180,10 @@ class ChatterTest {
 
     @Nested class sendMessage {
 
-        private void sendRandomMessage() {
-            chatter.sendMessage(randomMessage());
+        private Message sendRandomMessage() {
+            final Message message = randomMessage();
+            chatter.sendMessage(message);
+            return message;
         }
 
         @Test
@@ -209,18 +207,61 @@ class ChatterTest {
 
         @Nested class given_valid_message_handler {
             private boolean messageHandlerCalled = false;
+            private ViewConnector.Context context;
 
             @BeforeEach
             void setUp() {
                 chatter = chatter(randomIdentity())
-                    .messageHandler((message, context) -> messageHandlerCalled = true)
-                    .create();
+                    .viewConnector(context -> {
+                        messageHandlerCalled = true;
+                        this.context = context;
+                    }).create();
+            }
+
+            private void assertMessageHandlerCalled() {
+                assertThat(messageHandlerCalled).isTrue();
+            }
+
+            private void assertLastMessageIs(Message message) {
+                assertThat(context.lastMessage()).isPresent().get().isEqualTo(message);
             }
 
             @Test
             void then_message_handler_is_called() {
                 sendRandomMessage();
-                assertThat(messageHandlerCalled).isTrue();
+                assertMessageHandlerCalled();
+            }
+
+            @Test
+            void then_context_holds_chatter() {
+                sendRandomMessage();
+                assertThat(context.chatter()).isSameAs(chatter);
+            }
+
+            @Test
+            void then_context_holds_last_message() {
+                final Message message = sendRandomMessage();
+                assertLastMessageIs(message);
+            }
+
+            @Nested class update {
+                @Test
+                void given_no_messages_when_update_is_called_then_context_has_no_last_message() {
+                    chatter.updateView();
+                    assertMessageHandlerCalled();
+                    assertThat(context.lastMessage()).isNotPresent();
+                }
+
+                @Test
+                void given_messages_when_update_is_called_holds_last_message() {
+                    final Message message = sendRandomMessage();
+                    messageHandlerCalled = false;
+                    context = null;
+
+                    chatter.updateView();
+                    assertMessageHandlerCalled();
+                    assertLastMessageIs(message);
+                }
             }
         }
     }

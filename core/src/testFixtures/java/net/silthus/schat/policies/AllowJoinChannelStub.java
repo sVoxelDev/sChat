@@ -17,18 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.ui.views;
+package net.silthus.schat.policies;
 
-import lombok.NonNull;
-import net.silthus.schat.ui.ViewModel;
-import net.silthus.schat.view.View;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.util.Permissable;
 
-public final class Views {
-
-    public static View tabbedChannels(@NonNull ViewModel viewModel) {
-        return new TabbedChannelsView(viewModel);
-    }
-
-    private Views() {
+public class AllowJoinChannelStub implements CanJoinChannel {
+    @Override
+    public boolean canJoinChannel(Permissable chatter, Channel channel) {
+        return true;
     }
 }

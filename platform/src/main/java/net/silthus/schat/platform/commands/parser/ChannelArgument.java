@@ -46,7 +46,7 @@ public final class ChannelArgument implements ArgumentParser<Sender, Channel> {
 
     public static final Caption ARGUMENT_PARSE_FAILURE_CHANNEL = Caption.of("argument.parse.failure.channel");
 
-    public static void registerChannelParser(CommandManager<Sender> commandManager, ChannelRepository repository, CanJoinChannel canJoinChannel) {
+    public static void registerChannelArgument(CommandManager<Sender> commandManager, ChannelRepository repository, CanJoinChannel canJoinChannel) {
         registerArgumentParser(commandManager, repository, canJoinChannel);
         registerCaptions(commandManager);
     }

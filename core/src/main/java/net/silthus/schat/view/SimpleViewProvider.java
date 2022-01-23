@@ -17,18 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.ui.views;
+package net.silthus.schat.view;
 
+import java.util.Map;
+import java.util.WeakHashMap;
 import lombok.NonNull;
-import net.silthus.schat.ui.ViewModel;
-import net.silthus.schat.view.View;
+import net.silthus.schat.chatter.Chatter;
 
-public final class Views {
+final class SimpleViewProvider implements ViewProvider {
 
-    public static View tabbedChannels(@NonNull ViewModel viewModel) {
-        return new TabbedChannelsView(viewModel);
+    private final ViewFactory factory;
+    private final Map<Chatter, View> views = new WeakHashMap<>();
+
+    SimpleViewProvider(ViewFactory factory) {
+        this.factory = factory;
     }
 
-    private Views() {
+    @Override
+    public View getView(@NonNull Chatter chatter) {
+        return views.computeIfAbsent(chatter, factory::create);
     }
 }

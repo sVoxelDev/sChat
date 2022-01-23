@@ -32,6 +32,7 @@ import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.repository.Entity;
 import net.silthus.schat.util.Permissable;
+import net.silthus.schat.view.ViewConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -88,19 +89,16 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
 
     @NotNull @Unmodifiable Set<Message> getMessages();
 
+    Optional<Message> getLastMessage();
+
+    void updateView();
+
     interface Builder {
-        Builder messageHandler(MessageHandler messageHandler);
+        Builder viewConnector(ViewConnector viewConnector);
 
         Builder permissionHandler(PermissionHandler permissionHandler);
 
         Chatter create();
-    }
-
-    interface MessageHandler {
-        void handleMessage(Message message, Context context);
-
-        record Context(Chatter chatter) {
-        }
     }
 
     interface PermissionHandler {
