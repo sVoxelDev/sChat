@@ -42,15 +42,21 @@ import net.silthus.schat.platform.locale.TranslationManager;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.policies.Policies;
 import net.silthus.schat.policies.PoliciesImpl;
-import net.silthus.schat.ui.ViewProvider;
 import net.silthus.schat.usecases.OnChat;
+import net.silthus.schat.view.ViewFactory;
+import net.silthus.schat.view.ViewProvider;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.chatter.ChatterProvider.createChatterProvider;
+import static net.silthus.schat.platform.commands.parser.ChannelArgument.registerChannelArgument;
+import static net.silthus.schat.platform.commands.parser.ChatterArgument.registerChatterArgument;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 import static net.silthus.schat.platform.locale.Presenter.defaultPresenter;
-import static net.silthus.schat.ui.ViewProvider.simpleViewProvider;
+import static net.silthus.schat.ui.ViewModel.of;
+import static net.silthus.schat.ui.views.Views.tabbedChannels;
+import static net.silthus.schat.view.ViewProvider.simpleViewProvider;
 
 @Getter
 public abstract class AbstractSChatPlugin implements SChatPlugin {
@@ -60,13 +66,15 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     private SChatConfig config;
     private Messenger messenger;
     private Presenter presenter;
-    private ViewProvider viewProvider;
     private Policies policies;
     private ChatterProvider chatterProvider;
     private ChannelRepository channelRepository;
     private ChannelInteractorImpl channelInteractor;
     private OnChat chatListener;
     private Commands commands;
+
+    private ViewFactory viewFactory;
+    private ViewProvider viewProvider;
 
     @Override
     public final void load() {
@@ -86,20 +94,17 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
         messenger = provideMessenger();
         presenter = providePresenter();
-        viewProvider = provideViewProvider();
+
+        viewFactory = provideViewFactory();
+        viewProvider = provideViewProvider(getViewFactory());
 
         policies = provideChannelPolicies();
         chatterProvider = createChatterProvider(provideChatterFactory());
         channelRepository = provideChannelRepository();
 
-        channelInteractor = new ChannelInteractorImpl()
-            .channelRepository(channelRepository)
-            .chatterProvider(chatterProvider)
-            .canJoinChannel(policies);
+        channelInteractor = new ChannelInteractorImpl().channelRepository(channelRepository).chatterProvider(chatterProvider).canJoinChannel(policies);
 
-        chatListener = provideChatListener()
-            .chatterProvider(getChatterProvider())
-            .messenger(getMessenger());
+        chatListener = provideChatListener().chatterProvider(getChatterProvider()).messenger(getMessenger());
 
         getLogger().info("Loading channels...");
         for (final Channel channel : getConfig().get(CHANNELS)) {
@@ -107,8 +112,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
         }
         getLogger().info("... loaded " + channelRepository.keys().size() + " channels.");
 
-        commands = new Commands(provideCommandManager(), new Commands.Context(chatterProvider, channelRepository, policies));
-        registerCommands();
+        commands = createCommands();
 
         registerListeners();
     }
@@ -135,8 +139,13 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     }
 
     @ApiStatus.OverrideOnly
-    protected ViewProvider provideViewProvider() {
-        return simpleViewProvider();
+    protected ViewFactory provideViewFactory() {
+        return chatter -> tabbedChannels(of(chatter));
+    }
+
+    @ApiStatus.OverrideOnly
+    protected ViewProvider provideViewProvider(ViewFactory viewFactory) {
+        return simpleViewProvider(viewFactory);
     }
 
     protected abstract ChatterFactory provideChatterFactory();
@@ -153,14 +162,30 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     protected abstract ChatListener provideChatListener();
 
+    @NotNull
+    private Commands createCommands() {
+        final CommandManager<Sender> commandManager = provideCommandManager();
+        final Commands commands = new Commands(commandManager);
+
+        registerCommandArguments(commandManager);
+        registerCommands(commands);
+
+        return commands;
+    }
+
+    private void registerCommandArguments(CommandManager<Sender> commandManager) {
+        registerChatterArgument(commandManager, getChatterProvider());
+        registerChannelArgument(commandManager, getChannelRepository(), getPolicies());
+    }
+
     protected abstract CommandManager<Sender> provideCommandManager();
 
-    private void registerCommands() {
-        registerNativeCommands();
+    private void registerCommands(Commands commands) {
+        registerNativeCommands(commands);
         registerCustomCommands(commands);
     }
 
-    private void registerNativeCommands() {
+    private void registerNativeCommands(Commands commands) {
         commands.register(new ChannelCommands(channelInteractor));
     }
 

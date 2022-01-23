@@ -29,19 +29,14 @@ import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.policies.Policies;
 import org.jetbrains.annotations.NotNull;
 
-import static net.silthus.schat.platform.commands.parser.ChannelArgument.registerChannelParser;
-import static net.silthus.schat.platform.commands.parser.ChatterArgument.registerChatterArgument;
-
 public final class Commands {
 
     private final CommandManager<Sender> commandManager;
     private final AnnotationParser<Sender> annotationParser;
 
-    public Commands(CommandManager<Sender> commandManager, Context context) {
+    public Commands(CommandManager<Sender> commandManager) {
         this.commandManager = commandManager;
         this.annotationParser = createAnnotationParser();
-        registerChatterArgument(commandManager, context.chatterProvider());
-        registerChannelParser(commandManager, context.channelRepository(), context.policies());
     }
 
     public void register(Command... commands) {

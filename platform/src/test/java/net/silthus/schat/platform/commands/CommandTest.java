@@ -27,15 +27,16 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.platform.sender.SenderMock;
-import net.silthus.schat.policies.Policies;
+import net.silthus.schat.policies.AllowJoinChannelStub;
 import org.junit.jupiter.api.BeforeEach;
 
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.chatter.ChatterProviderStub.chatterProviderStub;
 import static net.silthus.schat.platform.commands.CommandTestUtils.createCommandManager;
+import static net.silthus.schat.platform.commands.parser.ChannelArgument.registerChannelArgument;
+import static net.silthus.schat.platform.commands.parser.ChatterArgument.registerChatterArgument;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
 public abstract class CommandTest {
 
@@ -49,10 +50,13 @@ public abstract class CommandTest {
     void setUpBase() {
         commandManager = createCommandManager();
         channelRepository = createInMemoryChannelRepository();
+
         final Chatter chatter = randomChatter();
         chatterProvider = chatterProviderStub(chatter);
-        commands = new Commands(commandManager, new Commands.Context(chatterProvider, channelRepository, mock(Policies.class)));
         sender = new SenderMock(chatter.getIdentity());
+
+        commands = new Commands(commandManager);
+        registerArgumentTypes();
     }
 
     @SneakyThrows
@@ -72,4 +76,8 @@ public abstract class CommandTest {
         sender.assertLastMessageIs(component);
     }
 
+    private void registerArgumentTypes() {
+        registerChatterArgument(commandManager, chatterProvider);
+        registerChannelArgument(commandManager, channelRepository, new AllowJoinChannelStub());
+    }
 }

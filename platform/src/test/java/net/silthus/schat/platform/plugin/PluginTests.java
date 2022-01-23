@@ -19,25 +19,14 @@
 
 package net.silthus.schat.platform.plugin;
 
-import cloud.commandframework.CommandManager;
-import net.silthus.schat.chatter.ChatterFactory;
-import net.silthus.schat.platform.commands.Command;
-import net.silthus.schat.platform.commands.Commands;
-import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
-import net.silthus.schat.platform.listener.ChatListener;
-import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
-import net.silthus.schat.platform.sender.Sender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.chatter.ChatterMock.randomChatter;
-import static net.silthus.schat.platform.commands.CommandTestUtils.createCommandManager;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
-import static net.silthus.schat.platform.sender.SenderMock.senderMock;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 
 class PluginTests {
@@ -63,7 +52,7 @@ class PluginTests {
 
             @Test
             void then_commands_are_registered() {
-                verify(TestPlugin.command).register(any(), any());
+                verify(TestPlugin.dummyCommand, atLeastOnce()).register(any(), any());
             }
 
             @Test
@@ -71,51 +60,11 @@ class PluginTests {
                 assertThat(plugin.getConfig()).isNotNull();
                 assertThat(plugin.getConfig().get(CHANNELS)).isNotNull();
             }
-        }
-    }
 
-    private static class TestPlugin extends AbstractSChatPlugin {
-
-        static Command command = mock(Command.class);
-
-        @Override
-        public Sender getConsole() {
-            return senderMock();
-        }
-
-        @Override
-        protected ConfigurationAdapter provideConfigurationAdapter() {
-            return mock(ConfigurationAdapter.class);
-        }
-
-        @Override
-        protected void setupSenderFactory() {
-
-        }
-
-        @Override
-        protected ChatterFactory provideChatterFactory() {
-            return id -> randomChatter();
-        }
-
-        @Override
-        protected ChatListener provideChatListener() {
-            return new ChatListener();
-        }
-
-        @Override
-        protected CommandManager<Sender> provideCommandManager() {
-            return createCommandManager();
-        }
-
-        @Override
-        protected void registerCustomCommands(Commands commands) {
-            commands.register(command);
-        }
-
-        @Override
-        public Bootstrap getBootstrap() {
-            return mock(Bootstrap.class);
+            @Test
+            void then_channels_are_loaded() {
+                assertThat(plugin.getChannelRepository().all()).isNotEmpty();
+            }
         }
     }
 }

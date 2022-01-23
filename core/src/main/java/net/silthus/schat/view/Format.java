@@ -17,18 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.ui.views;
+package net.silthus.schat.view;
 
-import lombok.NonNull;
-import net.silthus.schat.ui.ViewModel;
-import net.silthus.schat.view.View;
+import net.kyori.adventure.text.Component;
 
-public final class Views {
+@FunctionalInterface
+public interface Format {
 
-    public static View tabbedChannels(@NonNull ViewModel viewModel) {
-        return new TabbedChannelsView(viewModel);
-    }
-
-    private Views() {
-    }
+    Component format(Component component);
 }

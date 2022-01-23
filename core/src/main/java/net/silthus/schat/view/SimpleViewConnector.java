@@ -17,18 +17,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.ui.views;
+package net.silthus.schat.view;
 
 import lombok.NonNull;
-import net.silthus.schat.ui.ViewModel;
-import net.silthus.schat.view.View;
+import net.kyori.adventure.text.Component;
+import net.silthus.schat.chatter.Chatter;
 
-public final class Views {
+final class SimpleViewConnector implements ViewConnector {
 
-    public static View tabbedChannels(@NonNull ViewModel viewModel) {
-        return new TabbedChannelsView(viewModel);
+    private final ViewProvider viewProvider;
+    private final Display display;
+
+    SimpleViewConnector(ViewProvider viewProvider, Display display) {
+        this.viewProvider = viewProvider;
+        this.display = display;
     }
 
-    private Views() {
+    @Override
+    public void update(@NonNull Context context) {
+        final Chatter chatter = context.chatter();
+        final Component render = viewProvider.getView(chatter).render();
+        display.display(chatter, render);
     }
 }

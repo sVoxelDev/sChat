@@ -17,18 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.ui.views;
+package net.silthus.schat.identity;
 
-import lombok.NonNull;
-import net.silthus.schat.ui.ViewModel;
-import net.silthus.schat.view.View;
+import java.util.UUID;
+import org.apache.commons.lang3.RandomStringUtils;
 
-public final class Views {
+public final class IdentityHelper {
 
-    public static View tabbedChannels(@NonNull ViewModel viewModel) {
-        return new TabbedChannelsView(viewModel);
+    private IdentityHelper() {
     }
 
-    private Views() {
+    public static Identity randomIdentity() {
+        return Identity.identity(UUID.randomUUID(), RandomStringUtils.randomAlphanumeric(10));
     }
 }

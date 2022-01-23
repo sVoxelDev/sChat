@@ -44,7 +44,7 @@ class ChannelArgumentTests extends ParserTest<Channel> {
     }
 
     private void registerChannelParser() {
-        ChannelArgument.registerChannelParser(getCommandManager(), mock(ChannelRepository.class), (chatter, channel) -> true);
+        ChannelArgument.registerChannelArgument(getCommandManager(), mock(ChannelRepository.class), (chatter, channel) -> true);
     }
 
     @Test

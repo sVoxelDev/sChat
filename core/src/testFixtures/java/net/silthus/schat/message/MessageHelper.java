@@ -17,18 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.ui.views;
+package net.silthus.schat.message;
 
-import lombok.NonNull;
-import net.silthus.schat.ui.ViewModel;
-import net.silthus.schat.view.View;
+import net.kyori.adventure.text.Component;
+import org.apache.commons.lang3.RandomStringUtils;
 
-public final class Views {
+import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.message.Message.message;
 
-    public static View tabbedChannels(@NonNull ViewModel viewModel) {
-        return new TabbedChannelsView(viewModel);
+public final class MessageHelper {
+
+    private MessageHelper() {
     }
 
-    private Views() {
+    public static Component randomText() {
+        return text(RandomStringUtils.randomAlphanumeric(30));
+    }
+
+    public static Message randomMessage() {
+        return message(randomText());
     }
 }
