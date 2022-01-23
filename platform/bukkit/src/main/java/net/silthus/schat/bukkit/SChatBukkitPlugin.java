@@ -35,6 +35,7 @@ import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
 import net.silthus.schat.platform.listener.ChatListener;
 import net.silthus.schat.platform.plugin.AbstractSChatPlugin;
 import net.silthus.schat.platform.sender.Sender;
+import net.silthus.schat.view.ViewProvider;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,7 +68,7 @@ public final class SChatBukkitPlugin extends AbstractSChatPlugin {
     }
 
     @Override
-    protected ChatterFactory provideChatterFactory() {
+    protected ChatterFactory provideChatterFactory(final ViewProvider viewProvider) {
         return new BukkitChatterFactory(getAudiences(), getViewProvider());
     }
 

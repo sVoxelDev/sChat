@@ -34,6 +34,7 @@ import net.silthus.schat.velocity.adapter.VelocityChatListener;
 import net.silthus.schat.velocity.adapter.VelocityChatterFactory;
 import net.silthus.schat.velocity.adapter.VelocitySenderFactory;
 import net.silthus.schat.velocity.protocolize.ChatPacketListener;
+import net.silthus.schat.view.ViewProvider;
 
 import static cloud.commandframework.execution.CommandExecutionCoordinator.simpleCoordinator;
 
@@ -64,7 +65,7 @@ public final class VelocityPlugin extends AbstractSChatPlugin {
     }
 
     @Override
-    protected ChatterFactory provideChatterFactory() {
+    protected ChatterFactory provideChatterFactory(final ViewProvider viewProvider) {
         return new VelocityChatterFactory(getBootstrap().getProxy(), getViewProvider());
     }
 

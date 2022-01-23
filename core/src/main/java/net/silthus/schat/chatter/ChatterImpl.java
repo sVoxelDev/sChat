@@ -33,6 +33,7 @@ import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.view.Display;
 import net.silthus.schat.view.ViewConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,6 +55,7 @@ non-sealed class ChatterImpl implements Chatter {
     private final Identity identity;
     private final ViewConnector viewConnector;
     private final PermissionHandler permissionHandler;
+    private final Display display;
 
     private final Set<Channel> channels = new HashSet<>();
     private final Queue<Message> messages = new LinkedList<>();
@@ -64,6 +66,7 @@ non-sealed class ChatterImpl implements Chatter {
         this.identity = builder.identity();
         this.viewConnector = builder.viewConnector();
         this.permissionHandler = builder.permissionHandler();
+        this.display = builder.display();
     }
 
     @Override
@@ -128,7 +131,7 @@ non-sealed class ChatterImpl implements Chatter {
 
     @Override
     public void updateView() {
-        viewConnector.update(of(this, messages.peek()));
+        viewConnector.update(of(this, display, messages.peek()));
     }
 
     @Getter
@@ -137,15 +140,16 @@ non-sealed class ChatterImpl implements Chatter {
     static final class Builder implements Chatter.Builder {
 
         private final Identity identity;
-        private ViewConnector viewConnector = context -> {};
-        private PermissionHandler permissionHandler = permission -> false;
+        private @NonNull ViewConnector viewConnector = context -> {};
+        private @NonNull PermissionHandler permissionHandler = permission -> false;
+        private @NonNull Display display = Display.empty();
 
         private Builder(Identity identity) {
             this.identity = identity;
         }
 
         @Override
-        public Chatter create() {
+        public @NotNull Chatter create() {
             return new ChatterImpl(this);
         }
     }

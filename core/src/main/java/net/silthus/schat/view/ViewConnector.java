@@ -29,8 +29,8 @@ import org.jetbrains.annotations.Nullable;
 
 public interface ViewConnector {
 
-    static SimpleViewConnector createSimpleViewConnector(ViewProvider viewProvider, Display display) {
-        return new SimpleViewConnector(viewProvider, display);
+    static SimpleViewConnector createSimpleViewConnector(ViewProvider viewProvider) {
+        return new SimpleViewConnector(viewProvider);
     }
 
     void update(@NonNull Context context);
@@ -38,19 +38,21 @@ public interface ViewConnector {
     @Value
     @Accessors(fluent = true)
     class Context {
-        public static Context of(@NonNull Chatter chatter) {
-            return new Context(chatter, null);
+        public static Context of(@NonNull Chatter chatter, @NonNull Display display) {
+            return new Context(chatter, display, null);
         }
 
-        public static Context of(Chatter chatter, Message lastMessage) {
-            return new Context(chatter, lastMessage);
+        public static Context of(Chatter chatter, @NonNull Display display, Message lastMessage) {
+            return new Context(chatter, display, lastMessage);
         }
 
         @NonNull Chatter chatter;
+        @NonNull Display display;
         @Nullable Message lastMessage;
 
-        private Context(@NonNull Chatter chatter, @Nullable Message lastMessage) {
+        private Context(@NonNull Chatter chatter, @NonNull Display display, @Nullable Message lastMessage) {
             this.chatter = chatter;
+            this.display = display;
             this.lastMessage = lastMessage;
         }
 

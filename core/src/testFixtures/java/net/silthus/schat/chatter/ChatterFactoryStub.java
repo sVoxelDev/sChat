@@ -17,49 +17,40 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.velocity.adapter;
+package net.silthus.schat.chatter;
 
-import com.velocitypowered.api.proxy.Player;
-import com.velocitypowered.api.proxy.ProxyServer;
 import java.util.UUID;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.view.Display;
 import net.silthus.schat.view.ViewProvider;
 import org.jetbrains.annotations.NotNull;
 
-public class VelocityChatterFactory extends ChatterFactory {
+import static net.silthus.schat.view.ViewFactory.empty;
+import static net.silthus.schat.view.ViewProvider.simpleViewProvider;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
-    private final ProxyServer proxy;
+public class ChatterFactoryStub extends ChatterFactory {
 
-    public VelocityChatterFactory(ProxyServer proxy, ViewProvider viewProvider) {
+    public ChatterFactoryStub() {
+        super(simpleViewProvider(empty()));
+    }
+
+    public ChatterFactoryStub(ViewProvider viewProvider) {
         super(viewProvider);
-        this.proxy = proxy;
     }
 
     @Override
     protected @NotNull Identity getIdentity(UUID id) {
-        return proxy.getPlayer(id)
-            .map(VelocitySenderFactory::identity)
-            .orElse(Identity.nil());
+        return Identity.identity(id, randomAlphabetic(10));
     }
 
     @Override
     protected Chatter.PermissionHandler getPermissionHandler(UUID id) {
-        return permission -> proxy.getPlayer(id)
-            .map(player -> player.hasPermission(permission))
-            .orElse(false);
+        return permission -> false;
     }
 
     @Override
     protected Display getDisplay(UUID id) {
-        return proxy.getPlayer(id)
-            .map(this::display)
-            .orElse(Display.empty());
-    }
-
-    private Display display(Player player) {
-        return player::sendMessage;
+        return Display.empty();
     }
 }
