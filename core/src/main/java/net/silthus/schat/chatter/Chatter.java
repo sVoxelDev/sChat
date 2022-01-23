@@ -32,7 +32,6 @@ import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.repository.Entity;
 import net.silthus.schat.util.Permissable;
-import net.silthus.schat.view.Display;
 import net.silthus.schat.view.ViewConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -95,11 +94,9 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
     void updateView();
 
     interface Builder {
-        @NotNull Builder viewConnector(@NonNull ViewConnector viewConnector);
+        @NotNull Builder viewConnector(@NonNull ViewConnector.Factory viewConnectorFactory);
 
         @NotNull Builder permissionHandler(@NonNull PermissionHandler permissionHandler);
-
-        @NotNull Builder display(@NonNull Display display);
 
         @NotNull Chatter create();
     }

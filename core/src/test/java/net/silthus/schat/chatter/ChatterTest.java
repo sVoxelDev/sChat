@@ -22,7 +22,7 @@ package net.silthus.schat.chatter;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.view.ViewConnector;
+import net.silthus.schat.view.ViewConnectorMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -205,37 +205,27 @@ class ChatterTest {
             assertThat(chatter.getMessages()).contains(message);
         }
 
-        @Nested class given_valid_message_handler {
-            private boolean messageHandlerCalled = false;
-            private ViewConnector.Context context;
+        @Nested class given_valid_view_connector {
+            private final ViewConnectorMock connectorMock = new ViewConnectorMock();
 
             @BeforeEach
             void setUp() {
                 chatter = chatter(randomIdentity())
-                    .viewConnector(context -> {
-                        messageHandlerCalled = true;
-                        this.context = context;
-                    }).create();
+                    .viewConnector(c -> connectorMock).create();
             }
 
-            private void assertMessageHandlerCalled() {
-                assertThat(messageHandlerCalled).isTrue();
+            private void assertViewConnectorCalled() {
+                connectorMock.assertUpdateCalled();
             }
 
             private void assertLastMessageIs(Message message) {
-                assertThat(context.lastMessage()).isPresent().get().isEqualTo(message);
+                assertThat(chatter.getLastMessage()).isPresent().get().isEqualTo(message);
             }
 
             @Test
             void then_message_handler_is_called() {
                 sendRandomMessage();
-                assertMessageHandlerCalled();
-            }
-
-            @Test
-            void then_context_holds_chatter() {
-                sendRandomMessage();
-                assertThat(context.chatter()).isSameAs(chatter);
+                assertViewConnectorCalled();
             }
 
             @Test
@@ -248,18 +238,15 @@ class ChatterTest {
                 @Test
                 void given_no_messages_when_update_is_called_then_context_has_no_last_message() {
                     chatter.updateView();
-                    assertMessageHandlerCalled();
-                    assertThat(context.lastMessage()).isNotPresent();
+                    assertViewConnectorCalled();
+                    assertThat(chatter.getLastMessage()).isNotPresent();
                 }
 
                 @Test
                 void given_messages_when_update_is_called_holds_last_message() {
                     final Message message = sendRandomMessage();
-                    messageHandlerCalled = false;
-                    context = null;
-
                     chatter.updateView();
-                    assertMessageHandlerCalled();
+                    assertViewConnectorCalled();
                     assertLastMessageIs(message);
                 }
             }

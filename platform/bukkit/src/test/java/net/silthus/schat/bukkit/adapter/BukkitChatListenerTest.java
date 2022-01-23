@@ -26,7 +26,6 @@ import net.silthus.schat.bukkit.BukkitTests;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.locale.Messages;
-import net.silthus.schat.view.ViewConnector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -47,15 +46,17 @@ class BukkitChatListenerTest extends BukkitTests {
     @BeforeEach
     void setUp() {
         player = server.addPlayer();
-        chatter = Chatter.chatter(identity(player)).viewConnector(this::handleMessage).create();
+        chatter = Chatter.chatter(identity(player))
+            .viewConnector(c -> () -> handleMessage(c))
+            .create();
         listener = (BukkitChatListener) new BukkitChatListener()
             .chatterProvider(chatterProviderStub(chatter))
             .messenger(defaultMessenger());
         server.getPluginManager().registerEvents(listener, mockPlugin);
     }
 
-    private void handleMessage(ViewConnector.Context context) {
-        lastMessage = context.lastMessage().map(Message::text).orElse(null);
+    private void handleMessage(Chatter chatter) {
+        lastMessage = chatter.getLastMessage().map(Message::text).orElse(null);
     }
 
     private void chat() {

@@ -37,9 +37,8 @@ public abstract class ChatterFactory {
 
     public final Chatter createChatter(UUID id) {
         return chatter(getIdentity(id))
-            .viewConnector(createSimpleViewConnector(viewProvider))
+            .viewConnector(chatter -> createSimpleViewConnector(chatter, viewProvider, getDisplay(id)))
             .permissionHandler(getPermissionHandler(id))
-            .display(getDisplay(id))
             .create();
     }
 

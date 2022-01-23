@@ -19,22 +19,18 @@
 
 package net.silthus.schat.view;
 
-import net.silthus.schat.chatter.Chatter;
+import static org.assertj.core.api.Assertions.assertThat;
 
-final class SimpleViewConnector implements ViewConnector {
+public class ViewConnectorMock implements ViewConnector {
 
-    private final Chatter chatter;
-    private final ViewProvider viewProvider;
-    private final Display display;
-
-    SimpleViewConnector(Chatter chatter, ViewProvider viewProvider, Display display) {
-        this.chatter = chatter;
-        this.viewProvider = viewProvider;
-        this.display = display;
-    }
+    private boolean updateCalled = false;
 
     @Override
     public void update() {
-        display.display(viewProvider.getView(chatter).render());
+        updateCalled = true;
+    }
+
+    public void assertUpdateCalled() {
+        assertThat(updateCalled).isTrue();
     }
 }
