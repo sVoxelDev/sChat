@@ -19,46 +19,17 @@
 
 package net.silthus.schat.view;
 
-import java.util.Optional;
-import lombok.NonNull;
-import lombok.Value;
-import lombok.experimental.Accessors;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.message.Message;
-import org.jetbrains.annotations.Nullable;
 
 public interface ViewConnector {
 
-    static SimpleViewConnector createSimpleViewConnector(ViewProvider viewProvider) {
-        return new SimpleViewConnector(viewProvider);
+    static SimpleViewConnector createSimpleViewConnector(Chatter chatter, ViewProvider viewProvider, Display display) {
+        return new SimpleViewConnector(chatter, viewProvider, display);
     }
 
-    void update(@NonNull Context context);
+    void update();
 
-    @Value
-    @Accessors(fluent = true)
-    class Context {
-        public static Context of(@NonNull Chatter chatter, @NonNull Display display) {
-            return new Context(chatter, display, null);
-        }
-
-        public static Context of(Chatter chatter, @NonNull Display display, Message lastMessage) {
-            return new Context(chatter, display, lastMessage);
-        }
-
-        @NonNull Chatter chatter;
-        @NonNull Display display;
-        @Nullable Message lastMessage;
-
-        private Context(@NonNull Chatter chatter, @NonNull Display display, @Nullable Message lastMessage) {
-            this.chatter = chatter;
-            this.display = display;
-            this.lastMessage = lastMessage;
-        }
-
-        public Optional<Message> lastMessage() {
-            return Optional.ofNullable(lastMessage);
-        }
+    interface Factory {
+        ViewConnector create(Chatter chatter);
     }
-
 }

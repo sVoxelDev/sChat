@@ -28,10 +28,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.chatter.ChatterMock.chatterMock;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
-import static net.silthus.schat.view.ViewConnector.Context.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class SimpleViewConnectorTest {
@@ -43,10 +41,10 @@ class SimpleViewConnectorTest {
 
     @BeforeEach
     void setUp() {
-        connector = ViewConnector.createSimpleViewConnector(
-            new LastMessageViewProviderStub()
-        );
-        chatter = chatterMock(builder -> builder.viewConnector(connector).display(display));
+        chatter = chatterMock(builder -> builder.viewConnector(c -> {
+            connector = new SimpleViewConnector(c, cv -> () -> c.getLastMessage().map(Message::text).orElse(Component.empty()), display);
+            return connector;
+        }));
     }
 
     @NotNull
@@ -61,16 +59,10 @@ class SimpleViewConnectorTest {
     }
 
     private void callUpdate() {
-        connector.update(of(chatter, display));
+        connector.update();
     }
 
     @Nested class update {
-
-        @Test
-        @SuppressWarnings("ConstantConditions")
-        void given_null_context_throws_npe() {
-            assertNPE(() -> connector.update(null));
-        }
 
         @Test
         void given_no_messages_then_calls_display_with_rendered_empty_view() {
