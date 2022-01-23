@@ -48,9 +48,36 @@ public final class ChatterMock extends ChatterImpl {
         return new ChatterMock((Builder) chatter);
     }
 
+    private int viewUpdateCount = 0;
+    private boolean viewUpdated = false;
+
     public void assertReceivedMessage(Component text) {
         assertThat(getMessages())
             .extracting(Message::text)
             .contains(text);
+    }
+
+    @Override
+    public void updateView() {
+        super.updateView();
+        this.viewUpdateCount++;
+        this.viewUpdated = true;
+    }
+
+    public void assertViewUpdated() {
+        assertThat(viewUpdated).isTrue();
+    }
+
+    public void assertViewUpdated(int times) {
+        assertThat(viewUpdateCount).isEqualTo(times);
+    }
+
+    public void assertViewNotUpdated() {
+        assertThat(viewUpdated).isFalse();
+    }
+
+    public void resetViewUpdate() {
+        viewUpdateCount = 0;
+        viewUpdated = false;
     }
 }
