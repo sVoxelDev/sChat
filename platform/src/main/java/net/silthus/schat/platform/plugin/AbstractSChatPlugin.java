@@ -99,7 +99,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
         viewProvider = provideViewProvider(getViewFactory());
 
         policies = provideChannelPolicies();
-        chatterProvider = createChatterProvider(provideChatterFactory());
+        chatterProvider = createChatterProvider(provideChatterFactory(viewProvider));
         channelRepository = provideChannelRepository();
 
         channelInteractor = new ChannelInteractorImpl().channelRepository(channelRepository).chatterProvider(chatterProvider).canJoinChannel(policies);
@@ -148,7 +148,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
         return simpleViewProvider(viewFactory);
     }
 
-    protected abstract ChatterFactory provideChatterFactory();
+    protected abstract ChatterFactory provideChatterFactory(final ViewProvider viewProvider);
 
     @ApiStatus.OverrideOnly
     protected ChannelRepository provideChannelRepository() {

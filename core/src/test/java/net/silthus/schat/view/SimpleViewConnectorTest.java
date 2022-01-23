@@ -19,6 +19,7 @@
 
 package net.silthus.schat.view;
 
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.message.Message;
@@ -35,6 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class SimpleViewConnectorTest {
 
+    private final @NonNull Display display = render -> this.renderedView = render;
     private SimpleViewConnector connector;
     private ChatterMock chatter;
     private Component renderedView;
@@ -42,10 +44,9 @@ class SimpleViewConnectorTest {
     @BeforeEach
     void setUp() {
         connector = ViewConnector.createSimpleViewConnector(
-            new LastMessageViewProviderStub(),
-            (context, renderedView) -> this.renderedView = renderedView
+            new LastMessageViewProviderStub()
         );
-        chatter = chatterMock(builder -> builder.viewConnector(connector));
+        chatter = chatterMock(builder -> builder.viewConnector(connector).display(display));
     }
 
     @NotNull
@@ -60,7 +61,7 @@ class SimpleViewConnectorTest {
     }
 
     private void callUpdate() {
-        connector.update(of(chatter));
+        connector.update(of(chatter, display));
     }
 
     @Nested class update {

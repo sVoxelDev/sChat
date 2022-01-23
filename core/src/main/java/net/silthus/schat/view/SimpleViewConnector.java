@@ -26,17 +26,15 @@ import net.silthus.schat.chatter.Chatter;
 final class SimpleViewConnector implements ViewConnector {
 
     private final ViewProvider viewProvider;
-    private final Display display;
 
-    SimpleViewConnector(ViewProvider viewProvider, Display display) {
+    SimpleViewConnector(ViewProvider viewProvider) {
         this.viewProvider = viewProvider;
-        this.display = display;
     }
 
     @Override
     public void update(@NonNull Context context) {
         final Chatter chatter = context.chatter();
         final Component render = viewProvider.getView(chatter).render();
-        display.display(chatter, render);
+        context.display().display(render);
     }
 }

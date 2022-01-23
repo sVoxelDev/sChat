@@ -20,12 +20,11 @@
 package net.silthus.schat.view;
 
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.chatter.Chatter;
 
 public interface Display {
     static Display empty() {
-        return (chatter, renderedView) -> {};
+        return renderedView -> {};
     }
 
-    void display(Chatter chatter, Component renderedView);
+    void display(Component renderedView);
 }

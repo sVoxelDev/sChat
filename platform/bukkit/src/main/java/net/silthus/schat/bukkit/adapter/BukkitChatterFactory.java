@@ -19,45 +19,44 @@
 
 package net.silthus.schat.bukkit.adapter;
 
+import java.util.Optional;
 import java.util.UUID;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterFactory;
+import net.silthus.schat.identity.Identity;
+import net.silthus.schat.view.Display;
 import net.silthus.schat.view.ViewProvider;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.bukkit.adapter.BukkitIdentityAdapter.identity;
-import static net.silthus.schat.chatter.Chatter.chatter;
-import static net.silthus.schat.view.ViewConnector.createSimpleViewConnector;
 import static org.bukkit.Bukkit.getOfflinePlayer;
 
-public final class BukkitChatterFactory implements ChatterFactory {
+public final class BukkitChatterFactory extends ChatterFactory {
 
     private final BukkitAudiences audiences;
-    private final ViewProvider viewProvider;
 
     public BukkitChatterFactory(BukkitAudiences audiences, ViewProvider viewProvider) {
+        super(viewProvider);
         this.audiences = audiences;
-        this.viewProvider = viewProvider;
     }
 
     @Override
-    public Chatter createChatter(UUID id) {
-        return chatter(identity(getOfflinePlayer(id)))
-            .viewConnector(createSimpleViewConnector(
-                viewProvider,
-                (chatter, renderedView) -> display(id, renderedView)
-            ))
-            .permissionHandler(permission -> {
-                final Player player = Bukkit.getPlayer(id);
-                return player != null && player.hasPermission(permission);
-            })
-            .create();
+    @NotNull
+    protected Identity getIdentity(UUID id) {
+        return identity(getOfflinePlayer(id));
     }
 
-    private void display(UUID id, Component renderedView) {
-        audiences.player(id).sendMessage(renderedView);
+    @Override
+    protected Chatter.PermissionHandler getPermissionHandler(UUID id) {
+        return permission -> Optional.ofNullable(Bukkit.getPlayer(id))
+            .map(player -> player.hasPermission(permission))
+            .orElse(false);
+    }
+
+    @Override
+    protected Display getDisplay(UUID id) {
+        return renderedView -> audiences.player(id).sendMessage(renderedView);
     }
 }

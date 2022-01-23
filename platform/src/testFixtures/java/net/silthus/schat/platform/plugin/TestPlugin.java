@@ -21,14 +21,15 @@ package net.silthus.schat.platform.plugin;
 
 import cloud.commandframework.CommandManager;
 import net.silthus.schat.chatter.ChatterFactory;
+import net.silthus.schat.chatter.ChatterFactoryStub;
 import net.silthus.schat.platform.commands.Command;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.listener.ChatListener;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.platform.sender.Sender;
+import net.silthus.schat.view.ViewProvider;
 
-import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.platform.commands.CommandTestUtils.createCommandManager;
 import static net.silthus.schat.platform.config.TestConfigurationAdapter.testConfigAdapter;
 import static net.silthus.schat.platform.sender.SenderMock.senderMock;
@@ -54,8 +55,8 @@ public class TestPlugin extends AbstractSChatPlugin {
     }
 
     @Override
-    protected ChatterFactory provideChatterFactory() {
-        return id -> randomChatter();
+    protected ChatterFactory provideChatterFactory(final ViewProvider viewProvider) {
+        return new ChatterFactoryStub(viewProvider);
     }
 
     @Override
