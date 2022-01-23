@@ -116,5 +116,7 @@ subprojects {
         newLine = true
     }
 
+    tasks.build.dependsOn(updateLicenses)
+
     defaultTasks 'licenseFormat', 'build'
 }
