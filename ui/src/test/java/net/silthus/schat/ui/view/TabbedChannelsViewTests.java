@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.ui.views;
+package net.silthus.schat.ui.view;
 
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
@@ -41,8 +41,8 @@ import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
-import static net.silthus.schat.ui.ViewModel.of;
-import static net.silthus.schat.ui.views.Views.tabbedChannels;
+import static net.silthus.schat.ui.model.ChatterViewModel.of;
+import static net.silthus.schat.ui.view.Views.tabbedChannels;
 import static net.silthus.schat.view.View.ACTIVE_CHANNEL_FORMAT;
 import static net.silthus.schat.view.View.CHANNEL_JOIN_CONFIG;
 import static net.silthus.schat.view.View.MESSAGE_SOURCE_FORMAT;
@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TabbedChannelsViewTests {
 
-    private static final @NotNull MiniMessage COMPONENT_SERIALIZER = MiniMessage.miniMessage();
+    private static final @NotNull MiniMessage COMPONENT_SERIALIZER = MiniMessage.get();
     private Chatter chatter;
     private View view;
 
@@ -185,7 +185,7 @@ class TabbedChannelsViewTests {
 
                 @Test
                 void uses_custom_format() {
-                    assertViewRenders("| <green><underlined>test</underlined></green> |");
+                    assertViewRenders("| <green><underlined>test</green></underlined> |");
                 }
             }
         }

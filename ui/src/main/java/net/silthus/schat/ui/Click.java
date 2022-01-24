@@ -19,16 +19,13 @@
 
 package net.silthus.schat.ui;
 
-import lombok.NonNull;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.ui.model.ChatterViewModel;
-import net.silthus.schat.ui.view.Views;
-import net.silthus.schat.view.View;
-import net.silthus.schat.view.ViewProvider;
+import net.kyori.adventure.text.event.ClickEvent;
 
-public class ViewProviderStub implements ViewProvider {
-    @Override
-    public View getView(@NonNull Chatter chatter) {
-        return Views.tabbedChannels(ChatterViewModel.of(chatter));
+@FunctionalInterface
+public interface Click<T> {
+
+    ClickEvent onClick(T type);
+
+    interface Channel extends Click<net.silthus.schat.channel.Channel> {
     }
 }

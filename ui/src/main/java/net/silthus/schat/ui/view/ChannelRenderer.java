@@ -17,18 +17,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.ui;
+package net.silthus.schat.ui.view;
 
-import lombok.NonNull;
-import net.silthus.schat.chatter.Chatter;
+import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.pointer.Configured;
+import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.ui.model.ChatterViewModel;
-import net.silthus.schat.ui.view.Views;
-import net.silthus.schat.view.View;
-import net.silthus.schat.view.ViewProvider;
 
-public class ViewProviderStub implements ViewProvider {
-    @Override
-    public View getView(@NonNull Chatter chatter) {
-        return Views.tabbedChannels(ChatterViewModel.of(chatter));
+@Getter
+public class ChannelRenderer implements Configured {
+    private final ChatterViewModel viewModel;
+    private final Settings settings;
+
+    // TODO: change to channel view model
+    ChannelRenderer(ChatterViewModel viewModel, Settings settings) {
+        this.viewModel = viewModel;
+        this.settings = settings;
+    }
+
+    public Component renderChannel(Channel channel) {
+        if (viewModel.isActiveChannel(channel))
+            return get(TabbedChannelsView.ACTIVE_CHANNEL_FORMAT).format(channel.getDisplayName());
+        else
+            return channel.getDisplayName();
     }
 }
