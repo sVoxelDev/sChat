@@ -17,22 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.ui.views;
+package net.silthus.schat.ui.view;
 
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
-import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.pointer.Settings;
-import net.silthus.schat.ui.ViewModel;
+import net.silthus.schat.ui.model.ChatterViewModel;
 import net.silthus.schat.view.View;
 import org.jetbrains.annotations.NotNull;
 
-import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.join;
 import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
@@ -42,11 +40,13 @@ import static net.silthus.schat.pointer.Settings.createSettings;
 @Getter
 final class TabbedChannelsView implements View {
 
-    private final ViewModel viewModel;
+    private final ChatterViewModel viewModel;
     private final Settings settings = createSettings();
+    private final ChannelRenderer channelRenderer;
 
-    TabbedChannelsView(@NonNull ViewModel viewModel) {
+    TabbedChannelsView(ChatterViewModel viewModel) {
         this.viewModel = viewModel;
+        channelRenderer = new ChannelRenderer(viewModel, getSettings());
     }
 
     @Override
@@ -83,7 +83,7 @@ final class TabbedChannelsView implements View {
 
     private Component renderChannels() {
         if (viewModel.getChannels().isEmpty())
-            return empty();
+            return Component.empty();
         else
             return join(get(CHANNEL_JOIN_CONFIG), getRenderedChannels());
     }
@@ -104,22 +104,15 @@ final class TabbedChannelsView implements View {
         if (message.hasSource())
             return get(MESSAGE_SOURCE_FORMAT).format(message.source().getDisplayName());
         else
-            return empty();
+            return Component.empty();
     }
 
     private List<Component> getRenderedChannels() {
         final ArrayList<Component> channels = new ArrayList<>();
         for (final Channel channel : viewModel.getChannels()) {
-            channels.add(renderChannel(channel));
+            channels.add(channelRenderer.renderChannel(channel));
         }
         return channels;
-    }
-
-    private Component renderChannel(Channel channel) {
-        if (viewModel.isActiveChannel(channel))
-            return get(ACTIVE_CHANNEL_FORMAT).format(channel.getDisplayName());
-        else
-            return channel.getDisplayName();
     }
 
 }

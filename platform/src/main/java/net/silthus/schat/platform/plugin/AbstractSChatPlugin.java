@@ -54,8 +54,8 @@ import static net.silthus.schat.platform.commands.parser.ChannelArgument.registe
 import static net.silthus.schat.platform.commands.parser.ChatterArgument.registerChatterArgument;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 import static net.silthus.schat.platform.locale.Presenter.defaultPresenter;
-import static net.silthus.schat.ui.ViewModel.of;
-import static net.silthus.schat.ui.views.Views.tabbedChannels;
+import static net.silthus.schat.ui.model.ChatterViewModel.of;
+import static net.silthus.schat.ui.view.Views.tabbedChannels;
 import static net.silthus.schat.view.ViewProvider.simpleViewProvider;
 
 @Getter

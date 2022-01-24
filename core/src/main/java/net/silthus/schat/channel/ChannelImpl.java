@@ -43,14 +43,12 @@ final class ChannelImpl implements Channel {
     private static final String VALID_KEY_PATTERN = "^[a-zA-Z0-9_-]+$";
 
     private final String key;
-    private final Component displayName;
     private final Settings settings;
     private final Set<MessageTarget> targets = new HashSet<>();
 
     private ChannelImpl(Builder builder) {
         this.key = builder.key;
-        this.displayName = builder.displayName;
-        this.settings = builder.settings.create();
+        this.settings = builder.settings.withStatic(DISPLAY_NAME, builder.displayName).create();
     }
 
     @Override
@@ -84,7 +82,6 @@ final class ChannelImpl implements Channel {
         Builder(String key) {
             if (isInvalidKey(key))
                 throw new InvalidKey();
-
             this.key = key;
             this.displayName = text(key);
         }
