@@ -40,7 +40,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.channel.Channel.PRIORITY;
 import static net.silthus.schat.channel.Channel.createChannel;
@@ -49,11 +49,11 @@ import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static net.silthus.schat.ui.model.ChatterViewModel.of;
-import static net.silthus.schat.ui.views.Views.tabbedChannels;
+import static net.silthus.schat.ui.view.View.VIEW_HEIGHT;
 import static net.silthus.schat.ui.views.TabbedChannelsView.ACTIVE_CHANNEL_FORMAT;
 import static net.silthus.schat.ui.views.TabbedChannelsView.CHANNEL_JOIN_CONFIG;
 import static net.silthus.schat.ui.views.TabbedChannelsView.MESSAGE_FORMAT;
-import static net.silthus.schat.ui.view.View.VIEW_HEIGHT;
+import static net.silthus.schat.ui.views.Views.tabbedChannels;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -72,24 +72,24 @@ class TabbedChannelsViewTests {
     }
 
     @NotNull
-    private String text(Message message) {
+    private String msgText(Message message) {
         return COMPONENT_SERIALIZER.serialize(message.text());
     }
 
     @SneakyThrows
     @NotNull
-    private Message addMessage(Message message) {
+    private Message sendMessage(Message message) {
         chatter.sendMessage(message);
         Thread.sleep(1L); // required to order messages by time
         return message;
     }
 
-    private void addMessage(String text) {
-        addMessage(Message.message(text));
+    private void sendMessage(String text) {
+        sendMessage(Message.message(text).create());
     }
 
-    private void addMessageWithSource(String source, String text) {
-        addMessage(Message.message(text).source(Identity.identity(source)));
+    private void sendMessageWithSource(String source, String text) {
+        sendMessage(Message.message(text).source(Identity.identity(source)).create());
     }
 
     private void assertTextRenders(String expected) {
@@ -121,8 +121,8 @@ class TabbedChannelsViewTests {
 
         @Test
         void renders_message_text() {
-            final Message message = addMessage(randomMessage());
-            assertTextRenders(text(message));
+            final Message message = sendMessage(randomMessage());
+            assertTextRenders(msgText(message));
         }
     }
 
@@ -130,7 +130,7 @@ class TabbedChannelsViewTests {
 
         @BeforeEach
         void setUp() {
-            addMessageWithSource("Bob", "Hi");
+            sendMessageWithSource("Bob", "Hi");
         }
 
         @Test
@@ -157,8 +157,8 @@ class TabbedChannelsViewTests {
 
         @Test
         void renders_both_messages() {
-            addMessage("Hey");
-            addMessageWithSource("Silthus", "Yo");
+            sendMessage("Hey");
+            sendMessageWithSource("Silthus", "Yo");
             assertTextRenders("""
             Hey
             Silthus: Yo"""
@@ -182,7 +182,6 @@ class TabbedChannelsViewTests {
         }
 
         @Nested class when_it_is_active {
-
             @BeforeEach
             void setUp() {
                 chatter.setActiveChannel(channel);
@@ -190,20 +189,27 @@ class TabbedChannelsViewTests {
 
             @Test
             void underlines_channel() {
-                assertViewRenders("| <green><underlined>test</green></underlined> |");
+                assertViewRenders("| <green><underlined>test</underlined></green> |");
             }
 
             @Nested class and_different_format_is_used {
                 @BeforeEach
                 void setUp() {
                     view = tabbedChannels(of(chatter))
-                        .set(ACTIVE_CHANNEL_FORMAT, component -> ACTIVE_CHANNEL_FORMAT.getDefaultValue().format(component).color(GREEN));
+                        .set(ACTIVE_CHANNEL_FORMAT, channel -> ACTIVE_CHANNEL_FORMAT.getDefaultValue().format(channel).color(RED));
                 }
 
                 @Test
                 void uses_custom_format() {
-                    assertViewRenders("| <green><underlined>test</green></underlined> |");
+                    assertViewRenders("| <red><underlined>test</underlined></red> |");
                 }
+            }
+        }
+
+        @Nested class when_it_is_inactive {
+            @Test
+            void then_channel_click_executes_join_command() {
+                assertViewRenders("| <gray><click:run_command:\"/channel join test\">test</click></gray> |");
             }
         }
     }
@@ -254,9 +260,9 @@ class TabbedChannelsViewTests {
         void setUp() {
             chatter.join(createChannel("aaa"));
             chatter.setActiveChannel(channelWith("zzz", set(PRIORITY, 10)));
-            addMessage("No Source!");
-            addMessageWithSource("Player", "Hey");
-            addMessageWithSource("Player2", "Hello");
+            sendMessage("No Source!");
+            sendMessageWithSource("Player", "Hey");
+            sendMessageWithSource("Player2", "Hello");
         }
 
         @Test
@@ -265,7 +271,7 @@ class TabbedChannelsViewTests {
                 No Source!
                 Player: Hey
                 Player2: Hello
-                | <green><underlined>zzz</green></underlined> | <gray>aaa</gray> |""");
+                | <green><underlined>zzz</underlined></green> | <gray><click:run_command:"/channel join aaa">aaa</click></gray> |""");
         }
     }
 

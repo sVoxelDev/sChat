@@ -69,7 +69,7 @@ public final class ChatPacketListener extends AbstractPacketListener<Chat> {
         if (view.isRenderedView(packet))
             return;
 
-        message(packet).type(Message.Type.SYSTEM).send(messenger);
+        message(packet).type(Message.Type.SYSTEM).send();
         event.cancelled(true);
     }
 

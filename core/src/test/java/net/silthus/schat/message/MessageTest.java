@@ -42,15 +42,17 @@ import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomText;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-class MessageTest implements Messenger {
+class MessageTest {
 
     private boolean processCalled = false;
     private boolean deliverCalled = false;
 
     @Test
     void has_unique_id() {
-        final Message message = message();
+        final Message.Draft message = message();
         assertThat(message.id()).isNotNull();
         assertThat(message.id()).isNotEqualTo(message().id());
     }
@@ -58,8 +60,8 @@ class MessageTest implements Messenger {
     @Test
     void given_same_id_are_equal() {
         final UUID id = UUID.randomUUID();
-        final Message message = message().id(id).send(this);
-        final Message message2 = message().id(id).send(this);
+        final Message message = message().id(id).send();
+        final Message message2 = message().id(id).send();
         assertThat(message).isEqualTo(message2);
     }
 
@@ -98,34 +100,22 @@ class MessageTest implements Messenger {
         assertThat(message().text(text).text()).isEqualTo(text);
     }
 
-    @Test
-    @SuppressWarnings("ConstantConditions")
-    void send_given_null_messenger_throws_npe() {
-        assertNPE(() -> message().send(null));
-    }
+    @Nested class send {
 
-    @Test
-    void send_calls_process_on_messenger() {
-        message().send(this);
-        assertThat(processCalled).isTrue();
-    }
+        @Test
+        void creates_message() {
+            final Message message = message().send();
+            assertThat(message)
+                .isNotNull()
+                .isInstanceOf(MessageImpl.class);
+        }
 
-    @Test
-    void send_creates_message() {
-        final Message message = message().send(this);
-        assertThat(message).isNotNull();
-    }
-
-    @Test
-    void given_process_returns_different_message_then_send_uses_returned_processed_message() {
-        final Message message = message().send(new ProcessedMessageMessengerStub());
-        assertThat(message.id()).isEqualTo(ProcessedMessageMessengerStub.STUB_ID);
-    }
-
-    @Test
-    void send_calls_deliver_on_messenger() {
-        message().send(this);
-        assertThat(deliverCalled).isTrue();
+        @Test
+        void delivers_message_to_all_targets() {
+            MessageTarget target = mock(MessageTarget.class);
+            Message message = message().to(target).send();
+            verify(target).sendMessage(message);
+        }
     }
 
     @Test
@@ -166,16 +156,5 @@ class MessageTest implements Messenger {
         Channel channel = randomChannel();
         Message.Draft message = message().to(channel);
         assertThat(message.channels()).contains(channel);
-    }
-
-    @Override
-    public Message.Draft process(Message.Draft message) {
-        processCalled = true;
-        return message;
-    }
-
-    @Override
-    public void deliver(Message message) {
-        deliverCalled = true;
     }
 }

@@ -81,8 +81,8 @@ class MessengerTests {
 
             @Test
             void then_message_is_returned_by_deliver() {
-                Message message = draft.build();
-                assertThat(draft.send(messenger)).isEqualTo(message);
+                Message message = draft.create();
+                assertThat(draft.send()).isEqualTo(message);
             }
 
             @Nested class given_one_target {
@@ -97,7 +97,7 @@ class MessengerTests {
 
                 @Test
                 void then_sends_message_to_target() {
-                    draft.send(messenger);
+                    draft.send();
                     assertThat(sendMessageCalled).isTrue();
                 }
             }

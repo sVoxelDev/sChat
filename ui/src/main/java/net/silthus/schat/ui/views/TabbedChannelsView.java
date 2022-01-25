@@ -34,6 +34,7 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.pointer.Settings;
+import net.silthus.schat.ui.Click;
 import net.silthus.schat.ui.format.Format;
 import net.silthus.schat.ui.model.ChatterViewModel;
 import net.silthus.schat.ui.view.View;
@@ -43,9 +44,12 @@ import static net.kyori.adventure.text.Component.join;
 import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.JoinConfiguration.newlines;
+import static net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND;
+import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
+import static net.silthus.schat.identity.Identity.IS_NOT_NIL;
 import static net.silthus.schat.pointer.Setting.setting;
 import static net.silthus.schat.pointer.Settings.createSettings;
 
@@ -56,9 +60,13 @@ public final class TabbedChannelsView implements View {
         channel.getOrDefault(Channel.DISPLAY_NAME, Component.empty())
             .decorate(UNDERLINED)
             .colorIfAbsent(GREEN));
+
     public static final Setting<Format.Pointered> INACTIVE_CHANNEL_FORMAT = setting(Format.Pointered.class, "inactive_channel", channel ->
         channel.getOrDefault(Channel.DISPLAY_NAME, Component.empty())
             .colorIfAbsent(GRAY));
+    public static final Setting<Click.Channel> INACTIVE_CHANNEL_CLICK = setting(Click.Channel.class, "inactive_click", channel ->
+        clickEvent(RUN_COMMAND, "/channel join " + channel.getOrDefault(Channel.KEY, null)));
+
     public static final Setting<JoinConfiguration> CHANNEL_JOIN_CONFIG = setting(JoinConfiguration.class, "channel_join_config", JoinConfiguration.builder()
         .prefix(text("| "))
         .separator(text(" | "))
@@ -66,6 +74,7 @@ public final class TabbedChannelsView implements View {
         .build());
     public static final Setting<Format.Pointered> MESSAGE_FORMAT = setting(Format.Pointered.class, "message", msg ->
         msg.get(Message.SOURCE)
+            .filter(IS_NOT_NIL)
             .map(identity -> identity.getDisplayName().append(text(": ")))
             .orElse(Component.empty())
             .append(msg.getOrDefault(Message.TEXT, Component.empty())));
@@ -119,13 +128,9 @@ public final class TabbedChannelsView implements View {
     private List<Component> getRenderedMessages() {
         final ArrayList<Component> messages = new ArrayList<>();
         for (final Message message : viewModel.getMessages()) {
-            messages.add(renderMessage(message));
+            messages.add(get(MESSAGE_FORMAT).format(message));
         }
         return messages;
-    }
-
-    private Component renderMessage(Message message) {
-        return get(MESSAGE_FORMAT).format(message);
     }
 
     private List<Component> getRenderedChannels() {
@@ -134,7 +139,7 @@ public final class TabbedChannelsView implements View {
             if (viewModel.isActiveChannel(channel))
                 channels.add(get(ACTIVE_CHANNEL_FORMAT).format(channel));
             else
-                channels.add(get(INACTIVE_CHANNEL_FORMAT).format(channel));
+                channels.add(get(INACTIVE_CHANNEL_FORMAT).format(channel).clickEvent(get(INACTIVE_CHANNEL_CLICK).onClick(channel)));
         }
         return channels;
     }
