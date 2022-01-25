@@ -23,6 +23,6 @@ package net.silthus.schat.view;
 public interface Format<T> {
     net.kyori.adventure.text.Component format(T type);
 
-    interface Component extends Format<net.kyori.adventure.text.Component> {
+    interface Pointered extends Format<net.silthus.schat.pointer.Pointered> {
     }
 }

@@ -34,7 +34,7 @@ public interface Configured extends Pointered {
 
     @Override
     default @NotNull Pointers getPointers() {
-        return Pointered.super.getPointers();
+        return getSettings();
     }
 
     /**

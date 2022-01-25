@@ -47,7 +47,7 @@ import static net.silthus.schat.ui.model.ChatterViewModel.of;
 import static net.silthus.schat.ui.view.Views.tabbedChannels;
 import static net.silthus.schat.view.View.ACTIVE_CHANNEL_FORMAT;
 import static net.silthus.schat.view.View.CHANNEL_JOIN_CONFIG;
-import static net.silthus.schat.view.View.MESSAGE_SOURCE_FORMAT;
+import static net.silthus.schat.view.View.MESSAGE_FORMAT;
 import static net.silthus.schat.view.View.VIEW_HEIGHT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -138,7 +138,7 @@ class TabbedChannelsViewTests {
             @Test
             void uses_format() {
                 view = tabbedChannels(of(chatter))
-                    .set(MESSAGE_SOURCE_FORMAT, component -> Component.text("<").append(component).append(Component.text("> ")));
+                    .set(MESSAGE_FORMAT, msg -> Component.text("<").append(msg.source().getDisplayName()).append(Component.text("> ").append(msg.text())));
                 assertTextRenders("<Bob> Hi");
             }
         }

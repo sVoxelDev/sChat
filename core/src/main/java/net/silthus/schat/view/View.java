@@ -23,6 +23,7 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.message.Message;
 import net.silthus.schat.pointer.Configured;
 import net.silthus.schat.pointer.Setting;
 
@@ -38,14 +39,14 @@ public interface View extends Configured.Modifiable<View> {
     Component VIEW_MARKER = net.kyori.adventure.text.Component.storageNBT(VIEW_MARKER_KEY.asString(), VIEW_MARKER_KEY);
 
     Setting<Integer> VIEW_HEIGHT = setting(Integer.class, "format.height", 100); // minecraft chat box height in lines
-    Setting<Channel.Format> ACTIVE_CHANNEL_FORMAT = setting(Channel.Format.class, "format.active_channel", c -> c.getDisplayName().decorate(UNDERLINED).colorIfAbsent(GREEN));
-    Setting<Channel.Format> INACTIVE_CHANNEL_FORMAT = setting(Channel.Format.class, "format.inactive_channel", c -> c.getDisplayName().colorIfAbsent(GRAY));
+    Setting<Format.Pointered> ACTIVE_CHANNEL_FORMAT = setting(Format.Pointered.class, "format.active_channel", c -> c.getOrDefault(Channel.DISPLAY_NAME, Component.empty()).decorate(UNDERLINED).colorIfAbsent(GREEN));
+    Setting<Format.Pointered> INACTIVE_CHANNEL_FORMAT = setting(Format.Pointered.class, "format.inactive_channel", c -> c.getOrDefault(Channel.DISPLAY_NAME, Component.empty()).colorIfAbsent(GRAY));
     Setting<JoinConfiguration> CHANNEL_JOIN_CONFIG = setting(JoinConfiguration.class, "format.channel_join_config", JoinConfiguration.builder()
         .prefix(text("| "))
         .separator(text(" | "))
         .suffix(text(" |"))
         .build());
-    Setting<Format.Component> MESSAGE_SOURCE_FORMAT = setting(Format.Component.class, "format.message_source", name -> name.append(text(": ")));
+    Setting<Message.Format> MESSAGE_FORMAT = setting(Message.Format.class, "format.message", msg -> msg.hasSource() ? msg.source().getDisplayName().append(text(": ").append(msg.text())) : msg.text());
 
     static View empty() {
         return net.kyori.adventure.text.Component::empty;

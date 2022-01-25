@@ -95,14 +95,7 @@ final class TabbedChannelsView implements View {
     }
 
     private Component renderMessage(Message message) {
-        return source(message).append(message.text());
-    }
-
-    private Component source(Message message) {
-        if (message.hasSource())
-            return get(MESSAGE_SOURCE_FORMAT).format(message.source().getDisplayName());
-        else
-            return Component.empty();
+        return get(MESSAGE_FORMAT).format(message);
     }
 
     private List<Component> getRenderedChannels() {
