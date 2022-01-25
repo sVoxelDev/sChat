@@ -40,6 +40,6 @@ public final class MessageHelper {
     }
 
     public static Message randomMessage() {
-        return message(randomText());
+        return message(randomText()).create();
     }
 }

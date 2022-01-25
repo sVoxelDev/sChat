@@ -59,14 +59,16 @@ class ChatterViewModelTests {
 
     @SneakyThrows
     @NotNull
-    private Message.Draft createMessage() {
+    private Message.Draft message() {
         final Message.Draft one = Message.message().to(chatter);
         Thread.sleep(1L);
         return one;
     }
 
-    private void sendMessage(Message message) {
+    private Message sendMessage(Message.Draft draft) {
+        Message message = draft.create();
         chatter.sendMessage(message);
+        return message;
     }
 
     @Nested class given_empty_view_model {
@@ -88,10 +90,10 @@ class ChatterViewModelTests {
 
         @BeforeEach
         void setUp() {
-            one = createMessage();
-            two = createMessage();
-            sendMessage(two);
-            sendMessage(one);
+            Message.Draft draftOne = message();
+            Message.Draft draftTwo = message();
+            two = sendMessage(draftTwo);
+            one = sendMessage(draftOne);
         }
 
         @Test
@@ -104,13 +106,12 @@ class ChatterViewModelTests {
 
         @Nested class given_message_sent_to_channel {
             private Channel channel;
-            private Message.Draft message;
+            private Message message;
 
             @BeforeEach
             void setUp() {
                 channel = randomChannel();
-                message = createMessage().to(channel);
-                sendMessage(message);
+                message = sendMessage(message().to(channel));
             }
 
             @Nested class given_channel_is_inactive {

@@ -61,6 +61,6 @@ public class ChatListener implements OnChat {
         final Optional<Channel> channel = chatter.getActiveChannel();
         if (channel.isEmpty())
             throw new NoActiveChannel();
-        return message(text).source(chatter).to(channel.get()).type(Message.Type.CHAT).send(messenger);
+        return message(text).source(chatter).to(channel.get()).type(Message.Type.CHAT).send();
     }
 }

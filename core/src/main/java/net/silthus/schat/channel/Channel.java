@@ -28,6 +28,7 @@ import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.pointer.Configured;
+import net.silthus.schat.pointer.Pointer;
 import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.repository.Entity;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +36,9 @@ import org.jetbrains.annotations.Unmodifiable;
 
 public sealed interface Channel extends Entity<String>, Configured.Modifiable<Channel>, Comparable<Channel> permits ChannelImpl {
 
+    Pointer<String> KEY = Pointer.pointer(String.class, "key");
     Setting<Component> DISPLAY_NAME = Setting.setting(Component.class, "name", Component.empty());
+
     /**
      * The priority of the channel may determine the position in the view.
      *

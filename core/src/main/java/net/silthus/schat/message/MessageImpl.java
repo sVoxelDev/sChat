@@ -25,6 +25,8 @@
 package net.silthus.schat.message;
 
 import java.time.Instant;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -39,6 +41,7 @@ import net.silthus.schat.identity.Identity;
 import net.silthus.schat.pointer.Pointers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
 @Getter
 @Accessors(fluent = true)
@@ -73,6 +76,17 @@ final class MessageImpl implements Message {
             .withStatic(Message.TEXT, text)
             .withStatic(Message.TYPE, type)
             .create();
+    }
+
+    @Override
+    public @NotNull Pointers getPointers() {
+        return pointers;
+    }
+
+    @Override
+    public @NotNull MessageImpl send() {
+        targets().forEach(target -> target.sendMessage(this));
+        return this;
     }
 
     @Getter
@@ -110,20 +124,29 @@ final class MessageImpl implements Message {
         }
 
         @Override
+        public @NotNull @Unmodifiable Collection<MessageTarget> targets() {
+            return Collections.unmodifiableCollection(targets);
+        }
+
+        @Override
         public @NotNull Draft to(@NonNull Channel channel) {
             this.channels.add(channel);
             this.targets.addAll(channel.getTargets());
             return this;
         }
 
-        public @NotNull Message send(@NonNull Messenger messenger) {
-            final Draft draft = messenger.process(this);
-            final Message message = ((MessageImpl.Draft) draft).build();
-            messenger.deliver(message);
-            return message;
+        @Override
+        public @NotNull @Unmodifiable Collection<Channel> channels() {
+            return Collections.unmodifiableCollection(channels);
         }
 
-        Message build() {
+        @Override
+        public @NotNull Message send() {
+            return create().send();
+        }
+
+        @Override
+        public @NotNull MessageImpl create() {
             return new MessageImpl(this);
         }
     }

@@ -25,6 +25,7 @@
 package net.silthus.schat.message;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 import lombok.NonNull;
@@ -41,7 +42,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import static java.util.Comparator.comparing;
 import static net.silthus.schat.pointer.Pointer.pointer;
 
-public sealed interface Message extends Comparable<Message>, Pointered permits Message.Draft, MessageImpl {
+public sealed interface Message extends Comparable<Message>, Pointered permits MessageImpl {
 
     Pointer<UUID> ID = pointer(UUID.class, "id");
     Pointer<Instant> TIMESTAMP = pointer(Instant.class, "timestamp");
@@ -67,6 +68,10 @@ public sealed interface Message extends Comparable<Message>, Pointered permits M
 
     @NotNull Identity source();
 
+    default boolean hasSource() {
+        return !source().equals(Identity.nil());
+    }
+
     @NotNull @Unmodifiable Set<Channel> channels();
 
     @NotNull @Unmodifiable Set<MessageTarget> targets();
@@ -75,9 +80,7 @@ public sealed interface Message extends Comparable<Message>, Pointered permits M
 
     @NotNull Type type();
 
-    default boolean hasSource() {
-        return !source().equals(Identity.nil());
-    }
+    @NotNull Message send();
 
     @Override
     default int compareTo(@NotNull Message o) {
@@ -85,11 +88,17 @@ public sealed interface Message extends Comparable<Message>, Pointered permits M
             .compare(this, o);
     }
 
-    sealed interface Draft extends Message permits MessageImpl.Draft {
+    sealed interface Draft permits MessageImpl.Draft {
+
+        @NotNull UUID id();
 
         @NotNull Draft id(@NonNull UUID id);
 
+        @NotNull Instant timestamp();
+
         @NotNull Draft timestamp(@NonNull Instant timestamp);
+
+        @NotNull Identity source();
 
         @NotNull Draft source(@Nullable Identity identity);
 
@@ -99,13 +108,23 @@ public sealed interface Message extends Comparable<Message>, Pointered permits M
 
         @NotNull Draft to(@NonNull MessageTarget target);
 
+        @NotNull @Unmodifiable Collection<MessageTarget> targets();
+
         @NotNull Draft to(@NonNull Channel channel);
+
+        @NotNull @Unmodifiable Collection<Channel> channels();
+
+        @NotNull Component text();
 
         @NotNull Draft text(@Nullable Component text);
 
+        @NotNull Type type();
+
         @NotNull Draft type(@NonNull Type type);
 
-        @NotNull Message send(@NonNull Messenger messenger);
+        @NotNull Message send();
+
+        @NotNull Message create();
     }
 
     enum Type {

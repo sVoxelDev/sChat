@@ -25,6 +25,7 @@
 package net.silthus.schat.identity;
 
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
@@ -44,6 +45,9 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
     Pointer<UUID> ID = pointer(UUID.class, "id");
     Pointer<String> NAME = pointer(String.class, "name");
     Pointer<Component> DISPLAY_NAME = pointer(Component.class, "display_name");
+
+    Predicate<Identity> IS_NIL = identity -> nil().equals(identity);
+    Predicate<Identity> IS_NOT_NIL = IS_NIL.negate();
 
     /**
      * Gets a {@code nil} identity.

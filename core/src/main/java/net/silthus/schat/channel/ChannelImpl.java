@@ -53,7 +53,10 @@ final class ChannelImpl implements Channel {
 
     private ChannelImpl(Builder builder) {
         this.key = builder.key;
-        this.settings = builder.settings.withStatic(DISPLAY_NAME, builder.displayName).create();
+        this.settings = builder.settings
+            .withStatic(KEY, key)
+            .withStatic(DISPLAY_NAME, builder.displayName)
+            .create();
     }
 
     @Override
