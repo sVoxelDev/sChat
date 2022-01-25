@@ -25,16 +25,16 @@ final class SimpleViewConnector implements ViewConnector {
 
     private final Chatter chatter;
     private final ViewProvider viewProvider;
-    private final Display display;
+    private final Out out;
 
-    SimpleViewConnector(Chatter chatter, ViewProvider viewProvider, Display display) {
+    SimpleViewConnector(Chatter chatter, ViewProvider viewProvider, Out out) {
         this.chatter = chatter;
         this.viewProvider = viewProvider;
-        this.display = display;
+        this.out = out;
     }
 
     @Override
     public void update() {
-        display.display(viewProvider.getView(chatter).render());
+        out.send(viewProvider.getView(chatter).render());
     }
 }

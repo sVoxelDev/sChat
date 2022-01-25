@@ -23,13 +23,13 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import java.util.UUID;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.identity.Identity;
-import net.silthus.schat.view.Display;
+import net.silthus.schat.platform.factories.AbstractChatterFactory;
+import net.silthus.schat.view.ViewConnector;
 import net.silthus.schat.view.ViewProvider;
 import org.jetbrains.annotations.NotNull;
 
-public class VelocityChatterFactory extends ChatterFactory {
+public class VelocityChatterFactory extends AbstractChatterFactory {
 
     private final ProxyServer proxy;
 
@@ -39,27 +39,31 @@ public class VelocityChatterFactory extends ChatterFactory {
     }
 
     @Override
-    protected @NotNull Identity getIdentity(UUID id) {
+    protected @NotNull Identity createIdentity(UUID id) {
         return proxy.getPlayer(id)
             .map(VelocitySenderFactory::identity)
             .orElse(Identity.nil());
     }
 
     @Override
-    protected Chatter.PermissionHandler getPermissionHandler(UUID id) {
+    protected Chatter.PermissionHandler createPermissionHandler(UUID id) {
         return permission -> proxy.getPlayer(id)
             .map(player -> player.hasPermission(permission))
             .orElse(false);
     }
 
     @Override
-    protected Display getDisplay(UUID id) {
-        return proxy.getPlayer(id)
-            .map(this::display)
-            .orElse(Display.empty());
+    protected ViewConnector.Factory createViewConnector(UUID id) {
+        return chatter -> ViewConnector.createSimpleViewConnector(chatter, viewProvider, getViewOut(id));
     }
 
-    private Display display(Player player) {
+    protected ViewConnector.Out getViewOut(UUID id) {
+        return proxy.getPlayer(id)
+            .map(this::display)
+            .orElse(ViewConnector.Out.empty());
+    }
+
+    private ViewConnector.Out display(Player player) {
         return player::sendMessage;
     }
 }
