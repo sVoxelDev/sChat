@@ -100,7 +100,7 @@ public sealed interface Settings extends Pointers permits SettingsImpl {
      * @return the value
      * @since next
      */
-    <V> @NotNull V get(final @NotNull Setting<V> setting);
+    <V> @UnknownNullability V get(final @NotNull Setting<V> setting);
 
     /**
      * Gets the value of {@code setting}.

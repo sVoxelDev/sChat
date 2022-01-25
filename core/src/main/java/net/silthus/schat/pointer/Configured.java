@@ -50,7 +50,7 @@ public interface Configured extends Pointered {
      * @return the value
      * @since next
      */
-    default <V> @NotNull V get(final @NonNull Setting<V> setting) {
+    default <V> @UnknownNullability V get(final @NonNull Setting<V> setting) {
         return this.getSettings().get(setting);
     }
 

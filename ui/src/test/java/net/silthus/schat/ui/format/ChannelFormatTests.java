@@ -22,18 +22,13 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.ui.views;
+package net.silthus.schat.ui.format;
 
-import lombok.NonNull;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.ui.view.View;
+import org.junit.jupiter.api.Test;
 
-public final class Views {
+class ChannelFormatTests {
+    @Test
+    void name_is_rendered() {
 
-    public static View tabbedChannels(@NonNull Chatter chatter) {
-        return new TabbedChannelsView(chatter);
-    }
-
-    private Views() {
     }
 }

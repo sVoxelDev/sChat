@@ -31,10 +31,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.pointer.Settings;
-import net.silthus.schat.ui.Click;
+import net.silthus.schat.ui.format.ChannelFormat;
 import net.silthus.schat.ui.format.Format;
 import net.silthus.schat.ui.model.ChatterViewModel;
 import net.silthus.schat.ui.view.View;
@@ -56,17 +57,6 @@ import static net.silthus.schat.pointer.Settings.createSettings;
 @Getter
 public final class TabbedChannelsView implements View {
 
-    public static final Setting<Format.Pointered> ACTIVE_CHANNEL_FORMAT = setting(Format.Pointered.class, "active_channel", channel ->
-        channel.getOrDefault(Channel.DISPLAY_NAME, Component.empty())
-            .decorate(UNDERLINED)
-            .colorIfAbsent(GREEN));
-
-    public static final Setting<Format.Pointered> INACTIVE_CHANNEL_FORMAT = setting(Format.Pointered.class, "inactive_channel", channel ->
-        channel.getOrDefault(Channel.DISPLAY_NAME, Component.empty())
-            .colorIfAbsent(GRAY));
-    public static final Setting<Click.Channel> INACTIVE_CHANNEL_CLICK = setting(Click.Channel.class, "inactive_click", channel ->
-        clickEvent(RUN_COMMAND, "/channel join " + channel.getOrDefault(Channel.KEY, null)));
-
     public static final Setting<JoinConfiguration> CHANNEL_JOIN_CONFIG = setting(JoinConfiguration.class, "channel_join_config", JoinConfiguration.builder()
         .prefix(text("| "))
         .separator(text(" | "))
@@ -79,11 +69,21 @@ public final class TabbedChannelsView implements View {
             .orElse(Component.empty())
             .append(msg.getOrDefault(Message.TEXT, Component.empty())));
 
+    public static final Setting<Settings> ACTIVE_CHANNEL = setting(Settings.class, "active_channel", Settings.settings()
+        .withStatic(ChannelFormat.COLOR, GREEN)
+        .withStatic(ChannelFormat.DECORATION, UNDERLINED)
+        .create());
+    public static final Setting<Settings> INACTIVE_CHANNEL = setting(Settings.class, "inactive_channel", Settings.settings()
+        .withStatic(ChannelFormat.COLOR, GRAY)
+        .withStatic(ChannelFormat.ON_CLICK, channel ->
+            clickEvent(RUN_COMMAND, "/channel join " + channel.getOrDefault(Channel.KEY, null)))
+        .create());
+
     private final ChatterViewModel viewModel;
     private final Settings settings = createSettings();
 
-    TabbedChannelsView(ChatterViewModel viewModel) {
-        this.viewModel = viewModel;
+    TabbedChannelsView(Chatter chatter) {
+        this.viewModel = ChatterViewModel.of(chatter);
     }
 
     @Override
@@ -137,9 +137,9 @@ public final class TabbedChannelsView implements View {
         final ArrayList<Component> channels = new ArrayList<>();
         for (final Channel channel : viewModel.getChannels()) {
             if (viewModel.isActiveChannel(channel))
-                channels.add(get(ACTIVE_CHANNEL_FORMAT).format(channel));
+                channels.add(new ChannelFormat(get(ACTIVE_CHANNEL)).format(channel));
             else
-                channels.add(get(INACTIVE_CHANNEL_FORMAT).format(channel).clickEvent(get(INACTIVE_CHANNEL_CLICK).onClick(channel)));
+                channels.add(new ChannelFormat(get(INACTIVE_CHANNEL)).format(channel));
         }
         return channels;
     }

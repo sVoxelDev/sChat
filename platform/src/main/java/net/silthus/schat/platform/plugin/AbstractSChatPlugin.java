@@ -35,11 +35,11 @@ import net.silthus.schat.channel.ChannelInteractorImpl;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.message.Messenger;
+import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.config.SChatConfig;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
-import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.listener.ChatListener;
 import net.silthus.schat.platform.locale.Messages;
 import net.silthus.schat.platform.locale.Presenter;
@@ -47,9 +47,9 @@ import net.silthus.schat.platform.locale.TranslationManager;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.policies.Policies;
 import net.silthus.schat.policies.PoliciesImpl;
-import net.silthus.schat.usecases.OnChat;
 import net.silthus.schat.ui.view.ViewFactory;
 import net.silthus.schat.ui.view.ViewProvider;
+import net.silthus.schat.usecases.OnChat;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,9 +59,8 @@ import static net.silthus.schat.platform.commands.parser.ChannelArgument.registe
 import static net.silthus.schat.platform.commands.parser.ChatterArgument.registerChatterArgument;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 import static net.silthus.schat.platform.locale.Presenter.defaultPresenter;
-import static net.silthus.schat.ui.model.ChatterViewModel.of;
-import static net.silthus.schat.ui.views.Views.tabbedChannels;
 import static net.silthus.schat.ui.view.ViewProvider.cachingViewProvider;
+import static net.silthus.schat.ui.views.Views.tabbedChannels;
 
 @Getter
 public abstract class AbstractSChatPlugin implements SChatPlugin {
@@ -145,7 +144,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     @ApiStatus.OverrideOnly
     protected ViewFactory provideViewFactory() {
-        return chatter -> tabbedChannels(of(chatter));
+        return chatter -> tabbedChannels(chatter);
     }
 
     @ApiStatus.OverrideOnly

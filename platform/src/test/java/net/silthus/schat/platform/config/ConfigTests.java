@@ -40,6 +40,7 @@ import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 import static net.silthus.schat.platform.config.TestConfigurationAdapter.testConfigAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
 
+// TODO: add tests for nested settings blocks, e.g. channel -> view -> active_channel
 class ConfigTests {
 
     private SChatConfig config;

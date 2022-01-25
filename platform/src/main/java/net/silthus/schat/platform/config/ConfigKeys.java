@@ -70,7 +70,4 @@ public final class ConfigKeys {
             settings = Settings.createSettings();
         return Channel.channel(key).name(name).settings(settings).create();
     }
-
-    public static final class InvalidConfig extends RuntimeException {
-    }
 }
