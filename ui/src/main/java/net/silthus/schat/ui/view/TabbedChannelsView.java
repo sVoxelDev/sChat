@@ -42,11 +42,9 @@ final class TabbedChannelsView implements View {
 
     private final ChatterViewModel viewModel;
     private final Settings settings = createSettings();
-    private final ChannelRenderer channelRenderer;
 
     TabbedChannelsView(ChatterViewModel viewModel) {
         this.viewModel = viewModel;
-        channelRenderer = new ChannelRenderer(viewModel, getSettings());
     }
 
     @Override
@@ -110,7 +108,10 @@ final class TabbedChannelsView implements View {
     private List<Component> getRenderedChannels() {
         final ArrayList<Component> channels = new ArrayList<>();
         for (final Channel channel : viewModel.getChannels()) {
-            channels.add(channelRenderer.renderChannel(channel));
+            if (viewModel.isActiveChannel(channel))
+                channels.add(get(ACTIVE_CHANNEL_FORMAT).format(channel));
+            else
+                channels.add(get(INACTIVE_CHANNEL_FORMAT).format(channel));
         }
         return channels;
     }
