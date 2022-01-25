@@ -22,18 +22,34 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.ui;
+package net.silthus.schat.chatter;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import lombok.NonNull;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.ui.model.ChatterViewModel;
-import net.silthus.schat.ui.view.View;
-import net.silthus.schat.ui.view.ViewProvider;
-import net.silthus.schat.ui.views.Views;
 
-public class ViewProviderStub implements ViewProvider {
+final class CachedChatterProvider implements ChatterProvider {
+
+    static final ChatterProvider NIL = new NilChatterProvider();
+
+    private final ChatterFactory factory;
+    private final Map<UUID, Chatter> chatters = new HashMap<>();
+
+    CachedChatterProvider(ChatterFactory factory) {
+        this.factory = factory;
+    }
+
     @Override
-    public View getView(@NonNull Chatter chatter) {
-        return Views.tabbedChannels(ChatterViewModel.of(chatter));
+    public Chatter get(@NonNull UUID id) {
+        return chatters.computeIfAbsent(id, uuid -> factory.createChatter(id));
+    }
+
+    static final class NilChatterProvider implements ChatterProvider {
+
+        @Override
+        public Chatter get(@NonNull UUID id) {
+            return Chatter.empty();
+        }
     }
 }

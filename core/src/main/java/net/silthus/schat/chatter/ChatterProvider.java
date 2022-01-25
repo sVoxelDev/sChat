@@ -37,11 +37,11 @@ public interface ChatterProvider {
      * @return the null chatter provider
      */
     static ChatterProvider nil() {
-        return ChatterProviderImpl.NIL;
+        return CachedChatterProvider.NIL;
     }
 
-    static ChatterProvider createChatterProvider(ChatterFactory factory) {
-        return new ChatterProviderImpl(factory);
+    static ChatterProvider createCachingChatterProvider(ChatterFactory factory) {
+        return new CachedChatterProvider(factory);
     }
 
     Chatter get(@NonNull UUID id);

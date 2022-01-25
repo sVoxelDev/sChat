@@ -22,18 +22,41 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.ui;
+package net.silthus.schat.platform.chatter;
 
-import lombok.NonNull;
+import java.util.UUID;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.ui.model.ChatterViewModel;
-import net.silthus.schat.ui.view.View;
+import net.silthus.schat.identity.Identity;
+import net.silthus.schat.view.ViewConnector;
 import net.silthus.schat.ui.view.ViewProvider;
-import net.silthus.schat.ui.views.Views;
+import org.jetbrains.annotations.NotNull;
 
-public class ViewProviderStub implements ViewProvider {
+import static net.silthus.schat.ui.view.ViewFactory.empty;
+import static net.silthus.schat.ui.view.ViewProvider.cachingViewProvider;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+
+public class ChatterFactoryStub extends AbstractChatterFactory {
+
+    public ChatterFactoryStub() {
+        super(cachingViewProvider(empty()));
+    }
+
+    public ChatterFactoryStub(ViewProvider viewProvider) {
+        super(viewProvider);
+    }
+
     @Override
-    public View getView(@NonNull Chatter chatter) {
-        return Views.tabbedChannels(ChatterViewModel.of(chatter));
+    protected @NotNull Identity createIdentity(UUID id) {
+        return Identity.identity(id, randomAlphabetic(10));
+    }
+
+    @Override
+    protected Chatter.PermissionHandler createPermissionHandler(UUID id) {
+        return permission -> false;
+    }
+
+    @Override
+    protected ViewConnector.Factory createViewConnector(UUID id) {
+        return ViewConnector.Factory.empty();
     }
 }

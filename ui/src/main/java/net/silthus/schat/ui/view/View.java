@@ -22,18 +22,29 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.ui;
+package net.silthus.schat.ui.view;
 
-import lombok.NonNull;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.ui.model.ChatterViewModel;
-import net.silthus.schat.ui.view.View;
-import net.silthus.schat.ui.view.ViewProvider;
-import net.silthus.schat.ui.views.Views;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
+import net.silthus.schat.pointer.Configured;
+import net.silthus.schat.pointer.Setting;
 
-public class ViewProviderStub implements ViewProvider {
-    @Override
-    public View getView(@NonNull Chatter chatter) {
-        return Views.tabbedChannels(ChatterViewModel.of(chatter));
+import static net.silthus.schat.pointer.Setting.setting;
+
+public interface View extends Configured.Modifiable<View> {
+
+    Key VIEW_MARKER_KEY = Key.key("schat", "view");
+    Component VIEW_MARKER = net.kyori.adventure.text.Component.storageNBT(VIEW_MARKER_KEY.asString(), VIEW_MARKER_KEY);
+
+    Setting<Integer> VIEW_HEIGHT = setting(Integer.class, "height", 100); // minecraft chat box height in lines
+
+    static View empty() {
+        return net.kyori.adventure.text.Component::empty;
+    }
+
+    Component render();
+
+    default boolean isRenderedView(Component render) {
+        return render.contains(VIEW_MARKER) || render.children().contains(VIEW_MARKER);
     }
 }

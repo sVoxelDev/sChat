@@ -133,7 +133,7 @@ public final class TranslationManager {
     }
 
     private void registerRegistryAsGlobalSource() {
-        GlobalTranslator.get().addSource(this.registry);
+        GlobalTranslator.translator().addSource(this.registry);
     }
 
     private void loadTranslations() {
@@ -157,7 +157,7 @@ public final class TranslationManager {
 
     private void clearPreviousRegistry() {
         if (this.registry != null) {
-            GlobalTranslator.get().removeSource(this.registry);
+            GlobalTranslator.translator().removeSource(this.registry);
             this.installed.clear();
         }
     }
