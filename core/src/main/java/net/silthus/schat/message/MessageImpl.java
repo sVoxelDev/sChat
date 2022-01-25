@@ -36,6 +36,7 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identity;
+import net.silthus.schat.pointer.Pointers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,6 +56,7 @@ final class MessageImpl implements Message {
     private final Set<MessageTarget> targets;
     private final Component text;
     private final Type type;
+    private final Pointers pointers;
 
     private MessageImpl(Draft draft) {
         this.id = draft.id;
@@ -64,6 +66,13 @@ final class MessageImpl implements Message {
         this.targets = Set.copyOf(draft.targets);
         this.text = draft.text;
         this.type = draft.type;
+        this.pointers = Pointers.pointers()
+            .withStatic(Message.ID, id)
+            .withStatic(Message.TIMESTAMP, timestamp)
+            .withStatic(Message.SOURCE, source)
+            .withStatic(Message.TEXT, text)
+            .withStatic(Message.TYPE, type)
+            .create();
     }
 
     @Getter

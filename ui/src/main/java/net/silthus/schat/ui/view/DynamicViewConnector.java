@@ -22,18 +22,16 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.ui;
+package net.silthus.schat.ui.view;
 
-import lombok.NonNull;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.ui.model.ChatterViewModel;
-import net.silthus.schat.ui.view.View;
-import net.silthus.schat.ui.view.ViewProvider;
-import net.silthus.schat.ui.views.Views;
+import net.silthus.schat.view.ViewConnector;
 
-public class ViewProviderStub implements ViewProvider {
+public record DynamicViewConnector(Chatter chatter,
+                                   ViewProvider viewProvider,
+                                   ViewConnector.Out out) implements ViewConnector {
     @Override
-    public View getView(@NonNull Chatter chatter) {
-        return Views.tabbedChannels(ChatterViewModel.of(chatter));
+    public void update() {
+        out.send(viewProvider.getView(chatter).render());
     }
 }

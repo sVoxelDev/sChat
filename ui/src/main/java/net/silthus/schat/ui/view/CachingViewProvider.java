@@ -22,18 +22,24 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.ui;
+package net.silthus.schat.ui.view;
 
+import java.util.Map;
+import java.util.WeakHashMap;
 import lombok.NonNull;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.ui.model.ChatterViewModel;
-import net.silthus.schat.ui.view.View;
-import net.silthus.schat.ui.view.ViewProvider;
-import net.silthus.schat.ui.views.Views;
 
-public class ViewProviderStub implements ViewProvider {
+final class CachingViewProvider implements ViewProvider {
+
+    private final ViewFactory factory;
+    private final Map<Chatter, View> views = new WeakHashMap<>();
+
+    CachingViewProvider(ViewFactory factory) {
+        this.factory = factory;
+    }
+
     @Override
     public View getView(@NonNull Chatter chatter) {
-        return Views.tabbedChannels(ChatterViewModel.of(chatter));
+        return views.computeIfAbsent(chatter, factory::createView);
     }
 }

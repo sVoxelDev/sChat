@@ -22,18 +22,37 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.ui;
+package net.silthus.schat.platform.chatter;
 
-import lombok.NonNull;
+import java.util.UUID;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.ui.model.ChatterViewModel;
-import net.silthus.schat.ui.view.View;
+import net.silthus.schat.chatter.ChatterFactory;
+import net.silthus.schat.identity.Identity;
+import net.silthus.schat.view.ViewConnector;
 import net.silthus.schat.ui.view.ViewProvider;
-import net.silthus.schat.ui.views.Views;
+import org.jetbrains.annotations.NotNull;
 
-public class ViewProviderStub implements ViewProvider {
-    @Override
-    public View getView(@NonNull Chatter chatter) {
-        return Views.tabbedChannels(ChatterViewModel.of(chatter));
+import static net.silthus.schat.chatter.Chatter.chatter;
+
+public abstract class AbstractChatterFactory implements ChatterFactory {
+    protected final ViewProvider viewProvider;
+
+    public AbstractChatterFactory(ViewProvider viewProvider) {
+        this.viewProvider = viewProvider;
     }
+
+    @Override
+    public final Chatter createChatter(UUID id) {
+        return chatter(createIdentity(id))
+            .viewConnector(createViewConnector(id))
+            .permissionHandler(createPermissionHandler(id))
+            .create();
+    }
+
+    @NotNull
+    protected abstract Identity createIdentity(UUID id);
+
+    protected abstract Chatter.PermissionHandler createPermissionHandler(UUID id);
+
+    protected abstract ViewConnector.Factory createViewConnector(UUID id);
 }

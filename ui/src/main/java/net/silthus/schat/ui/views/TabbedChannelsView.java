@@ -1,44 +1,74 @@
 /*
- * sChat, a Supercharged Minecraft Chat Plugin
+ * This file is part of sChat, licensed under the MIT License.
  * Copyright (C) Silthus <https://www.github.com/silthus>
  * Copyright (C) sChat team and contributors
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
-package net.silthus.schat.ui.view;
+package net.silthus.schat.ui.views;
 
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.pointer.Settings;
+import net.silthus.schat.ui.format.Format;
 import net.silthus.schat.ui.model.ChatterViewModel;
-import net.silthus.schat.view.View;
+import net.silthus.schat.ui.view.View;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.join;
 import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.JoinConfiguration.newlines;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
+import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
+import static net.silthus.schat.pointer.Setting.setting;
 import static net.silthus.schat.pointer.Settings.createSettings;
 
 @Getter
-final class TabbedChannelsView implements View {
+public final class TabbedChannelsView implements View {
+
+    public static final Setting<Format.Pointered> ACTIVE_CHANNEL_FORMAT = setting(Format.Pointered.class, "active_channel", channel ->
+        channel.getOrDefault(Channel.DISPLAY_NAME, Component.empty())
+            .decorate(UNDERLINED)
+            .colorIfAbsent(GREEN));
+    public static final Setting<Format.Pointered> INACTIVE_CHANNEL_FORMAT = setting(Format.Pointered.class, "inactive_channel", channel ->
+        channel.getOrDefault(Channel.DISPLAY_NAME, Component.empty())
+            .colorIfAbsent(GRAY));
+    public static final Setting<JoinConfiguration> CHANNEL_JOIN_CONFIG = setting(JoinConfiguration.class, "channel_join_config", JoinConfiguration.builder()
+        .prefix(text("| "))
+        .separator(text(" | "))
+        .suffix(text(" |"))
+        .build());
+    public static final Setting<Format.Pointered> MESSAGE_FORMAT = setting(Format.Pointered.class, "message", msg ->
+        msg.get(Message.SOURCE)
+            .map(identity -> identity.getDisplayName().append(text(": ")))
+            .orElse(Component.empty())
+            .append(msg.getOrDefault(Message.TEXT, Component.empty())));
 
     private final ChatterViewModel viewModel;
     private final Settings settings = createSettings();
