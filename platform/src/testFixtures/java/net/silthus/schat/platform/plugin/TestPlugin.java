@@ -20,11 +20,11 @@
 package net.silthus.schat.platform.plugin;
 
 import cloud.commandframework.CommandManager;
-import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.chatter.ChatterFactoryStub;
 import net.silthus.schat.platform.commands.Command;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
+import net.silthus.schat.platform.factories.AbstractChatterFactory;
 import net.silthus.schat.platform.listener.ChatListener;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.platform.sender.Sender;
@@ -55,7 +55,7 @@ public class TestPlugin extends AbstractSChatPlugin {
     }
 
     @Override
-    protected ChatterFactory provideChatterFactory(final ViewProvider viewProvider) {
+    protected AbstractChatterFactory provideChatterFactory(final ViewProvider viewProvider) {
         return new ChatterFactoryStub(viewProvider);
     }
 

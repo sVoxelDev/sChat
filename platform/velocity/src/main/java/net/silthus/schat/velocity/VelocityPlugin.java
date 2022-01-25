@@ -24,9 +24,9 @@ import cloud.commandframework.velocity.VelocityCommandManager;
 import dev.simplix.protocolize.api.Protocolize;
 import java.io.File;
 import lombok.Getter;
-import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
+import net.silthus.schat.platform.factories.AbstractChatterFactory;
 import net.silthus.schat.platform.listener.ChatListener;
 import net.silthus.schat.platform.plugin.AbstractSChatPlugin;
 import net.silthus.schat.platform.sender.Sender;
@@ -65,7 +65,7 @@ public final class VelocityPlugin extends AbstractSChatPlugin {
     }
 
     @Override
-    protected ChatterFactory provideChatterFactory(final ViewProvider viewProvider) {
+    protected AbstractChatterFactory provideChatterFactory(final ViewProvider viewProvider) {
         return new VelocityChatterFactory(getBootstrap().getProxy(), getViewProvider());
     }
 

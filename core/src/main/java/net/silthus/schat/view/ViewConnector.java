@@ -19,17 +19,34 @@
 
 package net.silthus.schat.view;
 
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
 
 public interface ViewConnector {
 
-    static SimpleViewConnector createSimpleViewConnector(Chatter chatter, ViewProvider viewProvider, Display display) {
-        return new SimpleViewConnector(chatter, viewProvider, display);
+    static ViewConnector empty() {
+        return () -> {};
+    }
+
+    static SimpleViewConnector createSimpleViewConnector(Chatter chatter, ViewProvider viewProvider, Out out) {
+        return new SimpleViewConnector(chatter, viewProvider, out);
     }
 
     void update();
 
     interface Factory {
+        static Factory empty() {
+            return chatter -> ViewConnector.empty();
+        }
+
         ViewConnector create(Chatter chatter);
+    }
+
+    interface Out {
+        static Out empty() {
+            return renderedView -> {};
+        }
+
+        void send(Component renderedView);
     }
 }

@@ -28,13 +28,13 @@ import lombok.Getter;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelInteractorImpl;
 import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.message.Messenger;
 import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.config.SChatConfig;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
+import net.silthus.schat.platform.factories.AbstractChatterFactory;
 import net.silthus.schat.platform.listener.ChatListener;
 import net.silthus.schat.platform.locale.Messages;
 import net.silthus.schat.platform.locale.Presenter;
@@ -148,7 +148,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
         return simpleViewProvider(viewFactory);
     }
 
-    protected abstract ChatterFactory provideChatterFactory(final ViewProvider viewProvider);
+    protected abstract AbstractChatterFactory provideChatterFactory(final ViewProvider viewProvider);
 
     @ApiStatus.OverrideOnly
     protected ChannelRepository provideChannelRepository() {

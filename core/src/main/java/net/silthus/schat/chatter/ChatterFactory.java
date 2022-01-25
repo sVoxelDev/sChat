@@ -20,32 +20,7 @@
 package net.silthus.schat.chatter;
 
 import java.util.UUID;
-import net.silthus.schat.identity.Identity;
-import net.silthus.schat.view.Display;
-import net.silthus.schat.view.ViewProvider;
-import org.jetbrains.annotations.NotNull;
 
-import static net.silthus.schat.chatter.Chatter.chatter;
-import static net.silthus.schat.view.ViewConnector.createSimpleViewConnector;
-
-public abstract class ChatterFactory {
-    protected final ViewProvider viewProvider;
-
-    public ChatterFactory(ViewProvider viewProvider) {
-        this.viewProvider = viewProvider;
-    }
-
-    public final Chatter createChatter(UUID id) {
-        return chatter(getIdentity(id))
-            .viewConnector(chatter -> createSimpleViewConnector(chatter, viewProvider, getDisplay(id)))
-            .permissionHandler(getPermissionHandler(id))
-            .create();
-    }
-
-    @NotNull
-    protected abstract Identity getIdentity(UUID id);
-
-    protected abstract Chatter.PermissionHandler getPermissionHandler(UUID id);
-
-    protected abstract Display getDisplay(UUID id);
+public interface ChatterFactory {
+    Chatter createChatter(UUID id);
 }

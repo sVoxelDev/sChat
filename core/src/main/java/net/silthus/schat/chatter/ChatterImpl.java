@@ -33,8 +33,6 @@ import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.view.Display;
-import net.silthus.schat.view.View;
 import net.silthus.schat.view.ViewConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -137,7 +135,7 @@ non-sealed class ChatterImpl implements Chatter {
     static final class Builder implements Chatter.Builder {
 
         private final Identity identity;
-        private @NonNull ViewConnector.Factory viewConnector = chatter -> ViewConnector.createSimpleViewConnector(chatter, c -> View.empty(), Display.empty());
+        private @NonNull ViewConnector.Factory viewConnector = chatter -> () -> {};
         private @NonNull PermissionHandler permissionHandler = permission -> false;
 
         private Builder(Identity identity) {

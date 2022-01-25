@@ -17,41 +17,37 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.chatter;
+package net.silthus.schat.platform.factories;
 
 import java.util.UUID;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.identity.Identity;
-import net.silthus.schat.platform.factories.AbstractChatterFactory;
 import net.silthus.schat.view.ViewConnector;
 import net.silthus.schat.view.ViewProvider;
 import org.jetbrains.annotations.NotNull;
 
-import static net.silthus.schat.view.ViewFactory.empty;
-import static net.silthus.schat.view.ViewProvider.simpleViewProvider;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static net.silthus.schat.chatter.Chatter.chatter;
 
-public class ChatterFactoryStub extends AbstractChatterFactory {
+public abstract class AbstractChatterFactory implements ChatterFactory {
+    protected final ViewProvider viewProvider;
 
-    public ChatterFactoryStub() {
-        super(simpleViewProvider(empty()));
-    }
-
-    public ChatterFactoryStub(ViewProvider viewProvider) {
-        super(viewProvider);
+    public AbstractChatterFactory(ViewProvider viewProvider) {
+        this.viewProvider = viewProvider;
     }
 
     @Override
-    protected @NotNull Identity createIdentity(UUID id) {
-        return Identity.identity(id, randomAlphabetic(10));
+    public final Chatter createChatter(UUID id) {
+        return chatter(createIdentity(id))
+            .viewConnector(createViewConnector(id))
+            .permissionHandler(createPermissionHandler(id))
+            .create();
     }
 
-    @Override
-    protected Chatter.PermissionHandler createPermissionHandler(UUID id) {
-        return permission -> false;
-    }
+    @NotNull
+    protected abstract Identity createIdentity(UUID id);
 
-    @Override
-    protected ViewConnector.Factory createViewConnector(UUID id) {
-        return ViewConnector.Factory.empty();
-    }
+    protected abstract Chatter.PermissionHandler createPermissionHandler(UUID id);
+
+    protected abstract ViewConnector.Factory createViewConnector(UUID id);
 }

@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class SimpleViewConnectorTest {
 
-    private final @NonNull Display display = render -> this.renderedView = render;
+    private final @NonNull ViewConnector.Out out = render -> this.renderedView = render;
     private SimpleViewConnector connector;
     private ChatterMock chatter;
     private Component renderedView;
@@ -42,7 +42,7 @@ class SimpleViewConnectorTest {
     @BeforeEach
     void setUp() {
         chatter = chatterMock(builder -> builder.viewConnector(c -> {
-            connector = new SimpleViewConnector(c, cv -> () -> c.getLastMessage().map(Message::text).orElse(Component.empty()), display);
+            connector = new SimpleViewConnector(c, cv -> () -> c.getLastMessage().map(Message::text).orElse(Component.empty()), out);
             return connector;
         }));
     }
