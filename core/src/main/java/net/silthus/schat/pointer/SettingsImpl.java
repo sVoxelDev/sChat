@@ -57,7 +57,7 @@ final class SettingsImpl extends PointersImpl implements Settings {
     }
 
     @Override
-    public @NotNull <V> V get(final @NonNull Setting<V> setting) {
+    public @UnknownNullability <V> V get(final @NonNull Setting<V> setting) {
         return this.valueFromSupplier(setting, getValueSupplier(setting));
     }
 

@@ -48,9 +48,9 @@ import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
-import static net.silthus.schat.ui.model.ChatterViewModel.of;
+import static net.silthus.schat.ui.format.ChannelFormat.COLOR;
 import static net.silthus.schat.ui.view.View.VIEW_HEIGHT;
-import static net.silthus.schat.ui.views.TabbedChannelsView.ACTIVE_CHANNEL_FORMAT;
+import static net.silthus.schat.ui.views.TabbedChannelsView.ACTIVE_CHANNEL;
 import static net.silthus.schat.ui.views.TabbedChannelsView.CHANNEL_JOIN_CONFIG;
 import static net.silthus.schat.ui.views.TabbedChannelsView.MESSAGE_FORMAT;
 import static net.silthus.schat.ui.views.Views.tabbedChannels;
@@ -68,7 +68,7 @@ class TabbedChannelsViewTests {
     @BeforeEach
     void setUp() {
         chatter = randomChatter();
-        view = tabbedChannels(of(chatter));
+        view = tabbedChannels(chatter);
     }
 
     @NotNull
@@ -142,7 +142,7 @@ class TabbedChannelsViewTests {
 
             @Test
             void uses_format() {
-                view = tabbedChannels(of(chatter))
+                view = tabbedChannels(chatter)
                     .set(MESSAGE_FORMAT, msg ->
                         Component.text("<")
                             .append(msg.getOrDefault(Message.SOURCE, Identity.nil()).getDisplayName())
@@ -195,8 +195,8 @@ class TabbedChannelsViewTests {
             @Nested class and_different_format_is_used {
                 @BeforeEach
                 void setUp() {
-                    view = tabbedChannels(of(chatter))
-                        .set(ACTIVE_CHANNEL_FORMAT, channel -> ACTIVE_CHANNEL_FORMAT.getDefaultValue().format(channel).color(RED));
+                    view = tabbedChannels(chatter);
+                    view.get(ACTIVE_CHANNEL).set(COLOR, RED);
                 }
 
                 @Test
@@ -244,7 +244,7 @@ class TabbedChannelsViewTests {
 
             @BeforeEach
             void setUp() {
-                view = tabbedChannels(of(chatter))
+                view = tabbedChannels(chatter)
                     .set(CHANNEL_JOIN_CONFIG, JoinConfiguration.builder().separator(Component.text(" - ")).build());
             }
 
