@@ -79,6 +79,9 @@ public sealed interface Channel extends Entity<String>, Configured.Modifiable<Ch
         Channel create();
     }
 
+    interface Format extends net.silthus.schat.view.Format<Channel> {
+    }
+
     final class InvalidKey extends RuntimeException {
     }
 }

@@ -22,7 +22,9 @@ package net.silthus.schat.ui.view;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
+import net.kyori.adventure.text.flattener.ComponentFlattener;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
@@ -53,6 +55,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class TabbedChannelsViewTests {
 
     private static final @NotNull MiniMessage COMPONENT_SERIALIZER = MiniMessage.get();
+    private static final @NotNull PlainTextComponentSerializer PLAIN_TEXT_SERIALIZER = PlainTextComponentSerializer.plainText()
+        .toBuilder().flattener(ComponentFlattener.textOnly()).build();
     private Chatter chatter;
     private View view;
 
@@ -83,6 +87,10 @@ class TabbedChannelsViewTests {
         addMessage(Message.message(text).source(Identity.identity(source)));
     }
 
+    private void assertTextRenders(String expected) {
+        assertEquals(expected, PLAIN_TEXT_SERIALIZER.serialize(view.render()).trim());
+    }
+
     private void assertViewRenders(String expected) {
         assertEquals(expected, COMPONENT_SERIALIZER.serialize(view.render()).trim());
     }
@@ -109,7 +117,7 @@ class TabbedChannelsViewTests {
         @Test
         void renders_message_text() {
             final Message message = addMessage(randomMessage());
-            assertViewRenders(text(message));
+            assertTextRenders(text(message));
         }
     }
 
@@ -122,7 +130,7 @@ class TabbedChannelsViewTests {
 
         @Test
         void renders_source_name_with_message_text() {
-            assertViewRenders("Bob: Hi");
+            assertTextRenders("Bob: Hi");
         }
 
         @Nested class and_custom_message_source_format {
@@ -131,7 +139,7 @@ class TabbedChannelsViewTests {
             void uses_format() {
                 view = tabbedChannels(of(chatter))
                     .set(MESSAGE_SOURCE_FORMAT, component -> Component.text("<").append(component).append(Component.text("> ")));
-                assertViewRenders("<Bob> Hi");
+                assertTextRenders("<Bob> Hi");
             }
         }
     }
@@ -142,7 +150,7 @@ class TabbedChannelsViewTests {
         void renders_both_messages() {
             addMessage("Hey");
             addMessageWithSource("Silthus", "Yo");
-            assertViewRenders("""
+            assertTextRenders("""
             Hey
             Silthus: Yo"""
             );
@@ -161,7 +169,7 @@ class TabbedChannelsViewTests {
 
         @Test
         void renders_channel_name() {
-            assertViewRenders("| test |");
+            assertTextRenders("| test |");
         }
 
         @Nested class when_it_is_active {
@@ -173,7 +181,7 @@ class TabbedChannelsViewTests {
 
             @Test
             void underlines_channel() {
-                assertViewRenders("| <underlined>test</underlined> |");
+                assertViewRenders("| <green><underlined>test</green></underlined> |");
             }
 
             @Nested class and_different_format_is_used {
@@ -201,7 +209,7 @@ class TabbedChannelsViewTests {
 
         @Test
         void renders_both_seperated_by_a_divider() {
-            assertViewRenders("| one | two |");
+            assertTextRenders("| one | two |");
         }
 
         @Nested class with_different_priorities {
@@ -213,7 +221,7 @@ class TabbedChannelsViewTests {
 
             @Test
             void renders_higher_priority_channel_first() {
-                assertViewRenders("| zzz | one | test | two |");
+                assertTextRenders("| zzz | one | test | two |");
             }
         }
 
@@ -227,7 +235,7 @@ class TabbedChannelsViewTests {
 
             @Test
             void uses_custom_format() {
-                assertViewRenders("one - two");
+                assertTextRenders("one - two");
             }
         }
     }
@@ -248,7 +256,7 @@ class TabbedChannelsViewTests {
                 No Source!
                 Player: Hey
                 Player2: Hello
-                | <underlined>zzz</underlined> | aaa |""");
+                | <green><underlined>zzz</green></underlined> | <gray>aaa</gray> |""");
         }
     }
 

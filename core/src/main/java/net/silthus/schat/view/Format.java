@@ -19,10 +19,10 @@
 
 package net.silthus.schat.view;
 
-import net.kyori.adventure.text.Component;
-
 @FunctionalInterface
-public interface Format {
+public interface Format<T> {
+    net.kyori.adventure.text.Component format(T type);
 
-    Component format(Component component);
+    interface Component extends Format<net.kyori.adventure.text.Component> {
+    }
 }
