@@ -34,13 +34,13 @@ import org.spongepowered.configurate.serialize.TypeSerializer;
 
 public final class MiniMessageComponentSerializer implements TypeSerializer<Component> {
 
-    private final MiniMessage serializer = MiniMessage.miniMessage();
+    private final MiniMessage serializer = MiniMessage.get();
 
     @Override
     public Component deserialize(Type type, ConfigurationNode node) {
         final String string = node.getString();
         if (node.virtual() || node.empty() || string == null) return Component.empty();
-        return serializer.deserialize(string);
+        return serializer.parse(string);
     }
 
     @Override
