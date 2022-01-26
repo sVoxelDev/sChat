@@ -19,10 +19,25 @@
 
 package net.silthus.schat.command;
 
-public interface Command {
+import java.util.Optional;
 
-    Result execute() throws Error;
+final class ResultImpl implements Result {
 
-    class Error extends RuntimeException {
+    private final boolean success;
+    private final Throwable failureReason;
+
+    ResultImpl(boolean success, Throwable failureReason) {
+        this.success = success;
+        this.failureReason = failureReason;
+    }
+
+    @Override
+    public boolean wasSuccessful() {
+        return success;
+    }
+
+    @Override
+    public Optional<Throwable> getFailureReason() {
+        return Optional.ofNullable(failureReason);
     }
 }

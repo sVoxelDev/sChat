@@ -17,25 +17,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.usecases;
+package net.silthus.schat.command;
 
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.command.Command;
+import net.silthus.schat.command.commands.JoinChannelCommand;
 
-public interface JoinChannel extends Command {
+import static net.silthus.schat.channel.Channel.JOIN_PERMISSION;
+import static net.silthus.schat.channel.Channel.PROTECTED;
+import static net.silthus.schat.command.Result.of;
+import static net.silthus.schat.command.Result.success;
 
-    interface Out {
-        static Out empty() {
-            return result -> {};
-        }
+public class CanJoinChannelCheck implements Check<JoinChannelCommand> {
 
-        void joinedChannel(Output result);
-    }
+    public static final Check.Type<JoinChannelCommand> CAN_JOIN_CHANNEL = Check.check(JoinChannelCommand.class, CanJoinChannelCheck::new);
 
-    record Output(Chatter chatter, Channel channel) {
-    }
-
-    final class AccessDenied extends Error {
+    @Override
+    public Result check(JoinChannelCommand command) {
+        final Chatter chatter = command.getChatter();
+        final Channel channel = command.getChannel();
+        if (!channel.get(PROTECTED))
+            return success();
+        return of(chatter.hasPermission(channel.get(JOIN_PERMISSION)));
     }
 }

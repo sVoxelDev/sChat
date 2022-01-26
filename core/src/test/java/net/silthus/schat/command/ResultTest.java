@@ -19,10 +19,29 @@
 
 package net.silthus.schat.command;
 
-public interface Command {
+import org.junit.jupiter.api.Test;
 
-    Result execute() throws Error;
+import static org.assertj.core.api.Assertions.assertThat;
 
-    class Error extends RuntimeException {
+class ResultTest {
+
+    @Test
+    void given_failed_result_wasSuccessful_is_false() {
+        Result result = Result.failure();
+        assertThat(result.wasSuccessful()).isFalse();
+    }
+
+    @Test
+    void given_success_result_wasSuccessful_is_true() {
+        Result result = Result.success();
+        assertThat(result.wasSuccessful()).isTrue();
+    }
+
+    @Test
+    void given_error_result_has_exception() {
+        final Result result = Result.error(new RuntimeException());
+        assertThat(result.wasSuccessful()).isFalse();
+        assertThat(result.getFailureReason())
+            .isPresent().get().isInstanceOf(RuntimeException.class);
     }
 }
