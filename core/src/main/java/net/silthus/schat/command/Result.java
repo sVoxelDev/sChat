@@ -17,9 +17,36 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.usecases;
+package net.silthus.schat.command;
 
-import net.silthus.schat.command.Command;
+/**
+ * Represents a generic result, which can either be successful or fail.
+ *
+ * @since next
+ */
+@FunctionalInterface
+public interface Result {
 
-public interface SetActiveChannel extends Command {
+    /**
+     * Instance of {@link Result} which always reports success.
+     *
+     * @since next
+     */
+    Result GENERIC_SUCCESS = () -> true;
+
+    /**
+     * Instance of {@link Result} which always reports failure.
+     *
+     * @since next
+     */
+    Result GENERIC_FAILURE = () -> false;
+
+    /**
+     * Gets if the operation which produced this result completed successfully.
+     *
+     * @return if the result indicates a success
+     * @since next
+     */
+    boolean wasSuccessful();
+
 }

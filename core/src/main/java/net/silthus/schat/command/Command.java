@@ -17,9 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.usecases;
+package net.silthus.schat.command;
 
-import net.silthus.schat.command.Command;
+public interface Command {
 
-public interface SetActiveChannel extends Command {
+    static Result success() {
+        return Result.GENERIC_SUCCESS;
+    }
+
+    static Result failure() {
+        return Result.GENERIC_FAILURE;
+    }
+
+    Result execute() throws Error;
+
+    class Error extends RuntimeException {
+    }
 }
