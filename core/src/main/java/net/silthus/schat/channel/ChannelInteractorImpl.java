@@ -1,25 +1,20 @@
 /*
- * This file is part of sChat, licensed under the MIT License.
+ * sChat, a Supercharged Minecraft Chat Plugin
  * Copyright (C) Silthus <https://www.github.com/silthus>
  * Copyright (C) sChat team and contributors
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
- *  of this software and associated documentation files (the "Software"), to deal
- *  in the Software without restriction, including without limitation the rights
- *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  copies of the Software, and to permit persons to whom the Software is
- *  furnished to do so, subject to the following conditions:
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The above copyright notice and this permission notice shall be included in all
- *  copies or substantial portions of the Software.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package net.silthus.schat.channel;
@@ -41,17 +36,21 @@ import org.jetbrains.annotations.NotNull;
 @Getter(AccessLevel.PROTECTED)
 @Accessors(fluent = true)
 public class ChannelInteractorImpl implements ChannelInteractor {
+
     private ChatterProvider chatterProvider;
     private ChannelRepository channelRepository;
-    private JoinChannel.Out joinChannelOut = result -> {
-    };
+    private JoinChannel.Out joinChannelOut = result -> {};
     private CanJoinChannel canJoinChannel = (chatter, channel) -> true;
 
     @Override
     public void joinChannel(@NonNull UUID chatterId, @NonNull String channelId) throws Repository.NotFound, JoinChannel.Error {
         final Chatter chatter = getChatter(chatterId);
         final Channel channel = getChannel(channelId);
-        joinChannel(chatter, channel);
+        JoinChannelCommand.joinChannel(chatter, channel)
+            .out(joinChannelOut())
+            .check(canJoinChannel())
+            .create()
+            .execute();
     }
 
     @NotNull
@@ -64,44 +63,14 @@ public class ChannelInteractorImpl implements ChannelInteractor {
         return channelRepository().get(channelId);
     }
 
-    protected void joinChannel(Chatter chatter, Channel channel) throws JoinChannel.Error {
-        if (canJoinChannel.canJoinChannel(chatter, channel))
-            joinChannelAndUpdateView(chatter, channel);
-        else
-            handleJoinChannelError(chatter, channel);
-    }
-
-    private void joinChannelAndUpdateView(Chatter chatter, Channel channel) {
-        if (chatter.isJoined(channel))
-            return;
-        chatter.join(channel);
-        notifyJoinChannelPresenter(chatter, channel);
-        chatter.updateView();
-    }
-
-    private void notifyJoinChannelPresenter(Chatter chatter, Channel channel) {
-        joinChannelOut().joinedChannel(new JoinChannel.Result(chatter, channel));
-    }
-
-    private void handleJoinChannelError(Chatter chatter, Channel channel) {
-        leaveChannel(chatter, channel);
-        throw new JoinChannel.AccessDenied();
-    }
-
-    private void leaveChannel(Chatter chatter, Channel channel) {
-        chatter.leave(channel);
-    }
-
     @Override
     public void setActiveChannel(@NonNull UUID chatterId, @NonNull String channelId) throws Repository.NotFound, JoinChannel.Error {
         final Chatter chatter = getChatter(chatterId);
         final Channel channel = getChannel(channelId);
-        setActiveChannel(chatter, channel);
+        final SetActiveChannelCommand command = SetActiveChannelCommand.setActiveChannel(chatter, channel)
+            .joinChannelCmd(builder -> builder.out(joinChannelOut()).check(canJoinChannel()))
+            .create();
+        command.execute();
     }
 
-    protected void setActiveChannel(Chatter chatter, Channel channel) {
-        joinChannel(chatter, channel);
-        chatter.setActiveChannel(channel);
-        chatter.updateView();
-    }
 }
