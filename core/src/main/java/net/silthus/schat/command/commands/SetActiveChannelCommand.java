@@ -17,9 +17,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.channel;
+package net.silthus.schat.command.commands;
 
 import java.util.function.Consumer;
+import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.command.Command;
 import net.silthus.schat.command.Result;
@@ -45,7 +46,7 @@ public class SetActiveChannelCommand implements Command {
         joinChannelCommand.execute();
         chatter.setActiveChannel(channel);
         chatter.updateView();
-        return Command.success();
+        return Result.success();
     }
 
     public static class Builder {

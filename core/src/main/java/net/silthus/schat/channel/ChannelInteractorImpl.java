@@ -27,6 +27,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterProvider;
+import net.silthus.schat.command.commands.JoinChannelCommand;
+import net.silthus.schat.command.commands.SetActiveChannelCommand;
 import net.silthus.schat.policies.CanJoinChannel;
 import net.silthus.schat.repository.Repository;
 import net.silthus.schat.usecases.JoinChannel;

@@ -19,10 +19,22 @@
 
 package net.silthus.schat.command;
 
-public interface Command {
+import java.util.function.Supplier;
+import lombok.Getter;
 
-    Result execute() throws Error;
+public class CheckImpl<C extends Command, T extends Check<C>> implements Check.Type<C> {
 
-    class Error extends RuntimeException {
+    @Getter
+    private final Class<C> type;
+    private final Supplier<T> supplier;
+
+    public CheckImpl(Class<C> type, Supplier<T> supplier) {
+        this.type = type;
+        this.supplier = supplier;
+    }
+
+    @Override
+    public Result check(C command) {
+        return supplier.get().check(command);
     }
 }

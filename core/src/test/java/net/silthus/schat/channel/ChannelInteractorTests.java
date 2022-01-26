@@ -148,7 +148,7 @@ class ChannelInteractorTests {
                 @Test
                 void then_presenter_is_called() {
                     joinChannel();
-                    verify(joinChannelOut).joinedChannel(new JoinChannel.Result(chatter, channel));
+                    verify(joinChannelOut).joinedChannel(new JoinChannel.Output(chatter, channel));
                 }
 
                 @Test

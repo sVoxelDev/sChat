@@ -19,6 +19,8 @@
 
 package net.silthus.schat.command;
 
+import java.util.Optional;
+
 /**
  * Represents a generic result, which can either be successful or fail.
  *
@@ -41,6 +43,22 @@ public interface Result {
      */
     Result GENERIC_FAILURE = () -> false;
 
+    static Result success() {
+        return GENERIC_SUCCESS;
+    }
+
+    static Result failure() {
+        return GENERIC_FAILURE;
+    }
+
+    static Result error(Throwable exception) {
+        return new ResultImpl(false, exception);
+    }
+
+    static Result of(boolean result) {
+        return new ResultImpl(result, null);
+    }
+
     /**
      * Gets if the operation which produced this result completed successfully.
      *
@@ -49,4 +67,13 @@ public interface Result {
      */
     boolean wasSuccessful();
 
+    /**
+     * The exception that lead to the failed result.
+     *
+     * @return the exception responsible for the result failure
+     * @since next
+     */
+    default Optional<Throwable> getFailureReason() {
+        return Optional.empty();
+    }
 }

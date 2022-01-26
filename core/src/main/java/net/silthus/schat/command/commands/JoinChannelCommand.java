@@ -17,15 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.channel;
+package net.silthus.schat.command.commands;
 
+import lombok.Getter;
+import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.command.Result;
 import net.silthus.schat.policies.CanJoinChannel;
 import net.silthus.schat.usecases.JoinChannel;
 
-import static net.silthus.schat.command.Command.failure;
-import static net.silthus.schat.command.Command.success;
+import static net.silthus.schat.command.Result.failure;
+import static net.silthus.schat.command.Result.success;
 
+@Getter
 public class JoinChannelCommand implements JoinChannel {
 
     public static Builder joinChannel(Chatter chatter, Channel channel) {
@@ -44,14 +48,14 @@ public class JoinChannelCommand implements JoinChannel {
         this.check = builder.check;
     }
 
-    public net.silthus.schat.command.Result execute() throws Error {
+    public Result execute() throws Error {
         if (check.canJoinChannel(chatter, channel))
             return joinChannelAndUpdateView(chatter, channel);
         else
             return handleJoinChannelError(chatter, channel);
     }
 
-    private net.silthus.schat.command.Result joinChannelAndUpdateView(Chatter chatter, Channel channel) {
+    private Result joinChannelAndUpdateView(Chatter chatter, Channel channel) {
         if (chatter.isJoined(channel))
             return failure();
         chatter.join(channel);
@@ -61,10 +65,10 @@ public class JoinChannelCommand implements JoinChannel {
     }
 
     private void notifyJoinChannelPresenter(Chatter chatter, Channel channel) {
-        out.joinedChannel(new Result(chatter, channel));
+        out.joinedChannel(new Output(chatter, channel));
     }
 
-    private net.silthus.schat.command.Result handleJoinChannelError(Chatter chatter, Channel channel) throws AccessDenied {
+    private Result handleJoinChannelError(Chatter chatter, Channel channel) throws AccessDenied {
         chatter.leave(channel);
         throw new AccessDenied();
     }

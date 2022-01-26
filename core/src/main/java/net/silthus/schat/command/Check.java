@@ -19,10 +19,23 @@
 
 package net.silthus.schat.command;
 
-public interface Command {
+import java.util.function.Supplier;
 
-    Result execute() throws Error;
+@FunctionalInterface
+public interface Check<C extends Command> {
 
-    class Error extends RuntimeException {
+//    static <C extends Command, T extends Check<C>> Type<C> check(Class<C> commandType, T check) {
+//        return new CheckImpl<>(commandType, () -> check);
+//    }
+
+    static <C extends Command, T extends Check<C>> Type<C> check(Class<C> commandType, Supplier<T> supplier) {
+        return new CheckImpl<>(commandType, supplier);
+    }
+
+    Result check(C command);
+
+    interface Type<C extends Command> extends Check<C> {
+
+        Class<C> getType();
     }
 }
