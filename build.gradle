@@ -100,7 +100,7 @@ dependencies {
 
     implementation 'net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT'
 
-    implementation 'org.bstats:bstats-bukkit:2.2.1'
+    implementation 'org.bstats:bstats-bukkit:3.0.0'
     implementation 'net.silthus.config-mapper:bukkit:1.6.1'
 
     //Test dependencies
