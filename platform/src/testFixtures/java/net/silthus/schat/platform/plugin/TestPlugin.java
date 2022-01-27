@@ -25,11 +25,12 @@
 package net.silthus.schat.platform.plugin;
 
 import cloud.commandframework.CommandManager;
+import lombok.Getter;
+import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.chatter.ChatterFactoryStub;
 import net.silthus.schat.platform.commands.Command;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
-import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.listener.ChatListener;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.platform.sender.Sender;
@@ -40,9 +41,11 @@ import static net.silthus.schat.platform.config.TestConfigurationAdapter.testCon
 import static net.silthus.schat.platform.sender.SenderMock.senderMock;
 import static org.mockito.Mockito.spy;
 
+@Getter
 public class TestPlugin extends AbstractSChatPlugin {
 
     static Command dummyCommand = spy(Command.class);
+    private ChatterFactoryStub chatterFactory;
 
     @Override
     public Sender getConsole() {
@@ -61,7 +64,8 @@ public class TestPlugin extends AbstractSChatPlugin {
 
     @Override
     protected AbstractChatterFactory provideChatterFactory(final ViewProvider viewProvider) {
-        return new ChatterFactoryStub(viewProvider);
+        chatterFactory = new ChatterFactoryStub(viewProvider);
+        return chatterFactory;
     }
 
     @Override

@@ -79,7 +79,7 @@ class PoliciesTests {
         @Nested class given_user_has_permission {
             @BeforeEach
             void setUp() {
-                mockHasPermission(channel.get(JOIN_PERMISSION));
+                mockHasPermission("schat.channel." + channel.getKey() + ".join");
             }
 
             @Test

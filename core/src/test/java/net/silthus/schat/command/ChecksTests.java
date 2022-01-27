@@ -22,9 +22,9 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.usecases;
+package net.silthus.schat.command;
 
-import net.silthus.schat.command.Command;
+public class ChecksTests {
 
-public interface SetActiveChannel extends Command {
+
 }

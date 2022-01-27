@@ -32,6 +32,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.command.Check;
+import net.silthus.schat.command.Command;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.pointer.Settings;
@@ -92,12 +94,18 @@ final class ChannelImpl implements Channel {
                 throw new InvalidKey();
             this.key = key;
             this.displayName = text(key);
+            this.settings.withStatic(JOIN_PERMISSION, "schat.channel." + key + ".join");
         }
 
         @Override
         public Builder name(Component displayName) {
             this.displayName = displayName;
             return this;
+        }
+
+        @Override
+        public <C extends Command> Channel.Builder check(Check.Type<C> check) {
+            return null;
         }
 
         @Override

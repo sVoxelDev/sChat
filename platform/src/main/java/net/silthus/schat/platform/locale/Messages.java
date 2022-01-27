@@ -173,7 +173,7 @@ public interface Messages {
         }
 
         default void send(Chatter chatter) {
-            chatter.sendMessage(message(build()));
+            message(build()).to(chatter).send();
         }
 
         Component build();
@@ -185,7 +185,7 @@ public interface Messages {
         }
 
         default void send(Chatter chatter, A0 arg0) {
-            chatter.sendMessage(message(build(arg0)));
+            message(build(arg0)).to(chatter).send();
         }
 
         Component build(A0 arg0);

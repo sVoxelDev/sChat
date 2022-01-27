@@ -24,11 +24,14 @@
 
 package net.silthus.schat.platform.chatter;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
-import net.silthus.schat.view.ViewConnector;
+import net.silthus.schat.platform.sender.SenderMock;
 import net.silthus.schat.ui.view.ViewProvider;
+import net.silthus.schat.view.ViewConnector;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.ui.view.ViewFactory.empty;
@@ -36,6 +39,8 @@ import static net.silthus.schat.ui.view.ViewProvider.cachingViewProvider;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 public class ChatterFactoryStub extends AbstractChatterFactory {
+
+    private final Map<UUID, SenderMock> chatterStubs = new HashMap<>();
 
     public ChatterFactoryStub() {
         super(cachingViewProvider(empty()));
@@ -45,13 +50,21 @@ public class ChatterFactoryStub extends AbstractChatterFactory {
         super(viewProvider);
     }
 
+    public void stubSenderAsChatter(SenderMock sender) {
+        chatterStubs.put(sender.getUniqueId(), sender);
+    }
+
     @Override
     protected @NotNull Identity createIdentity(UUID id) {
+        if (chatterStubs.containsKey(id))
+            return chatterStubs.get(id).getIdentity();
         return Identity.identity(id, randomAlphabetic(10));
     }
 
     @Override
     protected Chatter.PermissionHandler createPermissionHandler(UUID id) {
+        if (chatterStubs.containsKey(id))
+            return chatterStubs.get(id).getPermissionHandler();
         return permission -> false;
     }
 

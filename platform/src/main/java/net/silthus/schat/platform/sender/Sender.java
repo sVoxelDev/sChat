@@ -55,13 +55,6 @@ public interface Sender extends Identified, Permissable {
     void sendMessage(Component message);
 
     /**
-     * Makes the sender perform a command.
-     *
-     * @param commandLine the command
-     */
-    void performCommand(String commandLine);
-
-    /**
      * Gets whether this sender is the console.
      *
      * @return if the sender is the console

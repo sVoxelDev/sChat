@@ -190,7 +190,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     }
 
     private void registerNativeCommands(Commands commands) {
-        commands.register(new ChannelCommands(channelInteractor));
+        commands.register(new ChannelCommands(policies));
     }
 
     @ApiStatus.OverrideOnly
