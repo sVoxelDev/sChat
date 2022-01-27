@@ -26,8 +26,9 @@ package net.silthus.schat.platform.commands;
 
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelInteractorSpy;
-import net.silthus.schat.channel.FailingChannelInteractorStub;
 import net.silthus.schat.platform.commands.parser.ChannelArgument;
+import net.silthus.schat.policies.FailedCanJoinStub;
+import net.silthus.schat.policies.PoliciesImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -45,7 +46,7 @@ class ChannelCommandsTests extends CommandTest {
     @BeforeEach
     void setUp() {
         interactor = new ChannelInteractorSpy();
-        channelCommands = new ChannelCommands(interactor);
+        channelCommands = new ChannelCommands(new PoliciesImpl());
         commands.register(channelCommands);
         channel = addRandomChannel();
     }
@@ -82,7 +83,7 @@ class ChannelCommandsTests extends CommandTest {
 
                 @BeforeEach
                 void setUp() {
-                    channelCommands.interactor(new FailingChannelInteractorStub());
+                    channelCommands.policies(new FailedCanJoinStub());
                 }
 
                 @Test

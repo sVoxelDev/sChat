@@ -33,22 +33,24 @@ import lombok.AccessLevel;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.channel.ChannelInteractor;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.sender.Sender;
+import net.silthus.schat.policies.Policies;
 import net.silthus.schat.repository.Repository;
 import net.silthus.schat.usecases.JoinChannel;
 
+import static net.silthus.schat.commands.SetActiveChannelCommand.setActiveChannel;
+import static net.silthus.schat.platform.locale.Messages.JOINED_CHANNEL;
 import static net.silthus.schat.platform.locale.Messages.JOIN_CHANNEL_ERROR;
 
 @Setter(AccessLevel.PROTECTED)
 @Accessors(fluent = true)
 public final class ChannelCommands implements Command {
 
-    private ChannelInteractor interactor;
+    private Policies policies;
 
-    public ChannelCommands(ChannelInteractor interactor) {
-        this.interactor = interactor;
+    public ChannelCommands(Policies policies) {
+        this.policies = policies;
     }
 
     @Override
@@ -60,7 +62,9 @@ public final class ChannelCommands implements Command {
     @CommandMethod("channel join <channel>")
     void joinChannel(Sender sender, Chatter chatter, @Argument("channel") Channel channel) {
         try {
-            interactor.setActiveChannel(chatter.getKey(), channel.getKey());
+            if (setActiveChannel(chatter, channel).joinChannelCmd(builder -> builder.check(policies)).execute().wasSuccessful()) {
+                JOINED_CHANNEL.send(sender, channel);
+            }
         } catch (Repository.NotFound | JoinChannel.Error e) {
             JOIN_CHANNEL_ERROR.send(sender, channel);
         }

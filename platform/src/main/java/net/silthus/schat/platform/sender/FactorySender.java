@@ -79,11 +79,6 @@ final class FactorySender<T> implements Sender {
     }
 
     @Override
-    public void performCommand(String commandLine) {
-        factory.performCommand(handle, commandLine);
-    }
-
-    @Override
     public boolean isValid() {
         return isConsole() || factory.isPlayerOnline(getUniqueId());
     }

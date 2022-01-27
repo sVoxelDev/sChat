@@ -28,10 +28,15 @@ import java.util.LinkedList;
 import java.util.Queue;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
 
 import static net.silthus.schat.identity.IdentityHelper.randomIdentity;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 @Getter
 public class SenderMock implements Sender {
@@ -46,6 +51,7 @@ public class SenderMock implements Sender {
 
     private final Identity identity;
     private final Queue<Component> messages = new LinkedList<>();
+    private final Chatter.PermissionHandler permissionHandler = mock(Chatter.PermissionHandler.class);
 
     public SenderMock(Identity identity) {
         this.identity = identity;
@@ -58,12 +64,7 @@ public class SenderMock implements Sender {
 
     @Override
     public boolean hasPermission(String permission) {
-        return false;
-    }
-
-    @Override
-    public void performCommand(String commandLine) {
-
+        return permissionHandler.hasPermission(permission);
     }
 
     @Override
@@ -73,5 +74,14 @@ public class SenderMock implements Sender {
 
     public void assertLastMessageIs(Component component) {
         assertThat(messages.peek()).isEqualTo(component);
+    }
+
+    public void mockPermission(String permission, boolean state) {
+        when(permissionHandler.hasPermission(permission)).thenReturn(state);
+    }
+
+    public void mockNoPermission() {
+        reset(permissionHandler);
+        when(permissionHandler.hasPermission(anyString())).thenReturn(false);
     }
 }

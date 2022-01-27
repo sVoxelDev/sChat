@@ -22,9 +22,29 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.usecases;
+package net.silthus.schat.checks;
 
-import net.silthus.schat.command.Command;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.command.Check;
+import net.silthus.schat.command.Result;
+import net.silthus.schat.commands.JoinChannelCommand;
 
-public interface SetActiveChannel extends Command {
+import static net.silthus.schat.channel.Channel.JOIN_PERMISSION;
+import static net.silthus.schat.channel.Channel.PROTECTED;
+import static net.silthus.schat.command.Result.of;
+import static net.silthus.schat.command.Result.success;
+
+public class CanJoinChannelCheck implements Check<JoinChannelCommand> {
+
+    public static final Check.Type<JoinChannelCommand> CAN_JOIN_CHANNEL = Check.check(JoinChannelCommand.class, CanJoinChannelCheck::new);
+
+    @Override
+    public Result check(JoinChannelCommand command) {
+        final Chatter chatter = command.getChatter();
+        final Channel channel = command.getChannel();
+        if (!channel.get(PROTECTED))
+            return success();
+        return of(chatter.hasPermission(channel.get(JOIN_PERMISSION)));
+    }
 }
