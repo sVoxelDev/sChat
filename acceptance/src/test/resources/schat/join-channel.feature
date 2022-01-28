@@ -3,7 +3,7 @@ Feature: Join Channel
 
   Scenario: User can join public channel
     Given a public channel 'global'
-    Given user
+    Given a user
     And user has no permissions
     When user runs '/ch global'
     Then user is member of channel 'global'
