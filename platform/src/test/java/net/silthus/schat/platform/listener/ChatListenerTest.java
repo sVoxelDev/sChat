@@ -26,10 +26,11 @@ package net.silthus.schat.platform.listener;
 
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.message.Messenger;
+import net.silthus.schat.message.MessageTargetSpy;
 import net.silthus.schat.usecases.OnChat;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,24 +51,13 @@ class ChatListenerTest {
 
     private ChatListener listener;
     private ChatterMock chatter;
-    private Message deliveredMessage;
-    private boolean messageDelivered = false;
+    private MessageTargetSpy target;
 
     @BeforeEach
     void setUp() {
         chatter = randomChatter();
-        listener = new ChatListener().messenger(new Messenger() {
-            @Override
-            public Message.Draft process(Message.Draft message) {
-                return message;
-            }
-
-            @Override
-            public void deliver(Message message) {
-                deliveredMessage = message;
-                messageDelivered = true;
-            }
-        }).chatterProvider(chatterProviderStub(chatter));
+        target = new MessageTargetSpy();
+        listener = new ChatListener().chatterProvider(chatterProviderStub(chatter));
     }
 
     @NotNull
@@ -114,14 +104,15 @@ class ChatListenerTest {
 
         @BeforeEach
         void setUp() {
-            chatter.setActiveChannel(randomChannel());
+            Channel activeChannel = randomChannel();
+            activeChannel.addTarget(target);
+            chatter.setActiveChannel(activeChannel);
         }
 
         @Test
         void then_sends_message_to_channel() {
             final Message message = chat();
-            assertThat(messageDelivered).isTrue();
-            assertThat(deliveredMessage).isEqualTo(message);
+            target.assertReceivedMessage(message);
         }
 
         @Test
@@ -137,7 +128,7 @@ class ChatListenerTest {
         @Test
         void when_chat_with_id_is_called_then_sends_message_to_chatters_channel() {
             final Component text = chatWithId();
-            assertThat(deliveredMessage.text()).isEqualTo(text);
+            target.assertReceivedMessageWithText(text);
         }
     }
 }

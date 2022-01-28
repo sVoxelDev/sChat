@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
@@ -55,7 +56,6 @@ final class MessageImpl implements Message {
     private final UUID id;
     private final Instant timestamp;
     private final Identity source;
-    private final Set<Channel> channels;
     private final Set<MessageTarget> targets;
     private final Component text;
     private final Type type;
@@ -65,7 +65,6 @@ final class MessageImpl implements Message {
         this.id = draft.id;
         this.timestamp = draft.timestamp;
         this.source = draft.source;
-        this.channels = Set.copyOf(draft.channels);
         this.targets = Set.copyOf(draft.targets);
         this.text = draft.text;
         this.type = draft.type;
@@ -79,6 +78,11 @@ final class MessageImpl implements Message {
     }
 
     @Override
+    public @NotNull @Unmodifiable Collection<Channel> channels() {
+        return filterAndMapChannels(targets.stream()).toList();
+    }
+
+    @Override
     public @NotNull Pointers getPointers() {
         return pointers;
     }
@@ -89,6 +93,13 @@ final class MessageImpl implements Message {
         return this;
     }
 
+    @NotNull
+    private static Stream<Channel> filterAndMapChannels(Stream<MessageTarget> stream) {
+        return stream
+            .filter(messageTarget -> messageTarget instanceof Channel)
+            .map(messageTarget -> (Channel) messageTarget);
+    }
+
     @Getter
     @Setter
     @Accessors(fluent = true)
@@ -96,7 +107,6 @@ final class MessageImpl implements Message {
         private UUID id = UUID.randomUUID();
         private Instant timestamp = Instant.now();
         private Identity source = Identity.nil();
-        private Set<Channel> channels = new HashSet<>();
         private Set<MessageTarget> targets = new HashSet<>();
         private Component text = Component.empty();
         private Type type = Type.SYSTEM;
@@ -130,14 +140,13 @@ final class MessageImpl implements Message {
 
         @Override
         public @NotNull Draft to(@NonNull Channel channel) {
-            this.channels.add(channel);
-            this.targets.addAll(channel.getTargets());
+            this.targets.add(channel);
             return this;
         }
 
         @Override
         public @NotNull @Unmodifiable Collection<Channel> channels() {
-            return Collections.unmodifiableCollection(channels);
+            return filterAndMapChannels(targets.stream()).toList();
         }
 
         @Override

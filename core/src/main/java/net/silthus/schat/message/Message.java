@@ -72,7 +72,7 @@ public sealed interface Message extends Comparable<Message>, Pointered permits M
         return !source().equals(Identity.nil());
     }
 
-    @NotNull @Unmodifiable Set<Channel> channels();
+    @NotNull @Unmodifiable Collection<Channel> channels();
 
     @NotNull @Unmodifiable Set<MessageTarget> targets();
 

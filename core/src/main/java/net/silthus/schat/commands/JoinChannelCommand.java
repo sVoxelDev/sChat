@@ -25,46 +25,44 @@
 package net.silthus.schat.commands;
 
 import java.util.function.Function;
-import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
-import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.command.Command;
 import net.silthus.schat.command.Result;
-import net.silthus.schat.policies.CanJoinChannel;
+import net.silthus.schat.policies.Policy;
 import net.silthus.schat.usecases.JoinChannel;
-import org.jetbrains.annotations.NotNull;
 
-import static net.silthus.schat.command.Result.failure;
 import static net.silthus.schat.command.Result.success;
+import static net.silthus.schat.policies.JoinChannelPolicy.canJoinChannel;
 
 @Getter
 public class JoinChannelCommand implements JoinChannel, Command {
 
-    @Accessors(fluent = true)
-    @Setter(AccessLevel.PROTECTED)
-    private static @NotNull Function<Builder, Builder> joinChannelCommandPrototype = builder -> builder;
-
-    public static Builder joinChannel(Chatter chatter, Channel channel) {
-        return joinChannelCommandPrototype.apply(new Builder(chatter, channel));
-    }
+    @Getter
+    @Setter
+    private static @NonNull Function<Builder, Builder> prototype = builder -> builder.check(canJoinChannel(builder.chatter, builder.channel).create());
+    private final Policy policy;
 
     private final Chatter chatter;
     private final Channel channel;
     private final Out out;
-    private final CanJoinChannel check;
 
     protected JoinChannelCommand(Builder builder) {
         this.chatter = builder.chatter;
         this.channel = builder.channel;
         this.out = builder.out;
-        this.check = builder.check;
+        this.policy = builder.policy;
+    }
+
+    public static Builder joinChannel(Chatter chatter, Channel channel) {
+        return getPrototype().apply(new Builder(chatter, channel));
     }
 
     public Result execute() throws Error {
-        if (check.canJoinChannel(chatter, channel))
+        if (policy.validate())
             return joinChannelAndUpdateView(chatter, channel);
         else
             return handleJoinChannelError(chatter, channel);
@@ -72,7 +70,7 @@ public class JoinChannelCommand implements JoinChannel, Command {
 
     private Result joinChannelAndUpdateView(Chatter chatter, Channel channel) {
         if (chatter.isJoined(channel))
-            return failure();
+            return success();
         chatter.join(channel);
         notifyJoinChannelPresenter(chatter, channel);
         chatter.updateView();
@@ -92,7 +90,7 @@ public class JoinChannelCommand implements JoinChannel, Command {
         private final Chatter chatter;
         private final Channel channel;
         private Out out = Out.empty();
-        private CanJoinChannel check = CanJoinChannel.ALLOW;
+        private Policy policy = Policy.ALLOW;
 
         public Builder(Chatter chatter, Channel channel) {
             this.chatter = chatter;
@@ -104,8 +102,8 @@ public class JoinChannelCommand implements JoinChannel, Command {
             return this;
         }
 
-        public Builder check(CanJoinChannel check) {
-            this.check = check;
+        public Builder check(Policy policy) {
+            this.policy = policy;
             return this;
         }
 

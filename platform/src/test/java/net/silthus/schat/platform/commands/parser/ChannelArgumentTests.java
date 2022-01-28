@@ -45,11 +45,11 @@ class ChannelArgumentTests extends ParserTest<Channel> {
     @BeforeEach
     void setUp() {
         channelRepository = createInMemoryChannelRepository();
-        setParser(new ChannelArgument(channelRepository, (chatter, channel) -> true));
+        setParser(new ChannelArgument(channelRepository));
     }
 
     private void registerChannelParser() {
-        ChannelArgument.registerChannelArgument(getCommandManager(), mock(ChannelRepository.class), (chatter, channel) -> true);
+        ChannelArgument.registerChannelArgument(getCommandManager(), mock(ChannelRepository.class));
     }
 
     @Test

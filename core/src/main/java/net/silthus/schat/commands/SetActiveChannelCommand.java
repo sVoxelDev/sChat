@@ -25,6 +25,9 @@
 package net.silthus.schat.commands;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
+import lombok.Getter;
+import lombok.Setter;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.command.Command;
@@ -32,8 +35,12 @@ import net.silthus.schat.command.Result;
 
 public class SetActiveChannelCommand implements Command {
 
+    @Getter
+    @Setter
+    private static Function<SetActiveChannelCommand.Builder, SetActiveChannelCommand.Builder> prototype = builder -> builder;
+
     public static SetActiveChannelCommand.Builder setActiveChannel(Chatter chatter, Channel channel) {
-        return new Builder(chatter, channel);
+        return getPrototype().apply(new Builder(chatter, channel));
     }
 
     private final Chatter chatter;
@@ -48,11 +55,11 @@ public class SetActiveChannelCommand implements Command {
 
     @Override
     public Result execute() throws Error {
-        final Result joinChannel = joinChannelCommand.execute();
-        if (joinChannel.wasSuccessful())
+        final Result joinChannelResult = joinChannelCommand.execute();
+        if (joinChannelResult.wasSuccessful())
             return setActiveChannelAndUpdateView();
         else
-            return joinChannel;
+            return joinChannelResult;
     }
 
     private Result setActiveChannelAndUpdateView() {

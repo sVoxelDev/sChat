@@ -35,7 +35,6 @@ import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.sender.Sender;
-import net.silthus.schat.policies.Policies;
 import net.silthus.schat.repository.Repository;
 import net.silthus.schat.usecases.JoinChannel;
 
@@ -47,12 +46,6 @@ import static net.silthus.schat.platform.locale.Messages.JOIN_CHANNEL_ERROR;
 @Accessors(fluent = true)
 public final class ChannelCommands implements Command {
 
-    private Policies policies;
-
-    public ChannelCommands(Policies policies) {
-        this.policies = policies;
-    }
-
     @Override
     public void register(CommandManager<Sender> commandManager, AnnotationParser<Sender> parser) {
         parser.parse(this);
@@ -60,9 +53,11 @@ public final class ChannelCommands implements Command {
 
     @ProxiedBy("ch")
     @CommandMethod("channel join <channel>")
-    void joinChannel(Sender sender, Chatter chatter, @Argument("channel") Channel channel) {
+    void setActiveChannelCmd(Sender sender, Chatter chatter, @Argument("channel") Channel channel) {
         try {
-            if (setActiveChannel(chatter, channel).joinChannelCmd(builder -> builder.check(policies)).execute().wasSuccessful()) {
+            if (chatter.isActiveChannel(channel))
+                return;
+            if (setActiveChannel(chatter, channel).execute().wasSuccessful()) {
                 JOINED_CHANNEL.send(sender, channel);
             }
         } catch (Repository.NotFound | JoinChannel.Error e) {

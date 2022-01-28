@@ -34,7 +34,6 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.message.Messenger;
 import net.silthus.schat.usecases.OnChat;
 
 import static net.silthus.schat.message.Message.message;
@@ -45,7 +44,6 @@ import static net.silthus.schat.platform.locale.Messages.CANNOT_CHAT_NO_ACTIVE_C
 public class ChatListener implements OnChat {
 
     private ChatterProvider chatterProvider = ChatterProvider.nil();
-    private Messenger messenger = Messenger.nil();
 
     protected final void onChat(@NonNull UUID chatterId, @NonNull Component text) {
         final Chatter chatter = chatterProvider.get(chatterId);

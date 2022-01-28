@@ -25,10 +25,8 @@
 package net.silthus.schat.platform.commands;
 
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.channel.ChannelInteractorSpy;
+import net.silthus.schat.commands.JoinChannelCommand;
 import net.silthus.schat.platform.commands.parser.ChannelArgument;
-import net.silthus.schat.policies.FailedCanJoinStub;
-import net.silthus.schat.policies.PoliciesImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -36,19 +34,14 @@ import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.platform.locale.Messages.JOIN_CHANNEL_ERROR;
+import static net.silthus.schat.policies.Policy.DENY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ChannelCommandsTests extends CommandTest {
-    private ChannelCommands channelCommands;
-    private Channel channel;
-    private ChannelInteractorSpy interactor;
 
     @BeforeEach
     void setUp() {
-        interactor = new ChannelInteractorSpy();
-        channelCommands = new ChannelCommands(new PoliciesImpl());
-        commands.register(channelCommands);
-        channel = addRandomChannel();
+        commands.register(new ChannelCommands());
     }
 
     private Channel addRandomChannel() {
@@ -62,34 +55,55 @@ class ChannelCommandsTests extends CommandTest {
     class joinChannel {
         private static final String JOIN_CHANNEL_CMD = "channel join ";
 
-        private void executeJoinCommand() {
-            cmd(JOIN_CHANNEL_CMD + channel.getKey());
-        }
-
         @Test
         void given_invalid_chanel_join_command_fails() {
             cmdFails(JOIN_CHANNEL_CMD + "foobar", ChannelArgument.ChannelParseException.class);
         }
 
         @Nested class given_valid_channel {
+            private Channel channel;
+
+            @BeforeEach
+            void setUp() {
+                channel = addRandomChannel();
+            }
 
             @Test
             void then_join_command_succeeds_and_calls_interactor() {
                 executeJoinCommand();
-                assertThat(interactor.isSetActiveChannelCalled()).isTrue();
+                assertThat(chatter.isJoined(channel)).isTrue();
+                assertThat(chatter.getActiveChannel())
+                    .isPresent().get().isEqualTo(channel);
+            }
+
+            private void executeJoinCommand() {
+                cmd(JOIN_CHANNEL_CMD + channel.getKey());
             }
 
             @Nested class given_join_fails {
 
                 @BeforeEach
                 void setUp() {
-                    channelCommands.policies(new FailedCanJoinStub());
+                    JoinChannelCommand.setPrototype(builder -> builder.check(DENY));
                 }
 
                 @Test
                 void then_join_command_prints_error_message() {
                     executeJoinCommand();
                     assertLastMessageIs(JOIN_CHANNEL_ERROR.build(channel));
+                }
+            }
+
+            @Nested class given_channel_is_already_active {
+                @BeforeEach
+                void setUp() {
+                    chatter.setActiveChannel(channel);
+                }
+
+                @Test
+                void then_join_command_does_nothing() {
+                    executeJoinCommand();
+                    assertLastMessageIs(null);
                 }
             }
         }

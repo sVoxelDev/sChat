@@ -22,32 +22,24 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.platform.locale;
+package net.silthus.schat.policies;
 
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.ChatterMock;
-import net.silthus.schat.usecases.JoinChannel;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+@FunctionalInterface
+public interface Policy {
 
-import static net.silthus.schat.channel.ChannelHelper.randomChannel;
-import static net.silthus.schat.chatter.ChatterMock.randomChatter;
-import static net.silthus.schat.platform.locale.Messages.JOINED_CHANNEL;
+    Policy ALLOW = () -> true;
+    Policy DENY = () -> false;
 
-class PresenterTest {
+    boolean validate() throws Error;
 
-    private Presenter presenter;
+    interface Builder<T extends Policy> {
+        default boolean validate() {
+            return create().validate();
+        }
 
-    @BeforeEach
-    void setUp() {
-        presenter = Presenter.defaultPresenter();
+        T create();
     }
 
-    @Test
-    void given_join_channel_success_then_sends_message_to_chatter() {
-        final ChatterMock chatter = randomChatter();
-        final Channel channel = randomChannel();
-        presenter.joinedChannel(new JoinChannel.Output(chatter, channel));
-        chatter.assertReceivedMessage(JOINED_CHANNEL.build(channel));
+    class Error extends RuntimeException {
     }
 }

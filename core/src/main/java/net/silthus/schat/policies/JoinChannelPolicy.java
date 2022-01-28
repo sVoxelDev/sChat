@@ -24,12 +24,50 @@
 
 package net.silthus.schat.policies;
 
+import java.util.function.Function;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.util.Permissable;
 
-public class AllowJoinChannelStub implements CanJoinChannel {
+public class JoinChannelPolicy implements Policy {
+
+    @Getter
+    @Setter
+    private static Function<JoinChannelPolicy.Builder, JoinChannelPolicy.Builder> prototype = builder -> builder;
+    private final Permissable permissable;
+    private final Channel channel;
+
+    protected JoinChannelPolicy(Builder builder) {
+        this.permissable = builder.chatter;
+        this.channel = builder.channel;
+    }
+
+    public static JoinChannelPolicy.Builder canJoinChannel(@NonNull Permissable permissable, @NonNull Channel channel) {
+        return getPrototype().apply(new Builder(permissable, channel));
+    }
+
     @Override
-    public boolean canJoinChannel(Permissable chatter, Channel channel) {
-        return true;
+    public boolean validate() throws Error {
+        if (!channel.get(Channel.PROTECTED))
+            return true;
+        return permissable.hasPermission(channel.get(Channel.JOIN_PERMISSION));
+    }
+
+    public static class Builder implements Policy.Builder<JoinChannelPolicy> {
+
+        private final Permissable chatter;
+        private final Channel channel;
+
+        protected Builder(@NonNull Permissable permissable, @NonNull Channel channel) {
+            this.chatter = permissable;
+            this.channel = channel;
+        }
+
+        @Override
+        public JoinChannelPolicy create() {
+            return new JoinChannelPolicy(this);
+        }
     }
 }
