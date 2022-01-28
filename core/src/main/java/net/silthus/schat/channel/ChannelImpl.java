@@ -34,6 +34,7 @@ import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.command.Check;
 import net.silthus.schat.command.Command;
+import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.pointer.Settings;
@@ -74,6 +75,11 @@ final class ChannelImpl implements Channel {
     @Override
     public void removeTarget(MessageTarget target) {
         targets.remove(target);
+    }
+
+    @Override
+    public void sendMessage(@NonNull Message message) {
+        getTargets().forEach(messageTarget -> messageTarget.sendMessage(message));
     }
 
     @Override

@@ -39,25 +39,25 @@ import java.util.Queue;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.platform.sender.Sender;
-import net.silthus.schat.policies.CanJoinChannel;
 import net.silthus.schat.repository.Repository;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import static cloud.commandframework.arguments.parser.ArgumentParseResult.failure;
 import static cloud.commandframework.arguments.parser.ArgumentParseResult.success;
+import static net.silthus.schat.policies.JoinChannelPolicy.canJoinChannel;
 
 public final class ChannelArgument implements ArgumentParser<Sender, Channel> {
 
     public static final Caption ARGUMENT_PARSE_FAILURE_CHANNEL = Caption.of("argument.parse.failure.channel");
 
-    public static void registerChannelArgument(CommandManager<Sender> commandManager, ChannelRepository repository, CanJoinChannel canJoinChannel) {
-        registerArgumentParser(commandManager, repository, canJoinChannel);
-        registerCaptions(commandManager);
+    public ChannelArgument(ChannelRepository repository) {
+        this.repository = repository;
     }
 
-    private static void registerArgumentParser(CommandManager<Sender> commandManager, ChannelRepository repository, CanJoinChannel canJoinChannel) {
-        commandManager.getParserRegistry().registerParserSupplier(TypeToken.get(Channel.class), parserParameters -> new ChannelArgument(repository, canJoinChannel));
+    public static void registerChannelArgument(CommandManager<Sender> commandManager, ChannelRepository repository) {
+        registerArgumentParser(commandManager, repository);
+        registerCaptions(commandManager);
     }
 
     private static void registerCaptions(CommandManager<Sender> commandManager) {
@@ -70,11 +70,9 @@ public final class ChannelArgument implements ArgumentParser<Sender, Channel> {
     }
 
     private final ChannelRepository repository;
-    private final CanJoinChannel canJoinChannel;
 
-    public ChannelArgument(ChannelRepository repository, CanJoinChannel canJoinChannel) {
-        this.repository = repository;
-        this.canJoinChannel = canJoinChannel;
+    private static void registerArgumentParser(CommandManager<Sender> commandManager, ChannelRepository repository) {
+        commandManager.getParserRegistry().registerParserSupplier(TypeToken.get(Channel.class), parserParameters -> new ChannelArgument(repository));
     }
 
     @Override
@@ -88,7 +86,8 @@ public final class ChannelArgument implements ArgumentParser<Sender, Channel> {
 
     @Override
     public @NonNull List<@NonNull String> suggestions(@NonNull CommandContext<Sender> commandContext, @NonNull String input) {
-        return repository.filter(channel -> canJoinChannel.canJoinChannel(commandContext.getSender(), channel))
+        return repository
+            .filter(channel -> canJoinChannel(commandContext.getSender(), channel).validate())
             .stream().map(Channel::getKey)
             .toList();
     }

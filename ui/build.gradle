@@ -3,5 +3,5 @@ dependencies {
 
     testImplementation(testFixtures(project(':core')))
 
-    testFixturesImplementation 'net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT'
+    testFixturesImplementation 'net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT'
 }

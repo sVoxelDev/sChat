@@ -38,7 +38,6 @@ import org.junit.jupiter.api.Test;
 import static net.silthus.schat.bukkit.adapter.BukkitIdentityAdapter.identity;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.chatter.ChatterProviderStub.chatterProviderStub;
-import static net.silthus.schat.message.Messenger.defaultMessenger;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BukkitChatListenerTest extends BukkitTests {
@@ -54,8 +53,7 @@ class BukkitChatListenerTest extends BukkitTests {
             .viewConnector(c -> () -> handleMessage(c))
             .create();
         BukkitChatListener listener = (BukkitChatListener) new BukkitChatListener()
-            .chatterProvider(chatterProviderStub(chatter))
-            .messenger(defaultMessenger());
+            .chatterProvider(chatterProviderStub(chatter));
         server.getPluginManager().registerEvents(listener, mockPlugin);
     }
 

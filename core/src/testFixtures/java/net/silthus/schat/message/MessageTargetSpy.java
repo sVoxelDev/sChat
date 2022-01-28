@@ -22,16 +22,29 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.channel;
+package net.silthus.schat.message;
 
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.NonNull;
-import net.silthus.schat.repository.Repository;
-import net.silthus.schat.usecases.JoinChannel;
+import net.kyori.adventure.text.Component;
 
-public interface ChannelInteractor {
+import static org.assertj.core.api.Assertions.assertThat;
 
-    void joinChannel(@NonNull UUID chatterId, @NonNull String channelId) throws Repository.NotFound, JoinChannel.Error;
+public class MessageTargetSpy implements MessageTarget {
 
-    void setActiveChannel(@NonNull UUID chatterId, @NonNull String channelId) throws Repository.NotFound, JoinChannel.Error;
+    private final List<Message> receivedMessages = new ArrayList<>();
+
+    @Override
+    public void sendMessage(@NonNull Message message) {
+        receivedMessages.add(message);
+    }
+
+    public void assertReceivedMessage(Message message) {
+        assertThat(receivedMessages).contains(message);
+    }
+
+    public void assertReceivedMessageWithText(Component text) {
+        assertThat(receivedMessages).anyMatch(message -> message.text().equals(text));
+    }
 }

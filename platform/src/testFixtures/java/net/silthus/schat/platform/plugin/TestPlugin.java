@@ -63,13 +63,13 @@ public class TestPlugin extends AbstractSChatPlugin {
     }
 
     @Override
-    protected AbstractChatterFactory provideChatterFactory(final ViewProvider viewProvider) {
+    protected AbstractChatterFactory createChatterFactory(final ViewProvider viewProvider) {
         chatterFactory = new ChatterFactoryStub(viewProvider);
         return chatterFactory;
     }
 
     @Override
-    protected ChatListener provideChatListener() {
+    protected ChatListener createChatListener() {
         return new ChatListener();
     }
 

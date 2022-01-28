@@ -34,9 +34,9 @@ import net.silthus.schat.bukkit.adapter.BukkitChatterFactory;
 import net.silthus.schat.bukkit.adapter.BukkitSchedulerAdapter;
 import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
 import net.silthus.schat.bukkit.protocollib.ChatPacketListener;
+import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
-import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.listener.ChatListener;
 import net.silthus.schat.platform.plugin.AbstractSChatPlugin;
 import net.silthus.schat.platform.sender.Sender;
@@ -73,7 +73,7 @@ public final class SChatBukkitPlugin extends AbstractSChatPlugin {
     }
 
     @Override
-    protected AbstractChatterFactory provideChatterFactory(final ViewProvider viewProvider) {
+    protected AbstractChatterFactory createChatterFactory(final ViewProvider viewProvider) {
         return new BukkitChatterFactory(getAudiences(), getViewProvider());
     }
 
@@ -83,7 +83,7 @@ public final class SChatBukkitPlugin extends AbstractSChatPlugin {
     }
 
     @Override
-    protected ChatListener provideChatListener() {
+    protected ChatListener createChatListener() {
         final BukkitChatListener listener = new BukkitChatListener();
         Bukkit.getPluginManager().registerEvents(listener, getBootstrap().getLoader());
         return listener;

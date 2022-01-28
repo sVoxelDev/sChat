@@ -32,7 +32,6 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.platform.sender.SenderMock;
-import net.silthus.schat.policies.AllowJoinChannelStub;
 import org.junit.jupiter.api.BeforeEach;
 
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
@@ -50,13 +49,14 @@ public abstract class CommandTest {
     protected Commands commands;
     protected ChatterProvider chatterProvider;
     protected ChannelRepository channelRepository;
+    protected Chatter chatter;
 
     @BeforeEach
     void setUpBase() {
         commandManager = createCommandManager();
         channelRepository = createInMemoryChannelRepository();
 
-        final Chatter chatter = randomChatter();
+        chatter = randomChatter();
         chatterProvider = chatterProviderStub(chatter);
         sender = new SenderMock(chatter.getIdentity());
 
@@ -83,6 +83,6 @@ public abstract class CommandTest {
 
     private void registerArgumentTypes() {
         registerChatterArgument(commandManager, chatterProvider);
-        registerChannelArgument(commandManager, channelRepository, new AllowJoinChannelStub());
+        registerChannelArgument(commandManager, channelRepository);
     }
 }

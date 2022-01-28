@@ -84,7 +84,7 @@ class BukkitChatterFactoryTests extends BukkitTests {
         @Nested class when_message_is_send {
             @BeforeEach
             void setUp() {
-                createChatter().sendMessage(message("Hey"));
+                message("Hey").to(createChatter()).send();
             }
 
             @Test
