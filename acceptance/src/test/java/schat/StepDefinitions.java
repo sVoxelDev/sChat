@@ -19,113 +19,233 @@
 
 package schat;
 
-import io.cucumber.java.AfterAll;
+import io.cucumber.java.After;
 import io.cucumber.java.Before;
-import io.cucumber.java.BeforeAll;
-import io.cucumber.java.ParameterType;
+import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.identity.Identity;
+import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.locale.Messages;
+import net.silthus.schat.platform.messenger.CrossServerMessengerMock;
+import net.silthus.schat.platform.plugin.AbstractSChatPlugin;
 import net.silthus.schat.platform.plugin.TestPlugin;
 import net.silthus.schat.platform.sender.SenderMock;
+import org.jetbrains.annotations.NotNull;
 
+import static net.silthus.schat.channel.Channel.GLOBAL;
 import static net.silthus.schat.channel.Channel.PROTECTED;
-import static net.silthus.schat.channel.Channel.createChannel;
-import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
-import static net.silthus.schat.channel.ChannelHelper.channelWith;
+import static net.silthus.schat.message.Message.message;
+import static net.silthus.schat.message.MessageHelper.randomText;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class StepDefinitions {
 
-    private static final TestPlugin plugin = new TestPlugin();
-    private SenderMock user;
-    private Channel channel;
+    private final Map<String, TestPlugin> SERVERS = new HashMap<>();
+    private final Map<String, User> users = new HashMap<>();
+    private Message lastMessage;
+    private User user;
 
-    @BeforeAll(order = 1)
-    public static void loadPlugin() {
-        plugin.load();
+    public StepDefinitions() {
+        createServer("server1");
     }
 
-    @BeforeAll(order = 2)
-    public static void enablePlugin() {
-        plugin.enable();
+    @Before(order = 10)
+    public void loadPlugin() {
+        SERVERS.values().forEach(AbstractSChatPlugin::load);
     }
 
-    @AfterAll
-    public static void disablePlugin() {
-        plugin.disable();
+    @Before(order = 20)
+    public void enablePlugin() {
+        SERVERS.values().forEach(AbstractSChatPlugin::enable);
+    }
+
+    @After
+    public void disablePlugin() {
+        SERVERS.values().forEach(AbstractSChatPlugin::disable);
     }
 
     @Before
     public void clearChannels() {
-        for (Channel c : plugin.getChannelRepository().all()) {
-            plugin.getChannelRepository().remove(c);
+        SERVERS.values().stream()
+            .map(AbstractSChatPlugin::getChannelRepository)
+            .forEach(repository -> repository.all().forEach(repository::remove));
+    }
+
+    private void addChannel(String key, Function<Channel.Builder, Channel.Builder> cfg) {
+        getChannelRepositories().forEach(repository -> repository.add(createChannel(key, cfg)));
+    }
+
+    private Channel createChannel(String key, Function<Channel.Builder, Channel.Builder> cfg) {
+        return cfg.apply(Channel.channel(key)).create();
+    }
+
+    private void setChannel(String channel, Consumer<Channel> config) {
+        findChannel(channel).forEach(config);
+    }
+
+    private Channel getChannel(String channel) {
+        return findChannel(channel).findFirst().orElseThrow();
+    }
+
+    @NotNull
+    private Stream<Channel> findChannel(String channel) {
+        return getChannelRepositories()
+            .map(repository -> repository.find(channel))
+            .flatMap(Optional::stream);
+    }
+
+    @NotNull
+    private Stream<ChannelRepository> getChannelRepositories() {
+        return SERVERS.values().stream()
+            .map(AbstractSChatPlugin::getChannelRepository);
+    }
+
+    private User getUser(String user) {
+        return users.get(user);
+    }
+
+    private Chatter getChatter(String user) {
+        return getChatter(getUser(user));
+    }
+
+    private Chatter getChatter() {
+        return getChatter(user);
+    }
+
+    private Channel getChannel(String server, String channel) {
+        return SERVERS.get(server).getChannelRepository().get(channel);
+    }
+
+    private Chatter getChatter(User user) {
+        return getServer(user).getChatterProvider().get(user.id);
+    }
+
+    private TestPlugin getServer(User user) {
+        return SERVERS.get(user.server);
+    }
+
+    @DataTableType
+    public User userEntry(Map<String, String> entry) {
+        return new User()
+            .name(entry.get("name"))
+            .server(entry.get("server"))
+            .channel(entry.get("channel"));
+    }
+
+    @Given("a second server {string}")
+    public void aSecondServer(String server) {
+        createServer(server);
+    }
+
+    private void createServer(String server) {
+        final TestPlugin plugin = new TestPlugin();
+        plugin.load();
+        plugin.enable();
+        SERVERS.put(server, plugin);
+        plugin.setMessenger(new CrossServerMessengerMock(plugin, SERVERS.values().stream().filter(p -> !p.equals(plugin)).toList()));
+    }
+
+    @And("the following users")
+    public void theFollowingUsers(List<User> users) {
+        for (final User user : users) {
+            createUser(user);
         }
+    }
+
+    private User createUser(User user) {
+        final SenderMock senderMock = SenderMock.senderMock(Identity.identity(user.name));
+        user.id = senderMock.getUniqueId();
+        user.sender = senderMock;
+        SERVERS.get(user.server).getChatterFactory().stubSenderAsChatter(senderMock);
+        if (user.channel != null)
+            getChatter(user).setActiveChannel(getChannel(user.server, user.channel));
+        this.users.put(user.name, user);
+        return user;
+    }
+
+    @And("a global channel {string}")
+    public void aGlobalChannel(String channel) {
+        addChannel(channel, builder -> builder.set(GLOBAL, true));
     }
 
     @Given("a user")
     public void user() {
-        user = SenderMock.senderMock();
-        plugin.getChatterFactory().stubSenderAsChatter(user);
+        this.user = createUser(new User().name("player1").server("server1").channel(null));
     }
 
     @Given("a public channel {string}")
     public void aPublicChannel(String channel) {
-        this.channel = createChannel(channel);
-        plugin.getChannelRepository().add(this.channel);
+        addChannel(channel, builder -> builder.set(PROTECTED, false));
     }
 
     @Given("a protected channel {string}")
     public void aProtectedChannelProtected(String channel) {
-        this.channel = channelWith(channel, set(PROTECTED, true));
-        plugin.getChannelRepository().add(this.channel);
+        addChannel(channel, builder -> builder.set(PROTECTED, true));
     }
 
     @When("user runs {string}")
     public void userExecutesCommand(String command) {
-        plugin.getCommands().execute(user, command);
+        executeCommand(user, command);
     }
 
-    @Then("user receives join channel error message")
-    public void userReceivesErrorMessage() {
-        user.assertLastMessageIs(Messages.JOIN_CHANNEL_ERROR.build(this.channel));
+    private void executeCommand(User user, String command) {
+        getServer(user).getCommands().execute(user.sender, command);
+    }
+
+    @When("user {string} sends a message")
+    public void userSendsAMessage(String user) {
+        final Chatter chatter = getChatter(user);
+        final Channel channel = chatter.getActiveChannel().orElseThrow();
+        lastMessage = message(randomText()).source(chatter).to(channel).send();
+    }
+
+    @Then("user receives join channel error message for channel {string}")
+    public void userReceivesErrorMessage(String channel) {
+        user.sender.assertLastMessageIs(Messages.JOIN_CHANNEL_ERROR.build(getChannel(channel)));
     }
 
     @Then("user is member of channel {string}")
     public void userIsMemberOfChannel(String channel) {
-        assertThat(chatter().isJoined(channel(channel))).isTrue();
-    }
-
-    private Chatter chatter() {
-        return plugin.getChatterProvider().get(user.getUniqueId());
-    }
-
-    @ParameterType("channel")
-    public Channel channel(String key) {
-        return plugin.getChannelRepository().get(key);
+        assertThat(getChatter().isJoined(getChannel(channel))).isTrue();
     }
 
     @Then("user is not a member of channel {string}")
     public void userIsNotAMemberOfChannel(String channel) {
-        assertThat(chatter().isJoined(channel(channel))).isFalse();
+        assertThat(getChatter().isJoined(getChannel(channel))).isFalse();
     }
 
     @And("user has no permissions")
     public void noPermission() {
-        user.mockNoPermission();
+        user.sender.mockNoPermission();
     }
 
     @And("user has permission {string}")
     public void userHasPermission(String permission) {
-        user.mockPermission(permission, true);
+        user.sender.mockPermission(permission, true);
     }
 
     @Then("user received joined channel {string} message")
     public void userReceivedJoinedChannel(String channel) {
-        user.assertLastMessageIs(Messages.JOINED_CHANNEL.build(channel(channel)));
+        user.sender.assertLastMessageIs(Messages.JOINED_CHANNEL.build(getChannel(channel)));
     }
+
+    @Then("user {string} receives the message")
+    public void userReceivesTheMessage(String user) {
+        assertThat(getChatter(user).getLastMessage())
+            .isPresent().get().isEqualTo(lastMessage);
+    }
+
 }
