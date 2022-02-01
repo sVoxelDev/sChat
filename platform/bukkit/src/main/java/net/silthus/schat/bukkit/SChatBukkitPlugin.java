@@ -26,9 +26,11 @@ import lombok.SneakyThrows;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.silthus.schat.bukkit.adapter.BukkitChatListener;
 import net.silthus.schat.bukkit.adapter.BukkitChatterFactory;
+import net.silthus.schat.bukkit.adapter.BukkitEventBus;
 import net.silthus.schat.bukkit.adapter.BukkitSchedulerAdapter;
 import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
 import net.silthus.schat.bukkit.protocollib.ChatPacketListener;
+import net.silthus.schat.event.EventBus;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
@@ -58,8 +60,13 @@ public final class SChatBukkitPlugin extends AbstractSChatPlugin {
     }
 
     @Override
-    protected ConfigurationAdapter provideConfigurationAdapter() {
+    protected ConfigurationAdapter createConfigurationAdapter() {
         return ConfigurationAdapters.YAML.create(resolveConfig("config.yml").toFile());
+    }
+
+    @Override
+    protected EventBus createEventBus() {
+        return new BukkitEventBus();
     }
 
     @Override

@@ -17,31 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.config;
+package net.silthus.schat.bukkit.adapter;
 
-import net.silthus.schat.event.EventBus;
-import net.silthus.schat.events.config.ConfigReloadedEvent;
-import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
-import net.silthus.schat.platform.config.key.KeyedConfiguration;
+import net.silthus.schat.event.AbstractEventBus;
+import org.bukkit.plugin.Plugin;
 
-public final class SChatConfig extends KeyedConfiguration {
-
-    private final EventBus eventBus;
-
-    public SChatConfig(ConfigurationAdapter adapter, EventBus eventBus) {
-        super(adapter, ConfigKeys.getKeys());
-        this.eventBus = eventBus;
-
-        init();
-    }
-
-    public SChatConfig(ConfigurationAdapter adapter) {
-        this(adapter, EventBus.empty());
-    }
-
+public final class BukkitEventBus extends AbstractEventBus<Plugin> {
     @Override
-    public void reload() {
-        super.reload();
-        eventBus.post(new ConfigReloadedEvent());
+    protected Plugin checkPlugin(Object plugin) throws IllegalArgumentException {
+        if (plugin instanceof Plugin p)
+            return p;
+        else
+            throw new IllegalArgumentException();
     }
 }

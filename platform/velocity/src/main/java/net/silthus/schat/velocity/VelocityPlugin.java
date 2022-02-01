@@ -24,6 +24,7 @@ import cloud.commandframework.velocity.VelocityCommandManager;
 import dev.simplix.protocolize.api.Protocolize;
 import java.io.File;
 import lombok.Getter;
+import net.silthus.schat.event.EventBus;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
@@ -33,6 +34,7 @@ import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.ui.view.ViewProvider;
 import net.silthus.schat.velocity.adapter.VelocityChatListener;
 import net.silthus.schat.velocity.adapter.VelocityChatterFactory;
+import net.silthus.schat.velocity.adapter.VelocityEventBus;
 import net.silthus.schat.velocity.adapter.VelocitySenderFactory;
 import net.silthus.schat.velocity.protocolize.ChatPacketListener;
 
@@ -55,8 +57,13 @@ public final class VelocityPlugin extends AbstractSChatPlugin {
     }
 
     @Override
-    protected ConfigurationAdapter provideConfigurationAdapter() {
+    protected ConfigurationAdapter createConfigurationAdapter() {
         return ConfigurationAdapters.YAML.create(new File(bootstrap.getConfigDirectory().toFile(), "config.yml"));
+    }
+
+    @Override
+    protected EventBus createEventBus() {
+        return new VelocityEventBus();
     }
 
     @Override

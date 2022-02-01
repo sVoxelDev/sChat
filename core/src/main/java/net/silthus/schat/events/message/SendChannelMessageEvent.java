@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.event.types;
+package net.silthus.schat.events.message;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;

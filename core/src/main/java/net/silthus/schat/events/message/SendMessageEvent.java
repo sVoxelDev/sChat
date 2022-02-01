@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.event.types;
+package net.silthus.schat.events.message;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.Getter;
@@ -26,6 +26,7 @@ import lombok.experimental.Accessors;
 import net.silthus.schat.event.Cancellable;
 import net.silthus.schat.event.SChatEvent;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.message.Targets;
 
 /**
  * The {@code SendMessageEvent} is called before a message is sent to its targets.
@@ -40,6 +41,7 @@ import net.silthus.schat.message.Message;
 public final class SendMessageEvent implements SChatEvent, Cancellable {
 
     private final Message message;
+    private final Targets targets;
     @Getter
     private final AtomicBoolean cancellationState = new AtomicBoolean(false);
 
@@ -51,6 +53,7 @@ public final class SendMessageEvent implements SChatEvent, Cancellable {
      */
     public SendMessageEvent(final @NonNull Message message) {
         this.message = message;
+        this.targets = Targets.copyOf(message.targets());
     }
 
     /**
@@ -63,5 +66,9 @@ public final class SendMessageEvent implements SChatEvent, Cancellable {
      */
     public Message message() {
         return message;
+    }
+
+    public Targets targets() {
+        return targets;
     }
 }

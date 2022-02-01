@@ -26,9 +26,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import lombok.Getter;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.channel.ChannelPrototype;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.ChatterProvider;
-import net.silthus.schat.message.Messenger;
+import net.silthus.schat.event.EventBus;
+import net.silthus.schat.message.MessagePrototype;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;
@@ -56,6 +58,7 @@ import static net.silthus.schat.ui.view.ViewProvider.cachingViewProvider;
 public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     private TranslationManager translationManager;
+    private EventBus eventBus;
 
     private SChatConfig config;
     private ChatterProvider chatterProvider;
@@ -70,6 +73,8 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     public final void load() {
         translationManager = new TranslationManager(getBootstrap().getConfigDirectory());
         translationManager.reload();
+
+        eventBus = createEventBus();
     }
 
     @Override
@@ -79,7 +84,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
         Messages.STARTUP_BANNER.send(getConsole(), getBootstrap());
 
         getLogger().info("Loading configuration...");
-        config = new SChatConfig(provideConfigurationAdapter());
+        config = new SChatConfig(createConfigurationAdapter(), getEventBus());
         config.load();
 
         viewFactory = createViewFactory();
@@ -110,14 +115,11 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     public abstract Sender getConsole();
 
-    protected abstract ConfigurationAdapter provideConfigurationAdapter();
+    protected abstract ConfigurationAdapter createConfigurationAdapter();
+
+    protected abstract EventBus createEventBus();
 
     protected abstract void setupSenderFactory();
-
-    @ApiStatus.OverrideOnly
-    protected Messenger createMessenger() {
-        return Messenger.defaultMessenger();
-    }
 
     @ApiStatus.OverrideOnly
     protected ViewFactory createViewFactory() {
@@ -139,7 +141,8 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     protected abstract ChatListener createChatListener();
 
     private void setupPrototypes() {
-
+        MessagePrototype.configure(getEventBus());
+        ChannelPrototype.configure(getEventBus());
     }
 
     @NotNull

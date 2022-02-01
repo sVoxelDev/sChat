@@ -20,18 +20,17 @@
 package net.silthus.schat.channel;
 
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Consumer;
+import java.util.function.Function;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.command.Check;
 import net.silthus.schat.command.Command;
+import net.silthus.schat.event.EventBus;
+import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.message.Targets;
@@ -47,34 +46,27 @@ import static net.kyori.adventure.text.Component.text;
 @EqualsAndHashCode(of = {"key"})
 final class ChannelImpl implements Channel {
 
+    @Setter
+    private static Function<ChannelImpl.Builder, ChannelImpl.Builder> prototype = builder -> builder;
+
+    static ChannelImpl.Builder builder(String key) {
+        return prototype.apply(new Builder(key));
+    }
+
     private static final String VALID_KEY_PATTERN = "^[a-zA-Z0-9_-]+$";
 
     private final String key;
     private final Settings settings;
     private final Targets targets = new Targets();
-    private final Map<Feature.Type<?>, Feature> features = new HashMap<>();
+    private final EventBus eventBus;
 
     private ChannelImpl(Builder builder) {
         this.key = builder.key;
         this.settings = builder.settings
             .withStatic(KEY, key)
-            .withStatic(DISPLAY_NAME, builder.displayName)
+            .withStatic(DISPLAY_NAME, builder.name)
             .create();
-
-        createFeatures(builder.features);
-        callFeatures(Feature::initialize);
-    }
-
-    private void createFeatures(Set<Feature.Type<?>> features) {
-        for (final Feature.Type<?> feature : features) {
-            this.features.put(feature, feature.createInstance(this));
-        }
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <F extends Feature> Optional<F> getFeature(Feature.Type<F> feature) {
-        return Optional.ofNullable((F) features.get(feature));
+        this.eventBus = builder.eventBus;
     }
 
     @Override
@@ -94,8 +86,9 @@ final class ChannelImpl implements Channel {
 
     @Override
     public void sendMessage(@NonNull Message message) {
-        callFeatures(feature -> feature.onMessage(message));
-        getTargets().sendMessage(message);
+        SendChannelMessageEvent event = eventBus.post(new SendChannelMessageEvent(this, message));
+        if (event.isNotCancelled())
+            event.targets().sendMessage(event.message());
     }
 
     @Override
@@ -105,36 +98,23 @@ final class ChannelImpl implements Channel {
             .compare(this, o);
     }
 
-    private void callFeatures(Consumer<Feature> action) {
-        features.values().forEach(action);
-    }
-
+    @Getter
+    @Setter
+    @Accessors(fluent = true)
     static final class Builder implements Channel.Builder {
 
         private final String key;
-        private final Set<Feature.Type<?>> features = new HashSet<>();
 
-        private Component displayName;
+        private Component name;
         private Settings.Builder settings = Settings.settings();
+        private EventBus eventBus = EventBus.empty();
 
         Builder(String key) {
             if (isInvalidKey(key))
                 throw new InvalidKey();
             this.key = key;
-            this.displayName = text(key);
+            this.name = text(key);
             this.settings.withStatic(JOIN_PERMISSION, "schat.channel." + key + ".join");
-        }
-
-        @Override
-        public Builder name(Component displayName) {
-            this.displayName = displayName;
-            return this;
-        }
-
-        @Override
-        public <F extends Feature> Channel.Builder withFeature(Feature.Type<F> feature) {
-            this.features.add(feature);
-            return this;
         }
 
         @Override

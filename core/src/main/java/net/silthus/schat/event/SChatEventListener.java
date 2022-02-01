@@ -17,31 +17,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.config;
+package net.silthus.schat.event;
 
-import net.silthus.schat.event.EventBus;
-import net.silthus.schat.events.config.ConfigReloadedEvent;
-import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
-import net.silthus.schat.platform.config.key.KeyedConfiguration;
+/**
+ * Defines a class which listens to {@link SChatEvent}s.
+ *
+ * @since next
+ */
+@FunctionalInterface
+public interface SChatEventListener {
 
-public final class SChatConfig extends KeyedConfiguration {
-
-    private final EventBus eventBus;
-
-    public SChatConfig(ConfigurationAdapter adapter, EventBus eventBus) {
-        super(adapter, ConfigKeys.getKeys());
-        this.eventBus = eventBus;
-
-        init();
-    }
-
-    public SChatConfig(ConfigurationAdapter adapter) {
-        this(adapter, EventBus.empty());
-    }
-
-    @Override
-    public void reload() {
-        super.reload();
-        eventBus.post(new ConfigReloadedEvent());
-    }
+    /**
+     * Binds the event listener to the event bus.
+     *
+     * @param bus the event bus
+     * @since next
+     */
+    void bind(EventBus bus);
 }
