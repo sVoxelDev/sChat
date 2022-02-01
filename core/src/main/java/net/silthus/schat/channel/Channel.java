@@ -19,7 +19,6 @@
 
 package net.silthus.schat.channel;
 
-import java.util.Optional;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.command.Check;
 import net.silthus.schat.command.Command;
@@ -69,7 +68,7 @@ public sealed interface Channel extends Entity<String>, Configured.Modifiable<Ch
     }
 
     static @NotNull Builder channel(String key) {
-        return new ChannelImpl.Builder(key);
+        return ChannelImpl.builder(key);
     }
 
     @NotNull String getKey();
@@ -77,8 +76,6 @@ public sealed interface Channel extends Entity<String>, Configured.Modifiable<Ch
     default @NotNull Component getDisplayName() {
         return get(DISPLAY_NAME);
     }
-
-    <F extends Feature> Optional<F> getFeature(Feature.Type<F> feature);
 
     @NotNull @Unmodifiable Targets getTargets();
 
@@ -89,8 +86,6 @@ public sealed interface Channel extends Entity<String>, Configured.Modifiable<Ch
     interface Builder extends Configured.Builder<Builder> {
 
         Builder name(Component displayName);
-
-        <F extends Feature> Builder withFeature(Feature.Type<F> feature);
 
         <C extends Command> Builder check(Check.Type<C> check);
 

@@ -19,7 +19,6 @@
 
 package net.silthus.schat.platform.messenger;
 
-import net.silthus.schat.message.Messenger;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.ApiStatus.NonExtendable;
 

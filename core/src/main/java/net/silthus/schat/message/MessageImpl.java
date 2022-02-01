@@ -23,6 +23,7 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -31,6 +32,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.event.EventBus;
+import net.silthus.schat.events.message.SendMessageEvent;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.pointer.Pointers;
 import org.jetbrains.annotations.NotNull;
@@ -42,8 +45,12 @@ import org.jetbrains.annotations.Unmodifiable;
 @EqualsAndHashCode(of = {"id"})
 final class MessageImpl implements Message {
 
+    @Setter
+    @Accessors
+    private static Function<MessageImpl.Draft, MessageImpl.Draft> prototype = draft -> draft;
+
     static MessageImpl.Draft builder() {
-        return new Draft();
+        return prototype.apply(new Draft());
     }
 
     private final UUID id;
@@ -52,15 +59,17 @@ final class MessageImpl implements Message {
     private final Targets targets;
     private final Component text;
     private final Type type;
+    private final EventBus eventBus;
     private final Pointers pointers;
 
     private MessageImpl(Draft draft) {
         this.id = draft.id;
         this.timestamp = draft.timestamp;
         this.source = draft.source;
-        this.targets = Targets.copyOf(draft.targets);
+        this.targets = Targets.unmodifiable(Targets.copyOf(draft.targets));
         this.text = draft.text;
         this.type = draft.type;
+        this.eventBus = draft.eventBus;
         this.pointers = Pointers.pointers()
             .withStatic(Message.ID, id)
             .withStatic(Message.TIMESTAMP, timestamp)
@@ -82,7 +91,9 @@ final class MessageImpl implements Message {
 
     @Override
     public @NotNull MessageImpl send() {
-        targets().sendMessage(this);
+        final SendMessageEvent event = eventBus.post(new SendMessageEvent(this));
+        if (event.isNotCancelled())
+            event.targets().sendMessage(this);
         return this;
     }
 
@@ -108,6 +119,7 @@ final class MessageImpl implements Message {
         private Targets targets = new Targets();
         private Component text = Component.empty();
         private Type type = Type.SYSTEM;
+        private EventBus eventBus = EventBus.empty();
 
         private Draft() {
         }

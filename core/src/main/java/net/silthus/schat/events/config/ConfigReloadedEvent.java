@@ -17,31 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.config;
+package net.silthus.schat.events.config;
 
-import net.silthus.schat.event.EventBus;
-import net.silthus.schat.events.config.ConfigReloadedEvent;
-import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
-import net.silthus.schat.platform.config.key.KeyedConfiguration;
+import net.silthus.schat.event.SChatEvent;
 
-public final class SChatConfig extends KeyedConfiguration {
-
-    private final EventBus eventBus;
-
-    public SChatConfig(ConfigurationAdapter adapter, EventBus eventBus) {
-        super(adapter, ConfigKeys.getKeys());
-        this.eventBus = eventBus;
-
-        init();
-    }
-
-    public SChatConfig(ConfigurationAdapter adapter) {
-        this(adapter, EventBus.empty());
-    }
-
-    @Override
-    public void reload() {
-        super.reload();
-        eventBus.post(new ConfigReloadedEvent());
-    }
+/**
+ * Dispatched when the configuration was reloaded.
+ *
+ * @since next
+ */
+public class ConfigReloadedEvent implements SChatEvent {
 }

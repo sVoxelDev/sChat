@@ -19,11 +19,15 @@
 
 package net.silthus.schat.channel;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
+import java.util.function.Consumer;
 import net.kyori.adventure.text.TextComponent;
+import net.silthus.schat.event.EventBusMock;
+import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.message.Targets;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -35,11 +39,14 @@ import static net.silthus.schat.channel.Channel.DISPLAY_NAME;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
-import static net.silthus.schat.channel.Feature.feature;
 import static net.silthus.schat.checks.CanJoinChannelCheck.CAN_JOIN_CHANNEL;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 class ChannelTests {
 
@@ -50,6 +57,12 @@ class ChannelTests {
     @BeforeEach
     void setUp() {
         channel = randomChannel();
+    }
+
+    private MessageTarget addMockTarget() {
+        final MessageTarget target = mock(MessageTarget.class);
+        channel.addTarget(target);
+        return target;
     }
 
     private void assertInvalidKey(String key) {
@@ -128,63 +141,64 @@ class ChannelTests {
         }
     }
 
-    @Nested class Features {
+    @Nested class events {
+        private EventBusMock eventBus;
+        private boolean calledEvent = false;
+
+        @BeforeEach
+        void setUp() {
+            eventBus = new EventBusMock();
+            ChannelImpl.setPrototype(builder -> builder.eventBus(eventBus));
+            channel = randomChannel();
+        }
+
+        @AfterEach
+        void tearDown() {
+            eventBus.close();
+        }
+
+        private void onEvent(Consumer<SendChannelMessageEvent> handler) {
+            eventBus.on(SendChannelMessageEvent.class, handler);
+        }
 
         @Test
-        void given_no_feature_returns_empty() {
-            assertThat(channel.getFeature(MockFeature.MOCK_FEATURE)).isEmpty();
+        void sendMessage_fires_ChannelMessageEvent() {
+            onEvent(event -> calledEvent = true);
+
+            channel.sendMessage(randomMessage());
+
+            assertThat(calledEvent).isTrue();
         }
 
-        @Nested class given_mock_feature {
-            private Channel channel;
+        @Test
+        void sendMessage_uses_modified_targets() {
+            final MessageTarget target = mock(MessageTarget.class);
+            onEvent(event -> event.targets(Targets.of(target)));
 
-            @BeforeEach
-            void setUp() {
-                channel = Channel.channel("test").withFeature(MockFeature.MOCK_FEATURE).create();
-            }
+            channel.sendMessage(randomMessage());
 
-            private MockFeature getFeature() {
-                return channel.getFeature(MockFeature.MOCK_FEATURE).orElseThrow();
-            }
-
-            @Test
-            void channel_feature_is_initialized() {
-                assertThat(getFeature().initializeCalled).isTrue();
-            }
-
-            @Test
-            void sendMessage_calls_feature() {
-                final Message message = randomMessage();
-                channel.sendMessage(message);
-                assertThat(getFeature().onMessageCalled).isTrue();
-                assertThat(getFeature().lastMessage).isEqualTo(message);
-            }
+            verify(target).sendMessage(any());
         }
 
-        @Getter
-        @Accessors(fluent = true)
-        private static final class MockFeature implements Feature {
-            static final Feature.Type<MockFeature> MOCK_FEATURE = feature(MockFeature.class, MockFeature::new);
+        @Test
+        void cancelled_event_cancels_message_sending() {
+            final MessageTarget target = addMockTarget();
+            onEvent(event -> event.cancelled(true));
 
-            private final Channel channel;
-            public boolean initializeCalled = false;
-            public boolean onMessageCalled = false;
-            public Message lastMessage;
+            channel.sendMessage(randomMessage());
 
-            private MockFeature(Channel channel) {
-                this.channel = channel;
-            }
+            verify(target, never()).sendMessage(any());
+        }
 
-            @Override
-            public void initialize() {
-                initializeCalled = true;
-            }
+        @Test
+        void sendMessage_uses_message_of_event() {
+            final MessageTarget target = addMockTarget();
+            final Message replacedMessage = randomMessage();
+            onEvent(event -> event.message(replacedMessage));
 
-            @Override
-            public void onMessage(Message message) {
-                onMessageCalled = true;
-                lastMessage = message;
-            }
+            channel.sendMessage(randomMessage());
+
+            verify(target).sendMessage(replacedMessage);
         }
     }
 }

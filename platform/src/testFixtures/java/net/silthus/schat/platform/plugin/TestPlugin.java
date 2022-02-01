@@ -21,6 +21,8 @@ package net.silthus.schat.platform.plugin;
 
 import cloud.commandframework.CommandManager;
 import lombok.Getter;
+import net.silthus.schat.event.AbstractEventBus;
+import net.silthus.schat.event.EventBus;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.chatter.ChatterFactoryStub;
 import net.silthus.schat.platform.commands.Command;
@@ -50,8 +52,13 @@ public class TestPlugin extends AbstractSChatPlugin {
     }
 
     @Override
-    protected ConfigurationAdapter provideConfigurationAdapter() {
+    protected ConfigurationAdapter createConfigurationAdapter() {
         return testConfigAdapter();
+    }
+
+    @Override
+    protected EventBus createEventBus() {
+        return new TestEventBus();
     }
 
     @Override
@@ -87,5 +94,13 @@ public class TestPlugin extends AbstractSChatPlugin {
 
     public void setMessenger(CrossServerMessengerMock messenger) {
         this.messenger = messenger;
+    }
+
+    private final class TestEventBus extends AbstractEventBus<TestPlugin> {
+
+        @Override
+        protected TestPlugin checkPlugin(Object plugin) throws IllegalArgumentException {
+            return TestPlugin.this;
+        }
     }
 }
