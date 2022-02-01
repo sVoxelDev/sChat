@@ -19,7 +19,6 @@
 
 package net.silthus.schat.event.types;
 
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import lombok.Getter;
@@ -29,11 +28,10 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.event.Cancellable;
 import net.silthus.schat.event.SChatEvent;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
-import net.silthus.schat.target.Targets;
+import net.silthus.schat.message.Targets;
 
 /**
- * The {@code SendChannelMessageEvent} is fired before a {@link Channel} forwards a message to its {@link Channel#targets()}.
+ * The {@code SendChannelMessageEvent} is fired before a {@link Channel} forwards a message to its {@link Channel#getTargets()}.
  *
  * <p>The {@link SendMessageEvent} will be called before this event and the message will already be sealed.</p>
  *
@@ -51,7 +49,7 @@ public final class SendChannelMessageEvent implements SChatEvent, Cancellable {
 
     private final Channel channel;
     private Message message;
-    private Set<MessageTarget> targets;
+    private Targets targets;
     @Getter
     private final AtomicBoolean cancellationState = new AtomicBoolean(false);
 
@@ -67,7 +65,7 @@ public final class SendChannelMessageEvent implements SChatEvent, Cancellable {
     public SendChannelMessageEvent(final @NonNull Channel channel, final @NonNull Message message) {
         this.channel = channel;
         this.message = message;
-        this.targets = channel.targets().copy();
+        this.targets = Targets.copyOf(channel.getTargets());
     }
 
     /**

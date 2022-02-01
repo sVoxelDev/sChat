@@ -1,25 +1,20 @@
 /*
- * This file is part of sChat, licensed under the MIT License.
+ * sChat, a Supercharged Minecraft Chat Plugin
  * Copyright (C) Silthus <https://www.github.com/silthus>
  * Copyright (C) sChat team and contributors
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
- *  of this software and associated documentation files (the "Software"), to deal
- *  in the Software without restriction, including without limitation the rights
- *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  copies of the Software, and to permit persons to whom the Software is
- *  furnished to do so, subject to the following conditions:
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *  The above copyright notice and this permission notice shall be included in all
- *  copies or substantial portions of the Software.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package net.silthus.schat.message;
@@ -27,8 +22,6 @@ package net.silthus.schat.message;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Stream;
 import lombok.EqualsAndHashCode;
@@ -56,7 +49,7 @@ final class MessageImpl implements Message {
     private final UUID id;
     private final Instant timestamp;
     private final Identity source;
-    private final Set<MessageTarget> targets;
+    private final Targets targets;
     private final Component text;
     private final Type type;
     private final Pointers pointers;
@@ -65,7 +58,7 @@ final class MessageImpl implements Message {
         this.id = draft.id;
         this.timestamp = draft.timestamp;
         this.source = draft.source;
-        this.targets = Set.copyOf(draft.targets);
+        this.targets = Targets.copyOf(draft.targets);
         this.text = draft.text;
         this.type = draft.type;
         this.pointers = Pointers.pointers()
@@ -89,8 +82,13 @@ final class MessageImpl implements Message {
 
     @Override
     public @NotNull MessageImpl send() {
-        targets().forEach(target -> target.sendMessage(this));
+        targets().sendMessage(this);
         return this;
+    }
+
+    @Override
+    public Message.@NotNull Draft copy() {
+        return new Draft(this);
     }
 
     @NotNull
@@ -107,11 +105,20 @@ final class MessageImpl implements Message {
         private UUID id = UUID.randomUUID();
         private Instant timestamp = Instant.now();
         private Identity source = Identity.nil();
-        private Set<MessageTarget> targets = new HashSet<>();
+        private Targets targets = new Targets();
         private Component text = Component.empty();
         private Type type = Type.SYSTEM;
 
         private Draft() {
+        }
+
+        private Draft(Message message) {
+            this.id = message.id();
+            this.timestamp = message.timestamp();
+            this.source = message.source();
+            this.targets = Targets.copyOf(message.targets());
+            this.text = message.text();
+            this.type = message.type();
         }
 
         public @NotNull Draft text(@Nullable Component text) {

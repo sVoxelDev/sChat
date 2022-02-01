@@ -22,7 +22,6 @@ package net.silthus.schat.channel;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -35,6 +34,7 @@ import net.silthus.schat.command.Check;
 import net.silthus.schat.command.Command;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.message.Targets;
 import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.pointer.Settings;
 import org.jetbrains.annotations.NotNull;
@@ -51,7 +51,7 @@ final class ChannelImpl implements Channel {
 
     private final String key;
     private final Settings settings;
-    private final Set<MessageTarget> targets = new HashSet<>();
+    private final Targets targets = new Targets();
     private final Map<Feature.Type<?>, Feature> features = new HashMap<>();
 
     private ChannelImpl(Builder builder) {
@@ -78,8 +78,8 @@ final class ChannelImpl implements Channel {
     }
 
     @Override
-    public @NotNull @Unmodifiable List<MessageTarget> getTargets() {
-        return List.copyOf(targets);
+    public @NotNull @Unmodifiable Targets getTargets() {
+        return Targets.unmodifiable(targets);
     }
 
     @Override
@@ -95,7 +95,7 @@ final class ChannelImpl implements Channel {
     @Override
     public void sendMessage(@NonNull Message message) {
         callFeatures(feature -> feature.onMessage(message));
-        getTargets().forEach(messageTarget -> messageTarget.sendMessage(message));
+        getTargets().sendMessage(message);
     }
 
     @Override
