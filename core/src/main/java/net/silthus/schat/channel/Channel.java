@@ -19,12 +19,12 @@
 
 package net.silthus.schat.channel;
 
-import java.util.List;
 import java.util.Optional;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.command.Check;
 import net.silthus.schat.command.Command;
 import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.message.Targets;
 import net.silthus.schat.pointer.Configured;
 import net.silthus.schat.pointer.Pointer;
 import net.silthus.schat.pointer.Setting;
@@ -80,7 +80,7 @@ public sealed interface Channel extends Entity<String>, Configured.Modifiable<Ch
 
     <F extends Feature> Optional<F> getFeature(Feature.Type<F> feature);
 
-    @NotNull @Unmodifiable List<MessageTarget> getTargets();
+    @NotNull @Unmodifiable Targets getTargets();
 
     void addTarget(MessageTarget target);
 
