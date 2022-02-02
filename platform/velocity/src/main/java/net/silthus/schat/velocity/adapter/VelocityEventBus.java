@@ -19,7 +19,7 @@
 
 package net.silthus.schat.velocity.adapter;
 
-import net.silthus.schat.event.AbstractEventBus;
+import net.silthus.schat.eventbus.AbstractEventBus;
 import net.silthus.schat.velocity.VelocityPlugin;
 
 public final class VelocityEventBus extends AbstractEventBus<VelocityPlugin> {

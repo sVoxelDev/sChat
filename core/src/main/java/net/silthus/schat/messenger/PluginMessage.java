@@ -17,14 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.events.config;
+package net.silthus.schat.messenger;
 
-import net.silthus.schat.events.SChatEvent;
+import java.util.UUID;
+import org.jetbrains.annotations.NotNull;
 
-/**
- * Dispatched when the configuration was reloaded.
- *
- * @since next
- */
-public class ConfigReloadedEvent implements SChatEvent {
+public interface PluginMessage {
+
+    /**
+     * Gets the unique id associated with this message.
+     *
+     * <p>This ID is used to ensure a single server instance doesn't process
+     * the same message twice.</p>
+     *
+     * @return the id of the message
+     */
+    @NotNull UUID getId();
 }

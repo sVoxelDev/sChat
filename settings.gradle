@@ -18,12 +18,19 @@
  */
 
 rootProject.name = 'sChat'
+
 include 'api'
 include 'core'
+
 include 'ui'
+include 'features:globalchat'
+
 include 'platform'
 include 'platform:bukkit'
 include 'platform:velocity'
-include 'example'
+
+
 include 'acceptance'
+
+include 'example'
 

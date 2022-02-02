@@ -17,14 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.events.config;
+package net.silthus.schat.messenger.message.type;
 
-import net.silthus.schat.events.SChatEvent;
+import java.util.UUID;
+import lombok.Getter;
+import net.silthus.schat.messenger.PluginMessage;
 
-/**
- * Dispatched when the configuration was reloaded.
- *
- * @since next
- */
-public class ConfigReloadedEvent implements SChatEvent {
+@Getter
+public abstract class AbstractPluginMessage implements PluginMessage {
+
+    private final UUID id = UUID.randomUUID();
 }

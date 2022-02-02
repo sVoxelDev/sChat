@@ -19,7 +19,7 @@
 
 package net.silthus.schat.platform.config;
 
-import net.silthus.schat.event.EventBus;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.events.config.ConfigReloadedEvent;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.key.KeyedConfiguration;

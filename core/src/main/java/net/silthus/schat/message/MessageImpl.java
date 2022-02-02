@@ -32,7 +32,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.event.EventBus;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.events.message.SendMessageEvent;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.pointer.Pointers;

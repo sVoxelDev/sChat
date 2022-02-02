@@ -17,14 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.events.config;
+package net.silthus.schat.messenger;
 
-import net.silthus.schat.events.SChatEvent;
+import org.junit.jupiter.api.Test;
 
-/**
- * Dispatched when the configuration was reloaded.
- *
- * @since next
- */
-public class ConfigReloadedEvent implements SChatEvent {
+class MessengerTests {
+
+    // TODO: messenger outline
+    //  - incoming json is processed by some kind of plugin message parser or factory where dynamic types and parsers can be registered
+    //  - the plugin message interface itself has a process() method to processed the message after it was consumed by the incoming messenger
+    //  - the serialization is not done by the message, but by the factory or lets call it serializer
+
+    @Test
+    void todo() {
+        assert false;
+    }
 }
