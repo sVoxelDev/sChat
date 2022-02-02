@@ -29,8 +29,10 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelPrototype;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.ChatterProvider;
-import net.silthus.schat.event.EventBus;
+import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.features.GlobalChatFeature;
 import net.silthus.schat.message.MessagePrototype;
+import net.silthus.schat.messenger.Messenger;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;
@@ -61,8 +63,11 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     private EventBus eventBus;
 
     private SChatConfig config;
+    private Messenger messenger;
+
     private ChatterProvider chatterProvider;
     private ChannelRepository channelRepository;
+
     private OnChat chatListener;
     private Commands commands;
 
@@ -96,6 +101,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
         chatListener = createChatListener().chatterProvider(chatterProvider);
 
         setupPrototypes();
+        loadFeatures();
 
         getLogger().info("Loading channels...");
         for (final Channel channel : getConfig().get(CHANNELS)) {
@@ -143,6 +149,10 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     private void setupPrototypes() {
         MessagePrototype.configure(getEventBus());
         ChannelPrototype.configure(getEventBus());
+    }
+
+    private void loadFeatures() {
+        new GlobalChatFeature(getMessenger()).bind(getEventBus());
     }
 
     @NotNull

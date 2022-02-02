@@ -24,7 +24,7 @@ import cloud.commandframework.velocity.VelocityCommandManager;
 import dev.simplix.protocolize.api.Protocolize;
 import java.io.File;
 import lombok.Getter;
-import net.silthus.schat.event.EventBus;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;

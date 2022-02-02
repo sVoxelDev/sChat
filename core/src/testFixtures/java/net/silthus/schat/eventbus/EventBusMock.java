@@ -17,14 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.events.config;
+package net.silthus.schat.eventbus;
 
-import net.silthus.schat.events.SChatEvent;
+import net.silthus.schat.channel.ChannelPrototype;
+import net.silthus.schat.message.MessagePrototype;
 
-/**
- * Dispatched when the configuration was reloaded.
- *
- * @since next
- */
-public class ConfigReloadedEvent implements SChatEvent {
+public class EventBusMock extends AbstractEventBus<Object> {
+
+    public EventBusMock() {
+        ChannelPrototype.configure(this);
+        MessagePrototype.configure(this);
+    }
+
+    @Override
+    protected Object checkPlugin(Object plugin) throws IllegalArgumentException {
+        return plugin;
+    }
 }

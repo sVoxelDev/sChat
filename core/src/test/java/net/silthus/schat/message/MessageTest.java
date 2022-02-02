@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.event.EventBusMock;
+import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.message.SendMessageEvent;
 import net.silthus.schat.identity.Identity;
 import org.junit.jupiter.api.AfterEach;
@@ -165,7 +165,6 @@ class MessageTest {
         @BeforeEach
         void setUp() {
             eventBus = new EventBusMock();
-            MessageImpl.setPrototype(draft -> draft.eventBus(eventBus));
             onEvent(event -> eventCalled = true);
         }
 

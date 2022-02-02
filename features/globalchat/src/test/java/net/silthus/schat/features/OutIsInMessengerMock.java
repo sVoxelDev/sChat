@@ -17,38 +17,44 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.messenger;
+package net.silthus.schat.features;
 
-import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Queue;
 import net.silthus.schat.messenger.IncomingPluginMessageConsumer;
 import net.silthus.schat.messenger.Messenger;
 import net.silthus.schat.messenger.PluginMessage;
-import net.silthus.schat.platform.plugin.TestPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class CrossServerMessengerMock implements Messenger, IncomingPluginMessageConsumer {
-    private final TestPlugin plugin;
-    private final Collection<TestPlugin> servers;
+import static org.assertj.core.api.Assertions.assertThat;
 
-    public CrossServerMessengerMock(TestPlugin plugin, Collection<TestPlugin> servers) {
-        this.plugin = plugin;
-        this.servers = servers;
-    }
+public class OutIsInMessengerMock implements IncomingPluginMessageConsumer, Messenger {
 
-    @Override
-    public void sendPluginMessage(@NonNull PluginMessage pluginMessage) {
-        servers.stream()
-            .filter(p -> !p.equals(plugin))
-            .forEach(p -> p.getMessenger().consumeIncomingMessage(pluginMessage));
-    }
+    private final Queue<PluginMessage> received = new LinkedList<>();
+
+    private boolean calledSendOutgoing = false;
 
     @Override
     public boolean consumeIncomingMessage(@NonNull PluginMessage message) {
-        return false;
+        received.add(message);
+        return true;
     }
 
     @Override
     public boolean consumeIncomingMessageAsString(@NonNull String encodedString) {
         return false;
+    }
+
+    @Override
+    public void sendPluginMessage(@NonNull PluginMessage pluginMessage) {
+        this.calledSendOutgoing = true;
+    }
+
+    public void assertOutgoingMessageSent() {
+        assertThat(calledSendOutgoing).isTrue();
+    }
+
+    public void assertReceivedMessage(PluginMessage msg) {
+        assertThat(received).contains(msg);
     }
 }

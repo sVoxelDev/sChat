@@ -21,8 +21,8 @@ package net.silthus.schat.platform.plugin;
 
 import cloud.commandframework.CommandManager;
 import lombok.Getter;
-import net.silthus.schat.event.AbstractEventBus;
-import net.silthus.schat.event.EventBus;
+import net.silthus.schat.eventbus.AbstractEventBus;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.chatter.ChatterFactoryStub;
 import net.silthus.schat.platform.commands.Command;

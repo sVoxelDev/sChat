@@ -29,7 +29,7 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.command.Check;
 import net.silthus.schat.command.Command;
-import net.silthus.schat.event.EventBus;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;

@@ -17,14 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.events.config;
+package net.silthus.schat.message;
 
-import net.silthus.schat.events.SChatEvent;
+import net.silthus.schat.eventbus.EventBus;
 
-/**
- * Dispatched when the configuration was reloaded.
- *
- * @since next
- */
-public class ConfigReloadedEvent implements SChatEvent {
+public final class MessagePrototype {
+
+    public static void configure(EventBus eventBus) {
+        MessageImpl.setPrototype(draft -> draft.eventBus(eventBus));
+    }
+
+    private MessagePrototype() {
+    }
 }

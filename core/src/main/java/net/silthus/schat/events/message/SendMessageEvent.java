@@ -23,8 +23,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
-import net.silthus.schat.event.Cancellable;
-import net.silthus.schat.event.SChatEvent;
+import net.silthus.schat.events.Cancellable;
+import net.silthus.schat.events.SChatEvent;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.Targets;
 

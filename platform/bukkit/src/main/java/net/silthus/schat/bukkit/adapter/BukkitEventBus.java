@@ -19,15 +19,23 @@
 
 package net.silthus.schat.bukkit.adapter;
 
-import net.silthus.schat.event.AbstractEventBus;
+import net.silthus.schat.eventbus.AbstractEventBus;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
 
-public final class BukkitEventBus extends AbstractEventBus<Plugin> {
+public final class BukkitEventBus extends AbstractEventBus<Plugin> implements Listener {
     @Override
     protected Plugin checkPlugin(Object plugin) throws IllegalArgumentException {
         if (plugin instanceof Plugin p)
             return p;
         else
             throw new IllegalArgumentException();
+    }
+
+    @EventHandler
+    public void onPluginDisable(PluginDisableEvent event) {
+        unregisterHandlers(event.getPlugin());
     }
 }

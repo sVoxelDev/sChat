@@ -17,14 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.events.config;
-
-import net.silthus.schat.events.SChatEvent;
+package net.silthus.schat.events;
 
 /**
- * Dispatched when the configuration was reloaded.
+ * The root sChat event that must be implemented by all events.
  *
  * @since next
  */
-public class ConfigReloadedEvent implements SChatEvent {
+public interface SChatEvent {
 }

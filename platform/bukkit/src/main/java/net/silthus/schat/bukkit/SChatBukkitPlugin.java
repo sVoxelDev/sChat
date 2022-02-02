@@ -30,7 +30,7 @@ import net.silthus.schat.bukkit.adapter.BukkitEventBus;
 import net.silthus.schat.bukkit.adapter.BukkitSchedulerAdapter;
 import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
 import net.silthus.schat.bukkit.protocollib.ChatPacketListener;
-import net.silthus.schat.event.EventBus;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
@@ -66,7 +66,9 @@ public final class SChatBukkitPlugin extends AbstractSChatPlugin {
 
     @Override
     protected EventBus createEventBus() {
-        return new BukkitEventBus();
+        final BukkitEventBus bus = new BukkitEventBus();
+        Bukkit.getPluginManager().registerEvents(bus, getBootstrap().getLoader());
+        return bus;
     }
 
     @Override

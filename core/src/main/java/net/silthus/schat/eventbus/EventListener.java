@@ -17,14 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.events.config;
+package net.silthus.schat.eventbus;
 
 import net.silthus.schat.events.SChatEvent;
 
 /**
- * Dispatched when the configuration was reloaded.
+ * Defines a class which listens to {@link SChatEvent}s.
  *
  * @since next
  */
-public class ConfigReloadedEvent implements SChatEvent {
+@FunctionalInterface
+public interface EventListener {
+
+    /**
+     * Binds the event listener to the event bus.
+     *
+     * @param bus the event bus
+     * @since next
+     */
+    void bind(EventBus bus);
 }

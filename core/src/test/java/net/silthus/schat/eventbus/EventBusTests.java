@@ -17,14 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.events.config;
+package net.silthus.schat.eventbus;
 
-import net.silthus.schat.events.SChatEvent;
+import org.junit.jupiter.api.Test;
 
-/**
- * Dispatched when the configuration was reloaded.
- *
- * @since next
- */
-public class ConfigReloadedEvent implements SChatEvent {
+class EventBusTests {
+
+    @Test
+    void create() {
+
+    }
 }

@@ -17,14 +17,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.events.config;
+package net.silthus.schat.messenger;
 
-import net.silthus.schat.events.SChatEvent;
+import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 
 /**
- * Dispatched when the configuration was reloaded.
- *
- * @since next
+ * Represents an object which dispatches {@link PluginMessage}s.
  */
-public class ConfigReloadedEvent implements SChatEvent {
+@OverrideOnly
+public interface Messenger extends AutoCloseable {
+
+    /**
+     * Performs the necessary action to dispatch the message using the means
+     * of the messenger.
+     *
+     * <p>This call should always be made async.</p>
+     *
+     * @param pluginMessage the outgoing message
+     */
+    void sendPluginMessage(@NonNull PluginMessage pluginMessage);
+
+    /**
+     * Performs the necessary action to gracefully shut down the messenger.
+     */
+    @Override
+    default void close() {
+
+    }
 }

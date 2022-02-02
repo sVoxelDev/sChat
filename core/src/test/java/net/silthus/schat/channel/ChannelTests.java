@@ -21,7 +21,7 @@ package net.silthus.schat.channel;
 
 import java.util.function.Consumer;
 import net.kyori.adventure.text.TextComponent;
-import net.silthus.schat.event.EventBusMock;
+import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
@@ -148,7 +148,6 @@ class ChannelTests {
         @BeforeEach
         void setUp() {
             eventBus = new EventBusMock();
-            ChannelImpl.setPrototype(builder -> builder.eventBus(eventBus));
             channel = randomChannel();
         }
 
