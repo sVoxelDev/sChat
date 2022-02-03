@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package schat;
+package net.silthus.schat.cucumber;
 
 import java.util.UUID;
 import lombok.Getter;

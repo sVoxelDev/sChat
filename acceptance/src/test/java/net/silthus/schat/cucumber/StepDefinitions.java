@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package schat;
+package net.silthus.schat.cucumber;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;

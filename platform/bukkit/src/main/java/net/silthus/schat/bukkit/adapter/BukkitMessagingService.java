@@ -24,9 +24,9 @@
 
 package net.silthus.schat.bukkit.adapter;
 
-import net.silthus.schat.messaging.Messenger;
+import net.silthus.schat.messaging.MessengerGateway;
 
-public class BukkitMessagingService implements Messenger.Gateway {
+public class BukkitMessagingService implements MessengerGateway {
 
     public BukkitMessagingService(BukkitSchedulerAdapter scheduler) {
 

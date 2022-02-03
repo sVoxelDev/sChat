@@ -44,7 +44,7 @@ public interface MessengerGatewayProvider {
     @NonNull String getName();
 
     /**
-     * Creates and returns a new {@link Messenger.Gateway} instance, which passes
+     * Creates and returns a new {@link MessengerGateway} instance, which passes
      * incoming messages to the provided {@link IncomingMessageConsumer}.
      *
      * <p>As the agent should pass incoming messages to the given consumer,
@@ -54,7 +54,7 @@ public interface MessengerGatewayProvider {
      *                                incoming messages to
      * @return a new messenger gateway instance
      */
-    @NonNull Messenger.Gateway obtain(@NonNull IncomingMessageConsumer incomingMessageConsumer);
+    @NonNull MessengerGateway obtain(@NonNull IncomingMessageConsumer incomingMessageConsumer);
 
     interface Registry {
         MessengerGatewayProvider get(String name);
