@@ -1,0 +1,16 @@
+{
+  "type": "test",
+  "id": "",
+  "content": {
+    "foo": "test",
+    "message": {
+      "source": {
+        "id": "",
+        "name": "",
+        "display_name": {
+
+        }
+      }
+    }
+  }
+}

@@ -17,20 +17,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.messenger;
+package net.silthus.schat.messaging;
 
-import java.util.UUID;
+import java.lang.reflect.Type;
+import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 
-public interface PluginMessage {
+public interface PluginMessageSerializer {
+
+    SerializationType[] supportedTypes();
 
     /**
-     * Gets the unique id associated with this message.
+     * Registers the given type adapter for serialization and deserialization.
      *
-     * <p>This ID is used to ensure a single server instance doesn't process
-     * the same message twice.</p>
+     * <p>The provided adapter must be on of the {@link #supportedTypes()}.</p>
      *
-     * @return the id of the message
+     * @param type the type
+     * @param adapter the adapter
+     * @throws IllegalArgumentException if the adapter cannot be used for the given serialization implementation
      */
-    @NotNull UUID getId();
+    void registerTypeAdapter(Type type, Object adapter) throws IllegalArgumentException;
+
+    @NotNull String encode(PluginMessage.Type pluginMessage);
+
+    @NotNull PluginMessage.Type decode(@NonNull String encodedString);
 }

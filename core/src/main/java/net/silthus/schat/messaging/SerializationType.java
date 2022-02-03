@@ -17,32 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.messenger;
+package net.silthus.schat.messaging;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.jetbrains.annotations.ApiStatus.OverrideOnly;
+import java.lang.reflect.Type;
 
-/**
- * Represents an object which dispatches {@link PluginMessage}s.
- */
-@OverrideOnly
-public interface Messenger extends AutoCloseable {
-
+public enum SerializationType {
     /**
-     * Performs the necessary action to dispatch the message using the means
-     * of the messenger.
-     *
-     * <p>This call should always be made async.</p>
-     *
-     * @param pluginMessage the outgoing message
+     * The type adapter must match the specification of {@link com.google.gson.GsonBuilder#registerTypeAdapter(Type, Object)}.
      */
-    void sendPluginMessage(@NonNull PluginMessage pluginMessage);
-
-    /**
-     * Performs the necessary action to gracefully shut down the messenger.
-     */
-    @Override
-    default void close() {
-
-    }
+    GSON
 }

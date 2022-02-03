@@ -17,14 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.messenger.message.type;
+package net.silthus.schat.messaging;
 
 import java.util.UUID;
-import lombok.Getter;
-import net.silthus.schat.messenger.PluginMessage;
+import lombok.NonNull;
 
-@Getter
-public abstract class AbstractPluginMessage implements PluginMessage {
+public interface PluginMessage {
 
-    private final UUID id = UUID.randomUUID();
+    static Type of(PluginMessage content) {
+        return new Type(UUID.randomUUID(), parseTypeName(content.getClass()), content);
+    }
+
+    static String parseTypeName(java.lang.reflect.Type type) {
+        return type.getTypeName();
+    }
+
+    void process();
+
+    record Type(UUID id, String type, @NonNull PluginMessage content) {
+    }
 }

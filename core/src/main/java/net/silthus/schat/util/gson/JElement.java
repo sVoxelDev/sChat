@@ -17,19 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.messenger;
+package net.silthus.schat.util.gson;
 
-import org.junit.jupiter.api.Test;
+import com.google.gson.JsonElement;
 
-class MessengerTests {
+public interface JElement {
 
-    // TODO: messenger outline
-    //  - incoming json is processed by some kind of plugin message parser or factory where dynamic types and parsers can be registered
-    //  - the plugin message interface itself has a process() method to processed the message after it was consumed by the incoming messenger
-    //  - the serialization is not done by the message, but by the factory or lets call it serializer
+    JsonElement toJson();
 
-    @Test
-    void todo() {
-        assert false;
-    }
 }

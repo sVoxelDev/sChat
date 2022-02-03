@@ -56,11 +56,11 @@ final class MessageImpl implements Message {
     private final UUID id;
     private final Instant timestamp;
     private final Identity source;
-    private final Targets targets;
+    private final transient Targets targets;
     private final Component text;
     private final Type type;
-    private final EventBus eventBus;
-    private final Pointers pointers;
+    private final transient EventBus eventBus;
+    private final transient Pointers pointers;
 
     private MessageImpl(Draft draft) {
         this.id = draft.id;
