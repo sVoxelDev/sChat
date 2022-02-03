@@ -22,25 +22,22 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.velocity.adapter;
+package net.silthus.schat.platform.messaging;
 
-import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.player.PlayerChatEvent;
-import net.silthus.schat.chatter.ChatterProvider;
-import net.silthus.schat.platform.listener.ChatListener;
+import net.silthus.schat.messaging.PluginMessage;
 
-import static com.velocitypowered.api.event.player.PlayerChatEvent.ChatResult.denied;
-import static net.kyori.adventure.text.Component.text;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public final class VelocityChatListener extends ChatListener {
+public class MockPluginMessage extends PluginMessage {
 
-    public VelocityChatListener(ChatterProvider provider) {
-        super(provider);
+    private int processCount = 0;
+
+    @Override
+    public void process() {
+        processCount++;
     }
 
-    @Subscribe
-    public void onPlayerChat(PlayerChatEvent event) {
-        onChat(event.getPlayer().getUniqueId(), text(event.getMessage()));
-        event.setResult(denied());
+    public void assertProcessed() {
+        assertThat(processCount).isGreaterThan(0);
     }
 }

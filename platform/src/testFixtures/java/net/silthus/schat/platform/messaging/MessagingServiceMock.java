@@ -37,6 +37,7 @@ public class MessagingServiceMock extends MessagingService {
 
     public MessagingServiceMock() {
         super(new MockMessagingGatewayProvider(), gsonSerializer());
+        gsonSerializer().registerMessageType(MockPluginMessage.class);
     }
 
     @Override

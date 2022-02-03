@@ -24,14 +24,13 @@
 
 package net.silthus.schat.platform.messaging;
 
-import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import net.silthus.schat.messaging.PluginMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 class MessagingServiceTest {
 
@@ -40,20 +39,18 @@ class MessagingServiceTest {
     @BeforeEach
     void setUp() {
         service = new MessagingServiceMock();
-        service.getSerializer().registerMessageType(EmptyPluginMessage.class);
-        EmptyPluginMessage.processed = false;
     }
 
     @Test
     void message_without_content_is_sent() {
-        final EmptyPluginMessage message = new EmptyPluginMessage();
+        final MockPluginMessage message = new MockPluginMessage();
         service.sendPluginMessage(message);
         service.assertLastReceivedMessageIs(message);
     }
 
     @Test
     void same_message_is_only_consumed_once() {
-        final EmptyPluginMessage message = new EmptyPluginMessage();
+        final MockPluginMessage message = new MockPluginMessage();
         service.consumeIncomingMessage(message);
         service.consumeIncomingMessage(message);
         service.assertProcessedMessageCountIs(1);
@@ -61,19 +58,9 @@ class MessagingServiceTest {
 
     @Test
     void received_message_is_processed() {
-        service.consumeIncomingMessage(new EmptyPluginMessage());
-        assertThat(EmptyPluginMessage.processed).isTrue();
-    }
-
-    @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-    private static final class EmptyPluginMessage extends PluginMessage {
-
-        static boolean processed = false;
-
-        @Override
-        public void process() {
-            processed = true;
-        }
+        final MockPluginMessage message = new MockPluginMessage();
+        service.consumeIncomingMessage(message);
+        message.assertProcessed();
     }
 
     @Nested class given_self_referencing_messenger {
@@ -92,8 +79,16 @@ class MessagingServiceTest {
 
         @Test
         void message_is_not_processed() {
-            service.sendPluginMessage(new EmptyPluginMessage());
+            service.sendPluginMessage(new MockPluginMessage());
             service.assertProcessedMessageCountIs(0);
+        }
+    }
+
+    @Nested class given_invalid_message {
+        @Test
+        void incoming_consumer_silently_fails() {
+            assertThatCode(() -> service.consumeIncomingMessageAsString(""))
+                .doesNotThrowAnyException();
         }
     }
 }

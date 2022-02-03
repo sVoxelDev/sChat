@@ -26,13 +26,13 @@ package net.silthus.schat.platform.messaging;
 
 import java.util.Collection;
 import net.silthus.schat.messaging.MessengerGateway;
-import net.silthus.schat.platform.plugin.TestPlugin;
+import net.silthus.schat.platform.plugin.TestServer;
 
 public class CrossServerMessengerMock implements MessengerGateway {
-    private final TestPlugin plugin;
-    private final Collection<TestPlugin> servers;
+    private final TestServer plugin;
+    private final Collection<TestServer> servers;
 
-    public CrossServerMessengerMock(TestPlugin plugin, Collection<TestPlugin> servers) {
+    public CrossServerMessengerMock(TestServer plugin, Collection<TestServer> servers) {
         this.plugin = plugin;
         this.servers = servers;
     }

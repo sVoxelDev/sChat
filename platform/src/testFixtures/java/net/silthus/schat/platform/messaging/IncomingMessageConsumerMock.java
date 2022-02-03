@@ -22,14 +22,20 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.velocity.adapter;
+package net.silthus.schat.platform.messaging;
 
-import net.silthus.schat.messaging.MessengerGateway;
+import lombok.NonNull;
+import net.silthus.schat.messaging.IncomingMessageConsumer;
+import net.silthus.schat.messaging.PluginMessage;
 
-public class VelocityMessagingService implements MessengerGateway {
+public class IncomingMessageConsumerMock implements IncomingMessageConsumer {
+    @Override
+    public boolean consumeIncomingMessage(@NonNull PluginMessage message) {
+        return false;
+    }
 
     @Override
-    public void sendOutgoingMessage(String encodedMessage) {
-
+    public boolean consumeIncomingMessageAsString(@NonNull String encodedString) {
+        return false;
     }
 }

@@ -22,18 +22,26 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.bukkit.adapter;
+package net.silthus.schat.platform.plugin;
 
-import net.silthus.schat.messaging.MessengerGateway;
+import lombok.Getter;
 
-public class BukkitMessagingService implements MessengerGateway {
+@Getter
+public abstract class AbstractSChatProxyPlugin extends AbstractSChatPlugin {
 
-    public BukkitMessagingService(BukkitSchedulerAdapter scheduler) {
+    @Override
+    protected void onLoad() {
 
     }
 
     @Override
-    public void sendOutgoingMessage(String encodedMessage) {
-
+    protected void onEnable() {
+        registerListeners();
     }
+
+    @Override
+    protected void onDisable() {
+    }
+
+    protected abstract void registerListeners();
 }

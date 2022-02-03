@@ -25,6 +25,9 @@
 package net.silthus.schat.messaging;
 
 public interface MessengerGateway extends AutoCloseable {
+
+    String CHANNEL = "schat:update";
+
     /**
      * Processes the encoded message by using the means of this gateway.
      *

@@ -27,7 +27,6 @@ package net.silthus.schat.platform.messaging;
 import java.util.HashMap;
 import java.util.Map;
 import net.silthus.schat.messaging.MessengerGatewayProvider;
-import org.jetbrains.annotations.NotNull;
 
 public final class GatewayProviderRegistry implements MessengerGatewayProvider.Registry {
 
@@ -35,25 +34,20 @@ public final class GatewayProviderRegistry implements MessengerGatewayProvider.R
 
     @Override
     public MessengerGatewayProvider get(String name) {
-        final String key = key(name);
+        final String key = name.toLowerCase();
         if (!providerMap.containsKey(key))
-            throw new IllegalArgumentException("The provider '" + name + "' is not registered!");
+            throw new IllegalArgumentException("The provider '" + key + "' is not registered!");
         else
             return providerMap.get(key);
     }
 
     @Override
-    public void register(MessengerGatewayProvider provider) {
-        final String key = key(provider.getName());
+    public void register(String name, MessengerGatewayProvider provider) {
+        final String key = name.toLowerCase();
         if (providerMap.containsKey(key))
-            throw new IllegalArgumentException("A provider with the name " + provider.getName()
+            throw new IllegalArgumentException("A provider with the name " + key
                 + " already exists: " + providerMap.get(key).getClass().getCanonicalName());
         else
             providerMap.put(key, provider);
-    }
-
-    @NotNull
-    private String key(String key) {
-        return key.toLowerCase();
     }
 }

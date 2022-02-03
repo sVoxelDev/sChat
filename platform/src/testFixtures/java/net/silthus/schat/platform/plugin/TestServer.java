@@ -29,6 +29,7 @@ import lombok.Getter;
 import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.eventbus.AbstractEventBus;
 import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.messaging.MessengerGatewayProvider;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.chatter.ChatterFactoryStub;
 import net.silthus.schat.platform.commands.Command;
@@ -46,15 +47,10 @@ import static net.silthus.schat.platform.sender.SenderMock.senderMock;
 import static org.mockito.Mockito.spy;
 
 @Getter
-public class TestPlugin extends AbstractSChatPlugin {
+public class TestServer extends AbstractSChatServerPlugin {
 
     static Command dummyCommand = spy(Command.class);
     private ChatterFactoryStub chatterFactory;
-
-    @Override
-    protected void onLoad() {
-        getGatewayProviderRegistry().register(new MockMessagingGatewayProvider());
-    }
 
     @Override
     public Sender getConsole() {
@@ -74,6 +70,11 @@ public class TestPlugin extends AbstractSChatPlugin {
     @Override
     protected void setupSenderFactory() {
 
+    }
+
+    @Override
+    protected void registerMessengerGateway(MessengerGatewayProvider.Registry registry) {
+        registry.register("mock", new MockMessagingGatewayProvider());
     }
 
     @Override
@@ -102,11 +103,11 @@ public class TestPlugin extends AbstractSChatPlugin {
         return new BootstrapStub();
     }
 
-    private final class TestEventBus extends AbstractEventBus<TestPlugin> {
+    private final class TestEventBus extends AbstractEventBus<TestServer> {
 
         @Override
-        protected TestPlugin checkPlugin(Object plugin) throws IllegalArgumentException {
-            return TestPlugin.this;
+        protected TestServer checkPlugin(Object plugin) throws IllegalArgumentException {
+            return TestServer.this;
         }
     }
 }

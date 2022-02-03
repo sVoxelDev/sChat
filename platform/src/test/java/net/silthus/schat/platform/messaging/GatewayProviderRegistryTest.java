@@ -31,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class GatewayProviderRegistryTest {
+    private static final String PROVIDER_NAME = "mock";
 
     private GatewayProviderRegistry registry;
 
@@ -47,20 +48,20 @@ class GatewayProviderRegistryTest {
 
     @Test
     void registered_provider_returns_by_name() {
-        registry.register(new MockMessagingGatewayProvider());
-        assertThat(registry.get(MockMessagingGatewayProvider.PROVIDER_NAME)).isNotNull();
+        registry.register(PROVIDER_NAME, new MockMessagingGatewayProvider());
+        assertThat(registry.get(PROVIDER_NAME)).isNotNull();
     }
 
     @Test
     void duplicate_provider_throws() {
-        registry.register(new MockMessagingGatewayProvider());
+        registry.register(PROVIDER_NAME, new MockMessagingGatewayProvider());
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> registry.register(new MockMessagingGatewayProvider()));
+            .isThrownBy(() -> registry.register(PROVIDER_NAME, new MockMessagingGatewayProvider()));
     }
 
     @Test
     void gateway_name_is_lower_cased() {
-        registry.register(new MockMessagingGatewayProvider());
-        assertThat(registry.get(MockMessagingGatewayProvider.PROVIDER_NAME.toLowerCase())).isNotNull();
+        registry.register(PROVIDER_NAME, new MockMessagingGatewayProvider());
+        assertThat(registry.get(PROVIDER_NAME.toUpperCase())).isNotNull();
     }
 }

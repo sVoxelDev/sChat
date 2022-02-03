@@ -25,12 +25,12 @@
 package net.silthus.schat.velocity.adapter;
 
 import net.silthus.schat.eventbus.AbstractEventBus;
-import net.silthus.schat.velocity.VelocityPlugin;
+import net.silthus.schat.velocity.SChatVelocityProxy;
 
-public final class VelocityEventBus extends AbstractEventBus<VelocityPlugin> {
+public final class VelocityEventBus extends AbstractEventBus<SChatVelocityProxy> {
     @Override
-    protected VelocityPlugin checkPlugin(Object plugin) throws IllegalArgumentException {
-        if (plugin instanceof VelocityPlugin p)
+    protected SChatVelocityProxy checkPlugin(Object plugin) throws IllegalArgumentException {
+        if (plugin instanceof SChatVelocityProxy p)
             return p;
         else
             throw new IllegalArgumentException();

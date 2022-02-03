@@ -38,7 +38,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class BukkitBootstrap implements Bootstrap, LoaderBootstrap {
 
     private final JavaPlugin loader;
-    private final SChatBukkitPlugin plugin;
+    private final SChatBukkitServer plugin;
 
     private final PluginLogger pluginLogger;
     private final BukkitSchedulerAdapter scheduler;
@@ -48,7 +48,7 @@ public class BukkitBootstrap implements Bootstrap, LoaderBootstrap {
 
         this.pluginLogger = new JavaPluginLogger(loader.getLogger());
         this.scheduler = new BukkitSchedulerAdapter(loader);
-        this.plugin = new SChatBukkitPlugin(this);
+        this.plugin = new SChatBukkitServer(this);
     }
 
     @Override
