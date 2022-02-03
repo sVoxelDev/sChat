@@ -17,4 +17,5 @@ cucumber {
     main = 'io.cucumber.core.cli.Main'
     featurePath = "$rootDir/acceptance/src/test/resources/features"
     glue = 'classpath:net.silthus.schat.cucumber'
+    plugin = ['pretty', "json:$rootDir/acceptance/build/reports/cucumber-report.json"]
 }
