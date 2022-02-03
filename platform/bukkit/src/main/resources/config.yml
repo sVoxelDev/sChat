@@ -1,3 +1,4 @@
+messenger: pluginmessage
 channels:
   global:
     name: Global

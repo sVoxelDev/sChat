@@ -24,18 +24,17 @@
 
 package net.silthus.schat.velocity;
 
-import java.io.File;
 import lombok.Getter;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.messaging.MessengerGatewayProvider;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
-import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
 import net.silthus.schat.platform.plugin.AbstractSChatProxyPlugin;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.velocity.adapter.VelocityEventBus;
 import net.silthus.schat.velocity.adapter.VelocityMessengerGateway;
 import net.silthus.schat.velocity.adapter.VelocitySenderFactory;
 
+import static net.silthus.schat.platform.config.adapter.ConfigurationAdapters.YAML;
 import static net.silthus.schat.velocity.adapter.VelocityMessengerGateway.GATEWAY_TYPE;
 
 @Getter
@@ -55,7 +54,7 @@ public final class SChatVelocityProxy extends AbstractSChatProxyPlugin {
 
     @Override
     protected ConfigurationAdapter createConfigurationAdapter() {
-        return ConfigurationAdapters.YAML.create(new File(bootstrap.getConfigDirectory().toFile(), "config.yml"));
+        return YAML.create(resolveConfig("config.yml").toFile());
     }
 
     @Override

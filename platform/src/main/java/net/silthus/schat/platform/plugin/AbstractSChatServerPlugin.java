@@ -25,10 +25,6 @@
 package net.silthus.schat.platform.plugin;
 
 import cloud.commandframework.CommandManager;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import lombok.Getter;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelPrototype;
@@ -173,29 +169,4 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     protected void registerListeners() {
     }
 
-    protected final Path resolveConfig(String fileName) {
-        Path configFile = getBootstrap().getConfigDirectory().resolve(fileName);
-
-        if (!Files.exists(configFile)) {
-            createConfigDirectory(configFile);
-            copyDefaultConfig(fileName, configFile);
-        }
-
-        return configFile;
-    }
-
-    private void copyDefaultConfig(String fileName, Path configFile) {
-        try (InputStream is = getBootstrap().getResourceStream(fileName)) {
-            Files.copy(is, configFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void createConfigDirectory(Path configFile) {
-        try {
-            Files.createDirectories(configFile.getParent());
-        } catch (IOException ignored) {
-        }
-    }
 }

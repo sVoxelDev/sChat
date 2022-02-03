@@ -43,7 +43,7 @@ public final class ConfigKeys {
     private ConfigKeys() {
     }
 
-    public static final ConfigKey<String> MESSENGER = notReloadable(lowercaseStringKey("messenger", "pluginmessaging"));
+    public static final ConfigKey<String> MESSENGER = notReloadable(lowercaseStringKey("messenger", "pluginmessage"));
 
     public static final ConfigKey<List<Channel>> CHANNELS = modifiable(key(config -> {
         final ArrayList<Channel> channels = new ArrayList<>();

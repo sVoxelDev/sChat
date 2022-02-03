@@ -35,6 +35,7 @@ import net.silthus.schat.platform.plugin.AbstractSChatProxyPlugin;
 import net.silthus.schat.platform.sender.Sender;
 
 import static net.silthus.schat.bungeecord.adapter.BungeecordMessengerGateway.GATEWAY_TYPE;
+import static net.silthus.schat.platform.config.adapter.ConfigurationAdapters.YAML;
 
 @Getter
 public final class BungeecordProxyPlugin extends AbstractSChatProxyPlugin {
@@ -63,7 +64,7 @@ public final class BungeecordProxyPlugin extends AbstractSChatProxyPlugin {
 
     @Override
     protected ConfigurationAdapter createConfigurationAdapter() {
-        return null;
+        return YAML.create(resolveConfig("config.yml").toFile());
     }
 
     @Override

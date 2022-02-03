@@ -32,6 +32,7 @@ import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.pointer.Settings;
@@ -50,7 +51,6 @@ import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
-import static net.silthus.schat.identity.Identity.IS_NOT_NIL;
 import static net.silthus.schat.pointer.Setting.setting;
 import static net.silthus.schat.pointer.Settings.createSettings;
 
@@ -64,7 +64,7 @@ public final class TabbedChannelsView implements View {
         .build());
     public static final Setting<Format.Pointered> MESSAGE_FORMAT = setting(Format.Pointered.class, "message", msg ->
         msg.get(Message.SOURCE)
-            .filter(IS_NOT_NIL)
+            .filter(Identity.IS_NOT_NIL)
             .map(identity -> identity.getDisplayName().append(text(": ")))
             .orElse(Component.empty())
             .append(msg.getOrDefault(Message.TEXT, Component.empty())));

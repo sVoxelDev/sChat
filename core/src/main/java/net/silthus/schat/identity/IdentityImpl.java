@@ -45,16 +45,13 @@ final class IdentityImpl implements Identity {
 
     static final Identity NIL = Identity.identity(NIL_IDENTITY_ID, "", Component.empty());
 
-    private final UUID uniqueId;
-    private final String name;
-    private final transient Pointers pointers;
+    private final @NonNull UUID uniqueId;
+    private final Pointers pointers;
 
     IdentityImpl(
         @NonNull UUID uniqueId,
-        @NonNull String name,
         @NonNull Pointers pointers) {
         this.uniqueId = uniqueId;
-        this.name = name;
         this.pointers = pointers;
     }
 }
