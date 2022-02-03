@@ -17,17 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.messenger;
+package net.silthus.schat.messaging;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import org.jetbrains.annotations.ApiStatus.NonExtendable;
 
 /**
- * Encapsulates the sChat system which accepts incoming {@link PluginMessage}s
+ * Encapsulates the sChat system which accepts incoming {@link PluginMessage.Type}s
  * from implementations of {@link Messenger}.
  */
 @NonExtendable
-public interface IncomingPluginMessageConsumer {
+public interface IncomingMessageConsumer {
 
     /**
      * Consumes a message instance.
@@ -43,27 +43,6 @@ public interface IncomingPluginMessageConsumer {
      * @param message the message
      * @return true if the message was accepted by the plugin
      */
-    boolean consumeIncomingMessage(@NonNull PluginMessage message);
-
-    /**
-     * Consumes a message in an encoded string format.
-     *
-     * <p>This method will decode strings obtained by calling
-     * {@link OutgoingPluginMessage#asEncodedString()}. This means that basic
-     * implementations can successfully implement {@link Messenger} without
-     * providing their own serialisation.</p>
-     *
-     * <p>The boolean returned from this method indicates whether or not the
-     * platform accepted the message. Some implementations which have multiple
-     * distribution channels may wish to use this result to dispatch the same
-     * message back to additional receivers.</p>
-     *
-     * <p>The implementation will usually return <code>false</code> if a message
-     * with the same ping id has already been processed.</p>
-     *
-     * @param encodedString the encoded string
-     * @return true if the message was accepted by the plugin
-     */
-    boolean consumeIncomingMessageAsString(@NonNull String encodedString);
+    boolean consumeIncomingMessage(@NonNull PluginMessage.Type message);
 
 }

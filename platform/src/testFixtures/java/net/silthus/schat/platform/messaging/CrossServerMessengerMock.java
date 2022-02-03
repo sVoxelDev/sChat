@@ -17,16 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.messenger;
+package net.silthus.schat.platform.messaging;
 
 import java.util.Collection;
-import net.silthus.schat.messenger.IncomingPluginMessageConsumer;
-import net.silthus.schat.messenger.Messenger;
-import net.silthus.schat.messenger.PluginMessage;
 import net.silthus.schat.platform.plugin.TestPlugin;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
-public class CrossServerMessengerMock implements Messenger, IncomingPluginMessageConsumer {
+public class CrossServerMessengerMock extends MessagingServiceMock {
     private final TestPlugin plugin;
     private final Collection<TestPlugin> servers;
 
@@ -36,19 +32,9 @@ public class CrossServerMessengerMock implements Messenger, IncomingPluginMessag
     }
 
     @Override
-    public void sendPluginMessage(@NonNull PluginMessage pluginMessage) {
+    protected void sendOutgoingMessage(String data) {
         servers.stream()
             .filter(p -> !p.equals(plugin))
-            .forEach(p -> p.getMessenger().consumeIncomingMessage(pluginMessage));
-    }
-
-    @Override
-    public boolean consumeIncomingMessage(@NonNull PluginMessage message) {
-        return false;
-    }
-
-    @Override
-    public boolean consumeIncomingMessageAsString(@NonNull String encodedString) {
-        return false;
+            .forEach(p -> p.getMessenger().consumeIncomingMessageAsString(data));
     }
 }

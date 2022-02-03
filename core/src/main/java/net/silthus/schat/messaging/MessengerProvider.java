@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.messenger;
+package net.silthus.schat.messaging;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.ApiStatus.OverrideOnly;
@@ -40,7 +40,7 @@ public interface MessengerProvider {
 
     /**
      * Creates and returns a new {@link Messenger} instance, which passes
-     * incoming messages to the provided {@link IncomingPluginMessageConsumer}.
+     * incoming messages to the provided {@link IncomingMessageConsumer}.
      *
      * <p>As the agent should pass incoming messages to the given consumer,
      * this method should always return a new object.</p>
@@ -49,6 +49,6 @@ public interface MessengerProvider {
      *                                incoming messages to
      * @return a new messenger agent instance
      */
-    @NonNull Messenger obtain(@NonNull IncomingPluginMessageConsumer incomingMessageConsumer);
+    @NonNull Messenger obtain(@NonNull IncomingMessageConsumer incomingMessageConsumer);
 
 }

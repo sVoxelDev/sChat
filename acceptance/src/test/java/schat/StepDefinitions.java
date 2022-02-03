@@ -39,7 +39,7 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.locale.Messages;
-import net.silthus.schat.platform.messenger.CrossServerMessengerMock;
+import net.silthus.schat.platform.messaging.CrossServerMessengerMock;
 import net.silthus.schat.platform.plugin.AbstractSChatPlugin;
 import net.silthus.schat.platform.plugin.TestPlugin;
 import net.silthus.schat.platform.sender.SenderMock;

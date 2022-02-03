@@ -32,7 +32,7 @@ import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.features.GlobalChatFeature;
 import net.silthus.schat.message.MessagePrototype;
-import net.silthus.schat.messenger.Messenger;
+import net.silthus.schat.messaging.Messenger;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;

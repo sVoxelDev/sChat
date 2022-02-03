@@ -29,7 +29,7 @@ import net.silthus.schat.platform.commands.Command;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.listener.ChatListener;
-import net.silthus.schat.platform.messenger.CrossServerMessengerMock;
+import net.silthus.schat.platform.messaging.MessagingServiceMock;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.ui.view.ViewProvider;
@@ -44,7 +44,7 @@ public class TestPlugin extends AbstractSChatPlugin {
 
     static Command dummyCommand = spy(Command.class);
     private ChatterFactoryStub chatterFactory;
-    private CrossServerMessengerMock messenger;
+    private MessagingServiceMock messenger;
 
     @Override
     public Sender getConsole() {
@@ -92,7 +92,7 @@ public class TestPlugin extends AbstractSChatPlugin {
         return new BootstrapStub();
     }
 
-    public void setMessenger(CrossServerMessengerMock messenger) {
+    public void setMessenger(MessagingServiceMock messenger) {
         this.messenger = messenger;
     }
 

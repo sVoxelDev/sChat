@@ -57,8 +57,8 @@ final class ChannelImpl implements Channel {
 
     private final String key;
     private final Settings settings;
-    private final Targets targets = new Targets();
-    private final EventBus eventBus;
+    private final transient Targets targets = new Targets();
+    private final transient EventBus eventBus;
 
     private ChannelImpl(Builder builder) {
         this.key = builder.key;

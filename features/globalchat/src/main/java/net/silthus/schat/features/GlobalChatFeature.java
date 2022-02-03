@@ -19,22 +19,28 @@
 
 package net.silthus.schat.features;
 
-import lombok.Getter;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import java.io.IOException;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.eventbus.EventListener;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.messenger.Messenger;
-import net.silthus.schat.messenger.message.type.AbstractPluginMessage;
+import net.silthus.schat.messaging.Messenger;
+import net.silthus.schat.messaging.PluginMessage;
+import net.silthus.schat.messaging.PluginMessageSerializer;
+import net.silthus.schat.util.gson.GsonProvider;
 
 import static net.silthus.schat.channel.Channel.GLOBAL;
 
 public class GlobalChatFeature implements EventListener {
     private final Messenger messenger;
 
-    public GlobalChatFeature(Messenger messenger) {
+    public GlobalChatFeature(Messenger messenger, PluginMessageSerializer serializer) {
         this.messenger = messenger;
+        serializer.registerTypeAdapter(GlobalChannelPluginMessage.class, new GlobalChannelPluginMessage.Adapter());
     }
 
     @Override
@@ -48,14 +54,23 @@ public class GlobalChatFeature implements EventListener {
         }
     }
 
-    @Getter
-    public static final class GlobalChannelPluginMessage extends AbstractPluginMessage {
-        private final Channel channel;
-        private final Message message;
+    public record GlobalChannelPluginMessage(Channel channel, Message message) implements PluginMessage {
+        @Override
+        public void process() {
 
-        public GlobalChannelPluginMessage(Channel channel, Message message) {
-            this.channel = channel;
-            this.message = message;
+        }
+
+        private static class Adapter extends TypeAdapter<GlobalChannelPluginMessage> {
+
+            @Override
+            public void write(JsonWriter jsonWriter, GlobalChannelPluginMessage globalChannelPluginMessage) throws IOException {
+                jsonWriter.jsonValue(GsonProvider.normalGson().toJson(globalChannelPluginMessage));
+            }
+
+            @Override
+            public GlobalChannelPluginMessage read(JsonReader jsonReader) throws IOException {
+                return GsonProvider.normalGson().fromJson(jsonReader, GlobalChannelPluginMessage.class);
+            }
         }
     }
 }
