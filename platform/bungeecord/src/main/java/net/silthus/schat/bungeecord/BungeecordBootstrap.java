@@ -17,54 +17,76 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.bungeecord;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.logging.Logger;
-import lombok.SneakyThrows;
+import lombok.Getter;
+import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.plugin.Plugin;
+import net.silthus.schat.bungeecord.adapter.BungeecordSchedulerAdapter;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
+import net.silthus.schat.platform.plugin.bootstrap.LoaderBootstrap;
 import net.silthus.schat.platform.plugin.bootstrap.Platform;
 import net.silthus.schat.platform.plugin.logging.JavaPluginLogger;
-import net.silthus.schat.platform.plugin.logging.PluginLogger;
 import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
 
-import static org.mockito.Mockito.mock;
+@Getter
+public final class BungeecordBootstrap implements Bootstrap, LoaderBootstrap {
 
-public class BootstrapStub implements Bootstrap {
-    @Override
-    public PluginLogger getPluginLogger() {
-        return new JavaPluginLogger(Logger.getLogger("Test"));
+    private final Plugin loader;
+    private final ProxyServer proxy;
+    private final SchedulerAdapter scheduler;
+    private final BungeecordProxyPlugin plugin;
+
+    private JavaPluginLogger pluginLogger;
+
+    BungeecordBootstrap(Plugin loader) {
+        this.loader = loader;
+        this.proxy = loader.getProxy();
+        this.scheduler = new BungeecordSchedulerAdapter(loader, loader.getProxy());
+
+        this.plugin = new BungeecordProxyPlugin(this);
     }
 
-    @Override
-    public SchedulerAdapter getScheduler() {
-        return mock(SchedulerAdapter.class);
-    }
-
-    @SneakyThrows
     @Override
     public Path getDataDirectory() {
-        return Files.createTempDirectory("schat");
+        return loader.getDataFolder().toPath();
     }
 
     @Override
     public String getVersion() {
-        return "0";
+        return loader.getDescription().getVersion();
     }
 
     @Override
     public Platform.Type getType() {
-        return Platform.Type.BUKKIT;
+        return Platform.Type.BUNGEECORD;
     }
 
     @Override
     public String getServerBrand() {
-        return "test";
+        return loader.getProxy().getName();
     }
 
     @Override
     public String getServerVersion() {
-        return "0";
+        return loader.getProxy().getVersion();
+    }
+
+    @Override
+    public void onLoad() {
+        pluginLogger = new JavaPluginLogger(loader.getLogger());
+
+        plugin.load();
+    }
+
+    @Override
+    public void onEnable() {
+        plugin.enable();
+    }
+
+    @Override
+    public void onDisable() {
+        plugin.disable();
     }
 }

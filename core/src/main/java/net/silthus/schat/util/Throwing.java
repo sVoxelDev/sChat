@@ -17,22 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'sChat'
+package net.silthus.schat.util;
 
-include 'api'
-include 'core'
+public interface Throwing {
 
-include 'ui'
-include 'features:globalchat'
+    @FunctionalInterface
+    interface Runnable {
+        void run() throws Exception;
+    }
 
-include 'platform'
-include 'platform:bukkit'
-include 'platform:velocity'
-
-
-include 'acceptance'
-
-include 'example'
-include 'platform:bungeecord'
-findProject(':platform:bungeecord')?.name = 'bungeecord'
-
+    @FunctionalInterface
+    interface Consumer<T> {
+        void accept(T t) throws Exception;
+    }
+}

@@ -1,11 +1,11 @@
 repositories {
-    maven { url = "https://nexus.velocitypowered.com/repository/maven-public/" }
+    maven { url = "https://oss.sonatype.org/content/repositories/snapshots" }
 }
 
 dependencies {
-    implementation 'com.velocitypowered:velocity-api:3.0.1'
+    implementation 'net.md-5:bungeecord-api:1.16-R0.5-SNAPSHOT'
 
-    annotationProcessor 'com.velocitypowered:velocity-api:3.0.1'
+    implementation "net.kyori:adventure-platform-bungeecord:4.0.1"
 }
 
 shadowJar {
