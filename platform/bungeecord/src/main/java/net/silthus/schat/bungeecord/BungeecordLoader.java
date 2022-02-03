@@ -17,22 +17,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-rootProject.name = 'sChat'
+package net.silthus.schat.bungeecord;
 
-include 'api'
-include 'core'
+import net.md_5.bungee.api.plugin.Plugin;
 
-include 'ui'
-include 'features:globalchat'
+public class BungeecordLoader extends Plugin {
 
-include 'platform'
-include 'platform:bukkit'
-include 'platform:velocity'
+    private final BungeecordBootstrap bootstrap;
 
+    public BungeecordLoader() {
+        this.bootstrap = new BungeecordBootstrap(this);
+    }
 
-include 'acceptance'
+    @Override
+    public void onLoad() {
+        bootstrap.onLoad();
+    }
 
-include 'example'
-include 'platform:bungeecord'
-findProject(':platform:bungeecord')?.name = 'bungeecord'
+    @Override
+    public void onEnable() {
+        bootstrap.onEnable();
+    }
 
+    @Override
+    public void onDisable() {
+        bootstrap.onDisable();
+    }
+}

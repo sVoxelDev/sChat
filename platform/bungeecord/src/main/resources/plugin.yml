@@ -1,0 +1,4 @@
+name: sChat
+main: net.silthus.schat.bungeecord.BungeecordLoader
+version: 1.0.0
+author: Silthus
