@@ -22,25 +22,38 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.bukkit.adapter;
+package net.silthus.schat.platform.messaging;
 
-import net.silthus.schat.eventbus.AbstractEventBus;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.plugin.Plugin;
+import java.util.HashMap;
+import java.util.Map;
+import net.silthus.schat.messaging.MessengerGatewayProvider;
+import org.jetbrains.annotations.NotNull;
 
-public final class BukkitEventBus extends AbstractEventBus<Plugin> implements Listener {
+public final class GatewayProviderRegistry implements MessengerGatewayProvider.Registry {
+
+    private final Map<String, MessengerGatewayProvider> providerMap = new HashMap<>();
+
     @Override
-    protected Plugin checkPlugin(Object plugin) throws IllegalArgumentException {
-        if (plugin instanceof Plugin p)
-            return p;
+    public MessengerGatewayProvider get(String name) {
+        final String key = key(name);
+        if (!providerMap.containsKey(key))
+            throw new IllegalArgumentException("The provider '" + name + "' is not registered!");
         else
-            throw new IllegalArgumentException();
+            return providerMap.get(key);
     }
 
-    @EventHandler
-    public void onPluginDisable(PluginDisableEvent event) {
-        unregisterHandlers(event.getPlugin());
+    @Override
+    public void register(MessengerGatewayProvider provider) {
+        final String key = key(provider.getName());
+        if (providerMap.containsKey(key))
+            throw new IllegalArgumentException("A provider with the name " + provider.getName()
+                + " already exists: " + providerMap.get(key).getClass().getCanonicalName());
+        else
+            providerMap.put(key, provider);
+    }
+
+    @NotNull
+    private String key(String key) {
+        return key.toLowerCase();
     }
 }

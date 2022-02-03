@@ -27,27 +27,46 @@ package net.silthus.schat.util.gson.types;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.time.Instant;
-import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+import net.kyori.adventure.text.Component;
+import net.silthus.schat.identity.Identity;
+import net.silthus.schat.message.Message;
+import net.silthus.schat.util.gson.JObject;
 
-public final class InstantSerializer implements JsonSerializer<Instant>, JsonDeserializer<Instant> {
+import static net.silthus.schat.message.Message.message;
 
-    public static final Type INSTANT_TYPE = new TypeToken<Instant>(){}.getType();
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_INSTANT;
+public final class MessageSerializer implements JsonSerializer<Message>, JsonDeserializer<Message> {
+
+    public static final Type MESSAGE_TYPE = new TypeToken<Message>() {
+    }.getType();
 
     @Override
-    public JsonElement serialize(Instant src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(FORMATTER.format(src));
+    public JsonElement serialize(Message src, Type typeOfSrc, JsonSerializationContext context) {
+        return new JObject()
+            .add("id", context.serialize(src.id(), UUID.class))
+            .add("timestamp", context.serialize(src.timestamp(), Instant.class))
+            .add("text", context.serialize(src.text(), Component.class))
+            .add("type", context.serialize(src.type(), Message.Type.class))
+            .add("source", context.serialize(src.source(), Identity.class))
+            .toJson();
     }
 
     @Override
-    public Instant deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        return FORMATTER.parse(json.getAsString(), Instant::from);
+    public Message deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        final JsonObject object = json.getAsJsonObject();
+        return message()
+            .id(context.deserialize(object.get("id"), UUID.class))
+            .timestamp(context.deserialize(object.get("timestamp"), Instant.class))
+            .text(context.deserialize(object.get("text"), Component.class))
+            .type(context.deserialize(object.get("type"), Message.Type.class))
+            .source((Identity) context.deserialize(object.get("source"), Identity.class))
+            .create();
     }
 }

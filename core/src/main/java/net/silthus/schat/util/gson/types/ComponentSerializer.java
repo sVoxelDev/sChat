@@ -22,25 +22,33 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.bukkit.adapter;
+package net.silthus.schat.util.gson.types;
 
-import net.silthus.schat.eventbus.AbstractEventBus;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.plugin.Plugin;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
-public final class BukkitEventBus extends AbstractEventBus<Plugin> implements Listener {
+public final class ComponentSerializer implements JsonSerializer<Component>, JsonDeserializer<Component> {
+
+    public static final Type COMPONENT_TYPE = new TypeToken<Component>() {
+    }.getType();
+
+    private final GsonComponentSerializer componentSerializer = GsonComponentSerializer.gson();
+
     @Override
-    protected Plugin checkPlugin(Object plugin) throws IllegalArgumentException {
-        if (plugin instanceof Plugin p)
-            return p;
-        else
-            throw new IllegalArgumentException();
+    public JsonElement serialize(Component src, Type typeOfSrc, JsonSerializationContext context) {
+        return componentSerializer.serializeToTree(src);
     }
 
-    @EventHandler
-    public void onPluginDisable(PluginDisableEvent event) {
-        unregisterHandlers(event.getPlugin());
+    @Override
+    public Component deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        return componentSerializer.deserializeFromTree(json);
     }
 }

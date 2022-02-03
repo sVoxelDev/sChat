@@ -27,8 +27,6 @@ package net.silthus.schat.platform.listener;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.NonNull;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
@@ -39,11 +37,13 @@ import net.silthus.schat.usecases.OnChat;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.platform.locale.Messages.CANNOT_CHAT_NO_ACTIVE_CHANNEL;
 
-@Setter
-@Accessors(fluent = true)
 public class ChatListener implements OnChat {
 
-    private ChatterProvider chatterProvider = ChatterProvider.nil();
+    private final ChatterProvider chatterProvider;
+
+    public ChatListener(ChatterProvider chatterProvider) {
+        this.chatterProvider = chatterProvider;
+    }
 
     protected final void onChat(@NonNull UUID chatterId, @NonNull Component text) {
         final Chatter chatter = chatterProvider.get(chatterId);

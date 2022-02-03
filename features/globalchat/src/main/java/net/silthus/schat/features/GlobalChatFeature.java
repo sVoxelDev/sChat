@@ -1,28 +1,30 @@
 /*
- * sChat, a Supercharged Minecraft Chat Plugin
+ * This file is part of sChat, licensed under the MIT License.
  * Copyright (C) Silthus <https://www.github.com/silthus>
  * Copyright (C) sChat team and contributors
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.silthus.schat.features;
 
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import java.io.IOException;
+import lombok.EqualsAndHashCode;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.eventbus.EventListener;
@@ -31,7 +33,6 @@ import net.silthus.schat.message.Message;
 import net.silthus.schat.messaging.Messenger;
 import net.silthus.schat.messaging.PluginMessage;
 import net.silthus.schat.messaging.PluginMessageSerializer;
-import net.silthus.schat.util.gson.GsonProvider;
 
 import static net.silthus.schat.channel.Channel.GLOBAL;
 
@@ -40,7 +41,7 @@ public class GlobalChatFeature implements EventListener {
 
     public GlobalChatFeature(Messenger messenger, PluginMessageSerializer serializer) {
         this.messenger = messenger;
-        serializer.registerTypeAdapter(GlobalChannelPluginMessage.class, new GlobalChannelPluginMessage.Adapter());
+        serializer.registerMessageType(GlobalChannelPluginMessage.class);
     }
 
     @Override
@@ -54,23 +55,19 @@ public class GlobalChatFeature implements EventListener {
         }
     }
 
-    public record GlobalChannelPluginMessage(Channel channel, Message message) implements PluginMessage {
-        @Override
-        public void process() {
+    @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+    public static final class GlobalChannelPluginMessage extends PluginMessage {
+        private final Channel channel;
+        private final Message message;
 
+        public GlobalChannelPluginMessage(Channel channel, Message message) {
+            this.channel = channel;
+            this.message = message;
         }
 
-        private static class Adapter extends TypeAdapter<GlobalChannelPluginMessage> {
-
-            @Override
-            public void write(JsonWriter jsonWriter, GlobalChannelPluginMessage globalChannelPluginMessage) throws IOException {
-                jsonWriter.jsonValue(GsonProvider.normalGson().toJson(globalChannelPluginMessage));
-            }
-
-            @Override
-            public GlobalChannelPluginMessage read(JsonReader jsonReader) throws IOException {
-                return GsonProvider.normalGson().fromJson(jsonReader, GlobalChannelPluginMessage.class);
-            }
+        @Override
+        public void process() {
+            message.copy().to(channel).send();
         }
     }
 }

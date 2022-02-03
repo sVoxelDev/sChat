@@ -27,27 +27,38 @@ package net.silthus.schat.util.gson.types;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
+import java.util.Map;
+import net.silthus.schat.pointer.Setting;
+import net.silthus.schat.pointer.Settings;
+import net.silthus.schat.util.gson.JObject;
 
-public final class InstantSerializer implements JsonSerializer<Instant>, JsonDeserializer<Instant> {
+public final class SettingsSerializer implements JsonSerializer<Settings>, JsonDeserializer<Settings> {
 
-    public static final Type INSTANT_TYPE = new TypeToken<Instant>(){}.getType();
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_INSTANT;
+    public static final Type SETTINGS_TYPE = new TypeToken<Settings>() {
+    }.getType();
 
     @Override
-    public JsonElement serialize(Instant src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(FORMATTER.format(src));
+    public JsonElement serialize(Settings src, Type typeOfSrc, JsonSerializationContext context) {
+        final JObject object = new JObject();
+        for (Setting<?> setting : src.getSettings()) {
+            object.add(setting.getKey(), context.serialize(src.get(setting), setting.getType()));
+        }
+        return object.toJson();
     }
 
     @Override
-    public Instant deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        return FORMATTER.parse(json.getAsString(), Instant::from);
+    public Settings deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        final JsonObject object = json.getAsJsonObject();
+        final Settings.Builder settings = Settings.settings();
+        for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
+            settings.withUnknown(entry.getKey(), setting -> context.deserialize(entry.getValue(), setting.getType()));
+        }
+        return settings.create();
     }
 }

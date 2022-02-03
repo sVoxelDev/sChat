@@ -27,27 +27,38 @@ package net.silthus.schat.util.gson.types;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+import net.kyori.adventure.text.Component;
+import net.silthus.schat.identity.Identity;
+import net.silthus.schat.util.gson.JObject;
 
-public final class InstantSerializer implements JsonSerializer<Instant>, JsonDeserializer<Instant> {
+public final class IdentitySerializer implements JsonSerializer<Identity>, JsonDeserializer<Identity> {
 
-    public static final Type INSTANT_TYPE = new TypeToken<Instant>(){}.getType();
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_INSTANT;
+    public static final Type IDENTITY_TYPE = new TypeToken<Identity>() {
+    }.getType();
 
     @Override
-    public JsonElement serialize(Instant src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(FORMATTER.format(src));
+    public JsonElement serialize(Identity src, Type typeOfSrc, JsonSerializationContext context) {
+        return new JObject()
+            .add("id", context.serialize(src.getUniqueId(), UUID.class))
+            .add("name", src.getName())
+            .add("display_name", context.serialize(src.getDisplayName(), Component.class))
+            .toJson();
     }
 
     @Override
-    public Instant deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        return FORMATTER.parse(json.getAsString(), Instant::from);
+    public Identity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        final JsonObject object = json.getAsJsonObject();
+        return Identity.identity(
+            context.deserialize(object.get("id"), UUID.class),
+            object.get("name").getAsString(),
+            (Component) context.deserialize(object.get("display_name"), Component.class)
+        );
     }
 }

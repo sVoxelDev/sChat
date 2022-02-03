@@ -24,23 +24,16 @@
 
 package net.silthus.schat.bukkit.adapter;
 
-import net.silthus.schat.eventbus.AbstractEventBus;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.plugin.Plugin;
+import net.silthus.schat.messaging.Messenger;
 
-public final class BukkitEventBus extends AbstractEventBus<Plugin> implements Listener {
-    @Override
-    protected Plugin checkPlugin(Object plugin) throws IllegalArgumentException {
-        if (plugin instanceof Plugin p)
-            return p;
-        else
-            throw new IllegalArgumentException();
+public class BukkitMessagingService implements Messenger.Gateway {
+
+    public BukkitMessagingService(BukkitSchedulerAdapter scheduler) {
+
     }
 
-    @EventHandler
-    public void onPluginDisable(PluginDisableEvent event) {
-        unregisterHandlers(event.getPlugin());
+    @Override
+    public void sendOutgoingMessage(String encodedMessage) {
+
     }
 }

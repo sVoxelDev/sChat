@@ -1,59 +1,46 @@
 /*
- * sChat, a Supercharged Minecraft Chat Plugin
+ * This file is part of sChat, licensed under the MIT License.
  * Copyright (C) Silthus <https://www.github.com/silthus>
  * Copyright (C) sChat team and contributors
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.silthus.schat.platform.messaging;
 
-import java.lang.reflect.Type;
 import lombok.NonNull;
 import net.silthus.schat.messaging.PluginMessage;
-import net.silthus.schat.platform.SchedulerMock;
-import net.silthus.schat.util.gson.GsonSerializer;
 
 import static net.silthus.schat.util.gson.GsonProvider.gsonSerializer;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MessagingServiceMock extends MessagingService {
 
-    private PluginMessage.Type lastReceivedMessage;
+    private PluginMessage lastReceivedMessage;
     private int processedMessageCount = 0;
 
     public MessagingServiceMock() {
-        super(new SchedulerMock(), gsonSerializer());
+        super(new MockMessagingGatewayProvider(), gsonSerializer());
     }
 
     @Override
-    public SchedulerMock getScheduler() {
-        return (SchedulerMock) super.getScheduler();
-    }
-
-    public void registerGsonTypeAdapter(Type type, Object adapter) {
-        if (getSerializer() instanceof GsonSerializer gsonSerializer)
-            gsonSerializer.registerTypeAdapter(type, adapter);
-    }
-
-    @Override
-    protected void sendOutgoingMessage(String data) {
-        consumeIncomingMessageAsString(data);
-    }
-
-    @Override
-    public boolean consumeIncomingMessage(@NonNull PluginMessage.Type message) {
+    public boolean consumeIncomingMessage(@NonNull PluginMessage message) {
         final boolean processed = super.consumeIncomingMessage(message);
         this.lastReceivedMessage = message;
         if (processed)
@@ -61,9 +48,8 @@ public class MessagingServiceMock extends MessagingService {
         return processed;
     }
 
-    public void assertLastReceivedMessageIs(Object message) {
-        assertThat(lastReceivedMessage).isNotNull()
-            .extracting(PluginMessage.Type::content).isEqualTo(message);
+    public void assertLastReceivedMessageIs(PluginMessage message) {
+        assertThat(lastReceivedMessage).isNotNull().isEqualTo(message);
     }
 
     public void assertProcessedMessageCountIs(int count) {
