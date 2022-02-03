@@ -84,6 +84,10 @@ public interface Configured extends Pointered {
         return this.getSettings().getOrDefaultFrom(setting, defaultValue);
     }
 
+    default boolean is(Setting<Boolean> setting) {
+        return get(setting);
+    }
+
     /**
      * Gets the settings for this object.
      *
