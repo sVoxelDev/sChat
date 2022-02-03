@@ -25,6 +25,8 @@
 package net.silthus.schat.platform.plugin;
 
 import cloud.commandframework.CommandManager;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelPrototype;
@@ -65,6 +67,8 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
     private ViewFactory viewFactory;
     private ViewProvider viewProvider;
+
+    private final List<Object> features = new ArrayList<>();
 
     protected void onLoad() {
     }
@@ -118,7 +122,9 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     }
 
     private void loadFeatures() {
-        new GlobalChatFeature(getMessenger(), getSerializer()).bind(getEventBus());
+        final GlobalChatFeature feature = new GlobalChatFeature(getMessenger(), getSerializer());
+        feature.bind(getEventBus());
+        features.add(feature);
     }
 
     private void setupPrototypes() {
