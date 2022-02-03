@@ -1,29 +1,37 @@
 /*
- * sChat, a Supercharged Minecraft Chat Plugin
+ * This file is part of sChat, licensed under the MIT License.
  * Copyright (C) Silthus <https://www.github.com/silthus>
  * Copyright (C) sChat team and contributors
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.silthus.schat.features;
 
+import lombok.NonNull;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.eventbus.EventBusMock;
+import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.messaging.Messenger;
 import net.silthus.schat.messaging.PluginMessage;
 import net.silthus.schat.util.gson.GsonSerializer;
+import net.silthus.schat.util.gson.types.ChannelSerializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -32,27 +40,24 @@ import org.junit.jupiter.api.Test;
 import static net.silthus.schat.channel.Channel.GLOBAL;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
+import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
-import static net.silthus.schat.messaging.PluginMessage.of;
 import static net.silthus.schat.util.gson.GsonProvider.gsonSerializer;
+import static net.silthus.schat.util.gson.GsonProvider.registerTypeAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 
-class GlobalChatFeatureTests {
+class GlobalChatFeatureTests implements Messenger {
 
-    private Messenger messenger;
+    private boolean messengerCalled = false;
     private EventBusMock events;
     private GsonSerializer serializer;
 
     @BeforeEach
     void setUp() {
-        messenger = spy(Messenger.class);
         events = new EventBusMock();
+        registerTypeAdapter(ChannelSerializer.CHANNEL_TYPE, new ChannelSerializer(createInMemoryChannelRepository()));
         serializer = gsonSerializer();
-        new GlobalChatFeature(messenger, serializer).bind(events);
+        new GlobalChatFeature(this, serializer).bind(events);
     }
 
     @AfterEach
@@ -63,29 +68,43 @@ class GlobalChatFeatureTests {
     @Test
     void channel_without_global_flag_is_not_sent() {
         randomChannel().sendMessage(randomMessage());
-        verify(messenger, never()).sendPluginMessage(any());
+        assertThat(messengerCalled).isFalse();
+    }
+
+    @Override
+    public void sendPluginMessage(@NonNull PluginMessage pluginMessage) {
+        messengerCalled = true;
     }
 
     @Nested class channel_with_global_flag {
         private Channel channel;
+        private int messageCount = 0;
 
         @BeforeEach
         void setUp() {
             channel = channelWith(GLOBAL, true);
+            events.on(SendChannelMessageEvent.class, event -> messageCount++);
         }
 
         @Test
         void sendMessage_dispatches_plugin_message() {
             channel.sendMessage(randomMessage());
-            verify(messenger).sendPluginMessage(any());
+            assertThat(messengerCalled).isTrue();
         }
 
         @Test
         void plugin_message_is_serializable() {
             final GlobalChatFeature.GlobalChannelPluginMessage message = new GlobalChatFeature.GlobalChannelPluginMessage(channel, randomMessage());
-            final String encode = serializer.encode(of(message));
-            final PluginMessage.Type decode = serializer.decode(encode);
-            assertThat(decode.content()).isEqualTo(message);
+            final String encode = serializer.encode(message);
+            final PluginMessage decode = serializer.decode(encode);
+            assertThat(decode).isEqualTo(message);
+        }
+
+        @Test
+        void process_sends_message_to_channel() {
+            final GlobalChatFeature.GlobalChannelPluginMessage message = new GlobalChatFeature.GlobalChannelPluginMessage(channel, randomMessage());
+            message.process();
+            assertThat(messageCount).isEqualTo(1);
         }
     }
 }

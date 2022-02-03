@@ -57,7 +57,7 @@ class ChatListenerTest {
     void setUp() {
         chatter = randomChatter();
         target = new MessageTargetSpy();
-        listener = new ChatListener().chatterProvider(chatterProviderStub(chatter));
+        listener = new ChatListener(chatterProviderStub(chatter));
     }
 
     @NotNull

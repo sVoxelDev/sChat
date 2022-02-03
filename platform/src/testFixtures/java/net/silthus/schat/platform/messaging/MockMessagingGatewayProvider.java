@@ -22,25 +22,26 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.bukkit.adapter;
+package net.silthus.schat.platform.messaging;
 
-import net.silthus.schat.eventbus.AbstractEventBus;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.plugin.Plugin;
+import lombok.NonNull;
+import net.silthus.schat.messaging.IncomingMessageConsumer;
+import net.silthus.schat.messaging.Messenger;
+import net.silthus.schat.messaging.MessengerGatewayProvider;
+import org.jetbrains.annotations.NotNull;
 
-public final class BukkitEventBus extends AbstractEventBus<Plugin> implements Listener {
+public class MockMessagingGatewayProvider implements MessengerGatewayProvider {
+
+    public static final String PROVIDER_NAME = "MOCK";
+
     @Override
-    protected Plugin checkPlugin(Object plugin) throws IllegalArgumentException {
-        if (plugin instanceof Plugin p)
-            return p;
-        else
-            throw new IllegalArgumentException();
+    public @NonNull String getName() {
+        return PROVIDER_NAME;
     }
 
-    @EventHandler
-    public void onPluginDisable(PluginDisableEvent event) {
-        unregisterHandlers(event.getPlugin());
+    @NotNull
+    @Override
+    public @NonNull Messenger.Gateway obtain(@NonNull IncomingMessageConsumer incomingMessageConsumer) {
+        return incomingMessageConsumer::consumeIncomingMessageAsString;
     }
 }

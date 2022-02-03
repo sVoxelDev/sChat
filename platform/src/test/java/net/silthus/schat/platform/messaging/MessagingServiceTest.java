@@ -1,46 +1,47 @@
 /*
- * sChat, a Supercharged Minecraft Chat Plugin
+ * This file is part of sChat, licensed under the MIT License.
  * Copyright (C) Silthus <https://www.github.com/silthus>
  * Copyright (C) sChat team and contributors
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package net.silthus.schat.platform.messaging;
 
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import java.io.IOException;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import net.silthus.schat.messaging.PluginMessage;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-class MessagingServiceTest {
+import static org.assertj.core.api.Assertions.assertThat;
 
-    // TODO: messenger outline
-    //  - incoming json is processed by some kind of plugin message parser or factory where dynamic types and parsers can be registered
-    //  - the plugin message interface itself has a process() method to processed the message after it was consumed by the incoming messenger
-    //  - the serialization is not done by the message, but by the factory or lets call it serializer
+class MessagingServiceTest {
 
     private MessagingServiceMock service;
 
     @BeforeEach
     void setUp() {
         service = new MessagingServiceMock();
-        service.registerGsonTypeAdapter(EmptyPluginMessage.class, new EmptyPluginMessage.Type());
+        service.getSerializer().registerMessageType(EmptyPluginMessage.class);
+        EmptyPluginMessage.processed = false;
     }
 
     @Test
@@ -52,37 +53,47 @@ class MessagingServiceTest {
 
     @Test
     void same_message_is_only_consumed_once() {
-        final PluginMessage.Type message = PluginMessage.of(new EmptyPluginMessage());
+        final EmptyPluginMessage message = new EmptyPluginMessage();
         service.consumeIncomingMessage(message);
         service.consumeIncomingMessage(message);
         service.assertProcessedMessageCountIs(1);
     }
 
     @Test
-    void message_is_dispatched_async() {
-        service.sendPluginMessage(new EmptyPluginMessage());
-        service.getScheduler().assertExecutedAsync();
+    void received_message_is_processed() {
+        service.consumeIncomingMessage(new EmptyPluginMessage());
+        assertThat(EmptyPluginMessage.processed).isTrue();
     }
 
-    @EqualsAndHashCode
-    private static final class EmptyPluginMessage implements PluginMessage {
+    @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+    private static final class EmptyPluginMessage extends PluginMessage {
+
+        static boolean processed = false;
 
         @Override
         public void process() {
+            processed = true;
+        }
+    }
 
+    @Nested class given_self_referencing_messenger {
+        @BeforeEach
+        void setUp() {
+            service = new MessagingServiceMock() {
+                @Override
+                public boolean consumeIncomingMessage(@NonNull PluginMessage message) {
+                    final boolean process = super.consumeIncomingMessage(message);
+                    if (process)
+                        sendPluginMessage(message);
+                    return process;
+                }
+            };
         }
 
-        static class Type extends TypeAdapter<EmptyPluginMessage> {
-
-            @Override
-            public void write(JsonWriter jsonWriter, EmptyPluginMessage emptyPluginMessage) throws IOException {
-                jsonWriter.beginObject().endObject();
-            }
-
-            @Override
-            public EmptyPluginMessage read(JsonReader jsonReader) throws IOException {
-                return new EmptyPluginMessage();
-            }
+        @Test
+        void message_is_not_processed() {
+            service.sendPluginMessage(new EmptyPluginMessage());
+            service.assertProcessedMessageCountIs(0);
         }
     }
 }

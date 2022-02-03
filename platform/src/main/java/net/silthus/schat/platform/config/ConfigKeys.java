@@ -34,12 +34,16 @@ import net.silthus.schat.platform.config.key.KeyedConfiguration;
 import net.silthus.schat.pointer.Settings;
 
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.key;
+import static net.silthus.schat.platform.config.key.ConfigKeyFactory.lowercaseStringKey;
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.modifiable;
+import static net.silthus.schat.platform.config.key.ConfigKeyFactory.notReloadable;
 
 public final class ConfigKeys {
 
     private ConfigKeys() {
     }
+
+    public static final ConfigKey<String> MESSENGER = notReloadable(lowercaseStringKey("messenger", "pluginmessaging"));
 
     public static final ConfigKey<List<Channel>> CHANNELS = modifiable(key(config -> {
         final ArrayList<Channel> channels = new ArrayList<>();

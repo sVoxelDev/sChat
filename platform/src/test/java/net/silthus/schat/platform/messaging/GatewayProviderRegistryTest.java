@@ -22,14 +22,45 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.eventbus;
+package net.silthus.schat.platform.messaging;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class EventBusTests {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
+class GatewayProviderRegistryTest {
+
+    private GatewayProviderRegistry registry;
+
+    @BeforeEach
+    void setUp() {
+        registry = new GatewayProviderRegistry();
+    }
 
     @Test
-    void create() {
+    void unknown_provider_throws_illegal_argument() {
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> registry.get("unknown"));
+    }
 
+    @Test
+    void registered_provider_returns_by_name() {
+        registry.register(new MockMessagingGatewayProvider());
+        assertThat(registry.get(MockMessagingGatewayProvider.PROVIDER_NAME)).isNotNull();
+    }
+
+    @Test
+    void duplicate_provider_throws() {
+        registry.register(new MockMessagingGatewayProvider());
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> registry.register(new MockMessagingGatewayProvider()));
+    }
+
+    @Test
+    void gateway_name_is_lower_cased() {
+        registry.register(new MockMessagingGatewayProvider());
+        assertThat(registry.get(MockMessagingGatewayProvider.PROVIDER_NAME.toLowerCase())).isNotNull();
     }
 }

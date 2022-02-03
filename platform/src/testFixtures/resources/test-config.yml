@@ -1,3 +1,4 @@
+messenger: mock
 channels:
   test:
     name: Test

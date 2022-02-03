@@ -27,27 +27,44 @@ package net.silthus.schat.util.gson.types;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.pointer.Settings;
+import net.silthus.schat.util.gson.JObject;
 
-public final class InstantSerializer implements JsonSerializer<Instant>, JsonDeserializer<Instant> {
+import static net.silthus.schat.channel.Channel.channel;
 
-    public static final Type INSTANT_TYPE = new TypeToken<Instant>(){}.getType();
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_INSTANT;
+public final class ChannelSerializer implements JsonSerializer<Channel>, JsonDeserializer<Channel> {
 
-    @Override
-    public JsonElement serialize(Instant src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(FORMATTER.format(src));
+    public static final Type CHANNEL_TYPE = new TypeToken<Channel>() {
+    }.getType();
+
+    private final ChannelRepository channelRepository;
+
+    public ChannelSerializer(ChannelRepository channelRepository) {
+        this.channelRepository = channelRepository;
     }
 
     @Override
-    public Instant deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        return FORMATTER.parse(json.getAsString(), Instant::from);
+    public JsonElement serialize(Channel src, Type typeOfSrc, JsonSerializationContext context) {
+        return new JObject()
+            .add("key", src.getKey())
+            .add("settings", context.serialize(src.getSettings(), Settings.class))
+            .toJson();
+    }
+
+    @Override
+    public Channel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        final JsonObject object = json.getAsJsonObject();
+        final String key = object.get("key").getAsString();
+        return channelRepository.find(key).orElseGet(() -> channel(key)
+            .settings(context.deserialize(object.get("settings"), Settings.class))
+            .create());
     }
 }

@@ -22,25 +22,43 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.bukkit.adapter;
+package net.silthus.schat.messaging;
 
-import net.silthus.schat.eventbus.AbstractEventBus;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.plugin.Plugin;
+import lombok.NonNull;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 
-public final class BukkitEventBus extends AbstractEventBus<Plugin> implements Listener {
-    @Override
-    protected Plugin checkPlugin(Object plugin) throws IllegalArgumentException {
-        if (plugin instanceof Plugin p)
-            return p;
-        else
-            throw new IllegalArgumentException();
-    }
+/**
+ * Represents a provider for {@link Messenger} instances.
+ *
+ * <p>Users wishing to provide their own implementation for the plugins
+ * "Messaging Service" should implement and register this interface.</p>
+ */
+@OverrideOnly
+public interface MessengerGatewayProvider {
 
-    @EventHandler
-    public void onPluginDisable(PluginDisableEvent event) {
-        unregisterHandlers(event.getPlugin());
+    /**
+     * Gets the name of this provider.
+     *
+     * @return the provider name
+     */
+    @NonNull String getName();
+
+    /**
+     * Creates and returns a new {@link Messenger.Gateway} instance, which passes
+     * incoming messages to the provided {@link IncomingMessageConsumer}.
+     *
+     * <p>As the agent should pass incoming messages to the given consumer,
+     * this method should always return a new object.</p>
+     *
+     * @param incomingMessageConsumer the consumer the new instance should pass
+     *                                incoming messages to
+     * @return a new messenger gateway instance
+     */
+    @NonNull Messenger.Gateway obtain(@NonNull IncomingMessageConsumer incomingMessageConsumer);
+
+    interface Registry {
+        MessengerGatewayProvider get(String name);
+
+        void register(MessengerGatewayProvider provider);
     }
 }

@@ -47,6 +47,7 @@ class PluginTests {
         @Nested class when_enable_is_called {
             @BeforeEach
             void setUp() {
+                plugin.load();
                 plugin.enable();
             }
 

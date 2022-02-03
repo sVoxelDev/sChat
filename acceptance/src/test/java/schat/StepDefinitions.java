@@ -1,20 +1,25 @@
 /*
- * sChat, a Supercharged Minecraft Chat Plugin
+ * This file is part of sChat, licensed under the MIT License.
  * Copyright (C) Silthus <https://www.github.com/silthus>
  * Copyright (C) sChat team and contributors
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
  */
 
 package schat;
@@ -40,6 +45,7 @@ import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.locale.Messages;
 import net.silthus.schat.platform.messaging.CrossServerMessengerMock;
+import net.silthus.schat.platform.messaging.StubMessengerGatewayProvider;
 import net.silthus.schat.platform.plugin.AbstractSChatPlugin;
 import net.silthus.schat.platform.plugin.TestPlugin;
 import net.silthus.schat.platform.sender.SenderMock;
@@ -47,6 +53,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.Channel.GLOBAL;
 import static net.silthus.schat.channel.Channel.PROTECTED;
+import static net.silthus.schat.commands.SetActiveChannelCommand.setActiveChannel;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomText;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,16 +67,6 @@ public class StepDefinitions {
 
     public StepDefinitions() {
         createServer("server1");
-    }
-
-    @Before(order = 10)
-    public void loadPlugin() {
-        SERVERS.values().forEach(AbstractSChatPlugin::load);
-    }
-
-    @Before(order = 20)
-    public void enablePlugin() {
-        SERVERS.values().forEach(AbstractSChatPlugin::enable);
     }
 
     @After
@@ -153,9 +150,9 @@ public class StepDefinitions {
     private void createServer(String server) {
         final TestPlugin plugin = new TestPlugin();
         plugin.load();
+        plugin.getGatewayProviderRegistry().register(new StubMessengerGatewayProvider("acceptance", new CrossServerMessengerMock(plugin, SERVERS.values())));
         plugin.enable();
         SERVERS.put(server, plugin);
-        plugin.setMessenger(new CrossServerMessengerMock(plugin, SERVERS.values().stream().filter(p -> !p.equals(plugin)).toList()));
     }
 
     @And("the following users")
@@ -171,7 +168,7 @@ public class StepDefinitions {
         user.sender = senderMock;
         SERVERS.get(user.server).getChatterFactory().stubSenderAsChatter(senderMock);
         if (user.channel != null)
-            getChatter(user).setActiveChannel(getChannel(user.server, user.channel));
+            setActiveChannel(getChatter(user), getChannel(user.server, user.channel)).execute();
         this.users.put(user.name, user);
         return user;
     }

@@ -61,8 +61,12 @@
 
 ### Features
 
-* **cmd:** add /nick command to change the out name of a player ([abd945b](https://github.com/sVoxelDev/sChat/commit/abd945b7d526700cf940edfa70adbb5dc475a23a)), closes [#14](https://github.com/sVoxelDev/sChat/issues/14) [#14](https://github.com/sVoxelDev/sChat/issues/14)
-* **nicknames:** allow blocking names with regular expressions ([a552e58](https://github.com/sVoxelDev/sChat/commit/a552e585dcaeffafa0c3b722a8ea27a6528b1e4b)), closes [#14](https://github.com/sVoxelDev/sChat/issues/14)
+* **cmd:** add /nick command to change the gateway name of a
+  player ([abd945b](https://github.com/sVoxelDev/sChat/commit/abd945b7d526700cf940edfa70adbb5dc475a23a)),
+  closes [#14](https://github.com/sVoxelDev/sChat/issues/14) [#14](https://github.com/sVoxelDev/sChat/issues/14)
+* **nicknames:** allow blocking names with regular
+  expressions ([a552e58](https://github.com/sVoxelDev/sChat/commit/a552e585dcaeffafa0c3b722a8ea27a6528b1e4b)),
+  closes [#14](https://github.com/sVoxelDev/sChat/issues/14)
 * **nicknames:** allow bypassing blocked nicknames with `schat.nickname.set.blocked` ([d947d18](https://github.com/sVoxelDev/sChat/commit/d947d187ae72416f505877c57fe73df2dabe814f)), closes [#14](https://github.com/sVoxelDev/sChat/issues/14)
 
 # [1.0.0-beta.9](https://github.com/sVoxelDev/sChat/compare/v1.0.0-beta.8...v1.0.0-beta.9) (2021-11-17)
@@ -119,7 +123,9 @@
 
 ### Bug Fixes
 
-* **platform:** system messages out under the channel tabs ([cac4ffb](https://github.com/Silthus/sChat/commit/cac4ffbc62b48b981be3b68b79d595d93ecbd87b)), closes [#36](https://github.com/Silthus/sChat/issues/36)
+* **platform:** system messages gateway under the channel
+  tabs ([cac4ffb](https://github.com/Silthus/sChat/commit/cac4ffbc62b48b981be3b68b79d595d93ecbd87b)),
+  closes [#36](https://github.com/Silthus/sChat/issues/36)
 
 # [1.0.0-beta.3](https://github.com/Silthus/sChat/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2021-11-15)
 
