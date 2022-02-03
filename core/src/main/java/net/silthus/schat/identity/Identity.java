@@ -45,9 +45,8 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
     Pointer<UUID> ID = pointer(UUID.class, "id");
     Pointer<String> NAME = pointer(String.class, "name");
     Pointer<Component> DISPLAY_NAME = pointer(Component.class, "display_name");
-
-    Predicate<Identity> IS_NIL = identity -> nil().equals(identity);
-    Predicate<Identity> IS_NOT_NIL = IS_NIL.negate();
+    Predicate<? super Identity> IS_NIL = identity -> identity.equals(nil());
+    Predicate<? super Identity> IS_NOT_NIL = IS_NIL.negate();
 
     /**
      * Gets a {@code nil} identity.
@@ -59,24 +58,21 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
      * of the application, but changes for every lifecycle.</p>
      *
      * @return the nil identity
-     * @since next
      */
     static @NotNull Identity nil() {
         return IdentityImpl.NIL;
     }
 
     /**
-     * Creates a new identity using the provided id and name.
+     * Creates a new identity using the provided id.
      *
-     * <p>The {@link #getDisplayName()} will be the {@code name}.</p>
+     * <p>The name of the identity will be empty, but not null.</p>
      *
-     * @param id   the id
-     * @param name the name
+     * @param id the id
      * @return the identity
-     * @since next
      */
-    static @NotNull Identity identity(@NonNull UUID id, @NonNull String name) {
-        return identity(id, name, text(name));
+    static Identity identity(@NonNull UUID id) {
+        return identity(id, "", empty());
     }
 
     /**
@@ -87,10 +83,44 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
      *
      * @param name the name
      * @return the identity
-     * @since next
      */
     static @NotNull Identity identity(@NonNull String name) {
         return identity(UUID.randomUUID(), name);
+    }
+
+    /**
+     * Creates a new identity with a random id using the provided name and display name.
+     *
+     * @param name        the name
+     * @param displayName the display name
+     * @return the identity
+     */
+    static @NotNull Identity identity(@NonNull String name, @NonNull Component displayName) {
+        return identity(UUID.randomUUID(), name, displayName);
+    }
+
+    /**
+     * Creates a new identity with a random id using the provided name and display name supplier.
+     *
+     * @param name        the name of the identity
+     * @param displayName the display name provider
+     * @return the identity
+     */
+    static @NotNull Identity identity(@NonNull String name, @NonNull Supplier<Component> displayName) {
+        return identity(UUID.randomUUID(), name, displayName);
+    }
+
+    /**
+     * Creates a new identity using the provided id and name.
+     *
+     * <p>The {@link #getDisplayName()} will be the {@code name}.</p>
+     *
+     * @param id   the id
+     * @param name the name
+     * @return the identity
+     */
+    static @NotNull Identity identity(@NonNull UUID id, @NonNull String name) {
+        return identity(id, name, text(name));
     }
 
     /**
@@ -100,7 +130,6 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
      * @param name        the name
      * @param displayName the display name
      * @return the identity
-     * @since next
      */
     static Identity identity(final UUID id, final String name, final Component displayName) {
         return identity(id, name, () -> displayName);
@@ -113,10 +142,9 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
      * @param name        the name
      * @param displayName the display name supplier
      * @return the identity
-     * @since next
      */
     static Identity identity(final UUID id, final String name, final Supplier<Component> displayName) {
-        return new IdentityImpl(id, name, pointers()
+        return new IdentityImpl(id, pointers()
             .withStatic(ID, id)
             .withStatic(NAME, name)
             .withDynamic(DISPLAY_NAME, displayName)

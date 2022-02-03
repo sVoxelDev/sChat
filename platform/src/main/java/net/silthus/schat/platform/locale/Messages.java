@@ -83,7 +83,7 @@ public interface Messages {
             .append(text("Running on "))
             .append(text(bootstrap.getType().getFriendlyName()))
             .append(text(" - "))
-            .append(text(bootstrap.getServerBrand())).append(text(" v")).append(text(bootstrap.getServerVersion()))
+            .append(text(bootstrap.getServerBrand())).append(text(bootstrap.getServerVersion()))
             .build();
 
         //        _________ .__            __

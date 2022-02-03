@@ -41,7 +41,6 @@ import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.messaging.MessengerGatewayProvider;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
-import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
 import net.silthus.schat.platform.listener.ChatListener;
 import net.silthus.schat.platform.plugin.AbstractSChatServerPlugin;
 import net.silthus.schat.platform.sender.Sender;
@@ -50,6 +49,7 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import static cloud.commandframework.execution.CommandExecutionCoordinator.simpleCoordinator;
+import static net.silthus.schat.platform.config.adapter.ConfigurationAdapters.YAML;
 
 @Getter
 public final class SChatBukkitServer extends AbstractSChatServerPlugin {
@@ -69,14 +69,12 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
 
     @Override
     protected ConfigurationAdapter createConfigurationAdapter() {
-        return ConfigurationAdapters.YAML.create(resolveConfig("config.yml").toFile());
+        return YAML.create(resolveConfig("config.yml").toFile());
     }
 
     @Override
     protected EventBus createEventBus() {
-        final BukkitEventBus bus = new BukkitEventBus();
-        Bukkit.getPluginManager().registerEvents(bus, getBootstrap().getLoader());
-        return bus;
+        return new BukkitEventBus();
     }
 
     @Override
@@ -132,5 +130,7 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
     protected void registerListeners() {
         chatPacketListener = new ChatPacketListener(getBootstrap().getLoader(), getChatterProvider(), getViewProvider());
         chatPacketListener.enable();
+
+        Bukkit.getPluginManager().registerEvents((BukkitEventBus) getEventBus(), getBootstrap().getLoader());
     }
 }
