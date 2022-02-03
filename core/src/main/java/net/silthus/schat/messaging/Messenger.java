@@ -50,23 +50,4 @@ public interface Messenger extends AutoCloseable {
     default void close() {
 
     }
-
-    interface Gateway extends AutoCloseable {
-        /**
-         * Processes the encoded message by using the means of this gateway.
-         *
-         * <p>The method should always prefer dispatching the message asynchronously.</p>
-         *
-         * @param encodedMessage the encoded message
-         */
-        void sendOutgoingMessage(String encodedMessage);
-
-        /**
-         * Performs the necessary action to gracefully shut down the messenger.
-         */
-        @Override
-        default void close() {
-
-        }
-    }
 }

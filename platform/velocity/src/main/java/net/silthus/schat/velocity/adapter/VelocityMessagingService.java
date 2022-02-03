@@ -24,9 +24,9 @@
 
 package net.silthus.schat.velocity.adapter;
 
-import net.silthus.schat.messaging.Messenger;
+import net.silthus.schat.messaging.MessengerGateway;
 
-public class VelocityMessagingService implements Messenger.Gateway {
+public class VelocityMessagingService implements MessengerGateway {
 
     @Override
     public void sendOutgoingMessage(String encodedMessage) {

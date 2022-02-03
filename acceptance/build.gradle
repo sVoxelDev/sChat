@@ -1,3 +1,7 @@
+plugins {
+    id "se.thinkcode.cucumber-runner" version "0.0.8"
+}
+
 dependencies {
     testImplementation project(':core')
     testImplementation project(':platform')
@@ -9,19 +13,8 @@ dependencies {
     testImplementation 'org.junit.platform:junit-platform-suite:1.8.2'
 }
 
-configurations {
-    cucumberRuntime {
-        extendsFrom testImplementation
-    }
-}
-
-task cucumber() {
-    dependsOn assemble, testClasses
-    doLast {
-        javaexec {
-            main = "io.cucumber.core.cli.Main"
-            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
-            args = ['--plugin', 'pretty', '--glue', 'acceptance', 'src/test/resources']
-        }
-    }
+cucumber {
+    main = 'io.cucumber.core.cli.Main'
+    featurePath = "$rootDir/acceptance/src/test/resources/features"
+    glue = 'classpath:net.silthus.schat.cucumber'
 }

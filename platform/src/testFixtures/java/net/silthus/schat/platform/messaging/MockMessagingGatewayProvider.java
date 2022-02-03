@@ -26,7 +26,7 @@ package net.silthus.schat.platform.messaging;
 
 import lombok.NonNull;
 import net.silthus.schat.messaging.IncomingMessageConsumer;
-import net.silthus.schat.messaging.Messenger;
+import net.silthus.schat.messaging.MessengerGateway;
 import net.silthus.schat.messaging.MessengerGatewayProvider;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +41,7 @@ public class MockMessagingGatewayProvider implements MessengerGatewayProvider {
 
     @NotNull
     @Override
-    public @NonNull Messenger.Gateway obtain(@NonNull IncomingMessageConsumer incomingMessageConsumer) {
+    public @NonNull MessengerGateway obtain(@NonNull IncomingMessageConsumer incomingMessageConsumer) {
         return incomingMessageConsumer::consumeIncomingMessageAsString;
     }
 }

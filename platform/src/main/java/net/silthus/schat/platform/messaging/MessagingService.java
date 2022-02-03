@@ -31,6 +31,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import net.silthus.schat.messaging.IncomingMessageConsumer;
 import net.silthus.schat.messaging.Messenger;
+import net.silthus.schat.messaging.MessengerGateway;
 import net.silthus.schat.messaging.MessengerGatewayProvider;
 import net.silthus.schat.messaging.PluginMessage;
 import net.silthus.schat.messaging.PluginMessageSerializer;
@@ -39,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 public class MessagingService implements Messenger, IncomingMessageConsumer {
 
-    private final Gateway gateway;
+    private final MessengerGateway gateway;
     private final PluginMessageSerializer serializer;
     private final Set<UUID> processedMessages = new HashSet<>();
 

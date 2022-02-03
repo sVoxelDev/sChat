@@ -22,29 +22,23 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.platform.messaging;
+package net.silthus.schat.messaging;
 
-import lombok.NonNull;
-import net.silthus.schat.messaging.IncomingMessageConsumer;
-import net.silthus.schat.messaging.MessengerGateway;
-import net.silthus.schat.messaging.MessengerGatewayProvider;
+public interface MessengerGateway extends AutoCloseable {
+    /**
+     * Processes the encoded message by using the means of this gateway.
+     *
+     * <p>The method should always prefer dispatching the message asynchronously.</p>
+     *
+     * @param encodedMessage the encoded message
+     */
+    void sendOutgoingMessage(String encodedMessage);
 
-public class StubMessengerGatewayProvider implements MessengerGatewayProvider {
-    private final String name;
-    private final MessengerGateway gateway;
-
-    public StubMessengerGatewayProvider(String name, MessengerGateway gateway) {
-        this.name = name;
-        this.gateway = gateway;
-    }
-
+    /**
+     * Performs the necessary action to gracefully shut down the messenger.
+     */
     @Override
-    public @NonNull String getName() {
-        return name;
-    }
+    default void close() {
 
-    @Override
-    public @NonNull MessengerGateway obtain(@NonNull IncomingMessageConsumer incomingMessageConsumer) {
-        return gateway;
     }
 }

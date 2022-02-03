@@ -63,7 +63,12 @@ jobs:
         run: ./gradlew test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
+      - name: Acceptance Tests
+        run: ./gradlew cucumber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create Coverage
         run: ./gradlew jacocoTestReport
         env:
