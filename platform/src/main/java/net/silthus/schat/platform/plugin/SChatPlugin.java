@@ -24,7 +24,6 @@
 
 package net.silthus.schat.platform.plugin;
 
-import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.platform.config.SChatConfig;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.platform.plugin.logging.PluginLogger;
@@ -44,6 +43,4 @@ public interface SChatPlugin {
     }
 
     SChatConfig getConfig();
-
-    ChannelRepository getChannelRepository();
 }

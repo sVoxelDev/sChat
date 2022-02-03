@@ -24,50 +24,22 @@
 
 package net.silthus.schat.platform.plugin;
 
-import cloud.commandframework.CommandManager;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import lombok.Getter;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.channel.ChannelPrototype;
-import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.eventbus.EventBus;
-import net.silthus.schat.features.GlobalChatFeature;
-import net.silthus.schat.message.MessagePrototype;
 import net.silthus.schat.messaging.MessengerGatewayProvider;
-import net.silthus.schat.platform.chatter.AbstractChatterFactory;
-import net.silthus.schat.platform.commands.ChannelCommands;
-import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.config.ConfigKeys;
 import net.silthus.schat.platform.config.SChatConfig;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
-import net.silthus.schat.platform.listener.ChatListener;
 import net.silthus.schat.platform.locale.TranslationManager;
 import net.silthus.schat.platform.messaging.GatewayProviderRegistry;
 import net.silthus.schat.platform.messaging.MessagingService;
 import net.silthus.schat.platform.sender.Sender;
-import net.silthus.schat.ui.view.ViewFactory;
-import net.silthus.schat.ui.view.ViewProvider;
-import net.silthus.schat.ui.views.Views;
-import net.silthus.schat.usecases.OnChat;
-import net.silthus.schat.util.gson.GsonProvider;
 import net.silthus.schat.util.gson.GsonSerializer;
-import net.silthus.schat.util.gson.types.ChannelSerializer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
-import static net.silthus.schat.chatter.ChatterProvider.createCachingChatterProvider;
-import static net.silthus.schat.platform.commands.parser.ChannelArgument.registerChannelArgument;
-import static net.silthus.schat.platform.commands.parser.ChatterArgument.registerChatterArgument;
-import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 import static net.silthus.schat.platform.locale.Messages.STARTUP_BANNER;
-import static net.silthus.schat.ui.view.ViewProvider.cachingViewProvider;
 import static net.silthus.schat.util.gson.GsonProvider.gsonSerializer;
-import static net.silthus.schat.util.gson.types.ChannelSerializer.CHANNEL_TYPE;
 
 @Getter
 public abstract class AbstractSChatPlugin implements SChatPlugin {
@@ -75,19 +47,10 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     private TranslationManager translationManager;
     private EventBus eventBus;
     private MessengerGatewayProvider.Registry gatewayProviderRegistry;
-    private MessagingService messenger;
-
-    private SChatConfig config;
     private GsonSerializer serializer;
 
-    private ChatterProvider chatterProvider;
-    private ChannelRepository channelRepository;
-
-    private OnChat chatListener;
-    private Commands commands;
-
-    private ViewFactory viewFactory;
-    private ViewProvider viewProvider;
+    private SChatConfig config;
+    private MessagingService messenger;
 
     @Override
     public final void load() {
@@ -102,9 +65,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
         onLoad();
     }
 
-    @ApiStatus.OverrideOnly
-    protected void onLoad() {
-    }
+    protected abstract void onLoad();
 
     @Override
     public final void enable() {
@@ -114,39 +75,29 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
         config = loadConfiguration();
 
-        viewFactory = createViewFactory();
-        viewProvider = createViewProvider(viewFactory);
-
-        chatterProvider = createCachingChatterProvider(createChatterFactory(viewProvider));
-        channelRepository = createChannelRepository();
-
+        registerMessengerGateway(getGatewayProviderRegistry());
         messenger = createMessagingService();
-        chatListener = createChatListener(chatterProvider);
-
-        registerSerializers();
-        setupPrototypes();
-        loadFeatures();
-
-        loadChannels();
-
-        commands = createCommands();
-
-        registerListeners();
 
         onEnable();
     }
 
+    protected abstract void onEnable();
+
     @Override
     public final void disable() {
-        eventBus.close();
-        messenger.close();
+        getEventBus().close();
+        getMessenger().close();
 
         onDisable();
     }
 
-    @ApiStatus.OverrideOnly
-    protected void onDisable() {
-    }
+    protected abstract void onDisable();
+
+    protected abstract EventBus createEventBus();
+
+    public abstract Sender getConsole();
+
+    protected abstract void setupSenderFactory();
 
     private @NotNull SChatConfig loadConfiguration() {
         getLogger().info("Loading configuration...");
@@ -155,121 +106,12 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
         return config;
     }
 
-    public abstract Sender getConsole();
-
     protected abstract ConfigurationAdapter createConfigurationAdapter();
-
-    protected abstract EventBus createEventBus();
-
-    protected abstract void setupSenderFactory();
 
     @ApiStatus.OverrideOnly
     protected MessagingService createMessagingService() {
-        return new MessagingService(getGatewayProviderRegistry().get(config.get(ConfigKeys.MESSENGER)), getSerializer());
+        return new MessagingService(getGatewayProviderRegistry().get(getConfig().get(ConfigKeys.MESSENGER)), getSerializer());
     }
 
-    @ApiStatus.OverrideOnly
-    protected ViewFactory createViewFactory() {
-        return Views::tabbedChannels;
-    }
-
-    @ApiStatus.OverrideOnly
-    protected ViewProvider createViewProvider(ViewFactory viewFactory) {
-        return cachingViewProvider(viewFactory);
-    }
-
-    protected abstract AbstractChatterFactory createChatterFactory(final ViewProvider viewProvider);
-
-    @ApiStatus.OverrideOnly
-    protected ChannelRepository createChannelRepository() {
-        return createInMemoryChannelRepository();
-    }
-
-    protected abstract ChatListener createChatListener(ChatterProvider provider);
-
-    private void registerSerializers() {
-        GsonProvider.registerTypeAdapter(CHANNEL_TYPE, new ChannelSerializer(getChannelRepository()));
-    }
-
-    private void loadFeatures() {
-        new GlobalChatFeature(getMessenger(), getSerializer()).bind(getEventBus());
-    }
-
-    private void setupPrototypes() {
-        MessagePrototype.configure(getEventBus());
-        ChannelPrototype.configure(getEventBus());
-    }
-
-    private void loadChannels() {
-        getLogger().info("Loading channels...");
-        for (final Channel channel : getConfig().get(CHANNELS)) {
-            getChannelRepository().add(channel);
-        }
-        getLogger().info("... loaded " + channelRepository.keys().size() + " channels.");
-    }
-
-    @ApiStatus.OverrideOnly
-    protected void onEnable() {
-    }
-
-    @NotNull
-    private Commands createCommands() {
-        final CommandManager<Sender> commandManager = provideCommandManager();
-        final Commands commands = new Commands(commandManager);
-
-        registerCommandArguments(commandManager);
-        registerCommands(commands);
-
-        return commands;
-    }
-
-    private void registerCommandArguments(CommandManager<Sender> commandManager) {
-        registerChatterArgument(commandManager, getChatterProvider());
-        registerChannelArgument(commandManager, getChannelRepository());
-    }
-
-    protected abstract CommandManager<Sender> provideCommandManager();
-
-    private void registerCommands(Commands commands) {
-        registerNativeCommands(commands);
-        registerCustomCommands(commands);
-    }
-
-    private void registerNativeCommands(Commands commands) {
-        commands.register(new ChannelCommands());
-    }
-
-    @ApiStatus.OverrideOnly
-    protected void registerCustomCommands(Commands commands) {
-    }
-
-    @ApiStatus.OverrideOnly
-    protected void registerListeners() {
-    }
-
-    protected final Path resolveConfig(String fileName) {
-        Path configFile = getBootstrap().getConfigDirectory().resolve(fileName);
-
-        if (!Files.exists(configFile)) {
-            createConfigDirectory(configFile);
-            copyDefaultConfig(fileName, configFile);
-        }
-
-        return configFile;
-    }
-
-    private void copyDefaultConfig(String fileName, Path configFile) {
-        try (InputStream is = getBootstrap().getResourceStream(fileName)) {
-            Files.copy(is, configFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void createConfigDirectory(Path configFile) {
-        try {
-            Files.createDirectories(configFile.getParent());
-        } catch (IOException ignored) {
-        }
-    }
+    protected abstract void registerMessengerGateway(MessengerGatewayProvider.Registry registry);
 }

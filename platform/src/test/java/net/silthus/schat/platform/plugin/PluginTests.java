@@ -37,11 +37,11 @@ import static org.mockito.Mockito.verify;
 class PluginTests {
 
     @Nested class given_new_plugin {
-        private TestPlugin plugin;
+        private TestServer plugin;
 
         @BeforeEach
         void setUp() {
-            plugin = new TestPlugin();
+            plugin = new TestServer();
         }
 
         @Nested class when_enable_is_called {
@@ -58,7 +58,7 @@ class PluginTests {
 
             @Test
             void then_commands_are_registered() {
-                verify(TestPlugin.dummyCommand, atLeastOnce()).register(any(), any());
+                verify(TestServer.dummyCommand, atLeastOnce()).register(any(), any());
             }
 
             @Test

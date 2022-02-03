@@ -46,8 +46,8 @@ import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.locale.Messages;
 import net.silthus.schat.platform.messaging.CrossServerMessengerMock;
 import net.silthus.schat.platform.messaging.StubMessengerGatewayProvider;
-import net.silthus.schat.platform.plugin.AbstractSChatPlugin;
-import net.silthus.schat.platform.plugin.TestPlugin;
+import net.silthus.schat.platform.plugin.AbstractSChatServerPlugin;
+import net.silthus.schat.platform.plugin.TestServer;
 import net.silthus.schat.platform.sender.SenderMock;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,7 +60,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class StepDefinitions {
 
-    private final Map<String, TestPlugin> SERVERS = new HashMap<>();
+    private final Map<String, TestServer> SERVERS = new HashMap<>();
     private final Map<String, User> users = new HashMap<>();
     private Message lastMessage;
     private User user;
@@ -71,13 +71,13 @@ public class StepDefinitions {
 
     @After
     public void disablePlugin() {
-        SERVERS.values().forEach(AbstractSChatPlugin::disable);
+        SERVERS.values().forEach(AbstractSChatServerPlugin::disable);
     }
 
     @Before
     public void clearChannels() {
         SERVERS.values().stream()
-            .map(AbstractSChatPlugin::getChannelRepository)
+            .map(AbstractSChatServerPlugin::getChannelRepository)
             .forEach(repository -> repository.all().forEach(repository::remove));
     }
 
@@ -107,7 +107,7 @@ public class StepDefinitions {
     @NotNull
     private Stream<ChannelRepository> getChannelRepositories() {
         return SERVERS.values().stream()
-            .map(AbstractSChatPlugin::getChannelRepository);
+            .map(AbstractSChatServerPlugin::getChannelRepository);
     }
 
     private User getUser(String user) {
@@ -130,7 +130,7 @@ public class StepDefinitions {
         return getServer(user).getChatterProvider().get(user.id);
     }
 
-    private TestPlugin getServer(User user) {
+    private TestServer getServer(User user) {
         return SERVERS.get(user.server);
     }
 
@@ -148,9 +148,9 @@ public class StepDefinitions {
     }
 
     private void createServer(String server) {
-        final TestPlugin plugin = new TestPlugin();
+        final TestServer plugin = new TestServer();
         plugin.load();
-        plugin.getGatewayProviderRegistry().register(new StubMessengerGatewayProvider("acceptance", new CrossServerMessengerMock(plugin, SERVERS.values())));
+        plugin.getGatewayProviderRegistry().register("acceptance", new StubMessengerGatewayProvider(new CrossServerMessengerMock(plugin, SERVERS.values())));
         plugin.enable();
         SERVERS.put(server, plugin);
     }

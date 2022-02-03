@@ -27,8 +27,10 @@ package net.silthus.schat.platform.messaging;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.extern.java.Log;
 import net.silthus.schat.messaging.IncomingMessageConsumer;
 import net.silthus.schat.messaging.Messenger;
 import net.silthus.schat.messaging.MessengerGateway;
@@ -38,6 +40,7 @@ import net.silthus.schat.messaging.PluginMessageSerializer;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
+@Log
 public class MessagingService implements Messenger, IncomingMessageConsumer {
 
     private final MessengerGateway gateway;
@@ -67,6 +70,16 @@ public class MessagingService implements Messenger, IncomingMessageConsumer {
 
     @Override
     public boolean consumeIncomingMessageAsString(@NonNull String encodedString) {
-        return consumeIncomingMessage(serializer.decode(encodedString));
+        try {
+            return consumeIncomingMessage(serializer.decode(encodedString));
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Failed to process plugin message: " + encodedString, e);
+            return false;
+        }
+    }
+
+    @Override
+    public void close() {
+        gateway.close();
     }
 }

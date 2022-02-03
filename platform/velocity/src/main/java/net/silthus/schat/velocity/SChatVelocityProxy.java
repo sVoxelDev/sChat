@@ -24,36 +24,27 @@
 
 package net.silthus.schat.velocity;
 
-import cloud.commandframework.CommandManager;
-import cloud.commandframework.velocity.VelocityCommandManager;
-import dev.simplix.protocolize.api.Protocolize;
 import java.io.File;
 import lombok.Getter;
-import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.eventbus.EventBus;
-import net.silthus.schat.platform.chatter.AbstractChatterFactory;
+import net.silthus.schat.messaging.MessengerGatewayProvider;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
-import net.silthus.schat.platform.listener.ChatListener;
-import net.silthus.schat.platform.plugin.AbstractSChatPlugin;
+import net.silthus.schat.platform.plugin.AbstractSChatProxyPlugin;
 import net.silthus.schat.platform.sender.Sender;
-import net.silthus.schat.ui.view.ViewProvider;
-import net.silthus.schat.velocity.adapter.VelocityChatListener;
-import net.silthus.schat.velocity.adapter.VelocityChatterFactory;
 import net.silthus.schat.velocity.adapter.VelocityEventBus;
+import net.silthus.schat.velocity.adapter.VelocityMessengerGateway;
 import net.silthus.schat.velocity.adapter.VelocitySenderFactory;
-import net.silthus.schat.velocity.protocolize.ChatPacketListener;
 
-import static cloud.commandframework.execution.CommandExecutionCoordinator.simpleCoordinator;
+import static net.silthus.schat.velocity.adapter.VelocityMessengerGateway.GATEWAY_TYPE;
 
 @Getter
-public final class VelocityPlugin extends AbstractSChatPlugin {
+public final class SChatVelocityProxy extends AbstractSChatProxyPlugin {
 
     private final VelocityBootstrap bootstrap;
     private VelocitySenderFactory senderFactory;
-    private ChatPacketListener chatPacketListener;
 
-    public VelocityPlugin(VelocityBootstrap bootstrap) {
+    public SChatVelocityProxy(VelocityBootstrap bootstrap) {
         this.bootstrap = bootstrap;
     }
 
@@ -78,31 +69,11 @@ public final class VelocityPlugin extends AbstractSChatPlugin {
     }
 
     @Override
-    protected AbstractChatterFactory createChatterFactory(final ViewProvider viewProvider) {
-        return new VelocityChatterFactory(getBootstrap().getProxy(), getViewProvider());
-    }
-
-    @Override
-    protected ChatListener createChatListener(ChatterProvider provider) {
-        final VelocityChatListener listener = new VelocityChatListener(provider);
-        bootstrap.getProxy().getEventManager().register(bootstrap, listener);
-        return listener;
-    }
-
-    @Override
-    protected CommandManager<Sender> provideCommandManager() {
-        return new VelocityCommandManager<>(
-            bootstrap.getPluginContainer(),
-            bootstrap.getProxy(),
-            simpleCoordinator(),
-            commandSource -> getSenderFactory().wrap(commandSource),
-            sender -> getSenderFactory().unwrap(sender)
-        );
+    protected void registerMessengerGateway(MessengerGatewayProvider.Registry registry) {
+        registry.register(GATEWAY_TYPE, consumer -> new VelocityMessengerGateway(getBootstrap()));
     }
 
     @Override
     protected void registerListeners() {
-        chatPacketListener = new ChatPacketListener(getChatterProvider(), getViewProvider());
-        Protocolize.listenerProvider().registerListener(chatPacketListener);
     }
 }

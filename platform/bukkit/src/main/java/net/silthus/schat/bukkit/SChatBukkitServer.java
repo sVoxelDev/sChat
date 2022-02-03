@@ -32,16 +32,18 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.silthus.schat.bukkit.adapter.BukkitChatListener;
 import net.silthus.schat.bukkit.adapter.BukkitChatterFactory;
 import net.silthus.schat.bukkit.adapter.BukkitEventBus;
+import net.silthus.schat.bukkit.adapter.BukkitMessengerGateway;
 import net.silthus.schat.bukkit.adapter.BukkitSchedulerAdapter;
 import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
 import net.silthus.schat.bukkit.protocollib.ChatPacketListener;
 import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.messaging.MessengerGatewayProvider;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapters;
 import net.silthus.schat.platform.listener.ChatListener;
-import net.silthus.schat.platform.plugin.AbstractSChatPlugin;
+import net.silthus.schat.platform.plugin.AbstractSChatServerPlugin;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.ui.view.ViewProvider;
 import org.bukkit.Bukkit;
@@ -50,13 +52,13 @@ import org.jetbrains.annotations.NotNull;
 import static cloud.commandframework.execution.CommandExecutionCoordinator.simpleCoordinator;
 
 @Getter
-public final class SChatBukkitPlugin extends AbstractSChatPlugin {
+public final class SChatBukkitServer extends AbstractSChatServerPlugin {
 
     private final BukkitBootstrap bootstrap;
     private BukkitSenderFactory senderFactory;
     private ChatPacketListener chatPacketListener;
 
-    SChatBukkitPlugin(BukkitBootstrap bootstrap) {
+    SChatBukkitServer(BukkitBootstrap bootstrap) {
         this.bootstrap = bootstrap;
     }
 
@@ -80,6 +82,16 @@ public final class SChatBukkitPlugin extends AbstractSChatPlugin {
     @Override
     protected void setupSenderFactory() {
         senderFactory = new BukkitSenderFactory(getAudiences(), new BukkitSchedulerAdapter(bootstrap.getLoader()));
+    }
+
+    @Override
+    protected void registerMessengerGateway(MessengerGatewayProvider.Registry registry) {
+        registry.register(BukkitMessengerGateway.GATEWAY_TYPE, consumer -> new BukkitMessengerGateway(
+            getBootstrap().getLoader(),
+            Bukkit.getServer(),
+            getBootstrap().getScheduler(),
+            consumer
+        ));
     }
 
     @Override

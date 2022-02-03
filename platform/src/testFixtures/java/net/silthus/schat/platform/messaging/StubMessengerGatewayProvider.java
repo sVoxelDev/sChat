@@ -30,17 +30,10 @@ import net.silthus.schat.messaging.MessengerGateway;
 import net.silthus.schat.messaging.MessengerGatewayProvider;
 
 public class StubMessengerGatewayProvider implements MessengerGatewayProvider {
-    private final String name;
     private final MessengerGateway gateway;
 
-    public StubMessengerGatewayProvider(String name, MessengerGateway gateway) {
-        this.name = name;
+    public StubMessengerGatewayProvider(MessengerGateway gateway) {
         this.gateway = gateway;
-    }
-
-    @Override
-    public @NonNull String getName() {
-        return name;
     }
 
     @Override

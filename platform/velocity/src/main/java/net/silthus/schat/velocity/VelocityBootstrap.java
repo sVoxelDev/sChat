@@ -58,7 +58,7 @@ public final class VelocityBootstrap implements Bootstrap {
 
     private final PluginLogger pluginLogger;
     private final VelocitySchedulerAdapter scheduler;
-    private final VelocityPlugin plugin;
+    private final SChatVelocityProxy plugin;
 
     @Inject
     private ProxyServer proxy;
@@ -74,7 +74,7 @@ public final class VelocityBootstrap implements Bootstrap {
         this.pluginLogger = new Slf4jPluginLogger(logger);
         this.scheduler = new VelocitySchedulerAdapter(this);
 
-        this.plugin = new VelocityPlugin(this);
+        this.plugin = new SChatVelocityProxy(this);
     }
 
     @Override

@@ -37,13 +37,6 @@ import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 public interface MessengerGatewayProvider {
 
     /**
-     * Gets the name of this provider.
-     *
-     * @return the provider name
-     */
-    @NonNull String getName();
-
-    /**
      * Creates and returns a new {@link MessengerGateway} instance, which passes
      * incoming messages to the provided {@link IncomingMessageConsumer}.
      *
@@ -59,6 +52,6 @@ public interface MessengerGatewayProvider {
     interface Registry {
         MessengerGatewayProvider get(String name);
 
-        void register(MessengerGatewayProvider provider);
+        void register(String name, MessengerGatewayProvider provider);
     }
 }

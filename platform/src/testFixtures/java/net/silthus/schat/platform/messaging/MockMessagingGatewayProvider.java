@@ -32,13 +32,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class MockMessagingGatewayProvider implements MessengerGatewayProvider {
 
-    public static final String PROVIDER_NAME = "MOCK";
-
-    @Override
-    public @NonNull String getName() {
-        return PROVIDER_NAME;
-    }
-
     @NotNull
     @Override
     public @NonNull MessengerGateway obtain(@NonNull IncomingMessageConsumer incomingMessageConsumer) {
