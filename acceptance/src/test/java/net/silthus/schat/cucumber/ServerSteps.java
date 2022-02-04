@@ -26,10 +26,8 @@ package net.silthus.schat.cucumber;
 
 import io.cucumber.java.ParameterType;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import net.silthus.schat.cucumber.models.Server;
 
-@Singleton
 public class ServerSteps {
 
     private final Context context;
