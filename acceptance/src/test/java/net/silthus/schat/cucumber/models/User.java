@@ -22,13 +22,17 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.cucumber;
+package net.silthus.schat.cucumber.models;
 
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.sender.SenderMock;
+import net.silthus.schat.ui.view.View;
 
 @Getter
 @Setter
@@ -36,7 +40,48 @@ import net.silthus.schat.platform.sender.SenderMock;
 public class User {
     UUID id;
     String name;
-    String server;
-    String channel;
+    Server server;
+    Channel channel;
     SenderMock sender;
+
+    public User server(Server server) {
+        updateChatterStub(server);
+        this.server = server;
+        return this;
+    }
+
+    private void updateChatterStub(Server server) {
+        if (this.server != server && this.server != null)
+            removeStubFromCurrentServer();
+        if (server != null)
+            addStubToServer(server);
+    }
+
+    private void removeStubFromCurrentServer() {
+        this.server.plugin().chatterFactory().removeSenderStub(sender());
+    }
+
+    private void addStubToServer(Server server) {
+        server.plugin().chatterFactory().stubSenderAsChatter(sender());
+    }
+
+    public Chatter chatter() {
+        return server().plugin().chatterProvider().get(id());
+    }
+
+    public void execute(String command) {
+        server().plugin().commands().execute(sender(), command);
+    }
+
+    public void setPermission(String permission, boolean state) {
+        sender().mockPermission(permission, state);
+    }
+
+    public View view() {
+        return server().plugin().viewProvider().view(chatter());
+    }
+
+    public Message lastMessage() {
+        return chatter().lastMessage().orElse(null);
+    }
 }

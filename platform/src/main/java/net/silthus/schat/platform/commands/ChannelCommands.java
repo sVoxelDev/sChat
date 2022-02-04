@@ -29,9 +29,6 @@ import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.ProxiedBy;
-import lombok.AccessLevel;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.sender.Sender;
@@ -42,8 +39,6 @@ import static net.silthus.schat.commands.SetActiveChannelCommand.setActiveChanne
 import static net.silthus.schat.platform.locale.Messages.JOINED_CHANNEL;
 import static net.silthus.schat.platform.locale.Messages.JOIN_CHANNEL_ERROR;
 
-@Setter(AccessLevel.PROTECTED)
-@Accessors(fluent = true)
 public final class ChannelCommands implements Command {
 
     @Override

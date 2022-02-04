@@ -29,6 +29,7 @@ import java.util.Queue;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
 
@@ -42,6 +43,8 @@ import static org.mockito.Mockito.when;
 @Getter
 @Accessors(fluent = true)
 public class SenderMock implements Sender {
+
+    private static final MiniMessage SERIALIZER = MiniMessage.miniMessage();
 
     public static SenderMock senderMock() {
         return new SenderMock(randomIdentity());
@@ -75,7 +78,10 @@ public class SenderMock implements Sender {
     }
 
     public void assertLastMessageIs(Component component) {
-        assertThat(messages.peek()).isEqualTo(component);
+        assertThat(messages.peek()).isNotNull()
+            .extracting(SERIALIZER::serialize)
+            .asString()
+            .isEqualTo(SERIALIZER.serialize(component));
     }
 
     public void mockPermission(String permission, boolean state) {

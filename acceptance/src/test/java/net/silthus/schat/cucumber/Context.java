@@ -24,44 +24,66 @@
 
 package net.silthus.schat.cucumber;
 
+import io.cucumber.guice.ScenarioScoped;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
-import io.cucumber.java.ParameterType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.cucumber.models.Server;
+import net.silthus.schat.cucumber.models.User;
+import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.messaging.StubMessengerGatewayProvider;
 import net.silthus.schat.platform.plugin.TestServer;
 
 import static net.silthus.schat.platform.messaging.CrossServerMessengerGateway.provideCrossServerMessenger;
 
+@Getter
+@Setter
+@Accessors(fluent = true)
+@ScenarioScoped
 public class Context {
+    public static final String PRIMARY_SERVER = "server1";
+
+    private final UserSteps userSteps;
+    private final ServerSteps serverSteps;
+    private final ChannelSteps channelSteps;
 
     private final Map<String, Server> servers = new HashMap<>();
     private final Map<String, User> users = new HashMap<>();
+    private final Map<String, Channel> channels = new HashMap<>();
+
+    private Message lastMessage;
 
     public Context() {
+        this.userSteps = new UserSteps(this);
+        this.serverSteps = new ServerSteps(this);
+        this.channelSteps = new ChannelSteps(this);
     }
 
-    @Before(order = 10, value = "create servers")
+    @Before(order = 10)
     public void setup() {
-        servers.put("server1", createServer());
-        servers.put("server2", createServer());
+        servers.put(PRIMARY_SERVER, serverSteps.createServer());
+        servers.put("server2", serverSteps.createServer());
     }
 
-    @Before(order = 20, value = "load servers")
+    @Before(order = 20)
     public void loadServers() {
         servers.values().forEach(Server::load);
     }
 
-    @Before(order = 30, value = "inject cross server messenger")
+    @Before(order = 30)
     public void injectCrossServerMessenger() {
         final List<TestServer> servers = this.servers.values().stream().map(Server::plugin).toList();
         final StubMessengerGatewayProvider messenger = provideCrossServerMessenger(servers);
         this.servers.values().forEach(server -> server.injectMessenger(messenger));
     }
 
-    @Before(order = 40, value = "enable servers")
+    @Before(order = 40)
     public void enableServers() {
         servers.values().forEach(Server::enable);
     }
@@ -71,12 +93,26 @@ public class Context {
         servers.values().forEach(Server::disable);
     }
 
-    @ParameterType("[a-zA-Z0-9]+")
-    public Server server(String name) {
-        return servers.computeIfAbsent(name, n -> createServer());
+    public User user(String name) {
+        return userSteps().user(name);
     }
 
-    private Server createServer() {
-        return new Server();
+    public Server primaryServer() {
+        return servers.get(PRIMARY_SERVER);
+    }
+
+    public Server server(String server) {
+        return servers.getOrDefault(server, primaryServer());
+    }
+
+    public Channel channel(String channel) {
+        if (channel == null)
+            return null;
+        return channels.get(channel);
+    }
+
+    public Channel addChannelToAllServers(Channel channel) {
+        servers().values().forEach(server -> server.addChannel(channel));
+        return channel;
     }
 }

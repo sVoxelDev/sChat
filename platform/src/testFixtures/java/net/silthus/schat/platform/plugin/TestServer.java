@@ -26,6 +26,7 @@ package net.silthus.schat.platform.plugin;
 
 import cloud.commandframework.CommandManager;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.eventbus.AbstractEventBus;
 import net.silthus.schat.eventbus.EventBus;
@@ -47,6 +48,7 @@ import static net.silthus.schat.platform.sender.SenderMock.senderMock;
 import static org.mockito.Mockito.spy;
 
 @Getter
+@Accessors(fluent = true)
 public class TestServer extends AbstractSChatServerPlugin {
 
     static Command dummyCommand = spy(Command.class);
