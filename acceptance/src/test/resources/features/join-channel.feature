@@ -2,25 +2,21 @@ Feature: Join Channel
   Users can join channels using the /ch <channel> command.
 
   Scenario: User can join public channel
-    Given a public channel 'global'
-    Given a user
-    And user has no permissions
-    When user runs '/ch global'
-    Then user is member of channel 'global'
-    Then user received joined channel 'global' message
+    Given a public channel global
+    When I execute '/ch global'
+    Then I am a member of the global channel
+    And the global channel is active
+    And I received the joined global channel message
 
   Scenario: User cannot join protected channel
-    Given a protected channel 'protected'
-    Given a user
-    And user has no permissions
-    When user runs '/ch protected'
-    Then user is not a member of channel 'protected'
-    Then user receives join channel error message for channel 'protected'
+    Given a protected channel protected
+    When I execute '/ch protected'
+    Then I am not a member of the protected channel
+    And I received the cannot join protected channel message
 
   Scenario: User can join protected channel
-    Given a protected channel 'protected'
-    Given a user
-    And user has permission 'schat.channel.protected.join'
-    When user runs '/ch protected'
-    Then user is member of channel 'protected'
-    Then user received joined channel 'protected' message
+    Given a protected channel protected
+    And I have the 'schat.channel.protected.join' permission
+    When I execute '/ch protected'
+    Then I am a member of the protected channel
+    And I received the joined protected channel message

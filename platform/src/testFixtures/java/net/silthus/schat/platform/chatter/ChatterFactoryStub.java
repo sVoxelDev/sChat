@@ -54,6 +54,10 @@ public class ChatterFactoryStub extends AbstractChatterFactory {
         chatterStubs.put(sender.uniqueId(), sender);
     }
 
+    public void removeSenderStub(SenderMock sender) {
+        chatterStubs.remove(sender.uniqueId());
+    }
+
     @Override
     protected @NotNull Identity createIdentity(UUID id) {
         if (chatterStubs.containsKey(id))

@@ -9,7 +9,7 @@ Feature: Private Chats
       | player3 | server1 |
 
   Scenario: Users can send private messages
-    When player1 sends a private message to player2
+    When I send a private message to player2
     Then player2 receives the message
     And the view of player2 shows the message of player1 in a separate tab
-    But player3 does not receive a message
+    And player3 does not receive a message

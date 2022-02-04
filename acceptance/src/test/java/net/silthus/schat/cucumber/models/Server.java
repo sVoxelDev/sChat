@@ -22,11 +22,12 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.cucumber;
+package net.silthus.schat.cucumber.models;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import net.silthus.schat.channel.Channel;
 import net.silthus.schat.platform.messaging.StubMessengerGatewayProvider;
 import net.silthus.schat.platform.plugin.TestServer;
 
@@ -56,5 +57,9 @@ public class Server {
 
     public void injectMessenger(StubMessengerGatewayProvider messenger) {
         plugin().gatewayProviderRegistry().register(GATEWAY_TYPE, messenger);
+    }
+
+    public void addChannel(Channel channel) {
+        plugin().channelRepository().add(channel);
     }
 }

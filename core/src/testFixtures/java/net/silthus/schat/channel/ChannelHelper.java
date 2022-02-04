@@ -78,6 +78,10 @@ public final class ChannelHelper {
         public void configure(Configured.Builder<?> builder) {
             builder.set(setting(), value());
         }
+
+        public void applyTo(Channel channel) {
+            channel.set(setting, value);
+        }
     }
 
 }
