@@ -94,7 +94,7 @@ public class Context {
     }
 
     public User user(String name) {
-        return userSteps().user(name);
+        return users().getOrDefault(name, userSteps.user(name));
     }
 
     public Server primaryServer() {

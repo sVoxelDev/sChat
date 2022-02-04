@@ -44,6 +44,12 @@ public class User {
     Channel channel;
     SenderMock sender;
 
+    public User channel(Channel channel) {
+        this.channel = channel;
+        chatter().activeChannel(channel);
+        return this;
+    }
+
     public User server(Server server) {
         updateChatterStub(server);
         this.server = server;

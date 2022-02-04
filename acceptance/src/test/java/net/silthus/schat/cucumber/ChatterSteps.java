@@ -25,19 +25,15 @@
 package net.silthus.schat.cucumber;
 
 import io.cucumber.java.ParameterType;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.But;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 
 import static net.silthus.schat.message.MessageHelper.randomText;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Singleton
 public class ChatterSteps {
 
     private final Context context;
@@ -72,7 +68,7 @@ public class ChatterSteps {
             .isPresent().get().isEqualTo(context.lastMessage());
     }
 
-    @But("{chatter} does not receive a message")
+    @Then("{chatter} does not receive a message")
     public void playerDoesNotReceiveAMessage(Chatter chatter) {
         assertThat(chatter.lastMessage()).isEmpty();
     }
@@ -87,7 +83,7 @@ public class ChatterSteps {
         assertThat(chatter.isJoined(channel)).isFalse();
     }
 
-    @And("the {channel} channel is active")
+    @Then("the {channel} channel is active")
     public void theGlobalChannelIsActive(Channel channel) {
         assertThat(me().isActiveChannel(channel)).isTrue();
     }

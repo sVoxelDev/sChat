@@ -27,7 +27,6 @@ package net.silthus.schat.cucumber;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelHelper;
 
@@ -35,7 +34,6 @@ import static net.silthus.schat.channel.Channel.GLOBAL;
 import static net.silthus.schat.channel.Channel.PROTECTED;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 
-@Singleton
 public class ChannelSteps {
 
     private final Context context;

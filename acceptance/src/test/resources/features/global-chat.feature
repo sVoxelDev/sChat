@@ -7,6 +7,7 @@ Feature: Cross Server Global Chatting
       | name    | server  | channel |
       | player1 | server1 | global  |
       | player2 | server2 | global  |
+    And I am player1
 
   Scenario: Users can chat across two servers
     When I send a message

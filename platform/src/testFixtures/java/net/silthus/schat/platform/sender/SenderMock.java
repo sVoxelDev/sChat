@@ -78,10 +78,13 @@ public class SenderMock implements Sender {
     }
 
     public void assertLastMessageIs(Component component) {
-        assertThat(messages.peek()).isNotNull()
-            .extracting(SERIALIZER::serialize)
-            .asString()
-            .isEqualTo(SERIALIZER.serialize(component));
+        if (component == null)
+            assertThat(messages.peek()).isNull();
+        else
+            assertThat(messages.peek()).isNotNull()
+                .extracting(SERIALIZER::serialize)
+                .asString()
+                .isEqualTo(SERIALIZER.serialize(component));
     }
 
     public void mockPermission(String permission, boolean state) {
