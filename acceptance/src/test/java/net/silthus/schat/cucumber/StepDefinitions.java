@@ -24,10 +24,10 @@
 
 package net.silthus.schat.cucumber;
 
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
 import io.cucumber.java.DataTableType;
+import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.But;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -44,41 +44,29 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.locale.Messages;
-import net.silthus.schat.platform.messaging.CrossServerMessengerMock;
-import net.silthus.schat.platform.messaging.StubMessengerGatewayProvider;
 import net.silthus.schat.platform.plugin.AbstractSChatServerPlugin;
 import net.silthus.schat.platform.plugin.TestServer;
 import net.silthus.schat.platform.sender.SenderMock;
+import net.silthus.schat.ui.model.ViewTab;
+import net.silthus.schat.ui.view.View;
+import net.silthus.schat.ui.views.TabbedChannelsView;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.Channel.GLOBAL;
 import static net.silthus.schat.channel.Channel.PROTECTED;
 import static net.silthus.schat.commands.SetActiveChannelCommand.setActiveChannel;
-import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomText;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class StepDefinitions {
 
-    private final Map<String, TestServer> SERVERS = new HashMap<>();
+    private final Context context = new Context();
+
     private final Map<String, User> users = new HashMap<>();
     private Message lastMessage;
     private User user;
 
     public StepDefinitions() {
-        createServer("server1");
-    }
-
-    @After
-    public void disablePlugin() {
-        SERVERS.values().forEach(AbstractSChatServerPlugin::disable);
-    }
-
-    @Before
-    public void clearChannels() {
-        SERVERS.values().stream()
-            .map(AbstractSChatServerPlugin::getChannelRepository)
-            .forEach(repository -> repository.all().forEach(repository::remove));
     }
 
     private void addChannel(String key, Function<Channel.Builder, Channel.Builder> cfg) {
@@ -114,10 +102,6 @@ public class StepDefinitions {
         return users.get(user);
     }
 
-    private Chatter getChatter(String user) {
-        return getChatter(getUser(user));
-    }
-
     private Chatter getChatter() {
         return getChatter(user);
     }
@@ -142,26 +126,6 @@ public class StepDefinitions {
             .channel(entry.get("channel"));
     }
 
-    @Given("a second server {string}")
-    public void aSecondServer(String server) {
-        createServer(server);
-    }
-
-    private void createServer(String server) {
-        final TestServer plugin = new TestServer();
-        plugin.load();
-        plugin.getGatewayProviderRegistry().register("acceptance", new StubMessengerGatewayProvider(new CrossServerMessengerMock(plugin, SERVERS.values())));
-        plugin.enable();
-        SERVERS.put(server, plugin);
-    }
-
-    @And("the following users")
-    public void theFollowingUsers(List<User> users) {
-        for (final User user : users) {
-            createUser(user);
-        }
-    }
-
     private User createUser(User user) {
         final SenderMock senderMock = SenderMock.senderMock(Identity.identity(user.name));
         user.id = senderMock.getUniqueId();
@@ -171,6 +135,21 @@ public class StepDefinitions {
             setActiveChannel(getChatter(user), getChannel(user.server, user.channel)).execute();
         this.users.put(user.name, user);
         return user;
+    }
+
+    private void sendPrivateMessage(Chatter source, Chatter destination) {
+        lastMessage = source.message("Hey").to(destination).send();
+    }
+
+    @Given("a second server {server}")
+    public void aSecondServer(TestServer server) {
+    }
+
+    @And("the following users")
+    public void theFollowingUsers(List<User> users) {
+        for (final User user : users) {
+            createUser(user);
+        }
     }
 
     @And("a global channel {string}")
@@ -202,11 +181,16 @@ public class StepDefinitions {
         getServer(user).getCommands().execute(user.sender, command);
     }
 
-    @When("user {string} sends a message")
-    public void userSendsAMessage(String user) {
+    @When("{user} sends a message")
+    public void userSendsAMessage(User user) {
         final Chatter chatter = getChatter(user);
         final Channel channel = chatter.getActiveChannel().orElseThrow();
-        lastMessage = message(randomText()).source(chatter).to(channel).send();
+        lastMessage = Message.message(randomText()).source(chatter).to(channel).send();
+    }
+
+    @When("{user} sends a private message to {user}")
+    public void playerSendsAPrivateMessage(User source, User destination) {
+        sendPrivateMessage(getChatter(source), getChatter(destination));
     }
 
     @Then("user receives join channel error message for channel {string}")
@@ -239,10 +223,35 @@ public class StepDefinitions {
         user.sender.assertLastMessageIs(Messages.JOINED_CHANNEL.build(getChannel(channel)));
     }
 
-    @Then("user {string} receives the message")
-    public void userReceivesTheMessage(String user) {
+    @Then("{user} receives the message")
+    public void userReceivesTheMessage(User user) {
         assertThat(getChatter(user).getLastMessage())
             .isPresent().get().isEqualTo(lastMessage);
     }
 
+    @But("{user} does not receive a message")
+    public void playerDoesNotReceiveAMessage(User user) {
+        assertThat(getChatter(user).getLastMessage()).isEmpty();
+    }
+
+    @And("the {view} shows the {message} in a separate tab")
+    public void theMessageIsShownInASeparateTab(View view, Message message) {
+        assertThat(((TabbedChannelsView) view).getViewModel().getTabs())
+            .filteredOn(viewTab -> viewTab.source().equals(message.source()))
+            .isNotEmpty()
+            .extracting(ViewTab::messages).asList()
+            .contains(message);
+    }
+
+    @ParameterType("view of ([a-zA-Z0-9]+)")
+    public View view(String user) {
+        final User u = getUser(user);
+        return getServer(u).getViewProvider().getView(getChatter(u));
+    }
+
+    @ParameterType("message of ([a-zA-Z0-9]+)")
+    public Message message(String user) {
+        final User u = getUser(user);
+        return getChatter(u).getLastMessage().orElse(null);
+    }
 }

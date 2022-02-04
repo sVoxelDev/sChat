@@ -39,7 +39,6 @@ import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.channel.Channel.GLOBAL;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
-import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static net.silthus.schat.util.gson.GsonProvider.gsonSerializer;
@@ -67,7 +66,7 @@ class GlobalChatFeatureTests implements Messenger {
 
     @Test
     void channel_without_global_flag_is_not_sent() {
-        randomChannel().sendMessage(randomMessage());
+        channelWith(GLOBAL, false).sendMessage(randomMessage());
         assertThat(messengerCalled).isFalse();
     }
 

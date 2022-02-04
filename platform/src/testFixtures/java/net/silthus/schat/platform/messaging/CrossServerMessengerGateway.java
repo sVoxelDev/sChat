@@ -28,19 +28,22 @@ import java.util.Collection;
 import net.silthus.schat.messaging.MessengerGateway;
 import net.silthus.schat.platform.plugin.TestServer;
 
-public class CrossServerMessengerMock implements MessengerGateway {
-    private final TestServer plugin;
+public class CrossServerMessengerGateway implements MessengerGateway {
+
+    public static StubMessengerGatewayProvider provideCrossServerMessenger(Collection<TestServer> servers) {
+        return new StubMessengerGatewayProvider(new CrossServerMessengerGateway(servers));
+    }
+
+    public static final String GATEWAY_TYPE = "acceptance";
+
     private final Collection<TestServer> servers;
 
-    public CrossServerMessengerMock(TestServer plugin, Collection<TestServer> servers) {
-        this.plugin = plugin;
+    public CrossServerMessengerGateway(Collection<TestServer> servers) {
         this.servers = servers;
     }
 
     @Override
     public void sendOutgoingMessage(String encodedMessage) {
-        servers.stream()
-            .filter(p -> !p.equals(plugin))
-            .forEach(p -> p.getMessenger().consumeIncomingMessageAsString(encodedMessage));
+        servers.forEach(p -> p.getMessenger().consumeIncomingMessageAsString(encodedMessage));
     }
 }
