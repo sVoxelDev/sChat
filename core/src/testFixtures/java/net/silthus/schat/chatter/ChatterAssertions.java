@@ -31,15 +31,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 public final class ChatterAssertions {
 
     public static void assertChatterHasChannel(Chatter chatter, Channel channel) {
-        assertThat(chatter.getChannels()).contains(channel);
+        assertThat(chatter.channels()).contains(channel);
     }
 
     public static void assertChatterHasOnlyChannel(Chatter chatter, Channel channel) {
-        assertThat(chatter.getChannels()).containsExactly(channel);
+        assertThat(chatter.channels()).containsExactly(channel);
     }
 
     public static void assertChatterHasNoChannels(Chatter chatter) {
-        assertThat(chatter.getChannels()).isEmpty();
+        assertThat(chatter.channels()).isEmpty();
     }
 
     private ChatterAssertions() {

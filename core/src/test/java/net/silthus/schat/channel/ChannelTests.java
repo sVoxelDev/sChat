@@ -96,7 +96,7 @@ class ChannelTests {
 
     @Test
     void targets_are_empty() {
-        assertThat(channel.getTargets()).isEmpty();
+        assertThat(channel.targets()).isEmpty();
     }
 
     @Test
@@ -120,7 +120,7 @@ class ChannelTests {
     @Nested class given_no_display_name {
         @Test
         void uses_key_as_display_name() {
-            assertThat(channel.getDisplayName()).isEqualTo(text(channel.getKey()));
+            assertThat(channel.displayName()).isEqualTo(text(channel.key()));
         }
     }
 
@@ -134,7 +134,7 @@ class ChannelTests {
 
         @Test
         void uses_display_name() {
-            assertThat(channel.getDisplayName()).isEqualTo(name);
+            assertThat(channel.displayName()).isEqualTo(name);
         }
 
         @Nested class when_display_name_changes {
@@ -145,7 +145,7 @@ class ChannelTests {
 
             @Test
             void then_updates_property() {
-                assertThat(channel.getDisplayName()).isEqualTo(MY_CHANNEL);
+                assertThat(channel.displayName()).isEqualTo(MY_CHANNEL);
             }
         }
     }

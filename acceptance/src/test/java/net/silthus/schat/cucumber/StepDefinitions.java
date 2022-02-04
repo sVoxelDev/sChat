@@ -128,7 +128,7 @@ public class StepDefinitions {
 
     private User createUser(User user) {
         final SenderMock senderMock = SenderMock.senderMock(Identity.identity(user.name));
-        user.id = senderMock.getUniqueId();
+        user.id = senderMock.uniqueId();
         user.sender = senderMock;
         SERVERS.get(user.server).getChatterFactory().stubSenderAsChatter(senderMock);
         if (user.channel != null)
@@ -184,7 +184,7 @@ public class StepDefinitions {
     @When("{user} sends a message")
     public void userSendsAMessage(User user) {
         final Chatter chatter = getChatter(user);
-        final Channel channel = chatter.getActiveChannel().orElseThrow();
+        final Channel channel = chatter.activeChannel().orElseThrow();
         lastMessage = Message.message(randomText()).source(chatter).to(channel).send();
     }
 
@@ -225,18 +225,18 @@ public class StepDefinitions {
 
     @Then("{user} receives the message")
     public void userReceivesTheMessage(User user) {
-        assertThat(getChatter(user).getLastMessage())
+        assertThat(getChatter(user).lastMessage())
             .isPresent().get().isEqualTo(lastMessage);
     }
 
     @But("{user} does not receive a message")
     public void playerDoesNotReceiveAMessage(User user) {
-        assertThat(getChatter(user).getLastMessage()).isEmpty();
+        assertThat(getChatter(user).lastMessage()).isEmpty();
     }
 
     @And("the {view} shows the {message} in a separate tab")
     public void theMessageIsShownInASeparateTab(View view, Message message) {
-        assertThat(((TabbedChannelsView) view).getViewModel().getTabs())
+        assertThat(((TabbedChannelsView) view).getViewModel().tabs())
             .filteredOn(viewTab -> viewTab.source().equals(message.source()))
             .isNotEmpty()
             .extracting(ViewTab::messages).asList()
@@ -252,6 +252,6 @@ public class StepDefinitions {
     @ParameterType("message of ([a-zA-Z0-9]+)")
     public Message message(String user) {
         final User u = getUser(user);
-        return getChatter(u).getLastMessage().orElse(null);
+        return getChatter(u).lastMessage().orElse(null);
     }
 }

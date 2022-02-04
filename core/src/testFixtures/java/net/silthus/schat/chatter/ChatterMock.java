@@ -77,7 +77,7 @@ public final class ChatterMock extends ChatterImpl {
     }
 
     public void assertReceivedMessage(Component text) {
-        assertThat(getMessages())
+        assertThat(messages())
             .extracting(Message::text)
             .contains(text);
     }

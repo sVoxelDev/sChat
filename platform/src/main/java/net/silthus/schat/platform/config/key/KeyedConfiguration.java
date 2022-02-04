@@ -43,17 +43,17 @@ public class KeyedConfiguration implements Config {
      * @return the list of keys defined by the class with their ordinal values set
      */
     public static List<SimpleConfigKey<?>> initialise(Class<?> keysClass) {
-        List<SimpleConfigKey<?>> keys = getAllConfigKeysFromClass(keysClass);
+        List<SimpleConfigKey<?>> keys = allConfigKeysFromClass(keysClass);
         setOrdinalValues(keys);
         return keys;
     }
 
     @SuppressWarnings("SimplifyStreamApiCallChains")
-    private static List<SimpleConfigKey<?>> getAllConfigKeysFromClass(Class<?> keysClass) {
+    private static List<SimpleConfigKey<?>> allConfigKeysFromClass(Class<?> keysClass) {
         return Arrays.stream(keysClass.getFields())
             .filter(KeyedConfiguration::isStatic)
             .filter(KeyedConfiguration::isConfigKey)
-            .map(KeyedConfiguration::getConfigKey)
+            .map(KeyedConfiguration::configKey)
             .collect(Collectors.toUnmodifiableList());
     }
 
@@ -66,7 +66,7 @@ public class KeyedConfiguration implements Config {
     }
 
     @SneakyThrows
-    private static SimpleConfigKey<?> getConfigKey(Field f) {
+    private static SimpleConfigKey<?> configKey(Field f) {
         return (SimpleConfigKey<?>) f.get(null);
     }
 

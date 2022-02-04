@@ -42,7 +42,7 @@ final class ResultImpl implements Result {
     }
 
     @Override
-    public Optional<Throwable> getFailureReason() {
+    public Optional<Throwable> failureReason() {
         return Optional.ofNullable(failureReason);
     }
 }

@@ -59,13 +59,13 @@ class ChatterTest {
     @Test
     void given_valid_identity_uses_identity_properties() {
         assertThat(chatter).extracting(
-            Chatter::getUniqueId,
-            Chatter::getName,
-            Chatter::getDisplayName
+            Chatter::uniqueId,
+            Chatter::name,
+            Chatter::displayName
         ).contains(
-            identity.getUniqueId(),
-            identity.getName(),
-            identity.getDisplayName()
+            identity.uniqueId(),
+            identity.name(),
+            identity.displayName()
         );
     }
 
@@ -89,15 +89,15 @@ class ChatterTest {
         }
 
         private void setActiveChannel(Channel channel) {
-            chatter.setActiveChannel(channel);
+            chatter.activeChannel(channel);
         }
 
         private void assertChannelTargetsContains(Chatter chatter) {
-            assertThat(channel.getTargets()).containsOnlyOnce(chatter);
+            assertThat(channel.targets()).containsOnlyOnce(chatter);
         }
 
         private void assertChatterHasChannel(Channel channel) {
-            assertThat(chatter.getChannels()).containsOnlyOnce(channel);
+            assertThat(chatter.channels()).containsOnlyOnce(channel);
         }
 
         private void assertJoinSuccess() {
@@ -109,7 +109,7 @@ class ChatterTest {
             @Test
             void sets_active_channel() {
                 setActiveChannel(channel);
-                assertThat(chatter.getActiveChannel())
+                assertThat(chatter.activeChannel())
                     .isPresent().get().isEqualTo(channel);
             }
 
@@ -117,7 +117,7 @@ class ChatterTest {
             void given_null_channel_clears_active_channel() {
                 setActiveChannel(channel);
                 setActiveChannel(null);
-                assertThat(chatter.getActiveChannel()).isNotPresent();
+                assertThat(chatter.activeChannel()).isNotPresent();
             }
 
             @Nested class given_chatter_without_channel {
@@ -207,7 +207,7 @@ class ChatterTest {
         void then_message_is_added() {
             final Message message = randomMessage();
             chatter.sendMessage(message);
-            assertThat(chatter.getMessages()).contains(message);
+            assertThat(chatter.messages()).contains(message);
         }
 
         @Nested class given_valid_view_connector {
@@ -224,7 +224,7 @@ class ChatterTest {
             }
 
             private void assertLastMessageIs(Message message) {
-                assertThat(chatter.getLastMessage()).isPresent().get().isEqualTo(message);
+                assertThat(chatter.lastMessage()).isPresent().get().isEqualTo(message);
             }
 
             @Test
@@ -244,7 +244,7 @@ class ChatterTest {
                 void given_no_messages_when_update_is_called_then_context_has_no_last_message() {
                     chatter.updateView();
                     assertViewConnectorCalled();
-                    assertThat(chatter.getLastMessage()).isNotPresent();
+                    assertThat(chatter.lastMessage()).isNotPresent();
                 }
 
                 @Test

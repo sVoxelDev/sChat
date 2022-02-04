@@ -45,7 +45,7 @@ public final class TestConfigurationAdapter {
 
     @SneakyThrows
     public static ConfigurationAdapter testConfigAdapter(File target) {
-        return testConfigAdapter(getTestConfigAsStream(), target);
+        return testConfigAdapter(testConfigAsStream(), target);
     }
 
     @SneakyThrows
@@ -54,7 +54,7 @@ public final class TestConfigurationAdapter {
         return ConfigurationAdapters.YAML.create(target);
     }
 
-    private static InputStream getTestConfigAsStream() {
+    private static InputStream testConfigAsStream() {
         return Objects.requireNonNull(TestConfigurationAdapter.class.getClassLoader().getResourceAsStream(TEST_CONFIG_NAME));
     }
 

@@ -58,7 +58,7 @@ public abstract class CommandTest {
 
         chatter = randomChatter();
         chatterProvider = chatterProviderStub(chatter);
-        sender = new SenderMock(chatter.getIdentity());
+        sender = new SenderMock(chatter.identity());
 
         commands = new Commands(commandManager);
         registerArgumentTypes();

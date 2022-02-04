@@ -26,6 +26,7 @@ package net.silthus.schat.bungeecord;
 
 import java.nio.file.Path;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.silthus.schat.bungeecord.adapter.BungeecordSchedulerAdapter;
@@ -36,6 +37,7 @@ import net.silthus.schat.platform.plugin.logging.JavaPluginLogger;
 import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
 
 @Getter
+@Accessors(fluent = true)
 public final class BungeecordBootstrap implements Bootstrap, LoaderBootstrap {
 
     private final Plugin loader;
@@ -54,27 +56,27 @@ public final class BungeecordBootstrap implements Bootstrap, LoaderBootstrap {
     }
 
     @Override
-    public Path getDataDirectory() {
+    public Path dataDirectory() {
         return loader.getDataFolder().toPath();
     }
 
     @Override
-    public String getVersion() {
+    public String version() {
         return loader.getDescription().getVersion();
     }
 
     @Override
-    public Platform.Type getType() {
+    public Platform.Type type() {
         return Platform.Type.BUNGEECORD;
     }
 
     @Override
-    public String getServerBrand() {
+    public String serverBrand() {
         return loader.getProxy().getName();
     }
 
     @Override
-    public String getServerVersion() {
+    public String serverVersion() {
         return loader.getProxy().getVersion();
     }
 

@@ -36,11 +36,11 @@ import org.spongepowered.configurate.serialize.TypeSerializer;
 public final class SettingsSerializer implements TypeSerializer<Settings> {
     @Override
     public Settings deserialize(Type type, ConfigurationNode node) {
-        final Settings.Builder builder = Settings.settings();
+        final Settings.Builder builder = Settings.settingsBuilder();
         for (final String key : node.childrenMap().keySet().stream().map(Object::toString).toList()) {
             builder.withUnknown(key, setting -> {
                 try {
-                    return node.node(key).get(setting.getType());
+                    return node.node(key).get(setting.type());
                 } catch (SerializationException e) {
                     throw new ConfigurationAdapter.LoadFailed(e);
                 }
@@ -51,9 +51,10 @@ public final class SettingsSerializer implements TypeSerializer<Settings> {
 
     @Override
     public void serialize(Type type, @Nullable Settings settings, ConfigurationNode node) throws SerializationException {
-        if (settings == null) return;
-        for (final Setting<?> setting : settings.getSettings()) {
-            node.node(setting.getKey()).set(setting.getType(), settings.get(setting));
+        if (settings == null)
+            return;
+        for (final Setting<?> setting : settings.settings()) {
+            node.node(setting.key()).set(setting.type(), settings.get(setting));
         }
     }
 }

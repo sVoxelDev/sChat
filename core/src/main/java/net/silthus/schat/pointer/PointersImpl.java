@@ -44,7 +44,7 @@ non-sealed class PointersImpl implements Pointers {
     }
 
     @Override
-    public @NotNull Set<Pointer<?>> getPointers() {
+    public @NotNull Set<Pointer<?>> pointers() {
         return Collections.unmodifiableSet(this.pointers.keySet());
     }
 
@@ -94,7 +94,7 @@ non-sealed class PointersImpl implements Pointers {
 
     static final class EmptyPointers implements Pointers {
         @Override
-        public @NotNull Set<Pointer<?>> getPointers() {
+        public @NotNull Set<Pointer<?>> pointers() {
             return Collections.emptySet();
         }
 

@@ -42,7 +42,7 @@ public final class VelocitySchedulerAdapter implements SchedulerAdapter {
 
     public VelocitySchedulerAdapter(VelocityBootstrap bootstrap) {
         this.bootstrap = bootstrap;
-        this.executor = r -> bootstrap.getProxy().getScheduler().buildTask(bootstrap, r).schedule();
+        this.executor = r -> bootstrap.proxy().getScheduler().buildTask(bootstrap, r).schedule();
     }
 
     @Override
@@ -57,7 +57,7 @@ public final class VelocitySchedulerAdapter implements SchedulerAdapter {
 
     @Override
     public SchedulerTask asyncLater(Runnable task, long delay, TimeUnit unit) {
-        ScheduledTask t = this.bootstrap.getProxy().getScheduler().buildTask(this.bootstrap, task)
+        ScheduledTask t = this.bootstrap.proxy().getScheduler().buildTask(this.bootstrap, task)
             .delay((int) delay, unit)
             .schedule();
 
@@ -67,7 +67,7 @@ public final class VelocitySchedulerAdapter implements SchedulerAdapter {
 
     @Override
     public SchedulerTask asyncRepeating(Runnable task, long interval, TimeUnit unit) {
-        ScheduledTask t = this.bootstrap.getProxy().getScheduler().buildTask(this.bootstrap, task)
+        ScheduledTask t = this.bootstrap.proxy().getScheduler().buildTask(this.bootstrap, task)
             .delay((int) interval, unit)
             .repeat((int) interval, unit)
             .schedule();

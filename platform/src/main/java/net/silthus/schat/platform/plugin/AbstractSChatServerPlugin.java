@@ -28,6 +28,7 @@ import cloud.commandframework.CommandManager;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelPrototype;
 import net.silthus.schat.channel.ChannelRepository;
@@ -57,6 +58,7 @@ import static net.silthus.schat.ui.view.ViewProvider.cachingViewProvider;
 import static net.silthus.schat.util.gson.types.ChannelSerializer.CHANNEL_TYPE;
 
 @Getter
+@Accessors(fluent = true)
 public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
     private ChatterProvider chatterProvider;
@@ -118,26 +120,26 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     protected abstract ChatListener createChatListener(ChatterProvider provider);
 
     private void registerSerializers() {
-        GsonProvider.registerTypeAdapter(CHANNEL_TYPE, new ChannelSerializer(getChannelRepository()));
+        GsonProvider.registerTypeAdapter(CHANNEL_TYPE, new ChannelSerializer(channelRepository()));
     }
 
     private void loadFeatures() {
-        final GlobalChatFeature feature = new GlobalChatFeature(getMessenger(), getSerializer());
-        feature.bind(getEventBus());
+        final GlobalChatFeature feature = new GlobalChatFeature(messenger(), serializer());
+        feature.bind(eventBus());
         features.add(feature);
     }
 
     private void setupPrototypes() {
-        MessagePrototype.configure(getEventBus());
-        ChannelPrototype.configure(getEventBus());
+        MessagePrototype.configure(eventBus());
+        ChannelPrototype.configure(eventBus());
     }
 
     private void loadChannels() {
-        getLogger().info("Loading channels...");
-        for (final Channel channel : getConfig().get(CHANNELS)) {
-            getChannelRepository().add(channel);
+        logger().info("Loading channels...");
+        for (final Channel channel : this.config().get(CHANNELS)) {
+            channelRepository().add(channel);
         }
-        getLogger().info("... loaded " + channelRepository.keys().size() + " channels.");
+        logger().info("... loaded " + channelRepository.keys().size() + " channels.");
     }
 
     @NotNull
@@ -152,8 +154,8 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     }
 
     private void registerCommandArguments(CommandManager<Sender> commandManager) {
-        registerChatterArgument(commandManager, getChatterProvider());
-        registerChannelArgument(commandManager, getChannelRepository());
+        registerChatterArgument(commandManager, chatterProvider());
+        registerChannelArgument(commandManager, channelRepository());
     }
 
     protected abstract CommandManager<Sender> provideCommandManager();

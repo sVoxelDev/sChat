@@ -145,7 +145,7 @@ class TabbedChannelsViewTests {
                 view = tabbedChannels(chatter)
                     .set(MESSAGE_FORMAT, msg ->
                         Component.text("<")
-                            .append(msg.getOrDefault(Message.SOURCE, Identity.nil()).getDisplayName())
+                            .append(msg.getOrDefault(Message.SOURCE, Identity.nil()).displayName())
                             .append(Component.text("> "))
                             .append(msg.getOrDefault(Message.TEXT, Component.empty())));
                 assertTextRenders("<Bob> Hi");
@@ -184,7 +184,7 @@ class TabbedChannelsViewTests {
         @Nested class when_it_is_active {
             @BeforeEach
             void setUp() {
-                chatter.setActiveChannel(channel);
+                chatter.activeChannel(channel);
             }
 
             @Test
@@ -259,7 +259,7 @@ class TabbedChannelsViewTests {
         @BeforeEach
         void setUp() {
             chatter.join(createChannel("aaa"));
-            chatter.setActiveChannel(channelWith("zzz", set(PRIORITY, 10)));
+            chatter.activeChannel(channelWith("zzz", set(PRIORITY, 10)));
             sendMessage("No Source!");
             sendMessageWithSource("Player", "Hey");
             sendMessageWithSource("Player2", "Hello");

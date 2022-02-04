@@ -26,11 +26,13 @@ package net.silthus.schat.platform.config;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.pointer.Settings;
 
 @Getter
 @Setter
+@Accessors(fluent = true)
 public final class ChannelConfig {
 
     private transient String key;

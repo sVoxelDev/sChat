@@ -46,7 +46,7 @@ class CachingViewProviderTests {
         @Test
         @SuppressWarnings("ConstantConditions")
         void given_null_throws_npe() {
-            assertNPE(() -> viewProvider.getView(null));
+            assertNPE(() -> viewProvider.view(null));
         }
 
         @Nested class given_valid_chatter {
@@ -59,14 +59,14 @@ class CachingViewProviderTests {
 
             @Test
             void then_returns_chatter_view() {
-                final View view = viewProvider.getView(chatter);
+                final View view = viewProvider.view(chatter);
                 assertThat(view).isNotNull();
             }
 
             @Test
             void then_view_is_cached() {
-                final View view = viewProvider.getView(chatter);
-                assertThat(view).isSameAs(viewProvider.getView(chatter));
+                final View view = viewProvider.view(chatter);
+                assertThat(view).isSameAs(viewProvider.view(chatter));
             }
         }
     }

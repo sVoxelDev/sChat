@@ -63,7 +63,7 @@ public abstract class ConfigurateAdapter<T extends AbstractConfigurationLoader.B
     @Override
     public void save() {
         try {
-            loader.save(getRoot());
+            loader.save(root());
         } catch (ConfigurateException e) {
             throw new SaveFailed(e);
         }
@@ -72,7 +72,7 @@ public abstract class ConfigurateAdapter<T extends AbstractConfigurationLoader.B
     @Override
     public void load() {
         try {
-            setRoot(loader.load());
+            root(loader.load());
         } catch (IOException e) {
             throw new LoadFailed(e);
         }

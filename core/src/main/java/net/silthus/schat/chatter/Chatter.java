@@ -62,29 +62,29 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
     }
 
     @Override
-    default @NotNull UUID getKey() {
-        return getUniqueId();
+    default @NotNull UUID key() {
+        return uniqueId();
     }
 
-    default @NotNull UUID getUniqueId() {
-        return getIdentity().getUniqueId();
+    default @NotNull UUID uniqueId() {
+        return identity().uniqueId();
     }
 
-    default @NotNull String getName() {
-        return getIdentity().getName();
+    default @NotNull String name() {
+        return identity().name();
     }
 
-    default @NotNull Component getDisplayName() {
-        return getIdentity().getDisplayName();
+    default @NotNull Component displayName() {
+        return identity().displayName();
     }
 
-    @NotNull @Unmodifiable List<Channel> getChannels();
+    @NotNull @Unmodifiable List<Channel> channels();
 
-    @NotNull Optional<Channel> getActiveChannel();
+    @NotNull Optional<Channel> activeChannel();
+
+    void activeChannel(@Nullable Channel activeChannel);
 
     boolean isActiveChannel(@Nullable Channel channel);
-
-    void setActiveChannel(@Nullable Channel activeChannel);
 
     void join(@NonNull Channel channel);
 
@@ -92,9 +92,9 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
 
     void leave(Channel channel);
 
-    @NotNull @Unmodifiable Set<Message> getMessages();
+    @NotNull @Unmodifiable Set<Message> messages();
 
-    Optional<Message> getLastMessage();
+    Optional<Message> lastMessage();
 
     void updateView();
 

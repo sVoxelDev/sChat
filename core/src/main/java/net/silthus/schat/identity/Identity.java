@@ -31,12 +31,12 @@ import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.pointer.Pointer;
 import net.silthus.schat.pointer.Pointered;
+import net.silthus.schat.pointer.Pointers;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.pointer.Pointer.pointer;
-import static net.silthus.schat.pointer.Pointers.pointers;
 
 public sealed interface Identity extends Pointered permits IdentityImpl {
 
@@ -51,10 +51,10 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
     /**
      * Gets a {@code nil} identity.
      *
-     * <p>The identity will have an empty {@link #getName()} and {@link #getDisplayName()},
+     * <p>The identity will have an empty {@link #name()} and {@link #displayName()},
      * but no properties will actual be {@code null}.</p>
      *
-     * <p>The {@link #getUniqueId()} of the nil identity will always be the same during the lifetime
+     * <p>The {@link #uniqueId()} of the nil identity will always be the same during the lifetime
      * of the application, but changes for every lifecycle.</p>
      *
      * @return the nil identity
@@ -79,7 +79,7 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
      * Creates a new identity using the provided name.
      *
      * <p>A random {@code UUID} will be used for the id
-     * and the {@link #getDisplayName()} will be the {@code name}.</p>
+     * and the {@link #displayName()} will be the {@code name}.</p>
      *
      * @param name the name
      * @return the identity
@@ -113,7 +113,7 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
     /**
      * Creates a new identity using the provided id and name.
      *
-     * <p>The {@link #getDisplayName()} will be the {@code name}.</p>
+     * <p>The {@link #displayName()} will be the {@code name}.</p>
      *
      * @param id   the id
      * @param name the name
@@ -144,7 +144,7 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
      * @return the identity
      */
     static Identity identity(final UUID id, final String name, final Supplier<Component> displayName) {
-        return new IdentityImpl(id, pointers()
+        return new IdentityImpl(id, Pointers.pointersBuilder()
             .withStatic(ID, id)
             .withStatic(NAME, name)
             .withDynamic(DISPLAY_NAME, displayName)
@@ -152,13 +152,13 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
         );
     }
 
-    UUID getUniqueId();
+    UUID uniqueId();
 
-    default String getName() {
+    default String name() {
         return getOrDefault(NAME, "");
     }
 
-    default Component getDisplayName() {
+    default Component displayName() {
         return getOrDefault(DISPLAY_NAME, empty());
     }
 }

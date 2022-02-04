@@ -75,12 +75,12 @@ class ChatterViewModelTests {
 
         @Test
         void messages_are_empty() {
-            assertThat(model.getMessages()).isEmpty();
+            assertThat(model.messages()).isEmpty();
         }
 
         @Test
         void channels_are_empty() {
-            assertThat(model.getChannels()).isEmpty();
+            assertThat(model.channels()).isEmpty();
         }
     }
 
@@ -98,7 +98,7 @@ class ChatterViewModelTests {
 
         @Test
         void then_messages_are_sorted_by_time() {
-            assertThat(model.getMessages()).containsExactly(
+            assertThat(model.messages()).containsExactly(
                 one,
                 two
             );
@@ -117,19 +117,19 @@ class ChatterViewModelTests {
             @Nested class given_channel_is_inactive {
                 @Test
                 void then_message_is_not_displayed() {
-                    assertThat(model.getMessages()).doesNotContain(message);
+                    assertThat(model.messages()).doesNotContain(message);
                 }
             }
 
             @Nested class given_channel_is_active {
                 @BeforeEach
                 void setUp() {
-                    chatter.setActiveChannel(channel);
+                    chatter.activeChannel(channel);
                 }
 
                 @Test
                 void then_message_is_displayed() {
-                    assertThat(model.getMessages()).contains(message);
+                    assertThat(model.messages()).contains(message);
                 }
             }
         }
@@ -148,7 +148,7 @@ class ChatterViewModelTests {
 
         @Test
         void channels_are_sorted_by_name() {
-            assertThat(model.getChannels()).containsExactly(
+            assertThat(model.channels()).containsExactly(
                 one,
                 two
             );
@@ -169,7 +169,7 @@ class ChatterViewModelTests {
 
             @Test
             void channels_are_sorted_by_priority_and_than_name() {
-                assertThat(model.getChannels()).containsExactly(
+                assertThat(model.channels()).containsExactly(
                     first,
                     second,
                     third,

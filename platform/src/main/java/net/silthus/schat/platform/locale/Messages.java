@@ -75,15 +75,15 @@ public interface Messages {
         Component infoLine1 = text()
             .append(text("sChat", DARK_GREEN))
             .append(space())
-            .append(text("v" + bootstrap.getVersion(), AQUA))
+            .append(text("v" + bootstrap.version(), AQUA))
             .build();
 
         Component infoLine2 = text()
             .color(DARK_GRAY)
             .append(text("Running on "))
-            .append(text(bootstrap.getType().getFriendlyName()))
+            .append(text(bootstrap.type().friendlyName()))
             .append(text(" - "))
-            .append(text(bootstrap.getServerBrand())).append(text(bootstrap.getServerVersion()))
+            .append(text(bootstrap.serverBrand())).append(text(bootstrap.serverVersion()))
             .build();
 
         //        _________ .__            __
@@ -109,7 +109,7 @@ public interface Messages {
     Args1<Channel> JOIN_CHANNEL_ERROR = channel -> prefixed(translatable()
         .key("schat.command.channel.join.error")
         .color(RED)
-        .args(channel.getDisplayName())
+        .args(channel.displayName())
         .append(FULL_STOP)
     );
 
@@ -117,7 +117,7 @@ public interface Messages {
     Args1<Channel> JOINED_CHANNEL = channel -> prefixed(translatable()
         .key("schat.command.channel.join.success")
         .color(GREEN)
-        .args(channel.getDisplayName())
+        .args(channel.displayName())
         .append(FULL_STOP)
     );
 

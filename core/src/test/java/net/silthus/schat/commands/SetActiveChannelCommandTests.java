@@ -60,7 +60,7 @@ class SetActiveChannelCommandTests {
         void then_chatter_has_active_channel() {
             setActiveChannel();
             assertThat(chatter.isActiveChannel(channel)).isTrue();
-            assertThat(chatter.getActiveChannel()).isPresent().get().isEqualTo(channel);
+            assertThat(chatter.activeChannel()).isPresent().get().isEqualTo(channel);
         }
 
         @Test
@@ -101,7 +101,7 @@ class SetActiveChannelCommandTests {
             void then_channel_is_not_set_active() {
                 assertThatExceptionOfType(JoinChannel.AccessDenied.class)
                     .isThrownBy(SetActiveChannelCommandTests.this::setActiveChannel);
-                assertThat(chatter.getActiveChannel()).isNotPresent();
+                assertThat(chatter.activeChannel()).isNotPresent();
             }
         }
     }

@@ -38,38 +38,38 @@ import static org.mockito.Mockito.mock;
 
 public class BootstrapStub implements Bootstrap {
     @Override
-    public PluginLogger getPluginLogger() {
+    public PluginLogger pluginLogger() {
         return new JavaPluginLogger(Logger.getLogger("Test"));
     }
 
     @Override
-    public SchedulerAdapter getScheduler() {
+    public SchedulerAdapter scheduler() {
         return mock(SchedulerAdapter.class);
     }
 
     @SneakyThrows
     @Override
-    public Path getDataDirectory() {
+    public Path dataDirectory() {
         return Files.createTempDirectory("schat");
     }
 
     @Override
-    public String getVersion() {
+    public String version() {
         return "0";
     }
 
     @Override
-    public Platform.Type getType() {
+    public Platform.Type type() {
         return Platform.Type.BUKKIT;
     }
 
     @Override
-    public String getServerBrand() {
+    public String serverBrand() {
         return "test";
     }
 
     @Override
-    public String getServerVersion() {
+    public String serverVersion() {
         return "0";
     }
 }

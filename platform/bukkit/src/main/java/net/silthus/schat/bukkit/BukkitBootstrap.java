@@ -26,6 +26,7 @@ package net.silthus.schat.bukkit;
 
 import java.nio.file.Path;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.silthus.schat.bukkit.adapter.BukkitSchedulerAdapter;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.platform.plugin.bootstrap.LoaderBootstrap;
@@ -35,6 +36,7 @@ import net.silthus.schat.platform.plugin.logging.PluginLogger;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
+@Accessors(fluent = true)
 public class BukkitBootstrap implements Bootstrap, LoaderBootstrap {
 
     private final JavaPlugin loader;
@@ -67,27 +69,27 @@ public class BukkitBootstrap implements Bootstrap, LoaderBootstrap {
     }
 
     @Override
-    public Path getDataDirectory() {
-        return getLoader().getDataFolder().toPath().toAbsolutePath();
+    public Path dataDirectory() {
+        return loader().getDataFolder().toPath().toAbsolutePath();
     }
 
     @Override
-    public String getVersion() {
-        return getLoader().getDescription().getVersion();
+    public String version() {
+        return loader().getDescription().getVersion();
     }
 
     @Override
-    public Platform.Type getType() {
+    public Platform.Type type() {
         return Platform.Type.BUKKIT;
     }
 
     @Override
-    public String getServerBrand() {
-        return getLoader().getServer().getName();
+    public String serverBrand() {
+        return loader().getServer().getName();
     }
 
     @Override
-    public String getServerVersion() {
-        return getLoader().getServer().getVersion();
+    public String serverVersion() {
+        return loader().getServer().getVersion();
     }
 }

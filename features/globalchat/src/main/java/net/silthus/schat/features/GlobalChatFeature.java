@@ -25,6 +25,8 @@
 package net.silthus.schat.features;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.eventbus.EventListener;
@@ -55,6 +57,8 @@ public class GlobalChatFeature implements EventListener {
         }
     }
 
+    @Getter
+    @Accessors(fluent = true)
     @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
     public static final class GlobalChannelPluginMessage extends PluginMessage {
         private final Channel channel;

@@ -65,12 +65,12 @@ class ChannelRepositoryTests {
             @Test
             void then_the_channel_is_stored_in_the_repository() {
                 assertThat(repository.all()).contains(channel);
-                assertThat(repository.contains(channel.getKey())).isTrue();
+                assertThat(repository.contains(channel.key())).isTrue();
             }
 
             @Test
             void then_get_returns_the_channel_by_key() {
-                assertThat(repository.get(channel.getKey())).isNotNull();
+                assertThat(repository.get(channel.key())).isNotNull();
             }
 
             @Nested class when_a_channel_with_the_same_key_is_added {
@@ -79,7 +79,7 @@ class ChannelRepositoryTests {
 
                 @BeforeEach
                 void setUp() {
-                    channel2 = Channel.createChannel(channel.getKey());
+                    channel2 = Channel.createChannel(channel.key());
                 }
 
                 @Test

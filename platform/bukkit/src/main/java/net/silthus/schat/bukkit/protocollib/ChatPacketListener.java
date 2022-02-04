@@ -113,7 +113,7 @@ public final class ChatPacketListener extends PacketAdapter {
             return;
 
         final Chatter chatter = chatterProvider.get(event.getPlayer().getUniqueId());
-        final View view = viewProvider.getView(chatter);
+        final View view = viewProvider.view(chatter);
         if (view.isRenderedView(rawMessage))
             return;
 

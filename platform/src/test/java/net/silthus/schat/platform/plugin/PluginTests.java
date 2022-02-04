@@ -53,7 +53,7 @@ class PluginTests {
 
             @Test
             void then_ChannelRepository_is_not_null() {
-                assertThat(plugin.getChannelRepository()).isNotNull();
+                assertThat(plugin.channelRepository()).isNotNull();
             }
 
             @Test
@@ -63,13 +63,13 @@ class PluginTests {
 
             @Test
             void then_config_is_loaded() {
-                assertThat(plugin.getConfig()).isNotNull();
-                assertThat(plugin.getConfig().get(CHANNELS)).isNotNull();
+                assertThat(plugin.config()).isNotNull();
+                assertThat(plugin.config().get(CHANNELS)).isNotNull();
             }
 
             @Test
             void then_channels_are_loaded() {
-                assertThat(plugin.getChannelRepository().all()).isNotEmpty();
+                assertThat(plugin.channelRepository().all()).isNotEmpty();
             }
         }
     }

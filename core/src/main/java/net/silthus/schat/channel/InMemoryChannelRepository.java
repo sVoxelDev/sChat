@@ -31,7 +31,7 @@ final class InMemoryChannelRepository extends InMemoryRepository<String, Channel
 
     @Override
     public void add(@NotNull Channel channel) {
-        if (contains(channel.getKey()))
+        if (contains(channel.key()))
             throw new DuplicateChannel();
         super.add(channel);
     }

@@ -25,6 +25,7 @@
 package net.silthus.schat.bungeecord;
 
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.silthus.schat.bungeecord.adapter.BungeecordEventBus;
 import net.silthus.schat.bungeecord.adapter.BungeecordMessengerGateway;
 import net.silthus.schat.bungeecord.adapter.BungeecordSenderFactory;
@@ -38,6 +39,7 @@ import static net.silthus.schat.bungeecord.adapter.BungeecordMessengerGateway.GA
 import static net.silthus.schat.platform.config.adapter.ConfigurationAdapters.YAML;
 
 @Getter
+@Accessors(fluent = true)
 public final class BungeecordProxyPlugin extends AbstractSChatProxyPlugin {
 
     private final BungeecordBootstrap bootstrap;
@@ -49,17 +51,17 @@ public final class BungeecordProxyPlugin extends AbstractSChatProxyPlugin {
 
     @Override
     protected EventBus createEventBus() {
-        return new BungeecordEventBus(getBootstrap().getProxy());
+        return new BungeecordEventBus(bootstrap().proxy());
     }
 
     @Override
     public Sender getConsole() {
-        return senderFactory.wrap(getBootstrap().getProxy().getConsole());
+        return senderFactory.wrap(bootstrap().proxy().getConsole());
     }
 
     @Override
     protected void setupSenderFactory() {
-        this.senderFactory = new BungeecordSenderFactory(bootstrap.getLoader());
+        this.senderFactory = new BungeecordSenderFactory(bootstrap.loader());
     }
 
     @Override
@@ -69,7 +71,7 @@ public final class BungeecordProxyPlugin extends AbstractSChatProxyPlugin {
 
     @Override
     protected void registerMessengerGateway(MessengerGatewayProvider.Registry registry) {
-        registry.register(GATEWAY_TYPE, in -> new BungeecordMessengerGateway(getBootstrap()));
+        registry.register(GATEWAY_TYPE, in -> new BungeecordMessengerGateway(bootstrap()));
     }
 
     @Override

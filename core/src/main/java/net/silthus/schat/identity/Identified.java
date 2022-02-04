@@ -39,5 +39,5 @@ public interface Identified {
      * @return the identity
      * @since next
      */
-    @NotNull Identity getIdentity();
+    @NotNull Identity identity();
 }

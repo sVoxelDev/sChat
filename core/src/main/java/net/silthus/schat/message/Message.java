@@ -104,7 +104,7 @@ public sealed interface Message extends Comparable<Message>, Pointered permits M
         @NotNull Draft source(@Nullable Identity identity);
 
         default @NotNull Draft source(@NonNull Chatter chatter) {
-            return source(chatter.getIdentity());
+            return source(chatter.identity());
         }
 
         @NotNull Draft to(@NonNull MessageTarget target);

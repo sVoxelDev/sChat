@@ -46,8 +46,8 @@ public final class SettingsSerializer implements JsonSerializer<Settings>, JsonD
     @Override
     public JsonElement serialize(Settings src, Type typeOfSrc, JsonSerializationContext context) {
         final JObject object = new JObject();
-        for (Setting<?> setting : src.getSettings()) {
-            object.add(setting.getKey(), context.serialize(src.get(setting), setting.getType()));
+        for (Setting<?> setting : src.settings()) {
+            object.add(setting.key(), context.serialize(src.get(setting), setting.type()));
         }
         return object.toJson();
     }
@@ -55,9 +55,9 @@ public final class SettingsSerializer implements JsonSerializer<Settings>, JsonD
     @Override
     public Settings deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         final JsonObject object = json.getAsJsonObject();
-        final Settings.Builder settings = Settings.settings();
+        final Settings.Builder settings = Settings.settingsBuilder();
         for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
-            settings.withUnknown(entry.getKey(), setting -> context.deserialize(entry.getValue(), setting.getType()));
+            settings.withUnknown(entry.getKey(), setting -> context.deserialize(entry.getValue(), setting.type()));
         }
         return settings.create();
     }

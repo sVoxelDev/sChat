@@ -32,7 +32,7 @@ import net.silthus.schat.ui.views.Views;
 
 public class ViewProviderStub implements ViewProvider {
     @Override
-    public View getView(@NonNull Chatter chatter) {
+    public View view(@NonNull Chatter chatter) {
         return Views.tabbedChannels(chatter);
     }
 }

@@ -78,7 +78,7 @@ public interface Result {
      * @return the exception responsible for the result failure
      * @since next
      */
-    default Optional<Throwable> getFailureReason() {
+    default Optional<Throwable> failureReason() {
         return Optional.empty();
     }
 }

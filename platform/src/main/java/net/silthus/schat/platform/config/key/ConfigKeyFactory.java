@@ -31,9 +31,9 @@ import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 
 public interface ConfigKeyFactory<T> {
 
-    ConfigKeyFactory<Boolean> BOOLEAN = ConfigurationAdapter::getBoolean;
-    ConfigKeyFactory<String> STRING = ConfigurationAdapter::getString;
-    ConfigKeyFactory<String> LOWERCASE_STRING = (adapter, path, def) -> adapter.getString(path, def).toLowerCase(Locale.ROOT);
+    ConfigKeyFactory<Boolean> BOOLEAN = ConfigurationAdapter::bool;
+    ConfigKeyFactory<String> STRING = ConfigurationAdapter::string;
+    ConfigKeyFactory<String> LOWERCASE_STRING = (adapter, path, def) -> adapter.string(path, def).toLowerCase(Locale.ROOT);
 
     static <T> SimpleConfigKey<T> key(Function<ConfigurationAdapter, T> function) {
         return new SimpleConfigKey<>(function);
@@ -64,32 +64,21 @@ public interface ConfigKeyFactory<T> {
      * Extracts the value from the config.
      *
      * @param config the config
-     * @param path the path where the value is
-     * @param def the default value
+     * @param path   the path where the value is
+     * @param def    the default value
      * @return the value
      */
-    T getValue(ConfigurationAdapter config, String path, T def);
+    T value(ConfigurationAdapter config, String path, T def);
 
     /**
      * A {@link ConfigKeyFactory} bound to a given {@code path}.
      *
      * @param <T> the value type
      */
-    class Bound<T> implements Function<ConfigurationAdapter, T> {
-        private final ConfigKeyFactory<T> factory;
-        private final String path;
-        private final T def;
-
-        Bound(ConfigKeyFactory<T> factory, String path, T def) {
-            this.factory = factory;
-            this.path = path;
-            this.def = def;
-        }
-
+    record Bound<T>(ConfigKeyFactory<T> factory, String path, T def) implements Function<ConfigurationAdapter, T> {
         @Override
         public T apply(ConfigurationAdapter adapter) {
-            return this.factory.getValue(adapter, this.path, this.def);
+            return this.factory.value(adapter, this.path, this.def);
         }
     }
-
 }

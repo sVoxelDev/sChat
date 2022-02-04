@@ -26,6 +26,7 @@ package net.silthus.schat.platform.config.key;
 
 import java.util.function.Function;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 
 /**
@@ -33,6 +34,7 @@ import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
  *
  * @param <T> the value type
  */
+@Accessors(fluent = true)
 class SimpleConfigKey<T> implements ConfigKey<T> {
     @Getter
     private final Function<? super ConfigurationAdapter, ? extends T> function;

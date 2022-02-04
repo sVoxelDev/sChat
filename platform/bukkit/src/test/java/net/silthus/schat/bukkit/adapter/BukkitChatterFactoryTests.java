@@ -65,20 +65,20 @@ class BukkitChatterFactoryTests extends BukkitTests {
 
         @Test
         void then_chatter_name_is_player_name() {
-            assertThat(createChatter().getName()).isEqualTo(player.getName());
+            assertThat(createChatter().name()).isEqualTo(player.getName());
         }
 
         @Test
         void then_chatter_display_name_is_player_display_name() {
             player.setDisplayName("Bob");
-            assertThat(createChatter().getDisplayName()).isEqualTo(text("Bob"));
+            assertThat(createChatter().displayName()).isEqualTo(text("Bob"));
         }
 
         @Test
         void given_player_changes_display_name_then_chatter_name_changes() {
             final Chatter chatter = createChatter();
             player.setDisplayName("Bob");
-            assertThat(chatter.getDisplayName()).isEqualTo(text("Bob"));
+            assertThat(chatter.displayName()).isEqualTo(text("Bob"));
         }
 
         @Nested class when_message_is_send {
@@ -108,7 +108,7 @@ class BukkitChatterFactoryTests extends BukkitTests {
 
         @Test
         void then_player_name_is_chatter_name() {
-            assertThat(createChatter().getName()).isEqualTo(player.getName());
+            assertThat(createChatter().name()).isEqualTo(player.getName());
         }
     }
 }

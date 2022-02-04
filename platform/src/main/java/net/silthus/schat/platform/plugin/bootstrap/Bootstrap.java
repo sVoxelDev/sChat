@@ -31,14 +31,14 @@ import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
 
 public interface Bootstrap {
 
-    PluginLogger getPluginLogger();
+    PluginLogger pluginLogger();
 
     /**
      * Gets an adapter for the platforms scheduler.
      *
      * @return the scheduler
      */
-    SchedulerAdapter getScheduler();
+    SchedulerAdapter scheduler();
 
     /**
      * Gets the plugins main data storage directory.
@@ -50,15 +50,15 @@ public interface Bootstrap {
      *
      * @return the platforms data folder
      */
-    Path getDataDirectory();
+    Path dataDirectory();
 
     /**
      * Gets the plugins configuration directory.
      *
      * @return the config directory
      */
-    default Path getConfigDirectory() {
-        return getDataDirectory();
+    default Path configDirectory() {
+        return dataDirectory();
     }
 
     /**
@@ -67,15 +67,15 @@ public interface Bootstrap {
      * @param path the path of the file
      * @return the file as an input stream
      */
-    default InputStream getResourceStream(String path) {
+    default InputStream resourceAsStream(String path) {
         return getClass().getClassLoader().getResourceAsStream(path);
     }
 
-    String getVersion();
+    String version();
 
-    Platform.Type getType();
+    Platform.Type type();
 
-    String getServerBrand();
+    String serverBrand();
 
-    String getServerVersion();
+    String serverVersion();
 }

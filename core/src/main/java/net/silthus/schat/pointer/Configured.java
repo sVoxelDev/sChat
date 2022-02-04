@@ -38,8 +38,8 @@ import org.jetbrains.annotations.UnknownNullability;
 public interface Configured extends Pointered {
 
     @Override
-    default @NotNull Pointers getPointers() {
-        return getSettings();
+    default @NotNull Pointers pointers() {
+        return settings();
     }
 
     /**
@@ -51,7 +51,7 @@ public interface Configured extends Pointered {
      * @since next
      */
     default <V> @UnknownNullability V get(final @NonNull Setting<V> setting) {
-        return this.getSettings().get(setting);
+        return this.settings().get(setting);
     }
 
     /**
@@ -66,7 +66,7 @@ public interface Configured extends Pointered {
      * @since next
      */
     default <V> @UnknownNullability V getOrDefault(final @NonNull Setting<V> setting, final @Nullable V defaultValue) {
-        return this.getSettings().getOrDefault(setting, defaultValue);
+        return this.settings().getOrDefault(setting, defaultValue);
     }
 
     /**
@@ -81,7 +81,7 @@ public interface Configured extends Pointered {
      * @since next
      */
     default <V> @UnknownNullability V getOrDefaultFrom(final @NonNull Setting<V> setting, final @NonNull Supplier<? extends V> defaultValue) {
-        return this.getSettings().getOrDefaultFrom(setting, defaultValue);
+        return this.settings().getOrDefaultFrom(setting, defaultValue);
     }
 
     default boolean is(Setting<Boolean> setting) {
@@ -94,7 +94,7 @@ public interface Configured extends Pointered {
      * @return the settings
      * @since next
      */
-    default @NotNull Settings getSettings() {
+    default @NotNull Settings settings() {
         return Settings.createSettings();
     }
 
@@ -127,7 +127,7 @@ public interface Configured extends Pointered {
         @SuppressWarnings("unchecked")
         default <V> @NotNull T set(@NonNull Setting<V> setting, @Nullable V value) {
             final T type = (T) this;
-            getSettings().set(setting, value);
+            settings().set(setting, value);
             return type;
         }
     }

@@ -27,6 +27,7 @@ package net.silthus.schat.ui.views;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
@@ -55,6 +56,7 @@ import static net.silthus.schat.pointer.Setting.setting;
 import static net.silthus.schat.pointer.Settings.createSettings;
 
 @Getter
+@Accessors(fluent = true)
 public final class TabbedChannelsView implements View {
 
     public static final Setting<JoinConfiguration> CHANNEL_JOIN_CONFIG = setting(JoinConfiguration.class, "channel_join_config", JoinConfiguration.builder()
@@ -65,15 +67,15 @@ public final class TabbedChannelsView implements View {
     public static final Setting<Format.Pointered> MESSAGE_FORMAT = setting(Format.Pointered.class, "message", msg ->
         msg.get(Message.SOURCE)
             .filter(Identity.IS_NOT_NIL)
-            .map(identity -> identity.getDisplayName().append(text(": ")))
+            .map(identity -> identity.displayName().append(text(": ")))
             .orElse(Component.empty())
             .append(msg.getOrDefault(Message.TEXT, Component.empty())));
 
-    public static final Setting<Settings> ACTIVE_CHANNEL = setting(Settings.class, "active_channel", Settings.settings()
+    public static final Setting<Settings> ACTIVE_CHANNEL = setting(Settings.class, "active_channel", Settings.settingsBuilder()
         .withStatic(ChannelFormat.COLOR, GREEN)
         .withStatic(ChannelFormat.DECORATION, UNDERLINED)
         .create());
-    public static final Setting<Settings> INACTIVE_CHANNEL = setting(Settings.class, "inactive_channel", Settings.settings()
+    public static final Setting<Settings> INACTIVE_CHANNEL = setting(Settings.class, "inactive_channel", Settings.settingsBuilder()
         .withStatic(ChannelFormat.COLOR, GRAY)
         .withStatic(ChannelFormat.ON_CLICK, channel ->
             clickEvent(RUN_COMMAND, "/channel join " + channel.getOrDefault(Channel.KEY, null)))
@@ -94,7 +96,7 @@ public final class TabbedChannelsView implements View {
     }
 
     private Component renderBlankLines() {
-        final int blankLineAmount = Math.max(0, get(VIEW_HEIGHT) - viewModel.getMessages().size());
+        final int blankLineAmount = Math.max(0, get(VIEW_HEIGHT) - viewModel.messages().size());
         return blankLines(blankLineAmount);
     }
 
@@ -108,7 +110,7 @@ public final class TabbedChannelsView implements View {
 
     @NotNull
     private Component combineMessagesAndChannels(Component messages, Component channels) {
-        if (viewModel.getMessages().isEmpty() || viewModel.getChannels().isEmpty())
+        if (viewModel.messages().isEmpty() || viewModel.channels().isEmpty())
             return messages.append(channels);
         else
             return messages.append(newline()).append(channels);
@@ -119,7 +121,7 @@ public final class TabbedChannelsView implements View {
     }
 
     private Component renderChannels() {
-        if (viewModel.getChannels().isEmpty())
+        if (viewModel.channels().isEmpty())
             return Component.empty();
         else
             return join(get(CHANNEL_JOIN_CONFIG), getRenderedChannels());
@@ -127,7 +129,7 @@ public final class TabbedChannelsView implements View {
 
     private List<Component> getRenderedMessages() {
         final ArrayList<Component> messages = new ArrayList<>();
-        for (final Message message : viewModel.getMessages()) {
+        for (final Message message : viewModel.messages()) {
             messages.add(get(MESSAGE_FORMAT).format(message));
         }
         return messages;
@@ -135,7 +137,7 @@ public final class TabbedChannelsView implements View {
 
     private List<Component> getRenderedChannels() {
         final ArrayList<Component> channels = new ArrayList<>();
-        for (final Channel channel : viewModel.getChannels()) {
+        for (final Channel channel : viewModel.channels()) {
             if (viewModel.isActiveChannel(channel))
                 channels.add(new ChannelFormat(get(ACTIVE_CHANNEL)).format(channel));
             else

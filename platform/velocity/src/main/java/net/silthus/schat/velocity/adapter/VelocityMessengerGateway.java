@@ -47,8 +47,8 @@ public final class VelocityMessengerGateway implements MessengerGateway {
     private final VelocityBootstrap bootstrap;
 
     public VelocityMessengerGateway(VelocityBootstrap bootstrap) {
-        this.proxy = bootstrap.getProxy();
-        this.scheduler = bootstrap.getScheduler();
+        this.proxy = bootstrap.proxy();
+        this.scheduler = bootstrap.scheduler();
         this.bootstrap = bootstrap;
         this.proxy.getEventManager().register(bootstrap, this);
     }

@@ -59,7 +59,7 @@ class BukkitSenderFactoryTests extends BukkitTests {
     }
 
     private void assertDisplayName(Component name) {
-        assertThat(chatter().getDisplayName()).isEqualTo(name);
+        assertThat(chatter().displayName()).isEqualTo(name);
     }
 
     @Nested class wrap {
@@ -71,12 +71,12 @@ class BukkitSenderFactoryTests extends BukkitTests {
 
         @Test
         void has_same_id_as_player() {
-            assertThat(chatter().getUniqueId()).isEqualTo(player.getUniqueId());
+            assertThat(chatter().uniqueId()).isEqualTo(player.getUniqueId());
         }
 
         @Test
         void has_same_name_as_player() {
-            assertThat(chatter().getName()).isEqualTo(player.getName());
+            assertThat(chatter().name()).isEqualTo(player.getName());
         }
 
         @Test
@@ -152,7 +152,7 @@ class BukkitSenderFactoryTests extends BukkitTests {
 
             @Test
             void then_uses_console_properties() {
-                assertThat(console.getIdentity()).isEqualTo(SenderFactory.CONSOLE);
+                assertThat(console.identity()).isEqualTo(SenderFactory.CONSOLE);
             }
 
             @Test

@@ -47,7 +47,7 @@ final class SettingsImpl extends PointersImpl implements Settings {
     }
 
     @Override
-    public @NotNull Set<Setting<?>> getSettings() {
+    public @NotNull Set<Setting<?>> settings() {
         final HashSet<Setting<?>> settings = new HashSet<>();
         for (Pointer<?> pointer : pointers.keySet()) {
             if (pointer instanceof Setting<?> setting)
@@ -75,10 +75,10 @@ final class SettingsImpl extends PointersImpl implements Settings {
     @SuppressWarnings("unchecked") // all values are checked on entry
     private <V> V valueFromSupplier(final @NonNull Setting<V> setting, final @Nullable Supplier<?> supplier) {
         if (supplier == null) {
-            return setting.getDefaultValue();
+            return setting.defaultValue();
         } else {
             return Optional.ofNullable((V) supplier.get())
-                .orElse(setting.getDefaultValue());
+                .orElse(setting.defaultValue());
         }
     }
 
@@ -92,7 +92,7 @@ final class SettingsImpl extends PointersImpl implements Settings {
 
     @NotNull
     private <V> Supplier<Object> getUnknownValue(@NotNull Setting<V> setting) {
-        return () -> unknowns.get(setting.getKey()).apply(setting);
+        return () -> unknowns.get(setting.key()).apply(setting);
     }
 
     private <V> boolean notContains(@NotNull Setting<V> setting) {
@@ -100,7 +100,7 @@ final class SettingsImpl extends PointersImpl implements Settings {
     }
 
     private <V> boolean matchesUnknownValue(@NotNull Setting<V> setting) {
-        return notContains(setting) && isUnknownKey(setting.getKey());
+        return notContains(setting) && isUnknownKey(setting.key());
     }
 
     private boolean isUnknownKey(String key) {
@@ -115,8 +115,8 @@ final class SettingsImpl extends PointersImpl implements Settings {
     @Override
     public String toString() {
         final HashMap<String, Object> keyValueMap = new HashMap<>();
-        for (final Setting<?> setting : getSettings()) {
-            keyValueMap.put(setting.getKey(), get(setting));
+        for (final Setting<?> setting : settings()) {
+            keyValueMap.put(setting.key(), get(setting));
         }
         return "SettingsImpl{" + keyValueMap + '}';
     }

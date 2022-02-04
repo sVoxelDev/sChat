@@ -35,16 +35,16 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Sender extends Identified, Permissable {
 
-    default @NotNull UUID getUniqueId() {
-        return getIdentity().getUniqueId();
+    default @NotNull UUID uniqueId() {
+        return identity().uniqueId();
     }
 
-    default @NotNull String getName() {
-        return getIdentity().getName();
+    default @NotNull String name() {
+        return identity().name();
     }
 
-    default @NotNull Component getDisplayName() {
-        return getIdentity().getDisplayName();
+    default @NotNull Component displayName() {
+        return identity().displayName();
     }
 
     /**

@@ -49,7 +49,7 @@ public sealed interface Settings extends Pointers permits SettingsImpl {
      * @since next
      */
     static @NotNull Settings createSettings() {
-        return settings().create();
+        return settingsBuilder().create();
     }
 
     /**
@@ -59,7 +59,7 @@ public sealed interface Settings extends Pointers permits SettingsImpl {
      * @see Builder
      * @since next
      */
-    static @NotNull Builder settings() {
+    static @NotNull Builder settingsBuilder() {
         return new SettingsImpl.BuilderImpl();
     }
 
@@ -72,10 +72,10 @@ public sealed interface Settings extends Pointers permits SettingsImpl {
      * @since next
      */
     @SuppressWarnings("unchecked")
-    default <V> @NotNull @Unmodifiable Set<Setting<V>> getSettings(final @NonNull Class<V> valueType) {
+    default <V> @NotNull @Unmodifiable Set<Setting<V>> settings(final @NonNull Class<V> valueType) {
         final Set<Setting<V>> filteredSettings = new HashSet<>();
-        for (final Setting<?> setting : this.getSettings()) {
-            if (valueType.isAssignableFrom(setting.getType()))
+        for (final Setting<?> setting : this.settings()) {
+            if (valueType.isAssignableFrom(setting.type()))
                 filteredSettings.add((Setting<V>) setting);
         }
         return Collections.unmodifiableSet(filteredSettings);
@@ -88,12 +88,12 @@ public sealed interface Settings extends Pointers permits SettingsImpl {
      * @throws UnsupportedOperationException if the implementing class does not support querying for settings
      * @since next
      */
-    @NotNull @Unmodifiable Set<Setting<?>> getSettings();
+    @NotNull @Unmodifiable Set<Setting<?>> settings();
 
     /**
      * Gets the value of {@code setting}.
      *
-     * <p>Will use the {@link Setting#getDefaultValue()} if the setting does not exist.</p>
+     * <p>Will use the {@link Setting#defaultValue()} if the setting does not exist.</p>
      *
      * @param setting the setting
      * @param <V>     the type
