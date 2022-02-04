@@ -81,4 +81,8 @@ public class ChatterViewModel implements Configured.Modifiable<ChatterViewModel>
     public boolean isActiveChannel(Channel channel) {
         return chatter.isActiveChannel(channel);
     }
+
+    public List<ViewTab> getTabs() {
+        return null;
+    }
 }

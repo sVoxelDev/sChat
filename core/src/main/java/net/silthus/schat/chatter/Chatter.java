@@ -98,6 +98,10 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
 
     void updateView();
 
+    default Message.Draft message(String text) {
+        return Message.message(text).source(this);
+    }
+
     interface Builder {
         @NotNull Builder viewConnector(@NonNull ViewConnector.Factory viewConnectorFactory);
 
