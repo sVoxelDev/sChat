@@ -33,6 +33,7 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.command.Command;
 import net.silthus.schat.command.Result;
 
+// TODO: make subclass of join channel command
 public class SetActiveChannelCommand implements Command {
 
     @Getter
@@ -63,7 +64,7 @@ public class SetActiveChannelCommand implements Command {
     }
 
     private Result setActiveChannelAndUpdateView() {
-        chatter.setActiveChannel(channel);
+        chatter.activeChannel(channel);
         chatter.updateView();
         return Result.success();
     }

@@ -46,9 +46,9 @@ public final class IdentitySerializer implements JsonSerializer<Identity>, JsonD
     @Override
     public JsonElement serialize(Identity src, Type typeOfSrc, JsonSerializationContext context) {
         return new JObject()
-            .add("id", context.serialize(src.getUniqueId(), UUID.class))
-            .add("name", src.getName())
-            .add("display_name", context.serialize(src.getDisplayName(), Component.class))
+            .add("id", context.serialize(src.uniqueId(), UUID.class))
+            .add("name", src.name())
+            .add("display_name", context.serialize(src.displayName(), Component.class))
             .toJson();
     }
 

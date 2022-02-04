@@ -49,6 +49,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import static net.kyori.adventure.text.Component.text;
 
 @Getter
+@Accessors(fluent = true)
 @EqualsAndHashCode(of = {"key"})
 final class ChannelImpl implements Channel {
 
@@ -77,7 +78,7 @@ final class ChannelImpl implements Channel {
     }
 
     @Override
-    public @NotNull @Unmodifiable Targets getTargets() {
+    public @NotNull @Unmodifiable Targets targets() {
         return Targets.unmodifiable(targets);
     }
 
@@ -106,7 +107,7 @@ final class ChannelImpl implements Channel {
     @Override
     public int compareTo(@NotNull Channel o) {
         return Comparator.<Channel, Integer>comparing(o2 -> o2.get(PRIORITY))
-            .thenComparing(Channel::getKey)
+            .thenComparing(Channel::key)
             .compare(this, o);
     }
 
@@ -118,7 +119,7 @@ final class ChannelImpl implements Channel {
         private final String key;
 
         private Component name;
-        private Settings.Builder settings = Settings.settings();
+        private Settings.Builder settings = Settings.settingsBuilder();
         private EventBus eventBus = EventBus.empty();
 
         Builder(String key) {

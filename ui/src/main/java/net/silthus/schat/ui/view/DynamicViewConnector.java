@@ -32,6 +32,6 @@ public record DynamicViewConnector(Chatter chatter,
                                    ViewConnector.Out out) implements ViewConnector {
     @Override
     public void update() {
-        out.send(viewProvider.getView(chatter).render());
+        out.send(viewProvider.view(chatter).render());
     }
 }

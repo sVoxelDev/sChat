@@ -72,12 +72,12 @@ class ChannelCommandsTests extends CommandTest {
             void then_join_command_succeeds_and_calls_interactor() {
                 executeJoinCommand();
                 assertThat(chatter.isJoined(channel)).isTrue();
-                assertThat(chatter.getActiveChannel())
+                assertThat(chatter.activeChannel())
                     .isPresent().get().isEqualTo(channel);
             }
 
             private void executeJoinCommand() {
-                cmd(JOIN_CHANNEL_CMD + channel.getKey());
+                cmd(JOIN_CHANNEL_CMD + channel.key());
             }
 
             @Nested class given_join_fails {
@@ -97,7 +97,7 @@ class ChannelCommandsTests extends CommandTest {
             @Nested class given_channel_is_already_active {
                 @BeforeEach
                 void setUp() {
-                    chatter.setActiveChannel(channel);
+                    chatter.activeChannel(channel);
                 }
 
                 @Test

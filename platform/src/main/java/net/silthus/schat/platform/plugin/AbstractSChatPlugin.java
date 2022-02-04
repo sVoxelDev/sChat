@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.messaging.MessengerGatewayProvider;
 import net.silthus.schat.platform.config.ConfigKeys;
@@ -46,6 +47,7 @@ import static net.silthus.schat.platform.locale.Messages.STARTUP_BANNER;
 import static net.silthus.schat.util.gson.GsonProvider.gsonSerializer;
 
 @Getter
+@Accessors(fluent = true)
 public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     private TranslationManager translationManager;
@@ -58,7 +60,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     @Override
     public final void load() {
-        translationManager = new TranslationManager(getBootstrap().getConfigDirectory());
+        translationManager = new TranslationManager(bootstrap().configDirectory());
         translationManager.reload();
 
         eventBus = createEventBus();
@@ -75,11 +77,11 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     public final void enable() {
         setupSenderFactory();
 
-        STARTUP_BANNER.send(getConsole(), getBootstrap());
+        STARTUP_BANNER.send(getConsole(), bootstrap());
 
         config = loadConfiguration();
 
-        registerMessengerGateway(getGatewayProviderRegistry());
+        registerMessengerGateway(gatewayProviderRegistry());
         messenger = createMessagingService();
 
         onEnable();
@@ -89,8 +91,8 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     @Override
     public final void disable() {
-        getEventBus().close();
-        getMessenger().close();
+        eventBus().close();
+        messenger().close();
 
         onDisable();
     }
@@ -104,8 +106,8 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     protected abstract void setupSenderFactory();
 
     private @NotNull SChatConfig loadConfiguration() {
-        getLogger().info("Loading configuration...");
-        SChatConfig config = new SChatConfig(createConfigurationAdapter(), getEventBus());
+        logger().info("Loading configuration...");
+        SChatConfig config = new SChatConfig(createConfigurationAdapter(), eventBus());
         config.load();
         return config;
     }
@@ -114,13 +116,13 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     @ApiStatus.OverrideOnly
     protected MessagingService createMessagingService() {
-        return new MessagingService(getGatewayProviderRegistry().get(getConfig().get(ConfigKeys.MESSENGER)), getSerializer());
+        return new MessagingService(gatewayProviderRegistry().get(this.config().get(ConfigKeys.MESSENGER)), serializer());
     }
 
     protected abstract void registerMessengerGateway(MessengerGatewayProvider.Registry registry);
 
     protected final Path resolveConfig(String fileName) {
-        Path configFile = getBootstrap().getConfigDirectory().resolve(fileName);
+        Path configFile = bootstrap().configDirectory().resolve(fileName);
 
         if (!Files.exists(configFile)) {
             createConfigDirectory(configFile);
@@ -131,7 +133,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     }
 
     private void copyDefaultConfig(String fileName, Path configFile) {
-        try (InputStream is = getBootstrap().getResourceStream(fileName)) {
+        try (InputStream is = bootstrap().resourceAsStream(fileName)) {
             Files.copy(is, configFile);
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -37,8 +37,6 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-import static net.silthus.schat.bukkit.adapter.BukkitIdentityAdapter.identity;
-
 public final class BukkitSenderFactory extends SenderFactory<CommandSender> {
 
     private final BukkitAudiences audiences;
@@ -50,14 +48,14 @@ public final class BukkitSenderFactory extends SenderFactory<CommandSender> {
     }
 
     @Override
-    protected Class<CommandSender> getSenderType() {
+    protected Class<CommandSender> senderType() {
         return CommandSender.class;
     }
 
     @Override
-    protected Identity getIdentity(CommandSender sender) {
+    protected Identity identity(CommandSender sender) {
         if (sender instanceof OfflinePlayer player)
-            return identity(player);
+            return BukkitIdentityAdapter.identity(player);
         return CONSOLE;
     }
 

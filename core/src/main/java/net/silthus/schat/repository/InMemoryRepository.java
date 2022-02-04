@@ -87,7 +87,7 @@ public abstract class InMemoryRepository<K, E extends Entity<K>> implements Repo
 
     @Override
     public void add(@NotNull final E entity) {
-        entities.putIfAbsent(entity.getKey(), entity);
+        entities.putIfAbsent(entity.key(), entity);
     }
 
     @Override

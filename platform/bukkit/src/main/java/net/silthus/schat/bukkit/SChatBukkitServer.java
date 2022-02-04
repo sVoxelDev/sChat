@@ -28,6 +28,7 @@ import cloud.commandframework.CommandManager;
 import cloud.commandframework.paper.PaperCommandManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.silthus.schat.bukkit.adapter.BukkitChatListener;
 import net.silthus.schat.bukkit.adapter.BukkitChatterFactory;
@@ -52,6 +53,7 @@ import static cloud.commandframework.execution.CommandExecutionCoordinator.simpl
 import static net.silthus.schat.platform.config.adapter.ConfigurationAdapters.YAML;
 
 @Getter
+@Accessors(fluent = true)
 public final class SChatBukkitServer extends AbstractSChatServerPlugin {
 
     private final BukkitBootstrap bootstrap;
@@ -64,7 +66,7 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
 
     @Override
     public Sender getConsole() {
-        return getSenderFactory().wrap(getBootstrap().getLoader().getServer().getConsoleSender());
+        return senderFactory().wrap(bootstrap().loader().getServer().getConsoleSender());
     }
 
     @Override
@@ -79,33 +81,33 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
 
     @Override
     protected void setupSenderFactory() {
-        senderFactory = new BukkitSenderFactory(getAudiences(), new BukkitSchedulerAdapter(bootstrap.getLoader()));
+        senderFactory = new BukkitSenderFactory(getAudiences(), new BukkitSchedulerAdapter(bootstrap.loader()));
     }
 
     @Override
     protected void registerMessengerGateway(MessengerGatewayProvider.Registry registry) {
         registry.register(BukkitMessengerGateway.GATEWAY_TYPE, consumer -> new BukkitMessengerGateway(
-            getBootstrap().getLoader(),
+            bootstrap().loader(),
             Bukkit.getServer(),
-            getBootstrap().getScheduler(),
+            bootstrap().scheduler(),
             consumer
         ));
     }
 
     @Override
     protected AbstractChatterFactory createChatterFactory(final ViewProvider viewProvider) {
-        return new BukkitChatterFactory(getAudiences(), getViewProvider());
+        return new BukkitChatterFactory(getAudiences(), viewProvider());
     }
 
     @NotNull
     private BukkitAudiences getAudiences() {
-        return BukkitAudiences.create(getBootstrap().getLoader());
+        return BukkitAudiences.create(bootstrap().loader());
     }
 
     @Override
     protected ChatListener createChatListener(ChatterProvider provider) {
         final BukkitChatListener listener = new BukkitChatListener(provider);
-        Bukkit.getPluginManager().registerEvents(listener, getBootstrap().getLoader());
+        Bukkit.getPluginManager().registerEvents(listener, bootstrap().loader());
         return listener;
     }
 
@@ -114,23 +116,23 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
     protected CommandManager<Sender> provideCommandManager() {
         try {
             return new PaperCommandManager<>(
-                getBootstrap().getLoader(),
+                bootstrap().loader(),
                 simpleCoordinator(),
-                commandSender -> getSenderFactory().wrap(commandSender),
-                sender -> getSenderFactory().unwrap(sender)
+                commandSender -> senderFactory().wrap(commandSender),
+                sender -> senderFactory().unwrap(sender)
             );
         } catch (Exception e) {
-            getLogger().severe("Failed to initialize the command manager.");
-            Bukkit.getPluginManager().disablePlugin(getBootstrap().getLoader());
+            logger().severe("Failed to initialize the command manager.");
+            Bukkit.getPluginManager().disablePlugin(bootstrap().loader());
             throw new RuntimeException(e);
         }
     }
 
     @Override
     protected void registerListeners() {
-        chatPacketListener = new ChatPacketListener(getBootstrap().getLoader(), getChatterProvider(), getViewProvider());
+        chatPacketListener = new ChatPacketListener(bootstrap().loader(), chatterProvider(), viewProvider());
         chatPacketListener.enable();
 
-        Bukkit.getPluginManager().registerEvents((BukkitEventBus) getEventBus(), getBootstrap().getLoader());
+        Bukkit.getPluginManager().registerEvents((BukkitEventBus) eventBus(), bootstrap().loader());
     }
 }

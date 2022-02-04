@@ -36,7 +36,7 @@ import net.silthus.schat.message.Message;
 import net.silthus.schat.message.Targets;
 
 /**
- * The {@code SendChannelMessageEvent} is fired before a {@link Channel} forwards a message to its {@link Channel#getTargets()}.
+ * The {@code SendChannelMessageEvent} is fired before a {@link Channel} forwards a message to its {@link Channel#targets()}.
  *
  * <p>The {@link SendMessageEvent} will be called before this event and the message will already be sealed.</p>
  *
@@ -70,7 +70,7 @@ public final class SendChannelMessageEvent implements SChatEvent, Cancellable {
     public SendChannelMessageEvent(final @NonNull Channel channel, final @NonNull Message message) {
         this.channel = channel;
         this.message = message;
-        this.targets = Targets.copyOf(channel.getTargets());
+        this.targets = Targets.copyOf(channel.targets());
     }
 
     /**

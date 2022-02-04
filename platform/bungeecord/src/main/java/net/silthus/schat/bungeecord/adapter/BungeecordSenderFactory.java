@@ -33,8 +33,6 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.platform.sender.SenderFactory;
 
-import static net.silthus.schat.bungeecord.adapter.BungeecordIdentityAdapter.identity;
-
 public class BungeecordSenderFactory extends SenderFactory<CommandSender> {
 
     private final Plugin plugin;
@@ -51,14 +49,14 @@ public class BungeecordSenderFactory extends SenderFactory<CommandSender> {
     }
 
     @Override
-    protected Class<CommandSender> getSenderType() {
+    protected Class<CommandSender> senderType() {
         return CommandSender.class;
     }
 
     @Override
-    protected Identity getIdentity(CommandSender sender) {
+    protected Identity identity(CommandSender sender) {
         if (sender instanceof ProxiedPlayer player)
-            return identity(player);
+            return BungeecordIdentityAdapter.identity(player);
         else
             return CONSOLE;
     }

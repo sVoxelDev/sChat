@@ -43,13 +43,13 @@ final class PointersTest {
 
         assertFalse(Pointers.empty().supports(pointer));
 
-        final Pointers p0 = Pointers.pointers()
+        final Pointers p0 = Pointers.pointersBuilder()
             .withStatic(pointer, null)
             .create();
         assertTrue(p0.supports(pointer));
         assertFalse(p0.get(pointer).isPresent());
 
-        final Pointers p1 = Pointers.pointers()
+        final Pointers p1 = Pointers.pointersBuilder()
             .withStatic(pointer, "test")
             .create();
         assertTrue(p1.supports(pointer));
@@ -63,7 +63,7 @@ final class PointersTest {
             s.reverse();
             return result;
         };
-        final Pointers p2 = Pointers.pointers()
+        final Pointers p2 = Pointers.pointersBuilder()
             .withDynamic(pointer, supplier)
             .create();
         assertTrue(p2.supports(pointer));
@@ -85,9 +85,9 @@ final class PointersTest {
         @Test
         void then_always_returns_empty() {
             assertThat(pointers.get(pointer)).isEmpty();
-            assertThat(pointers.getPointers()).isEmpty();
+            assertThat(pointers.pointers()).isEmpty();
             assertThat(pointers.supports(pointer)).isFalse();
-            AssertionHelper.assertUnmodifiable(pointers.getPointers(), () -> pointer);
+            AssertionHelper.assertUnmodifiable(pointers.pointers(), () -> pointer);
         }
     }
 }

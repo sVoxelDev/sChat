@@ -47,14 +47,14 @@ public final class ConfigKeys {
 
     public static final ConfigKey<List<Channel>> CHANNELS = modifiable(key(config -> {
         final ArrayList<Channel> channels = new ArrayList<>();
-        for (final String key : config.getKeys("channels", new ArrayList<>())) {
+        for (final String key : config.keys("channels", new ArrayList<>())) {
             channels.add(createFromConfig(config.scoped("channels." + key), key));
         }
         return channels;
     }), (c, value) -> {
         for (final Channel channel : value) {
-            c.set("channels." + channel.getKey() + ".name", channel.getDisplayName());
-            c.set("channels." + channel.getKey() + ".settings", channel.getSettings());
+            c.set("channels." + channel.key() + ".name", channel.displayName());
+            c.set("channels." + channel.key() + ".settings", channel.settings());
         }
     });
 

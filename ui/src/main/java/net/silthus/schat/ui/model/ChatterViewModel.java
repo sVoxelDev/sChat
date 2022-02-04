@@ -27,6 +27,7 @@ package net.silthus.schat.ui.model;
 import java.util.List;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
@@ -38,6 +39,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import static net.silthus.schat.pointer.Settings.createSettings;
 
 @Getter
+@Accessors(fluent = true)
 public class ChatterViewModel implements Configured.Modifiable<ChatterViewModel> {
 
     public static ChatterViewModel of(@NonNull Chatter chatter) {
@@ -51,8 +53,8 @@ public class ChatterViewModel implements Configured.Modifiable<ChatterViewModel>
         this.chatter = chatter;
     }
 
-    public @NotNull @Unmodifiable List<Message> getMessages() {
-        return chatter.getMessages().stream()
+    public @NotNull @Unmodifiable List<Message> messages() {
+        return chatter.messages().stream()
             .filter(this::isMessageDisplayed)
             .sorted()
             .toList();
@@ -67,22 +69,22 @@ public class ChatterViewModel implements Configured.Modifiable<ChatterViewModel>
     }
 
     private boolean hasActiveChannel() {
-        return chatter.getActiveChannel().isPresent();
+        return chatter.activeChannel().isPresent();
     }
 
     private boolean sentToActiveChannel(Message message) {
-        return chatter.getActiveChannel().map(channel -> message.channels().contains(channel)).orElse(false);
+        return chatter.activeChannel().map(channel -> message.channels().contains(channel)).orElse(false);
     }
 
-    public @NotNull @Unmodifiable List<Channel> getChannels() {
-        return chatter.getChannels().stream().sorted().toList();
+    public @NotNull @Unmodifiable List<Channel> channels() {
+        return chatter.channels().stream().sorted().toList();
     }
 
     public boolean isActiveChannel(Channel channel) {
         return chatter.isActiveChannel(channel);
     }
 
-    public List<ViewTab> getTabs() {
+    public List<ViewTab> tabs() {
         return null;
     }
 }

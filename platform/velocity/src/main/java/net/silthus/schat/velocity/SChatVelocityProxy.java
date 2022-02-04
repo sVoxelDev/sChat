@@ -25,6 +25,7 @@
 package net.silthus.schat.velocity;
 
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.messaging.MessengerGatewayProvider;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
@@ -38,6 +39,7 @@ import static net.silthus.schat.platform.config.adapter.ConfigurationAdapters.YA
 import static net.silthus.schat.velocity.adapter.VelocityMessengerGateway.GATEWAY_TYPE;
 
 @Getter
+@Accessors(fluent = true)
 public final class SChatVelocityProxy extends AbstractSChatProxyPlugin {
 
     private final VelocityBootstrap bootstrap;
@@ -49,7 +51,7 @@ public final class SChatVelocityProxy extends AbstractSChatProxyPlugin {
 
     @Override
     public Sender getConsole() {
-        return getSenderFactory().wrap(bootstrap.getProxy().getConsoleCommandSource());
+        return senderFactory().wrap(bootstrap.proxy().getConsoleCommandSource());
     }
 
     @Override
@@ -64,12 +66,12 @@ public final class SChatVelocityProxy extends AbstractSChatProxyPlugin {
 
     @Override
     protected void setupSenderFactory() {
-        senderFactory = new VelocitySenderFactory(bootstrap.getProxy());
+        senderFactory = new VelocitySenderFactory(bootstrap.proxy());
     }
 
     @Override
     protected void registerMessengerGateway(MessengerGatewayProvider.Registry registry) {
-        registry.register(GATEWAY_TYPE, consumer -> new VelocityMessengerGateway(getBootstrap()));
+        registry.register(GATEWAY_TYPE, consumer -> new VelocityMessengerGateway(bootstrap()));
     }
 
     @Override

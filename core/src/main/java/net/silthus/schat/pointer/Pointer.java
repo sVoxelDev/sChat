@@ -122,7 +122,7 @@ public sealed interface Pointer<V> permits PointerImpl, Setting {
      * @return the value type
      * @since next
      */
-    @NotNull Class<V> getType();
+    @NotNull Class<V> type();
 
     /**
      * Gets the key.
@@ -130,5 +130,5 @@ public sealed interface Pointer<V> permits PointerImpl, Setting {
      * @return the key
      * @since next
      */
-    @NotNull String getKey();
+    @NotNull String key();
 }

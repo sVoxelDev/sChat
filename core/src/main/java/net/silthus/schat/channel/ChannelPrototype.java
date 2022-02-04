@@ -29,7 +29,7 @@ import net.silthus.schat.eventbus.EventBus;
 public final class ChannelPrototype {
 
     public static void configure(EventBus eventBus) {
-        ChannelImpl.setPrototype(builder -> builder.eventBus(eventBus));
+        ChannelImpl.prototype(builder -> builder.eventBus(eventBus));
     }
 
     private ChannelPrototype() {

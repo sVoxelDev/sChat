@@ -44,6 +44,6 @@ public class CrossServerMessengerGateway implements MessengerGateway {
 
     @Override
     public void sendOutgoingMessage(String encodedMessage) {
-        servers.forEach(p -> p.getMessenger().consumeIncomingMessageAsString(encodedMessage));
+        servers.forEach(p -> p.messenger().consumeIncomingMessageAsString(encodedMessage));
     }
 }

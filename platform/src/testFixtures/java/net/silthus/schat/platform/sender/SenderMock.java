@@ -27,6 +27,7 @@ package net.silthus.schat.platform.sender;
 import java.util.LinkedList;
 import java.util.Queue;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
@@ -39,6 +40,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 @Getter
+@Accessors(fluent = true)
 public class SenderMock implements Sender {
 
     public static SenderMock senderMock() {

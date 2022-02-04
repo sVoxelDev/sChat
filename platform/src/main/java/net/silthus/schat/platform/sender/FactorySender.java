@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.identity.Identity;
@@ -44,6 +45,7 @@ import static net.kyori.adventure.text.JoinConfiguration.noSeparators;
  *
  * @param <T> the command sender type
  */
+@Accessors(fluent = true)
 @EqualsAndHashCode(of = {"identity"})
 final class FactorySender<T> implements Sender {
 
@@ -59,12 +61,12 @@ final class FactorySender<T> implements Sender {
         this.factory = factory;
         this.handle = sender;
         this.console = factory.isConsole(sender);
-        this.identity = factory.getIdentity(sender);
+        this.identity = factory.identity(sender);
     }
 
     @Override
     public void sendMessage(Component message) {
-        if (isConsole()) {
+        if (this.isConsole()) {
             for (Component line : splitNewlines(message)) {
                 factory.sendMessage(handle, line);
             }
@@ -74,13 +76,18 @@ final class FactorySender<T> implements Sender {
     }
 
     @Override
+    public boolean isConsole() {
+        return console;
+    }
+
+    @Override
     public boolean hasPermission(String permission) {
-        return isConsole() || factory.hasPermission(handle, permission);
+        return this.isConsole() || factory.hasPermission(handle, permission);
     }
 
     @Override
     public boolean isValid() {
-        return isConsole() || factory.isPlayerOnline(getUniqueId());
+        return this.isConsole() || factory.isPlayerOnline(uniqueId());
     }
 
     // A small utility method which splits components built using

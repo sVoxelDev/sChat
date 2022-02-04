@@ -45,6 +45,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 @Getter
 @Setter
+@Accessors(fluent = true)
 @EqualsAndHashCode(of = {"identity"})
 non-sealed class ChatterImpl implements Chatter {
 
@@ -70,14 +71,14 @@ non-sealed class ChatterImpl implements Chatter {
     }
 
     @Override
-    public void setActiveChannel(@Nullable Channel activeChannel) {
+    public void activeChannel(@Nullable Channel activeChannel) {
         if (activeChannel != null)
             join(activeChannel);
         this.activeChannel = activeChannel;
     }
 
     @Override
-    public @NotNull Optional<Channel> getActiveChannel() {
+    public @NotNull Optional<Channel> activeChannel() {
         return Optional.ofNullable(activeChannel);
     }
 
@@ -87,7 +88,7 @@ non-sealed class ChatterImpl implements Chatter {
     }
 
     @Override
-    public @NotNull @Unmodifiable List<Channel> getChannels() {
+    public @NotNull @Unmodifiable List<Channel> channels() {
         return List.copyOf(channels);
     }
 
@@ -114,12 +115,12 @@ non-sealed class ChatterImpl implements Chatter {
     }
 
     @Override
-    public @NotNull @Unmodifiable Set<Message> getMessages() {
+    public @NotNull @Unmodifiable Set<Message> messages() {
         return Set.copyOf(messages);
     }
 
     @Override
-    public Optional<Message> getLastMessage() {
+    public Optional<Message> lastMessage() {
         return Optional.ofNullable(messages.peek());
     }
 
@@ -156,12 +157,12 @@ non-sealed class ChatterImpl implements Chatter {
     static final class EmptyChatter implements Chatter {
 
         @Override
-        public @NotNull @Unmodifiable List<Channel> getChannels() {
+        public @NotNull @Unmodifiable List<Channel> channels() {
             return List.of();
         }
 
         @Override
-        public @NotNull Optional<Channel> getActiveChannel() {
+        public @NotNull Optional<Channel> activeChannel() {
             return Optional.empty();
         }
 
@@ -171,7 +172,7 @@ non-sealed class ChatterImpl implements Chatter {
         }
 
         @Override
-        public void setActiveChannel(@Nullable Channel activeChannel) {
+        public void activeChannel(@Nullable Channel activeChannel) {
 
         }
 
@@ -191,12 +192,12 @@ non-sealed class ChatterImpl implements Chatter {
         }
 
         @Override
-        public @NotNull @Unmodifiable Set<Message> getMessages() {
+        public @NotNull @Unmodifiable Set<Message> messages() {
             return Set.of();
         }
 
         @Override
-        public Optional<Message> getLastMessage() {
+        public Optional<Message> lastMessage() {
             return Optional.empty();
         }
 
@@ -211,7 +212,7 @@ non-sealed class ChatterImpl implements Chatter {
         }
 
         @Override
-        public @NotNull Identity getIdentity() {
+        public @NotNull Identity identity() {
             return Identity.nil();
         }
 

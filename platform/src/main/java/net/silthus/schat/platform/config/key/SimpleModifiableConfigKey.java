@@ -32,7 +32,7 @@ final class SimpleModifiableConfigKey<T> extends SimpleConfigKey<T> implements M
     private final BiConsumer<ConfigurationAdapter, T> setter;
 
     SimpleModifiableConfigKey(SimpleConfigKey<T> key, BiConsumer<ConfigurationAdapter, T> setter) {
-        super(key.getFunction());
+        super(key.function());
         this.setter = setter;
     }
 

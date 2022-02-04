@@ -36,11 +36,11 @@ public interface SChatPlugin {
 
     void disable();
 
-    Bootstrap getBootstrap();
+    Bootstrap bootstrap();
 
-    default PluginLogger getLogger() {
-        return getBootstrap().getPluginLogger();
+    default PluginLogger logger() {
+        return bootstrap().pluginLogger();
     }
 
-    SChatConfig getConfig();
+    SChatConfig config();
 }

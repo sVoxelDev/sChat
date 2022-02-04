@@ -24,9 +24,8 @@
 
 package net.silthus.schat.identity;
 
+import java.util.Objects;
 import java.util.UUID;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.pointer.Pointers;
@@ -39,19 +38,20 @@ import net.silthus.schat.pointer.Pointers;
  *
  * @since next
  */
-@Getter
-@EqualsAndHashCode(of = {"uniqueId"})
-final class IdentityImpl implements Identity {
-
+record IdentityImpl(@NonNull UUID uniqueId, @NonNull Pointers pointers) implements Identity {
     static final Identity NIL = Identity.identity(NIL_IDENTITY_ID, "", Component.empty());
 
-    private final @NonNull UUID uniqueId;
-    private final Pointers pointers;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof IdentityImpl identity))
+            return false;
+        return uniqueId().equals(identity.uniqueId());
+    }
 
-    IdentityImpl(
-        @NonNull UUID uniqueId,
-        @NonNull Pointers pointers) {
-        this.uniqueId = uniqueId;
-        this.pointers = pointers;
+    @Override
+    public int hashCode() {
+        return Objects.hash(uniqueId());
     }
 }

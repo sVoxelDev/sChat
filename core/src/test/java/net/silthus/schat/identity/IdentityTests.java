@@ -52,7 +52,7 @@ class IdentityTests {
     void given_identity_with_id_then_identity_has_id() {
         final UUID id = randomUUID();
         final Identity identity = Identity.identity(id);
-        assertThat(identity.getUniqueId()).isEqualTo(id);
+        assertThat(identity.uniqueId()).isEqualTo(id);
     }
 
     @Test
@@ -77,9 +77,9 @@ class IdentityTests {
         void then_properties_match_nil_properties() {
             assertThat(identity)
                 .extracting(
-                    Identity::getUniqueId,
-                    Identity::getName,
-                    Identity::getDisplayName
+                    Identity::uniqueId,
+                    Identity::name,
+                    Identity::displayName
                 ).contains(
                     Identity.NIL_IDENTITY_ID,
                     "",
@@ -99,12 +99,12 @@ class IdentityTests {
 
         @Test
         void then_has_name() {
-            assertThat(identity.getName()).isEqualTo(NAME);
+            assertThat(identity.name()).isEqualTo(NAME);
         }
 
         @Test
         void then_display_name_is_name() {
-            assertThat(identity.getDisplayName()).isEqualTo(text(NAME));
+            assertThat(identity.displayName()).isEqualTo(text(NAME));
         }
 
         @Nested
@@ -116,7 +116,7 @@ class IdentityTests {
 
             @Test
             void then_uses_custom_display_name() {
-                assertThat(identity.getDisplayName()).isEqualTo(DISPLAY_NAME);
+                assertThat(identity.displayName()).isEqualTo(DISPLAY_NAME);
             }
         }
 
@@ -132,13 +132,13 @@ class IdentityTests {
 
             @Test
             void then_uses_display_name() {
-                assertThat(identity.getDisplayName()).isEqualTo(DISPLAY_NAME);
+                assertThat(identity.displayName()).isEqualTo(DISPLAY_NAME);
             }
 
             @Test
             void when_display_name_changes_then_display_name_is_updated() {
                 displayName = text("Bobby");
-                assertThat(identity.getDisplayName()).isEqualTo(displayName);
+                assertThat(identity.displayName()).isEqualTo(displayName);
             }
         }
     }

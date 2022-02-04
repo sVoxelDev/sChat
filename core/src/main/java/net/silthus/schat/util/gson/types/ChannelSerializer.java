@@ -54,8 +54,8 @@ public final class ChannelSerializer implements JsonSerializer<Channel>, JsonDes
     @Override
     public JsonElement serialize(Channel src, Type typeOfSrc, JsonSerializationContext context) {
         return new JObject()
-            .add("key", src.getKey())
-            .add("settings", context.serialize(src.getSettings(), Settings.class))
+            .add("key", src.key())
+            .add("settings", context.serialize(src.settings(), Settings.class))
             .toJson();
     }
 

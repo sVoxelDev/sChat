@@ -76,13 +76,13 @@ public sealed interface Channel extends Entity<String>, Configured.Modifiable<Ch
         return ChannelImpl.builder(key);
     }
 
-    @NotNull String getKey();
+    @NotNull String key();
 
-    default @NotNull Component getDisplayName() {
+    default @NotNull Component displayName() {
         return get(DISPLAY_NAME);
     }
 
-    @NotNull @Unmodifiable Targets getTargets();
+    @NotNull @Unmodifiable Targets targets();
 
     void addTarget(MessageTarget target);
 

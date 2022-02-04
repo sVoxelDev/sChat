@@ -76,7 +76,7 @@ public interface Repository<K, E extends Entity<K>> {
      * @since next
      */
     default boolean contains(E entity) {
-        return contains(entity.getKey());
+        return contains(entity.key());
     }
 
     /**
@@ -116,7 +116,7 @@ public interface Repository<K, E extends Entity<K>> {
      * @since next
      */
     default void remove(@NotNull E entity) {
-        remove(entity.getKey());
+        remove(entity.key());
     }
 
     /**
@@ -138,7 +138,7 @@ public interface Repository<K, E extends Entity<K>> {
     }
 
     default Optional<E> find(K key) {
-        return find(e -> e.getKey().equals(key));
+        return find(e -> e.key().equals(key));
     }
 
     /**

@@ -46,7 +46,7 @@ class ResultTest {
     void given_error_result_has_exception() {
         final Result result = Result.error(new RuntimeException());
         assertThat(result.wasSuccessful()).isFalse();
-        assertThat(result.getFailureReason())
+        assertThat(result.failureReason())
             .isPresent().get().isInstanceOf(RuntimeException.class);
     }
 }

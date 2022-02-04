@@ -51,20 +51,20 @@ public class ChatterFactoryStub extends AbstractChatterFactory {
     }
 
     public void stubSenderAsChatter(SenderMock sender) {
-        chatterStubs.put(sender.getUniqueId(), sender);
+        chatterStubs.put(sender.uniqueId(), sender);
     }
 
     @Override
     protected @NotNull Identity createIdentity(UUID id) {
         if (chatterStubs.containsKey(id))
-            return chatterStubs.get(id).getIdentity();
+            return chatterStubs.get(id).identity();
         return Identity.identity(id, randomAlphabetic(10));
     }
 
     @Override
     protected Chatter.PermissionHandler createPermissionHandler(UUID id) {
         if (chatterStubs.containsKey(id))
-            return chatterStubs.get(id).getPermissionHandler();
+            return chatterStubs.get(id).permissionHandler();
         return permission -> false;
     }
 

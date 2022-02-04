@@ -67,7 +67,7 @@ class ChatListenerTest {
 
     private Component chatWithId() {
         final Component text = randomText();
-        listener.onChat(chatter.getUniqueId(), text);
+        listener.onChat(chatter.uniqueId(), text);
         return text;
     }
 
@@ -83,7 +83,7 @@ class ChatListenerTest {
     @Nested class given_no_active_channel {
         @BeforeEach
         void setUp() {
-            chatter.setActiveChannel(null);
+            chatter.activeChannel(null);
         }
 
         @Test
@@ -106,7 +106,7 @@ class ChatListenerTest {
         void setUp() {
             Channel activeChannel = randomChannel();
             activeChannel.addTarget(target);
-            chatter.setActiveChannel(activeChannel);
+            chatter.activeChannel(activeChannel);
         }
 
         @Test
@@ -117,7 +117,7 @@ class ChatListenerTest {
 
         @Test
         void then_sets_message_source_to_chatter_identity() {
-            assertThat(chat().source()).isEqualTo(chatter.getIdentity());
+            assertThat(chat().source()).isEqualTo(chatter.identity());
         }
 
         @Test

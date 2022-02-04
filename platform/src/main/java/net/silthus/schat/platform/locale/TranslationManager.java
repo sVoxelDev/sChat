@@ -109,19 +109,19 @@ public final class TranslationManager {
         return locale.getDisplayLanguage(locale);
     }
 
-    public Path getTranslationsDirectory() {
+    public Path translationsDirectory() {
         return this.translationsDirectory;
     }
 
-    public Path getRepositoryTranslationsDirectory() {
+    public Path repositoryTranslationsDirectory() {
         return this.repositoryTranslationsDirectory;
     }
 
-    public Path getRepositoryStatusFile() {
+    public Path repositoryStatusFile() {
         return this.repositoryTranslationsDirectory.resolve("status.json");
     }
 
-    public Set<Locale> getInstalledLocales() {
+    public Set<Locale> installedLocales() {
         return Collections.unmodifiableSet(this.installed);
     }
 

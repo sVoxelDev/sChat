@@ -25,8 +25,10 @@
 package net.silthus.schat.platform.plugin;
 
 import lombok.Getter;
+import lombok.experimental.Accessors;
 
 @Getter
+@Accessors(fluent = true)
 public abstract class AbstractSChatProxyPlugin extends AbstractSChatPlugin {
 
     @Override

@@ -75,7 +75,7 @@ final class MessageImpl implements Message {
         this.text = draft.text;
         this.type = draft.type;
         this.eventBus = draft.eventBus;
-        this.pointers = Pointers.pointers()
+        this.pointers = Pointers.pointersBuilder()
             .withStatic(Message.ID, id)
             .withStatic(Message.TIMESTAMP, timestamp)
             .withStatic(Message.SOURCE, source)
@@ -90,7 +90,7 @@ final class MessageImpl implements Message {
     }
 
     @Override
-    public @NotNull Pointers getPointers() {
+    public @NotNull Pointers pointers() {
         return pointers;
     }
 

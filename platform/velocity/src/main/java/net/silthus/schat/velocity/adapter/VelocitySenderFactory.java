@@ -47,12 +47,12 @@ public final class VelocitySenderFactory extends SenderFactory<CommandSource> {
     }
 
     @Override
-    protected Class<CommandSource> getSenderType() {
+    protected Class<CommandSource> senderType() {
         return CommandSource.class;
     }
 
     @Override
-    protected Identity getIdentity(CommandSource sender) {
+    protected Identity identity(CommandSource sender) {
         if (sender instanceof Player player)
             return identity(player);
         return CONSOLE;

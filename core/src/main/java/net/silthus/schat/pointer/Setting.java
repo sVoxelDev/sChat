@@ -71,5 +71,5 @@ public sealed interface Setting<V> extends Pointer<V> permits SettingImpl {
      * @return the default value
      * @since next
      */
-    V getDefaultValue();
+    V defaultValue();
 }

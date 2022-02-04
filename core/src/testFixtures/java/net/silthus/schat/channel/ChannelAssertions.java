@@ -31,15 +31,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 public final class ChannelAssertions {
 
     public static void assertChannelHasTarget(Channel channel, MessageTarget target) {
-        assertThat(channel.getTargets()).contains(target);
+        assertThat(channel.targets()).contains(target);
     }
 
     public static void assertChannelHasOnlyTarget(Channel channel, MessageTarget target) {
-        assertThat(channel.getTargets()).containsExactly(target);
+        assertThat(channel.targets()).containsExactly(target);
     }
 
     public static void assertChannelHasNoTargets(Channel channel) {
-        assertThat(channel.getTargets()).isEmpty();
+        assertThat(channel.targets()).isEmpty();
     }
 
     private ChannelAssertions() {

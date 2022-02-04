@@ -99,7 +99,7 @@ public class TestServer extends AbstractSChatServerPlugin {
     }
 
     @Override
-    public Bootstrap getBootstrap() {
+    public Bootstrap bootstrap() {
         return new BootstrapStub();
     }
 

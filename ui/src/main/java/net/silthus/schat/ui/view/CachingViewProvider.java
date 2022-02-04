@@ -39,7 +39,7 @@ final class CachingViewProvider implements ViewProvider {
     }
 
     @Override
-    public View getView(@NonNull Chatter chatter) {
+    public View view(@NonNull Chatter chatter) {
         return views.computeIfAbsent(chatter, factory::createView);
     }
 }

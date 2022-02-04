@@ -33,5 +33,5 @@ public interface ViewProvider {
         return new CachingViewProvider(factory);
     }
 
-    View getView(@NonNull Chatter chatter);
+    View view(@NonNull Chatter chatter);
 }

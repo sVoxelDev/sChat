@@ -40,5 +40,5 @@ public interface Entity<K> {
      * @return the unique key
      * @since next
      */
-    @NotNull K getKey();
+    @NotNull K key();
 }

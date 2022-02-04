@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.silthus.schat.pointer.Settings;
@@ -38,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
+@Accessors(fluent = true)
 class ConfigurateConfigSection implements ConfigurationSection {
 
     private final MiniMessage parser = MiniMessage.miniMessage();
@@ -74,36 +76,37 @@ class ConfigurateConfigSection implements ConfigurationSection {
         }
     }
 
-    public String getString(String path, String def) {
+    public String string(String path, String def) {
         return resolvePath(path).getString(def);
     }
 
-    public int getInteger(String path, int def) {
+    public int integer(String path, int def) {
         return resolvePath(path).getInt(def);
     }
 
-    public boolean getBoolean(String path, boolean def) {
+    public boolean bool(String path, boolean def) {
         return resolvePath(path).getBoolean(def);
     }
 
-    public Component getParsedString(String path, Component def) {
+    public Component component(String path, Component def) {
         final String string = resolvePath(path).getString();
-        if (string == null) return def;
+        if (string == null)
+            return def;
         return parser.deserialize(string);
     }
 
     @Override
-    public Settings getSettings(String path) {
-        final Settings.Builder builder = Settings.settings();
+    public Settings settings(String path) {
+        final Settings.Builder builder = Settings.settingsBuilder();
         final ConfigurateConfigSection scoped = scoped(path);
-        for (final String key : getKeys(path, new ArrayList<>())) {
-            builder.withUnknown(key, setting -> scoped.get(key, setting.getType()));
+        for (final String key : keys(path, new ArrayList<>())) {
+            builder.withUnknown(key, setting -> scoped.get(key, setting.type()));
         }
         return builder.create();
     }
 
     @SneakyThrows
-    public List<String> getStringList(String path, List<String> def) {
+    public List<String> stringList(String path, List<String> def) {
         ConfigurationNode node = resolvePath(path);
         if (node.virtual() || !node.isList()) {
             return def;
@@ -112,7 +115,7 @@ class ConfigurateConfigSection implements ConfigurationSection {
         return node.getList(String.class);
     }
 
-    public List<String> getKeys(String path, List<String> def) {
+    public List<String> keys(String path, List<String> def) {
         ConfigurationNode node = resolvePath(path);
         if (node.virtual() || !node.isMap()) {
             return def;
@@ -123,8 +126,9 @@ class ConfigurateConfigSection implements ConfigurationSection {
 
     @SuppressWarnings("UnstableApiUsage")
     private ConfigurationNode resolvePath(String path) {
-        if (path == null || path.isBlank()) return getRoot();
+        if (path == null || path.isBlank())
+            return root();
 
-        return getRoot().node(Splitter.on('.').splitToList(path).toArray());
+        return root().node(Splitter.on('.').splitToList(path).toArray());
     }
 }

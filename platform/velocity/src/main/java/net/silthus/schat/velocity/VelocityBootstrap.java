@@ -37,6 +37,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.util.ProxyVersion;
 import java.nio.file.Path;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.platform.plugin.bootstrap.Platform;
 import net.silthus.schat.platform.plugin.logging.PluginLogger;
@@ -54,6 +55,7 @@ import org.slf4j.Logger;
 )
 
 @Getter
+@Accessors(fluent = true)
 public final class VelocityBootstrap implements Bootstrap {
 
     private final PluginLogger pluginLogger;
@@ -78,28 +80,28 @@ public final class VelocityBootstrap implements Bootstrap {
     }
 
     @Override
-    public Path getDataDirectory() {
+    public Path dataDirectory() {
         return this.dataDirectory.toAbsolutePath();
     }
 
     @Override
-    public String getVersion() {
+    public String version() {
         return pluginContainer.getDescription().getVersion().orElse("UNKNOWN");
     }
 
     @Override
-    public Platform.Type getType() {
+    public Platform.Type type() {
         return Platform.Type.VELOCITY;
     }
 
     @Override
-    public String getServerBrand() {
+    public String serverBrand() {
         final ProxyVersion version = proxy.getVersion();
         return version.getName() + " - " + version.getVendor();
     }
 
     @Override
-    public String getServerVersion() {
+    public String serverVersion() {
         return proxy.getVersion().getVersion();
     }
 

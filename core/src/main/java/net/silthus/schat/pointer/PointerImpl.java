@@ -24,14 +24,5 @@
 
 package net.silthus.schat.pointer;
 
-import lombok.Value;
-
-@Value final class PointerImpl<T> implements Pointer<T> {
-    private final Class<T> type;
-    private final String key;
-
-    PointerImpl(final Class<T> type, final String key) {
-        this.type = type;
-        this.key = key;
-    }
+record PointerImpl<T>(Class<T> type, String key) implements Pointer<T> {
 }

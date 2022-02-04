@@ -25,6 +25,7 @@
 package net.silthus.schat.ui.format;
 
 import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
@@ -39,6 +40,7 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
 
 @Getter
+@Accessors(fluent = true)
 public class ChannelFormat implements Format<Channel>, Configured {
 
     public static final Setting<TextColor> COLOR = Setting.setting(TextColor.class, "color", WHITE);
@@ -52,7 +54,7 @@ public class ChannelFormat implements Format<Channel>, Configured {
     }
 
     public Component format(Channel channel) {
-        TextComponent.Builder builder = text().append(channel.getDisplayName());
+        TextComponent.Builder builder = text().append(channel.displayName());
         if (get(COLOR) != null)
             builder.color(get(COLOR));
         if (get(DECORATION) != null)

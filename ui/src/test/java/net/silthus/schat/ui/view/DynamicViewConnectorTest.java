@@ -48,7 +48,7 @@ class DynamicViewConnectorTest {
     @BeforeEach
     void setUp() {
         chatter = chatterMock(builder -> builder.viewConnector(c -> {
-            connector = new DynamicViewConnector(c, cv -> () -> c.getLastMessage().map(Message::text).orElse(Component.empty()), out);
+            connector = new DynamicViewConnector(c, cv -> () -> c.lastMessage().map(Message::text).orElse(Component.empty()), out);
             return connector;
         }));
     }

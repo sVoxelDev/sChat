@@ -37,8 +37,8 @@ public final class ChannelSerializer implements TypeSerializer<ChannelConfig> {
     @Override
     public ChannelConfig deserialize(Type type, ConfigurationNode node) throws SerializationException {
         final ChannelConfig config = new ChannelConfig();
-        config.setName(node.node("name").get(Component.class));
-        config.setSettings(node.node("settings").get(Settings.class));
+        config.name(node.node("name").get(Component.class));
+        config.settings(node.node("settings").get(Settings.class));
         return config;
     }
 
@@ -46,7 +46,7 @@ public final class ChannelSerializer implements TypeSerializer<ChannelConfig> {
     public void serialize(Type type, @Nullable ChannelConfig obj, ConfigurationNode node) throws SerializationException {
         if (obj == null)
             return;
-        node.node("name").set(Component.class, obj.getName());
-        node.node("settings").set(Settings.class, obj.getSettings());
+        node.node("name").set(Component.class, obj.name());
+        node.node("settings").set(Settings.class, obj.settings());
     }
 }

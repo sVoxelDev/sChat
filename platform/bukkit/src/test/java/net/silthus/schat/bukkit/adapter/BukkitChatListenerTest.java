@@ -58,7 +58,7 @@ class BukkitChatListenerTest extends BukkitTests {
     }
 
     private void handleMessage(Chatter chatter) {
-        lastMessage = chatter.getLastMessage().map(Message::text).orElse(null);
+        lastMessage = chatter.lastMessage().map(Message::text).orElse(null);
     }
 
     private void chat() {
@@ -68,7 +68,7 @@ class BukkitChatListenerTest extends BukkitTests {
     @Nested class given_no_active_channel {
         @BeforeEach
         void setUp() {
-            chatter.setActiveChannel(null);
+            chatter.activeChannel(null);
         }
 
         @SneakyThrows
@@ -84,7 +84,7 @@ class BukkitChatListenerTest extends BukkitTests {
     @Nested class given_active_channel {
         @BeforeEach
         void setUp() {
-            chatter.setActiveChannel(randomChannel());
+            chatter.activeChannel(randomChannel());
         }
     }
 }

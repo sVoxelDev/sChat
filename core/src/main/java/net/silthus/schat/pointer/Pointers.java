@@ -62,7 +62,7 @@ public sealed interface Pointers permits PointersImpl, PointersImpl.EmptyPointer
      * @since next
      */
     @Contract(pure = true)
-    static @NotNull Builder pointers() {
+    static @NotNull Builder pointersBuilder() {
         return new PointersImpl.BuilderImpl();
     }
 
@@ -78,8 +78,8 @@ public sealed interface Pointers permits PointersImpl, PointersImpl.EmptyPointer
     default <V> @NotNull @Unmodifiable Set<Pointer<V>> getPointers(final @NotNull Class<V> valueType) {
         Objects.requireNonNull(valueType, "valueType");
         final Set<Pointer<V>> filteredPointers = new HashSet<>();
-        for (final Pointer<?> pointer : this.getPointers()) {
-            if (valueType.isAssignableFrom(pointer.getType()))
+        for (final Pointer<?> pointer : this.pointers()) {
+            if (valueType.isAssignableFrom(pointer.type()))
                 filteredPointers.add((Pointer<V>) pointer);
         }
         return Collections.unmodifiableSet(filteredPointers);
@@ -95,7 +95,7 @@ public sealed interface Pointers permits PointersImpl, PointersImpl.EmptyPointer
      * @return an unmodifiable set of pointers in this pointer collection
      * @since next
      */
-    default @NotNull @Unmodifiable Set<Pointer<?>> getPointers() {
+    default @NotNull @Unmodifiable Set<Pointer<?>> pointers() {
         return Collections.emptySet();
     }
 

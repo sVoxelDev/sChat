@@ -48,6 +48,6 @@ public final class ChatterArgument implements ParameterInjector<Sender, Chatter>
 
     @Override
     public Chatter create(@NonNull CommandContext<Sender> context, @NonNull AnnotationAccessor annotationAccessor) {
-        return chatterProvider.get(context.getSender().getUniqueId());
+        return chatterProvider.get(context.getSender().uniqueId());
     }
 }

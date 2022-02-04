@@ -43,9 +43,9 @@ public final class BungeecordMessengerGateway implements MessengerGateway, Liste
     private final SchedulerAdapter scheduler;
 
     public BungeecordMessengerGateway(BungeecordBootstrap bootstrap) {
-        this.proxy = bootstrap.getProxy();
-        this.scheduler = bootstrap.getScheduler();
-        this.proxy.getPluginManager().registerListener(bootstrap.getLoader(), this);
+        this.proxy = bootstrap.proxy();
+        this.scheduler = bootstrap.scheduler();
+        this.proxy.getPluginManager().registerListener(bootstrap.loader(), this);
     }
 
     @Override

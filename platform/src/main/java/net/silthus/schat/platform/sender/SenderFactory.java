@@ -43,9 +43,9 @@ public abstract class SenderFactory<T> implements AutoCloseable, PlayerOnlineChe
         "Console"
     );
 
-    protected abstract Class<T> getSenderType();
+    protected abstract Class<T> senderType();
 
-    protected abstract Identity getIdentity(T sender);
+    protected abstract Identity identity(T sender);
 
     protected abstract void sendMessage(T sender, Component message);
 
@@ -56,7 +56,7 @@ public abstract class SenderFactory<T> implements AutoCloseable, PlayerOnlineChe
     protected abstract boolean isConsole(T sender);
 
     public final Sender wrap(@NonNull T sender) {
-        if (!getSenderType().isInstance(sender))
+        if (!senderType().isInstance(sender))
             throw new IllegalSenderType();
         return new FactorySender<>(this, sender);
     }
@@ -64,7 +64,7 @@ public abstract class SenderFactory<T> implements AutoCloseable, PlayerOnlineChe
     @SuppressWarnings("unchecked")
     public final T unwrap(@NonNull Sender sender) {
         if (sender instanceof FactorySender<?> factorySender)
-            return (T) factorySender.getHandle();
+            return (T) factorySender.handle();
         throw new IllegalSenderType();
     }
 

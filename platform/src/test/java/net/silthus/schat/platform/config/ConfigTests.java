@@ -54,18 +54,18 @@ class ConfigTests {
 
     private Channel getTestChannelConfig() {
         return config.get(CHANNELS).stream()
-            .filter(channel -> channel.getKey().equals("test"))
+            .filter(channel -> channel.key().equals("test"))
             .findFirst().orElseThrow();
     }
 
     @Test
     void loads_parsed_channel_name() {
-        assertThat(getTestChannelConfig().getDisplayName()).isEqualTo(text("Test"));
+        assertThat(getTestChannelConfig().displayName()).isEqualTo(text("Test"));
     }
 
     @Test
     void loads_defined_channel_settings() {
-        assertThat(getTestChannelConfig().getSettings().get(PROTECTED)).isTrue();
+        assertThat(getTestChannelConfig().settings().get(PROTECTED)).isTrue();
     }
 
     @Test
@@ -78,6 +78,6 @@ class ConfigTests {
         config.set(CHANNELS, channels);
         config.reload();
 
-        assertThat(getTestChannelConfig().getDisplayName()).isEqualTo(name);
+        assertThat(getTestChannelConfig().displayName()).isEqualTo(name);
     }
 }

@@ -37,17 +37,17 @@ public interface ConfigurationSection {
 
     void set(String path, Object value);
 
-    String getString(String path, String def);
+    String string(String path, String def);
 
-    int getInteger(String path, int def);
+    int integer(String path, int def);
 
-    boolean getBoolean(String path, boolean def);
+    boolean bool(String path, boolean def);
 
-    List<String> getStringList(String path, List<String> def);
+    List<String> stringList(String path, List<String> def);
 
-    List<String> getKeys(String path, List<String> def);
+    List<String> keys(String path, List<String> def);
 
-    Component getParsedString(String path, Component def);
+    Component component(String path, Component def);
 
-    Settings getSettings(String path);
+    Settings settings(String path);
 }

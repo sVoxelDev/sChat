@@ -78,7 +78,7 @@ public final class ChannelArgument implements ArgumentParser<Sender, Channel> {
     @Override
     public @NonNull ArgumentParseResult<@NonNull Channel> parse(@NonNull CommandContext<@NonNull Sender> commandContext, @NonNull Queue<@NonNull String> inputQueue) {
         try {
-            return getChannel(commandContext, validateAndGetInput(commandContext, inputQueue));
+            return parseChannel(commandContext, validateAndGetInput(commandContext, inputQueue));
         } catch (Exception e) {
             return failure(e);
         }
@@ -88,12 +88,12 @@ public final class ChannelArgument implements ArgumentParser<Sender, Channel> {
     public @NonNull List<@NonNull String> suggestions(@NonNull CommandContext<Sender> commandContext, @NonNull String input) {
         return repository
             .filter(channel -> canJoinChannel(commandContext.getSender(), channel).validate())
-            .stream().map(Channel::getKey)
+            .stream().map(Channel::key)
             .toList();
     }
 
     @NotNull
-    private ArgumentParseResult<@NonNull Channel> getChannel(@NotNull CommandContext<@NonNull Sender> commandContext, String input) {
+    private ArgumentParseResult<@NonNull Channel> parseChannel(@NotNull CommandContext<@NonNull Sender> commandContext, String input) {
         try {
             return success(repository.get(input));
         } catch (Repository.NotFound e) {

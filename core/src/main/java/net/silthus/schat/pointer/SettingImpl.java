@@ -25,13 +25,14 @@
 package net.silthus.schat.pointer;
 
 import java.util.function.Supplier;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import lombok.Value;
+import lombok.experimental.Accessors;
 
-@Data
-@EqualsAndHashCode(of = {"type", "key"})
-final class SettingImpl<V> implements Setting<V> {
+@Value
+@Accessors(fluent = true)
+@EqualsAndHashCode(of = {"type", "key"}) final class SettingImpl<V> implements Setting<V> {
 
     private final Class<V> type;
     private final String key;
@@ -47,7 +48,7 @@ final class SettingImpl<V> implements Setting<V> {
     }
 
     @Override
-    public V getDefaultValue() {
+    public V defaultValue() {
         return this.defaultValue.get();
     }
 }

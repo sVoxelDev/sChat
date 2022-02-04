@@ -37,14 +37,14 @@ public interface Platform {
      *
      * @return the type of platform sChat is running on
      */
-    @NonNull Type getType();
+    @NonNull Type type();
 
     /**
      * Gets the time when the plugin first started.
      *
      * @return the enable time
      */
-    @NonNull Instant getStartTime();
+    @NonNull Instant startTime();
 
     /**
      * Represents a type of platform which sChat can run on.
@@ -69,7 +69,7 @@ public interface Platform {
          *
          * @return a readable name
          */
-        public @NonNull String getFriendlyName() {
+        public @NonNull String friendlyName() {
             return this.friendlyName;
         }
     }
