@@ -25,14 +25,10 @@
 package net.silthus.schat.message;
 
 import java.util.UUID;
-import java.util.function.Consumer;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.eventbus.EventBusMock;
-import net.silthus.schat.events.message.SendMessageEvent;
 import net.silthus.schat.identity.Identity;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -43,13 +39,10 @@ import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.message.Message.message;
-import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static net.silthus.schat.message.MessageHelper.randomText;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 class MessageTest {
@@ -160,56 +153,5 @@ class MessageTest {
         Channel channel = randomChannel();
         Message.Draft message = message().to(channel);
         assertThat(message.channels()).contains(channel);
-    }
-
-    @Nested class events {
-
-        private EventBusMock eventBus;
-        private boolean eventCalled = false;
-
-        @BeforeEach
-        void setUp() {
-            eventBus = new EventBusMock();
-            onEvent(event -> eventCalled = true);
-        }
-
-        @AfterEach
-        void tearDown() {
-            eventBus.close();
-        }
-
-        private void onEvent(Consumer<SendMessageEvent> event) {
-            eventBus.on(SendMessageEvent.class, event);
-        }
-
-        @Test
-        void send_calls_event() {
-            final MessageTarget target = mock(MessageTarget.class);
-
-            final Message message = message().to(target).send();
-
-            assertThat(eventCalled).isTrue();
-            verify(target).sendMessage(message);
-        }
-
-        @Test
-        void cancelled_event_prevents_message_sending() {
-            onEvent(event -> event.cancelled(true));
-            final MessageTarget target = mock(MessageTarget.class);
-
-            message().to(target).send();
-
-            verify(target, never()).sendMessage(any());
-        }
-
-        @Test
-        void targets_are_modifiable_when_event_is_called() {
-            final MessageTarget target = mock(MessageTarget.class);
-            onEvent(event -> event.targets().add(target));
-
-            final Message message = randomMessage().send();
-
-            verify(target).sendMessage(message);
-        }
     }
 }

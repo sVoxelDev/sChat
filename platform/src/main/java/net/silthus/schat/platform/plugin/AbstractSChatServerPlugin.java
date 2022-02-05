@@ -35,6 +35,7 @@ import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.features.GlobalChatFeature;
 import net.silthus.schat.message.MessagePrototype;
+import net.silthus.schat.message.Messenger;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;
@@ -130,7 +131,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     }
 
     private void setupPrototypes() {
-        MessagePrototype.configure(eventBus());
+        MessagePrototype.configure(Messenger.messenger().eventBus(eventBus()).create());
         ChannelPrototype.configure(eventBus());
     }
 

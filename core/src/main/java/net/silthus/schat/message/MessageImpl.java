@@ -37,13 +37,14 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.eventbus.EventBus;
-import net.silthus.schat.events.message.SendMessageEvent;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.pointer.Pointers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
+
+import static net.silthus.schat.message.Targets.copyOf;
+import static net.silthus.schat.message.Targets.unmodifiable;
 
 @Getter
 @Accessors(fluent = true)
@@ -64,17 +65,17 @@ final class MessageImpl implements Message {
     private final transient Targets targets;
     private final Component text;
     private final Type type;
-    private final transient EventBus eventBus;
+    private final transient Messenger messenger;
     private final transient Pointers pointers;
 
     private MessageImpl(Draft draft) {
         this.id = draft.id;
         this.timestamp = draft.timestamp;
         this.source = draft.source;
-        this.targets = Targets.unmodifiable(Targets.copyOf(draft.targets));
+        this.targets = unmodifiable(copyOf(draft.targets));
         this.text = draft.text;
         this.type = draft.type;
-        this.eventBus = draft.eventBus;
+        this.messenger = draft.messenger;
         this.pointers = Pointers.pointersBuilder()
             .withStatic(Message.ID, id)
             .withStatic(Message.TIMESTAMP, timestamp)
@@ -95,11 +96,8 @@ final class MessageImpl implements Message {
     }
 
     @Override
-    public @NotNull MessageImpl send() {
-        final SendMessageEvent event = eventBus.post(new SendMessageEvent(this));
-        if (event.isNotCancelled())
-            event.targets().sendMessage(this);
-        return this;
+    public @NotNull Message send() {
+        return messenger.send(this);
     }
 
     @Override
@@ -124,7 +122,7 @@ final class MessageImpl implements Message {
         private Targets targets = new Targets();
         private Component text = Component.empty();
         private Type type = Type.SYSTEM;
-        private EventBus eventBus = EventBus.empty();
+        private Messenger messenger = Messenger.simpleMessenger();
 
         private Draft() {
         }
@@ -133,7 +131,7 @@ final class MessageImpl implements Message {
             this.id = message.id();
             this.timestamp = message.timestamp();
             this.source = message.source();
-            this.targets = Targets.copyOf(message.targets());
+            this.targets = copyOf(message.targets());
             this.text = message.text();
             this.type = message.type();
         }

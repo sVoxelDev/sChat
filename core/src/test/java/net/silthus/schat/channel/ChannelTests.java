@@ -24,15 +24,10 @@
 
 package net.silthus.schat.channel;
 
-import java.util.function.Consumer;
 import net.kyori.adventure.text.TextComponent;
-import net.silthus.schat.eventbus.EventBusMock;
-import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
-import net.silthus.schat.message.Targets;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -48,9 +43,7 @@ import static net.silthus.schat.checks.CanJoinChannelCheck.CAN_JOIN_CHANNEL;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 class ChannelTests {
@@ -154,66 +147,6 @@ class ChannelTests {
         @BeforeEach
         void setUp() {
             channel = Channel.channel("test").check(CAN_JOIN_CHANNEL).create();
-        }
-    }
-
-    @Nested class events {
-        private EventBusMock eventBus;
-        private boolean calledEvent = false;
-
-        @BeforeEach
-        void setUp() {
-            eventBus = new EventBusMock();
-            channel = randomChannel();
-        }
-
-        @AfterEach
-        void tearDown() {
-            eventBus.close();
-        }
-
-        private void onEvent(Consumer<SendChannelMessageEvent> handler) {
-            eventBus.on(SendChannelMessageEvent.class, handler);
-        }
-
-        @Test
-        void sendMessage_fires_ChannelMessageEvent() {
-            onEvent(event -> calledEvent = true);
-
-            channel.sendMessage(randomMessage());
-
-            assertThat(calledEvent).isTrue();
-        }
-
-        @Test
-        void sendMessage_uses_modified_targets() {
-            final MessageTarget target = mock(MessageTarget.class);
-            onEvent(event -> event.targets(Targets.of(target)));
-
-            channel.sendMessage(randomMessage());
-
-            verify(target).sendMessage(any());
-        }
-
-        @Test
-        void cancelled_event_cancels_message_sending() {
-            final MessageTarget target = addMockTarget();
-            onEvent(event -> event.cancelled(true));
-
-            channel.sendMessage(randomMessage());
-
-            verify(target, never()).sendMessage(any());
-        }
-
-        @Test
-        void sendMessage_uses_message_of_event() {
-            final MessageTarget target = addMockTarget();
-            final Message replacedMessage = randomMessage();
-            onEvent(event -> event.message(replacedMessage));
-
-            channel.sendMessage(randomMessage());
-
-            verify(target).sendMessage(replacedMessage);
         }
     }
 }
