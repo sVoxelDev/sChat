@@ -36,7 +36,6 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.cucumber.models.User;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.sender.SenderMock;
-import net.silthus.schat.ui.model.ViewTab;
 import net.silthus.schat.ui.view.View;
 import net.silthus.schat.ui.views.TabbedChannelsView;
 
@@ -54,13 +53,19 @@ public class UserSteps {
         this.context = context;
     }
 
+    public User me() {
+        return user("I");
+    }
+
     @ParameterType("I|[a-zA-Z0-9]+")
     public User user(String user) {
         return context.users().computeIfAbsent(user, this::createUser);
     }
 
-    @ParameterType("view of ([a-zA-Z0-9]+)")
+    @ParameterType(value = "my view|(the view of (?<user>[a-zA-Z0-9]+))")
     public View view(String user) {
+        if (user == null)
+            return me().view();
         return user(user).view();
     }
 
@@ -117,12 +122,12 @@ public class UserSteps {
         user.sender().assertLastMessageIs(JOIN_CHANNEL_ERROR.build(channel));
     }
 
-    @Then("the {view} shows the {message} in a separate tab")
+    @Then("{view} shows the {message} in a separate tab")
     public void theMessageIsShownInASeparateTab(View view, Message message) {
-        assertThat(((TabbedChannelsView) view).viewModel().tabs())
-            .filteredOn(viewTab -> viewTab.source().equals(message.source()))
+        assertThat(((TabbedChannelsView) view).tabs())
+            .filteredOn(tab -> message.targets().contains(tab.channel()))
             .isNotEmpty()
-            .extracting(ViewTab::messages).asList()
+            .extracting(TabbedChannelsView.Tab::messages).asList()
             .contains(message);
     }
 }

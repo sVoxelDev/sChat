@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.messaging.GsonPluginMessageSerializer;
 import net.silthus.schat.messaging.MessengerGatewayProvider;
 import net.silthus.schat.platform.config.ConfigKeys;
 import net.silthus.schat.platform.config.SChatConfig;
@@ -39,12 +40,11 @@ import net.silthus.schat.platform.locale.TranslationManager;
 import net.silthus.schat.platform.messaging.GatewayProviderRegistry;
 import net.silthus.schat.platform.messaging.MessagingService;
 import net.silthus.schat.platform.sender.Sender;
-import net.silthus.schat.util.gson.GsonSerializer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import static net.silthus.schat.messaging.PluginMessageSerializer.gsonSerializer;
 import static net.silthus.schat.platform.locale.Messages.STARTUP_BANNER;
-import static net.silthus.schat.util.gson.GsonProvider.gsonSerializer;
 
 @Getter
 @Accessors(fluent = true)
@@ -53,7 +53,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     private TranslationManager translationManager;
     private EventBus eventBus;
     private MessengerGatewayProvider.Registry gatewayProviderRegistry;
-    private GsonSerializer serializer;
+    private GsonPluginMessageSerializer serializer;
 
     private SChatConfig config;
     private MessagingService messenger;

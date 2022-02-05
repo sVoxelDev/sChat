@@ -39,6 +39,7 @@ import net.silthus.schat.messaging.PluginMessageSerializer;
 import static net.silthus.schat.channel.Channel.GLOBAL;
 
 public class GlobalChatFeature implements EventListener {
+
     private final Messenger messenger;
 
     public GlobalChatFeature(Messenger messenger, PluginMessageSerializer serializer) {

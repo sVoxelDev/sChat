@@ -82,6 +82,7 @@ public final class TabbedChannelsView implements View {
         .create());
 
     private final ChatterViewModel viewModel;
+    private final List<Tab> tabs = new ArrayList<>();
     private final Settings settings = createSettings();
 
     TabbedChannelsView(Chatter chatter) {
@@ -130,9 +131,14 @@ public final class TabbedChannelsView implements View {
     private List<Component> getRenderedMessages() {
         final ArrayList<Component> messages = new ArrayList<>();
         for (final Message message : viewModel.messages()) {
-            messages.add(get(MESSAGE_FORMAT).format(message));
+            if (isMessageDisplayed(message))
+                messages.add(get(MESSAGE_FORMAT).format(message));
         }
         return messages;
+    }
+
+    private boolean isMessageDisplayed(Message message) {
+        return viewModel.isNotSentToChannel(message) || viewModel.isSentToActiveChannel(message);
     }
 
     private List<Component> getRenderedChannels() {
@@ -146,4 +152,13 @@ public final class TabbedChannelsView implements View {
         return channels;
     }
 
+    public static class Tab {
+        public Channel channel() {
+            return null;
+        }
+
+        public List<Message> messages() {
+            return null;
+        }
+    }
 }

@@ -105,32 +105,16 @@ class ChatterViewModelTests {
         }
 
         @Nested class given_message_sent_to_channel {
-            private Channel channel;
             private Message message;
 
             @BeforeEach
             void setUp() {
-                channel = randomChannel();
-                message = sendMessage(message().to(channel));
+                message = sendMessage(message().to(randomChannel()));
             }
 
-            @Nested class given_channel_is_inactive {
-                @Test
-                void then_message_is_not_displayed() {
-                    assertThat(model.messages()).doesNotContain(message);
-                }
-            }
-
-            @Nested class given_channel_is_active {
-                @BeforeEach
-                void setUp() {
-                    chatter.activeChannel(channel);
-                }
-
-                @Test
-                void then_message_is_displayed() {
-                    assertThat(model.messages()).contains(message);
-                }
+            @Test
+            void then_message_is_listed_in_messages() {
+                assertThat(model.messages()).contains(message);
             }
         }
     }

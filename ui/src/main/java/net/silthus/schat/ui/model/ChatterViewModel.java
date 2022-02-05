@@ -61,19 +61,12 @@ public class ChatterViewModel implements Configured.Modifiable<ChatterViewModel>
     }
 
     private boolean isMessageDisplayed(Message message) {
-        return notSentToChannel(message) || hasActiveChannel() && sentToActiveChannel(message);
-    }
-
-    private boolean notSentToChannel(Message message) {
-        return message.channels().isEmpty();
+        return true;
+//        return notSentToChannel(message) || hasActiveChannel() && sentToActiveChannel(message);
     }
 
     private boolean hasActiveChannel() {
         return chatter.activeChannel().isPresent();
-    }
-
-    private boolean sentToActiveChannel(Message message) {
-        return chatter.activeChannel().map(channel -> message.channels().contains(channel)).orElse(false);
     }
 
     public @NotNull @Unmodifiable List<Channel> channels() {
@@ -84,7 +77,11 @@ public class ChatterViewModel implements Configured.Modifiable<ChatterViewModel>
         return chatter.isActiveChannel(channel);
     }
 
-    public List<ViewTab> tabs() {
-        return null;
+    public boolean isNotSentToChannel(Message message) {
+        return message.channels().isEmpty();
+    }
+
+    public boolean isSentToActiveChannel(Message message) {
+        return chatter.activeChannel().map(channel -> message.channels().contains(channel)).orElse(false);
     }
 }

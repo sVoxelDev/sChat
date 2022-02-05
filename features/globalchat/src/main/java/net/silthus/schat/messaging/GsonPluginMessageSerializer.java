@@ -24,23 +24,38 @@
 
 package net.silthus.schat.messaging;
 
+import com.google.gson.JsonObject;
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.NonNull;
-import net.silthus.schat.util.gson.GsonProvider;
 import org.jetbrains.annotations.NotNull;
 
-public interface PluginMessageSerializer {
+import static net.silthus.schat.util.gson.GsonProvider.normalGson;
 
-    /**
-     * Registers the given message type for serialization and deserialization.
-     *
-     * <p>Register your custom json serializable types with the {@link GsonProvider#registerTypeAdapter(Type, Object)}.</p>
-     *
-     * @param type the type
-     */
-    void registerMessageType(Type type);
+public final class GsonPluginMessageSerializer implements PluginMessageSerializer {
 
-    @NotNull String encode(PluginMessage pluginMessage);
+    static final GsonPluginMessageSerializer SERIALIZER = new GsonPluginMessageSerializer();
 
-    @NotNull PluginMessage decode(@NonNull String encodedString);
+    private final Map<String, Type> typeMap = new HashMap<>();
+
+    @Override
+    public void registerMessageType(Type type) {
+        typeMap.put(type.getTypeName(), type);
+    }
+
+    @Override
+    public @NotNull String encode(PluginMessage pluginMessage) {
+        final JsonObject json = normalGson()
+            .toJsonTree(pluginMessage).getAsJsonObject();
+        json.addProperty("type", pluginMessage.getClass().getTypeName());
+        return normalGson().toJson(json);
+    }
+
+    @Override
+    public @NotNull PluginMessage decode(@NonNull String encodedString) {
+        final JsonObject json = normalGson().fromJson(encodedString, JsonObject.class);
+        final String type = json.get("type").getAsString();
+        return normalGson().fromJson(json, typeMap.get(type));
+    }
 }

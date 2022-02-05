@@ -22,18 +22,29 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.ui.model;
+package net.silthus.schat.messaging;
 
-import java.util.List;
-import net.silthus.schat.identity.Identity;
-import net.silthus.schat.message.Message;
+import java.lang.reflect.Type;
+import lombok.NonNull;
+import net.silthus.schat.util.gson.GsonProvider;
+import org.jetbrains.annotations.NotNull;
 
-public class ViewTab {
-    public Identity source() {
-        return null;
+public interface PluginMessageSerializer {
+
+    static GsonPluginMessageSerializer gsonSerializer() {
+        return GsonPluginMessageSerializer.SERIALIZER;
     }
 
-    public List<Message> messages() {
-        return null;
-    }
+    /**
+     * Registers the given message type for serialization and deserialization.
+     *
+     * <p>Register your custom json serializable types with the {@link GsonProvider#registerTypeAdapter(Type, Object)}.</p>
+     *
+     * @param type the type
+     */
+    void registerMessageType(Type type);
+
+    @NotNull String encode(PluginMessage pluginMessage);
+
+    @NotNull PluginMessage decode(@NonNull String encodedString);
 }
