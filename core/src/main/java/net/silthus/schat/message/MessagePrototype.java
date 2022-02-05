@@ -24,12 +24,10 @@
 
 package net.silthus.schat.message;
 
-import net.silthus.schat.eventbus.EventBus;
-
 public final class MessagePrototype {
 
-    public static void configure(EventBus eventBus) {
-        MessageImpl.setPrototype(draft -> draft.eventBus(eventBus));
+    public static void configure(Messenger messenger) {
+        MessageImpl.setPrototype(draft -> draft.messenger(messenger));
     }
 
     private MessagePrototype() {
