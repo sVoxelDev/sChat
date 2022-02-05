@@ -28,6 +28,7 @@ import net.kyori.adventure.text.Component;
 import net.silthus.schat.command.Check;
 import net.silthus.schat.command.Command;
 import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.message.Messages;
 import net.silthus.schat.message.Targets;
 import net.silthus.schat.pointer.Configured;
 import net.silthus.schat.pointer.Pointer;
@@ -87,6 +88,8 @@ public sealed interface Channel extends Entity<String>, Configured.Modifiable<Ch
     void addTarget(MessageTarget target);
 
     void removeTarget(MessageTarget target);
+
+    @NotNull @Unmodifiable Messages messages();
 
     interface Builder extends Configured.Builder<Builder> {
 

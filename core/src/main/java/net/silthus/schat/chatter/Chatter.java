@@ -66,19 +66,9 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
         return uniqueId();
     }
 
-    default @NotNull UUID uniqueId() {
-        return identity().uniqueId();
-    }
-
-    default @NotNull String name() {
-        return identity().name();
-    }
-
-    default @NotNull Component displayName() {
-        return identity().displayName();
-    }
-
     @NotNull @Unmodifiable List<Channel> channels();
+
+    @NotNull Optional<Channel> channel(String key);
 
     @NotNull Optional<Channel> activeChannel();
 

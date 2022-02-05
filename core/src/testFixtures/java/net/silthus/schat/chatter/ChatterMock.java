@@ -26,8 +26,10 @@ package net.silthus.schat.chatter;
 
 import java.util.function.Consumer;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
+import org.assertj.core.api.ObjectAssert;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.identity.IdentityHelper.randomIdentity;
@@ -80,6 +82,23 @@ public final class ChatterMock extends ChatterImpl {
         assertThat(messages())
             .extracting(Message::text)
             .contains(text);
+    }
+
+    public void assertReceivedMessage(Message message) {
+        assertThat(messages()).contains(message);
+    }
+
+    public ObjectAssert<Channel> assertJoinedChannel(String key) {
+        return assertThat(channels())
+            .filteredOn(channel -> channel.key().equals(key))
+            .isNotEmpty()
+            .first();
+    }
+
+    public void assertJoinedChannel(String key, Component displayName) {
+        assertJoinedChannel(key)
+            .extracting(Channel::displayName)
+            .isEqualTo(displayName);
     }
 
     public void assertViewUpdated() {

@@ -35,7 +35,6 @@ import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.features.GlobalChatFeature;
 import net.silthus.schat.message.MessagePrototype;
-import net.silthus.schat.message.Messenger;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;
@@ -52,6 +51,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.chatter.ChatterProvider.createCachingChatterProvider;
+import static net.silthus.schat.message.SendMessage.sendMessageUseCase;
 import static net.silthus.schat.platform.commands.parser.ChannelArgument.registerChannelArgument;
 import static net.silthus.schat.platform.commands.parser.ChatterArgument.registerChatterArgument;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
@@ -124,15 +124,20 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
         GsonProvider.registerTypeAdapter(CHANNEL_TYPE, new ChannelSerializer(channelRepository()));
     }
 
+    private void setupPrototypes() {
+        MessagePrototype.configure(
+            sendMessageUseCase()
+                .eventBus(eventBus())
+                .channelRepository(channelRepository())
+                .create()
+        );
+        ChannelPrototype.configure(eventBus());
+    }
+
     private void loadFeatures() {
         final GlobalChatFeature feature = new GlobalChatFeature(messenger(), serializer());
         feature.bind(eventBus());
         features.add(feature);
-    }
-
-    private void setupPrototypes() {
-        MessagePrototype.configure(Messenger.messenger().eventBus(eventBus()).create());
-        ChannelPrototype.configure(eventBus());
     }
 
     private void loadChannels() {

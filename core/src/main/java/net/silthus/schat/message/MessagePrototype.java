@@ -26,8 +26,8 @@ package net.silthus.schat.message;
 
 public final class MessagePrototype {
 
-    public static void configure(Messenger messenger) {
-        MessageImpl.setPrototype(draft -> draft.messenger(messenger));
+    public static void configure(SendMessage useCase) {
+        MessageImpl.setPrototype(draft -> draft.sendMessageUseCase(useCase));
     }
 
     private MessagePrototype() {
