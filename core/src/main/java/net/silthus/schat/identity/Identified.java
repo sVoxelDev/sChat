@@ -24,6 +24,9 @@
 
 package net.silthus.schat.identity;
 
+import java.util.UUID;
+import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -31,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @since next
  */
-public interface Identified {
+public non-sealed interface Identified extends Identity {
 
     /**
      * Gets the identity of the identified entity.
@@ -40,4 +43,22 @@ public interface Identified {
      * @since next
      */
     @NotNull Identity identity();
+
+    @Override
+    @ApiStatus.NonExtendable
+    default /*final*/ UUID uniqueId() {
+        return identity().uniqueId();
+    }
+
+    @Override
+    @ApiStatus.NonExtendable
+    default /*final*/ String name() {
+        return identity().name();
+    }
+
+    @Override
+    @ApiStatus.NonExtendable
+    default /*final*/ Component displayName() {
+        return identity().displayName();
+    }
 }

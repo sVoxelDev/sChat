@@ -38,7 +38,7 @@ import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.pointer.Pointer.pointer;
 
-public sealed interface Identity extends Pointered permits IdentityImpl {
+public sealed interface Identity extends Pointered permits Identified, IdentityImpl {
 
     UUID NIL_IDENTITY_ID = new UUID(0, 0); // 00000000-0000-0000-0000-000000000000
 

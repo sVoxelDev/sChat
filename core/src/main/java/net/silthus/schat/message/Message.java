@@ -30,7 +30,6 @@ import java.util.UUID;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.pointer.Pointer;
 import net.silthus.schat.pointer.Pointered;
@@ -67,10 +66,6 @@ public sealed interface Message extends Comparable<Message>, Pointered permits M
 
     @NotNull Identity source();
 
-    default boolean hasSource() {
-        return !source().equals(Identity.nil());
-    }
-
     @NotNull @Unmodifiable Collection<Channel> channels();
 
     @NotNull @Unmodifiable Targets targets();
@@ -102,10 +97,6 @@ public sealed interface Message extends Comparable<Message>, Pointered permits M
         @NotNull Identity source();
 
         @NotNull Draft source(@Nullable Identity identity);
-
-        default @NotNull Draft source(@NonNull Chatter chatter) {
-            return source(chatter.identity());
-        }
 
         @NotNull Draft to(@NonNull MessageTarget target);
 

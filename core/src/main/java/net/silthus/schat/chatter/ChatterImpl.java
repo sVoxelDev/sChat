@@ -93,6 +93,11 @@ non-sealed class ChatterImpl implements Chatter {
     }
 
     @Override
+    public @NotNull Optional<Channel> channel(String key) {
+        return channels().stream().filter(channel -> channel.key().equals(key)).findFirst();
+    }
+
+    @Override
     public void join(@NonNull Channel channel) {
         channel.addTarget(this);
         this.channels.add(channel);
@@ -159,6 +164,11 @@ non-sealed class ChatterImpl implements Chatter {
         @Override
         public @NotNull @Unmodifiable List<Channel> channels() {
             return List.of();
+        }
+
+        @Override
+        public @NotNull Optional<Channel> channel(String key) {
+            return Optional.empty();
         }
 
         @Override

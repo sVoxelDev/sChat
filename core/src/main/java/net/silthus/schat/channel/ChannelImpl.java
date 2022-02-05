@@ -82,6 +82,10 @@ final class ChannelImpl implements Channel {
         return Targets.unmodifiable(targets);
     }
 
+    public @NotNull @Unmodifiable Messages messages() {
+        return Messages.unmodifiable(messages);
+    }
+
     @Override
     public void addTarget(MessageTarget user) {
         targets.add(user);

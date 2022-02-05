@@ -3,7 +3,9 @@ package net.silthus.schat.message;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
@@ -14,7 +16,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.silthus.schat.channel.Channel.GLOBAL;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
+import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
@@ -24,13 +28,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-class MessengerTests {
+class SendMessageUseCaseTests {
 
-    private Messenger messenger;
+    private SendMessage messenger;
+    private ChannelRepository repository;
 
     @BeforeEach
     void setUp() {
-        messenger = Messenger.messenger().create();
+        repository = createInMemoryChannelRepository();
+        messenger = SendMessage.sendMessageUseCase().channelRepository(repository).create();
     }
 
     private Message send(Message.Draft draft) {
@@ -52,28 +58,91 @@ class MessengerTests {
         target.assertReceivedMessageCountIs(1);
     }
 
-    @Nested class private_messages {
+    @Nested class private_message {
         private @NotNull ChatterMock source;
         private @NotNull ChatterMock target;
-        private Message.@NotNull Draft draft;
 
         @BeforeEach
         void setUp() {
             source = randomChatter();
             target = randomChatter();
-            draft = message().source(source).to(target);
         }
 
         private Message sendPrivateMessage() {
-            return send(draft);
+            return send(message().source(source).to(target));
+        }
+
+        private String sourceId() {
+            return source.uniqueId().toString();
+        }
+
+        private String targetId() {
+            return target.uniqueId().toString();
+        }
+
+        private Component sourceName() {
+            return source.displayName();
+        }
+
+        private Component targetName() {
+            return target.displayName();
+        }
+
+        private Channel targetChannel() {
+            return target.channel(sourceId()).orElseThrow();
+        }
+
+        private Channel sourceChannel() {
+            return source.channel(targetId()).orElseThrow();
         }
 
         @Test
         void creates_channel_with_partner_name() {
             sendPrivateMessage();
-            assertThat(source.channels())
-                .isNotEmpty()
-                .allMatch(channel -> channel.key().equals(target.uniqueId().toString()));
+            source.assertJoinedChannel(targetId(), targetName());
+            target.assertJoinedChannel(sourceId(), sourceName());
+        }
+
+        @Test
+        void private_channels_are_linked() {
+            sendPrivateMessage();
+            assertThat(sourceChannel().targets()).contains(targetChannel());
+            assertThat(targetChannel().targets()).contains(sourceChannel());
+        }
+
+        @Test
+        void private_channels_are_global() {
+            sendPrivateMessage();
+            assertThat(sourceChannel().is(GLOBAL)).isTrue();
+        }
+
+        @Test
+        void target_receives_message() {
+            final Message message = sendPrivateMessage();
+            target.assertReceivedMessage(message);
+        }
+
+        @Test
+        void private_channels_are_added_to_repository() {
+            sendPrivateMessage();
+            assertThat(repository.all()).contains(sourceChannel(), targetChannel());
+        }
+
+        @Nested class given_private_channel_exists {
+            private Channel channel;
+
+            @BeforeEach
+            void setUp() {
+                channel = Channel.channel(targetId()).create();
+                repository.add(channel);
+            }
+
+            @Test
+            void channel_is_reused() {
+                final Message message = sendPrivateMessage();
+                assertThat(channel).isSameAs(sourceChannel());
+                assertThat(channel.messages()).contains(message);
+            }
         }
     }
 
@@ -170,7 +239,7 @@ class MessengerTests {
         @BeforeEach
         void setUp() {
             eventBus = new EventBusMock();
-            messenger = Messenger.messenger().eventBus(eventBus).create();
+            messenger = SendMessage.sendMessageUseCase().eventBus(eventBus).create();
             onEvent(event -> eventCalled = true);
         }
 

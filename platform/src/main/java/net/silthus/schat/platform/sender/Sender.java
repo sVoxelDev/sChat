@@ -24,28 +24,14 @@
 
 package net.silthus.schat.platform.sender;
 
-import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.identity.Identified;
 import net.silthus.schat.util.Permissable;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Wrapper interface to represent a CommandSender/CommandSource within the common command implementations.
  */
 public interface Sender extends Identified, Permissable {
-
-    default @NotNull UUID uniqueId() {
-        return identity().uniqueId();
-    }
-
-    default @NotNull String name() {
-        return identity().name();
-    }
-
-    default @NotNull Component displayName() {
-        return identity().displayName();
-    }
 
     /**
      * Send a json message to the Sender.

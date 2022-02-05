@@ -65,7 +65,7 @@ final class MessageImpl implements Message {
     private final transient Targets targets;
     private final Component text;
     private final Type type;
-    private final transient Messenger messenger;
+    private final transient SendMessage sendMessageUseCase;
     private final transient Pointers pointers;
 
     private MessageImpl(Draft draft) {
@@ -75,7 +75,7 @@ final class MessageImpl implements Message {
         this.targets = unmodifiable(copyOf(draft.targets));
         this.text = draft.text;
         this.type = draft.type;
-        this.messenger = draft.messenger;
+        this.sendMessageUseCase = draft.sendMessageUseCase;
         this.pointers = Pointers.pointersBuilder()
             .withStatic(Message.ID, id)
             .withStatic(Message.TIMESTAMP, timestamp)
@@ -97,7 +97,7 @@ final class MessageImpl implements Message {
 
     @Override
     public @NotNull Message send() {
-        return messenger.send(this);
+        return sendMessageUseCase.send(this);
     }
 
     @Override
@@ -122,7 +122,7 @@ final class MessageImpl implements Message {
         private Targets targets = new Targets();
         private Component text = Component.empty();
         private Type type = Type.SYSTEM;
-        private Messenger messenger = Messenger.simpleMessenger();
+        private SendMessage sendMessageUseCase = SendMessage.sendMessageUseCase().create();
 
         private Draft() {
         }
