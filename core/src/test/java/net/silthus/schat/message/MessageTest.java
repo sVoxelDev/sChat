@@ -148,7 +148,7 @@ class MessageTest {
     }
 
     @Test
-    void given_channel_target_adds_channels_targets_to_message() {
+    void given_channel_target_then_adds_channels_targets_to_message() {
         Channel channel = randomChannel();
         MessageTarget target = message -> {};
         channel.addTarget(target);
@@ -156,7 +156,7 @@ class MessageTest {
     }
 
     @Test
-    void given_channel_stores_channel_in_message() {
+    void given_channel_then_stores_channel_in_message() {
         Channel channel = randomChannel();
         Message.Draft message = message().to(channel);
         assertThat(message.channels()).contains(channel);

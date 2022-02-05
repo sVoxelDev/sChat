@@ -28,9 +28,9 @@ import lombok.NonNull;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
+import net.silthus.schat.messaging.GsonPluginMessageSerializer;
 import net.silthus.schat.messaging.Messenger;
 import net.silthus.schat.messaging.PluginMessage;
-import net.silthus.schat.util.gson.GsonSerializer;
 import net.silthus.schat.util.gson.types.ChannelSerializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +41,7 @@ import static net.silthus.schat.channel.Channel.GLOBAL;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
-import static net.silthus.schat.util.gson.GsonProvider.gsonSerializer;
+import static net.silthus.schat.messaging.PluginMessageSerializer.gsonSerializer;
 import static net.silthus.schat.util.gson.GsonProvider.registerTypeAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,7 +49,7 @@ class GlobalChatFeatureTests implements Messenger {
 
     private boolean messengerCalled = false;
     private EventBusMock events;
-    private GsonSerializer serializer;
+    private GsonPluginMessageSerializer serializer;
 
     @BeforeEach
     void setUp() {

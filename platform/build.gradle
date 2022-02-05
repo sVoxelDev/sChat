@@ -70,7 +70,7 @@ subprojects {
 }
 
 dependencies {
-    implementation project(':features:globalchat')
+    api project(':features:globalchat')
 
     implementation 'cloud.commandframework:cloud-core:1.6.1'
     implementation 'cloud.commandframework:cloud-annotations:1.6.1'

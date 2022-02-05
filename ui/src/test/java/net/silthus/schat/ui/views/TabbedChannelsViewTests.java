@@ -47,6 +47,8 @@ import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
+import static net.silthus.schat.identity.Identity.identity;
+import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static net.silthus.schat.ui.format.ChannelFormat.COLOR;
 import static net.silthus.schat.ui.view.View.VIEW_HEIGHT;
@@ -85,19 +87,28 @@ class TabbedChannelsViewTests {
     }
 
     private void sendMessage(String text) {
-        sendMessage(Message.message(text).create());
+        sendMessage(message(text).create());
     }
 
     private void sendMessageWithSource(String source, String text) {
-        sendMessage(Message.message(text).source(Identity.identity(source)).create());
+        sendMessage(message(text).source(identity(source)).create());
     }
 
     private void assertTextRenders(String expected) {
         assertEquals(expected, PLAIN_TEXT_SERIALIZER.serialize(view.render()).trim());
     }
 
+    private void assertTextDoesNotContain(String... unexpected) {
+        assertThat(PLAIN_TEXT_SERIALIZER.serialize(view.render()).trim())
+            .doesNotContain(unexpected);
+    }
+
     private void assertViewRenders(String expected) {
         assertEquals(expected, COMPONENT_SERIALIZER.serialize(view.render()).trim());
+    }
+
+    private void assertViewDoesNotContain(String... unexpected) {
+        assertThat(COMPONENT_SERIALIZER.serialize(view.render()).trim()).doesNotContain(unexpected);
     }
 
     @Nested class given_null_chatter {
@@ -216,15 +227,52 @@ class TabbedChannelsViewTests {
 
     @Nested class given_two_channels {
 
+        private @NotNull Channel channelOne;
+        private @NotNull Channel channelTwo;
+
         @BeforeEach
         void setUp() {
-            chatter.join(createChannel("one"));
-            chatter.join(createChannel("two"));
+            channelOne = createChannel("one");
+            channelTwo = createChannel("two");
+            chatter.join(channelOne);
+            chatter.join(channelTwo);
         }
 
         @Test
         void renders_both_seperated_by_a_divider() {
             assertTextRenders("| one | two |");
+        }
+
+        @Nested class given_both_channels_received_messages {
+            @BeforeEach
+            void setUp() {
+                message("one").source(identity("Bob")).to(channelOne).send();
+                message("two").source(identity("Bob")).to(channelTwo).send();
+            }
+
+            @Test
+            void when_no_channel_is_active_then_messages_are_not_displayed() {
+                assertTextDoesNotContain("Bob: one", "Bob: two");
+            }
+
+            @Nested class given_channel_one_is_active {
+                @BeforeEach
+                void setUp() {
+                    chatter.activeChannel(channelOne);
+                }
+
+                @Test
+                void then_message_one_is_displayed() {
+                    assertTextRenders("""
+                        Bob: one
+                        | one | two |""");
+                }
+
+                @Test
+                void then_message_two_is_not_displayed() {
+                    assertTextDoesNotContain("Bob: two");
+                }
+            }
         }
 
         @Nested class with_different_priorities {

@@ -53,8 +53,6 @@ public final class GsonProvider {
     private static final GsonBuilder PRETTY_PRINTING = BASE.setPrettyPrinting();
     private static final JsonParser NORMAL_PARSER = new JsonParser();
 
-    private static final GsonSerializer SERIALIZER = new GsonSerializer();
-
     public static Gson normalGson() {
         return BASE.create();
     }
@@ -65,10 +63,6 @@ public final class GsonProvider {
 
     public static JsonParser gsonParser() {
         return NORMAL_PARSER;
-    }
-
-    public static GsonSerializer gsonSerializer() {
-        return SERIALIZER;
     }
 
     public static void registerTypeAdapter(Type type, @NonNull Object adapter) {
