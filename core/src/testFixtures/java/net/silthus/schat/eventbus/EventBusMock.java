@@ -25,15 +25,13 @@
 package net.silthus.schat.eventbus;
 
 import net.silthus.schat.channel.ChannelPrototype;
-import net.silthus.schat.message.MessagePrototype;
-
-import static net.silthus.schat.message.SendMessage.sendMessageUseCase;
+import net.silthus.schat.commands.SendMessageCommand;
 
 public class EventBusMock extends AbstractEventBus<Object> {
 
     public EventBusMock() {
         ChannelPrototype.configure(this);
-        MessagePrototype.configure(sendMessageUseCase().eventBus(this).create());
+        SendMessageCommand.prototype(builder -> builder.eventBus(this));
     }
 
     @Override

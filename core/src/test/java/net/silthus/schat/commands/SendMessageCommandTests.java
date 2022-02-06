@@ -1,4 +1,4 @@
-package net.silthus.schat.message;
+package net.silthus.schat.commands;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,10 @@ import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.events.message.SendMessageEvent;
+import net.silthus.schat.message.Message;
+import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.message.MockTarget;
+import net.silthus.schat.message.Targets;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,19 +33,18 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-class SendMessageUseCaseTests {
+class SendMessageCommandTests {
 
-    private SendMessage messenger;
     private ChannelRepository repository;
 
     @BeforeEach
     void setUp() {
         repository = createInMemoryChannelRepository();
-        messenger = SendMessage.sendMessageUseCase().channelRepository(repository).create();
+        SendMessageCommand.prototype(builder -> builder.channelRepository(repository));
     }
 
     private Message send(Message.Draft draft) {
-        return messenger.send(draft.create());
+        return draft.send();
     }
 
     @Test
@@ -49,14 +52,6 @@ class SendMessageUseCaseTests {
         final MockTarget target = new MockTarget();
         final Message message = send(message().to(target));
         target.assertReceivedMessage(message);
-    }
-
-    @Test
-    void same_message_is_only_sent_once() {
-        final MockTarget target = new MockTarget();
-        final Message message = send(message().to(target));
-        messenger.send(message);
-        target.assertReceivedMessageCountIs(1);
     }
 
     @Nested class private_message {
@@ -271,7 +266,7 @@ class SendMessageUseCaseTests {
         @BeforeEach
         void setUp() {
             eventBus = new EventBusMock();
-            messenger = SendMessage.sendMessageUseCase().eventBus(eventBus).create();
+            SendMessageCommand.prototype(builder -> builder.eventBus(eventBus).channelRepository(repository));
             onEvent(event -> eventCalled = true);
         }
 
@@ -288,7 +283,7 @@ class SendMessageUseCaseTests {
         void send_calls_event() {
             final MessageTarget target = mock(MessageTarget.class);
 
-            final Message message = messenger.send(message().to(target).create());
+            final Message message = message().to(target).send();
 
             assertThat(eventCalled).isTrue();
             verify(target).sendMessage(message);
@@ -299,7 +294,7 @@ class SendMessageUseCaseTests {
             onEvent(event -> event.cancelled(true));
             final MessageTarget target = mock(MessageTarget.class);
 
-            messenger.send(message().to(target).create());
+            message().to(target).send();
 
             verify(target, never()).sendMessage(any());
         }
@@ -309,7 +304,7 @@ class SendMessageUseCaseTests {
             final MessageTarget target = mock(MessageTarget.class);
             onEvent(event -> event.targets().add(target));
 
-            final Message message = messenger.send(randomMessage());
+            final Message message = randomMessage().send();
 
             verify(target).sendMessage(message);
         }
