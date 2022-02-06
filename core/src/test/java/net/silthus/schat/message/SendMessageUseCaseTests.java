@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
@@ -69,11 +70,19 @@ class SendMessageUseCaseTests {
         }
 
         private Message sendPrivateMessage() {
+            return sendPrivateMessageFrom(source);
+        }
+
+        private Message sendPrivateMessageFrom(Chatter source) {
             return send(message().source(source).to(target));
         }
 
         private String sourceId() {
-            return source.uniqueId().toString();
+            return idOf(source);
+        }
+
+        private String idOf(Chatter chatter) {
+            return chatter.uniqueId().toString();
         }
 
         private String targetId() {
@@ -117,6 +126,12 @@ class SendMessageUseCaseTests {
         }
 
         @Test
+        void private_channels_have_private_setting() {
+            sendPrivateMessage();
+            assertThat(sourceChannel().is(Channel.PRIVATE)).isTrue();
+        }
+
+        @Test
         void target_receives_message() {
             final Message message = sendPrivateMessage();
             target.assertReceivedMessage(message);
@@ -142,6 +157,23 @@ class SendMessageUseCaseTests {
                 final Message message = sendPrivateMessage();
                 assertThat(channel).isSameAs(sourceChannel());
                 assertThat(channel.messages()).contains(message);
+            }
+        }
+
+        @Nested class given_two_different_source_chatters {
+            private @NotNull ChatterMock source2;
+
+            @BeforeEach
+            void setUp() {
+                source2 = randomChatter();
+            }
+
+            @Test
+            void target_receives_message_in_separate_channels() {
+                sendPrivateMessageFrom(source);
+                sendPrivateMessageFrom(source2);
+                assertThat(target.channel(idOf(source))).isPresent();
+                assertThat(target.channel(idOf(source2))).isPresent();
             }
         }
     }

@@ -22,34 +22,25 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.platform.listener;
+package net.silthus.schat.commands;
 
-import java.util.UUID;
-import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTargetSpy;
-import net.silthus.schat.usecases.OnChat;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static java.util.UUID.randomUUID;
-import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
-import static net.silthus.schat.chatter.ChatterProviderStub.chatterProviderStub;
 import static net.silthus.schat.message.MessageHelper.randomText;
-import static net.silthus.schat.platform.locale.Messages.CANNOT_CHAT_NO_ACTIVE_CHANNEL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-class ChatListenerTest {
+class ChatCommandTest {
 
-    private ChatListener listener;
     private ChatterMock chatter;
     private MessageTargetSpy target;
 
@@ -57,27 +48,11 @@ class ChatListenerTest {
     void setUp() {
         chatter = randomChatter();
         target = new MessageTargetSpy();
-        listener = new ChatListener(chatterProviderStub(chatter));
     }
 
     @NotNull
     private Message chat() {
-        return listener.onChat(chatter, randomText());
-    }
-
-    private Component chatWithId() {
-        final Component text = randomText();
-        listener.onChat(chatter.uniqueId(), text);
-        return text;
-    }
-
-    @Test
-    @SuppressWarnings("ConstantConditions")
-    void given_null_inputs_throws() {
-        assertNPE(() -> listener.onChat((Chatter) null, null));
-        assertNPE(() -> listener.onChat(chatter, null));
-        assertNPE(() -> listener.onChat((UUID) null, null));
-        assertNPE(() -> listener.onChat(randomUUID(), null));
+        return ChatCommand.chat(chatter, randomText());
     }
 
     @Nested class given_no_active_channel {
@@ -88,14 +63,8 @@ class ChatListenerTest {
 
         @Test
         void then_chat_throws() {
-            assertThatExceptionOfType(OnChat.NoActiveChannel.class)
-                .isThrownBy(ChatListenerTest.this::chat);
-        }
-
-        @Test
-        void then_chat_with_id_sends_error_message() {
-            chatWithId();
-            chatter.assertReceivedMessage(CANNOT_CHAT_NO_ACTIVE_CHANNEL.build());
+            assertThatExceptionOfType(ChatCommand.NoActiveChannel.class)
+                .isThrownBy(ChatCommandTest.this::chat);
         }
     }
 
@@ -123,12 +92,6 @@ class ChatListenerTest {
         @Test
         void then_sets_message_type_to_chat() {
             assertThat(chat().type()).isEqualTo(Message.Type.CHAT);
-        }
-
-        @Test
-        void when_chat_with_id_is_called_then_sends_message_to_chatters_channel() {
-            final Component text = chatWithId();
-            target.assertReceivedMessageWithText(text);
         }
     }
 }

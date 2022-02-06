@@ -24,39 +24,24 @@
 
 package net.silthus.schat.commands;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
-import lombok.Getter;
-import lombok.Setter;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.command.Command;
 import net.silthus.schat.command.Result;
 
-// TODO: make subclass of join channel command
-public class SetActiveChannelCommand implements Command {
+public class SetActiveChannelCommand extends JoinChannelCommand implements Command {
 
-    @Getter
-    @Setter
-    private static Function<SetActiveChannelCommand.Builder, SetActiveChannelCommand.Builder> prototype = builder -> builder;
-
-    public static SetActiveChannelCommand.Builder setActiveChannel(Chatter chatter, Channel channel) {
-        return getPrototype().apply(new Builder(chatter, channel));
+    public static JoinChannelCommand.Builder setActiveChannel(Chatter chatter, Channel channel) {
+        return joinChannel(chatter, channel).use(SetActiveChannelCommand::new);
     }
 
-    private final Chatter chatter;
-    private final Channel channel;
-    private final JoinChannelCommand joinChannelCommand;
-
-    protected SetActiveChannelCommand(Builder builder) {
-        this.chatter = builder.chatter;
-        this.channel = builder.channel;
-        this.joinChannelCommand = builder.joinChannelCommand.create();
+    protected SetActiveChannelCommand(JoinChannelCommand.Builder builder) {
+        super(builder);
     }
 
     @Override
     public Result execute() throws Error {
-        final Result joinChannelResult = joinChannelCommand.execute();
+        final Result joinChannelResult = super.execute();
         if (joinChannelResult.wasSuccessful())
             return setActiveChannelAndUpdateView();
         else
@@ -64,29 +49,8 @@ public class SetActiveChannelCommand implements Command {
     }
 
     private Result setActiveChannelAndUpdateView() {
-        chatter.activeChannel(channel);
-        chatter.updateView();
+        chatter().activeChannel(channel());
+        chatter().updateView();
         return Result.success();
-    }
-
-    public static class Builder implements Command.Builder<SetActiveChannelCommand> {
-        private final Chatter chatter;
-        private final Channel channel;
-        private final JoinChannelCommand.Builder joinChannelCommand;
-
-        public Builder(Chatter chatter, Channel channel) {
-            this.chatter = chatter;
-            this.channel = channel;
-            this.joinChannelCommand = JoinChannelCommand.joinChannel(chatter, channel);
-        }
-
-        public Builder joinChannelCmd(Consumer<JoinChannelCommand.Builder> builder) {
-            builder.accept(joinChannelCommand);
-            return this;
-        }
-
-        public SetActiveChannelCommand create() {
-            return new SetActiveChannelCommand(this);
-        }
     }
 }

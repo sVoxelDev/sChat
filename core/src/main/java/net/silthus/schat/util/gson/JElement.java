@@ -28,6 +28,6 @@ import com.google.gson.JsonElement;
 
 public interface JElement {
 
-    JsonElement toJson();
+    JsonElement create();
 
 }

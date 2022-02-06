@@ -27,7 +27,7 @@ package net.silthus.schat.commands;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.ChatterMock;
-import net.silthus.schat.usecases.JoinChannel;
+import net.silthus.schat.command.Command;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -61,13 +61,13 @@ class JoinChannelCommandTests {
 
     private void canJoin(boolean canJoin) {
         if (canJoin)
-            JoinChannelCommand.setPrototype(builder -> builder.check(ALLOW));
+            JoinChannelCommand.prototype(builder -> builder.validate(ALLOW));
         else
-            JoinChannelCommand.setPrototype(builder -> builder.check(DENY));
+            JoinChannelCommand.prototype(builder -> builder.validate(DENY));
     }
 
     private void assertJoinChannelError() {
-        assertThatExceptionOfType(JoinChannel.Error.class)
+        assertThatExceptionOfType(Command.Error.class)
             .isThrownBy(this::joinChannel);
     }
 

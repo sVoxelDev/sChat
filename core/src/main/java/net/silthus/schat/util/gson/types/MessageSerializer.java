@@ -49,13 +49,13 @@ public final class MessageSerializer implements JsonSerializer<Message>, JsonDes
 
     @Override
     public JsonElement serialize(Message src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JObject()
+        return JObject.json()
             .add("id", context.serialize(src.id(), UUID.class))
             .add("timestamp", context.serialize(src.timestamp(), Instant.class))
             .add("text", context.serialize(src.text(), Component.class))
             .add("type", context.serialize(src.type(), Message.Type.class))
             .add("source", context.serialize(src.source(), Identity.class))
-            .toJson();
+            .create();
     }
 
     @Override
@@ -66,7 +66,7 @@ public final class MessageSerializer implements JsonSerializer<Message>, JsonDes
             .timestamp(context.deserialize(object.get("timestamp"), Instant.class))
             .text(context.deserialize(object.get("text"), Component.class))
             .type(context.deserialize(object.get("type"), Message.Type.class))
-            .source((Identity) context.deserialize(object.get("source"), Identity.class))
+            .source(context.deserialize(object.get("source"), Identity.class))
             .create();
     }
 }

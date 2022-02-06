@@ -27,7 +27,6 @@ package net.silthus.schat.platform.plugin;
 import cloud.commandframework.CommandManager;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.eventbus.AbstractEventBus;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.messaging.MessengerGatewayProvider;
@@ -36,7 +35,6 @@ import net.silthus.schat.platform.chatter.ChatterFactoryStub;
 import net.silthus.schat.platform.commands.Command;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
-import net.silthus.schat.platform.listener.ChatListener;
 import net.silthus.schat.platform.messaging.MockMessagingGatewayProvider;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.platform.sender.Sender;
@@ -83,11 +81,6 @@ public class TestServer extends AbstractSChatServerPlugin {
     protected AbstractChatterFactory createChatterFactory(final ViewProvider viewProvider) {
         chatterFactory = new ChatterFactoryStub(viewProvider);
         return chatterFactory;
-    }
-
-    @Override
-    protected ChatListener createChatListener(ChatterProvider provider) {
-        return new ChatListener(provider);
     }
 
     @Override

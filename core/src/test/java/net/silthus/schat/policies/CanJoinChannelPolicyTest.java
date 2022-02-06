@@ -37,12 +37,12 @@ import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.chatter.Chatter.chatter;
 import static net.silthus.schat.identity.IdentityHelper.randomIdentity;
-import static net.silthus.schat.policies.JoinChannelPolicy.canJoinChannel;
+import static net.silthus.schat.policies.CanJoinChannelPolicy.canJoinChannel;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class JoinChannelPolicyTest {
+class CanJoinChannelPolicyTest {
 
     private final Chatter.PermissionHandler permissionHandler = mock(Chatter.PermissionHandler.class);
     private Chatter chatter;

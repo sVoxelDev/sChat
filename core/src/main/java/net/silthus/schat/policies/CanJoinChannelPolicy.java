@@ -31,21 +31,22 @@ import lombok.Setter;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.util.Permissable;
 
-public class JoinChannelPolicy implements Policy {
+public class CanJoinChannelPolicy implements Policy {
+
+    public static CanJoinChannelPolicy.Builder canJoinChannel(@NonNull Permissable permissable, @NonNull Channel channel) {
+        return getPrototype().apply(new Builder(permissable, channel));
+    }
 
     @Getter
     @Setter
-    private static Function<JoinChannelPolicy.Builder, JoinChannelPolicy.Builder> prototype = builder -> builder;
+    private static Function<CanJoinChannelPolicy.Builder, CanJoinChannelPolicy.Builder> prototype = builder -> builder;
     private final Permissable permissable;
+
     private final Channel channel;
 
-    protected JoinChannelPolicy(Builder builder) {
+    protected CanJoinChannelPolicy(Builder builder) {
         this.permissable = builder.chatter;
         this.channel = builder.channel;
-    }
-
-    public static JoinChannelPolicy.Builder canJoinChannel(@NonNull Permissable permissable, @NonNull Channel channel) {
-        return getPrototype().apply(new Builder(permissable, channel));
     }
 
     @Override
@@ -55,7 +56,7 @@ public class JoinChannelPolicy implements Policy {
         return permissable.hasPermission(channel.get(Channel.JOIN_PERMISSION));
     }
 
-    public static class Builder implements Policy.Builder<JoinChannelPolicy> {
+    public static class Builder implements Policy.Builder<CanJoinChannelPolicy> {
 
         private final Permissable chatter;
         private final Channel channel;
@@ -66,8 +67,8 @@ public class JoinChannelPolicy implements Policy {
         }
 
         @Override
-        public JoinChannelPolicy create() {
-            return new JoinChannelPolicy(this);
+        public CanJoinChannelPolicy create() {
+            return new CanJoinChannelPolicy(this);
         }
     }
 }

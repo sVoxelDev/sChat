@@ -28,37 +28,39 @@ import java.util.function.Function;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.command.Command;
+import net.silthus.schat.command.CommandBuilder;
 import net.silthus.schat.command.Result;
 import net.silthus.schat.policies.Policy;
-import net.silthus.schat.usecases.JoinChannel;
 
 import static net.silthus.schat.command.Result.success;
-import static net.silthus.schat.policies.JoinChannelPolicy.canJoinChannel;
+import static net.silthus.schat.policies.CanJoinChannelPolicy.canJoinChannel;
 
 @Getter
-public class JoinChannelCommand implements JoinChannel, Command {
+@Accessors(fluent = true)
+public class JoinChannelCommand implements Command {
 
+    private static final @NonNull Function<Builder, Builder> DEFAULTS = builder -> builder.validate(canJoinChannel(builder.chatter, builder.channel).create());
     @Getter
     @Setter
-    private static @NonNull Function<Builder, Builder> prototype = builder -> builder.check(canJoinChannel(builder.chatter, builder.channel).create());
-    private final Policy policy;
+    private static @NonNull Function<Builder, Builder> prototype = builder -> builder;
+
+    public static Builder joinChannel(Chatter chatter, Channel channel) {
+        return prototype().apply(DEFAULTS.apply(new Builder(chatter, channel)));
+    }
 
     private final Chatter chatter;
     private final Channel channel;
-    private final Out out;
+
+    private final Policy policy;
 
     protected JoinChannelCommand(Builder builder) {
         this.chatter = builder.chatter;
         this.channel = builder.channel;
-        this.out = builder.out;
         this.policy = builder.policy;
-    }
-
-    public static Builder joinChannel(Chatter chatter, Channel channel) {
-        return getPrototype().apply(new Builder(chatter, channel));
     }
 
     public Result execute() throws Error {
@@ -72,13 +74,8 @@ public class JoinChannelCommand implements JoinChannel, Command {
         if (chatter.isJoined(channel))
             return success();
         chatter.join(channel);
-        notifyJoinChannelPresenter(chatter, channel);
         chatter.updateView();
         return success();
-    }
-
-    private void notifyJoinChannelPresenter(Chatter chatter, Channel channel) {
-        out.joinedChannel(new Output(chatter, channel));
     }
 
     private Result handleJoinChannelError(Chatter chatter, Channel channel) throws AccessDenied {
@@ -86,29 +83,25 @@ public class JoinChannelCommand implements JoinChannel, Command {
         throw new AccessDenied();
     }
 
-    public static class Builder implements Command.Builder<JoinChannelCommand> {
+    @Getter
+    @Accessors(fluent = true)
+    public static class Builder extends CommandBuilder<Builder, JoinChannelCommand> {
         private final Chatter chatter;
         private final Channel channel;
-        private Out out = Out.empty();
-        private Policy policy = Policy.ALLOW; // TODO: change to checks
+        private Policy policy = Policy.ALLOW;
 
-        public Builder(Chatter chatter, Channel channel) {
+        protected Builder(Chatter chatter, Channel channel) {
+            super(JoinChannelCommand::new);
             this.chatter = chatter;
             this.channel = channel;
         }
 
-        public Builder out(Out out) {
-            this.out = out;
-            return this;
-        }
-
-        public Builder check(Policy policy) {
+        public Builder validate(Policy policy) {
             this.policy = policy;
             return this;
         }
+    }
 
-        public JoinChannelCommand create() {
-            return new JoinChannelCommand(this);
-        }
+    public static final class AccessDenied extends Error {
     }
 }

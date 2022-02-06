@@ -30,19 +30,17 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.silthus.schat.bukkit.adapter.BukkitChatListener;
 import net.silthus.schat.bukkit.adapter.BukkitChatterFactory;
 import net.silthus.schat.bukkit.adapter.BukkitEventBus;
 import net.silthus.schat.bukkit.adapter.BukkitMessengerGateway;
 import net.silthus.schat.bukkit.adapter.BukkitSchedulerAdapter;
 import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
+import net.silthus.schat.bukkit.adapter.PlayerChatListener;
 import net.silthus.schat.bukkit.protocollib.ChatPacketListener;
-import net.silthus.schat.chatter.ChatterProvider;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.messaging.MessengerGatewayProvider;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
-import net.silthus.schat.platform.listener.ChatListener;
 import net.silthus.schat.platform.plugin.AbstractSChatServerPlugin;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.ui.view.ViewProvider;
@@ -59,6 +57,7 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
     private final BukkitBootstrap bootstrap;
     private BukkitSenderFactory senderFactory;
     private ChatPacketListener chatPacketListener;
+    private PlayerChatListener chatListener;
 
     SChatBukkitServer(BukkitBootstrap bootstrap) {
         this.bootstrap = bootstrap;
@@ -105,13 +104,6 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
     }
 
     @Override
-    protected ChatListener createChatListener(ChatterProvider provider) {
-        final BukkitChatListener listener = new BukkitChatListener(provider);
-        Bukkit.getPluginManager().registerEvents(listener, bootstrap().loader());
-        return listener;
-    }
-
-    @Override
     @SneakyThrows
     protected CommandManager<Sender> provideCommandManager() {
         try {
@@ -130,9 +122,19 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
 
     @Override
     protected void registerListeners() {
-        chatPacketListener = new ChatPacketListener(bootstrap().loader(), chatterProvider(), viewProvider());
-        chatPacketListener.enable();
+        createChatListener();
+        createChatPacketListener();
 
         Bukkit.getPluginManager().registerEvents((BukkitEventBus) eventBus(), bootstrap().loader());
+    }
+
+    private void createChatListener() {
+        chatListener = new PlayerChatListener(chatterProvider());
+        Bukkit.getPluginManager().registerEvents(chatListener, bootstrap().loader());
+    }
+
+    private void createChatPacketListener() {
+        chatPacketListener = new ChatPacketListener(bootstrap().loader(), chatterProvider(), viewProvider());
+        chatPacketListener.enable();
     }
 }

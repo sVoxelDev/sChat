@@ -41,7 +41,7 @@ import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.chatter.ChatterProviderStub.chatterProviderStub;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BukkitChatListenerTest extends BukkitTests {
+class PlayerChatListenerTest extends BukkitTests {
 
     private Chatter chatter;
     private PlayerMock player;
@@ -53,7 +53,7 @@ class BukkitChatListenerTest extends BukkitTests {
         chatter = Chatter.chatter(identity(player))
             .viewConnector(c -> () -> handleMessage(c))
             .create();
-        BukkitChatListener listener = new BukkitChatListener(chatterProviderStub(chatter));
+        PlayerChatListener listener = new PlayerChatListener(chatterProviderStub(chatter));
         server.getPluginManager().registerEvents(listener, mockPlugin);
     }
 

@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -139,6 +140,14 @@ public interface Repository<K, E extends Entity<K>> {
 
     default Optional<E> find(K key) {
         return find(e -> e.key().equals(key));
+    }
+
+    default E findOrCreate(K key, Function<K, E> creator) {
+        return find(e -> e.key().equals(key)).orElseGet(() -> {
+            final E entity = creator.apply(key);
+            add(entity);
+            return entity;
+        });
     }
 
     /**

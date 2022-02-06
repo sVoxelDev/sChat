@@ -38,12 +38,10 @@ import net.silthus.schat.message.MessagePrototype;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;
-import net.silthus.schat.platform.listener.ChatListener;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.ui.view.ViewFactory;
 import net.silthus.schat.ui.view.ViewProvider;
 import net.silthus.schat.ui.views.Views;
-import net.silthus.schat.usecases.OnChat;
 import net.silthus.schat.util.gson.GsonProvider;
 import net.silthus.schat.util.gson.types.ChannelSerializer;
 import org.jetbrains.annotations.ApiStatus;
@@ -65,7 +63,6 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     private ChatterProvider chatterProvider;
     private ChannelRepository channelRepository;
 
-    private OnChat chatListener;
     private Commands commands;
 
     private ViewFactory viewFactory;
@@ -83,8 +80,6 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
         chatterProvider = createCachingChatterProvider(createChatterFactory(viewProvider));
         channelRepository = createChannelRepository();
-
-        chatListener = createChatListener(chatterProvider);
 
         registerSerializers();
         setupPrototypes();
@@ -117,8 +112,6 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     protected ChannelRepository createChannelRepository() {
         return createInMemoryChannelRepository();
     }
-
-    protected abstract ChatListener createChatListener(ChatterProvider provider);
 
     private void registerSerializers() {
         GsonProvider.registerTypeAdapter(CHANNEL_TYPE, new ChannelSerializer(channelRepository()));

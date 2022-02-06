@@ -22,25 +22,39 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.usecases;
+package net.silthus.schat.bukkit.adapter;
 
-import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.command.Command;
+import net.silthus.schat.chatter.ChatterProvider;
+import net.silthus.schat.commands.ChatCommand;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
-public interface JoinChannel extends Command {
+import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.commands.ChatCommand.chat;
+import static net.silthus.schat.platform.locale.Messages.CANNOT_CHAT_NO_ACTIVE_CHANNEL;
 
-    interface Out {
-        static Out empty() {
-            return result -> {};
+public final class PlayerChatListener implements Listener {
+
+    private final ChatterProvider chatterProvider;
+
+    public PlayerChatListener(ChatterProvider provider) {
+        chatterProvider = provider;
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
+        final Chatter chatter = chatterProvider.get(event.getPlayer().getUniqueId());
+        tryChatting(chatter, event.getMessage());
+        event.setCancelled(true);
+    }
+
+    private void tryChatting(Chatter chatter, String message) {
+        try {
+            chat(chatter, text(message));
+        } catch (ChatCommand.NoActiveChannel e) {
+            CANNOT_CHAT_NO_ACTIVE_CHANNEL.send(chatter);
         }
-
-        void joinedChannel(Output result);
-    }
-
-    record Output(Chatter chatter, Channel channel) {
-    }
-
-    final class AccessDenied extends Error {
     }
 }
