@@ -32,8 +32,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.command.Check;
-import net.silthus.schat.command.Command;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
@@ -132,12 +130,6 @@ final class ChannelImpl implements Channel {
             this.key = key;
             this.name = text(key);
             this.settings.withStatic(JOIN_PERMISSION, "schat.channel." + key + ".join");
-        }
-
-        @Override
-        public <C extends Command> Channel.Builder check(Check.Type<C> check) {
-            // TODO: implement - switch commands to checks
-            throw new UnsupportedOperationException();
         }
 
         @Override

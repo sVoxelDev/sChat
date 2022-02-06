@@ -53,17 +53,17 @@ public final class ChannelSerializer implements JsonSerializer<Channel>, JsonDes
 
     @Override
     public JsonElement serialize(Channel src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JObject()
+        return JObject.json()
             .add("key", src.key())
             .add("settings", context.serialize(src.settings(), Settings.class))
-            .toJson();
+            .create();
     }
 
     @Override
     public Channel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         final JsonObject object = json.getAsJsonObject();
         final String key = object.get("key").getAsString();
-        return channelRepository.find(key).orElseGet(() -> channel(key)
+        return channelRepository.findOrCreate(key, k -> channel(k)
             .settings(context.deserialize(object.get("settings"), Settings.class))
             .create());
     }

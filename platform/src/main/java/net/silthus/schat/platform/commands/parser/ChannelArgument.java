@@ -45,7 +45,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static cloud.commandframework.arguments.parser.ArgumentParseResult.failure;
 import static cloud.commandframework.arguments.parser.ArgumentParseResult.success;
-import static net.silthus.schat.policies.JoinChannelPolicy.canJoinChannel;
+import static net.silthus.schat.policies.CanJoinChannelPolicy.canJoinChannel;
 
 public final class ChannelArgument implements ArgumentParser<Sender, Channel> {
 

@@ -24,17 +24,26 @@
 
 package net.silthus.schat.command;
 
+import java.util.function.Function;
+
 public interface Command {
 
     Result execute() throws Error;
 
-    interface Builder<C extends Command> {
+    interface Builder<B extends Builder<B, C>, C extends Command> {
 
         default Result execute() {
             return create().execute();
         }
 
-        C create();
+        Function<B, ? extends C> command();
+
+        B use(Function<B, ? extends C> command);
+
+        @SuppressWarnings("unchecked")
+        default C create() {
+            return command().apply((B) this);
+        }
     }
 
     class Error extends RuntimeException {

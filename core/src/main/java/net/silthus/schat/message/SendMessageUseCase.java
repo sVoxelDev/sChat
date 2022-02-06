@@ -14,6 +14,7 @@ import net.silthus.schat.events.message.SendMessageEvent;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.Channel.GLOBAL;
+import static net.silthus.schat.channel.Channel.PRIVATE;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 
 final class SendMessageUseCase implements SendMessage {
@@ -78,19 +79,17 @@ final class SendMessageUseCase implements SendMessage {
     @NotNull
     private Channel createPrivateChannel(Chatter source, Chatter target) {
         final String key = target.uniqueId().toString();
-        final Channel channel = repository.find(key)
-            .or(() -> source.channel(key))
-            .orElseGet(() -> {
-                final Channel c = createPrivateChannel(key, target.displayName());
-                repository.add(c);
-                return c;
-            });
+        final Channel channel = repository.findOrCreate(key, k -> createPrivateChannel(key, target.displayName()));
         source.join(channel);
         return channel;
     }
 
     private Channel createPrivateChannel(String key, Component name) {
-        return Channel.channel(key).name(name).set(GLOBAL, true).create();
+        return Channel.channel(key)
+            .name(name)
+            .set(GLOBAL, true)
+            .set(PRIVATE, true)
+            .create();
     }
 
     private boolean targetsSingleChatter(Targets targets) {

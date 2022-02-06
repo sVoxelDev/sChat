@@ -45,11 +45,11 @@ public final class SettingsSerializer implements JsonSerializer<Settings>, JsonD
 
     @Override
     public JsonElement serialize(Settings src, Type typeOfSrc, JsonSerializationContext context) {
-        final JObject object = new JObject();
+        final JObject object = JObject.json();
         for (Setting<?> setting : src.settings()) {
             object.add(setting.key(), context.serialize(src.get(setting), setting.type()));
         }
-        return object.toJson();
+        return object.create();
     }
 
     @Override

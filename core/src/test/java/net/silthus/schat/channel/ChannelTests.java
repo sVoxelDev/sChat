@@ -39,7 +39,6 @@ import static net.silthus.schat.channel.Channel.DISPLAY_NAME;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
-import static net.silthus.schat.checks.CanJoinChannelCheck.CAN_JOIN_CHANNEL;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -140,13 +139,6 @@ class ChannelTests {
             void then_updates_property() {
                 assertThat(channel.displayName()).isEqualTo(MY_CHANNEL);
             }
-        }
-    }
-
-    @Nested class given_checks {
-        @BeforeEach
-        void setUp() {
-            channel = Channel.channel("test").check(CAN_JOIN_CHANNEL).create();
         }
     }
 }

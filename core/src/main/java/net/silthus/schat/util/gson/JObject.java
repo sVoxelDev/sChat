@@ -31,11 +31,19 @@ import com.google.gson.JsonPrimitive;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class JObject implements JElement {
+public final class JObject implements JElement {
+
+    public static JObject json() {
+        return new JObject();
+    }
+
     private final JsonObject object = new JsonObject();
 
+    private JObject() {
+    }
+
     @Override
-    public JsonObject toJson() {
+    public JsonObject create() {
         return this.object;
     }
 
@@ -69,11 +77,11 @@ public class JObject implements JElement {
         if (value == null) {
             return add(key, JsonNull.INSTANCE);
         }
-        return add(key, value.toJson());
+        return add(key, value.create());
     }
 
     public JObject add(String key, Supplier<? extends JElement> value) {
-        return add(key, value.get().toJson());
+        return add(key, value.get().create());
     }
 
     public JObject consume(Consumer<? super JObject> consumer) {

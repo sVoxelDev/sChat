@@ -27,7 +27,6 @@ package net.silthus.schat.commands;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelHelper;
 import net.silthus.schat.chatter.ChatterMock;
-import net.silthus.schat.usecases.JoinChannel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -47,7 +46,7 @@ class SetActiveChannelCommandTests {
     void setUp() {
         chatter = ChatterMock.randomChatter();
         channel = ChannelHelper.randomChannel();
-        JoinChannelCommand.setPrototype(builder -> builder.check(ALLOW));
+        JoinChannelCommand.prototype(builder -> builder.validate(ALLOW));
     }
 
     private void setActiveChannel() {
@@ -94,12 +93,12 @@ class SetActiveChannelCommandTests {
         @Nested class given_join_fails {
             @BeforeEach
             void setUp() {
-                JoinChannelCommand.setPrototype(builder -> builder.check(DENY));
+                JoinChannelCommand.prototype(builder -> builder.validate(DENY));
             }
 
             @Test
             void then_channel_is_not_set_active() {
-                assertThatExceptionOfType(JoinChannel.AccessDenied.class)
+                assertThatExceptionOfType(JoinChannelCommand.AccessDenied.class)
                     .isThrownBy(SetActiveChannelCommandTests.this::setActiveChannel);
                 assertThat(chatter.activeChannel()).isNotPresent();
             }

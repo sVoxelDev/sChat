@@ -53,9 +53,8 @@ public class GlobalChatFeature implements EventListener {
     }
 
     private void onChannelMessage(SendChannelMessageEvent event) {
-        if (event.channel().is(GLOBAL)) {
+        if (event.channel().is(GLOBAL))
             messenger.sendPluginMessage(new GlobalChannelPluginMessage(event.channel(), event.message()));
-        }
     }
 
     @Getter

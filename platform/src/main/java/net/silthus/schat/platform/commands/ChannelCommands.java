@@ -33,7 +33,6 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.repository.Repository;
-import net.silthus.schat.usecases.JoinChannel;
 
 import static net.silthus.schat.commands.SetActiveChannelCommand.setActiveChannel;
 import static net.silthus.schat.platform.locale.Messages.JOINED_CHANNEL;
@@ -55,7 +54,7 @@ public final class ChannelCommands implements Command {
             if (setActiveChannel(chatter, channel).execute().wasSuccessful()) {
                 JOINED_CHANNEL.send(sender, channel);
             }
-        } catch (Repository.NotFound | JoinChannel.Error e) {
+        } catch (Repository.NotFound | net.silthus.schat.command.Command.Error e) {
             JOIN_CHANNEL_ERROR.send(sender, channel);
         }
     }
