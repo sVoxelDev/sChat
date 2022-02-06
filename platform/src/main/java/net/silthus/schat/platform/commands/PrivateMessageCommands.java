@@ -22,22 +22,16 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.messaging;
+package net.silthus.schat.platform.commands;
 
-import java.util.UUID;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.experimental.Accessors;
+import cloud.commandframework.CommandManager;
+import cloud.commandframework.annotations.AnnotationParser;
+import net.silthus.schat.platform.sender.Sender;
 
-@Getter
-@Accessors(fluent = true)
-@EqualsAndHashCode(of = "id")
-public abstract class PluginMessage {
-    private final UUID id;
+public final class PrivateMessageCommands implements Command {
 
-    protected PluginMessage() {
-        this.id = UUID.randomUUID();
+    @Override
+    public void register(CommandManager<Sender> commandManager, AnnotationParser<Sender> parser) {
+        parser.parse(this);
     }
-
-    public abstract void process();
 }

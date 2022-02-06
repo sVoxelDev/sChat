@@ -31,12 +31,12 @@ import java.util.logging.Level;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.java.Log;
-import net.silthus.schat.messaging.IncomingMessageConsumer;
-import net.silthus.schat.messaging.Messenger;
-import net.silthus.schat.messaging.MessengerGateway;
-import net.silthus.schat.messaging.MessengerGatewayProvider;
-import net.silthus.schat.messaging.PluginMessage;
-import net.silthus.schat.messaging.PluginMessageSerializer;
+import net.silthus.schat.IncomingMessageConsumer;
+import net.silthus.schat.Messenger;
+import net.silthus.schat.MessengerGateway;
+import net.silthus.schat.MessengerGatewayProvider;
+import net.silthus.schat.PluginMessage;
+import net.silthus.schat.PluginMessageSerializer;
 import org.jetbrains.annotations.NotNull;
 
 @Getter

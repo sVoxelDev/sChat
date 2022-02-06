@@ -22,40 +22,20 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.messaging;
+package net.silthus.schat.platform.commands;
 
-import com.google.gson.JsonObject;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
-import lombok.NonNull;
-import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 
-import static net.silthus.schat.util.gson.GsonProvider.normalGson;
+class PrivateMessageCommandsTests extends CommandTest {
 
-public final class GsonPluginMessageSerializer implements PluginMessageSerializer {
-
-    static final GsonPluginMessageSerializer SERIALIZER = new GsonPluginMessageSerializer();
-
-    private final Map<String, Type> typeMap = new HashMap<>();
-
-    @Override
-    public void registerMessageType(Type type) {
-        typeMap.put(type.getTypeName(), type);
+    @BeforeEach
+    void setUp() {
+        commands.register(new PrivateMessageCommands());
     }
 
-    @Override
-    public @NotNull String encode(PluginMessage pluginMessage) {
-        final JsonObject json = normalGson()
-            .toJsonTree(pluginMessage).getAsJsonObject();
-        json.addProperty("type", pluginMessage.getClass().getTypeName());
-        return normalGson().toJson(json);
-    }
+    @Nested class sendPrivateMessage {
 
-    @Override
-    public @NotNull PluginMessage decode(@NonNull String encodedString) {
-        final JsonObject json = normalGson().fromJson(encodedString, JsonObject.class);
-        final String type = json.get("type").getAsString();
-        return normalGson().fromJson(json, typeMap.get(type));
+
     }
 }

@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.messaging;
+package net.silthus.schat;
 
 import lombok.NonNull;
 import org.jetbrains.annotations.ApiStatus.OverrideOnly;

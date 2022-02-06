@@ -25,8 +25,8 @@
 package net.silthus.schat.bukkit.adapter;
 
 import java.nio.charset.StandardCharsets;
-import net.silthus.schat.messaging.IncomingMessageConsumer;
-import net.silthus.schat.messaging.MessengerGateway;
+import net.silthus.schat.IncomingMessageConsumer;
+import net.silthus.schat.MessengerGateway;
 import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;

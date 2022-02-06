@@ -30,8 +30,8 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import net.silthus.schat.MessengerGateway;
 import net.silthus.schat.bungeecord.BungeecordBootstrap;
-import net.silthus.schat.messaging.MessengerGateway;
 import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
 
 public final class BungeecordMessengerGateway implements MessengerGateway, Listener {

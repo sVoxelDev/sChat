@@ -30,9 +30,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import net.silthus.schat.GsonPluginMessageSerializer;
+import net.silthus.schat.MessengerGatewayProvider;
 import net.silthus.schat.eventbus.EventBus;
-import net.silthus.schat.messaging.GsonPluginMessageSerializer;
-import net.silthus.schat.messaging.MessengerGatewayProvider;
 import net.silthus.schat.platform.config.ConfigKeys;
 import net.silthus.schat.platform.config.SChatConfig;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
@@ -43,7 +43,7 @@ import net.silthus.schat.platform.sender.Sender;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import static net.silthus.schat.messaging.PluginMessageSerializer.gsonSerializer;
+import static net.silthus.schat.PluginMessageSerializer.gsonSerializer;
 import static net.silthus.schat.platform.locale.Messages.STARTUP_BANNER;
 
 @Getter
