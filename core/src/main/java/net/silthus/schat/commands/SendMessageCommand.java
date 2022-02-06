@@ -1,66 +1,83 @@
-package net.silthus.schat.message;
+package net.silthus.schat.commands;
 
-import lombok.AccessLevel;
+import java.util.function.Function;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.command.Command;
+import net.silthus.schat.command.CommandBuilder;
+import net.silthus.schat.command.Result;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.events.message.SendMessageEvent;
+import net.silthus.schat.message.Message;
+import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.message.Targets;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.Channel.GLOBAL;
 import static net.silthus.schat.channel.Channel.PRIVATE;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 
-final class SendMessageUseCase implements SendMessage {
+@Getter
+@Accessors(fluent = true)
+public class SendMessageCommand implements Command {
 
+    @Getter
+    @Setter
+    private static @NonNull Function<SendMessageCommand.Builder, SendMessageCommand.Builder> prototype = builder -> builder;
+
+    public static SendMessageResult sendMessage(Message message) {
+        return sendMessageBuilder(message).create().execute();
+    }
+
+    public static Builder sendMessageBuilder(Message message) {
+        return prototype().apply(new Builder(message));
+    }
+
+    private final Message message;
     private final EventBus eventBus;
     private final ChannelRepository repository;
-    private final Messages messages = new Messages();
 
-    private SendMessageUseCase(Builder builder) {
+    protected SendMessageCommand(Builder builder) {
+        this.message = builder.message;
         this.eventBus = builder.eventBus;
         this.repository = builder.channelRepository;
     }
 
-    static SendMessageUseCase.Builder builder() {
-        return new Builder();
-    }
-
     @Override
-    public @NotNull Message send(Message message) {
-        if (messages.add(message))
-            fireEventAndProcessMessage(message);
-        return message;
+    public SendMessageResult execute() throws Error {
+        return fireEventAndSendMessage(message);
     }
 
-    private void fireEventAndProcessMessage(Message message) {
+    private SendMessageResult fireEventAndSendMessage(Message message) {
         final SendMessageEvent event = eventBus.post(new SendMessageEvent(message));
         if (event.isNotCancelled())
-            processMessage(event);
+            return sendMessage(event);
+        return new SendMessageResult(message, false);
     }
 
-    private void processMessage(SendMessageEvent event) {
+    private SendMessageResult sendMessage(SendMessageEvent event) {
         if (targetsSingleChatter(event.targets()))
-            sendMessageToPrivateChannel(event);
+            return sendMessageToPrivateChannel(event);
         else
-            deliverMessage(event);
+            return deliverMessage(event.targets(), event.message());
     }
 
-    private void sendMessageToPrivateChannel(SendMessageEvent event) {
+    private SendMessageResult sendMessageToPrivateChannel(SendMessageEvent event) {
         if (event.message().source() instanceof Chatter source)
-            createPrivateChannels(source, targetOf(event)).sendMessage(event.message());
+            return deliverMessage(createPrivateChannels(source, targetOf(event)), event.message());
         else
-            deliverMessage(event);
+            return deliverMessage(event.targets(), event.message());
     }
 
-    private void deliverMessage(SendMessageEvent event) {
-        event.targets().sendMessage(event.message());
+    private SendMessageResult deliverMessage(MessageTarget target, Message message) {
+        target.sendMessage(message);
+        return new SendMessageResult(message, true);
     }
 
     private Chatter targetOf(SendMessageEvent event) {
@@ -96,18 +113,26 @@ final class SendMessageUseCase implements SendMessage {
         return targets.filter(MessageTarget.IS_CHATTER).size() == 1;
     }
 
+    public record SendMessageResult(Message message, boolean success) implements Result {
+
+        @Override
+        public boolean wasSuccessful() {
+            return success;
+        }
+    }
+
     @Getter
     @Setter
     @Accessors(fluent = true)
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    static final class Builder implements SendMessage.Builder {
+    public static class Builder extends CommandBuilder<Builder, SendMessageCommand> {
 
+        private final Message message;
         private EventBus eventBus = EventBus.empty();
         private ChannelRepository channelRepository = createInMemoryChannelRepository();
 
-        @Override
-        public SendMessage create() {
-            return new SendMessageUseCase(this);
+        public Builder(Message message) {
+            super(SendMessageCommand::new);
+            this.message = message;
         }
     }
 }

@@ -33,8 +33,8 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelPrototype;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.ChatterProvider;
+import net.silthus.schat.commands.SendMessageCommand;
 import net.silthus.schat.features.GlobalChatFeature;
-import net.silthus.schat.message.MessagePrototype;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;
@@ -49,7 +49,6 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.chatter.ChatterProvider.createCachingChatterProvider;
-import static net.silthus.schat.message.SendMessage.sendMessageUseCase;
 import static net.silthus.schat.platform.commands.parser.ChannelArgument.registerChannelArgument;
 import static net.silthus.schat.platform.commands.parser.ChatterArgument.registerChatterArgument;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
@@ -118,11 +117,9 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     }
 
     private void setupPrototypes() {
-        MessagePrototype.configure(
-            sendMessageUseCase()
-                .eventBus(eventBus())
-                .channelRepository(channelRepository())
-                .create()
+        SendMessageCommand.prototype(builder -> builder
+            .eventBus(eventBus())
+            .channelRepository(channelRepository())
         );
         ChannelPrototype.configure(eventBus());
     }

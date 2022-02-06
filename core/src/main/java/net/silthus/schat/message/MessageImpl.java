@@ -28,7 +28,6 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.stream.Stream;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -37,6 +36,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.commands.SendMessageCommand;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.pointer.Pointers;
 import org.jetbrains.annotations.NotNull;
@@ -51,12 +51,8 @@ import static net.silthus.schat.message.Targets.unmodifiable;
 @EqualsAndHashCode(of = {"id"})
 final class MessageImpl implements Message {
 
-    @Setter
-    @Accessors
-    private static Function<MessageImpl.Draft, MessageImpl.Draft> prototype = draft -> draft;
-
     static MessageImpl.Draft builder() {
-        return prototype.apply(new Draft());
+        return new Draft();
     }
 
     private final UUID id;
@@ -65,7 +61,6 @@ final class MessageImpl implements Message {
     private final transient Targets targets;
     private final Component text;
     private final Type type;
-    private final transient SendMessage sendMessageUseCase;
     private final transient Pointers pointers;
 
     private MessageImpl(Draft draft) {
@@ -75,7 +70,6 @@ final class MessageImpl implements Message {
         this.targets = unmodifiable(copyOf(draft.targets));
         this.text = draft.text;
         this.type = draft.type;
-        this.sendMessageUseCase = draft.sendMessageUseCase;
         this.pointers = Pointers.pointersBuilder()
             .withStatic(Message.ID, id)
             .withStatic(Message.TIMESTAMP, timestamp)
@@ -97,7 +91,7 @@ final class MessageImpl implements Message {
 
     @Override
     public @NotNull Message send() {
-        return sendMessageUseCase.send(this);
+        return SendMessageCommand.sendMessage(this).message();
     }
 
     @Override
@@ -122,7 +116,6 @@ final class MessageImpl implements Message {
         private Targets targets = new Targets();
         private Component text = Component.empty();
         private Type type = Type.SYSTEM;
-        private SendMessage sendMessageUseCase = SendMessage.sendMessageUseCase().create();
 
         private Draft() {
         }
