@@ -22,29 +22,32 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.messaging;
+package net.silthus.schat;
 
-import java.lang.reflect.Type;
 import lombok.NonNull;
-import net.silthus.schat.util.gson.GsonProvider;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 
-public interface PluginMessageSerializer {
-
-    static GsonPluginMessageSerializer gsonSerializer() {
-        return GsonPluginMessageSerializer.SERIALIZER;
-    }
+/**
+ * Represents an object which dispatches {@link PluginMessage}s.
+ */
+@OverrideOnly
+public interface Messenger extends AutoCloseable {
 
     /**
-     * Registers the given message type for serialization and deserialization.
+     * Performs the necessary action to dispatch the message using the means
+     * of the messenger.
      *
-     * <p>Register your custom json serializable types with the {@link GsonProvider#registerTypeAdapter(Type, Object)}.</p>
+     * <p>The underlying dispatch should always be made async.</p>
      *
-     * @param type the type
+     * @param pluginMessage the outgoing message
      */
-    void registerMessageType(Type type);
+    void sendPluginMessage(@NonNull PluginMessage pluginMessage);
 
-    @NotNull String encode(PluginMessage pluginMessage);
+    /**
+     * Performs the necessary action to gracefully shut down the messenger.
+     */
+    @Override
+    default void close() {
 
-    @NotNull PluginMessage decode(@NonNull String encodedString);
+    }
 }

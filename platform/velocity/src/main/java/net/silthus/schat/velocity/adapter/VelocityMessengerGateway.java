@@ -30,7 +30,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import java.nio.charset.StandardCharsets;
-import net.silthus.schat.messaging.MessengerGateway;
+import net.silthus.schat.MessengerGateway;
 import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
 import net.silthus.schat.velocity.VelocityBootstrap;
 

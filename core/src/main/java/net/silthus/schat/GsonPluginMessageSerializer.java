@@ -22,26 +22,40 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.messaging;
+package net.silthus.schat;
 
-public interface MessengerGateway extends AutoCloseable {
+import com.google.gson.JsonObject;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
+import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
 
-    String CHANNEL = "schat:update";
+import static net.silthus.schat.util.gson.GsonProvider.normalGson;
 
-    /**
-     * Processes the encoded message by using the means of this gateway.
-     *
-     * <p>The method should always prefer dispatching the message asynchronously.</p>
-     *
-     * @param encodedMessage the encoded message
-     */
-    void sendOutgoingMessage(String encodedMessage);
+public final class GsonPluginMessageSerializer implements PluginMessageSerializer {
 
-    /**
-     * Performs the necessary action to gracefully shut down the messenger.
-     */
+    static final GsonPluginMessageSerializer SERIALIZER = new GsonPluginMessageSerializer();
+
+    private final Map<String, Type> typeMap = new HashMap<>();
+
     @Override
-    default void close() {
+    public void registerMessageType(Type type) {
+        typeMap.put(type.getTypeName(), type);
+    }
 
+    @Override
+    public @NotNull String encode(PluginMessage pluginMessage) {
+        final JsonObject json = normalGson()
+            .toJsonTree(pluginMessage).getAsJsonObject();
+        json.addProperty("type", pluginMessage.getClass().getTypeName());
+        return normalGson().toJson(json);
+    }
+
+    @Override
+    public @NotNull PluginMessage decode(@NonNull String encodedString) {
+        final JsonObject json = normalGson().fromJson(encodedString, JsonObject.class);
+        final String type = json.get("type").getAsString();
+        return normalGson().fromJson(json, typeMap.get(type));
     }
 }

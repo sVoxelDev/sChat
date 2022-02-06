@@ -26,11 +26,11 @@ package net.silthus.schat.bungeecord;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import net.silthus.schat.MessengerGatewayProvider;
 import net.silthus.schat.bungeecord.adapter.BungeecordEventBus;
 import net.silthus.schat.bungeecord.adapter.BungeecordMessengerGateway;
 import net.silthus.schat.bungeecord.adapter.BungeecordSenderFactory;
 import net.silthus.schat.eventbus.EventBus;
-import net.silthus.schat.messaging.MessengerGatewayProvider;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.plugin.AbstractSChatProxyPlugin;
 import net.silthus.schat.platform.sender.Sender;

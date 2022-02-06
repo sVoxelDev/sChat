@@ -25,7 +25,7 @@
 package net.silthus.schat.platform.messaging;
 
 import java.util.Collection;
-import net.silthus.schat.messaging.MessengerGateway;
+import net.silthus.schat.MessengerGateway;
 import net.silthus.schat.platform.plugin.TestServer;
 
 public class CrossServerMessengerGateway implements MessengerGateway {

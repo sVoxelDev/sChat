@@ -22,19 +22,22 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.platform.messaging;
+package net.silthus.schat;
 
-import lombok.NonNull;
-import net.silthus.schat.IncomingMessageConsumer;
-import net.silthus.schat.MessengerGateway;
-import net.silthus.schat.MessengerGatewayProvider;
-import org.jetbrains.annotations.NotNull;
+import java.util.UUID;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
-public class MockMessagingGatewayProvider implements MessengerGatewayProvider {
+@Getter
+@Accessors(fluent = true)
+@EqualsAndHashCode(of = "id")
+public abstract class PluginMessage {
+    private final UUID id;
 
-    @NotNull
-    @Override
-    public @NonNull MessengerGateway obtain(@NonNull IncomingMessageConsumer incomingMessageConsumer) {
-        return incomingMessageConsumer::consumeIncomingMessageAsString;
+    protected PluginMessage() {
+        this.id = UUID.randomUUID();
     }
+
+    public abstract void process();
 }

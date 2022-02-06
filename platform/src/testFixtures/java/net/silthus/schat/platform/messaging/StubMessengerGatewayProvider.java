@@ -25,9 +25,9 @@
 package net.silthus.schat.platform.messaging;
 
 import lombok.NonNull;
-import net.silthus.schat.messaging.IncomingMessageConsumer;
-import net.silthus.schat.messaging.MessengerGateway;
-import net.silthus.schat.messaging.MessengerGatewayProvider;
+import net.silthus.schat.IncomingMessageConsumer;
+import net.silthus.schat.MessengerGateway;
+import net.silthus.schat.MessengerGatewayProvider;
 
 public class StubMessengerGatewayProvider implements MessengerGatewayProvider {
     private final MessengerGateway gateway;

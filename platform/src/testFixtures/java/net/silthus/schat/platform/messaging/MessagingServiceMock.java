@@ -25,9 +25,9 @@
 package net.silthus.schat.platform.messaging;
 
 import lombok.NonNull;
-import net.silthus.schat.messaging.PluginMessage;
+import net.silthus.schat.PluginMessage;
 
-import static net.silthus.schat.messaging.PluginMessageSerializer.gsonSerializer;
+import static net.silthus.schat.PluginMessageSerializer.gsonSerializer;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MessagingServiceMock extends MessagingService {

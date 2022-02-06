@@ -24,7 +24,7 @@
 
 package net.silthus.schat.platform.messaging;
 
-import net.silthus.schat.messaging.PluginMessage;
+import net.silthus.schat.PluginMessage;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

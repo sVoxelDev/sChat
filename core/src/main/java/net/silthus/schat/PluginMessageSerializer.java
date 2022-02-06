@@ -22,19 +22,29 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.platform.messaging;
+package net.silthus.schat;
 
+import java.lang.reflect.Type;
 import lombok.NonNull;
-import net.silthus.schat.IncomingMessageConsumer;
-import net.silthus.schat.MessengerGateway;
-import net.silthus.schat.MessengerGatewayProvider;
+import net.silthus.schat.util.gson.GsonProvider;
 import org.jetbrains.annotations.NotNull;
 
-public class MockMessagingGatewayProvider implements MessengerGatewayProvider {
+public interface PluginMessageSerializer {
 
-    @NotNull
-    @Override
-    public @NonNull MessengerGateway obtain(@NonNull IncomingMessageConsumer incomingMessageConsumer) {
-        return incomingMessageConsumer::consumeIncomingMessageAsString;
+    static GsonPluginMessageSerializer gsonSerializer() {
+        return GsonPluginMessageSerializer.SERIALIZER;
     }
+
+    /**
+     * Registers the given message type for serialization and deserialization.
+     *
+     * <p>Register your custom json serializable types with the {@link GsonProvider#registerTypeAdapter(Type, Object)}.</p>
+     *
+     * @param type the type
+     */
+    void registerMessageType(Type type);
+
+    @NotNull String encode(PluginMessage pluginMessage);
+
+    @NotNull PluginMessage decode(@NonNull String encodedString);
 }

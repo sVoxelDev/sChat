@@ -22,26 +22,20 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.messaging;
+package net.silthus.schat;
 
-import lombok.NonNull;
-import org.jetbrains.annotations.ApiStatus.OverrideOnly;
+public interface MessengerGateway extends AutoCloseable {
 
-/**
- * Represents an object which dispatches {@link PluginMessage}s.
- */
-@OverrideOnly
-public interface Messenger extends AutoCloseable {
+    String CHANNEL = "schat:update";
 
     /**
-     * Performs the necessary action to dispatch the message using the means
-     * of the messenger.
+     * Processes the encoded message by using the means of this gateway.
      *
-     * <p>The underlying dispatch should always be made async.</p>
+     * <p>The method should always prefer dispatching the message asynchronously.</p>
      *
-     * @param pluginMessage the outgoing message
+     * @param encodedMessage the encoded message
      */
-    void sendPluginMessage(@NonNull PluginMessage pluginMessage);
+    void sendOutgoingMessage(String encodedMessage);
 
     /**
      * Performs the necessary action to gracefully shut down the messenger.
