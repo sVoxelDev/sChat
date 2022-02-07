@@ -106,6 +106,11 @@ public final class ChatterMock extends ChatterImpl {
             .isEqualTo(displayName);
     }
 
+    public void assertActiveChannel(Channel channel) {
+        assertThat(activeChannel()).isPresent().get()
+            .isEqualTo(channel);
+    }
+
     public void assertViewUpdated() {
         assertThat(viewUpdated).isTrue();
     }

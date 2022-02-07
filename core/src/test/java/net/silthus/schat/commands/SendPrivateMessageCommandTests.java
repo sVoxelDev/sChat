@@ -6,7 +6,6 @@ import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.message.Message;
-import org.assertj.core.api.Assertions;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -15,7 +14,9 @@ import org.junit.jupiter.api.Test;
 import static net.silthus.schat.channel.Channel.GLOBAL;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
+import static net.silthus.schat.commands.SendPrivateMessageCommand.sendPrivateMessageBuilder;
 import static net.silthus.schat.message.Message.message;
+import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Nested
@@ -107,7 +108,20 @@ class SendPrivateMessageCommandTests {
     @Test
     void private_channels_are_added_to_repository() {
         sendPrivateMessage();
-        Assertions.assertThat(repository.all()).contains(sourceChannel(), targetChannel());
+        assertThat(repository.all()).contains(sourceChannel(), targetChannel());
+    }
+
+    @Test
+    void private_channel_is_set_active() {
+        sendPrivateMessage();
+        source.assertActiveChannel(sourceChannel());
+    }
+
+    @Test
+    void given_setActive_is_false_then_private_channel_is_not_set_as_active() {
+        sendPrivateMessageBuilder(source, target, randomMessage()).setActive(false).execute();
+        assertThat(source.activeChannel()).isEmpty();
+        source.assertJoinedChannel(sourceChannel().key());
     }
 
     @Nested
