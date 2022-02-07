@@ -39,13 +39,14 @@ public class SendPrivateMessageCommand implements Command {
     private final Chatter source;
     private final Chatter target;
     private final Message message;
-
+    private final boolean setActive;
     private final ChannelRepository repository;
 
     public SendPrivateMessageCommand(Builder builder) {
         this.source = builder.source;
         this.target = builder.target;
         this.message = builder.message;
+        this.setActive = builder.setActive;
         this.repository = builder.channelRepository;
     }
 
@@ -66,7 +67,10 @@ public class SendPrivateMessageCommand implements Command {
     private @NotNull Channel createPrivateChannel(Chatter source, Chatter target) {
         final String key = target.uniqueId().toString();
         final Channel channel = repository.findOrCreate(key, k -> createPrivateChannel(key, target.displayName()));
+
         source.join(channel);
+        if (setActive()) source.activeChannel(channel);
+
         return channel;
     }
 
@@ -87,6 +91,7 @@ public class SendPrivateMessageCommand implements Command {
         private final Chatter target;
         private final Message message;
         private ChannelRepository channelRepository = createInMemoryChannelRepository();
+        private boolean setActive = true;
 
         protected Builder(Chatter source, Chatter target, Message message) {
             super(SendPrivateMessageCommand::new);

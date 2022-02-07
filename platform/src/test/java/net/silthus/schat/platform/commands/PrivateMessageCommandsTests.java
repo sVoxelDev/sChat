@@ -26,28 +26,45 @@ package net.silthus.schat.platform.commands;
 
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.ChatterMock;
+import net.silthus.schat.commands.SendPrivateMessageCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class PrivateMessageCommandsTests extends CommandTest {
+
+    public static final String TEXT = "Hi you there!";
+    private ChatterMock target;
 
     @BeforeEach
     void setUp() {
         commands.register(new PrivateMessageCommands());
+        target = addChatter(randomChatter());
+        SendPrivateMessageCommand.prototype(builder -> builder.channelRepository(channelRepository));
     }
 
     @DisplayName("/tell <player>")
     @Nested class sendPrivateMessage {
 
+        private void sendPM() {
+            cmd("/tell " + target.name() + " " + TEXT);
+        }
+
         @Test
         void sends_private_message() {
-            final ChatterMock target = addChatter(randomChatter());
-            cmd("/tell " + target.name() + " Hi you there!");
-            target.assertReceivedMessage(Component.text("Hi you there!"));
+            sendPM();
+            target.assertReceivedMessage(Component.text(TEXT));
+        }
+
+        @Test
+        void sets_private_channel_as_active() {
+            sendPM();
+            assertThat(chatter.activeChannel()).isPresent().get()
+                .isEqualTo(channelRepository.get(target.uniqueId().toString()));
         }
     }
 }
