@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.bukkit.adapter.BukkitIdentityAdapter.identity;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
-import static net.silthus.schat.chatter.ChatterProviderStub.chatterProviderStub;
+import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PlayerChatListenerTest extends BukkitTests {
@@ -53,7 +53,7 @@ class PlayerChatListenerTest extends BukkitTests {
         chatter = Chatter.chatter(identity(player))
             .viewConnector(c -> () -> handleMessage(c))
             .create();
-        PlayerChatListener listener = new PlayerChatListener(chatterProviderStub(chatter));
+        PlayerChatListener listener = new PlayerChatListener(createInMemoryChatterRepository());
         server.getPluginManager().registerEvents(listener, mockPlugin);
     }
 
@@ -73,10 +73,9 @@ class PlayerChatListenerTest extends BukkitTests {
 
         @SneakyThrows
         @Test
-        @Disabled
+        @Disabled("Async Chat Event not yet supported in MockBukkit: https://github.com/MockBukkit/MockBukkit/pull/297")
         void when_player_chats_sends_error_to_player() {
             chat();
-            Thread.sleep(100L); // workaround for async events until this PR is merged: https://github.com/MockBukkit/MockBukkit/pull/297
             assertThat(lastMessage).isEqualTo(Messages.CANNOT_CHAT_NO_ACTIVE_CHANNEL.build());
         }
     }

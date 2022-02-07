@@ -56,11 +56,11 @@ non-sealed class ChatterImpl implements Chatter {
     }
 
     private final Identity identity;
-    private final ViewConnector viewConnector;
-    private final PermissionHandler permissionHandler;
+    private final transient ViewConnector viewConnector;
+    private final transient PermissionHandler permissionHandler;
 
     private final Set<Channel> channels = new HashSet<>();
-    private final Queue<Message> messages = new LinkedList<>();
+    private final transient Queue<Message> messages = new LinkedList<>();
 
     private @Nullable Channel activeChannel;
 

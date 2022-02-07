@@ -25,34 +25,11 @@
 package net.silthus.schat.chatter;
 
 import java.util.UUID;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import net.silthus.schat.repository.Repository;
 
-import static java.util.UUID.randomUUID;
-import static net.silthus.schat.AssertionHelper.assertNPE;
-import static org.assertj.core.api.Assertions.assertThat;
+public interface ChatterRepository extends Repository<UUID, Chatter> {
 
-class ChatterProviderTest {
-    private CachedChatterProvider provider;
-
-    @BeforeEach
-    void setUp() {
-        provider = new CachedChatterProvider(id -> ChatterMock.randomChatter());
-    }
-
-    @Nested class get {
-        @SuppressWarnings("ConstantConditions")
-        @Test void given_null_throws_npe() {
-            assertNPE(() -> provider.get(null));
-        }
-
-        @Nested class given_valid_identity {
-            @Test void then_chatter_is_cached() {
-                final UUID id = randomUUID();
-                final Chatter chatter = provider.get(id);
-                assertThat(chatter).isSameAs(provider.get(id));
-            }
-        }
+    static ChatterRepository createInMemoryChatterRepository() {
+        return new InMemoryChatterRepository();
     }
 }

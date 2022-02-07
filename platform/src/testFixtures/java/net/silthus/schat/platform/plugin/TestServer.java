@@ -38,11 +38,11 @@ import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.messaging.MockMessagingGatewayProvider;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.platform.sender.Sender;
+import net.silthus.schat.platform.sender.SenderMock;
 import net.silthus.schat.ui.view.ViewProvider;
 
 import static net.silthus.schat.platform.commands.CommandTestUtils.createCommandManager;
 import static net.silthus.schat.platform.config.TestConfigurationAdapter.testConfigAdapter;
-import static net.silthus.schat.platform.sender.SenderMock.senderMock;
 import static org.mockito.Mockito.spy;
 
 @Getter
@@ -54,7 +54,7 @@ public class TestServer extends AbstractSChatServerPlugin {
 
     @Override
     public Sender getConsole() {
-        return senderMock();
+        return SenderMock.randomSender();
     }
 
     @Override

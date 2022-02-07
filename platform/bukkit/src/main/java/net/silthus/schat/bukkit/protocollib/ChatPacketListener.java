@@ -42,7 +42,7 @@ import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.chatter.ChatterProvider;
+import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.ui.view.View;
 import net.silthus.schat.ui.view.ViewProvider;
@@ -78,12 +78,12 @@ public final class ChatPacketListener extends PacketAdapter {
     }
 
     private final ProtocolManager protocolManager;
-    private final ChatterProvider chatterProvider;
+    private final ChatterRepository chatterRepository;
     private final ViewProvider viewProvider;
 
-    public ChatPacketListener(final Plugin plugin, ChatterProvider chatterProvider, ViewProvider viewProvider) {
+    public ChatPacketListener(final Plugin plugin, ChatterRepository chatterRepository, ViewProvider viewProvider) {
         super(plugin, PacketType.Play.Server.CHAT);
-        this.chatterProvider = chatterProvider;
+        this.chatterRepository = chatterRepository;
         this.viewProvider = viewProvider;
         this.protocolManager = ProtocolLibrary.getProtocolManager();
     }
@@ -112,7 +112,7 @@ public final class ChatPacketListener extends PacketAdapter {
         if (rawMessage == null)
             return;
 
-        final Chatter chatter = chatterProvider.get(event.getPlayer().getUniqueId());
+        final Chatter chatter = chatterRepository.get(event.getPlayer().getUniqueId());
         final View view = viewProvider.view(chatter);
         if (view.isRenderedView(rawMessage))
             return;

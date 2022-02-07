@@ -82,7 +82,7 @@ public class UserSteps {
     }
 
     public User createUser(String user) {
-        final SenderMock sender = SenderMock.senderMock(identity(user));
+        final SenderMock sender = SenderMock.sender(identity(user));
         return new User()
             .sender(sender)
             .id(sender.uniqueId())

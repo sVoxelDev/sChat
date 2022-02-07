@@ -24,6 +24,7 @@
 
 package net.silthus.schat.chatter;
 
+import java.util.UUID;
 import java.util.function.Consumer;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
@@ -42,6 +43,10 @@ public final class ChatterMock extends ChatterImpl {
 
     public static @NotNull ChatterMock randomChatter() {
         return chatterMock(randomIdentity());
+    }
+
+    public static Chatter randomChatter(UUID id) {
+        return chatterMock(Identity.identity(id));
     }
 
     public static @NotNull ChatterMock chatterMock(Identity identity) {

@@ -50,8 +50,9 @@ public class ChatterFactoryStub extends AbstractChatterFactory {
         super(viewProvider);
     }
 
-    public void stubSenderAsChatter(SenderMock sender) {
+    public Chatter stubSenderAsChatter(SenderMock sender) {
         chatterStubs.put(sender.uniqueId(), sender);
+        return createChatter(sender.uniqueId());
     }
 
     public void removeSenderStub(SenderMock sender) {

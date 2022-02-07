@@ -36,11 +36,11 @@ import cloud.commandframework.exceptions.parsing.ParserException;
 import io.leangen.geantyref.TypeToken;
 import java.util.List;
 import java.util.Queue;
+import lombok.NonNull;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.repository.Repository;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import static cloud.commandframework.arguments.parser.ArgumentParseResult.failure;
@@ -60,6 +60,10 @@ public final class ChannelArgument implements ArgumentParser<Sender, Channel> {
         registerCaptions(commandManager);
     }
 
+    private static void registerArgumentParser(CommandManager<Sender> commandManager, ChannelRepository repository) {
+        commandManager.getParserRegistry().registerParserSupplier(TypeToken.get(Channel.class), parserParameters -> new ChannelArgument(repository));
+    }
+
     private static void registerCaptions(CommandManager<Sender> commandManager) {
         if (commandManager.getCaptionRegistry() instanceof FactoryDelegatingCaptionRegistry<Sender> registry) {
             registry.registerMessageFactory(
@@ -70,10 +74,6 @@ public final class ChannelArgument implements ArgumentParser<Sender, Channel> {
     }
 
     private final ChannelRepository repository;
-
-    private static void registerArgumentParser(CommandManager<Sender> commandManager, ChannelRepository repository) {
-        commandManager.getParserRegistry().registerParserSupplier(TypeToken.get(Channel.class), parserParameters -> new ChannelArgument(repository));
-    }
 
     @Override
     public @NonNull ArgumentParseResult<@NonNull Channel> parse(@NonNull CommandContext<@NonNull Sender> commandContext, @NonNull Queue<@NonNull String> inputQueue) {

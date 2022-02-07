@@ -129,12 +129,12 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
     }
 
     private void createChatListener() {
-        chatListener = new PlayerChatListener(chatterProvider());
+        chatListener = new PlayerChatListener(chatterRepository());
         Bukkit.getPluginManager().registerEvents(chatListener, bootstrap().loader());
     }
 
     private void createChatPacketListener() {
-        chatPacketListener = new ChatPacketListener(bootstrap().loader(), chatterProvider(), viewProvider());
+        chatPacketListener = new ChatPacketListener(bootstrap().loader(), chatterRepository(), viewProvider());
         chatPacketListener.enable();
     }
 }

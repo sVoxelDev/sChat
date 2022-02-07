@@ -45,6 +45,11 @@ public final class GsonPluginMessageSerializer implements PluginMessageSerialize
     }
 
     @Override
+    public boolean supports(PluginMessage message) {
+        return typeMap.containsKey(message.getClass().getTypeName());
+    }
+
+    @Override
     public @NotNull String encode(PluginMessage pluginMessage) {
         final JsonObject json = normalGson()
             .toJsonTree(pluginMessage).getAsJsonObject();

@@ -25,12 +25,14 @@
 package net.silthus.schat.platform.messaging;
 
 import lombok.NonNull;
+import net.silthus.schat.Messenger;
 import net.silthus.schat.PluginMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class MessagingServiceTest {
 
@@ -61,6 +63,17 @@ class MessagingServiceTest {
         final MockPluginMessage message = new MockPluginMessage();
         service.consumeIncomingMessage(message);
         message.assertProcessed();
+    }
+
+    @Test
+    void unregistered_message_throws() {
+        assertThatExceptionOfType(Messenger.UnsupportedMessageException.class)
+            .isThrownBy(() -> service.sendPluginMessage(new PluginMessage() {
+                @Override
+                public void process() {
+
+                }
+            }));
     }
 
     @Nested class given_self_referencing_messenger {

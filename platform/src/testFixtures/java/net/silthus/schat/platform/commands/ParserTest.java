@@ -35,11 +35,11 @@ import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
 import net.silthus.schat.platform.sender.Sender;
+import net.silthus.schat.platform.sender.SenderMock;
 import org.jetbrains.annotations.NotNull;
 
 import static cloud.commandframework.arguments.parser.ParserParameters.empty;
 import static io.leangen.geantyref.TypeToken.get;
-import static net.silthus.schat.platform.sender.SenderMock.senderMock;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Getter
@@ -55,7 +55,7 @@ public abstract class ParserTest<T> {
 
     @NotNull
     private CommandContext<Sender> createContext() {
-        return new CommandContext<>(senderMock(), commandManager);
+        return new CommandContext<>(SenderMock.randomSender(), commandManager);
     }
 
     protected ArgumentParseResult<T> parse(String... input) {
@@ -73,7 +73,7 @@ public abstract class ParserTest<T> {
 
     @NotNull
     protected String getCaption(Caption caption) {
-        return commandManager.getCaptionRegistry().getCaption(caption, senderMock());
+        return commandManager.getCaptionRegistry().getCaption(caption, SenderMock.randomSender());
     }
 
     @NotNull
