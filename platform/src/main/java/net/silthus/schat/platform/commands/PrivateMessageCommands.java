@@ -32,6 +32,9 @@ import cloud.commandframework.annotations.specifier.Greedy;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.sender.Sender;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.commands.SendPrivateMessageCommand.sendPrivateMessage;
+
 public final class PrivateMessageCommands implements Command {
 
     @Override
@@ -41,6 +44,6 @@ public final class PrivateMessageCommands implements Command {
 
     @CommandMethod("tell <target> [message]")
     public void privateMessageCommand(Sender sender, Chatter source, @Argument("target") Chatter target, @Greedy @Argument("message") String message) {
-        source.message(message).to(target).send();
+        sendPrivateMessage(source, target, text(message));
     }
 }

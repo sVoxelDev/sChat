@@ -39,4 +39,16 @@ class ChatterArgumentTests extends ParserTest<Chatter> {
         chatterRepository.add(chatter);
         assertParseSuccessful(chatter.uniqueId().toString(), chatter);
     }
+
+    @Test
+    void given_unknown_name_throws_not_found() {
+        assertParseFailure(ChatterArgument.ChatterParseException.class, "Bob");
+    }
+
+    @Test
+    void given_valid_name_returns_chatter() {
+        ChatterMock chatter = randomChatter();
+        chatterRepository.add(chatter);
+        assertParseSuccessful(chatter.name(), chatter);
+    }
 }
