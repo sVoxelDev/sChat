@@ -42,6 +42,7 @@ import lombok.NonNull;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.platform.sender.Sender;
+import net.silthus.schat.repository.Repository;
 import org.jetbrains.annotations.NotNull;
 
 import static cloud.commandframework.arguments.parser.ArgumentParseResult.failure;
@@ -91,20 +92,13 @@ public final class ChatterArgument implements ParameterInjector<Sender, Chatter>
         try {
             final String input = validateAndGetInput(context, inputQueue);
             if (isUuid(input)) {
-                return parseFromId(input);
+                return parseFromId(context, input);
             } else {
-                return success(null);
+                return parseFromName(context, input);
             }
-        } catch (ParserException e) {
-            throw e;
         } catch (Exception e) {
-            return failure(new ChatterParseException(context, inputQueue.peek()));
+            return failure(e);
         }
-    }
-
-    @NotNull
-    private ArgumentParseResult<@NonNull Chatter> parseFromId(String input) {
-        return success(chatterRepository.get(UUID.fromString(input)));
     }
 
     @NotNull
@@ -113,6 +107,21 @@ public final class ChatterArgument implements ParameterInjector<Sender, Chatter>
         if (input == null || input.isBlank())
             throw new NoInputProvidedException(ChannelArgument.class, commandContext);
         return inputQueue.remove();
+    }
+
+    @NotNull
+    private ArgumentParseResult<@NonNull Chatter> parseFromId(@NonNull CommandContext<@NonNull Sender> context, String input) {
+        try {
+            return success(chatterRepository.get(UUID.fromString(input)));
+        } catch (Repository.NotFound e) {
+            throw new ChatterParseException(context, input);
+        }
+    }
+
+    private ArgumentParseResult<Chatter> parseFromName(@NonNull CommandContext<@NonNull Sender> context, String input) {
+        return chatterRepository.find(chatter -> chatter.name().equalsIgnoreCase(input))
+            .map(ArgumentParseResult::success)
+            .orElseThrow(() -> new ChatterParseException(context, input));
     }
 
     public static class ChatterParseException extends ParserException {
