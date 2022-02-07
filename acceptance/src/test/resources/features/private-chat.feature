@@ -11,5 +11,5 @@ Feature: Private Chats
   Scenario: Users can send private messages
     When I send a private message to player2
     Then player2 receives the message
-    And my view shows the message of player1 in a separate tab
+    And my view shows the message
     But player3 does not receive a message

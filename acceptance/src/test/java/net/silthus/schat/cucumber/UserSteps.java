@@ -34,15 +34,12 @@ import java.util.Map;
 import javax.inject.Inject;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.cucumber.models.User;
-import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.sender.SenderMock;
 import net.silthus.schat.ui.view.View;
-import net.silthus.schat.ui.views.TabbedChannelsView;
 
 import static net.silthus.schat.identity.Identity.identity;
 import static net.silthus.schat.platform.locale.Messages.JOINED_CHANNEL;
 import static net.silthus.schat.platform.locale.Messages.JOIN_CHANNEL_ERROR;
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserSteps {
 
@@ -67,11 +64,6 @@ public class UserSteps {
         if (user == null)
             return me().view();
         return user(user).view();
-    }
-
-    @ParameterType("message of ([a-zA-Z0-9]+)")
-    public Message message(String user) {
-        return user(user).lastMessage();
     }
 
     @DataTableType
@@ -122,12 +114,8 @@ public class UserSteps {
         user.sender().assertLastMessageIs(JOIN_CHANNEL_ERROR.build(channel));
     }
 
-    @Then("{view} shows the {message} in a separate tab")
-    public void theMessageIsShownInASeparateTab(View view, Message message) {
-        assertThat(((TabbedChannelsView) view).tabs())
-            .filteredOn(tab -> message.targets().contains(tab.channel()))
-            .isNotEmpty()
-            .extracting(TabbedChannelsView.Tab::messages).asList()
-            .contains(message);
+    @Then("{view} shows the message")
+    public void theMessageIsShownInASeparateTab(View view) {
+        view.render().contains(context.lastMessage().text());
     }
 }
