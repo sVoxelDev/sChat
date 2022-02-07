@@ -29,7 +29,6 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.Messenger;
 import net.silthus.schat.PluginMessage;
-import net.silthus.schat.PluginMessageSerializer;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.eventbus.EventListener;
@@ -42,9 +41,9 @@ public class GlobalChatFeature implements EventListener {
 
     private final Messenger messenger;
 
-    public GlobalChatFeature(Messenger messenger, PluginMessageSerializer serializer) {
+    public GlobalChatFeature(Messenger messenger) {
         this.messenger = messenger;
-        serializer.registerMessageType(GlobalChannelPluginMessage.class);
+        messenger.registerMessageType(GlobalChannelPluginMessage.class);
     }
 
     @Override

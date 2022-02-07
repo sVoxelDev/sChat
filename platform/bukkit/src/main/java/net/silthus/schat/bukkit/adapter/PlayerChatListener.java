@@ -25,7 +25,7 @@
 package net.silthus.schat.bukkit.adapter;
 
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.chatter.ChatterProvider;
+import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.commands.ChatCommand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -37,15 +37,15 @@ import static net.silthus.schat.platform.locale.Messages.CANNOT_CHAT_NO_ACTIVE_C
 
 public final class PlayerChatListener implements Listener {
 
-    private final ChatterProvider chatterProvider;
+    private final ChatterRepository chatterRepository;
 
-    public PlayerChatListener(ChatterProvider provider) {
-        chatterProvider = provider;
+    public PlayerChatListener(ChatterRepository provider) {
+        chatterRepository = provider;
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        final Chatter chatter = chatterProvider.get(event.getPlayer().getUniqueId());
+        final Chatter chatter = chatterRepository.get(event.getPlayer().getUniqueId());
         tryChatting(chatter, event.getMessage());
         event.setCancelled(true);
     }

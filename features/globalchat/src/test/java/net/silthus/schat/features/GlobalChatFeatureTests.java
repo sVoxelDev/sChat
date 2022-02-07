@@ -24,6 +24,7 @@
 
 package net.silthus.schat.features;
 
+import java.lang.reflect.Type;
 import lombok.NonNull;
 import net.silthus.schat.GsonPluginMessageSerializer;
 import net.silthus.schat.Messenger;
@@ -56,7 +57,7 @@ class GlobalChatFeatureTests implements Messenger {
         events = new EventBusMock();
         registerTypeAdapter(ChannelSerializer.CHANNEL_TYPE, new ChannelSerializer(createInMemoryChannelRepository()));
         serializer = gsonSerializer();
-        new GlobalChatFeature(this, serializer).bind(events);
+        new GlobalChatFeature(this).bind(events);
     }
 
     @AfterEach
@@ -68,6 +69,11 @@ class GlobalChatFeatureTests implements Messenger {
     void channel_without_global_flag_is_not_sent() {
         channelWith(GLOBAL, false).sendMessage(randomMessage());
         assertThat(messengerCalled).isFalse();
+    }
+
+    @Override
+    public void registerMessageType(Type type) {
+        serializer.registerMessageType(type);
     }
 
     @Override

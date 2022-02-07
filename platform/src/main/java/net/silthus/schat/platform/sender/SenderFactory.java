@@ -35,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <T> the command sender type
  */
-public abstract class SenderFactory<T> implements AutoCloseable, PlayerOnlineChecker {
+public abstract class SenderFactory<T> implements AutoCloseable {
 
     public static final UUID CONSOLE_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
     public static final @NotNull Identity CONSOLE = Identity.identity(
@@ -54,6 +54,8 @@ public abstract class SenderFactory<T> implements AutoCloseable, PlayerOnlineChe
     protected abstract void performCommand(T sender, String command);
 
     protected abstract boolean isConsole(T sender);
+
+    protected abstract boolean isPlayerOnline(UUID playerId);
 
     public final Sender wrap(@NonNull T sender) {
         if (!senderType().isInstance(sender))

@@ -68,11 +68,12 @@ public class User {
     }
 
     private void addStubToServer(Server server) {
-        server.plugin().chatterFactory().stubSenderAsChatter(sender());
+        final Chatter chatter = server.plugin().chatterFactory().stubSenderAsChatter(sender());
+        server.plugin().chatterRepository().add(chatter);
     }
 
     public Chatter chatter() {
-        return server().plugin().chatterProvider().get(id());
+        return server().plugin().chatterRepository().get(id());
     }
 
     public void execute(String command) {

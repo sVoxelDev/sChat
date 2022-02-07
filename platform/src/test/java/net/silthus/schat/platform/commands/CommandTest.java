@@ -29,14 +29,15 @@ import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.chatter.ChatterProvider;
+import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.platform.sender.SenderMock;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
-import static net.silthus.schat.chatter.ChatterProviderStub.chatterProviderStub;
+import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
 import static net.silthus.schat.platform.commands.CommandTestUtils.createCommandManager;
 import static net.silthus.schat.platform.commands.parser.ChannelArgument.registerChannelArgument;
 import static net.silthus.schat.platform.commands.parser.ChatterArgument.registerChatterArgument;
@@ -47,7 +48,7 @@ public abstract class CommandTest {
     protected CommandManager<Sender> commandManager;
     protected SenderMock sender;
     protected Commands commands;
-    protected ChatterProvider chatterProvider;
+    protected ChatterRepository chatterRepository;
     protected ChannelRepository channelRepository;
     protected Chatter chatter;
 
@@ -57,16 +58,23 @@ public abstract class CommandTest {
         channelRepository = createInMemoryChannelRepository();
 
         chatter = randomChatter();
-        chatterProvider = chatterProviderStub(chatter);
         sender = new SenderMock(chatter.identity());
+        chatterRepository = createInMemoryChatterRepository();
+        chatterRepository.add(chatter);
 
         commands = new Commands(commandManager);
         registerArgumentTypes();
     }
 
+    @NotNull
+    protected <T extends Chatter> T addChatter(@NotNull T chatter) {
+        chatterRepository.add(chatter);
+        return chatter;
+    }
+
     @SneakyThrows
-    protected Sender cmd(String command) {
-        return commandManager.executeCommand(sender, command).get().getCommandContext().getSender();
+    protected void cmd(String command) {
+        commands.execute(sender, command);
     }
 
     protected void cmdFails(String command, Class<? extends Exception> expectedException) {
@@ -82,7 +90,7 @@ public abstract class CommandTest {
     }
 
     private void registerArgumentTypes() {
-        registerChatterArgument(commandManager, chatterProvider);
+        registerChatterArgument(commandManager, chatterRepository);
         registerChannelArgument(commandManager, channelRepository);
     }
 }

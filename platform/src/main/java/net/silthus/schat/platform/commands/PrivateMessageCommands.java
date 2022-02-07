@@ -26,6 +26,10 @@ package net.silthus.schat.platform.commands;
 
 import cloud.commandframework.CommandManager;
 import cloud.commandframework.annotations.AnnotationParser;
+import cloud.commandframework.annotations.Argument;
+import cloud.commandframework.annotations.CommandMethod;
+import cloud.commandframework.annotations.specifier.Greedy;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.sender.Sender;
 
 public final class PrivateMessageCommands implements Command {
@@ -33,5 +37,10 @@ public final class PrivateMessageCommands implements Command {
     @Override
     public void register(CommandManager<Sender> commandManager, AnnotationParser<Sender> parser) {
         parser.parse(this);
+    }
+
+    @CommandMethod("tell <target> [message]")
+    public void privateMessageCommand(Sender sender, Chatter source, @Argument("target") Chatter target, @Greedy @Argument("message") String message) {
+        source.message(message).to(target).send();
     }
 }

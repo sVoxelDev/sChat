@@ -44,6 +44,8 @@ public interface PluginMessageSerializer {
      */
     void registerMessageType(Type type);
 
+    boolean supports(PluginMessage message);
+
     @NotNull String encode(PluginMessage pluginMessage);
 
     @NotNull PluginMessage decode(@NonNull String encodedString);

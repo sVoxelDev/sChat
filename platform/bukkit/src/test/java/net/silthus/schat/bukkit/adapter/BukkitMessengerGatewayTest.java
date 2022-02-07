@@ -88,6 +88,6 @@ class BukkitMessengerGatewayTest extends BukkitTests {
     }
 
     private byte[] encodedDummyMessage() {
-        return consumer.getSerializer().encode(new MockPluginMessage()).getBytes(StandardCharsets.UTF_8);
+        return consumer.serializer().encode(new MockPluginMessage()).getBytes(StandardCharsets.UTF_8);
     }
 }

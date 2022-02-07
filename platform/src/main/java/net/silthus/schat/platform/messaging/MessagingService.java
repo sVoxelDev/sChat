@@ -24,12 +24,14 @@
 
 package net.silthus.schat.platform.messaging;
 
+import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
 import net.silthus.schat.IncomingMessageConsumer;
 import net.silthus.schat.Messenger;
@@ -41,6 +43,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Log
+@Accessors(fluent = true)
 public class MessagingService implements Messenger, IncomingMessageConsumer {
 
     private final MessengerGateway gateway;
@@ -53,7 +56,14 @@ public class MessagingService implements Messenger, IncomingMessageConsumer {
     }
 
     @Override
-    public void sendPluginMessage(@NotNull PluginMessage message) {
+    public void registerMessageType(Type type) {
+        serializer().registerMessageType(type);
+    }
+
+    @Override
+    public void sendPluginMessage(@NotNull PluginMessage message) throws UnsupportedMessageException {
+        if (!serializer.supports(message))
+            throw new UnsupportedMessageException();
         if (processedMessages.add(message.id()))
             gateway.sendOutgoingMessage(serializer.encode(message));
     }

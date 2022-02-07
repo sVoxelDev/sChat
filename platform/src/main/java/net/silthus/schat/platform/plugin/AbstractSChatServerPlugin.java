@@ -32,7 +32,8 @@ import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelPrototype;
 import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.chatter.ChatterProvider;
+import net.silthus.schat.chatter.ChatterFactory;
+import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.commands.SendMessageCommand;
 import net.silthus.schat.features.GlobalChatFeature;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
@@ -48,7 +49,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
-import static net.silthus.schat.chatter.ChatterProvider.createCachingChatterProvider;
+import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
 import static net.silthus.schat.platform.commands.parser.ChannelArgument.registerChannelArgument;
 import static net.silthus.schat.platform.commands.parser.ChatterArgument.registerChatterArgument;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
@@ -59,13 +60,15 @@ import static net.silthus.schat.util.gson.types.ChannelSerializer.CHANNEL_TYPE;
 @Accessors(fluent = true)
 public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
-    private ChatterProvider chatterProvider;
+    private ViewFactory viewFactory;
+    private ViewProvider viewProvider;
+
+    private ChatterFactory chatterFactory;
+    private ChatterRepository chatterRepository;
+
     private ChannelRepository channelRepository;
 
     private Commands commands;
-
-    private ViewFactory viewFactory;
-    private ViewProvider viewProvider;
 
     private final List<Object> features = new ArrayList<>();
 
@@ -77,7 +80,9 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
         viewFactory = createViewFactory();
         viewProvider = createViewProvider(viewFactory);
 
-        chatterProvider = createCachingChatterProvider(createChatterFactory(viewProvider));
+        chatterFactory = createChatterFactory(viewProvider);
+        chatterRepository = createInMemoryChatterRepository();
+
         channelRepository = createChannelRepository();
 
         registerSerializers();
@@ -125,7 +130,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     }
 
     private void loadFeatures() {
-        final GlobalChatFeature feature = new GlobalChatFeature(messenger(), serializer());
+        final GlobalChatFeature feature = new GlobalChatFeature(messenger());
         feature.bind(eventBus());
         features.add(feature);
     }
@@ -150,7 +155,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     }
 
     private void registerCommandArguments(CommandManager<Sender> commandManager) {
-        registerChatterArgument(commandManager, chatterProvider());
+        registerChatterArgument(commandManager, chatterRepository());
         registerChannelArgument(commandManager, channelRepository());
     }
 

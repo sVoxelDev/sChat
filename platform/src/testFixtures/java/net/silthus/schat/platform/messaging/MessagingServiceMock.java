@@ -24,20 +24,32 @@
 
 package net.silthus.schat.platform.messaging;
 
+import java.util.LinkedList;
+import java.util.Queue;
 import lombok.NonNull;
 import net.silthus.schat.PluginMessage;
+import org.assertj.core.api.InstanceOfAssertFactories;
+import org.assertj.core.api.ObjectAssert;
+import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.PluginMessageSerializer.gsonSerializer;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MessagingServiceMock extends MessagingService {
 
+    private final Queue<PluginMessage> sentMessages = new LinkedList<>();
     private PluginMessage lastReceivedMessage;
     private int processedMessageCount = 0;
 
     public MessagingServiceMock() {
         super(new MockMessagingGatewayProvider(), gsonSerializer());
-        gsonSerializer().registerMessageType(MockPluginMessage.class);
+        registerMessageType(MockPluginMessage.class);
+    }
+
+    @Override
+    public void sendPluginMessage(@NotNull PluginMessage message) {
+        super.sendPluginMessage(message);
+        this.sentMessages.add(message);
     }
 
     @Override
@@ -53,7 +65,17 @@ public class MessagingServiceMock extends MessagingService {
         assertThat(lastReceivedMessage).isNotNull().isEqualTo(message);
     }
 
+    public <M extends PluginMessage> ObjectAssert<M> assertLastReceivedMessage(Class<M> type) {
+        return assertThat(lastReceivedMessage)
+            .isInstanceOf(type)
+            .asInstanceOf(InstanceOfAssertFactories.type(type));
+    }
+
     public void assertProcessedMessageCountIs(int count) {
         assertThat(processedMessageCount).isEqualTo(count);
+    }
+
+    public void assertSentMessage(Class<? extends PluginMessage> type) {
+        assertThat(sentMessages).hasAtLeastOneElementOfType(type);
     }
 }

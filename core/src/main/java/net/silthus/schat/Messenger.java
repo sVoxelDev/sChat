@@ -24,6 +24,7 @@
 
 package net.silthus.schat;
 
+import java.lang.reflect.Type;
 import lombok.NonNull;
 import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 
@@ -34,6 +35,16 @@ import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 public interface Messenger extends AutoCloseable {
 
     /**
+     * Registers the given plugin message type for sending messages.
+     *
+     * <p>Every {@link PluginMessage} that is sent must be registered
+     * or else an {@link UnsupportedMessageException} will be thrown by {@link #sendPluginMessage(PluginMessage)}.</p>
+     *
+     * @param type the type
+     */
+    void registerMessageType(Type type);
+
+    /**
      * Performs the necessary action to dispatch the message using the means
      * of the messenger.
      *
@@ -41,7 +52,7 @@ public interface Messenger extends AutoCloseable {
      *
      * @param pluginMessage the outgoing message
      */
-    void sendPluginMessage(@NonNull PluginMessage pluginMessage);
+    void sendPluginMessage(@NonNull PluginMessage pluginMessage) throws UnsupportedMessageException;
 
     /**
      * Performs the necessary action to gracefully shut down the messenger.
@@ -49,5 +60,8 @@ public interface Messenger extends AutoCloseable {
     @Override
     default void close() {
 
+    }
+
+    class UnsupportedMessageException extends RuntimeException {
     }
 }

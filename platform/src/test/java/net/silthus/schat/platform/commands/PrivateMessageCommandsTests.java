@@ -24,8 +24,14 @@
 
 package net.silthus.schat.platform.commands;
 
+import net.kyori.adventure.text.Component;
+import net.silthus.schat.chatter.ChatterMock;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+
+import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 
 class PrivateMessageCommandsTests extends CommandTest {
 
@@ -34,8 +40,14 @@ class PrivateMessageCommandsTests extends CommandTest {
         commands.register(new PrivateMessageCommands());
     }
 
+    @DisplayName("/tell <player>")
     @Nested class sendPrivateMessage {
 
-
+        @Test
+        void sends_private_message() {
+            final ChatterMock target = addChatter(randomChatter());
+            cmd("/tell " + target.name() + " Hi you there!");
+            target.assertReceivedMessage(Component.text("Hi you there!"));
+        }
     }
 }

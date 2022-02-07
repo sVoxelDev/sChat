@@ -46,11 +46,11 @@ public class SenderMock implements Sender {
 
     private static final MiniMessage SERIALIZER = MiniMessage.miniMessage();
 
-    public static SenderMock senderMock() {
+    public static SenderMock randomSender() {
         return new SenderMock(randomIdentity());
     }
 
-    public static SenderMock senderMock(Identity identity) {
+    public static SenderMock sender(Identity identity) {
         return new SenderMock(identity);
     }
 
