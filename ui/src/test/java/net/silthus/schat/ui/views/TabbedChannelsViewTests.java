@@ -308,7 +308,6 @@ class TabbedChannelsViewTests {
         void setUp() {
             chatter.join(createChannel("aaa"));
             chatter.activeChannel(channelWith("zzz", set(PRIORITY, 10)));
-            chatter.sendMessage(message("System").type(Message.Type.SYSTEM).create());
             sendMessage("No Source!");
             sendMessageWithSource("Player", "Hey");
             sendMessageWithSource("Player2", "Hello");
@@ -318,7 +317,6 @@ class TabbedChannelsViewTests {
         void renders_full_view() {
             assertViewRenders("""
                 No Source!
-                System
                 Player: Hey
                 Player2: Hello
                 | <green><underlined>zzz</underlined></green> | <gray><click:run_command:"/channel join aaa">aaa</click></gray> |""");
