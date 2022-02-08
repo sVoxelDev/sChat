@@ -33,6 +33,7 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.cucumber.models.Server;
 import net.silthus.schat.cucumber.models.User;
@@ -58,6 +59,7 @@ public class Context {
     private final Map<String, Channel> channels = new HashMap<>();
 
     private Message lastMessage;
+    private Component lastMessageText;
 
     public Context() {
         this.userSteps = new UserSteps(this);
@@ -91,6 +93,10 @@ public class Context {
     @After
     public void tearDown() {
         servers.values().forEach(Server::disable);
+    }
+
+    public Component lastMessageText() {
+        return lastMessageText == null && lastMessage() != null ? lastMessage().text() : lastMessageText;
     }
 
     public User user(String name) {

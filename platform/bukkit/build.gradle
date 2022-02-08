@@ -1,3 +1,4 @@
+//file:noinspection
 /*
  * sChat, a Supercharged Minecraft Chat Plugin
  * Copyright (C) Silthus <https://www.github.com/silthus>
@@ -16,6 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+//file:noinspection GroovyAssignabilityCheck
+//file:noinspection GroovyUnusedAssignment
 
 apply plugin: 'kr.entree.spigradle'
 
@@ -56,6 +59,10 @@ spigot {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     implementation spigot(mcVersion)
 
@@ -67,7 +74,7 @@ dependencies {
     //
     implementation "net.kyori:adventure-platform-bukkit:4.0.1"
     // bStats: https://bstats.org/plugin/bukkit/sChat/13304
-    implementation 'org.bstats:bstats-bukkit:2.2.1'
+    implementation 'org.bstats:bstats-bukkit:3.0.0'
 
     implementation "org.spongepowered:configurate-yaml:4.1.2"
 

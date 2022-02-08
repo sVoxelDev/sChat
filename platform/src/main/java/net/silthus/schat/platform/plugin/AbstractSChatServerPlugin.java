@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import net.silthus.schat.Messenger;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelPrototype;
 import net.silthus.schat.channel.ChannelRepository;
@@ -38,8 +39,10 @@ import net.silthus.schat.commands.SendMessageCommand;
 import net.silthus.schat.commands.SendPrivateMessageCommand;
 import net.silthus.schat.features.GlobalChatFeature;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
+import net.silthus.schat.platform.chatter.ConnectionListener;
 import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;
+import net.silthus.schat.platform.commands.PrivateMessageCommands;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.ui.view.ViewFactory;
 import net.silthus.schat.ui.view.ViewProvider;
@@ -66,6 +69,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
     private ChatterFactory chatterFactory;
     private ChatterRepository chatterRepository;
+    private ConnectionListener connectionListener;
 
     private ChannelRepository channelRepository;
 
@@ -81,8 +85,9 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
         viewFactory = createViewFactory();
         viewProvider = createViewProvider(viewFactory);
 
-        chatterFactory = createChatterFactory(viewProvider);
         chatterRepository = createInMemoryChatterRepository();
+        chatterFactory = createChatterFactory(viewProvider);
+        connectionListener = registerConnectionListener(chatterRepository, chatterFactory, messenger());
 
         channelRepository = createChannelRepository();
 
@@ -112,6 +117,8 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     }
 
     protected abstract AbstractChatterFactory createChatterFactory(final ViewProvider viewProvider);
+
+    protected abstract ConnectionListener registerConnectionListener(ChatterRepository repository, ChatterFactory factory, Messenger messenger);
 
     @ApiStatus.OverrideOnly
     protected ChannelRepository createChannelRepository() {
@@ -171,6 +178,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
     private void registerNativeCommands(Commands commands) {
         commands.register(new ChannelCommands());
+        commands.register(new PrivateMessageCommands());
     }
 
     @ApiStatus.OverrideOnly

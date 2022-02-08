@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
+import static net.silthus.schat.identity.IdentityHelper.randomIdentity;
 import static net.silthus.schat.platform.sender.SenderMock.randomSender;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,8 +24,14 @@ class ConnectionListenerTests {
     void setUp() {
         chatterRepository = createInMemoryChatterRepository();
         messenger = new MessagingServiceMock();
-        listener = new ConnectionListener(chatterRepository, ChatterMock::randomChatter, messenger);
+        listener = new ConnectionListener(chatterRepository, ChatterMock::randomChatter, messenger) {};
         sender = randomSender();
+    }
+
+    private ConnectionListener.ChatterJoined createRandomPluginMessage() {
+        return new ConnectionListener.ChatterJoined(randomIdentity())
+            .repository(chatterRepository)
+            .factory(ChatterMock::randomChatter);
     }
 
     @Nested class onJoin {
@@ -45,6 +52,13 @@ class ConnectionListenerTests {
             messenger.assertLastReceivedMessage(ConnectionListener.ChatterJoined.class)
                 .extracting(ConnectionListener.ChatterJoined::identity)
                 .isEqualTo(sender.identity());
+        }
+
+        @Test
+        void when_ping_is_processed_then_chatter_is_created() {
+            final ConnectionListener.ChatterJoined msg = createRandomPluginMessage();
+            messenger.consumeIncomingMessage(msg);
+            assertThat(chatterRepository.contains(msg.identity().uniqueId())).isTrue();
         }
     }
 }

@@ -37,6 +37,7 @@ import net.silthus.schat.cucumber.models.User;
 import net.silthus.schat.platform.sender.SenderMock;
 import net.silthus.schat.ui.view.View;
 
+import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.identity.Identity.identity;
 import static net.silthus.schat.platform.locale.Messages.JOINED_CHANNEL;
 import static net.silthus.schat.platform.locale.Messages.JOIN_CHANNEL_ERROR;
@@ -99,6 +100,12 @@ public class UserSteps {
         context.users().put("I", user);
     }
 
+    @When("{user} send(s) a private message to {user}")
+    public void sendPrivateMessage(User source, User target) {
+        source.execute("/tell " + target.name() + " Hi there!");
+        context.lastMessageText(text("Hi there!"));
+    }
+
     @When("{user} execute(s) {string}")
     public void executeCommand(User user, String command) {
         user.execute(command);
@@ -116,6 +123,6 @@ public class UserSteps {
 
     @Then("{view} shows the message")
     public void theMessageIsShownInASeparateTab(View view) {
-        view.render().contains(context.lastMessage().text());
+        view.render().contains(context.lastMessageText());
     }
 }

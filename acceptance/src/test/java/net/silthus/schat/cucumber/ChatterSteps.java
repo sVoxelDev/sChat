@@ -30,6 +30,7 @@ import io.cucumber.java.en.When;
 import javax.inject.Inject;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.message.Message;
 
 import static net.silthus.schat.message.MessageHelper.randomText;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -57,15 +58,10 @@ public class ChatterSteps {
         chatter.activeChannel().ifPresent(channel -> context.lastMessage(chatter.message(randomText()).to(channel).send()));
     }
 
-    @When("{chatter} send(s) a private message to {chatter}")
-    public void sendPrivateMessage(Chatter source, Chatter target) {
-        context.lastMessage(source.message(randomText()).to(target).send());
-    }
-
     @Then("{chatter} receives the message")
     public void receiveMessage(Chatter chatter) {
-        assertThat(chatter.lastMessage())
-            .isPresent().get().isEqualTo(context.lastMessage());
+        assertThat(chatter.lastMessage()).isPresent()
+            .get().extracting(Message::text).isEqualTo(context.lastMessageText());
     }
 
     @Then("{chatter} does not receive a message")

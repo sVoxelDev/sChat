@@ -36,11 +36,13 @@ import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.exceptions.parsing.NoInputProvidedException;
 import cloud.commandframework.exceptions.parsing.ParserException;
 import io.leangen.geantyref.TypeToken;
+import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
 import lombok.NonNull;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.identity.Identified;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.repository.Repository;
 import org.jetbrains.annotations.NotNull;
@@ -85,6 +87,11 @@ public final class ChatterArgument implements ParameterInjector<Sender, Chatter>
     @Override
     public Chatter create(@NonNull CommandContext<Sender> context, @NonNull AnnotationAccessor annotationAccessor) {
         return chatterRepository.get(context.getSender().uniqueId());
+    }
+
+    @Override
+    public @NonNull List<@NonNull String> suggestions(@NonNull CommandContext<Sender> commandContext, @NonNull String input) {
+        return chatterRepository.all().stream().map(Identified::name).toList();
     }
 
     @Override
