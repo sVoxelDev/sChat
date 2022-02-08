@@ -24,7 +24,6 @@
 
 package net.silthus.schat.commands;
 
-import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
@@ -36,6 +35,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.channel.Channel.GLOBAL;
+import static net.silthus.schat.channel.Channel.PRIVATE;
+import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.commands.SendPrivateMessageCommand.sendPrivateMessageBuilder;
@@ -69,10 +70,6 @@ class SendPrivateMessageCommandTests {
         return send(message().source(source).to(target));
     }
 
-    private String sourceId() {
-        return idOf(source);
-    }
-
     private String idOf(Chatter chatter) {
         return chatter.uniqueId().toString();
     }
@@ -81,46 +78,27 @@ class SendPrivateMessageCommandTests {
         return target.uniqueId().toString();
     }
 
-    private Component sourceName() {
-        return source.displayName();
-    }
-
-    private Component targetName() {
-        return target.displayName();
-    }
-
-    private Channel targetChannel() {
-        return target.channel(sourceId()).orElseThrow();
-    }
-
-    private Channel sourceChannel() {
-        return source.channel(targetId()).orElseThrow();
+    private Channel privateChannel() {
+        return source.channels().stream().filter(channel -> channel.is(PRIVATE)).findFirst().orElseThrow();
     }
 
     @Test
-    void creates_channel_with_partner_name() {
+    void creates_private_channel() {
         sendPrivateMessage();
-        source.assertJoinedChannel(targetId(), targetName());
-        target.assertJoinedChannel(sourceId(), sourceName());
-    }
-
-    @Test
-    void private_channels_are_linked() {
-        sendPrivateMessage();
-        assertThat(sourceChannel().targets()).contains(targetChannel());
-        assertThat(targetChannel().targets()).contains(sourceChannel());
+        source.assertJoinedChannel(privateChannel());
+        target.assertJoinedChannel(privateChannel());
     }
 
     @Test
     void private_channels_are_global() {
         sendPrivateMessage();
-        assertThat(sourceChannel().is(GLOBAL)).isTrue();
+        assertThat(privateChannel().is(GLOBAL)).isTrue();
     }
 
     @Test
     void private_channels_have_private_setting() {
         sendPrivateMessage();
-        assertThat(sourceChannel().is(Channel.PRIVATE)).isTrue();
+        assertThat(privateChannel().is(PRIVATE)).isTrue();
     }
 
     @Test
@@ -132,20 +110,20 @@ class SendPrivateMessageCommandTests {
     @Test
     void private_channels_are_added_to_repository() {
         sendPrivateMessage();
-        assertThat(repository.all()).contains(sourceChannel(), targetChannel());
+        assertThat(repository.contains(privateChannel())).isTrue();
     }
 
     @Test
     void private_channel_is_set_active() {
         sendPrivateMessage();
-        source.assertActiveChannel(sourceChannel());
+        source.assertActiveChannel(privateChannel());
     }
 
     @Test
     void given_setActive_is_false_then_private_channel_is_not_set_as_active() {
         sendPrivateMessageBuilder(source, target, randomMessage()).setActive(false).execute();
         assertThat(source.activeChannel()).isEmpty();
-        source.assertJoinedChannel(sourceChannel().key());
+        source.assertJoinedChannel(privateChannel().key());
     }
 
     @Nested
@@ -154,33 +132,17 @@ class SendPrivateMessageCommandTests {
 
         @BeforeEach
         void setUp() {
-            channel = Channel.channel(targetId()).create();
+            channel = channelWith(PRIVATE, true);
+            channel.addTarget(source);
+            channel.addTarget(target);
             repository.add(channel);
         }
 
         @Test
         void channel_is_reused() {
             final Message message = sendPrivateMessage();
-            assertThat(channel).isSameAs(sourceChannel());
+            assertThat(channel).isSameAs(privateChannel());
             assertThat(channel.messages()).contains(message);
-        }
-    }
-
-    @Nested
-    class given_two_different_source_chatters {
-        private @NotNull ChatterMock source2;
-
-        @BeforeEach
-        void setUp() {
-            source2 = randomChatter();
-        }
-
-        @Test
-        void target_receives_message_in_separate_channels() {
-            sendPrivateMessageFrom(source);
-            sendPrivateMessageFrom(source2);
-            assertThat(target.channel(idOf(source))).isPresent();
-            assertThat(target.channel(idOf(source2))).isPresent();
         }
     }
 }

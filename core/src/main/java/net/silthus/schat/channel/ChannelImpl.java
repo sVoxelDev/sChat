@@ -62,7 +62,7 @@ final class ChannelImpl implements Channel {
 
     private final String key;
     private final Settings settings;
-    private final transient Targets targets = new Targets();
+    private final Targets targets = new Targets();
     private final transient Messages messages = new Messages();
     private final transient EventBus eventBus;
 

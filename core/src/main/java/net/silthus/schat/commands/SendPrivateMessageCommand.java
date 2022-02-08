@@ -24,7 +24,9 @@
 
 package net.silthus.schat.commands;
 
+import java.util.UUID;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -38,12 +40,14 @@ import net.silthus.schat.command.CommandBuilder;
 import net.silthus.schat.message.Message;
 import org.jetbrains.annotations.NotNull;
 
+import static net.silthus.schat.channel.Channel.PRIVATE;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 
 @Getter
 @Accessors(fluent = true)
 public class SendPrivateMessageCommand implements Command {
 
+    public static final @NonNull Predicate<Channel> IS_PRIVATE = channel -> channel.is(PRIVATE);
     @Getter
     @Setter
     private static @NonNull Function<SendPrivateMessageCommand.Builder, SendPrivateMessageCommand.Builder> prototype = builder -> builder;
@@ -76,34 +80,37 @@ public class SendPrivateMessageCommand implements Command {
 
     @Override
     public SendMessageResult execute() throws Error {
-        createPrivateChannels(source, target).sendMessage(message);
+        createPrivateChannel(source, target).sendMessage(message);
         return new SendMessageResult(message, true);
     }
 
-    private @NotNull Channel createPrivateChannels(Chatter source, Chatter target) {
-        final Channel sourceChannel = createPrivateChannel(source, target);
-        final Channel targetChannel = createPrivateChannel(target, source);
-        sourceChannel.addTarget(targetChannel);
-        targetChannel.addTarget(sourceChannel);
-        return sourceChannel;
-    }
-
     private @NotNull Channel createPrivateChannel(Chatter source, Chatter target) {
-        final String key = target.uniqueId().toString();
-        final Channel channel = repository.findOrCreate(key, k -> createPrivateChannel(key, target.displayName()));
+        final Channel channel = repository.find(IS_PRIVATE.and(containsTarget(source)).and(containsTarget(target)))
+            .orElseGet(() -> createPrivateChannel(UUID.randomUUID().toString(), target.displayName()));
 
         source.join(channel);
-        if (setActive()) source.activeChannel(channel);
+        target.join(channel);
+        if (setActive()) {
+            source.activeChannel(channel);
+            target.activeChannel(channel);
+        }
 
         return channel;
     }
 
+    @NotNull
+    private Predicate<Channel> containsTarget(Chatter source) {
+        return channel -> channel.targets().contains(source);
+    }
+
     private Channel createPrivateChannel(String key, Component name) {
-        return Channel.channel(key)
+        final Channel channel = Channel.channel(key)
             .name(name)
             .set(Channel.GLOBAL, true)
-            .set(Channel.PRIVATE, true)
+            .set(PRIVATE, true)
             .create();
+        repository.add(channel);
+        return channel;
     }
 
     @Getter

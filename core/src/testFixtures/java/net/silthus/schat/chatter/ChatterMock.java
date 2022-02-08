@@ -127,4 +127,8 @@ public final class ChatterMock extends ChatterImpl {
         viewUpdateCount = 0;
         viewUpdated = false;
     }
+
+    public void assertJoinedChannel(Channel channel) {
+        assertThat(isJoined(channel)).isTrue();
+    }
 }

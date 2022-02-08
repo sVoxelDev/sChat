@@ -32,6 +32,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.silthus.schat.channel.Channel.PRIVATE;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -64,7 +65,7 @@ class PrivateMessageCommandsTests extends CommandTest {
         void sets_private_channel_as_active() {
             sendPM();
             assertThat(chatter.activeChannel()).isPresent().get()
-                .isEqualTo(channelRepository.get(target.uniqueId().toString()));
+                .matches(channel -> channel.is(PRIVATE));
         }
     }
 }
