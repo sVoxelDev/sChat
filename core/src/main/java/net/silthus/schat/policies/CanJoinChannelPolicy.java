@@ -31,6 +31,9 @@ import lombok.Setter;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.util.Permissable;
 
+import static net.silthus.schat.channel.Channel.PRIVATE;
+import static net.silthus.schat.channel.Channel.PROTECTED;
+
 public class CanJoinChannelPolicy implements Policy {
 
     public static CanJoinChannelPolicy.Builder canJoinChannel(@NonNull Permissable permissable, @NonNull Channel channel) {
@@ -51,8 +54,8 @@ public class CanJoinChannelPolicy implements Policy {
 
     @Override
     public boolean validate() throws Error {
-        if (!channel.get(Channel.PROTECTED))
-            return true;
+        if (channel.get(PRIVATE)) return false;
+        if (!channel.get(PROTECTED)) return true;
         return permissable.hasPermission(channel.get(Channel.JOIN_PERMISSION));
     }
 
