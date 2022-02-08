@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.channel.Channel.JOIN_PERMISSION;
+import static net.silthus.schat.channel.Channel.PRIVATE;
 import static net.silthus.schat.channel.Channel.PROTECTED;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
@@ -59,6 +60,18 @@ class CanJoinChannelPolicyTest {
 
     private void mockHasPermission(String permission) {
         when(permissionHandler.hasPermission(permission)).thenReturn(true);
+    }
+
+    @Nested class given_private_channel {
+        @BeforeEach
+        void setUp() {
+            channel = channelWith(PRIVATE, true);
+        }
+
+        @Test
+        void can_join_fails() {
+            assertCanJoin(false);
+        }
     }
 
     @Nested class given_protected_channel {
