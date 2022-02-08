@@ -117,7 +117,7 @@ public final class ChatPacketListener extends PacketAdapter {
         if (view.isRenderedView(rawMessage))
             return;
 
-        message(rawMessage).type(Message.Type.SYSTEM).send();
+        message(rawMessage).to(chatter).type(Message.Type.SYSTEM).send();
         event.setCancelled(true);
     }
 
