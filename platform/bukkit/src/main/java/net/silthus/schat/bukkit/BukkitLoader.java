@@ -26,12 +26,16 @@ package net.silthus.schat.bukkit;
 
 import java.io.File;
 import kr.entree.spigradle.annotations.PluginMain;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.jetbrains.annotations.NotNull;
 
 @PluginMain
+@Getter
+@Accessors(fluent = true)
 public final class BukkitLoader extends JavaPlugin {
 
     private final BukkitBootstrap bootstrap;

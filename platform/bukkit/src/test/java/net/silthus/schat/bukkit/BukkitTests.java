@@ -44,9 +44,11 @@ public abstract class BukkitTests {
     protected static MockPlugin mockPlugin;
     protected static BukkitAudiences audiences;
 
+    protected BukkitLoader plugin;
+
     @BeforeAll
     static void beforeAll() {
-        server = MockBukkit.mock();
+        server = MockBukkit.mock(new CustomServerMock());
         mockPlugin = MockBukkit.createMockPlugin();
     }
 
@@ -57,7 +59,7 @@ public abstract class BukkitTests {
 
     @BeforeEach
     void setup() {
-        audiences = BukkitAudiences.create(mockPlugin);
+        audiences = BukkitAudiences.create(plugin != null ? plugin : mockPlugin);
     }
 
     @AfterEach
@@ -65,10 +67,20 @@ public abstract class BukkitTests {
         audiences.close();
     }
 
+    protected void loadSChatPlugin() {
+        plugin = MockBukkit.load(BukkitLoader.class);
+    }
+
+    protected SChatBukkitServer sChat() {
+        return plugin.bootstrap().plugin();
+    }
+
+    @SuppressWarnings("SameParameterValue")
     protected void assertLastMessageIs(ConsoleCommandSenderMock mock, String message) {
         assertTrimmedEquals(getLastMessage(mock::nextMessage), message);
     }
 
+    @SuppressWarnings("SameParameterValue")
     protected void assertLastMessageIs(PlayerMock player, String message) {
         assertTrimmedEquals(getLastMessage(player::nextMessage), message);
     }

@@ -30,16 +30,21 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.silthus.schat.Messenger;
 import net.silthus.schat.MessengerGatewayProvider;
 import net.silthus.schat.bukkit.adapter.BukkitChatterFactory;
+import net.silthus.schat.bukkit.adapter.BukkitConnectionListener;
 import net.silthus.schat.bukkit.adapter.BukkitEventBus;
 import net.silthus.schat.bukkit.adapter.BukkitMessengerGateway;
 import net.silthus.schat.bukkit.adapter.BukkitSchedulerAdapter;
 import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
 import net.silthus.schat.bukkit.adapter.PlayerChatListener;
 import net.silthus.schat.bukkit.protocollib.ChatPacketListener;
+import net.silthus.schat.chatter.ChatterFactory;
+import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
+import net.silthus.schat.platform.chatter.ConnectionListener;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.plugin.AbstractSChatServerPlugin;
 import net.silthus.schat.platform.sender.Sender;
@@ -96,6 +101,11 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
     @Override
     protected AbstractChatterFactory createChatterFactory(final ViewProvider viewProvider) {
         return new BukkitChatterFactory(getAudiences(), viewProvider());
+    }
+
+    @Override
+    protected ConnectionListener registerConnectionListener(ChatterRepository repository, ChatterFactory factory, Messenger messenger) {
+        return new BukkitConnectionListener(this);
     }
 
     @NotNull

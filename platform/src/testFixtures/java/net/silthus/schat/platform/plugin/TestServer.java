@@ -27,11 +27,15 @@ package net.silthus.schat.platform.plugin;
 import cloud.commandframework.CommandManager;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import net.silthus.schat.Messenger;
 import net.silthus.schat.MessengerGatewayProvider;
+import net.silthus.schat.chatter.ChatterFactory;
+import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.eventbus.AbstractEventBus;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.chatter.ChatterFactoryStub;
+import net.silthus.schat.platform.chatter.ConnectionListener;
 import net.silthus.schat.platform.commands.Command;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
@@ -84,6 +88,11 @@ public class TestServer extends AbstractSChatServerPlugin {
     }
 
     @Override
+    protected ConnectionListener registerConnectionListener(ChatterRepository repository, ChatterFactory factory, Messenger messenger) {
+        return new TestConnectionListener(repository, factory, messenger);
+    }
+
+    @Override
     protected CommandManager<Sender> provideCommandManager() {
         return createCommandManager();
     }
@@ -96,6 +105,21 @@ public class TestServer extends AbstractSChatServerPlugin {
     @Override
     public Bootstrap bootstrap() {
         return new BootstrapStub();
+    }
+
+    public void joinServer(Sender sender) {
+        ((TestConnectionListener) connectionListener()).joinServer(sender);
+    }
+
+    private static final class TestConnectionListener extends ConnectionListener {
+
+        private TestConnectionListener(ChatterRepository chatterRepository, ChatterFactory chatterFactory, Messenger messenger) {
+            super(chatterRepository, chatterFactory, messenger);
+        }
+
+        public void joinServer(Sender sender) {
+            onJoin(sender);
+        }
     }
 
     private final class TestEventBus extends AbstractEventBus<TestServer> {

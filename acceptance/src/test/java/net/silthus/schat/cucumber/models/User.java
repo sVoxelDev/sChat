@@ -68,8 +68,7 @@ public class User {
     }
 
     private void addStubToServer(Server server) {
-        final Chatter chatter = server.plugin().chatterFactory().stubSenderAsChatter(sender());
-        server.plugin().chatterRepository().add(chatter);
+        server.join(sender());
     }
 
     public Chatter chatter() {

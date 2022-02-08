@@ -30,6 +30,7 @@ import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.platform.messaging.StubMessengerGatewayProvider;
 import net.silthus.schat.platform.plugin.TestServer;
+import net.silthus.schat.platform.sender.SenderMock;
 
 import static net.silthus.schat.platform.messaging.CrossServerMessengerGateway.GATEWAY_TYPE;
 
@@ -61,5 +62,10 @@ public class Server {
 
     public void addChannel(Channel channel) {
         plugin().channelRepository().add(channel);
+    }
+
+    public void join(SenderMock sender) {
+        plugin().chatterFactory().stubSenderAsChatter(sender);
+        plugin().joinServer(sender);
     }
 }
