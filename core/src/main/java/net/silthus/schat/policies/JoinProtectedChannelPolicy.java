@@ -28,38 +28,38 @@ import java.util.function.Function;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.util.Permissable;
 
-import static net.silthus.schat.channel.Channel.PRIVATE;
 import static net.silthus.schat.channel.Channel.PROTECTED;
 
-public class CanJoinChannelPolicy implements Policy {
+@Accessors(fluent = true)
+public class JoinProtectedChannelPolicy implements Policy {
 
-    public static CanJoinChannelPolicy.Builder canJoinChannel(@NonNull Permissable permissable, @NonNull Channel channel) {
-        return getPrototype().apply(new Builder(permissable, channel));
+    public static JoinProtectedChannelPolicy.Builder canJoinProtectedChannel(@NonNull Permissable permissable, @NonNull Channel channel) {
+        return prototype().apply(new Builder(permissable, channel));
     }
 
     @Getter
     @Setter
-    private static Function<CanJoinChannelPolicy.Builder, CanJoinChannelPolicy.Builder> prototype = builder -> builder;
+    private static Function<JoinProtectedChannelPolicy.Builder, JoinProtectedChannelPolicy.Builder> prototype = builder -> builder;
     private final Permissable permissable;
 
     private final Channel channel;
 
-    protected CanJoinChannelPolicy(Builder builder) {
+    protected JoinProtectedChannelPolicy(Builder builder) {
         this.permissable = builder.chatter;
         this.channel = builder.channel;
     }
 
     @Override
     public boolean validate() throws Error {
-        if (channel.get(PRIVATE)) return false;
         if (!channel.get(PROTECTED)) return true;
         return permissable.hasPermission(channel.get(Channel.JOIN_PERMISSION));
     }
 
-    public static class Builder implements Policy.Builder<CanJoinChannelPolicy> {
+    public static class Builder implements Policy.Builder<JoinProtectedChannelPolicy> {
 
         private final Permissable chatter;
         private final Channel channel;
@@ -70,8 +70,8 @@ public class CanJoinChannelPolicy implements Policy {
         }
 
         @Override
-        public CanJoinChannelPolicy create() {
-            return new CanJoinChannelPolicy(this);
+        public JoinProtectedChannelPolicy create() {
+            return new JoinProtectedChannelPolicy(this);
         }
     }
 }

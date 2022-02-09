@@ -37,13 +37,13 @@ import net.silthus.schat.command.Result;
 import net.silthus.schat.policies.Policy;
 
 import static net.silthus.schat.command.Result.success;
-import static net.silthus.schat.policies.CanJoinChannelPolicy.canJoinChannel;
+import static net.silthus.schat.policies.JoinChannelPolicy.canJoinChannel;
 
 @Getter
 @Accessors(fluent = true)
 public class JoinChannelCommand implements Command {
 
-    private static final @NonNull Function<Builder, Builder> DEFAULTS = builder -> builder.validate(canJoinChannel(builder.chatter, builder.channel).create());
+    private static final @NonNull Function<Builder, Builder> DEFAULTS = builder -> builder.validate(canJoinChannel(builder.chatter, builder.channel));
     @Getter
     @Setter
     private static @NonNull Function<Builder, Builder> prototype = builder -> builder;
@@ -54,7 +54,6 @@ public class JoinChannelCommand implements Command {
 
     private final Chatter chatter;
     private final Channel channel;
-
     private final Policy policy;
 
     protected JoinChannelCommand(Builder builder) {

@@ -45,7 +45,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static cloud.commandframework.arguments.parser.ArgumentParseResult.failure;
 import static cloud.commandframework.arguments.parser.ArgumentParseResult.success;
-import static net.silthus.schat.policies.CanJoinChannelPolicy.canJoinChannel;
+import static net.silthus.schat.policies.JoinProtectedChannelPolicy.canJoinProtectedChannel;
 
 public final class ChannelArgument implements ArgumentParser<Sender, Channel> {
 
@@ -87,7 +87,7 @@ public final class ChannelArgument implements ArgumentParser<Sender, Channel> {
     @Override
     public @NonNull List<@NonNull String> suggestions(@NonNull CommandContext<Sender> commandContext, @NonNull String input) {
         return repository
-            .filter(channel -> canJoinChannel(commandContext.getSender(), channel).validate())
+            .filter(channel -> canJoinProtectedChannel(commandContext.getSender(), channel).validate())
             .stream().map(Channel::key)
             .toList();
     }

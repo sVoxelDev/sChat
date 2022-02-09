@@ -25,53 +25,32 @@
 package net.silthus.schat.policies;
 
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.ChatterMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.channel.Channel.JOIN_PERMISSION;
-import static net.silthus.schat.channel.Channel.PRIVATE;
 import static net.silthus.schat.channel.Channel.PROTECTED;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
-import static net.silthus.schat.chatter.Chatter.chatter;
-import static net.silthus.schat.identity.IdentityHelper.randomIdentity;
-import static net.silthus.schat.policies.CanJoinChannelPolicy.canJoinChannel;
+import static net.silthus.schat.chatter.ChatterMock.randomChatter;
+import static net.silthus.schat.policies.JoinProtectedChannelPolicy.canJoinProtectedChannel;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-class CanJoinChannelPolicyTest {
+class JoinProtectedChannelPolicyTest {
 
-    private final Chatter.PermissionHandler permissionHandler = mock(Chatter.PermissionHandler.class);
-    private Chatter chatter;
+    private ChatterMock chatter;
     private Channel channel;
 
     @BeforeEach
     void setUp() {
-        chatter = chatter(randomIdentity()).permissionHandler(permissionHandler).create();
+        chatter = randomChatter();
     }
 
     private void assertCanJoin(boolean expected) {
-        assertThat(canJoinChannel(chatter, channel).validate()).isEqualTo(expected);
-    }
-
-    private void mockHasPermission(String permission) {
-        when(permissionHandler.hasPermission(permission)).thenReturn(true);
-    }
-
-    @Nested class given_private_channel {
-        @BeforeEach
-        void setUp() {
-            channel = channelWith(PRIVATE, true);
-        }
-
-        @Test
-        void can_join_fails() {
-            assertCanJoin(false);
-        }
+        assertThat(canJoinProtectedChannel(chatter, channel).validate()).isEqualTo(expected);
     }
 
     @Nested class given_protected_channel {
@@ -89,7 +68,7 @@ class CanJoinChannelPolicyTest {
         @Nested class given_user_has_permission {
             @BeforeEach
             void setUp() {
-                mockHasPermission("schat.channel." + channel.key() + ".join");
+                chatter.mockHasPermission("schat.channel." + channel.key() + ".join", true);
             }
 
             @Test
@@ -101,7 +80,7 @@ class CanJoinChannelPolicyTest {
                 @BeforeEach
                 void setUp() {
                     channel = channelWith(set(PROTECTED, true), set(JOIN_PERMISSION, "my-permission"));
-                    mockHasPermission("my-permission");
+                    chatter.mockHasPermission("my-permission", true);
                 }
 
                 @Test
