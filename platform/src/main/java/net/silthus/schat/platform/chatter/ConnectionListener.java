@@ -36,6 +36,8 @@ import net.silthus.schat.PluginMessage;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.events.chatter.ChatterJoinedServerEvent;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.util.gson.GsonProvider;
@@ -45,16 +47,14 @@ public abstract class ConnectionListener {
     private final ChatterRepository chatterRepository;
     private final ChatterFactory chatterFactory;
     private final Messenger messenger;
+    private final EventBus eventBus;
 
-    public ConnectionListener(ChatterRepository chatterRepository, ChatterFactory chatterFactory, Messenger messenger) {
+    public ConnectionListener(ChatterRepository chatterRepository, ChatterFactory chatterFactory, Messenger messenger, EventBus eventBus) {
         this.chatterRepository = chatterRepository;
         this.chatterFactory = chatterFactory;
         this.messenger = messenger;
+        this.eventBus = eventBus;
         registerMessageType();
-    }
-
-    protected final void onJoin(Sender sender) {
-        sendGlobalJoinPing(getOrCreateChatter(sender));
     }
 
     private void registerMessageType() {
@@ -62,17 +62,19 @@ public abstract class ConnectionListener {
         GsonProvider.registerTypeAdapter(ChatterJoined.class, new MessageCreator());
     }
 
-    @NotNull
-    private Chatter getOrCreateChatter(Sender sender) {
-        return chatterRepository.find(sender.uniqueId())
-            .orElseGet(() -> createChatter(sender));
+    protected final void onJoin(Sender sender) {
+        final Chatter chatter = getOrCreateChatter(sender);
+        fireJoinServerEvent(chatter);
+        sendGlobalJoinPing(chatter);
     }
 
     @NotNull
-    private Chatter createChatter(Sender sender) {
-        final Chatter c = chatterFactory.createChatter(sender.uniqueId());
-        chatterRepository.add(c);
-        return c;
+    private Chatter getOrCreateChatter(Sender sender) {
+        return chatterRepository.findOrCreate(sender.uniqueId(), chatterFactory::createChatter);
+    }
+
+    private void fireJoinServerEvent(Chatter chatter) {
+        eventBus.post(new ChatterJoinedServerEvent(chatter));
     }
 
     private void sendGlobalJoinPing(Chatter chatter) {

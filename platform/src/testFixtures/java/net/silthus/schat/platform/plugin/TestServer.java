@@ -88,8 +88,8 @@ public class TestServer extends AbstractSChatServerPlugin {
     }
 
     @Override
-    protected ConnectionListener registerConnectionListener(ChatterRepository repository, ChatterFactory factory, Messenger messenger) {
-        return new TestConnectionListener(repository, factory, messenger);
+    protected ConnectionListener registerConnectionListener(ChatterRepository repository, ChatterFactory factory, Messenger messenger, EventBus eventBus) {
+        return new TestConnectionListener(repository, factory, messenger, eventBus);
     }
 
     @Override
@@ -113,8 +113,8 @@ public class TestServer extends AbstractSChatServerPlugin {
 
     private static final class TestConnectionListener extends ConnectionListener {
 
-        private TestConnectionListener(ChatterRepository chatterRepository, ChatterFactory chatterFactory, Messenger messenger) {
-            super(chatterRepository, chatterFactory, messenger);
+        private TestConnectionListener(ChatterRepository chatterRepository, ChatterFactory chatterFactory, Messenger messenger, EventBus eventBus) {
+            super(chatterRepository, chatterFactory, messenger, eventBus);
         }
 
         public void joinServer(Sender sender) {

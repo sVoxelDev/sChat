@@ -24,10 +24,18 @@
 
 package net.silthus.schat.eventbus;
 
+import java.util.LinkedList;
+import java.util.Queue;
+import lombok.NonNull;
 import net.silthus.schat.channel.ChannelPrototype;
 import net.silthus.schat.commands.SendMessageCommand;
+import net.silthus.schat.events.SChatEvent;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class EventBusMock extends AbstractEventBus<Object> {
+
+    private final Queue<Object> events = new LinkedList<>();
 
     public EventBusMock() {
         ChannelPrototype.configure(this);
@@ -37,5 +45,15 @@ public class EventBusMock extends AbstractEventBus<Object> {
     @Override
     protected Object checkPlugin(Object plugin) throws IllegalArgumentException {
         return plugin;
+    }
+
+    @Override
+    public <E extends SChatEvent> E post(@NonNull E event) {
+        events.add(event);
+        return super.post(event);
+    }
+
+    public <E> void assertEventFired(E event) {
+        assertThat(events).contains(event);
     }
 }
