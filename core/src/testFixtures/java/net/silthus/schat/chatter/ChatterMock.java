@@ -83,6 +83,10 @@ public final class ChatterMock extends ChatterImpl {
         when(permissionHandler.hasPermission(any())).thenReturn(result);
     }
 
+    public void mockHasPermission(String permission, boolean state) {
+        when(permissionHandler.hasPermission(permission)).thenReturn(state);
+    }
+
     public void assertReceivedMessage(Component text) {
         assertThat(messages())
             .extracting(Message::text)
