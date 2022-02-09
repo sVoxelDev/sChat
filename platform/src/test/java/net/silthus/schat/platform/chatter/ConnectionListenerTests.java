@@ -26,6 +26,8 @@ package net.silthus.schat.platform.chatter;
 
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.eventbus.EventBusMock;
+import net.silthus.schat.events.chatter.ChatterJoinedServerEvent;
 import net.silthus.schat.platform.messaging.MessagingServiceMock;
 import net.silthus.schat.platform.sender.SenderMock;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,16 +41,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ConnectionListenerTests {
 
-    private ConnectionListener listener;
     private ChatterRepository chatterRepository;
-    private SenderMock sender;
     private MessagingServiceMock messenger;
+    private EventBusMock eventBus;
+    private ConnectionListener listener;
+    private SenderMock sender;
 
     @BeforeEach
     void setUp() {
         chatterRepository = createInMemoryChatterRepository();
         messenger = new MessagingServiceMock();
-        listener = new ConnectionListener(chatterRepository, ChatterMock::randomChatter, messenger) {};
+        eventBus = new EventBusMock();
+        listener = new ConnectionListener(chatterRepository, ChatterMock::randomChatter, messenger, eventBus) {};
         sender = randomSender();
     }
 
@@ -83,6 +87,12 @@ class ConnectionListenerTests {
             final ConnectionListener.ChatterJoined msg = createRandomPluginMessage();
             messenger.consumeIncomingMessage(msg);
             assertThat(chatterRepository.contains(msg.identity().uniqueId())).isTrue();
+        }
+
+        @Test
+        void fires_join_event() {
+            join();
+            eventBus.assertEventFired(new ChatterJoinedServerEvent(chatterRepository.get(sender.uniqueId())));
         }
     }
 }

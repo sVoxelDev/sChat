@@ -31,5 +31,5 @@ import net.silthus.schat.events.SChatEvent;
  *
  * @since next
  */
-public class ConfigReloadedEvent implements SChatEvent {
+public final class ConfigReloadedEvent implements SChatEvent {
 }

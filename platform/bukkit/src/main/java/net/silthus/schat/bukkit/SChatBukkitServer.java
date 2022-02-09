@@ -104,7 +104,7 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
     }
 
     @Override
-    protected ConnectionListener registerConnectionListener(ChatterRepository repository, ChatterFactory factory, Messenger messenger) {
+    protected ConnectionListener registerConnectionListener(ChatterRepository repository, ChatterFactory factory, Messenger messenger, EventBus eventBus) {
         return new BukkitConnectionListener(this);
     }
 

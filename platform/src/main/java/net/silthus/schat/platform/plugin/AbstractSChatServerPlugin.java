@@ -37,6 +37,7 @@ import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.commands.SendMessageCommand;
 import net.silthus.schat.commands.SendPrivateMessageCommand;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.features.GlobalChatFeature;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.chatter.ConnectionListener;
@@ -89,7 +90,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
         chatterRepository = createInMemoryChatterRepository();
         chatterFactory = createChatterFactory(viewProvider);
-        connectionListener = registerConnectionListener(chatterRepository, chatterFactory, messenger());
+        connectionListener = registerConnectionListener(chatterRepository, chatterFactory, messenger(), eventBus());
 
         channelRepository = createChannelRepository();
 
@@ -120,7 +121,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
     protected abstract AbstractChatterFactory createChatterFactory(final ViewProvider viewProvider);
 
-    protected abstract ConnectionListener registerConnectionListener(ChatterRepository repository, ChatterFactory factory, Messenger messenger);
+    protected abstract ConnectionListener registerConnectionListener(ChatterRepository repository, ChatterFactory factory, Messenger messenger, EventBus eventBus);
 
     @ApiStatus.OverrideOnly
     protected ChannelRepository createChannelRepository() {
