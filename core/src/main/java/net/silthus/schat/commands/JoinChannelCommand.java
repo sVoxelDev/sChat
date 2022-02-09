@@ -36,27 +36,27 @@ import net.silthus.schat.command.CommandBuilder;
 import net.silthus.schat.command.Result;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.events.channel.PostChatterJoinChannelEvent;
-import net.silthus.schat.policies.Policy;
+import net.silthus.schat.events.channel.PreJoinChannelEvent;
+import net.silthus.schat.policies.JoinChannelPolicy;
 
 import static net.silthus.schat.command.Result.success;
-import static net.silthus.schat.policies.JoinChannelPolicy.canJoinChannel;
+import static net.silthus.schat.policies.JoinChannelPolicy.JOIN_CHANNEL_POLICY;
 
 @Getter
 @Accessors(fluent = true)
 public class JoinChannelCommand implements Command {
 
-    private static final @NonNull Function<Builder, Builder> DEFAULTS = builder -> builder.policy(canJoinChannel(builder.chatter, builder.channel));
     @Getter
     @Setter
     private static @NonNull Function<Builder, Builder> prototype = builder -> builder;
 
     public static Builder joinChannel(Chatter chatter, Channel channel) {
-        return prototype().apply(DEFAULTS.apply(new Builder(chatter, channel)));
+        return prototype().apply(new Builder(chatter, channel));
     }
 
     private final Chatter chatter;
     private final Channel channel;
-    private final Policy policy;
+    private final JoinChannelPolicy policy;
     private final EventBus eventBus;
 
     protected JoinChannelCommand(Builder builder) {
@@ -67,10 +67,16 @@ public class JoinChannelCommand implements Command {
     }
 
     public Result execute() throws Error {
-        if (policy.validate())
+        PreJoinChannelEvent event = firePreJoinChannelEvent();
+        if (event.isNotCancelled() && event.policy().test(chatter, channel))
             return joinChannelAndUpdateView(chatter, channel);
         else
             return handleJoinChannelError(chatter, channel);
+    }
+
+    private PreJoinChannelEvent firePreJoinChannelEvent() {
+        JoinChannelPolicy policy = channel.policy(JoinChannelPolicy.class).orElse(this.policy);
+        return eventBus.post(new PreJoinChannelEvent(chatter, channel, policy));
     }
 
     private Result joinChannelAndUpdateView(Chatter chatter, Channel channel) {
@@ -93,7 +99,7 @@ public class JoinChannelCommand implements Command {
     public static class Builder extends CommandBuilder<Builder, JoinChannelCommand> {
         private final Chatter chatter;
         private final Channel channel;
-        private Policy policy = Policy.ALLOW;
+        private JoinChannelPolicy policy = JOIN_CHANNEL_POLICY;
         private EventBus eventBus = EventBus.empty();
 
         protected Builder(Chatter chatter, Channel channel) {

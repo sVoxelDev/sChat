@@ -24,50 +24,5 @@
 
 package net.silthus.schat.policies;
 
-import java.util.Arrays;
-
-@FunctionalInterface
 public interface Policy {
-
-    static Policy of(Policy... policies) {
-        Policy p = null;
-        for (final Policy policy : policies)
-            if (p == null)
-                p = policy;
-            else
-                p = p.and(policy);
-        return p;
-    }
-
-    static Policy of(Policy.Builder<?>... policies) {
-        return of(Arrays.stream(policies).map(Builder::create).toArray(Policy[]::new));
-    }
-
-    Policy ALLOW = () -> true;
-    Policy DENY = () -> false;
-
-    boolean validate() throws Error;
-
-    default Policy and(Policy policy) {
-        return () -> validate() && policy.validate();
-    }
-
-    default Policy or(Policy policy) {
-        return () -> validate() || policy.validate();
-    }
-
-    default Policy negate() {
-        return () -> !validate();
-    }
-
-    interface Builder<T extends Policy> {
-        default boolean validate() {
-            return create().validate();
-        }
-
-        T create();
-    }
-
-    class Error extends RuntimeException {
-    }
 }

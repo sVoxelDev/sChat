@@ -91,6 +91,6 @@ public abstract class CommandTest {
 
     private void registerArgumentTypes() {
         registerChatterArgument(commandManager, chatterRepository);
-        registerChannelArgument(commandManager, channelRepository);
+        registerChannelArgument(commandManager, channelRepository, chatterRepository);
     }
 }

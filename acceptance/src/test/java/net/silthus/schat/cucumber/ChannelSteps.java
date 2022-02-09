@@ -29,9 +29,10 @@ import io.cucumber.java.en.Given;
 import javax.inject.Inject;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelHelper;
+import net.silthus.schat.channel.ChannelSettings;
 
-import static net.silthus.schat.channel.Channel.GLOBAL;
-import static net.silthus.schat.channel.Channel.PROTECTED;
+import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
+import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 
 public class ChannelSteps {
@@ -58,7 +59,7 @@ public class ChannelSteps {
             case "global" -> set(GLOBAL, true);
             case "public" -> set(PROTECTED, false);
             case "private", "protected" -> set(PROTECTED, true);
-            default -> set(Channel.PRIORITY, 100);
+            default -> set(ChannelSettings.PRIORITY, 100);
         };
     }
 

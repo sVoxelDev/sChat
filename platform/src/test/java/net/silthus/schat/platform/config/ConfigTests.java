@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.channel.Channel.PROTECTED;
+import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 import static net.silthus.schat.platform.config.TestConfigurationAdapter.testConfigAdapter;

@@ -35,7 +35,7 @@ import net.silthus.schat.eventbus.EventListener;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
 
-import static net.silthus.schat.channel.Channel.GLOBAL;
+import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
 
 public class GlobalChatFeature implements EventListener {
 

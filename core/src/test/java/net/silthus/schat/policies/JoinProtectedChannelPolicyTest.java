@@ -30,13 +30,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.channel.Channel.JOIN_PERMISSION;
-import static net.silthus.schat.channel.Channel.PROTECTED;
+import static net.silthus.schat.channel.ChannelSettings.JOIN_PERMISSION;
+import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
-import static net.silthus.schat.policies.JoinProtectedChannelPolicy.canJoinProtectedChannel;
+import static net.silthus.schat.policies.JoinChannelPolicy.CAN_JOIN_PROTECTED_CHANNEL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class JoinProtectedChannelPolicyTest {
@@ -50,7 +50,7 @@ class JoinProtectedChannelPolicyTest {
     }
 
     private void assertCanJoin(boolean expected) {
-        assertThat(canJoinProtectedChannel(chatter, channel).validate()).isEqualTo(expected);
+        assertThat(CAN_JOIN_PROTECTED_CHANNEL.test(chatter, channel)).isEqualTo(expected);
     }
 
     @Nested class given_protected_channel {

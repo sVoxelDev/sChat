@@ -34,13 +34,14 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.channel.ChannelSettings;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.command.Command;
 import net.silthus.schat.command.CommandBuilder;
 import net.silthus.schat.message.Message;
 import org.jetbrains.annotations.NotNull;
 
-import static net.silthus.schat.channel.Channel.PRIVATE;
+import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 
 @Getter
@@ -106,7 +107,7 @@ public class SendPrivateMessageCommand implements Command {
     private Channel createPrivateChannel(String key, Component name) {
         final Channel channel = Channel.channel(key)
             .name(name)
-            .set(Channel.GLOBAL, true)
+            .set(ChannelSettings.GLOBAL, true)
             .set(PRIVATE, true)
             .create();
         repository.add(channel);
