@@ -84,7 +84,7 @@ class ChannelCommandsTests extends CommandTest {
 
                 @BeforeEach
                 void setUp() {
-                    JoinChannelCommand.prototype(builder -> builder.validate(DENY));
+                    JoinChannelCommand.prototype(builder -> builder.policy(DENY));
                 }
 
                 @Test

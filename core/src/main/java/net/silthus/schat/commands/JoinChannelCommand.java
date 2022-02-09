@@ -34,6 +34,8 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.command.Command;
 import net.silthus.schat.command.CommandBuilder;
 import net.silthus.schat.command.Result;
+import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.events.channel.PostChatterJoinChannelEvent;
 import net.silthus.schat.policies.Policy;
 
 import static net.silthus.schat.command.Result.success;
@@ -43,7 +45,7 @@ import static net.silthus.schat.policies.JoinChannelPolicy.canJoinChannel;
 @Accessors(fluent = true)
 public class JoinChannelCommand implements Command {
 
-    private static final @NonNull Function<Builder, Builder> DEFAULTS = builder -> builder.validate(canJoinChannel(builder.chatter, builder.channel));
+    private static final @NonNull Function<Builder, Builder> DEFAULTS = builder -> builder.policy(canJoinChannel(builder.chatter, builder.channel));
     @Getter
     @Setter
     private static @NonNull Function<Builder, Builder> prototype = builder -> builder;
@@ -55,11 +57,13 @@ public class JoinChannelCommand implements Command {
     private final Chatter chatter;
     private final Channel channel;
     private final Policy policy;
+    private final EventBus eventBus;
 
     protected JoinChannelCommand(Builder builder) {
         this.chatter = builder.chatter;
         this.channel = builder.channel;
         this.policy = builder.policy;
+        this.eventBus = builder.eventBus;
     }
 
     public Result execute() throws Error {
@@ -74,6 +78,7 @@ public class JoinChannelCommand implements Command {
             return success();
         chatter.join(channel);
         chatter.updateView();
+        eventBus.post(new PostChatterJoinChannelEvent(chatter, channel));
         return success();
     }
 
@@ -83,21 +88,18 @@ public class JoinChannelCommand implements Command {
     }
 
     @Getter
+    @Setter
     @Accessors(fluent = true)
     public static class Builder extends CommandBuilder<Builder, JoinChannelCommand> {
         private final Chatter chatter;
         private final Channel channel;
         private Policy policy = Policy.ALLOW;
+        private EventBus eventBus = EventBus.empty();
 
         protected Builder(Chatter chatter, Channel channel) {
             super(JoinChannelCommand::new);
             this.chatter = chatter;
             this.channel = channel;
-        }
-
-        public Builder validate(Policy policy) {
-            this.policy = policy;
-            return this;
         }
     }
 

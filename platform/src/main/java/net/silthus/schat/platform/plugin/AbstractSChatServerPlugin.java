@@ -35,6 +35,7 @@ import net.silthus.schat.channel.ChannelPrototype;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.commands.JoinChannelCommand;
 import net.silthus.schat.commands.SendMessageCommand;
 import net.silthus.schat.commands.SendPrivateMessageCommand;
 import net.silthus.schat.eventbus.EventBus;
@@ -139,6 +140,9 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
         );
         SendPrivateMessageCommand.prototype(builder -> builder
             .channelRepository(channelRepository())
+        );
+        JoinChannelCommand.prototype(builder -> builder
+            .eventBus(eventBus())
         );
         ChannelPrototype.configure(eventBus());
     }
