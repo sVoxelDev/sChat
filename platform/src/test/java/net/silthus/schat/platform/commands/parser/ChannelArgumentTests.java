@@ -27,6 +27,7 @@ package net.silthus.schat.platform.commands.parser;
 import cloud.commandframework.exceptions.parsing.NoInputProvidedException;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.platform.commands.ParserTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -34,6 +35,7 @@ import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
 import static net.silthus.schat.platform.commands.parser.ChannelArgument.ARGUMENT_PARSE_FAILURE_CHANNEL;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -45,11 +47,11 @@ class ChannelArgumentTests extends ParserTest<Channel> {
     @BeforeEach
     void setUp() {
         channelRepository = createInMemoryChannelRepository();
-        setParser(new ChannelArgument(channelRepository));
+        setParser(new ChannelArgument(channelRepository, createInMemoryChatterRepository()));
     }
 
     private void registerChannelParser() {
-        ChannelArgument.registerChannelArgument(getCommandManager(), mock(ChannelRepository.class));
+        ChannelArgument.registerChannelArgument(getCommandManager(), mock(ChannelRepository.class), mock(ChatterRepository.class));
     }
 
     @Test

@@ -174,7 +174,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
     private void registerCommandArguments(CommandManager<Sender> commandManager) {
         registerChatterArgument(commandManager, chatterRepository());
-        registerChannelArgument(commandManager, channelRepository());
+        registerChannelArgument(commandManager, channelRepository(), chatterRepository);
     }
 
     protected abstract CommandManager<Sender> provideCommandManager();

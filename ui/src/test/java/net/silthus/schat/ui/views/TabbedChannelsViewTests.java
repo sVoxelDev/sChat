@@ -42,7 +42,7 @@ import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.silthus.schat.AssertionHelper.assertNPE;
-import static net.silthus.schat.channel.Channel.PRIORITY;
+import static net.silthus.schat.channel.ChannelSettings.PRIORITY;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;

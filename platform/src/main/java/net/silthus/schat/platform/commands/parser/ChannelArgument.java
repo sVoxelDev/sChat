@@ -34,34 +34,34 @@ import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.exceptions.parsing.NoInputProvidedException;
 import cloud.commandframework.exceptions.parsing.ParserException;
 import io.leangen.geantyref.TypeToken;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import lombok.NonNull;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.platform.sender.Sender;
+import net.silthus.schat.policies.JoinChannelPolicy;
 import net.silthus.schat.repository.Repository;
 import org.jetbrains.annotations.NotNull;
 
 import static cloud.commandframework.arguments.parser.ArgumentParseResult.failure;
 import static cloud.commandframework.arguments.parser.ArgumentParseResult.success;
-import static net.silthus.schat.policies.JoinProtectedChannelPolicy.canJoinProtectedChannel;
+import static net.silthus.schat.policies.JoinChannelPolicy.JOIN_CHANNEL_POLICY;
 
 public final class ChannelArgument implements ArgumentParser<Sender, Channel> {
 
     public static final Caption ARGUMENT_PARSE_FAILURE_CHANNEL = Caption.of("argument.parse.failure.channel");
 
-    public ChannelArgument(ChannelRepository repository) {
-        this.repository = repository;
-    }
-
-    public static void registerChannelArgument(CommandManager<Sender> commandManager, ChannelRepository repository) {
-        registerArgumentParser(commandManager, repository);
+    public static void registerChannelArgument(CommandManager<Sender> commandManager, ChannelRepository repository, ChatterRepository chatterRepository) {
+        registerArgumentParser(commandManager, repository, chatterRepository);
         registerCaptions(commandManager);
     }
 
-    private static void registerArgumentParser(CommandManager<Sender> commandManager, ChannelRepository repository) {
-        commandManager.getParserRegistry().registerParserSupplier(TypeToken.get(Channel.class), parserParameters -> new ChannelArgument(repository));
+    private static void registerArgumentParser(CommandManager<Sender> commandManager, ChannelRepository repository, ChatterRepository chatterRepository) {
+        commandManager.getParserRegistry().registerParserSupplier(TypeToken.get(Channel.class), parserParameters -> new ChannelArgument(repository, chatterRepository));
     }
 
     private static void registerCaptions(CommandManager<Sender> commandManager) {
@@ -74,6 +74,12 @@ public final class ChannelArgument implements ArgumentParser<Sender, Channel> {
     }
 
     private final ChannelRepository repository;
+    private final ChatterRepository chatterRepository;
+
+    public ChannelArgument(ChannelRepository repository, ChatterRepository chatterRepository) {
+        this.repository = repository;
+        this.chatterRepository = chatterRepository;
+    }
 
     @Override
     public @NonNull ArgumentParseResult<@NonNull Channel> parse(@NonNull CommandContext<@NonNull Sender> commandContext, @NonNull Queue<@NonNull String> inputQueue) {
@@ -86,10 +92,15 @@ public final class ChannelArgument implements ArgumentParser<Sender, Channel> {
 
     @Override
     public @NonNull List<@NonNull String> suggestions(@NonNull CommandContext<Sender> commandContext, @NonNull String input) {
-        return repository
-            .filter(channel -> canJoinProtectedChannel(commandContext.getSender(), channel).validate())
-            .stream().map(Channel::key)
-            .toList();
+        try {
+            final Chatter chatter = chatterRepository.get(commandContext.getSender().uniqueId());
+            return repository
+                .filter(channel -> channel.policy(JoinChannelPolicy.class).orElse(JOIN_CHANNEL_POLICY).test(chatter, channel))
+                .stream().map(Channel::key)
+                .toList();
+        } catch (Repository.NotFound e) {
+            return new ArrayList<>();
+        }
     }
 
     @NotNull

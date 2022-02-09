@@ -25,6 +25,9 @@
 package net.silthus.schat.channel;
 
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -40,6 +43,7 @@ import net.silthus.schat.message.Messages;
 import net.silthus.schat.message.Targets;
 import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.pointer.Settings;
+import net.silthus.schat.policies.Policy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -65,23 +69,31 @@ final class ChannelImpl implements Channel {
     private final Targets targets = new Targets();
     private final transient Messages messages = new Messages();
     private final transient EventBus eventBus;
+    private final transient Map<Class<? extends Policy>, Policy> policies;
 
     private ChannelImpl(Builder builder) {
         this.key = builder.key;
         this.settings = builder.settings
             .withStatic(KEY, key)
-            .withStatic(DISPLAY_NAME, builder.name)
+            .withStatic(ChannelSettings.DISPLAY_NAME, builder.name)
             .create();
         this.eventBus = builder.eventBus;
+        this.policies = Map.copyOf(builder.policies);
+    }
+
+    public @NotNull @Unmodifiable Messages messages() {
+        return Messages.unmodifiable(messages);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <P extends Policy> Optional<P> policy(Class<P> policy) {
+        return Optional.ofNullable((P) policies.get(policy));
     }
 
     @Override
     public @NotNull @Unmodifiable Targets targets() {
         return Targets.unmodifiable(targets);
-    }
-
-    public @NotNull @Unmodifiable Messages messages() {
-        return Messages.unmodifiable(messages);
     }
 
     @Override
@@ -108,7 +120,7 @@ final class ChannelImpl implements Channel {
 
     @Override
     public int compareTo(@NotNull Channel o) {
-        return Comparator.<Channel, Integer>comparing(o2 -> o2.get(PRIORITY))
+        return Comparator.<Channel, Integer>comparing(o2 -> o2.get(ChannelSettings.PRIORITY))
             .thenComparing(Channel::key)
             .compare(this, o);
     }
@@ -123,13 +135,14 @@ final class ChannelImpl implements Channel {
         private Component name;
         private Settings.Builder settings = Settings.settingsBuilder();
         private EventBus eventBus = EventBus.empty();
+        private final Map<Class<? extends Policy>, Policy> policies = new HashMap<>();
 
         Builder(String key) {
             if (isInvalidKey(key))
                 throw new InvalidKey();
             this.key = key;
             this.name = text(key);
-            this.settings.withStatic(JOIN_PERMISSION, "schat.channel." + key + ".join");
+            this.settings.withStatic(ChannelSettings.JOIN_PERMISSION, "schat.channel." + key + ".join");
         }
 
         @Override
@@ -141,6 +154,12 @@ final class ChannelImpl implements Channel {
         @Override
         public Channel.@NotNull Builder settings(@NonNull Settings settings) {
             this.settings = settings.toBuilder();
+            return this;
+        }
+
+        @Override
+        public <P extends Policy> Channel.Builder policy(Class<P> type, P policy) {
+            policies.put(type, policy);
             return this;
         }
 

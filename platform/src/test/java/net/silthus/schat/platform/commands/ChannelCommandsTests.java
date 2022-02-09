@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.platform.locale.Messages.JOIN_CHANNEL_ERROR;
-import static net.silthus.schat.policies.Policy.DENY;
+import static net.silthus.schat.policies.JoinChannelPolicy.DENY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ChannelCommandsTests extends CommandTest {

@@ -27,6 +27,7 @@ package net.silthus.schat.channel;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.policies.JoinChannelPolicy;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -35,10 +36,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.channel.Channel.DISPLAY_NAME;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
+import static net.silthus.schat.channel.ChannelSettings.DISPLAY_NAME;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -139,6 +140,20 @@ class ChannelTests {
             void then_updates_property() {
                 assertThat(channel.displayName()).isEqualTo(MY_CHANNEL);
             }
+        }
+    }
+
+    @Nested class policy {
+        @Test
+        void is_empty_by_default() {
+            assertThat(channel.policy(JoinChannelPolicy.class)).isEmpty();
+        }
+
+        @Test
+        void given_policy_fetches_policy() {
+            channel = Channel.channel("test").policy(JoinChannelPolicy.class, JoinChannelPolicy.ALLOW).create();
+            assertThat(channel.policy(JoinChannelPolicy.class))
+                .isPresent().get().isEqualTo(JoinChannelPolicy.ALLOW);
         }
     }
 }

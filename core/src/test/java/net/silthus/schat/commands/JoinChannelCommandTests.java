@@ -30,6 +30,7 @@ import net.silthus.schat.command.Command;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.channel.PostChatterJoinChannelEvent;
 import net.silthus.schat.events.channel.PreJoinChannelEvent;
+import net.silthus.schat.policies.JoinChannelPolicy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -42,8 +43,8 @@ import static net.silthus.schat.chatter.ChatterAssertions.assertChatterHasChanne
 import static net.silthus.schat.chatter.ChatterAssertions.assertChatterHasNoChannels;
 import static net.silthus.schat.chatter.ChatterAssertions.assertChatterHasOnlyChannel;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
-import static net.silthus.schat.policies.Policy.ALLOW;
-import static net.silthus.schat.policies.Policy.DENY;
+import static net.silthus.schat.policies.JoinChannelPolicy.ALLOW;
+import static net.silthus.schat.policies.JoinChannelPolicy.DENY;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class JoinChannelCommandTests {
@@ -80,6 +81,18 @@ class JoinChannelCommandTests {
     void pre_join_channel_event_is_fired() {
         joinChannel();
         eventBus.assertEventFired(new PreJoinChannelEvent(chatter, channel, ALLOW));
+    }
+
+    @Test
+    void given_cancelled_pre_join_event_then_join_fails() {
+        eventBus.on(PreJoinChannelEvent.class, event -> event.cancelled(true));
+        assertJoinChannelError();
+    }
+
+    @Test
+    void given_channel_with_policy_then_uses_policy() {
+        channel = Channel.channel("test").policy(JoinChannelPolicy.class, DENY).create();
+        assertJoinChannelError();
     }
 
     @Nested class given_successful_can_join_check {

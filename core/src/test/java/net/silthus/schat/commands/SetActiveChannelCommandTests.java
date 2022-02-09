@@ -32,8 +32,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.commands.JoinChannelCommand.joinChannel;
-import static net.silthus.schat.policies.Policy.ALLOW;
-import static net.silthus.schat.policies.Policy.DENY;
+import static net.silthus.schat.policies.JoinChannelPolicy.ALLOW;
+import static net.silthus.schat.policies.JoinChannelPolicy.DENY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
