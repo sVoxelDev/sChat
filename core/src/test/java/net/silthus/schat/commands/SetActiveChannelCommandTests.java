@@ -46,7 +46,7 @@ class SetActiveChannelCommandTests {
     void setUp() {
         chatter = ChatterMock.randomChatter();
         channel = ChannelHelper.randomChannel();
-        JoinChannelCommand.prototype(builder -> builder.validate(ALLOW));
+        JoinChannelCommand.prototype(builder -> builder.policy(ALLOW));
     }
 
     private void setActiveChannel() {
@@ -93,7 +93,7 @@ class SetActiveChannelCommandTests {
         @Nested class given_join_fails {
             @BeforeEach
             void setUp() {
-                JoinChannelCommand.prototype(builder -> builder.validate(DENY));
+                JoinChannelCommand.prototype(builder -> builder.policy(DENY));
             }
 
             @Test

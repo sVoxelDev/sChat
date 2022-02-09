@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class EventBusMock extends AbstractEventBus<Object> {
 
-    private final Queue<Object> events = new LinkedList<>();
+    private final Queue<SChatEvent> events = new LinkedList<>();
 
     public EventBusMock() {
         ChannelPrototype.configure(this);
@@ -53,7 +53,11 @@ public class EventBusMock extends AbstractEventBus<Object> {
         return super.post(event);
     }
 
-    public <E> void assertEventFired(E event) {
+    public <E extends SChatEvent> void assertEventFired(E event) {
         assertThat(events).contains(event);
+    }
+
+    public <E extends SChatEvent> void assertNoEventFired(E event) {
+        assertThat(events).doesNotContain(event);
     }
 }

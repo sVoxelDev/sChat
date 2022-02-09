@@ -25,9 +25,11 @@
 package net.silthus.schat.commands;
 
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.command.Command;
+import net.silthus.schat.eventbus.EventBusMock;
+import net.silthus.schat.events.channel.PostChatterJoinChannelEvent;
+import net.silthus.schat.events.channel.PreJoinChannelEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -36,7 +38,6 @@ import static net.silthus.schat.channel.ChannelAssertions.assertChannelHasNoTarg
 import static net.silthus.schat.channel.ChannelAssertions.assertChannelHasOnlyTarget;
 import static net.silthus.schat.channel.ChannelAssertions.assertChannelHasTarget;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
-import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.chatter.ChatterAssertions.assertChatterHasChannel;
 import static net.silthus.schat.chatter.ChatterAssertions.assertChatterHasNoChannels;
 import static net.silthus.schat.chatter.ChatterAssertions.assertChatterHasOnlyChannel;
@@ -47,13 +48,13 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class JoinChannelCommandTests {
 
-    private final ChannelRepository channelRepository = createInMemoryChannelRepository();
-
+    private EventBusMock eventBus;
     private ChatterMock chatter;
     private Channel channel;
 
     @BeforeEach
     void setUp() {
+        eventBus = new EventBusMock();
         chatter = randomChatter();
         channel = randomChannel();
         canJoin(true);
@@ -61,9 +62,9 @@ class JoinChannelCommandTests {
 
     private void canJoin(boolean canJoin) {
         if (canJoin)
-            JoinChannelCommand.prototype(builder -> builder.validate(ALLOW));
+            JoinChannelCommand.prototype(builder -> builder.eventBus(eventBus).policy(ALLOW));
         else
-            JoinChannelCommand.prototype(builder -> builder.validate(DENY));
+            JoinChannelCommand.prototype(builder -> builder.eventBus(eventBus).policy(DENY));
     }
 
     private void assertJoinChannelError() {
@@ -75,85 +76,97 @@ class JoinChannelCommandTests {
         JoinChannelCommand.joinChannel(chatter, channel).execute();
     }
 
-    @Nested class joinChannel {
+    @Test
+    void pre_join_channel_event_is_fired() {
+        joinChannel();
+        eventBus.assertEventFired(new PreJoinChannelEvent(chatter, channel, ALLOW));
+    }
 
-        @Nested class given_valid_chatter_and_channel {
+    @Nested class given_successful_can_join_check {
+        @BeforeEach
+        void setUp() {
+            canJoin(true);
+        }
 
-            @Nested class given_successful_can_join_check {
-                @BeforeEach
-                void setUp() {
-                    canJoin(true);
-                }
+        @Test
+        void then_chatter_is_added_as_target_to_channel() {
+            joinChannel();
+            assertChannelHasTarget(channel, chatter);
+        }
 
-                @Test
-                void then_chatter_is_added_as_target_to_channel() {
-                    joinChannel();
-                    assertChannelHasTarget(channel, chatter);
-                }
+        @Test
+        void then_channel_is_added_to_chatter() {
+            joinChannel();
+            assertChatterHasChannel(chatter, channel);
+        }
 
-                @Test
-                void then_channel_is_added_to_chatter() {
-                    joinChannel();
-                    assertChatterHasChannel(chatter, channel);
-                }
+        @Test
+        void then_view_is_updated() {
+            joinChannel();
+            chatter.assertViewUpdated();
+        }
 
-                @Test
-                void then_view_is_updated() {
-                    joinChannel();
-                    chatter.assertViewUpdated();
-                }
+        @Test
+        void then_the_post_join_channel_event_is_fired() {
+            joinChannel();
+            eventBus.assertEventFired(new PostChatterJoinChannelEvent(chatter, channel));
+        }
 
-                @Nested class given_already_joined {
-                    @BeforeEach
-                    void setUp() {
-                        joinChannel();
-                    }
-
-                    @Test
-                    void then_only_joins_once() {
-                        joinChannel();
-                        assertChannelHasOnlyTarget(channel, chatter);
-                        assertChatterHasOnlyChannel(chatter, channel);
-                    }
-
-                    @Test
-                    void then_view_does_not_update() {
-                        chatter.resetViewUpdate();
-                        joinChannel();
-                        chatter.assertViewNotUpdated();
-                    }
-                }
+        @Nested class given_already_joined {
+            @BeforeEach
+            void setUp() {
+                joinChannel();
             }
 
-            @Nested class given_failed_can_join_check {
-                @BeforeEach
-                void setUp() {
-                    canJoin(false);
-                }
+            @Test
+            void then_only_joins_once() {
+                joinChannel();
+                assertChannelHasOnlyTarget(channel, chatter);
+                assertChatterHasOnlyChannel(chatter, channel);
+            }
 
-                @Test
-                void then_throws_access_defined_exception() {
-                    assertJoinChannelError();
-                }
+            @Test
+            void then_view_does_not_update() {
+                chatter.resetViewUpdate();
+                joinChannel();
+                chatter.assertViewNotUpdated();
+            }
+        }
+    }
 
-                @Nested class given_already_joined {
-                    @BeforeEach
-                    void setUp() {
-                        chatter.join(channel);
-                    }
+    @Nested class given_failed_can_join_check {
+        @BeforeEach
+        void setUp() {
+            canJoin(false);
+        }
 
-                    @Test
-                    void then_removes_chatter_as_channel_target() {
-                        assertJoinChannelError();
-                        assertChannelHasNoTargets(channel);
-                    }
+        @Test
+        void then_throws_access_defined_exception() {
+            assertJoinChannelError();
+        }
 
-                    @Test
-                    void then_removes_channel_from_chatter() {
-                        assertJoinChannelError();
-                        assertChatterHasNoChannels(chatter);
-                    }
-                }
+        @Test
+        void then_no_post_join_channel_event_is_fired() {
+            assertJoinChannelError();
+            eventBus.assertNoEventFired(new PostChatterJoinChannelEvent(chatter, channel));
+        }
+
+        @Nested class given_already_joined {
+            @BeforeEach
+            void setUp() {
+                chatter.join(channel);
+            }
+
+            @Test
+            void then_removes_chatter_as_channel_target() {
+                assertJoinChannelError();
+                assertChannelHasNoTargets(channel);
+            }
+
+            @Test
+            void then_removes_channel_from_chatter() {
+                assertJoinChannelError();
+                assertChatterHasNoChannels(chatter);
             }
         }
     }
