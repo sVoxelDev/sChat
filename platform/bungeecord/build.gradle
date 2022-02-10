@@ -10,3 +10,11 @@ dependencies {
 
     implementation "net.kyori:adventure-platform-bungeecord:4.0.1"
 }
+
+shadowJar {
+    archiveClassifier.set("")
+    dependencies {
+        include(dependency('net.kyori::'))
+    }
+    relocate 'net.kyori', "${packageName}.lib.kyori"
+}

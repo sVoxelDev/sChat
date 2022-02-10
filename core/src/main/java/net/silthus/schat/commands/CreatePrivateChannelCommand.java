@@ -10,13 +10,13 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.channel.ChannelSettings;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.command.Command;
 import net.silthus.schat.command.CommandBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
 import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 
 @Getter
@@ -71,7 +71,7 @@ public class CreatePrivateChannelCommand implements Command {
     private Channel createPrivateChannel(String key, Component name) {
         final Channel channel = Channel.channel(key)
             .name(name)
-            .set(ChannelSettings.GLOBAL, true)
+            .set(GLOBAL, true)
             .set(PRIVATE, true)
             .create();
         repository.add(channel);

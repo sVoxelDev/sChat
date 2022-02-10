@@ -46,7 +46,6 @@ import org.jetbrains.annotations.NotNull;
 import static net.kyori.adventure.text.Component.join;
 import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.JoinConfiguration.newlines;
 import static net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND;
 import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
@@ -118,7 +117,7 @@ public final class TabbedChannelsView implements View {
     }
 
     private Component renderMessages() {
-        return join(newlines(), getRenderedMessages());
+        return join(newline(), getRenderedMessages());
     }
 
     private Component renderChannels() {
