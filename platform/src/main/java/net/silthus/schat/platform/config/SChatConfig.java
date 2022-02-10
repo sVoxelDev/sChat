@@ -29,7 +29,7 @@ import net.silthus.schat.events.config.ConfigReloadedEvent;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.key.KeyedConfiguration;
 
-public final class SChatConfig extends KeyedConfiguration {
+public class SChatConfig extends KeyedConfiguration {
 
     private final EventBus eventBus;
 

@@ -27,6 +27,8 @@ package net.silthus.schat.bukkit.adapter;
 import java.nio.charset.StandardCharsets;
 import net.silthus.schat.bukkit.BukkitTests;
 import net.silthus.schat.platform.SchedulerMock;
+import net.silthus.schat.platform.config.ConfigKeys;
+import net.silthus.schat.platform.config.SChatConfig;
 import net.silthus.schat.platform.messaging.MessagingServiceMock;
 import net.silthus.schat.platform.messaging.MockPluginMessage;
 import org.bukkit.Server;
@@ -54,7 +56,9 @@ class BukkitMessengerGatewayTest extends BukkitTests {
         messenger = mock(Messenger.class);
         when(server.getMessenger()).thenReturn(messenger);
         consumer = new MessagingServiceMock();
-        gateway = new BukkitMessengerGateway(mockPlugin, server, scheduler, consumer);
+        final SChatConfig config = mock(SChatConfig.class);
+        when(config.get(ConfigKeys.DEBUG)).thenReturn(false);
+        gateway = BukkitMessengerGateway.createBukkitMessengerGateway(mockPlugin, server, scheduler, consumer, config);
     }
 
     @Test

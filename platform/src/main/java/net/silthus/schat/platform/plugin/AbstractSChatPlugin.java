@@ -31,20 +31,18 @@ import java.nio.file.Path;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.GsonPluginMessageSerializer;
-import net.silthus.schat.MessengerGatewayProvider;
 import net.silthus.schat.eventbus.EventBus;
-import net.silthus.schat.platform.config.ConfigKeys;
 import net.silthus.schat.platform.config.SChatConfig;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.locale.TranslationManager;
 import net.silthus.schat.platform.messaging.GatewayProviderRegistry;
 import net.silthus.schat.platform.messaging.MessagingService;
 import net.silthus.schat.platform.sender.Sender;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.PluginMessageSerializer.gsonSerializer;
 import static net.silthus.schat.platform.locale.Messages.STARTUP_BANNER;
+import static net.silthus.schat.platform.messaging.MessagingService.createMessagingService;
 
 @Getter
 @Accessors(fluent = true)
@@ -52,7 +50,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     private TranslationManager translationManager;
     private EventBus eventBus;
-    private MessengerGatewayProvider.Registry gatewayProviderRegistry;
+    private GatewayProviderRegistry gatewayProviderRegistry;
     private GsonPluginMessageSerializer serializer;
 
     private SChatConfig config;
@@ -82,7 +80,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
         config = loadConfiguration();
 
         registerMessengerGateway(gatewayProviderRegistry());
-        messenger = createMessagingService();
+        messenger = createMessagingService(gatewayProviderRegistry(), serializer(), config());
 
         onEnable();
     }
@@ -114,12 +112,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     protected abstract ConfigurationAdapter createConfigurationAdapter();
 
-    @ApiStatus.OverrideOnly
-    protected MessagingService createMessagingService() {
-        return new MessagingService(gatewayProviderRegistry().get(this.config().get(ConfigKeys.MESSENGER)), serializer());
-    }
-
-    protected abstract void registerMessengerGateway(MessengerGatewayProvider.Registry registry);
+    protected abstract void registerMessengerGateway(GatewayProviderRegistry registry);
 
     protected final Path resolveConfig(String fileName) {
         Path configFile = bootstrap().configDirectory().resolve(fileName);

@@ -25,8 +25,11 @@
 package net.silthus.schat.bukkit.adapter;
 
 import java.nio.charset.StandardCharsets;
+import lombok.extern.java.Log;
 import net.silthus.schat.IncomingMessageConsumer;
 import net.silthus.schat.MessengerGateway;
+import net.silthus.schat.platform.config.ConfigKeys;
+import net.silthus.schat.platform.config.SChatConfig;
 import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -38,12 +41,23 @@ public class BukkitMessengerGateway implements MessengerGateway, PluginMessageLi
 
     public static final String GATEWAY_TYPE = "pluginmessage";
 
+    public static BukkitMessengerGateway createBukkitMessengerGateway(Plugin plugin,
+                                                                      Server server,
+                                                                      SchedulerAdapter scheduler,
+                                                                      IncomingMessageConsumer consumer,
+                                                                      SChatConfig config) {
+        if (config.get(ConfigKeys.DEBUG))
+            return new Logging(plugin, server, scheduler, consumer);
+        else
+            return new BukkitMessengerGateway(plugin, server, scheduler, consumer);
+    }
+
     private final Plugin plugin;
     private final Server server;
     private final SchedulerAdapter scheduler;
     private final IncomingMessageConsumer consumer;
 
-    public BukkitMessengerGateway(Plugin plugin, Server server, SchedulerAdapter scheduler, IncomingMessageConsumer consumer) {
+    private BukkitMessengerGateway(Plugin plugin, Server server, SchedulerAdapter scheduler, IncomingMessageConsumer consumer) {
         this.plugin = plugin;
         this.server = server;
         this.scheduler = scheduler;
@@ -57,7 +71,7 @@ public class BukkitMessengerGateway implements MessengerGateway, PluginMessageLi
         scheduler.async().execute(() -> sendPluginMessage(encodedMessage));
     }
 
-    private void sendPluginMessage(String encodedMessage) {
+    protected void sendPluginMessage(String encodedMessage) {
         server.sendPluginMessage(plugin, CHANNEL, encodedMessage.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -71,5 +85,19 @@ public class BukkitMessengerGateway implements MessengerGateway, PluginMessageLi
     public void close() {
         server.getMessenger().unregisterOutgoingPluginChannel(plugin, CHANNEL);
         server.getMessenger().unregisterIncomingPluginChannel(plugin, CHANNEL);
+    }
+
+    @Log
+    private static final class Logging extends BukkitMessengerGateway {
+
+        private Logging(Plugin plugin, Server server, SchedulerAdapter scheduler, IncomingMessageConsumer consumer) {
+            super(plugin, server, scheduler, consumer);
+        }
+
+        @Override
+        protected void sendPluginMessage(String encodedMessage) {
+            log.info("Sending Outgoing Message over " + CHANNEL + ": " + encodedMessage);
+            super.sendPluginMessage(encodedMessage);
+        }
     }
 }

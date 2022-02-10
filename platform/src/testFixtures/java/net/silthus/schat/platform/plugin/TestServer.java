@@ -28,7 +28,6 @@ import cloud.commandframework.CommandManager;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.Messenger;
-import net.silthus.schat.MessengerGatewayProvider;
 import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.eventbus.AbstractEventBus;
@@ -39,6 +38,7 @@ import net.silthus.schat.platform.chatter.ConnectionListener;
 import net.silthus.schat.platform.commands.Command;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
+import net.silthus.schat.platform.messaging.GatewayProviderRegistry;
 import net.silthus.schat.platform.messaging.MockMessagingGatewayProvider;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.platform.sender.Sender;
@@ -77,7 +77,7 @@ public class TestServer extends AbstractSChatServerPlugin {
     }
 
     @Override
-    protected void registerMessengerGateway(MessengerGatewayProvider.Registry registry) {
+    protected void registerMessengerGateway(GatewayProviderRegistry registry) {
         registry.register("mock", new MockMessagingGatewayProvider());
     }
 

@@ -27,10 +27,12 @@ package net.silthus.schat;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @Getter
 @Accessors(fluent = true)
+@ToString
 @EqualsAndHashCode(of = "id")
 public abstract class PluginMessage {
     private final UUID id;

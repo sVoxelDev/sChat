@@ -26,9 +26,9 @@ package net.silthus.schat.velocity;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import net.silthus.schat.MessengerGatewayProvider;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
+import net.silthus.schat.platform.messaging.GatewayProviderRegistry;
 import net.silthus.schat.platform.plugin.AbstractSChatProxyPlugin;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.velocity.adapter.VelocityEventBus;
@@ -70,7 +70,7 @@ public final class SChatVelocityProxy extends AbstractSChatProxyPlugin {
     }
 
     @Override
-    protected void registerMessengerGateway(MessengerGatewayProvider.Registry registry) {
+    protected void registerMessengerGateway(GatewayProviderRegistry registry) {
         registry.register(GATEWAY_TYPE, consumer -> new VelocityMessengerGateway(bootstrap()));
     }
 

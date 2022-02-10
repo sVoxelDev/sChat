@@ -39,18 +39,30 @@ import net.silthus.schat.MessengerGateway;
 import net.silthus.schat.MessengerGatewayProvider;
 import net.silthus.schat.PluginMessage;
 import net.silthus.schat.PluginMessageSerializer;
+import net.silthus.schat.platform.config.ConfigKeys;
+import net.silthus.schat.platform.config.SChatConfig;
 import org.jetbrains.annotations.NotNull;
+
+import static net.silthus.schat.platform.config.ConfigKeys.DEBUG;
 
 @Getter
 @Log
 @Accessors(fluent = true)
 public class MessagingService implements Messenger, IncomingMessageConsumer {
 
+    public static MessagingService createMessagingService(GatewayProviderRegistry registry, PluginMessageSerializer serializer, SChatConfig config) {
+        final MessengerGatewayProvider gatewayProvider = registry.get(config.get(ConfigKeys.MESSENGER));
+        if (config.get(DEBUG))
+            return new Logging(gatewayProvider, serializer);
+        else
+            return new MessagingService(gatewayProvider, serializer);
+    }
+
     private final MessengerGateway gateway;
     private final PluginMessageSerializer serializer;
     private final Set<UUID> processedMessages = new HashSet<>();
 
-    public MessagingService(MessengerGatewayProvider gatewayProvider, PluginMessageSerializer serializer) {
+    MessagingService(MessengerGatewayProvider gatewayProvider, PluginMessageSerializer serializer) {
         this.serializer = serializer;
         this.gateway = gatewayProvider.obtain(this);
     }
@@ -62,20 +74,37 @@ public class MessagingService implements Messenger, IncomingMessageConsumer {
 
     @Override
     public void sendPluginMessage(@NotNull PluginMessage message) throws UnsupportedMessageException {
-        if (!serializer.supports(message))
+        if (supports(message))
+            sendOutgoingMessage(message);
+        else
             throw new UnsupportedMessageException();
-        if (processedMessages.add(message.id()))
+    }
+
+    protected boolean supports(@NotNull PluginMessage message) {
+        return serializer.supports(message);
+    }
+
+    protected void sendOutgoingMessage(@NotNull PluginMessage message) {
+        if (addMessage(message))
             gateway.sendOutgoingMessage(serializer.encode(message));
+    }
+
+    protected boolean addMessage(@NotNull PluginMessage message) {
+        return processedMessages.add(message.id());
     }
 
     @Override
     public boolean consumeIncomingMessage(@NonNull PluginMessage message) {
-        if (processedMessages.add(message.id())) {
+        if (shouldProcess(message)) {
             message.process();
             return true;
         } else {
             return false;
         }
+    }
+
+    protected boolean shouldProcess(@NotNull PluginMessage message) {
+        return processedMessages.add(message.id());
     }
 
     @Override
@@ -91,5 +120,51 @@ public class MessagingService implements Messenger, IncomingMessageConsumer {
     @Override
     public void close() {
         gateway.close();
+    }
+
+    @Log
+    public static final class Logging extends MessagingService {
+        protected Logging(MessengerGatewayProvider messengerGatewayProvider, PluginMessageSerializer serializer) {
+            super(messengerGatewayProvider, serializer);
+        }
+
+        @Override
+        protected boolean supports(@NotNull PluginMessage message) {
+            final boolean supports = super.supports(message);
+            log.info("PluginMessage(" + message + ") - SUPPORTED: " + supports);
+            return supports;
+        }
+
+        @Override
+        protected void sendOutgoingMessage(@NotNull PluginMessage message) {
+            log.info("Trying to send: " + message);
+            super.sendOutgoingMessage(message);
+        }
+
+        @Override
+        protected boolean addMessage(@NotNull PluginMessage message) {
+            final boolean added = super.addMessage(message);
+            if (added)
+                log.info("PluginMessage(" + message + ") - added to cache");
+            else
+                log.info("PluginMessage(" + message + ") - exists");
+            return added;
+        }
+
+        @Override
+        public boolean consumeIncomingMessage(@NonNull PluginMessage message) {
+            final boolean processed = super.consumeIncomingMessage(message);
+            if (processed)
+                log.info("PluginMessage(" + message + ") - processed");
+            else
+                log.info("PluginMessage(" + message + ") - NOT processed");
+            return processed;
+        }
+
+        @Override
+        public boolean consumeIncomingMessageAsString(@NonNull String encodedString) {
+            log.info("Decoding Incoming Message: " + encodedString);
+            return super.consumeIncomingMessageAsString(encodedString);
+        }
     }
 }
