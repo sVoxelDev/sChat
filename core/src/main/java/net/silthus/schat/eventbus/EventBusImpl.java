@@ -29,33 +29,19 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
+import lombok.extern.java.Log;
 import net.kyori.event.EventSubscriber;
 import net.kyori.event.SimpleEventBus;
 import net.silthus.schat.events.SChatEvent;
+import org.jetbrains.annotations.NotNull;
 
-/**
- * The base implementation of the event bus that must be implemented by each platform.
- *
- * @param <P> the type of the plugin of the platform
- * @since next
- */
 @Accessors(fluent = true)
-public abstract class AbstractEventBus<P> implements EventBus, AutoCloseable {
+class EventBusImpl implements EventBus, AutoCloseable {
 
     private final Bus bus = new Bus();
 
-    protected AbstractEventBus() {
+    protected EventBusImpl() {
     }
-
-    /**
-     * Checks that the given plugin object is a valid plugin instance for the platform.
-     *
-     * @param plugin the object
-     * @return a plugin
-     * @throws IllegalArgumentException if the plugin is invalid
-     * @since next
-     */
-    protected abstract P checkPlugin(Object plugin) throws IllegalArgumentException;
 
     @Override
     public <E extends SChatEvent> E post(final @NonNull E event) {
@@ -66,23 +52,20 @@ public abstract class AbstractEventBus<P> implements EventBus, AutoCloseable {
     @Override
     public <T extends SChatEvent> @NonNull EventSubscription<T> on(final @NonNull Class<T> eventClass,
                                                                    final @NonNull Consumer<? super T> handler) {
-        return registerSubscription(eventClass, handler, null);
-    }
-
-    @Override
-    public <T extends SChatEvent> @NonNull EventSubscription<T> on(final @NonNull Object plugin,
-                                                                   final @NonNull Class<T> eventClass,
-                                                                   final @NonNull Consumer<? super T> handler) {
-        return registerSubscription(eventClass, handler, checkPlugin(plugin));
+        return registerSubscription(eventClass, handler);
     }
 
     private <T extends SChatEvent> EventSubscription<T> registerSubscription(final Class<T> eventClass,
-                                                                             final Consumer<? super T> handler,
-                                                                             final Object plugin) {
-        final EventSubscriptionImpl<T> eventHandler = new EventSubscriptionImpl<>(this, eventClass, handler, plugin);
+                                                                             final Consumer<? super T> handler) {
+        final EventSubscriptionImpl<T> eventHandler = createSubscription(eventClass, handler);
         this.bus.register(eventClass, eventHandler);
 
         return eventHandler;
+    }
+
+    @NotNull
+    protected <T extends SChatEvent> EventSubscriptionImpl<T> createSubscription(Class<T> eventClass, Consumer<? super T> handler) {
+        return new EventSubscriptionImpl<>(this, eventClass, handler);
     }
 
     @Override
@@ -100,16 +83,6 @@ public abstract class AbstractEventBus<P> implements EventBus, AutoCloseable {
         this.bus.unregister(handler);
     }
 
-    /**
-     * Removes all handlers for a specific plugin.
-     *
-     * @param plugin the plugin
-     * @since next
-     */
-    protected void unregisterHandlers(final P plugin) {
-        this.bus.unregister(sub -> ((EventSubscriptionImpl<?>) sub).plugin() == plugin);
-    }
-
     @Override
     public void close() {
         this.bus.unregisterAll();
@@ -125,12 +98,34 @@ public abstract class AbstractEventBus<P> implements EventBus, AutoCloseable {
             return true;
         }
 
+        @SuppressWarnings("unchecked")
         public <E extends SChatEvent> Set<EventSubscription<E>> handlers(final Class<E> eventClass) {
-            //noinspection unchecked
             return super.subscribers().values().stream()
                 .filter(s -> s instanceof EventSubscription && ((EventSubscription<?>) s).eventClass().isAssignableFrom(eventClass))
                 .map(s -> (EventSubscription<E>) s)
                 .collect(Collectors.toSet());
+        }
+    }
+
+    @Log(topic = "sChat:EventBus")
+    static final class Logging extends EventBusImpl {
+
+        @Override
+        public <E extends SChatEvent> E post(@NonNull E event) {
+            log.info("POST: " + event);
+            return super.post(event);
+        }
+
+        @Override
+        public @NonNull <T extends SChatEvent> EventSubscription<T> on(@NonNull Class<T> eventClass, @NonNull Consumer<? super T> handler) {
+            final EventSubscription<T> subscription = super.on(eventClass, handler);
+            log.info("Subscribed " + handler.getClass().getName() + " to " + eventClass.getSimpleName());
+            return subscription;
+        }
+
+        @Override
+        protected @NotNull <T extends SChatEvent> EventSubscriptionImpl<T> createSubscription(Class<T> eventClass, Consumer<? super T> handler) {
+            return new EventSubscriptionImpl.Logging<>(this, eventClass, handler);
         }
     }
 }

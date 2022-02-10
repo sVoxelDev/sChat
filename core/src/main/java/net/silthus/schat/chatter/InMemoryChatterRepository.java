@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 class InMemoryChatterRepository extends InMemoryRepository<UUID, Chatter> implements ChatterRepository {
 
-    @Log
+    @Log(topic = "sChat:ChatterRepository")
     static final class Logging extends InMemoryChatterRepository {
         @Override
         public void add(@NotNull Chatter entity) {
