@@ -34,6 +34,7 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.sender.Sender;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.commands.CreatePrivateChannelCommand.createPrivateChannel;
 import static net.silthus.schat.commands.SendPrivateMessageCommand.sendPrivateMessage;
 
 public final class PrivateMessageCommands implements Command {
@@ -43,9 +44,12 @@ public final class PrivateMessageCommands implements Command {
         parser.parse(this);
     }
 
-    @ProxiedBy(value = "w,pm,dm,msg,say", hidden = true)
+    @ProxiedBy(value = "w,pm,dm,msg,say")
     @CommandMethod("tell <target> [message]")
     public void privateMessageCommand(Sender sender, Chatter source, @Argument("target") Chatter target, @Greedy @Argument("message") String message) {
-        sendPrivateMessage(source, target, text(message));
+        if (message == null || message.isBlank())
+            source.activeChannel(createPrivateChannel(source, target).channel());
+        else
+            sendPrivateMessage(source, target, text(message));
     }
 }

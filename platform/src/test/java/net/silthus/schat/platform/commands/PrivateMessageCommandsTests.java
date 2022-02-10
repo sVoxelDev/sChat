@@ -26,7 +26,7 @@ package net.silthus.schat.platform.commands;
 
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.ChatterMock;
-import net.silthus.schat.commands.SendPrivateMessageCommand;
+import net.silthus.schat.commands.CreatePrivateChannelCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -45,7 +45,7 @@ class PrivateMessageCommandsTests extends CommandTest {
     void setUp() {
         commands.register(new PrivateMessageCommands());
         target = addChatter(randomChatter());
-        SendPrivateMessageCommand.prototype(builder -> builder.channelRepository(channelRepository));
+        CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(channelRepository));
     }
 
     @DisplayName("/tell <player>")
@@ -55,6 +55,11 @@ class PrivateMessageCommandsTests extends CommandTest {
             cmd("/tell " + target.name() + " " + TEXT);
         }
 
+        private void assertPrivateChannelIsActive() {
+            assertThat(chatter.activeChannel()).isPresent().get()
+                .matches(channel -> channel.is(PRIVATE));
+        }
+
         @Test
         void sends_private_message() {
             sendPM();
@@ -62,10 +67,15 @@ class PrivateMessageCommandsTests extends CommandTest {
         }
 
         @Test
+        void given_no_text_sets_channel_active() {
+            cmd("/tell " + target.name());
+            assertPrivateChannelIsActive();
+        }
+
+        @Test
         void sets_private_channel_as_active() {
             sendPM();
-            assertThat(chatter.activeChannel()).isPresent().get()
-                .matches(channel -> channel.is(PRIVATE));
+            assertPrivateChannelIsActive();
         }
     }
 }
