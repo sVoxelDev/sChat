@@ -144,9 +144,9 @@ public final class TabbedChannelsView implements View {
         final ArrayList<Component> channels = new ArrayList<>();
         for (final Channel channel : viewModel.channels()) {
             if (viewModel.isActiveChannel(channel))
-                channels.add(new ChannelFormat(get(ACTIVE_CHANNEL)).format(channel));
+                channels.add(new ChannelFormat(viewModel.chatter(), get(ACTIVE_CHANNEL)).format(channel));
             else
-                channels.add(new ChannelFormat(get(INACTIVE_CHANNEL)).format(channel));
+                channels.add(new ChannelFormat(viewModel.chatter(), get(INACTIVE_CHANNEL)).format(channel));
         }
         return channels;
     }

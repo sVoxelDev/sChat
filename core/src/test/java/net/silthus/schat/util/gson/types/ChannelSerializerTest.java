@@ -32,6 +32,7 @@ import com.google.gson.JsonSerializationContext;
 import java.lang.reflect.Type;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.message.Targets;
 import net.silthus.schat.pointer.Settings;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -106,7 +107,11 @@ class ChannelSerializerTest {
         @Override
         @SuppressWarnings("unchecked")
         public <T> T deserialize(JsonElement jsonElement, Type type) throws JsonParseException {
-            return (T) Settings.createSettings();
+            if (type.equals(Settings.class))
+                return (T) Settings.createSettings();
+            if (type.equals(Targets.class))
+                return (T) new Targets();
+            return null;
         }
     }
 }

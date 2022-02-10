@@ -24,6 +24,7 @@
 
 package net.silthus.schat.commands;
 
+import java.util.Set;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
@@ -139,7 +140,7 @@ class SendPrivateMessageCommandTests {
 
         @BeforeEach
         void setUp() {
-            channel = channelWith(PRIVATE, true);
+            channel = channelWith(Set.of(source, target).hashCode() + "", PRIVATE, true);
             channel.addTarget(source);
             channel.addTarget(target);
             repository.add(channel);

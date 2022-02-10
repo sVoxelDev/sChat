@@ -32,6 +32,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.ui.view.View;
@@ -42,10 +43,12 @@ import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.silthus.schat.AssertionHelper.assertNPE;
-import static net.silthus.schat.channel.ChannelSettings.PRIORITY;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
+import static net.silthus.schat.channel.ChannelSettings.PRIORITY;
+import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
+import static net.silthus.schat.chatter.ChatterMock.chatterMock;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.identity.Identity.identity;
 import static net.silthus.schat.message.Message.message;
@@ -178,7 +181,6 @@ class TabbedChannelsViewTests {
     }
 
     @Nested class given_single_channel {
-
         private Channel channel;
 
         @BeforeEach
@@ -222,6 +224,22 @@ class TabbedChannelsViewTests {
             void then_channel_click_executes_join_command() {
                 assertViewRenders("| <gray><click:run_command:\"/channel join test\">test</click></gray> |");
             }
+        }
+    }
+
+    @Nested class given_private_channel {
+
+        @BeforeEach
+        void setUp() {
+            ChatterMock target = chatterMock(Identity.identity("target"));
+            Channel channel = channelWith(PRIVATE, true);
+            chatter.join(channel);
+            target.join(channel);
+        }
+
+        @Test
+        void renders_partner_name() {
+            assertTextRenders("| target |");
         }
     }
 
