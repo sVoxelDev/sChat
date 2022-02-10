@@ -31,13 +31,17 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.identity.Identified;
 import net.silthus.schat.pointer.Configured;
 import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.ui.Click;
+import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.WHITE;
+import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 
 @Getter
 @Accessors(fluent = true)
@@ -47,14 +51,16 @@ public class ChannelFormat implements Format<Channel>, Configured {
     public static final Setting<TextDecoration> DECORATION = Setting.setting(TextDecoration.class, "style", null);
     public static final Setting<Click.Channel> ON_CLICK = Setting.setting(Click.Channel.class, "on_click", null);
 
+    private final Chatter chatter;
     private final Settings settings;
 
-    public ChannelFormat(Settings settings) {
+    public ChannelFormat(Chatter chatter, Settings settings) {
+        this.chatter = chatter;
         this.settings = settings;
     }
 
     public Component format(Channel channel) {
-        TextComponent.Builder builder = text().append(channel.displayName());
+        TextComponent.Builder builder = text().append(channelName(channel));
         if (get(COLOR) != null)
             builder.color(get(COLOR));
         if (get(DECORATION) != null)
@@ -62,5 +68,21 @@ public class ChannelFormat implements Format<Channel>, Configured {
         if (get(ON_CLICK) != null)
             builder.clickEvent(get(ON_CLICK).onClick(channel));
         return builder.build();
+    }
+
+    @NotNull
+    private Component channelName(Channel channel) {
+        return channel.is(PRIVATE) ? privateChannelName(channel) : channel.displayName();
+    }
+
+    @NotNull
+    private Component privateChannelName(Channel channel) {
+        return channel.targets().stream()
+            .filter(target -> target instanceof Chatter)
+            .filter(target -> !target.equals(chatter))
+            .findFirst()
+            .map(target -> (Chatter) target)
+            .map(Identified::displayName)
+            .orElse(channel.displayName());
     }
 }
