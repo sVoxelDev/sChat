@@ -64,6 +64,7 @@ public class GlobalChatFeature implements EventListener {
         private final Message message;
 
         public GlobalChannelPluginMessage(Channel channel, Message message) {
+            super();
             this.channel = channel;
             this.message = message;
         }
