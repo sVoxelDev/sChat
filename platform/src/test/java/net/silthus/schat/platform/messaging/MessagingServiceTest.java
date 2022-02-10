@@ -25,8 +25,8 @@
 package net.silthus.schat.platform.messaging;
 
 import lombok.NonNull;
-import net.silthus.schat.Messenger;
-import net.silthus.schat.PluginMessage;
+import net.silthus.schat.messenger.Messenger;
+import net.silthus.schat.messenger.PluginMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

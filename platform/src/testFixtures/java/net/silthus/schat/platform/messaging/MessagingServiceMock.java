@@ -27,12 +27,12 @@ package net.silthus.schat.platform.messaging;
 import java.util.LinkedList;
 import java.util.Queue;
 import lombok.NonNull;
-import net.silthus.schat.PluginMessage;
+import net.silthus.schat.messenger.PluginMessage;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.assertj.core.api.ObjectAssert;
 import org.jetbrains.annotations.NotNull;
 
-import static net.silthus.schat.PluginMessageSerializer.gsonSerializer;
+import static net.silthus.schat.messenger.PluginMessageSerializer.gsonSerializer;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MessagingServiceMock extends MessagingService {

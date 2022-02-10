@@ -25,8 +25,8 @@
 package net.silthus.schat.platform.messaging;
 
 import lombok.NonNull;
-import net.silthus.schat.IncomingMessageConsumer;
-import net.silthus.schat.PluginMessage;
+import net.silthus.schat.messenger.IncomingMessageConsumer;
+import net.silthus.schat.messenger.PluginMessage;
 
 public class IncomingMessageConsumerMock implements IncomingMessageConsumer {
     @Override

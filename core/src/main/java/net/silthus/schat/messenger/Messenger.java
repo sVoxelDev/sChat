@@ -22,45 +22,50 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.messenger;
 
-import com.google.gson.JsonObject;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.NonNull;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 
-import static net.silthus.schat.util.gson.GsonProvider.normalGson;
+/**
+ * Represents an object which dispatches {@link PluginMessage}s.
+ */
+@OverrideOnly
+public interface Messenger extends AutoCloseable {
 
-public final class GsonPluginMessageSerializer implements PluginMessageSerializer {
-
-    static final GsonPluginMessageSerializer SERIALIZER = new GsonPluginMessageSerializer();
-
-    private final Map<String, Type> typeMap = new HashMap<>();
-
-    @Override
-    public void registerMessageType(Type type) {
-        typeMap.put(type.getTypeName(), type);
+    static Messenger empty() {
+        return new EmptyMessenger();
     }
 
+    /**
+     * Registers the given plugin message type for sending messages.
+     *
+     * <p>Every {@link PluginMessage} that is sent must be registered
+     * or else an {@link UnsupportedMessageException} will be thrown by {@link #sendPluginMessage(PluginMessage)}.</p>
+     *
+     * @param type the type
+     */
+    void registerMessageType(Type type);
+
+    /**
+     * Performs the necessary action to dispatch the message using the means
+     * of the messenger.
+     *
+     * <p>The underlying dispatch should always be made async.</p>
+     *
+     * @param pluginMessage the outgoing message
+     */
+    void sendPluginMessage(@NonNull PluginMessage pluginMessage) throws UnsupportedMessageException;
+
+    /**
+     * Performs the necessary action to gracefully shut down the messenger.
+     */
     @Override
-    public boolean supports(PluginMessage message) {
-        return typeMap.containsKey(message.getClass().getTypeName());
+    default void close() {
+
     }
 
-    @Override
-    public @NotNull String encode(PluginMessage pluginMessage) {
-        final JsonObject json = normalGson()
-            .toJsonTree(pluginMessage).getAsJsonObject();
-        json.addProperty("type", pluginMessage.getClass().getTypeName());
-        return normalGson().toJson(json);
-    }
-
-    @Override
-    public @NotNull PluginMessage decode(@NonNull String encodedString) {
-        final JsonObject json = normalGson().fromJson(encodedString, JsonObject.class);
-        final String type = json.get("type").getAsString();
-        return normalGson().fromJson(json, typeMap.get(type));
+    class UnsupportedMessageException extends RuntimeException {
     }
 }

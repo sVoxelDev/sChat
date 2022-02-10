@@ -26,23 +26,23 @@ package net.silthus.schat.features;
 
 import java.lang.reflect.Type;
 import lombok.NonNull;
-import net.silthus.schat.GsonPluginMessageSerializer;
-import net.silthus.schat.Messenger;
-import net.silthus.schat.PluginMessage;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
+import net.silthus.schat.messenger.GsonPluginMessageSerializer;
+import net.silthus.schat.messenger.Messenger;
+import net.silthus.schat.messenger.PluginMessage;
 import net.silthus.schat.util.gson.types.ChannelSerializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.PluginMessageSerializer.gsonSerializer;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
+import static net.silthus.schat.messenger.PluginMessageSerializer.gsonSerializer;
 import static net.silthus.schat.util.gson.GsonProvider.registerTypeAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
 
