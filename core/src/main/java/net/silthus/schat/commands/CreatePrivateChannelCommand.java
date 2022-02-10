@@ -31,6 +31,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
@@ -103,11 +104,6 @@ public class CreatePrivateChannelCommand implements Command {
         return String.valueOf(Set.of(source, target).hashCode());
     }
 
-    @NotNull
-    private Predicate<Channel> containsTarget(Chatter source) {
-        return channel -> channel.targets().contains(source);
-    }
-
     private Channel createPrivateChannel(String key, Component name) {
         final Channel channel = Channel.channel(key)
             .name(name)
@@ -143,6 +139,7 @@ public class CreatePrivateChannelCommand implements Command {
     }
 
     @Getter
+    @ToString
     @Accessors(fluent = true)
     @EqualsAndHashCode(of = {"channel"}, callSuper = true)
     public static class UpdatePrivateChannel extends PluginMessage {

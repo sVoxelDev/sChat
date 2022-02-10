@@ -83,7 +83,6 @@ public class JoinChannelCommand implements Command {
         if (chatter.isJoined(channel))
             return success();
         chatter.join(channel);
-        chatter.updateView();
         eventBus.post(new PostChatterJoinChannelEvent(chatter, channel));
         return success();
     }

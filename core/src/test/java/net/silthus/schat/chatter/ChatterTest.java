@@ -211,16 +211,20 @@ class ChatterTest {
         }
 
         @Nested class given_valid_view_connector {
-            private final ViewConnectorMock connectorMock = new ViewConnectorMock();
+            private final ViewConnectorMock view = new ViewConnectorMock();
 
             @BeforeEach
             void setUp() {
                 chatter = chatter(randomIdentity())
-                    .viewConnector(c -> connectorMock).create();
+                    .viewConnector(c -> view).create();
             }
 
-            private void assertViewConnectorCalled() {
-                connectorMock.assertUpdateCalled();
+            private void assertViewUpdated() {
+                view.assertUpdateCalled();
+            }
+
+            private void assertViewNotUpdated() {
+                view.assertUpdateNotCalled();
             }
 
             private void assertLastMessageIs(Message message) {
@@ -230,7 +234,7 @@ class ChatterTest {
             @Test
             void then_message_handler_is_called() {
                 sendRandomMessage();
-                assertViewConnectorCalled();
+                assertViewUpdated();
             }
 
             @Test
@@ -239,11 +243,32 @@ class ChatterTest {
                 assertLastMessageIs(message);
             }
 
+            @Test
+            void when_active_channel_is_set_then_view_is_updated() {
+                chatter.activeChannel(randomChannel());
+                assertViewUpdated();
+            }
+
+            @Test
+            void when_channel_is_joined_then_view_is_updated() {
+                chatter.join(randomChannel());
+                assertViewUpdated();
+            }
+
+            @Test
+            void when_channel_is_already_joined_then_view_is_not_updated() {
+                final Channel channel = randomChannel();
+                chatter.join(channel);
+                view.resetUpdateCalls();
+                chatter.join(channel);
+                assertViewNotUpdated();
+            }
+
             @Nested class update {
                 @Test
                 void given_no_messages_when_update_is_called_then_context_has_no_last_message() {
                     chatter.updateView();
-                    assertViewConnectorCalled();
+                    assertViewUpdated();
                     assertThat(chatter.lastMessage()).isNotPresent();
                 }
 
@@ -251,7 +276,7 @@ class ChatterTest {
                 void given_messages_when_update_is_called_holds_last_message() {
                     final Message message = sendRandomMessage();
                     chatter.updateView();
-                    assertViewConnectorCalled();
+                    assertViewUpdated();
                     assertLastMessageIs(message);
                 }
             }

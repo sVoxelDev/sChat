@@ -74,9 +74,11 @@ non-sealed class ChatterImpl implements Chatter {
 
     @Override
     public void activeChannel(@Nullable Channel activeChannel) {
+        if (isActiveChannel(activeChannel)) return;
         if (activeChannel != null)
             join(activeChannel);
         this.activeChannel = activeChannel;
+        this.updateView();
     }
 
     @Override
@@ -102,7 +104,8 @@ non-sealed class ChatterImpl implements Chatter {
     @Override
     public void join(@NonNull Channel channel) {
         channel.addTarget(this);
-        this.channels.add(channel);
+        if (this.channels.add(channel))
+            updateView();
     }
 
     @Override

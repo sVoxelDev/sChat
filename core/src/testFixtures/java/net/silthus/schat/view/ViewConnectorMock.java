@@ -38,4 +38,12 @@ public class ViewConnectorMock implements ViewConnector {
     public void assertUpdateCalled() {
         assertThat(updateCalled).isTrue();
     }
+
+    public void assertUpdateNotCalled() {
+        assertThat(updateCalled).isFalse();
+    }
+
+    public void resetUpdateCalls() {
+        updateCalled = false;
+    }
 }
