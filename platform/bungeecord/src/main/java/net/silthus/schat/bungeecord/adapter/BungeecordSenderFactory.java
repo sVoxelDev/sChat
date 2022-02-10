@@ -67,6 +67,11 @@ public class BungeecordSenderFactory extends SenderFactory<CommandSender> {
     }
 
     @Override
+    protected void sendActionBar(CommandSender sender, Component message) {
+        audiences.sender(sender).sendActionBar(message);
+    }
+
+    @Override
     protected boolean hasPermission(CommandSender sender, String node) {
         return sender.hasPermission(node);
     }

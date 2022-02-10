@@ -68,6 +68,11 @@ public final class VelocitySenderFactory extends SenderFactory<CommandSource> {
     }
 
     @Override
+    protected void sendActionBar(CommandSource sender, Component message) {
+        sender.sendActionBar(message);
+    }
+
+    @Override
     protected boolean hasPermission(CommandSource sender, String node) {
         return sender.hasPermission(node);
     }

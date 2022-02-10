@@ -67,6 +67,14 @@ public final class BukkitSenderFactory extends SenderFactory<CommandSender> {
             scheduler.executeSync(() -> this.audiences.sender(sender).sendMessage(message));
     }
 
+    @Override
+    protected void sendActionBar(CommandSender sender, Component message) {
+        if (canSendAsync(sender))
+            audiences.sender(sender).sendActionBar(message);
+        else
+            scheduler.executeSync(() -> this.audiences.sender(sender).sendActionBar(message));
+    }
+
     private boolean canSendAsync(CommandSender sender) {
         return sender instanceof Player || sender instanceof ConsoleCommandSender || sender instanceof RemoteConsoleCommandSender;
     }

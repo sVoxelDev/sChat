@@ -172,6 +172,10 @@ public interface Messages {
             sender.sendMessage(build());
         }
 
+        default void actionBar(Sender sender) {
+            sender.sendActionBar(build());
+        }
+
         default void send(Chatter chatter) {
             message(build()).to(chatter).send();
         }
@@ -182,6 +186,10 @@ public interface Messages {
     interface Args1<A0> {
         default void send(Sender sender, A0 arg0) {
             sender.sendMessage(build(arg0));
+        }
+
+        default void actionBar(Sender sender, A0 arg0) {
+            sender.sendActionBar(build(arg0));
         }
 
         default void send(Chatter chatter, A0 arg0) {
