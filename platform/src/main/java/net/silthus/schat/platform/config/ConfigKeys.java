@@ -26,12 +26,8 @@ package net.silthus.schat.platform.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.kyori.adventure.text.Component;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.platform.config.adapter.ConfigurationSection;
 import net.silthus.schat.platform.config.key.ConfigKey;
 import net.silthus.schat.platform.config.key.KeyedConfiguration;
-import net.silthus.schat.pointer.Settings;
 
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.booleanKey;
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.key;
@@ -48,16 +44,15 @@ public final class ConfigKeys {
 
     public static final ConfigKey<Boolean> DEBUG = notReloadable(booleanKey("debug", false));
 
-    public static final ConfigKey<List<Channel>> CHANNELS = modifiable(key(config -> {
-        final ArrayList<Channel> channels = new ArrayList<>();
+    public static final ConfigKey<List<ChannelConfig>> CHANNELS = modifiable(key(config -> {
+        final ArrayList<ChannelConfig> channels = new ArrayList<>();
         for (final String key : config.keys("channels", new ArrayList<>())) {
-            channels.add(createFromConfig(config.scoped("channels." + key), key));
+            channels.add(config.get("channels." + key, ChannelConfig.class));
         }
         return channels;
     }), (c, value) -> {
-        for (final Channel channel : value) {
-            c.set("channels." + channel.key() + ".name", channel.displayName());
-            c.set("channels." + channel.key() + ".settings", channel.settings());
+        for (final ChannelConfig channel : value) {
+            c.set("channels." + channel.key(), channel);
         }
     });
 
@@ -68,13 +63,5 @@ public final class ConfigKeys {
 
     public static List<? extends ConfigKey<?>> getKeys() {
         return KEYS;
-    }
-
-    private static Channel createFromConfig(ConfigurationSection config, String key) {
-        final Component name = config.get("name", Component.class);
-        Settings settings = config.get("settings", Settings.class);
-        if (settings == null)
-            settings = Settings.createSettings();
-        return Channel.channel(key).name(name).settings(settings).create();
     }
 }

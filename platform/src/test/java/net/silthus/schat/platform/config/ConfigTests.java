@@ -34,8 +34,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
+import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 import static net.silthus.schat.platform.config.TestConfigurationAdapter.testConfigAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,7 +55,8 @@ class ConfigTests {
     private Channel getTestChannelConfig() {
         return config.get(CHANNELS).stream()
             .filter(channel -> channel.key().equals("test"))
-            .findFirst().orElseThrow();
+            .findFirst().orElseThrow()
+            .toChannel();
     }
 
     @Test
@@ -71,8 +72,8 @@ class ConfigTests {
     @Test
     void set_values_writes_and_loads_when_reloaded() {
         final TextComponent name = text("Test Name");
-        final Channel channel = channelWith("test", builder -> builder.name(name));
-        final List<Channel> channels = config.get(CHANNELS);
+        final ChannelConfig channel = ChannelConfig.fromChannel(channelWith("test", builder -> builder.name(name)));
+        final List<ChannelConfig> channels = config.get(CHANNELS);
         channels.add(channel);
 
         config.set(CHANNELS, channels);

@@ -70,13 +70,14 @@ public class BungeecordMessengerGateway implements MessengerGateway, Listener {
     }
 
     protected void sendToServer(byte[] bytes, ServerInfo server) {
-        server.sendData(CHANNEL, bytes);
+        server.sendData(CHANNEL, bytes, true);
     }
 
     @EventHandler
     public void onIncomingMessage(PluginMessageEvent event) {
         if (!event.getTag().equals(CHANNEL))
             return;
+        event.setCancelled(true);
         sendToAllServers(event.getData());
     }
 
