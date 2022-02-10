@@ -76,6 +76,14 @@ final class FactorySender<T> implements Sender {
     }
 
     @Override
+    public void sendActionBar(Component message) {
+        if (this.isConsole())
+            sendMessage(message);
+        else
+            factory.sendActionBar(handle, message);
+    }
+
+    @Override
     public boolean isConsole() {
         return console;
     }

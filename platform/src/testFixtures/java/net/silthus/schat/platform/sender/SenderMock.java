@@ -68,6 +68,11 @@ public class SenderMock implements Sender {
     }
 
     @Override
+    public void sendActionBar(Component message) {
+        sendMessage(message);
+    }
+
+    @Override
     public boolean hasPermission(String permission) {
         return permissionHandler.hasPermission(permission);
     }

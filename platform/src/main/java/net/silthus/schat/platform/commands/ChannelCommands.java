@@ -52,7 +52,7 @@ public final class ChannelCommands implements Command {
             if (chatter.isActiveChannel(channel))
                 return;
             if (setActiveChannel(chatter, channel).execute().wasSuccessful()) {
-                JOINED_CHANNEL.send(sender, channel);
+                JOINED_CHANNEL.actionBar(sender, channel);
             }
         } catch (Repository.NotFound | net.silthus.schat.command.Command.Error e) {
             JOIN_CHANNEL_ERROR.send(sender, channel);

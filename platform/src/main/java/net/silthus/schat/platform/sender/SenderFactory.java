@@ -49,6 +49,8 @@ public abstract class SenderFactory<T> implements AutoCloseable {
 
     protected abstract void sendMessage(T sender, Component message);
 
+    protected abstract void sendActionBar(T handle, Component message);
+
     protected abstract boolean hasPermission(T sender, String node);
 
     protected abstract void performCommand(T sender, String command);

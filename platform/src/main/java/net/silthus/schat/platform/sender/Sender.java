@@ -40,6 +40,8 @@ public interface Sender extends Identified, Permissable {
      */
     void sendMessage(Component message);
 
+    void sendActionBar(Component message);
+
     /**
      * Gets whether this sender is the console.
      *
