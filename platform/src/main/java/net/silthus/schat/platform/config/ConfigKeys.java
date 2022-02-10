@@ -29,6 +29,7 @@ import java.util.List;
 import net.silthus.schat.platform.config.key.ConfigKey;
 import net.silthus.schat.platform.config.key.KeyedConfiguration;
 
+import static java.util.Objects.requireNonNullElse;
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.booleanKey;
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.key;
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.lowercaseStringKey;
@@ -47,7 +48,7 @@ public final class ConfigKeys {
     public static final ConfigKey<List<ChannelConfig>> CHANNELS = modifiable(key(config -> {
         final ArrayList<ChannelConfig> channels = new ArrayList<>();
         for (final String key : config.keys("channels", new ArrayList<>())) {
-            channels.add(config.get("channels." + key, ChannelConfig.class));
+            channels.add(requireNonNullElse(config.get("channels." + key, ChannelConfig.class), new ChannelConfig()).key(key));
         }
         return channels;
     }), (c, value) -> {
