@@ -24,10 +24,8 @@
 
 package net.silthus.schat.bukkit.adapter;
 
-import com.google.common.collect.Iterables;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import java.util.Collection;
 import lombok.extern.java.Log;
 import net.silthus.schat.messenger.IncomingMessageConsumer;
 import net.silthus.schat.messenger.MessengerGateway;
@@ -38,7 +36,6 @@ import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 public class BukkitMessengerGateway implements MessengerGateway, PluginMessageListener {
@@ -72,26 +69,14 @@ public class BukkitMessengerGateway implements MessengerGateway, PluginMessageLi
 
     @Override
     public void sendOutgoingMessage(String encodedMessage) {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Collection<? extends Player> players = server.getOnlinePlayers();
-                Player p = Iterables.getFirst(players, null);
-                if (p == null) {
-                    return;
-                }
-
-                dispatchMessage(p, encodedMessage);
-                cancel();
-            }
-        }.runTaskTimer(plugin, 1L, 100L);
+        scheduler.executeAsync(() -> dispatchMessage(encodedMessage));
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    protected void dispatchMessage(Player player, String encodedMessage) {
+    protected void dispatchMessage(String encodedMessage) {
         final ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF(encodedMessage);
-        player.sendPluginMessage(plugin, CHANNEL, out.toByteArray());
+        server.sendPluginMessage(plugin, CHANNEL, out.toByteArray());
     }
 
     @Override
@@ -121,9 +106,9 @@ public class BukkitMessengerGateway implements MessengerGateway, PluginMessageLi
         }
 
         @Override
-        protected void dispatchMessage(Player player, String encodedMessage) {
+        protected void dispatchMessage(String encodedMessage) {
             log.info("Sending Outgoing Message over " + CHANNEL + ": " + encodedMessage);
-            super.dispatchMessage(player, encodedMessage);
+            super.dispatchMessage(encodedMessage);
         }
     }
 }
