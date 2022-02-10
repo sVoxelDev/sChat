@@ -25,6 +25,7 @@
 package net.silthus.schat.bungeecord.adapter;
 
 import java.nio.charset.StandardCharsets;
+import lombok.extern.java.Log;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.event.PluginMessageEvent;
@@ -32,17 +33,25 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.silthus.schat.MessengerGateway;
 import net.silthus.schat.bungeecord.BungeecordBootstrap;
+import net.silthus.schat.platform.config.ConfigKeys;
 import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
 
-public final class BungeecordMessengerGateway implements MessengerGateway, Listener {
+public class BungeecordMessengerGateway implements MessengerGateway, Listener {
 
     public static final String GATEWAY_TYPE = "pluginmessage";
     public static final String CHANNEL = "schat:update";
 
+    public static BungeecordMessengerGateway createBungeecordMessengerGateway(BungeecordBootstrap bootstrap) {
+        if (bootstrap.plugin().config().get(ConfigKeys.DEBUG))
+            return new Logging(bootstrap);
+        else
+            return new BungeecordMessengerGateway(bootstrap);
+    }
+
     private final ProxyServer proxy;
     private final SchedulerAdapter scheduler;
 
-    public BungeecordMessengerGateway(BungeecordBootstrap bootstrap) {
+    private BungeecordMessengerGateway(BungeecordBootstrap bootstrap) {
         this.proxy = bootstrap.proxy();
         this.scheduler = bootstrap.scheduler();
         this.proxy.getPluginManager().registerListener(bootstrap.loader(), this);
@@ -55,8 +64,12 @@ public final class BungeecordMessengerGateway implements MessengerGateway, Liste
 
     private void sendToAllServers(byte[] bytes) {
         for (ServerInfo server : proxy.getServers().values()) {
-            scheduler.async().execute(() -> server.sendData(CHANNEL, bytes));
+            scheduler.async().execute(() -> sendToServer(bytes, server));
         }
+    }
+
+    protected void sendToServer(byte[] bytes, ServerInfo server) {
+        server.sendData(CHANNEL, bytes);
     }
 
     @EventHandler
@@ -69,5 +82,19 @@ public final class BungeecordMessengerGateway implements MessengerGateway, Liste
     @Override
     public void close() {
         this.proxy.getPluginManager().unregisterListener(this);
+    }
+
+    @Log
+    private static final class Logging extends BungeecordMessengerGateway {
+
+        private Logging(BungeecordBootstrap bootstrap) {
+            super(bootstrap);
+        }
+
+        @Override
+        protected void sendToServer(byte[] bytes, ServerInfo server) {
+            log.info("Forwarding Message to: " + server.getName());
+            super.sendToServer(bytes, server);
+        }
     }
 }

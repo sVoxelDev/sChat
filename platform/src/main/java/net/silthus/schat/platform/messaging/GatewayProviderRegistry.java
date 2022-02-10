@@ -28,11 +28,10 @@ import java.util.HashMap;
 import java.util.Map;
 import net.silthus.schat.MessengerGatewayProvider;
 
-public final class GatewayProviderRegistry implements MessengerGatewayProvider.Registry {
+public final class GatewayProviderRegistry {
 
     private final Map<String, MessengerGatewayProvider> providerMap = new HashMap<>();
 
-    @Override
     public MessengerGatewayProvider get(String name) {
         final String key = name.toLowerCase();
         if (!providerMap.containsKey(key))
@@ -41,7 +40,6 @@ public final class GatewayProviderRegistry implements MessengerGatewayProvider.R
             return providerMap.get(key);
     }
 
-    @Override
     public void register(String name, MessengerGatewayProvider provider) {
         final String key = name.toLowerCase();
         if (providerMap.containsKey(key))

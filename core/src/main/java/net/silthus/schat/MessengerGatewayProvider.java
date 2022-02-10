@@ -49,9 +49,4 @@ public interface MessengerGatewayProvider {
      */
     @NonNull MessengerGateway obtain(@NonNull IncomingMessageConsumer incomingMessageConsumer);
 
-    interface Registry {
-        MessengerGatewayProvider get(String name);
-
-        void register(String name, MessengerGatewayProvider provider);
-    }
 }

@@ -31,7 +31,6 @@ import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.silthus.schat.Messenger;
-import net.silthus.schat.MessengerGatewayProvider;
 import net.silthus.schat.bukkit.adapter.BukkitChatterFactory;
 import net.silthus.schat.bukkit.adapter.BukkitConnectionListener;
 import net.silthus.schat.bukkit.adapter.BukkitEventBus;
@@ -46,6 +45,7 @@ import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.chatter.ConnectionListener;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
+import net.silthus.schat.platform.messaging.GatewayProviderRegistry;
 import net.silthus.schat.platform.plugin.AbstractSChatServerPlugin;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.ui.view.ViewProvider;
@@ -53,6 +53,7 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import static cloud.commandframework.execution.CommandExecutionCoordinator.simpleCoordinator;
+import static net.silthus.schat.bukkit.adapter.BukkitMessengerGateway.createBukkitMessengerGateway;
 import static net.silthus.schat.platform.config.adapter.ConfigurationAdapters.YAML;
 
 @Getter
@@ -89,13 +90,13 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
     }
 
     @Override
-    protected void registerMessengerGateway(MessengerGatewayProvider.Registry registry) {
-        registry.register(BukkitMessengerGateway.GATEWAY_TYPE, consumer -> new BukkitMessengerGateway(
+    protected void registerMessengerGateway(GatewayProviderRegistry registry) {
+        registry.register(BukkitMessengerGateway.GATEWAY_TYPE, consumer -> createBukkitMessengerGateway(
             bootstrap().loader(),
             Bukkit.getServer(),
             bootstrap().scheduler(),
-            consumer
-        ));
+            consumer,
+            config()));
     }
 
     @Override
