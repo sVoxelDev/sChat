@@ -49,6 +49,17 @@ public interface EventBus extends AutoCloseable {
         return new EmptyEventBus();
     }
 
+    static EventBus eventBus() {
+        return eventBus(false);
+    }
+
+    static EventBus eventBus(boolean debug) {
+        if (debug)
+            return new EventBusImpl.Logging();
+        else
+            return new EventBusImpl();
+    }
+
     /**
      * Posts a new event to the event bus informing all subscribers about the event.
      *
@@ -71,27 +82,6 @@ public interface EventBus extends AutoCloseable {
      * @since next
      */
     <E extends SChatEvent> @NonNull EventSubscription<E> on(@NonNull Class<E> eventClass, @NonNull Consumer<? super E> handler);
-
-    /**
-     * Registers a new subscription to the given event.
-     *
-     * <p>The returned {@link EventSubscription} instance encapsulates the subscription state. It has
-     * methods which can be used to terminate the subscription, or view stats about the nature of
-     * the subscription.</p>
-     *
-     * <p>Unlike {@link #on(Class, Consumer)}, this method accepts an additional parameter
-     * for {@code plugin}. This object must be a "plugin" instance on the platform, and is used to
-     * automatically {@link EventSubscription#close() unregister} the subscription when the
-     * corresponding plugin is disabled.</p>
-     *
-     * @param <E>        the event class
-     * @param plugin     a plugin instance to bind the subscription to.
-     * @param eventClass the event class
-     * @param handler    the event handler
-     * @return an event handler instance representing this subscription
-     * @since next
-     */
-    <E extends SChatEvent> @NonNull EventSubscription<E> on(Object plugin, @NonNull Class<E> eventClass, @NonNull Consumer<? super E> handler);
 
     /**
      * Gets a set of all registered handlers for a given event.

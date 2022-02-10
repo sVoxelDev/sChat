@@ -78,7 +78,7 @@ public class TargetsSerializer implements JsonSerializer<Targets>, JsonDeseriali
         return targets;
     }
 
-    @Log
+    @Log(topic = "sChat:TargetsSerializer")
     private static final class Logging extends TargetsSerializer {
 
         private Logging(ChatterRepository chatterRepository) {

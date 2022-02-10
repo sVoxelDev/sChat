@@ -41,6 +41,7 @@ import net.silthus.schat.platform.sender.Sender;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.PluginMessageSerializer.gsonSerializer;
+import static net.silthus.schat.platform.config.ConfigKeys.DEBUG;
 import static net.silthus.schat.platform.locale.Messages.STARTUP_BANNER;
 import static net.silthus.schat.platform.messaging.MessagingService.createMessagingService;
 
@@ -61,8 +62,6 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
         translationManager = new TranslationManager(bootstrap().configDirectory());
         translationManager.reload();
 
-        eventBus = createEventBus();
-
         serializer = gsonSerializer();
         gatewayProviderRegistry = new GatewayProviderRegistry();
 
@@ -78,6 +77,8 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
         STARTUP_BANNER.send(getConsole(), bootstrap());
 
         config = loadConfiguration();
+
+        eventBus = createEventBus();
 
         registerMessengerGateway(gatewayProviderRegistry());
         messenger = createMessagingService(gatewayProviderRegistry(), serializer(), config());
@@ -97,7 +98,9 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     protected abstract void onDisable();
 
-    protected abstract EventBus createEventBus();
+    protected EventBus createEventBus() {
+        return EventBus.eventBus(config().get(DEBUG));
+    }
 
     public abstract Sender getConsole();
 

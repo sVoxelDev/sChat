@@ -37,7 +37,7 @@ class InMemoryChannelRepository extends InMemoryRepository<String, Channel> impl
         super.add(channel);
     }
 
-    @Log
+    @Log(topic = "sChat:ChannelRepository")
     static final class Logging extends InMemoryChannelRepository {
 
         @Override

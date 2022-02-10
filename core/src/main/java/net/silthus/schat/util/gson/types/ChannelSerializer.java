@@ -78,7 +78,7 @@ public class ChannelSerializer implements JsonSerializer<Channel>, JsonDeseriali
             .create();
     }
 
-    @Log
+    @Log(topic = "sChat:ChannelSerializer")
     private static final class Logging extends ChannelSerializer {
         private Logging(ChannelRepository repository) {
             super(repository);

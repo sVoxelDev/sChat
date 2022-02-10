@@ -33,7 +33,6 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.silthus.schat.Messenger;
 import net.silthus.schat.bukkit.adapter.BukkitChatterFactory;
 import net.silthus.schat.bukkit.adapter.BukkitConnectionListener;
-import net.silthus.schat.bukkit.adapter.BukkitEventBus;
 import net.silthus.schat.bukkit.adapter.BukkitMessengerGateway;
 import net.silthus.schat.bukkit.adapter.BukkitSchedulerAdapter;
 import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
@@ -77,11 +76,6 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
     @Override
     protected ConfigurationAdapter createConfigurationAdapter() {
         return YAML.create(resolveConfig("config.yml").toFile());
-    }
-
-    @Override
-    protected EventBus createEventBus() {
-        return new BukkitEventBus();
     }
 
     @Override
@@ -135,8 +129,6 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
     protected void registerListeners() {
         createChatListener();
         createChatPacketListener();
-
-        Bukkit.getPluginManager().registerEvents((BukkitEventBus) eventBus(), bootstrap().loader());
     }
 
     private void createChatListener() {

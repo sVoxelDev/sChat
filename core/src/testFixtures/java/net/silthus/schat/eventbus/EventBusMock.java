@@ -33,18 +33,13 @@ import net.silthus.schat.events.SChatEvent;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class EventBusMock extends AbstractEventBus<Object> {
+public class EventBusMock extends EventBusImpl {
 
     private final Queue<SChatEvent> events = new LinkedList<>();
 
     public EventBusMock() {
         ChannelPrototype.configure(this);
         SendMessageCommand.prototype(builder -> builder.eventBus(this));
-    }
-
-    @Override
-    protected Object checkPlugin(Object plugin) throws IllegalArgumentException {
-        return plugin;
     }
 
     @Override

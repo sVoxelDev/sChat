@@ -24,10 +24,44 @@
 
 package net.silthus.schat.eventbus;
 
-final class EmptyEventBus extends AbstractEventBus<Object> {
+import java.util.Set;
+import java.util.function.Consumer;
+import lombok.NonNull;
+import net.silthus.schat.events.SChatEvent;
+import org.jetbrains.annotations.Unmodifiable;
+
+final class EmptyEventBus implements EventBus {
 
     @Override
-    protected Object checkPlugin(final Object plugin) throws IllegalArgumentException {
-        return plugin;
+    public <E extends SChatEvent> E post(@NonNull E event) {
+        return event;
+    }
+
+    @Override
+    public @NonNull <E extends SChatEvent> EventSubscription<E> on(@NonNull Class<E> eventClass, @NonNull Consumer<? super E> handler) {
+        return new EmptySubscription<E>(eventClass, handler);
+    }
+
+    @Override
+    public @NonNull @Unmodifiable <E extends SChatEvent> Set<EventSubscription<E>> subscriptions(@NonNull Class<E> eventClass) {
+        return Set.of();
+    }
+
+    @Override
+    public void close() {
+
+    }
+
+    private record EmptySubscription<E extends SChatEvent>(Class<E> eventClass, Consumer<? super E> handler) implements EventSubscription<E> {
+
+        @Override
+        public boolean isActive() {
+            return false;
+        }
+
+        @Override
+        public void close() {
+
+        }
     }
 }

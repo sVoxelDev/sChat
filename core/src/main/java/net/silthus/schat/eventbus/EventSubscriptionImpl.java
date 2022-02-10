@@ -32,27 +32,23 @@ import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
 import net.kyori.event.EventSubscriber;
 import net.silthus.schat.events.SChatEvent;
-import org.jetbrains.annotations.Nullable;
 
 @Getter
-@Log(topic = "sChat")
+@Log(topic = "sChat:EventBus")
 @Accessors(fluent = true)
-final class EventSubscriptionImpl<E extends SChatEvent> implements EventSubscription<E>, EventSubscriber<E> {
+class EventSubscriptionImpl<E extends SChatEvent> implements EventSubscription<E>, EventSubscriber<E> {
 
-    private final AbstractEventBus<?> eventBus;
+    private final EventBusImpl eventBus;
     private final Class<E> eventClass;
     private final Consumer<? super E> handler;
-    private final @Nullable Object plugin;
     private final AtomicBoolean active = new AtomicBoolean(true);
 
-    EventSubscriptionImpl(final AbstractEventBus<?> eventBus,
+    EventSubscriptionImpl(final EventBusImpl eventBus,
                           final Class<E> eventClass,
-                          final Consumer<? super E> consumer,
-                          final @Nullable Object plugin) {
+                          final Consumer<? super E> consumer) {
         this.eventBus = eventBus;
         this.eventClass = eventClass;
         this.handler = consumer;
-        this.plugin = plugin;
     }
 
     @Override
@@ -83,7 +79,17 @@ final class EventSubscriptionImpl<E extends SChatEvent> implements EventSubscrip
         }
     }
 
-    public @Nullable Object plugin() {
-        return this.plugin;
+    @Log(topic = "sChat:EventBus")
+    static final class Logging<E extends SChatEvent> extends EventSubscriptionImpl<E> {
+
+        Logging(EventBusImpl eventBus, Class<E> eventClass, Consumer<? super E> consumer) {
+            super(eventBus, eventClass, consumer);
+        }
+
+        @Override
+        public void invoke(@NonNull E event) {
+            log.info(event + " --> " + this.handler().getClass().getName());
+            super.invoke(event);
+        }
     }
 }

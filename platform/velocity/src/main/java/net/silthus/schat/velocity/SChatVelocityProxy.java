@@ -26,12 +26,10 @@ package net.silthus.schat.velocity;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.messaging.GatewayProviderRegistry;
 import net.silthus.schat.platform.plugin.AbstractSChatProxyPlugin;
 import net.silthus.schat.platform.sender.Sender;
-import net.silthus.schat.velocity.adapter.VelocityEventBus;
 import net.silthus.schat.velocity.adapter.VelocityMessengerGateway;
 import net.silthus.schat.velocity.adapter.VelocitySenderFactory;
 
@@ -57,11 +55,6 @@ public final class SChatVelocityProxy extends AbstractSChatProxyPlugin {
     @Override
     protected ConfigurationAdapter createConfigurationAdapter() {
         return YAML.create(resolveConfig("config.yml").toFile());
-    }
-
-    @Override
-    protected EventBus createEventBus() {
-        return new VelocityEventBus();
     }
 
     @Override

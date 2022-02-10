@@ -30,7 +30,6 @@ import lombok.experimental.Accessors;
 import net.silthus.schat.Messenger;
 import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.chatter.ChatterRepository;
-import net.silthus.schat.eventbus.AbstractEventBus;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.chatter.ChatterFactoryStub;
@@ -64,11 +63,6 @@ public class TestServer extends AbstractSChatServerPlugin {
     @Override
     protected ConfigurationAdapter createConfigurationAdapter() {
         return testConfigAdapter();
-    }
-
-    @Override
-    protected EventBus createEventBus() {
-        return new TestEventBus();
     }
 
     @Override
@@ -119,14 +113,6 @@ public class TestServer extends AbstractSChatServerPlugin {
 
         public void joinServer(Sender sender) {
             onJoin(sender);
-        }
-    }
-
-    private final class TestEventBus extends AbstractEventBus<TestServer> {
-
-        @Override
-        protected TestServer checkPlugin(Object plugin) throws IllegalArgumentException {
-            return TestServer.this;
         }
     }
 }
