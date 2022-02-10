@@ -68,7 +68,7 @@ final class ChannelImpl implements Channel {
 
     private final String key;
     private final Settings settings;
-    private final Targets targets = new Targets();
+    private final Targets targets;
     private final transient Messages messages = new Messages();
     private final transient EventBus eventBus;
     private final transient Map<Class<? extends Policy>, Policy> policies;
@@ -79,6 +79,7 @@ final class ChannelImpl implements Channel {
             .withStatic(KEY, key)
             .withStatic(ChannelSettings.DISPLAY_NAME, builder.name)
             .create();
+        this.targets = builder.targets;
         this.eventBus = builder.eventBus;
         this.policies = Map.copyOf(builder.policies);
     }
@@ -137,6 +138,7 @@ final class ChannelImpl implements Channel {
         private Component name;
         private Settings.Builder settings = Settings.settingsBuilder();
         private EventBus eventBus = EventBus.empty();
+        private Targets targets = new Targets();
         private final Map<Class<? extends Policy>, Policy> policies = new HashMap<>();
 
         Builder(String key) {
@@ -156,6 +158,12 @@ final class ChannelImpl implements Channel {
         @Override
         public Channel.@NotNull Builder settings(@NonNull Settings settings) {
             this.settings = settings.toBuilder();
+            return this;
+        }
+
+        @Override
+        public Channel.Builder targets(Targets targets) {
+            this.targets = targets;
             return this;
         }
 

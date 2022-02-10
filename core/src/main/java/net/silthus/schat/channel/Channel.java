@@ -68,6 +68,8 @@ public sealed interface Channel extends Entity<String>, Configured.Modifiable<Ch
 
         Builder name(Component displayName);
 
+        Builder targets(Targets targets);
+
         <P extends Policy> Builder policy(Class<P> type, P policy);
 
         Channel create();

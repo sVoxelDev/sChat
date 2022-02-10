@@ -36,6 +36,7 @@ import java.lang.reflect.Type;
 import lombok.extern.java.Log;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.message.Targets;
 import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.util.gson.JObject;
 
@@ -62,6 +63,7 @@ public class ChannelSerializer implements JsonSerializer<Channel>, JsonDeseriali
         return JObject.json()
             .add("key", src.key())
             .add("settings", context.serialize(src.settings(), Settings.class))
+            .add("targets", context.serialize(src.targets(), Targets.class))
             .create();
     }
 
@@ -75,6 +77,7 @@ public class ChannelSerializer implements JsonSerializer<Channel>, JsonDeseriali
     protected Channel createChannel(String key, JsonObject object, JsonDeserializationContext context) {
         return Channel.channel(key)
             .settings(context.deserialize(object.get("settings"), Settings.class))
+            .targets(context.deserialize(object.get("targets"), Targets.class))
             .create();
     }
 
