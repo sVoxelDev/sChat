@@ -30,7 +30,6 @@ import java.util.List;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.Messenger;
-import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelPrototype;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.ChatterFactory;
@@ -45,6 +44,7 @@ import net.silthus.schat.platform.chatter.ConnectionListener;
 import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.commands.PrivateMessageCommands;
+import net.silthus.schat.platform.config.ChannelConfig;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.ui.view.ViewFactory;
 import net.silthus.schat.ui.view.ViewProvider;
@@ -157,8 +157,8 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
     private void loadChannels() {
         logger().info("Loading channels...");
-        for (final Channel channel : this.config().get(CHANNELS)) {
-            channelRepository().add(channel);
+        for (final ChannelConfig channelConfig : this.config().get(CHANNELS)) {
+            channelRepository().add(channelConfig.toChannel());
         }
         logger().info("... loaded " + channelRepository.keys().size() + " channels.");
     }

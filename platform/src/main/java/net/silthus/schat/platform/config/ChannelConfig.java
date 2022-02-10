@@ -24,10 +24,13 @@
 
 package net.silthus.schat.platform.config;
 
+import java.util.Collection;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.channel.Channel;
 import net.silthus.schat.pointer.Settings;
 
 @Getter
@@ -35,7 +38,27 @@ import net.silthus.schat.pointer.Settings;
 @Accessors(fluent = true)
 public final class ChannelConfig {
 
+    public static ChannelConfig fromChannel(Channel channel) {
+        return new ChannelConfig()
+            .key(channel.key())
+            .name(channel.displayName())
+            .settings(channel.settings());
+    }
+
+    public static List<ChannelConfig> fromChannels(Collection<Channel> channels) {
+        return channels.stream()
+            .map(ChannelConfig::fromChannel)
+            .toList();
+    }
+
     private transient String key;
     private Component name = Component.empty();
     private Settings settings = Settings.createSettings();
+
+    public Channel toChannel() {
+        return Channel.channel(key())
+            .name(name())
+            .settings(settings())
+            .create();
+    }
 }
