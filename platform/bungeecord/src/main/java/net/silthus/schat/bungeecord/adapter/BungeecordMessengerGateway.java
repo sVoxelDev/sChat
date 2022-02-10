@@ -24,10 +24,12 @@
 
 package net.silthus.schat.bungeecord.adapter;
 
-import java.nio.charset.StandardCharsets;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import lombok.extern.java.Log;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -59,8 +61,11 @@ public class BungeecordMessengerGateway implements MessengerGateway, Listener {
     }
 
     @Override
+    @SuppressWarnings("UnstableApiUsage")
     public void sendOutgoingMessage(String encodedMessage) {
-        sendToAllServers(encodedMessage.getBytes(StandardCharsets.UTF_8));
+        final ByteArrayDataOutput out = ByteStreams.newDataOutput();
+        out.writeUTF(encodedMessage);
+        sendToAllServers(out.toByteArray());
     }
 
     private void sendToAllServers(byte[] bytes) {
@@ -77,7 +82,11 @@ public class BungeecordMessengerGateway implements MessengerGateway, Listener {
     public void onIncomingMessage(PluginMessageEvent event) {
         if (!event.getTag().equals(CHANNEL))
             return;
+
         event.setCancelled(true);
+        if (event.getSender() instanceof ProxiedPlayer) // message from proxy -> server
+            return;
+
         sendToAllServers(event.getData());
     }
 

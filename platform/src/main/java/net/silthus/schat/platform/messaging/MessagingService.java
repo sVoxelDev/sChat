@@ -46,7 +46,7 @@ import org.jetbrains.annotations.NotNull;
 import static net.silthus.schat.platform.config.ConfigKeys.DEBUG;
 
 @Getter
-@Log
+@Log(topic = "sChat")
 @Accessors(fluent = true)
 public class MessagingService implements Messenger, IncomingMessageConsumer {
 
@@ -122,9 +122,9 @@ public class MessagingService implements Messenger, IncomingMessageConsumer {
         gateway.close();
     }
 
-    @Log
+    @Log(topic = "sChat:MessagingService")
     public static final class Logging extends MessagingService {
-        protected Logging(MessengerGatewayProvider messengerGatewayProvider, PluginMessageSerializer serializer) {
+        private Logging(MessengerGatewayProvider messengerGatewayProvider, PluginMessageSerializer serializer) {
             super(messengerGatewayProvider, serializer);
         }
 
