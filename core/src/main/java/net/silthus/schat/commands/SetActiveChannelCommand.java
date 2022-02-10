@@ -50,7 +50,6 @@ public class SetActiveChannelCommand extends JoinChannelCommand implements Comma
 
     private Result setActiveChannelAndUpdateView() {
         chatter().activeChannel(channel());
-        chatter().updateView();
         return Result.success();
     }
 }
