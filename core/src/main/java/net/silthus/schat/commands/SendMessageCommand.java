@@ -29,6 +29,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import lombok.extern.java.Log;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.command.Command;
 import net.silthus.schat.command.CommandBuilder;
@@ -59,7 +60,7 @@ public class SendMessageCommand implements Command {
     private final Message message;
     private final EventBus eventBus;
 
-    protected SendMessageCommand(Builder builder) {
+    public SendMessageCommand(Builder builder) {
         this.message = builder.message;
         this.eventBus = builder.eventBus;
     }
@@ -70,24 +71,32 @@ public class SendMessageCommand implements Command {
     }
 
     private SendMessageResult fireEventAndSendMessage(Message message) {
-        final SendMessageEvent event = eventBus.post(new SendMessageEvent(message));
+        final SendMessageEvent event = fireEvent(message);
         if (event.isNotCancelled())
             return sendMessage(event);
         return new SendMessageResult(message, false);
     }
 
+    protected SendMessageEvent fireEvent(Message message) {
+        return eventBus.post(new SendMessageEvent(message));
+    }
+
     private SendMessageResult sendMessage(SendMessageEvent event) {
         if (event.message().source() instanceof Chatter source && targetsSingleChatter(event.targets()))
-            return sendPrivateMessage(source, targetOf(event), event.message());
+            return deliverPrivateMessage(source, targetOf(event), event.message());
         else
             return deliverMessage(event.targets(), event.message());
+    }
+
+    protected SendMessageResult deliverPrivateMessage(Chatter source, Chatter target, Message message) {
+        return sendPrivateMessage(source, target, message);
     }
 
     private Chatter targetOf(SendMessageEvent event) {
         return (Chatter) event.targets().filter(MessageTarget.IS_CHATTER).get(0);
     }
 
-    private SendMessageResult deliverMessage(MessageTarget target, Message message) {
+    protected SendMessageResult deliverMessage(MessageTarget target, Message message) {
         target.sendMessage(message);
         return new SendMessageResult(message, true);
     }
@@ -107,6 +116,36 @@ public class SendMessageCommand implements Command {
         public Builder(Message message) {
             super(SendMessageCommand::new);
             this.message = message;
+        }
+    }
+
+    @Log(topic = "sChat:SendMessage")
+    public static class Logging extends SendMessageCommand {
+
+        public Logging(SendMessageCommand.Builder builder) {
+            super(builder);
+        }
+
+        @Override
+        protected SendMessageEvent fireEvent(Message message) {
+            final SendMessageEvent event = super.fireEvent(message);
+            if (event.isCancelled())
+                log.info("SendMessageEvent CANCELLED for: " + message);
+            return event;
+        }
+
+        @Override
+        protected SendMessageResult deliverPrivateMessage(Chatter source, Chatter target, Message message) {
+            final SendMessageResult result = super.deliverPrivateMessage(source, target, message);
+            log.info("Delivered PRIVATE Message '" + message + "' from '" + source + "' to '" + target + "' --> " + (result.wasSuccessful() ? "SUCCESS" : "FAILED"));
+            return result;
+        }
+
+        @Override
+        protected SendMessageResult deliverMessage(MessageTarget target, Message message) {
+            final SendMessageResult result = super.deliverMessage(target, message);
+            log.info("Delivered Message '" + message + "' from '" + message.source() + "' to '" + target + "' --> " + (result.wasSuccessful() ? "SUCCESS" : "FAILED"));
+            return result;
         }
     }
 }

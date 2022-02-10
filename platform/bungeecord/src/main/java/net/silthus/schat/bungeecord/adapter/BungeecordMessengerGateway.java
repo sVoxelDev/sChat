@@ -54,6 +54,7 @@ public class BungeecordMessengerGateway implements MessengerGateway, Listener {
     private BungeecordMessengerGateway(BungeecordBootstrap bootstrap) {
         this.proxy = bootstrap.proxy();
         this.scheduler = bootstrap.scheduler();
+        this.proxy.registerChannel(CHANNEL);
         this.proxy.getPluginManager().registerListener(bootstrap.loader(), this);
     }
 
@@ -82,13 +83,20 @@ public class BungeecordMessengerGateway implements MessengerGateway, Listener {
     @Override
     public void close() {
         this.proxy.getPluginManager().unregisterListener(this);
+        this.proxy.unregisterChannel(CHANNEL);
     }
 
-    @Log
+    @Log(topic = "sChat:MessengerGateway")
     private static final class Logging extends BungeecordMessengerGateway {
 
         private Logging(BungeecordBootstrap bootstrap) {
             super(bootstrap);
+        }
+
+        @Override
+        public void onIncomingMessage(PluginMessageEvent event) {
+            log.info("Received Plugin Message on '" + event.getTag() + "': " + new String(event.getData()));
+            super.onIncomingMessage(event);
         }
 
         @Override

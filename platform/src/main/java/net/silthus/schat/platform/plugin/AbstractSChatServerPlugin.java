@@ -138,6 +138,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     private void setupPrototypes() {
         SendMessageCommand.prototype(builder -> builder
             .eventBus(eventBus())
+            .use(b -> config().get(DEBUG) ? new SendMessageCommand.Logging(b) : new SendMessageCommand(b))
         );
         SendPrivateMessageCommand.prototype(builder -> builder
             .channelRepository(channelRepository())

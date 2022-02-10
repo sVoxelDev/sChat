@@ -64,7 +64,7 @@ public final class SChatVelocityProxy extends AbstractSChatProxyPlugin {
 
     @Override
     protected void registerMessengerGateway(GatewayProviderRegistry registry) {
-        registry.register(GATEWAY_TYPE, consumer -> new VelocityMessengerGateway(bootstrap()));
+        registry.register(GATEWAY_TYPE, consumer -> VelocityMessengerGateway.createVelocityMessengerGateway(bootstrap()));
     }
 
     @Override
