@@ -90,7 +90,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
         viewFactory = createViewFactory();
         viewProvider = createViewProvider(viewFactory);
 
-        chatterRepository = createInMemoryChatterRepository();
+        chatterRepository = createInMemoryChatterRepository(config().get(DEBUG));
         chatterFactory = createChatterFactory(viewProvider);
         connectionListener = registerConnectionListener(chatterRepository, chatterFactory, messenger(), eventBus());
 
@@ -127,7 +127,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
     @ApiStatus.OverrideOnly
     protected ChannelRepository createChannelRepository() {
-        return createInMemoryChannelRepository();
+        return createInMemoryChannelRepository(config().get(DEBUG));
     }
 
     private void registerSerializers() {

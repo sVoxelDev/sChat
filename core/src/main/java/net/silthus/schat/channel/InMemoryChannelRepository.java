@@ -24,15 +24,32 @@
 
 package net.silthus.schat.channel;
 
+import lombok.extern.java.Log;
 import net.silthus.schat.repository.InMemoryRepository;
 import org.jetbrains.annotations.NotNull;
 
-final class InMemoryChannelRepository extends InMemoryRepository<String, Channel> implements ChannelRepository {
+class InMemoryChannelRepository extends InMemoryRepository<String, Channel> implements ChannelRepository {
 
     @Override
     public void add(@NotNull Channel channel) {
         if (contains(channel.key()))
             throw new DuplicateChannel();
         super.add(channel);
+    }
+
+    @Log
+    static final class Logging extends InMemoryChannelRepository {
+
+        @Override
+        public void add(@NotNull Channel channel) {
+            super.add(channel);
+            log.info("Added Channel: " + channel);
+        }
+
+        @Override
+        public void remove(@NotNull String key) {
+            super.remove(key);
+            log.info("Removed Channel: " + key);
+        }
     }
 }
