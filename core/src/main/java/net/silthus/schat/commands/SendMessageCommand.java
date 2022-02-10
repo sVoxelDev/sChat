@@ -89,7 +89,7 @@ public class SendMessageCommand implements Command {
     }
 
     protected SendMessageResult deliverPrivateMessage(Chatter source, Chatter target, Message message) {
-        return sendPrivateMessage(source, target, message);
+        return sendPrivateMessage(source, target, message.text());
     }
 
     private Chatter targetOf(SendMessageEvent event) {

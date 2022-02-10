@@ -24,94 +24,55 @@
 
 package net.silthus.schat.commands;
 
-import java.util.UUID;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.channel.ChannelRepository;
-import net.silthus.schat.channel.ChannelSettings;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.command.Command;
 import net.silthus.schat.command.CommandBuilder;
 import net.silthus.schat.message.Message;
-import org.jetbrains.annotations.NotNull;
 
-import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
-import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.commands.CreatePrivateChannelCommand.createPrivateChannel;
 
 @Getter
 @Accessors(fluent = true)
 public class SendPrivateMessageCommand implements Command {
 
-    public static final @NonNull Predicate<Channel> IS_PRIVATE = channel -> channel.is(PRIVATE);
     @Getter
     @Setter
     private static @NonNull Function<SendPrivateMessageCommand.Builder, SendPrivateMessageCommand.Builder> prototype = builder -> builder;
 
     public static SendMessageResult sendPrivateMessage(Chatter source, Chatter target, Component text) {
-        return sendPrivateMessage(source, target, Message.message(text).source(source).to(target).create());
+        return sendPrivateMessageBuilder(source, target, text).create().execute();
     }
 
-    public static SendMessageResult sendPrivateMessage(Chatter source, Chatter target, Message message) {
-        return sendPrivateMessageBuilder(source, target, message).create().execute();
-    }
-
-    public static Builder sendPrivateMessageBuilder(Chatter source, Chatter target, Message message) {
-        return prototype.apply(new Builder(source, target, message));
+    public static Builder sendPrivateMessageBuilder(Chatter source, Chatter target, Component text) {
+        return prototype.apply(new Builder(source, target, text));
     }
 
     private final Chatter source;
     private final Chatter target;
-    private final Message message;
+    private final Component text;
     private final boolean setActive;
-    private final ChannelRepository repository;
 
     public SendPrivateMessageCommand(Builder builder) {
         this.source = builder.source;
         this.target = builder.target;
-        this.message = builder.message;
+        this.text = builder.text;
         this.setActive = builder.setActive;
-        this.repository = builder.channelRepository;
     }
 
     @Override
     public SendMessageResult execute() throws Error {
-        createPrivateChannel(source, target).sendMessage(message);
+        final Channel channel = createPrivateChannel(source, target).channel();
+        if (setActive())
+            source().activeChannel(channel);
+        final Message message = Message.message(text).to(channel).send();
         return new SendMessageResult(message, true);
-    }
-
-    private @NotNull Channel createPrivateChannel(Chatter source, Chatter target) {
-        final Channel channel = repository.find(IS_PRIVATE.and(containsTarget(source)).and(containsTarget(target)))
-            .orElseGet(() -> createPrivateChannel(UUID.randomUUID().toString(), target.displayName()));
-
-        source.join(channel);
-        target.join(channel);
-        if (setActive()) {
-            source.activeChannel(channel);
-            target.activeChannel(channel);
-        }
-
-        return channel;
-    }
-
-    @NotNull
-    private Predicate<Channel> containsTarget(Chatter source) {
-        return channel -> channel.targets().contains(source);
-    }
-
-    private Channel createPrivateChannel(String key, Component name) {
-        final Channel channel = Channel.channel(key)
-            .name(name)
-            .set(ChannelSettings.GLOBAL, true)
-            .set(PRIVATE, true)
-            .create();
-        repository.add(channel);
-        return channel;
     }
 
     @Getter
@@ -121,15 +82,14 @@ public class SendPrivateMessageCommand implements Command {
 
         private final Chatter source;
         private final Chatter target;
-        private final Message message;
-        private ChannelRepository channelRepository = createInMemoryChannelRepository();
+        private final Component text;
         private boolean setActive = true;
 
-        protected Builder(Chatter source, Chatter target, Message message) {
+        protected Builder(Chatter source, Chatter target, Component text) {
             super(SendPrivateMessageCommand::new);
             this.source = source;
             this.target = target;
-            this.message = message;
+            this.text = text;
         }
     }
 }

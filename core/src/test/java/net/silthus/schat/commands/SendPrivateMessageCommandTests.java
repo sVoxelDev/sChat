@@ -34,14 +34,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
-import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
+import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.commands.SendPrivateMessageCommand.sendPrivateMessageBuilder;
 import static net.silthus.schat.message.Message.message;
-import static net.silthus.schat.message.MessageHelper.randomMessage;
+import static net.silthus.schat.message.MessageHelper.randomText;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Nested
@@ -53,7 +53,7 @@ class SendPrivateMessageCommandTests {
     @BeforeEach
     void setUp() {
         repository = createInMemoryChannelRepository();
-        SendPrivateMessageCommand.prototype(builder -> builder.channelRepository(repository));
+        CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(repository));
         source = randomChatter();
         target = randomChatter();
     }
@@ -121,7 +121,7 @@ class SendPrivateMessageCommandTests {
 
     @Test
     void given_setActive_is_false_then_private_channel_is_not_set_as_active() {
-        sendPrivateMessageBuilder(source, target, randomMessage()).setActive(false).execute();
+        sendPrivateMessageBuilder(source, target, randomText()).setActive(false).execute();
         assertThat(source.activeChannel()).isEmpty();
         source.assertJoinedChannel(privateChannel().key());
     }

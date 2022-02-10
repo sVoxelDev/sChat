@@ -41,7 +41,6 @@ import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
 public class BungeecordMessengerGateway implements MessengerGateway, Listener {
 
     public static final String GATEWAY_TYPE = "pluginmessage";
-    public static final String CHANNEL = "schat:update";
 
     public static BungeecordMessengerGateway createBungeecordMessengerGateway(BungeecordBootstrap bootstrap) {
         if (bootstrap.plugin().config().get(ConfigKeys.DEBUG))
