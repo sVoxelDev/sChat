@@ -87,11 +87,17 @@ public class BukkitMessengerGateway implements MessengerGateway, PluginMessageLi
         server.getMessenger().unregisterIncomingPluginChannel(plugin, CHANNEL);
     }
 
-    @Log
+    @Log(topic = "sChat:MessengerGateway")
     private static final class Logging extends BukkitMessengerGateway {
 
         private Logging(Plugin plugin, Server server, SchedulerAdapter scheduler, IncomingMessageConsumer consumer) {
             super(plugin, server, scheduler, consumer);
+        }
+
+        @Override
+        public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte[] message) {
+            log.info("Received Plugin Message on '" + channel + "': " + new String(message));
+            super.onPluginMessageReceived(channel, player, message);
         }
 
         @Override
