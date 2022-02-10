@@ -33,8 +33,8 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-import net.silthus.schat.MessengerGateway;
 import net.silthus.schat.bungeecord.BungeecordBootstrap;
+import net.silthus.schat.messenger.MessengerGateway;
 import net.silthus.schat.platform.config.ConfigKeys;
 import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
 

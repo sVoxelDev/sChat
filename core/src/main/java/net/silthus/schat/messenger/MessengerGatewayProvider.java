@@ -22,24 +22,31 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.messenger;
 
-import java.util.UUID;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.experimental.Accessors;
+import lombok.NonNull;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 
-@Getter
-@Accessors(fluent = true)
-@ToString
-@EqualsAndHashCode(of = "id")
-public abstract class PluginMessage {
-    private final UUID id;
+/**
+ * Represents a provider for {@link Messenger} instances.
+ *
+ * <p>Users wishing to provide their own implementation for the plugins
+ * "Messaging Service" should implement and register this interface.</p>
+ */
+@OverrideOnly
+public interface MessengerGatewayProvider {
 
-    protected PluginMessage() {
-        this.id = UUID.randomUUID();
-    }
+    /**
+     * Creates and returns a new {@link MessengerGateway} instance, which passes
+     * incoming messages to the provided {@link IncomingMessageConsumer}.
+     *
+     * <p>As the agent should pass incoming messages to the given consumer,
+     * this method should always return a new object.</p>
+     *
+     * @param incomingMessageConsumer the consumer the new instance should pass
+     *                                incoming messages to
+     * @return a new messenger gateway instance
+     */
+    @NonNull MessengerGateway obtain(@NonNull IncomingMessageConsumer incomingMessageConsumer);
 
-    public abstract void process();
 }

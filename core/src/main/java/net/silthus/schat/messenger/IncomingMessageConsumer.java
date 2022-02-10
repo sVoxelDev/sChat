@@ -22,7 +22,7 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.messenger;
 
 import lombok.NonNull;
 import org.jetbrains.annotations.ApiStatus.NonExtendable;

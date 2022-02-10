@@ -22,37 +22,20 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.messenger;
 
-import java.lang.reflect.Type;
-import lombok.NonNull;
-import org.jetbrains.annotations.ApiStatus.OverrideOnly;
+public interface MessengerGateway extends AutoCloseable {
 
-/**
- * Represents an object which dispatches {@link PluginMessage}s.
- */
-@OverrideOnly
-public interface Messenger extends AutoCloseable {
+    String CHANNEL = "schat:update";
 
     /**
-     * Registers the given plugin message type for sending messages.
+     * Processes the encoded message by using the means of this gateway.
      *
-     * <p>Every {@link PluginMessage} that is sent must be registered
-     * or else an {@link UnsupportedMessageException} will be thrown by {@link #sendPluginMessage(PluginMessage)}.</p>
+     * <p>The method should always prefer dispatching the message asynchronously.</p>
      *
-     * @param type the type
+     * @param encodedMessage the encoded message
      */
-    void registerMessageType(Type type);
-
-    /**
-     * Performs the necessary action to dispatch the message using the means
-     * of the messenger.
-     *
-     * <p>The underlying dispatch should always be made async.</p>
-     *
-     * @param pluginMessage the outgoing message
-     */
-    void sendPluginMessage(@NonNull PluginMessage pluginMessage) throws UnsupportedMessageException;
+    void sendOutgoingMessage(String encodedMessage);
 
     /**
      * Performs the necessary action to gracefully shut down the messenger.
@@ -60,8 +43,5 @@ public interface Messenger extends AutoCloseable {
     @Override
     default void close() {
 
-    }
-
-    class UnsupportedMessageException extends RuntimeException {
     }
 }

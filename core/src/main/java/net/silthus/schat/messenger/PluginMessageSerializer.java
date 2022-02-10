@@ -22,26 +22,31 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat;
+package net.silthus.schat.messenger;
 
-public interface MessengerGateway extends AutoCloseable {
+import java.lang.reflect.Type;
+import lombok.NonNull;
+import net.silthus.schat.util.gson.GsonProvider;
+import org.jetbrains.annotations.NotNull;
 
-    String CHANNEL = "schat:update";
+public interface PluginMessageSerializer {
 
-    /**
-     * Processes the encoded message by using the means of this gateway.
-     *
-     * <p>The method should always prefer dispatching the message asynchronously.</p>
-     *
-     * @param encodedMessage the encoded message
-     */
-    void sendOutgoingMessage(String encodedMessage);
-
-    /**
-     * Performs the necessary action to gracefully shut down the messenger.
-     */
-    @Override
-    default void close() {
-
+    static GsonPluginMessageSerializer gsonSerializer() {
+        return GsonPluginMessageSerializer.SERIALIZER;
     }
+
+    /**
+     * Registers the given message type for serialization and deserialization.
+     *
+     * <p>Register your custom json serializable types with the {@link GsonProvider#registerTypeAdapter(Type, Object)}.</p>
+     *
+     * @param type the type
+     */
+    void registerMessageType(Type type);
+
+    boolean supports(PluginMessage message);
+
+    @NotNull String encode(PluginMessage pluginMessage);
+
+    @NotNull PluginMessage decode(@NonNull String encodedString);
 }

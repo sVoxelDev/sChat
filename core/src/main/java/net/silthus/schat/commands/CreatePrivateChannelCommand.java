@@ -3,6 +3,7 @@ package net.silthus.schat.commands;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -13,6 +14,9 @@ import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.command.Command;
 import net.silthus.schat.command.CommandBuilder;
+import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.messenger.Messenger;
+import net.silthus.schat.messenger.PluginMessage;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
@@ -40,11 +44,13 @@ public class CreatePrivateChannelCommand implements Command {
     private final Chatter source;
     private final Chatter target;
     private final ChannelRepository repository;
+    private final Messenger messenger;
 
     protected CreatePrivateChannelCommand(Builder builder) {
         this.source = builder.source;
         this.target = builder.target;
         this.repository = builder.channelRepository;
+        this.messenger = builder.messenger;
     }
 
     @Override
@@ -52,10 +58,15 @@ public class CreatePrivateChannelCommand implements Command {
         final Channel channel = repository.find(privateChannel())
             .orElseGet(() -> createPrivateChannel(UUID.randomUUID().toString(), target.displayName()));
 
-        source.join(channel);
-        target.join(channel);
+        updateChannelTargets(channel);
 
         return new Result(channel);
+    }
+
+    private void updateChannelTargets(Channel channel) {
+        source.join(channel);
+        target.join(channel);
+        messenger.sendPluginMessage(new UpdatePrivateChannel(channel));
     }
 
     @NotNull
@@ -93,11 +104,30 @@ public class CreatePrivateChannelCommand implements Command {
         private final Chatter source;
         private final Chatter target;
         private ChannelRepository channelRepository = createInMemoryChannelRepository();
+        private Messenger messenger = Messenger.empty();
 
         protected Builder(Chatter source, Chatter target) {
             super(CreatePrivateChannelCommand::new);
             this.source = source;
             this.target = target;
+        }
+    }
+
+    @Getter
+    @Accessors(fluent = true)
+    @EqualsAndHashCode(of = {"channel"}, callSuper = true)
+    public static class UpdatePrivateChannel extends PluginMessage {
+        private final Channel channel;
+
+        public UpdatePrivateChannel(Channel channel) {
+            this.channel = channel;
+        }
+
+        @Override
+        public void process() {
+            for (final MessageTarget target : channel.targets())
+                if (target instanceof Chatter chatter)
+                    chatter.join(channel);
         }
     }
 }

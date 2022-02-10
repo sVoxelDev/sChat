@@ -26,7 +26,7 @@ package net.silthus.schat.platform.messaging;
 
 import java.util.HashMap;
 import java.util.Map;
-import net.silthus.schat.MessengerGatewayProvider;
+import net.silthus.schat.messenger.MessengerGatewayProvider;
 
 public final class GatewayProviderRegistry {
 
