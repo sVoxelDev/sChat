@@ -42,6 +42,14 @@ record IdentityImpl(@NonNull UUID uniqueId, @NonNull Pointers pointers) implemen
     static final Identity NIL = Identity.identity(NIL_IDENTITY_ID, "", Component.empty());
 
     @Override
+    public String toString() {
+        return "IdentityImpl{" +
+            "uniqueId=" + uniqueId + "," +
+            "name=" + name() +
+            '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o)
             return true;

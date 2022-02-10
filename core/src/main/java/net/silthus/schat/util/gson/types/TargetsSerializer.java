@@ -33,6 +33,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
 import java.util.UUID;
+import lombok.extern.java.Log;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.message.Targets;
@@ -40,13 +41,20 @@ import net.silthus.schat.message.Targets;
 import static net.silthus.schat.message.MessageTarget.IS_CHATTER;
 import static net.silthus.schat.util.UUIDUtil.isUuid;
 
-public final class TargetsSerializer implements JsonSerializer<Targets>, JsonDeserializer<Targets> {
+public class TargetsSerializer implements JsonSerializer<Targets>, JsonDeserializer<Targets> {
 
     public static final Type TARGETS_TYPE = Targets.class;
 
+    public static TargetsSerializer createTargetsSerializer(ChatterRepository chatterRepository, boolean debug) {
+        if (debug)
+            return new Logging(chatterRepository);
+        else
+            return new TargetsSerializer(chatterRepository);
+    }
+
     private final ChatterRepository chatterRepository;
 
-    public TargetsSerializer(ChatterRepository chatterRepository) {
+    private TargetsSerializer(ChatterRepository chatterRepository) {
         this.chatterRepository = chatterRepository;
     }
 
@@ -68,5 +76,27 @@ public final class TargetsSerializer implements JsonSerializer<Targets>, JsonDes
                 chatterRepository.find(UUID.fromString(element.getAsString())).ifPresent(targets::add);
 
         return targets;
+    }
+
+    @Log
+    private static final class Logging extends TargetsSerializer {
+
+        private Logging(ChatterRepository chatterRepository) {
+            super(chatterRepository);
+        }
+
+        @Override
+        public JsonElement serialize(Targets targets, Type type, JsonSerializationContext jsonSerializationContext) {
+            final JsonElement json = super.serialize(targets, type, jsonSerializationContext);
+            log.info("Serialized Targets into: " + json);
+            return json;
+        }
+
+        @Override
+        public Targets deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            final Targets targets = super.deserialize(json, type, jsonDeserializationContext);
+            log.info("Deserialized Targets " + targets + " from " + json);
+            return targets;
+        }
     }
 }

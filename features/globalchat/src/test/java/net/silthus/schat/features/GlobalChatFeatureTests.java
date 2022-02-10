@@ -39,9 +39,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.PluginMessageSerializer.gsonSerializer;
-import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static net.silthus.schat.util.gson.GsonProvider.registerTypeAdapter;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,7 +55,7 @@ class GlobalChatFeatureTests implements Messenger {
     @BeforeEach
     void setUp() {
         events = new EventBusMock();
-        registerTypeAdapter(ChannelSerializer.CHANNEL_TYPE, new ChannelSerializer(createInMemoryChannelRepository()));
+        registerTypeAdapter(ChannelSerializer.CHANNEL_TYPE, ChannelSerializer.createChannelSerializer(createInMemoryChannelRepository(), false));
         serializer = gsonSerializer();
         new GlobalChatFeature(this).bind(events);
     }
