@@ -71,7 +71,7 @@ public class SendPrivateMessageCommand implements Command {
         final Channel channel = createPrivateChannel(source, target).channel();
         if (setActive())
             source().activeChannel(channel);
-        final Message message = Message.message(text).to(channel).send();
+        final Message message = Message.message(text).source(source).to(channel).type(Message.Type.CHAT).send();
         return new SendMessageResult(message, true);
     }
 

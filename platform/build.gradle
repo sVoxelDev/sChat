@@ -55,13 +55,11 @@ subprojects {
             include(dependency('cloud.commandframework::'))
             include(dependency('io.leangen.geantyref::'))
             include(dependency('org.spongepowered::'))
-            include(dependency('net.kyori::'))
             include(dependency('org.bstats::'))
         }
         relocate 'cloud.commandframework', "${packageName}.lib.commands"
         relocate 'org.spongepowered.configurate', "${packageName}.lib.configurate"
         relocate 'io.leangen.geantyref', "${packageName}.lib.typetoken"
-        relocate 'net.kyori', "${packageName}.lib.kyori"
         relocate 'org.bstats', "${packageName}.lib.bstats"
     }
 

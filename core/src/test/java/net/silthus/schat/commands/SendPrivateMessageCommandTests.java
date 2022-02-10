@@ -126,6 +126,13 @@ class SendPrivateMessageCommandTests {
         source.assertJoinedChannel(privateChannel().key());
     }
 
+    @Test
+    void message_has_source_and_is_of_type_chat() {
+        final Message message = sendPrivateMessage();
+        assertThat(message.source()).isEqualTo(source);
+        assertThat(message.type()).isEqualTo(Message.Type.CHAT);
+    }
+
     @Nested
     class given_private_channel_exists {
         private Channel channel;

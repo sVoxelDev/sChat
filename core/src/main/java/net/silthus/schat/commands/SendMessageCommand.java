@@ -74,7 +74,8 @@ public class SendMessageCommand implements Command {
         final SendMessageEvent event = fireEvent(message);
         if (event.isNotCancelled())
             return sendMessage(event);
-        return new SendMessageResult(message, false);
+        else
+            return new SendMessageResult(message, false);
     }
 
     protected SendMessageEvent fireEvent(Message message) {

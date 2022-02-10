@@ -91,3 +91,11 @@ dependencies {
     testImplementation 'com.github.seeseemelk:MockBukkit-v1.18:1.15.5'
     testImplementation(testFixtures(project(":core")))
 }
+
+shadowJar {
+    archiveClassifier.set("")
+    dependencies {
+        include(dependency('net.kyori::'))
+    }
+    relocate 'net.kyori', "${packageName}.lib.kyori"
+}

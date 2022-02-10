@@ -78,7 +78,7 @@ subprojects {
     }
 
     dependencies {
-        api 'net.kyori:adventure-api:4.10.0-SNAPSHOT'
+        api 'net.kyori:adventure-api:4.9.3'
 
         implementation 'net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT'
         implementation 'net.kyori:adventure-text-serializer-plain:4.9.3'
