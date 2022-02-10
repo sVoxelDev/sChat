@@ -29,7 +29,14 @@ import net.silthus.schat.repository.Repository;
 public interface ChannelRepository extends Repository<String, Channel> {
 
     static ChannelRepository createInMemoryChannelRepository() {
-        return new InMemoryChannelRepository();
+        return createInMemoryChannelRepository(false);
+    }
+
+    static ChannelRepository createInMemoryChannelRepository(boolean debug) {
+        if (debug)
+            return new InMemoryChannelRepository.Logging();
+        else
+            return new InMemoryChannelRepository();
     }
 
     final class DuplicateChannel extends RuntimeException {

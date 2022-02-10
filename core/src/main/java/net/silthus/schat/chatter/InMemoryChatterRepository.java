@@ -25,7 +25,24 @@
 package net.silthus.schat.chatter;
 
 import java.util.UUID;
+import lombok.extern.java.Log;
 import net.silthus.schat.repository.InMemoryRepository;
+import org.jetbrains.annotations.NotNull;
 
 class InMemoryChatterRepository extends InMemoryRepository<UUID, Chatter> implements ChatterRepository {
+
+    @Log
+    static final class Logging extends InMemoryChatterRepository {
+        @Override
+        public void add(@NotNull Chatter entity) {
+            super.add(entity);
+            log.info("Added Chatter: " + entity);
+        }
+
+        @Override
+        public void remove(@NotNull UUID key) {
+            super.remove(key);
+            log.info("Removed Chatter: " + key);
+        }
+    }
 }

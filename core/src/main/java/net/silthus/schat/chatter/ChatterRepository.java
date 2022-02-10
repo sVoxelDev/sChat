@@ -32,4 +32,11 @@ public interface ChatterRepository extends Repository<UUID, Chatter> {
     static ChatterRepository createInMemoryChatterRepository() {
         return new InMemoryChatterRepository();
     }
+
+    static ChatterRepository createInMemoryChatterRepository(boolean debug) {
+        if (debug)
+            return new InMemoryChatterRepository.Logging();
+        else
+            return new InMemoryChatterRepository();
+    }
 }
