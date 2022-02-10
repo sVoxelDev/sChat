@@ -51,6 +51,7 @@ public class CreatePrivateChannelCommand implements Command {
         this.target = builder.target;
         this.repository = builder.channelRepository;
         this.messenger = builder.messenger;
+        this.messenger.registerMessageType(UpdatePrivateChannel.class);
     }
 
     @Override
