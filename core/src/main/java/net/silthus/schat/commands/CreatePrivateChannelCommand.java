@@ -1,6 +1,6 @@
 package net.silthus.schat.commands;
 
-import java.util.UUID;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import lombok.EqualsAndHashCode;
@@ -56,8 +56,8 @@ public class CreatePrivateChannelCommand implements Command {
 
     @Override
     public Result execute() throws Error {
-        final Channel channel = repository.find(privateChannel())
-            .orElseGet(() -> createPrivateChannel(UUID.randomUUID().toString(), target.displayName()));
+        final Channel channel = repository.find(privateChannelFilter())
+            .orElseGet(() -> createPrivateChannel(privateChannelKey(), target.displayName()));
 
         updateChannelTargets(channel);
 
@@ -71,8 +71,12 @@ public class CreatePrivateChannelCommand implements Command {
     }
 
     @NotNull
-    private Predicate<Channel> privateChannel() {
-        return IS_PRIVATE.and(containsTarget(source)).and(containsTarget(target));
+    private Predicate<Channel> privateChannelFilter() {
+        return IS_PRIVATE.and(channel -> channel.key().equals(privateChannelKey()));
+    }
+
+    private String privateChannelKey() {
+        return String.valueOf(Set.of(source, target).hashCode());
     }
 
     @NotNull
@@ -121,6 +125,7 @@ public class CreatePrivateChannelCommand implements Command {
         private final Channel channel;
 
         public UpdatePrivateChannel(Channel channel) {
+            super();
             this.channel = channel;
         }
 

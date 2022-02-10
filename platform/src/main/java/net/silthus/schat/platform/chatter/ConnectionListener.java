@@ -92,6 +92,7 @@ public abstract class ConnectionListener {
         private transient ChatterFactory factory;
 
         ChatterJoined(Identity identity) {
+            super();
             this.identity = identity;
         }
 
