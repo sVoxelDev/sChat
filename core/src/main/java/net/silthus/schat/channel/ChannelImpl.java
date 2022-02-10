@@ -33,6 +33,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.eventbus.EventBus;
@@ -53,6 +54,7 @@ import static net.kyori.adventure.text.Component.text;
 @Getter
 @Accessors(fluent = true)
 @EqualsAndHashCode(of = {"key"})
+@ToString(of = {"key", "settings", "targets"})
 final class ChannelImpl implements Channel {
 
     @Setter

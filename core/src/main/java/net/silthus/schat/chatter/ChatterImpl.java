@@ -34,6 +34,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identity;
@@ -47,6 +48,7 @@ import org.jetbrains.annotations.Unmodifiable;
 @Setter
 @Accessors(fluent = true)
 @EqualsAndHashCode(of = {"identity"})
+@ToString(of = {"identity"})
 non-sealed class ChatterImpl implements Chatter {
 
     static final Chatter EMPTY = new EmptyChatter();

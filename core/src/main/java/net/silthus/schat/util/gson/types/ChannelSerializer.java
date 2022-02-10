@@ -33,21 +33,27 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
+import lombok.extern.java.Log;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.util.gson.JObject;
 
-import static net.silthus.schat.channel.Channel.channel;
-
-public final class ChannelSerializer implements JsonSerializer<Channel>, JsonDeserializer<Channel> {
+public class ChannelSerializer implements JsonSerializer<Channel>, JsonDeserializer<Channel> {
 
     public static final Type CHANNEL_TYPE = new TypeToken<Channel>() {
     }.getType();
 
+    public static ChannelSerializer createChannelSerializer(ChannelRepository channelRepository, boolean debug) {
+        if (debug)
+            return new Logging(channelRepository);
+        else
+            return new ChannelSerializer(channelRepository);
+    }
+
     private final ChannelRepository channelRepository;
 
-    public ChannelSerializer(ChannelRepository channelRepository) {
+    private ChannelSerializer(ChannelRepository channelRepository) {
         this.channelRepository = channelRepository;
     }
 
@@ -63,8 +69,40 @@ public final class ChannelSerializer implements JsonSerializer<Channel>, JsonDes
     public Channel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         final JsonObject object = json.getAsJsonObject();
         final String key = object.get("key").getAsString();
-        return channelRepository.findOrCreate(key, k -> channel(k)
+        return channelRepository.findOrCreate(key, k -> createChannel(k, object, context));
+    }
+
+    protected Channel createChannel(String key, JsonObject object, JsonDeserializationContext context) {
+        return Channel.channel(key)
             .settings(context.deserialize(object.get("settings"), Settings.class))
-            .create());
+            .create();
+    }
+
+    @Log
+    private static final class Logging extends ChannelSerializer {
+        private Logging(ChannelRepository repository) {
+            super(repository);
+        }
+
+        @Override
+        public JsonElement serialize(Channel src, Type typeOfSrc, JsonSerializationContext context) {
+            final JsonElement json = super.serialize(src, typeOfSrc, context);
+            log.info("Serialized Channel " + src + " into " + json);
+            return json;
+        }
+
+        @Override
+        public Channel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            final Channel channel = super.deserialize(json, typeOfT, context);
+            log.info("Deserialized Channel " + channel + " from " + json);
+            return channel;
+        }
+
+        @Override
+        protected Channel createChannel(String key, JsonObject object, JsonDeserializationContext context) {
+            final Channel channel = super.createChannel(key, object, context);
+            log.info("Created Channel " + channel);
+            return channel;
+        }
     }
 }

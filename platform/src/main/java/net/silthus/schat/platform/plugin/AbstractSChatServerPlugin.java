@@ -50,8 +50,6 @@ import net.silthus.schat.ui.view.ViewFactory;
 import net.silthus.schat.ui.view.ViewProvider;
 import net.silthus.schat.ui.views.Views;
 import net.silthus.schat.util.gson.GsonProvider;
-import net.silthus.schat.util.gson.types.ChannelSerializer;
-import net.silthus.schat.util.gson.types.TargetsSerializer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -60,9 +58,12 @@ import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterR
 import static net.silthus.schat.platform.commands.parser.ChannelArgument.registerChannelArgument;
 import static net.silthus.schat.platform.commands.parser.ChatterArgument.registerChatterArgument;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
+import static net.silthus.schat.platform.config.ConfigKeys.DEBUG;
 import static net.silthus.schat.ui.view.ViewProvider.cachingViewProvider;
 import static net.silthus.schat.util.gson.types.ChannelSerializer.CHANNEL_TYPE;
+import static net.silthus.schat.util.gson.types.ChannelSerializer.createChannelSerializer;
 import static net.silthus.schat.util.gson.types.TargetsSerializer.TARGETS_TYPE;
+import static net.silthus.schat.util.gson.types.TargetsSerializer.createTargetsSerializer;
 
 @Getter
 @Accessors(fluent = true)
@@ -130,8 +131,8 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     }
 
     private void registerSerializers() {
-        GsonProvider.registerTypeAdapter(CHANNEL_TYPE, new ChannelSerializer(channelRepository()));
-        GsonProvider.registerTypeAdapter(TARGETS_TYPE, new TargetsSerializer(chatterRepository()));
+        GsonProvider.registerTypeAdapter(CHANNEL_TYPE, createChannelSerializer(channelRepository(), config().get(DEBUG)));
+        GsonProvider.registerTypeAdapter(TARGETS_TYPE, createTargetsSerializer(chatterRepository(), config().get(DEBUG)));
     }
 
     private void setupPrototypes() {

@@ -40,6 +40,7 @@ import org.junit.jupiter.api.Test;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.util.gson.JObject.json;
+import static net.silthus.schat.util.gson.types.ChannelSerializer.createChannelSerializer;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ChannelSerializerTest {
@@ -52,7 +53,7 @@ class ChannelSerializerTest {
     @BeforeEach
     void setUp() {
         repository = createInMemoryChannelRepository();
-        serializer = new ChannelSerializer(repository);
+        serializer = createChannelSerializer(repository, false);
     }
 
     @NotNull

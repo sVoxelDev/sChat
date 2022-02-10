@@ -57,7 +57,7 @@ class TargetsSerializerTest {
     @BeforeEach
     void setUp() {
         chatterRepository = createInMemoryChatterRepository();
-        serializer = new TargetsSerializer(chatterRepository);
+        serializer = TargetsSerializer.createTargetsSerializer(chatterRepository, false);
     }
 
     @NotNull
