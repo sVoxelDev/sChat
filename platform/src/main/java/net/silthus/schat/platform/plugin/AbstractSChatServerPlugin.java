@@ -142,6 +142,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
         );
         CreatePrivateChannelCommand.prototype(builder -> builder
             .channelRepository(channelRepository())
+            .messenger(messenger())
         );
         JoinChannelCommand.prototype(builder -> builder
             .eventBus(eventBus())
