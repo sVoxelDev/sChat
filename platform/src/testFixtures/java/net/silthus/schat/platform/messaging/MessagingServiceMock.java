@@ -33,6 +33,7 @@ import org.assertj.core.api.ObjectAssert;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.messenger.PluginMessageSerializer.gsonSerializer;
+import static net.silthus.schat.util.gson.GsonProvider.createGsonProvider;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MessagingServiceMock extends MessagingService {
@@ -42,7 +43,7 @@ public class MessagingServiceMock extends MessagingService {
     private int processedMessageCount = 0;
 
     public MessagingServiceMock() {
-        super(new MockMessagingGatewayProvider(), gsonSerializer());
+        super(new MockMessagingGatewayProvider(), gsonSerializer(createGsonProvider()));
         registerMessageType(MockPluginMessage.class);
     }
 

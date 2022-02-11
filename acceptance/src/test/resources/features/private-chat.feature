@@ -8,6 +8,7 @@ Feature: Private Chats
       | player2 | server1 |
       | player3 | server1 |
       | player4 | server2 |
+    And I am player1
 
   Scenario: Users can send private messages
     When I send a private message to player2

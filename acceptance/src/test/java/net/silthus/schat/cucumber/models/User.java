@@ -58,17 +58,17 @@ public class User {
 
     private void updateChatterStub(Server server) {
         if (this.server != server && this.server != null)
-            removeStubFromCurrentServer();
+            removeFromServer(this.server);
         if (server != null)
-            addStubToServer(server);
+            addToServer(server);
     }
 
-    private void removeStubFromCurrentServer() {
-        this.server.plugin().chatterFactory().removeSenderStub(sender());
-    }
-
-    private void addStubToServer(Server server) {
+    private void addToServer(Server server) {
         server.join(sender());
+    }
+
+    private void removeFromServer(Server server) {
+        server.leave(sender());
     }
 
     public Chatter chatter() {
@@ -89,5 +89,10 @@ public class User {
 
     public Message lastMessage() {
         return chatter().lastMessage().orElse(null);
+    }
+
+    @Override
+    public String toString() {
+        return name + "@" + server();
     }
 }

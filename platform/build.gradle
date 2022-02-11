@@ -32,6 +32,7 @@ allprojects {
         testFixturesImplementation(testFixtures(project(':ui')))
 
         testFixturesImplementation 'org.spongepowered:configurate-core:4.1.2'
+        testFixturesImplementation 'com.google.code.gson:gson:2.8.9'
     }
 }
 

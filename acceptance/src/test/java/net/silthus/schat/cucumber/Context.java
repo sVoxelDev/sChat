@@ -38,8 +38,8 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.cucumber.models.Server;
 import net.silthus.schat.cucumber.models.User;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.platform.messaging.StubMessengerGatewayProvider;
 import net.silthus.schat.platform.plugin.TestServer;
+import net.silthus.schat.platform.sender.SenderMock;
 
 import static net.silthus.schat.platform.messaging.CrossServerMessengerGateway.provideCrossServerMessenger;
 
@@ -81,8 +81,7 @@ public class Context {
     @Before(order = 30)
     public void injectCrossServerMessenger() {
         final List<TestServer> servers = this.servers.values().stream().map(Server::plugin).toList();
-        final StubMessengerGatewayProvider messenger = provideCrossServerMessenger(servers);
-        this.servers.values().forEach(server -> server.injectMessenger(messenger));
+        this.servers.values().forEach(server -> server.injectMessenger(provideCrossServerMessenger(servers)));
     }
 
     @Before(order = 40)
@@ -108,7 +107,7 @@ public class Context {
     }
 
     public Server server(String server) {
-        return servers.getOrDefault(server, primaryServer());
+        return serverSteps().server(server);
     }
 
     public Channel channel(String channel) {
@@ -120,5 +119,9 @@ public class Context {
     public Channel addChannelToAllServers(Channel channel) {
         servers().values().forEach(server -> server.addChannel(channel));
         return channel;
+    }
+
+    public void addSenderToAllServers(SenderMock sender) {
+        servers().values().forEach(server -> server.plugin().chatterFactory().stubSenderAsChatter(sender));
     }
 }

@@ -27,11 +27,13 @@ package net.silthus.schat.features;
 import java.lang.reflect.Type;
 import lombok.NonNull;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.messenger.GsonPluginMessageSerializer;
 import net.silthus.schat.messenger.Messenger;
 import net.silthus.schat.messenger.PluginMessage;
+import net.silthus.schat.util.gson.GsonProvider;
 import net.silthus.schat.util.gson.types.ChannelSerializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,9 +43,10 @@ import org.junit.jupiter.api.Test;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
+import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static net.silthus.schat.messenger.PluginMessageSerializer.gsonSerializer;
-import static net.silthus.schat.util.gson.GsonProvider.registerTypeAdapter;
+import static net.silthus.schat.util.gson.GsonProvider.createGsonProvider;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class GlobalChatFeatureTests implements Messenger {
@@ -55,8 +58,9 @@ class GlobalChatFeatureTests implements Messenger {
     @BeforeEach
     void setUp() {
         events = new EventBusMock();
-        registerTypeAdapter(ChannelSerializer.CHANNEL_TYPE, ChannelSerializer.createChannelSerializer(createInMemoryChannelRepository(), false));
-        serializer = gsonSerializer();
+        final GsonProvider gsonProvider = createGsonProvider();
+        gsonProvider.registerTypeAdapter(ChannelSerializer.CHANNEL_TYPE, ChannelSerializer.createChannelSerializer(createInMemoryChannelRepository(), false));
+        serializer = gsonSerializer(gsonProvider);
         new GlobalChatFeature(this).bind(events);
     }
 
@@ -74,6 +78,11 @@ class GlobalChatFeatureTests implements Messenger {
     @Override
     public void registerMessageType(Type type) {
         serializer.registerMessageType(type);
+    }
+
+    @Override
+    public void registerTypeAdapter(Type type, Object adapter) {
+        serializer.registerTypeAdapter(type, adapter);
     }
 
     @Override
@@ -110,6 +119,15 @@ class GlobalChatFeatureTests implements Messenger {
             final GlobalChatFeature.GlobalChannelPluginMessage message = new GlobalChatFeature.GlobalChannelPluginMessage(channel, randomMessage());
             message.process();
             assertThat(messageCount).isEqualTo(1);
+        }
+
+        @Test
+        void process_joins_channel_targets_to_channel() {
+            final ChatterMock chatter = randomChatter();
+            channel.addTarget(chatter);
+            final GlobalChatFeature.GlobalChannelPluginMessage message = new GlobalChatFeature.GlobalChannelPluginMessage(channel, randomMessage());
+            message.process();
+            chatter.assertJoinedChannel(channel);
         }
     }
 }

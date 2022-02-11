@@ -64,6 +64,8 @@ public sealed interface Channel extends Entity<String>, Configured.Modifiable<Ch
 
     void removeTarget(MessageTarget target);
 
+    void updateTargets();
+
     interface Builder extends Configured.Builder<Builder> {
 
         Builder name(Component displayName);

@@ -24,24 +24,32 @@
 
 package net.silthus.schat.messenger;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.NonNull;
+import net.silthus.schat.util.gson.GsonProvider;
 import org.jetbrains.annotations.NotNull;
-
-import static net.silthus.schat.util.gson.GsonProvider.normalGson;
 
 public final class GsonPluginMessageSerializer implements PluginMessageSerializer {
 
-    static final GsonPluginMessageSerializer SERIALIZER = new GsonPluginMessageSerializer();
-
+    private final GsonProvider gsonProvider;
     private final Map<String, Type> typeMap = new HashMap<>();
+
+    GsonPluginMessageSerializer(GsonProvider gsonProvider) {
+        this.gsonProvider = gsonProvider;
+    }
 
     @Override
     public void registerMessageType(Type type) {
         typeMap.put(type.getTypeName(), type);
+    }
+
+    @Override
+    public void registerTypeAdapter(Type type, Object adapter) {
+        gsonProvider.registerTypeAdapter(type, adapter);
     }
 
     @Override
@@ -51,16 +59,17 @@ public final class GsonPluginMessageSerializer implements PluginMessageSerialize
 
     @Override
     public @NotNull String encode(PluginMessage pluginMessage) {
-        final JsonObject json = normalGson()
-            .toJsonTree(pluginMessage).getAsJsonObject();
+        final Gson gson = this.gsonProvider.normalGson();
+        final JsonObject json = gson.toJsonTree(pluginMessage).getAsJsonObject();
         json.addProperty("type", pluginMessage.getClass().getTypeName());
-        return normalGson().toJson(json);
+        return gson.toJson(json);
     }
 
     @Override
     public @NotNull PluginMessage decode(@NonNull String encodedString) {
-        final JsonObject json = normalGson().fromJson(encodedString, JsonObject.class);
+        final Gson gson = this.gsonProvider.normalGson();
+        final JsonObject json = gson.fromJson(encodedString, JsonObject.class);
         final String type = json.get("type").getAsString();
-        return normalGson().fromJson(json, typeMap.get(type));
+        return gson.fromJson(json, typeMap.get(type));
     }
 }

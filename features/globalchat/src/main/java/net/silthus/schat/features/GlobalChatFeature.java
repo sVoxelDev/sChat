@@ -71,6 +71,7 @@ public class GlobalChatFeature implements EventListener {
 
         @Override
         public void process() {
+            channel.updateTargets();
             message.copy().to(channel).send();
         }
     }

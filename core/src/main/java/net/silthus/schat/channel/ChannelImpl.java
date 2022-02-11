@@ -36,6 +36,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
@@ -107,6 +108,13 @@ final class ChannelImpl implements Channel {
     @Override
     public void removeTarget(MessageTarget target) {
         targets.remove(target);
+    }
+
+    @Override
+    public void updateTargets() {
+        for (MessageTarget target : targets())
+            if (target instanceof Chatter chatter)
+                chatter.join(this);
     }
 
     @Override

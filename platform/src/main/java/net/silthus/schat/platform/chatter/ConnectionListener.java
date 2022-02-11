@@ -40,7 +40,6 @@ import net.silthus.schat.identity.Identity;
 import net.silthus.schat.messenger.Messenger;
 import net.silthus.schat.messenger.PluginMessage;
 import net.silthus.schat.platform.sender.Sender;
-import net.silthus.schat.util.gson.GsonProvider;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class ConnectionListener {
@@ -59,7 +58,7 @@ public abstract class ConnectionListener {
 
     private void registerMessageType() {
         messenger.registerMessageType(ChatterJoined.class);
-        GsonProvider.registerTypeAdapter(ChatterJoined.class, new MessageCreator());
+        messenger.registerTypeAdapter(ChatterJoined.class, new MessageCreator());
     }
 
     protected final void onJoin(Sender sender) {

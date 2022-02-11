@@ -38,12 +38,14 @@ import net.silthus.schat.platform.locale.TranslationManager;
 import net.silthus.schat.platform.messaging.GatewayProviderRegistry;
 import net.silthus.schat.platform.messaging.MessagingService;
 import net.silthus.schat.platform.sender.Sender;
+import net.silthus.schat.util.gson.GsonProvider;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.messenger.PluginMessageSerializer.gsonSerializer;
 import static net.silthus.schat.platform.config.ConfigKeys.DEBUG;
 import static net.silthus.schat.platform.locale.Messages.STARTUP_BANNER;
 import static net.silthus.schat.platform.messaging.MessagingService.createMessagingService;
+import static net.silthus.schat.util.gson.GsonProvider.createGsonProvider;
 
 @Getter
 @Accessors(fluent = true)
@@ -52,6 +54,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     private TranslationManager translationManager;
     private EventBus eventBus;
     private GatewayProviderRegistry gatewayProviderRegistry;
+    private GsonProvider gsonProvider;
     private GsonPluginMessageSerializer serializer;
 
     private SChatConfig config;
@@ -62,7 +65,8 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
         translationManager = new TranslationManager(bootstrap().configDirectory());
         translationManager.reload();
 
-        serializer = gsonSerializer();
+        gsonProvider = createGsonProvider();
+        serializer = gsonSerializer(gsonProvider);
         gatewayProviderRegistry = new GatewayProviderRegistry();
 
         onLoad();
