@@ -65,7 +65,15 @@ public class Server {
     }
 
     public void join(SenderMock sender) {
-        plugin().chatterFactory().stubSenderAsChatter(sender);
         plugin().joinServer(sender);
+    }
+
+    public void leave(SenderMock sender) {
+        plugin().leaveServer(sender);
+    }
+
+    @Override
+    public String toString() {
+        return plugin().toString();
     }
 }

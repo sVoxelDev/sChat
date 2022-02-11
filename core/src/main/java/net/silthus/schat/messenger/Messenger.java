@@ -48,6 +48,8 @@ public interface Messenger extends AutoCloseable {
      */
     void registerMessageType(Type type);
 
+    void registerTypeAdapter(Type type, Object adapter);
+
     /**
      * Performs the necessary action to dispatch the message using the means
      * of the messenger.

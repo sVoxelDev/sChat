@@ -49,7 +49,6 @@ import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.ui.view.ViewFactory;
 import net.silthus.schat.ui.view.ViewProvider;
 import net.silthus.schat.ui.views.Views;
-import net.silthus.schat.util.gson.GsonProvider;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -131,8 +130,8 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     }
 
     private void registerSerializers() {
-        GsonProvider.registerTypeAdapter(CHANNEL_TYPE, createChannelSerializer(channelRepository(), config().get(DEBUG)));
-        GsonProvider.registerTypeAdapter(TARGETS_TYPE, createTargetsSerializer(chatterRepository(), config().get(DEBUG)));
+        gsonProvider().registerTypeAdapter(CHANNEL_TYPE, createChannelSerializer(channelRepository(), config().get(DEBUG)));
+        gsonProvider().registerTypeAdapter(TARGETS_TYPE, createTargetsSerializer(chatterRepository(), config().get(DEBUG)));
     }
 
     private void setupPrototypes() {

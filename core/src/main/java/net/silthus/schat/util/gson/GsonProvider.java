@@ -43,33 +43,36 @@ import static net.silthus.schat.util.gson.types.SettingsSerializer.SETTINGS_TYPE
 
 public final class GsonProvider {
 
-    private static final GsonBuilder BASE = new GsonBuilder()
+    public static GsonProvider createGsonProvider() {
+        return new GsonProvider();
+    }
+
+    private final GsonBuilder base = new GsonBuilder()
         .disableHtmlEscaping()
         .registerTypeAdapter(INSTANT_TYPE, new InstantSerializer())
         .registerTypeAdapter(COMPONENT_TYPE, new ComponentSerializer())
         .registerTypeAdapter(MESSAGE_TYPE, new MessageSerializer())
         .registerTypeAdapter(IDENTITY_TYPE, new IdentitySerializer())
         .registerTypeAdapter(SETTINGS_TYPE, new SettingsSerializer());
-    private static final GsonBuilder PRETTY_PRINTING = BASE.setPrettyPrinting();
-    private static final JsonParser NORMAL_PARSER = new JsonParser();
+    private final GsonBuilder prettyPrinting = base.setPrettyPrinting();
+    private final JsonParser normalParser = new JsonParser();
 
-    public static Gson normalGson() {
-        return BASE.create();
+    public Gson normalGson() {
+        return base.create();
     }
 
-    public static Gson prettyGson() {
-        return PRETTY_PRINTING.create();
+    public Gson prettyGson() {
+        return prettyPrinting.create();
     }
 
-    public static JsonParser gsonParser() {
-        return NORMAL_PARSER;
+    public JsonParser gsonParser() {
+        return normalParser;
     }
 
-    public static void registerTypeAdapter(Type type, @NonNull Object adapter) {
-        BASE.registerTypeAdapter(type, adapter);
+    public void registerTypeAdapter(Type type, @NonNull Object adapter) {
+        base.registerTypeAdapter(type, adapter);
     }
 
     private GsonProvider() {
-        throw new AssertionError();
     }
 }

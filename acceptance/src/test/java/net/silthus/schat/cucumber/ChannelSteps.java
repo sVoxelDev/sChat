@@ -31,9 +31,9 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelHelper;
 import net.silthus.schat.channel.ChannelSettings;
 
+import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
 import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
-import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 
 public class ChannelSteps {
 

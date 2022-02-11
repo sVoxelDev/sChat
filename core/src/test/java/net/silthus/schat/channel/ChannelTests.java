@@ -25,6 +25,7 @@
 package net.silthus.schat.channel;
 
 import net.kyori.adventure.text.TextComponent;
+import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.policies.JoinChannelPolicy;
@@ -40,6 +41,7 @@ import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.channel.ChannelSettings.DISPLAY_NAME;
+import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -154,6 +156,16 @@ class ChannelTests {
             channel = Channel.channel("test").policy(JoinChannelPolicy.class, JoinChannelPolicy.ALLOW).create();
             assertThat(channel.policy(JoinChannelPolicy.class))
                 .isPresent().get().isEqualTo(JoinChannelPolicy.ALLOW);
+        }
+    }
+
+    @Nested class updateTargets {
+        @Test
+        void given_targets_are_not_joined_then_targets_join() {
+            final ChatterMock target = randomChatter();
+            channel.addTarget(target);
+            channel.updateTargets();
+            target.assertJoinedChannel(channel);
         }
     }
 }

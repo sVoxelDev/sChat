@@ -76,6 +76,7 @@ public class UserSteps {
 
     public User createUser(String user) {
         final SenderMock sender = SenderMock.sender(identity(user));
+        context.addSenderToAllServers(sender);
         return new User()
             .sender(sender)
             .id(sender.uniqueId())

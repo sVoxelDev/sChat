@@ -73,6 +73,11 @@ public class MessagingService implements Messenger, IncomingMessageConsumer {
     }
 
     @Override
+    public void registerTypeAdapter(Type type, Object adapter) {
+        serializer().registerTypeAdapter(type, adapter);
+    }
+
+    @Override
     public void sendPluginMessage(@NotNull PluginMessage message) throws UnsupportedMessageException {
         if (supports(message))
             sendOutgoingMessage(message);

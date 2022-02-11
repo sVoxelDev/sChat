@@ -27,11 +27,9 @@ package net.silthus.schat.commands;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
@@ -39,9 +37,7 @@ import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.command.Command;
 import net.silthus.schat.command.CommandBuilder;
-import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.messenger.Messenger;
-import net.silthus.schat.messenger.PluginMessage;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
@@ -76,7 +72,6 @@ public class CreatePrivateChannelCommand implements Command {
         this.target = builder.target;
         this.repository = builder.channelRepository;
         this.messenger = builder.messenger;
-        this.messenger.registerMessageType(UpdatePrivateChannel.class);
     }
 
     @Override
@@ -92,7 +87,6 @@ public class CreatePrivateChannelCommand implements Command {
     private void updateChannelTargets(Channel channel) {
         source.join(channel);
         target.join(channel);
-        messenger.sendPluginMessage(new UpdatePrivateChannel(channel));
     }
 
     @NotNull
@@ -135,26 +129,6 @@ public class CreatePrivateChannelCommand implements Command {
             super(CreatePrivateChannelCommand::new);
             this.source = source;
             this.target = target;
-        }
-    }
-
-    @Getter
-    @ToString
-    @Accessors(fluent = true)
-    @EqualsAndHashCode(of = {"channel"}, callSuper = true)
-    public static class UpdatePrivateChannel extends PluginMessage {
-        private final Channel channel;
-
-        public UpdatePrivateChannel(Channel channel) {
-            super();
-            this.channel = channel;
-        }
-
-        @Override
-        public void process() {
-            for (final MessageTarget target : channel.targets())
-                if (target instanceof Chatter chatter)
-                    chatter.join(channel);
         }
     }
 }

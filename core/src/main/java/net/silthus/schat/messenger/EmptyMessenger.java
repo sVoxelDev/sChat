@@ -34,6 +34,11 @@ final class EmptyMessenger implements Messenger {
     }
 
     @Override
+    public void registerTypeAdapter(Type type, Object adapter) {
+
+    }
+
+    @Override
     public void sendPluginMessage(@NonNull PluginMessage pluginMessage) throws UnsupportedMessageException {
 
     }

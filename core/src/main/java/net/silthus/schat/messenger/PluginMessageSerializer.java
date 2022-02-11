@@ -31,8 +31,8 @@ import org.jetbrains.annotations.NotNull;
 
 public interface PluginMessageSerializer {
 
-    static GsonPluginMessageSerializer gsonSerializer() {
-        return GsonPluginMessageSerializer.SERIALIZER;
+    static GsonPluginMessageSerializer gsonSerializer(GsonProvider gsonProvider) {
+        return new GsonPluginMessageSerializer(gsonProvider);
     }
 
     /**
@@ -43,6 +43,8 @@ public interface PluginMessageSerializer {
      * @param type the type
      */
     void registerMessageType(Type type);
+
+    void registerTypeAdapter(Type type, Object adapter);
 
     boolean supports(PluginMessage message);
 

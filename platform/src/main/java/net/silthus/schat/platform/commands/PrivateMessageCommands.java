@@ -44,7 +44,7 @@ public final class PrivateMessageCommands implements Command {
         parser.parse(this);
     }
 
-    @ProxiedBy(value = "w,pm,dm,msg,say")
+    @ProxiedBy(value = "w|pm|dm|msg|say")
     @CommandMethod("tell <target> [message]")
     public void privateMessageCommand(Sender sender, Chatter source, @Argument("target") Chatter target, @Greedy @Argument("message") String message) {
         if (message == null || message.isBlank())

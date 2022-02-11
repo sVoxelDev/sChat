@@ -52,8 +52,15 @@ import static org.mockito.Mockito.spy;
 @Accessors(fluent = true)
 public class TestServer extends AbstractSChatServerPlugin {
 
+    private static int serverCount = 0;
+
+    private final String name;
     static Command dummyCommand = spy(Command.class);
     private ChatterFactoryStub chatterFactory;
+
+    public TestServer() {
+        name = "Server" + ++serverCount;
+    }
 
     @Override
     public Sender getConsole() {
@@ -103,6 +110,15 @@ public class TestServer extends AbstractSChatServerPlugin {
 
     public void joinServer(Sender sender) {
         ((TestConnectionListener) connectionListener()).joinServer(sender);
+    }
+
+    public void leaveServer(SenderMock sender) {
+        chatterRepository().remove(sender.uniqueId());
+    }
+
+    @Override
+    public String toString() {
+        return name();
     }
 
     private static final class TestConnectionListener extends ConnectionListener {
