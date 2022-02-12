@@ -26,7 +26,7 @@ package net.silthus.schat.commands;
 
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.ChatterMock;
-import net.silthus.schat.command.Command;
+import net.silthus.schat.command.Result;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.channel.PostChatterJoinChannelEvent;
 import net.silthus.schat.events.channel.PreJoinChannelEvent;
@@ -45,7 +45,7 @@ import static net.silthus.schat.chatter.ChatterAssertions.assertChatterHasOnlyCh
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.policies.JoinChannelPolicy.ALLOW;
 import static net.silthus.schat.policies.JoinChannelPolicy.DENY;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class JoinChannelCommandTests {
 
@@ -69,12 +69,11 @@ class JoinChannelCommandTests {
     }
 
     private void assertJoinChannelError() {
-        assertThatExceptionOfType(Command.Error.class)
-            .isThrownBy(this::joinChannel);
+        assertThat(joinChannel().wasFailure()).isTrue();
     }
 
-    private void joinChannel() {
-        JoinChannelCommand.joinChannel(chatter, channel).execute();
+    private Result joinChannel() {
+        return JoinChannelCommand.joinChannelBuilder(chatter, channel).execute();
     }
 
     @Test

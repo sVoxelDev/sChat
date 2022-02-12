@@ -39,6 +39,7 @@ import net.silthus.schat.events.channel.PostChatterJoinChannelEvent;
 import net.silthus.schat.events.channel.PreJoinChannelEvent;
 import net.silthus.schat.policies.JoinChannelPolicy;
 
+import static net.silthus.schat.command.Result.error;
 import static net.silthus.schat.command.Result.success;
 import static net.silthus.schat.policies.JoinChannelPolicy.JOIN_CHANNEL_POLICY;
 
@@ -50,7 +51,11 @@ public class JoinChannelCommand implements Command {
     @Setter
     private static @NonNull Function<Builder, Builder> prototype = builder -> builder;
 
-    public static Builder joinChannel(Chatter chatter, Channel channel) {
+    public static Result joinChannel(Chatter chatter, Channel channel) {
+        return joinChannelBuilder(chatter, channel).create().execute();
+    }
+
+    public static Builder joinChannelBuilder(Chatter chatter, Channel channel) {
         return prototype().apply(new Builder(chatter, channel));
     }
 
@@ -66,7 +71,7 @@ public class JoinChannelCommand implements Command {
         this.eventBus = builder.eventBus;
     }
 
-    public Result execute() throws Error {
+    public Result execute() {
         PreJoinChannelEvent event = firePreJoinChannelEvent();
         if (event.isNotCancelled() && event.policy().test(chatter, channel))
             return joinChannelAndUpdateView(chatter, channel);
@@ -87,9 +92,9 @@ public class JoinChannelCommand implements Command {
         return success();
     }
 
-    private Result handleJoinChannelError(Chatter chatter, Channel channel) throws AccessDenied {
+    private Result handleJoinChannelError(Chatter chatter, Channel channel) {
         chatter.leave(channel);
-        throw new AccessDenied();
+        return error(new AccessDenied());
     }
 
     @Getter

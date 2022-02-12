@@ -37,6 +37,8 @@ import net.silthus.schat.commands.CreatePrivateChannelCommand;
 import net.silthus.schat.commands.JoinChannelCommand;
 import net.silthus.schat.commands.SendMessageCommand;
 import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.eventbus.EventListener;
+import net.silthus.schat.features.AutoJoinChannelsFeature;
 import net.silthus.schat.features.GlobalChatFeature;
 import net.silthus.schat.messenger.Messenger;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
@@ -150,9 +152,12 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     }
 
     private void loadFeatures() {
-        final GlobalChatFeature feature = new GlobalChatFeature(messenger());
-        feature.bind(eventBus());
-        features.add(feature);
+        features.add(new GlobalChatFeature(messenger()));
+        features.add(new AutoJoinChannelsFeature(channelRepository()));
+
+        features.stream()
+            .filter(o -> o instanceof EventListener)
+            .forEach(o -> ((EventListener) o).bind(eventBus()));
     }
 
     private void loadChannels() {

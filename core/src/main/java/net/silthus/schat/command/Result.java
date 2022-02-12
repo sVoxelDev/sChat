@@ -72,6 +72,10 @@ public interface Result {
      */
     boolean wasSuccessful();
 
+    default boolean wasFailure() {
+        return !wasSuccessful();
+    }
+
     /**
      * The exception that lead to the failed result.
      *
@@ -80,5 +84,24 @@ public interface Result {
      */
     default Optional<Throwable> failureReason() {
         return Optional.empty();
+    }
+
+    /**
+     * Raises an {@link Error} if the result {@link #wasFailure()} and contains a {@link #failureReason()}.
+     *
+     * @return the result if no error occured
+     * @throws Error the error encapsulating the underlying {@link #failureReason()}
+     */
+    default Result raiseError() throws Error {
+        final Throwable throwable = failureReason().orElse(null);
+        if (throwable != null)
+            throw new Error(throwable);
+        return this;
+    }
+
+    class Error extends RuntimeException {
+        public Error(Throwable cause) {
+            super(cause);
+        }
     }
 }

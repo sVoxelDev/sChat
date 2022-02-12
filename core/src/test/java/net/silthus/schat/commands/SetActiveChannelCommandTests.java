@@ -27,15 +27,15 @@ package net.silthus.schat.commands;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelHelper;
 import net.silthus.schat.chatter.ChatterMock;
+import net.silthus.schat.command.Result;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.commands.JoinChannelCommand.joinChannel;
+import static net.silthus.schat.commands.JoinChannelCommand.joinChannelBuilder;
 import static net.silthus.schat.policies.JoinChannelPolicy.ALLOW;
 import static net.silthus.schat.policies.JoinChannelPolicy.DENY;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class SetActiveChannelCommandTests {
 
@@ -49,8 +49,8 @@ class SetActiveChannelCommandTests {
         JoinChannelCommand.prototype(builder -> builder.policy(ALLOW));
     }
 
-    private void setActiveChannel() {
-        SetActiveChannelCommand.setActiveChannel(chatter, channel).execute();
+    private Result setActiveChannel() {
+        return SetActiveChannelCommand.setActiveChannel(chatter, channel);
     }
 
     @Nested class given_valid_channel {
@@ -71,7 +71,7 @@ class SetActiveChannelCommandTests {
         @Nested class given_chatter_already_joined_channel {
             @BeforeEach
             void setUp() {
-                joinChannel(chatter, channel).execute();
+                joinChannelBuilder(chatter, channel).execute();
                 chatter.resetViewUpdate();
             }
 
@@ -98,8 +98,7 @@ class SetActiveChannelCommandTests {
 
             @Test
             void then_channel_is_not_set_active() {
-                assertThatExceptionOfType(JoinChannelCommand.AccessDenied.class)
-                    .isThrownBy(SetActiveChannelCommandTests.this::setActiveChannel);
+                assertThat(setActiveChannel().wasFailure()).isTrue();
                 assertThat(chatter.activeChannel()).isNotPresent();
             }
         }
