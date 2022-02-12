@@ -1,4 +1,4 @@
-subprojects {
+allprojects {
     dependencies {
         implementation project(':core')
 

@@ -52,7 +52,7 @@ subprojects {
             include(project(':core'))
             include(project(':platform'))
             include(project(':ui'))
-            include(project(':features:globalchat'))
+            include(project(':features'))
             include(dependency('cloud.commandframework::'))
             include(dependency('io.leangen.geantyref::'))
             include(dependency('org.spongepowered::'))
@@ -69,7 +69,7 @@ subprojects {
 }
 
 dependencies {
-    api project(':features:globalchat')
+    api project(':features')
 
     implementation 'cloud.commandframework:cloud-core:1.6.1'
     implementation 'cloud.commandframework:cloud-annotations:1.6.1'

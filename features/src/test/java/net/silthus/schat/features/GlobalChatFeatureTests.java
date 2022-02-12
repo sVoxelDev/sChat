@@ -27,26 +27,25 @@ package net.silthus.schat.features;
 import java.lang.reflect.Type;
 import lombok.NonNull;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.channel.ChannelHelper;
+import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.channel.ChannelSettings;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
+import net.silthus.schat.message.MessageHelper;
 import net.silthus.schat.messenger.GsonPluginMessageSerializer;
 import net.silthus.schat.messenger.Messenger;
 import net.silthus.schat.messenger.PluginMessage;
+import net.silthus.schat.messenger.PluginMessageSerializer;
 import net.silthus.schat.util.gson.GsonProvider;
 import net.silthus.schat.util.gson.types.ChannelSerializer;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.channel.ChannelHelper.channelWith;
-import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
-import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
-import static net.silthus.schat.chatter.ChatterMock.randomChatter;
-import static net.silthus.schat.message.MessageHelper.randomMessage;
-import static net.silthus.schat.messenger.PluginMessageSerializer.gsonSerializer;
-import static net.silthus.schat.util.gson.GsonProvider.createGsonProvider;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class GlobalChatFeatureTests implements Messenger {
@@ -58,9 +57,9 @@ class GlobalChatFeatureTests implements Messenger {
     @BeforeEach
     void setUp() {
         events = new EventBusMock();
-        final GsonProvider gsonProvider = createGsonProvider();
-        gsonProvider.registerTypeAdapter(ChannelSerializer.CHANNEL_TYPE, ChannelSerializer.createChannelSerializer(createInMemoryChannelRepository(), false));
-        serializer = gsonSerializer(gsonProvider);
+        final GsonProvider gsonProvider = GsonProvider.createGsonProvider();
+        gsonProvider.registerTypeAdapter(ChannelSerializer.CHANNEL_TYPE, ChannelSerializer.createChannelSerializer(ChannelRepository.createInMemoryChannelRepository(), false));
+        serializer = PluginMessageSerializer.gsonSerializer(gsonProvider);
         new GlobalChatFeature(this).bind(events);
     }
 
@@ -71,7 +70,7 @@ class GlobalChatFeatureTests implements Messenger {
 
     @Test
     void channel_without_global_flag_is_not_sent() {
-        channelWith(GLOBAL, false).sendMessage(randomMessage());
+        ChannelHelper.channelWith(ChannelSettings.GLOBAL, false).sendMessage(MessageHelper.randomMessage());
         assertThat(messengerCalled).isFalse();
     }
 
@@ -96,36 +95,36 @@ class GlobalChatFeatureTests implements Messenger {
 
         @BeforeEach
         void setUp() {
-            channel = channelWith(GLOBAL, true);
+            channel = ChannelHelper.channelWith(ChannelSettings.GLOBAL, true);
             events.on(SendChannelMessageEvent.class, event -> messageCount++);
         }
 
         @Test
         void sendMessage_dispatches_plugin_message() {
-            channel.sendMessage(randomMessage());
+            channel.sendMessage(MessageHelper.randomMessage());
             assertThat(messengerCalled).isTrue();
         }
 
         @Test
         void plugin_message_is_serializable() {
-            final GlobalChatFeature.GlobalChannelPluginMessage message = new GlobalChatFeature.GlobalChannelPluginMessage(channel, randomMessage());
+            final GlobalChatFeature.GlobalChannelPluginMessage message = new GlobalChatFeature.GlobalChannelPluginMessage(channel, MessageHelper.randomMessage());
             final String encode = serializer.encode(message);
             final PluginMessage decode = serializer.decode(encode);
-            assertThat(decode).isEqualTo(message);
+            Assertions.assertThat(decode).isEqualTo(message);
         }
 
         @Test
         void process_sends_message_to_channel() {
-            final GlobalChatFeature.GlobalChannelPluginMessage message = new GlobalChatFeature.GlobalChannelPluginMessage(channel, randomMessage());
+            final GlobalChatFeature.GlobalChannelPluginMessage message = new GlobalChatFeature.GlobalChannelPluginMessage(channel, MessageHelper.randomMessage());
             message.process();
             assertThat(messageCount).isEqualTo(1);
         }
 
         @Test
         void process_joins_channel_targets_to_channel() {
-            final ChatterMock chatter = randomChatter();
+            final ChatterMock chatter = ChatterMock.randomChatter();
             channel.addTarget(chatter);
-            final GlobalChatFeature.GlobalChannelPluginMessage message = new GlobalChatFeature.GlobalChannelPluginMessage(channel, randomMessage());
+            final GlobalChatFeature.GlobalChannelPluginMessage message = new GlobalChatFeature.GlobalChannelPluginMessage(channel, MessageHelper.randomMessage());
             message.process();
             chatter.assertJoinedChannel(channel);
         }
