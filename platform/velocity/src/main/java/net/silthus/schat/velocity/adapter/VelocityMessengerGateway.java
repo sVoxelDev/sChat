@@ -26,10 +26,16 @@ package net.silthus.schat.velocity.adapter;
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
+import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.java.Log;
 import net.silthus.schat.messenger.MessengerGateway;
 import net.silthus.schat.platform.config.ConfigKeys;
@@ -54,6 +60,7 @@ public class VelocityMessengerGateway implements MessengerGateway {
     private final ProxyServer proxy;
     private final SchedulerAdapter scheduler;
     private final VelocityBootstrap bootstrap;
+    private final Map<String, Queue<byte[]>> queuedPackets = new ConcurrentHashMap<>();
 
     private VelocityMessengerGateway(VelocityBootstrap bootstrap) {
         this.proxy = bootstrap.proxy();
@@ -70,12 +77,17 @@ public class VelocityMessengerGateway implements MessengerGateway {
 
     private void sendToAllServers(byte[] bytes) {
         for (RegisteredServer server : proxy.getAllServers()) {
-            scheduler.async().execute(() -> sendToServer(bytes, server));
+            scheduler.async().execute(() -> sendToServer(server, bytes));
         }
     }
 
-    protected boolean sendToServer(byte[] bytes, RegisteredServer server) {
-        return server.sendPluginMessage(CHANNEL, bytes);
+    protected boolean sendToServer(RegisteredServer server, byte[] bytes) {
+        if (!server.sendPluginMessage(CHANNEL, bytes)) {
+            queuedPackets.computeIfAbsent(server.getServerInfo().getName(), s -> new LinkedList<>()).add(bytes);
+            return false;
+        } else {
+            return true;
+        }
     }
 
     @Subscribe
@@ -84,6 +96,20 @@ public class VelocityMessengerGateway implements MessengerGateway {
             return;
         sendToAllServers(event.getData());
         event.setResult(forward());
+    }
+
+    @Subscribe
+    @SuppressWarnings("UnstableApiUsage")
+    public void onConnect(ServerPostConnectEvent event) {
+        event.getPlayer().getCurrentServer()
+            .ifPresent(serverConnection -> scheduler.executeAsync(() -> flushMessageQueue(serverConnection)));
+    }
+
+    protected void flushMessageQueue(ServerConnection connection) {
+        final Queue<byte[]> queue = queuedPackets.remove(connection.getServerInfo().getName());
+        if (queue != null)
+            while (!queue.isEmpty())
+                sendToServer(connection.getServer(), queue.poll());
     }
 
     @Override
@@ -106,9 +132,18 @@ public class VelocityMessengerGateway implements MessengerGateway {
         }
 
         @Override
-        protected boolean sendToServer(byte[] bytes, RegisteredServer server) {
+        protected boolean sendToServer(RegisteredServer server, byte[] bytes) {
             log.info("Forwarding Message to: " + server.getServerInfo().getName());
-            return super.sendToServer(bytes, server);
+            final boolean delivered = super.sendToServer(server, bytes);
+            if (!delivered)
+                log.info("---- QUEUED MESSAGE ----");
+            return delivered;
+        }
+
+        @Override
+        protected void flushMessageQueue(ServerConnection connection) {
+            log.info("Player Connected to " + connection.getServerInfo().getName() + " - FLUSHING MESSAGE QUEUE");
+            super.flushMessageQueue(connection);
         }
     }
 }
