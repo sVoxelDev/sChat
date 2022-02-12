@@ -24,8 +24,10 @@
 
 package net.silthus.schat.ui.model;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
@@ -49,6 +51,7 @@ public class ChatterViewModel implements Configured.Modifiable<ChatterViewModel>
             comparing(c -> c.get(ChannelSettings.PRIORITY))
         .thenComparing(c -> c.get(PRIVATE))
         .thenComparing(Channel::key);
+    private static final Comparator<Message> MESSAGE_COMPARATOR = Comparator.comparing(Message::timestamp);
 
     public static ChatterViewModel of(@NonNull Chatter chatter) {
         return new ChatterViewModel(chatter);
@@ -62,10 +65,19 @@ public class ChatterViewModel implements Configured.Modifiable<ChatterViewModel>
     }
 
     public @NotNull @Unmodifiable List<Message> messages() {
-        return chatter.messages().stream()
+        return Stream.concat(activeChannelMessages(), chatter.messages().stream())
+            .distinct()
             .filter(this::isMessageDisplayed)
-            .sorted()
+            .sorted(MESSAGE_COMPARATOR)
             .toList();
+    }
+
+    @NotNull
+    private Stream<Message> activeChannelMessages() {
+        return chatter.activeChannel()
+            .map(Channel::messages)
+            .stream()
+            .flatMap(Collection::stream);
     }
 
     private boolean isMessageDisplayed(Message message) {

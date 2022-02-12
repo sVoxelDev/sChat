@@ -37,10 +37,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
-import static java.util.Comparator.comparing;
 import static net.silthus.schat.pointer.Pointer.pointer;
 
-public sealed interface Message extends Comparable<Message>, Pointered permits MessageImpl {
+public sealed interface Message extends Pointered permits MessageImpl {
 
     Pointer<UUID> ID = pointer(UUID.class, "id");
     Pointer<Instant> TIMESTAMP = pointer(Instant.class, "timestamp");
@@ -77,12 +76,6 @@ public sealed interface Message extends Comparable<Message>, Pointered permits M
     @NotNull Message send();
 
     @NotNull Draft copy();
-
-    @Override
-    default int compareTo(@NotNull Message o) {
-        return comparing(Message::timestamp)
-            .compare(this, o);
-    }
 
     sealed interface Draft permits MessageImpl.Draft {
 
