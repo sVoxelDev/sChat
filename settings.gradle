@@ -23,16 +23,12 @@ include 'api'
 include 'core'
 
 include 'ui'
-include 'features:globalchat'
+include 'features'
 
 include 'platform'
 include 'platform:bukkit'
 include 'platform:velocity'
-
+include 'platform:bungeecord'
 
 include 'acceptance'
-
 include 'example'
-include 'platform:bungeecord'
-findProject(':platform:bungeecord')?.name = 'bungeecord'
-

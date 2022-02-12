@@ -28,14 +28,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.channel.ChannelSettings;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.eventbus.EventListener;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.messenger.Messenger;
 import net.silthus.schat.messenger.PluginMessage;
-
-import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
 
 public class GlobalChatFeature implements EventListener {
 
@@ -52,7 +51,7 @@ public class GlobalChatFeature implements EventListener {
     }
 
     private void onChannelMessage(SendChannelMessageEvent event) {
-        if (event.channel().is(GLOBAL))
+        if (event.channel().is(ChannelSettings.GLOBAL))
             messenger.sendPluginMessage(new GlobalChannelPluginMessage(event.channel(), event.message()));
     }
 
