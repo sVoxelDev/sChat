@@ -24,11 +24,13 @@
 
 package net.silthus.schat.ui.model;
 
+import java.util.Comparator;
 import java.util.List;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.channel.ChannelSettings;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.pointer.Configured;
@@ -36,11 +38,17 @@ import net.silthus.schat.pointer.Settings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
+import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.pointer.Settings.createSettings;
 
 @Getter
 @Accessors(fluent = true)
 public class ChatterViewModel implements Configured.Modifiable<ChatterViewModel> {
+
+    private static final Comparator<Channel> CHANNEL_COMPARATOR = Comparator.<Channel, Integer>
+            comparing(c -> c.get(ChannelSettings.PRIORITY))
+        .thenComparing(c -> c.get(PRIVATE))
+        .thenComparing(Channel::key);
 
     public static ChatterViewModel of(@NonNull Chatter chatter) {
         return new ChatterViewModel(chatter);
@@ -62,15 +70,28 @@ public class ChatterViewModel implements Configured.Modifiable<ChatterViewModel>
 
     private boolean isMessageDisplayed(Message message) {
         return true;
-//        return notSentToChannel(message) || hasActiveChannel() && sentToActiveChannel(message);
     }
 
-    private boolean hasActiveChannel() {
+    public boolean isPrivateChannel() {
+        return chatter.activeChannel().map(channel -> channel.is(PRIVATE)).orElse(false);
+    }
+
+    public boolean noActiveChannel() {
+        return chatter.activeChannel().isEmpty();
+    }
+
+    public boolean isSystemMessage(Message message) {
+        return message.type() == Message.Type.SYSTEM;
+    }
+
+    public boolean hasActiveChannel() {
         return chatter.activeChannel().isPresent();
     }
 
     public @NotNull @Unmodifiable List<Channel> channels() {
-        return chatter.channels().stream().sorted().toList();
+        return chatter.channels().stream()
+            .sorted(CHANNEL_COMPARATOR)
+            .toList();
     }
 
     public boolean isActiveChannel(Channel channel) {
@@ -83,5 +104,9 @@ public class ChatterViewModel implements Configured.Modifiable<ChatterViewModel>
 
     public boolean isSentToActiveChannel(Message message) {
         return chatter.activeChannel().map(channel -> message.channels().contains(channel)).orElse(false);
+    }
+
+    public boolean isSentToChannel(Message message) {
+        return message.targets().filter(target -> target instanceof Channel).size() > 0;
     }
 }

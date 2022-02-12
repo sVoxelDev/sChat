@@ -24,7 +24,6 @@
 
 package net.silthus.schat.channel;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -127,13 +126,6 @@ final class ChannelImpl implements Channel {
         SendChannelMessageEvent event = eventBus.post(new SendChannelMessageEvent(this, message));
         if (event.isNotCancelled())
             event.targets().sendMessage(event.message());
-    }
-
-    @Override
-    public int compareTo(@NotNull Channel o) {
-        return Comparator.<Channel, Integer>comparing(o2 -> o2.get(ChannelSettings.PRIORITY))
-            .thenComparing(Channel::key)
-            .compare(this, o);
     }
 
     @Getter
