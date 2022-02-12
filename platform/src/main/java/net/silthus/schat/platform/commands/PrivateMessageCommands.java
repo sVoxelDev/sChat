@@ -36,6 +36,7 @@ import net.silthus.schat.platform.sender.Sender;
 import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.commands.CreatePrivateChannelCommand.createPrivateChannel;
 import static net.silthus.schat.commands.SendPrivateMessageCommand.sendPrivateMessage;
+import static net.silthus.schat.platform.locale.Messages.CANNOT_SEND_PM_TO_SELF;
 
 public final class PrivateMessageCommands implements Command {
 
@@ -46,8 +47,10 @@ public final class PrivateMessageCommands implements Command {
 
     @ProxiedBy(value = "w|pm|dm|msg|say")
     @CommandMethod("tell <target> [message]")
-    public void privateMessageCommand(Sender sender, Chatter source, @Argument("target") Chatter target, @Greedy @Argument("message") String message) {
-        if (message == null || message.isBlank())
+    public void privateMessageCommand(Chatter source, @Argument("target") Chatter target, @Greedy @Argument("message") String message) {
+        if (source.equals(target))
+            CANNOT_SEND_PM_TO_SELF.send(source);
+        else if (message == null || message.isBlank())
             source.activeChannel(createPrivateChannel(source, target).channel());
         else
             sendPrivateMessage(source, target, text(message));
