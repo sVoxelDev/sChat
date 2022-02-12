@@ -41,15 +41,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelSettings.PRIORITY;
-import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.chatter.ChatterMock.chatterMock;
-import static net.silthus.schat.chatter.ChatterMock.randomChatter;
+import static net.silthus.schat.commands.CreatePrivateChannelCommand.createPrivateChannel;
+import static net.silthus.schat.commands.SendPrivateMessageCommand.sendPrivateMessage;
 import static net.silthus.schat.identity.Identity.identity;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
@@ -72,7 +73,7 @@ class TabbedChannelsViewTests {
 
     @BeforeEach
     void setUp() {
-        chatter = randomChatter();
+        chatter = chatterMock(Identity.identity("Player"));
         view = tabbedChannels(chatter);
     }
 
@@ -158,9 +159,9 @@ class TabbedChannelsViewTests {
             void uses_format() {
                 view = tabbedChannels(chatter)
                     .set(MESSAGE_FORMAT, msg ->
-                        Component.text("<")
+                        text("<")
                             .append(msg.getOrDefault(Message.SOURCE, Identity.nil()).displayName())
-                            .append(Component.text("> "))
+                            .append(text("> "))
                             .append(msg.getOrDefault(Message.TEXT, Component.empty())));
                 assertTextRenders("<Bob> Hi");
             }
@@ -228,18 +229,31 @@ class TabbedChannelsViewTests {
     }
 
     @Nested class given_private_channel {
+        private ChatterMock target;
 
         @BeforeEach
         void setUp() {
-            ChatterMock target = chatterMock(Identity.identity("target"));
-            Channel channel = channelWith(PRIVATE, true);
-            chatter.join(channel);
-            target.join(channel);
+            target = chatterMock(Identity.identity("target"));
+            chatter.activeChannel(createPrivateChannel(chatter, target).channel());
         }
 
         @Test
         void renders_partner_name() {
             assertTextRenders("| target |");
+        }
+
+        @Test
+        void does_not_display_system_messages() {
+            sendMessage("System");
+            assertTextRenders("| target |");
+        }
+
+        @Test
+        void displays_private_messages() {
+            sendPrivateMessage(chatter, target, text("Hi"));
+            assertTextRenders("""
+                Player: Hi
+                | target |""");
         }
     }
 
@@ -264,8 +278,8 @@ class TabbedChannelsViewTests {
         @Nested class given_both_channels_received_messages {
             @BeforeEach
             void setUp() {
-                message("one").source(identity("Bob")).to(channelOne).send();
-                message("two").source(identity("Bob")).to(channelTwo).send();
+                message("one").source(identity("Bob")).to(channelOne).type(Message.Type.CHAT).send();
+                message("two").source(identity("Bob")).to(channelTwo).type(Message.Type.CHAT).send();
             }
 
             @Test
@@ -304,6 +318,18 @@ class TabbedChannelsViewTests {
             void renders_higher_priority_channel_first() {
                 assertTextRenders("| zzz | one | test | two |");
             }
+
+            @Nested class and_private_channel {
+                @BeforeEach
+                void setUp() {
+                    createPrivateChannel(chatter, chatterMock(Identity.identity("target")));
+                }
+
+                @Test
+                void renders_private_channel_last() {
+                    assertTextRenders("| zzz | one | test | two | target |");
+                }
+            }
         }
 
         @Nested class with_custom_channel_join_config_format {
@@ -311,7 +337,7 @@ class TabbedChannelsViewTests {
             @BeforeEach
             void setUp() {
                 view = tabbedChannels(chatter)
-                    .set(CHANNEL_JOIN_CONFIG, JoinConfiguration.builder().separator(Component.text(" - ")).build());
+                    .set(CHANNEL_JOIN_CONFIG, JoinConfiguration.builder().separator(text(" - ")).build());
             }
 
             @Test

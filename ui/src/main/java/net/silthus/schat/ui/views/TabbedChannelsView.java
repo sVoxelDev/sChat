@@ -137,7 +137,11 @@ public final class TabbedChannelsView implements View {
     }
 
     private boolean isMessageDisplayed(Message message) {
-        return viewModel.isNotSentToChannel(message) || viewModel.isSentToActiveChannel(message);
+        if (viewModel.noActiveChannel() && viewModel.isSystemMessage(message))
+            return true;
+        if (viewModel.isPrivateChannel())
+            return viewModel.isSentToActiveChannel(message) && !viewModel().isSystemMessage(message);
+        return viewModel.isSystemMessage(message) || viewModel.isSentToActiveChannel(message);
     }
 
     private List<Component> getRenderedChannels() {

@@ -36,7 +36,7 @@ import net.silthus.schat.repository.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-public sealed interface Channel extends Entity<String>, Configured.Modifiable<Channel>, Comparable<Channel>, MessageTarget permits ChannelImpl {
+public sealed interface Channel extends Entity<String>, Configured.Modifiable<Channel>, MessageTarget permits ChannelImpl {
 
     Pointer<String> KEY = Pointer.pointer(String.class, "key");
 
