@@ -91,7 +91,10 @@ public final class ChatterArgument implements ParameterInjector<Sender, Chatter>
 
     @Override
     public @NonNull List<@NonNull String> suggestions(@NonNull CommandContext<Sender> commandContext, @NonNull String input) {
-        return chatterRepository.all().stream().map(Identified::name).toList();
+        return chatterRepository.all().stream()
+            .filter(chatter -> !commandContext.getSender().identity().equals(chatter.identity()))
+            .map(Identified::name)
+            .toList();
     }
 
     @Override
