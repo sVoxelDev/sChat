@@ -69,11 +69,11 @@ public class BungeecordMessengerGateway implements MessengerGateway, Listener {
 
     private void sendToAllServers(byte[] bytes) {
         for (ServerInfo server : proxy.getServers().values()) {
-            scheduler.async().execute(() -> sendToServer(bytes, server));
+            scheduler.async().execute(() -> sendToServer(server, bytes));
         }
     }
 
-    protected void sendToServer(byte[] bytes, ServerInfo server) {
+    protected void sendToServer(ServerInfo server, byte[] bytes) {
         server.sendData(CHANNEL, bytes, true);
     }
 
@@ -109,9 +109,9 @@ public class BungeecordMessengerGateway implements MessengerGateway, Listener {
         }
 
         @Override
-        protected void sendToServer(byte[] bytes, ServerInfo server) {
+        protected void sendToServer(ServerInfo server, byte[] bytes) {
             log.info("Forwarding Message to: " + server.getName());
-            super.sendToServer(bytes, server);
+            super.sendToServer(server, bytes);
         }
     }
 }
