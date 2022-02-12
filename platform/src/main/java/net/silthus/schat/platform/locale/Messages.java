@@ -140,6 +140,12 @@ public interface Messages {
         .build()
     );
 
+    Args0 CANNOT_SEND_PM_TO_SELF = () -> prefixed(translatable()
+        .key("schat.command.pm.cannot-send-to-self")
+        .color(RED)
+        .append(FULL_STOP)
+    );
+
     static TextComponent prefixed(ComponentLike component) {
         return text()
             .append(PREFIX_COMPONENT)

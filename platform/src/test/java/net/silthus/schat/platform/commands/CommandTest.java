@@ -29,6 +29,7 @@ import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.platform.sender.SenderMock;
@@ -50,7 +51,7 @@ public abstract class CommandTest {
     protected Commands commands;
     protected ChatterRepository chatterRepository;
     protected ChannelRepository channelRepository;
-    protected Chatter chatter;
+    protected ChatterMock chatter;
 
     @BeforeEach
     void setUpBase() {

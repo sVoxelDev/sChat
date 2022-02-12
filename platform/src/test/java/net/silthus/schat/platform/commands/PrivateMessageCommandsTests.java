@@ -27,6 +27,7 @@ package net.silthus.schat.platform.commands;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.commands.CreatePrivateChannelCommand;
+import net.silthus.schat.platform.locale.Messages;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -76,6 +77,12 @@ class PrivateMessageCommandsTests extends CommandTest {
         void sets_private_channel_as_active() {
             sendPM();
             assertPrivateChannelIsActive();
+        }
+
+        @Test
+        void given_target_and_source_are_same_prints_error_message() {
+            cmd("/tell " + chatter.name() + " hey");
+            chatter.assertReceivedMessage(Messages.CANNOT_SEND_PM_TO_SELF.build());
         }
     }
 }

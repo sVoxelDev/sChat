@@ -80,6 +80,14 @@ public final class TabbedChannelsView implements View {
             clickEvent(RUN_COMMAND, "/channel join " + channel.getOrDefault(Channel.KEY, null)))
         .create());
 
+    public static final Setting<Settings> FORMAT = setting(Settings.class, "format", Settings.settingsBuilder()
+        .withStatic(MESSAGE_FORMAT, MESSAGE_FORMAT.defaultValue())
+        .withStatic(ACTIVE_CHANNEL, ACTIVE_CHANNEL.defaultValue())
+        .withStatic(INACTIVE_CHANNEL, INACTIVE_CHANNEL.defaultValue())
+        .withStatic(CHANNEL_JOIN_CONFIG, CHANNEL_JOIN_CONFIG.defaultValue())
+        .create()
+    );
+
     private final ChatterViewModel viewModel;
     private final List<Tab> tabs = new ArrayList<>();
     private final Settings settings = createSettings();
@@ -148,9 +156,9 @@ public final class TabbedChannelsView implements View {
         final ArrayList<Component> channels = new ArrayList<>();
         for (final Channel channel : viewModel.channels()) {
             if (viewModel.isActiveChannel(channel))
-                channels.add(new ChannelFormat(viewModel.chatter(), get(ACTIVE_CHANNEL)).format(channel));
+                channels.add(new ChannelFormat(viewModel.chatter(), channel.get(FORMAT).get(ACTIVE_CHANNEL)).format(channel));
             else
-                channels.add(new ChannelFormat(viewModel.chatter(), get(INACTIVE_CHANNEL)).format(channel));
+                channels.add(new ChannelFormat(viewModel.chatter(), channel.get(FORMAT).get(INACTIVE_CHANNEL)).format(channel));
         }
         return channels;
     }
