@@ -136,7 +136,7 @@ public class MessagingService implements Messenger, IncomingMessageConsumer {
         @Override
         protected boolean supports(@NotNull PluginMessage message) {
             final boolean supports = super.supports(message);
-            log.info("PluginMessage(" + message + ") - SUPPORTED: " + supports);
+            log.info("PluginMessage(" + message + ") - " + (supports ? "" : "NOT") + " SUPPORTED");
             return supports;
         }
 

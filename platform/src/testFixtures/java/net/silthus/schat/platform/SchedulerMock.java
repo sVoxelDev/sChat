@@ -48,11 +48,13 @@ public class SchedulerMock implements SchedulerAdapter {
 
     @Override
     public SchedulerTask asyncLater(Runnable task, long delay, TimeUnit unit) {
+        task.run();
         return () -> {};
     }
 
     @Override
     public SchedulerTask asyncRepeating(Runnable task, long interval, TimeUnit unit) {
+        task.run();
         return () -> {};
     }
 

@@ -39,7 +39,6 @@ import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.messaging.GatewayProviderRegistry;
 import net.silthus.schat.platform.messaging.MockMessagingGatewayProvider;
-import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.platform.sender.SenderMock;
 import net.silthus.schat.ui.view.ViewProvider;
@@ -56,6 +55,7 @@ public class TestServer extends AbstractSChatServerPlugin {
 
     private final String name;
     static Command dummyCommand = spy(Command.class);
+    private final BootstrapStub bootstrap = new BootstrapStub();
     private ChatterFactoryStub chatterFactory;
 
     public TestServer() {
@@ -90,7 +90,7 @@ public class TestServer extends AbstractSChatServerPlugin {
 
     @Override
     protected ConnectionListener registerConnectionListener(ChatterRepository repository, ChatterFactory factory, Messenger messenger, EventBus eventBus) {
-        return new TestConnectionListener(repository, factory, messenger, eventBus);
+        return new TestConnectionListener();
     }
 
     @Override
@@ -101,11 +101,6 @@ public class TestServer extends AbstractSChatServerPlugin {
     @Override
     protected void registerCustomCommands(Commands commands) {
         commands.register(dummyCommand);
-    }
-
-    @Override
-    public Bootstrap bootstrap() {
-        return new BootstrapStub();
     }
 
     public void joinServer(Sender sender) {
@@ -121,10 +116,10 @@ public class TestServer extends AbstractSChatServerPlugin {
         return name();
     }
 
-    private static final class TestConnectionListener extends ConnectionListener {
+    private final class TestConnectionListener extends ConnectionListener {
 
-        private TestConnectionListener(ChatterRepository chatterRepository, ChatterFactory chatterFactory, Messenger messenger, EventBus eventBus) {
-            super(chatterRepository, chatterFactory, messenger, eventBus);
+        private TestConnectionListener() {
+            super(chatterRepository(), chatterFactory(), messenger(), eventBus(), bootstrap().scheduler());
         }
 
         public void joinServer(Sender sender) {

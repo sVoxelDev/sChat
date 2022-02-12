@@ -28,23 +28,26 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 import lombok.SneakyThrows;
+import net.silthus.schat.platform.SchedulerMock;
 import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.platform.plugin.bootstrap.Platform;
 import net.silthus.schat.platform.plugin.logging.JavaPluginLogger;
 import net.silthus.schat.platform.plugin.logging.PluginLogger;
 import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
 
-import static org.mockito.Mockito.mock;
-
 public class BootstrapStub implements Bootstrap {
+
+    private final JavaPluginLogger logger = new JavaPluginLogger(Logger.getLogger("Test"));
+    private final SchedulerMock scheduler = new SchedulerMock();
+
     @Override
     public PluginLogger pluginLogger() {
-        return new JavaPluginLogger(Logger.getLogger("Test"));
+        return logger;
     }
 
     @Override
     public SchedulerAdapter scheduler() {
-        return mock(SchedulerAdapter.class);
+        return scheduler;
     }
 
     @SneakyThrows

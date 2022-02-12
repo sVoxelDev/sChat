@@ -25,19 +25,23 @@
 package net.silthus.schat.bukkit.adapter;
 
 import net.silthus.schat.bukkit.SChatBukkitServer;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.chatter.ConnectionListener;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.Plugin;
 
 public final class BukkitConnectionListener extends ConnectionListener implements Listener {
 
+    private final Plugin plugin;
     private final BukkitSenderFactory senderFactory;
 
     public BukkitConnectionListener(SChatBukkitServer server) {
-        super(server.chatterRepository(), server.chatterFactory(), server.messenger(), server.eventBus());
+        super(server.chatterRepository(), server.chatterFactory(), server.messenger(), server.eventBus(), server.bootstrap().scheduler());
+        this.plugin = server.bootstrap().loader();
         this.senderFactory = server.senderFactory();
         Bukkit.getServer().getPluginManager().registerEvents(this, server.bootstrap().loader());
     }
@@ -45,5 +49,11 @@ public final class BukkitConnectionListener extends ConnectionListener implement
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event) {
         onJoin(senderFactory.wrap(event.getPlayer()));
+    }
+
+    @Override
+    protected void sendGlobalJoinPing(final Chatter chatter) {
+        // wait until connection is established for sending outgoing plugin messages
+        Bukkit.getScheduler().runTaskLater(plugin, () -> super.sendGlobalJoinPing(chatter), 1L);
     }
 }

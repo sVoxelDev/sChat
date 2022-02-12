@@ -39,20 +39,25 @@ import net.silthus.schat.events.chatter.ChatterJoinedServerEvent;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.messenger.Messenger;
 import net.silthus.schat.messenger.PluginMessage;
+import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
 import net.silthus.schat.platform.sender.Sender;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class ConnectionListener {
+    private static final long REQUIRED_JOIN_DELAY = 100L;
+
     private final ChatterRepository chatterRepository;
     private final ChatterFactory chatterFactory;
     private final Messenger messenger;
     private final EventBus eventBus;
+    private final SchedulerAdapter scheduler;
 
-    public ConnectionListener(ChatterRepository chatterRepository, ChatterFactory chatterFactory, Messenger messenger, EventBus eventBus) {
+    public ConnectionListener(ChatterRepository chatterRepository, ChatterFactory chatterFactory, Messenger messenger, EventBus eventBus, SchedulerAdapter scheduler) {
         this.chatterRepository = chatterRepository;
         this.chatterFactory = chatterFactory;
         this.messenger = messenger;
         this.eventBus = eventBus;
+        this.scheduler = scheduler;
         registerMessageType();
     }
 
@@ -76,7 +81,7 @@ public abstract class ConnectionListener {
         eventBus.post(new ChatterJoinedServerEvent(chatter));
     }
 
-    private void sendGlobalJoinPing(Chatter chatter) {
+    protected void sendGlobalJoinPing(Chatter chatter) {
         messenger.sendPluginMessage(new ChatterJoined(chatter.identity()));
     }
 
