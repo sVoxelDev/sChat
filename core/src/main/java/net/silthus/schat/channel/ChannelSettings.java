@@ -69,6 +69,12 @@ public final class ChannelSettings {
      * <p>Default: {@code false}</p>
      */
     public static final Setting<Boolean> PRIVATE = setting(Boolean.class, "private", false);
+    /**
+     * If set to true auto joins players into the channel when they connect.
+     *
+     * <p>Default: {@code false}</p>
+     */
+    public static final Setting<Boolean> AUTO_JOIN = setting(Boolean.class, "auto_join", false);
 
     private ChannelSettings() {
     }

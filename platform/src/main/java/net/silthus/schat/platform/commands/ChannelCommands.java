@@ -32,7 +32,6 @@ import cloud.commandframework.annotations.ProxiedBy;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.sender.Sender;
-import net.silthus.schat.repository.Repository;
 
 import static net.silthus.schat.commands.SetActiveChannelCommand.setActiveChannel;
 import static net.silthus.schat.platform.locale.Messages.JOINED_CHANNEL;
@@ -51,10 +50,10 @@ public final class ChannelCommands implements Command {
         try {
             if (chatter.isActiveChannel(channel))
                 return;
-            if (setActiveChannel(chatter, channel).execute().wasSuccessful()) {
+            if (setActiveChannel(chatter, channel).raiseError().wasSuccessful()) {
                 JOINED_CHANNEL.actionBar(sender, channel);
             }
-        } catch (Repository.NotFound | net.silthus.schat.command.Command.Error e) {
+        } catch (Throwable e) {
             JOIN_CHANNEL_ERROR.send(sender, channel);
         }
     }

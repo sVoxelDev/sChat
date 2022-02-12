@@ -135,4 +135,8 @@ public final class ChatterMock extends ChatterImpl {
     public void assertJoinedChannel(Channel channel) {
         assertThat(isJoined(channel)).isTrue();
     }
+
+    public void assertNotJoinedChannel(Channel channel) {
+        assertThat(channels()).doesNotContain(channel);
+    }
 }

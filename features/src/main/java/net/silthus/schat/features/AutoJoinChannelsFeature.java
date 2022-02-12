@@ -22,38 +22,31 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.commands;
+package net.silthus.schat.features;
 
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.command.Command;
-import net.silthus.schat.command.Result;
+import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.eventbus.EventListener;
+import net.silthus.schat.events.chatter.ChatterJoinedServerEvent;
 
-public class SetActiveChannelCommand extends JoinChannelCommand implements Command {
+import static net.silthus.schat.channel.ChannelSettings.AUTO_JOIN;
+import static net.silthus.schat.commands.JoinChannelCommand.joinChannel;
 
-    public static Result setActiveChannel(Chatter chatter, Channel channel) {
-        return setActiveChannelBuilder(chatter, channel).execute();
-    }
+public class AutoJoinChannelsFeature implements EventListener {
+    private final ChannelRepository channelRepository;
 
-    public static JoinChannelCommand.Builder setActiveChannelBuilder(Chatter chatter, Channel channel) {
-        return joinChannelBuilder(chatter, channel).use(SetActiveChannelCommand::new);
-    }
-
-    protected SetActiveChannelCommand(JoinChannelCommand.Builder builder) {
-        super(builder);
+    public AutoJoinChannelsFeature(ChannelRepository channelRepository) {
+        this.channelRepository = channelRepository;
     }
 
     @Override
-    public Result execute() {
-        final Result joinChannelResult = super.execute();
-        if (joinChannelResult.wasSuccessful())
-            return setActiveChannelAndUpdateView();
-        else
-            return joinChannelResult;
+    public void bind(EventBus bus) {
+        bus.on(ChatterJoinedServerEvent.class, this::onChatterJoin);
     }
 
-    private Result setActiveChannelAndUpdateView() {
-        chatter().activeChannel(channel());
-        return Result.success();
+    protected void onChatterJoin(ChatterJoinedServerEvent event) {
+        channelRepository.all().stream()
+            .filter(channel -> channel.is(AUTO_JOIN))
+            .forEach(channel -> joinChannel(event.chatter(), channel));
     }
 }
