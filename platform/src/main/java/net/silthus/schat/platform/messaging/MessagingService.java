@@ -51,7 +51,9 @@ import static net.silthus.schat.platform.config.ConfigKeys.DEBUG;
 public class MessagingService implements Messenger, IncomingMessageConsumer {
 
     public static MessagingService createMessagingService(GatewayProviderRegistry registry, PluginMessageSerializer serializer, SChatConfig config) {
-        final MessengerGatewayProvider gatewayProvider = registry.get(config.get(ConfigKeys.MESSENGER));
+        final String messenger = config.get(ConfigKeys.MESSENGER);
+        log.info("Loading Messenger... \t[" + messenger.toUpperCase() + "]");
+        final MessengerGatewayProvider gatewayProvider = registry.get(messenger);
         if (config.get(DEBUG))
             return new Logging(gatewayProvider, serializer);
         else

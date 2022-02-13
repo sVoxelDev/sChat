@@ -26,8 +26,10 @@ package net.silthus.schat.platform.messaging;
 
 import java.util.HashMap;
 import java.util.Map;
+import lombok.extern.java.Log;
 import net.silthus.schat.messenger.MessengerGatewayProvider;
 
+@Log(topic = "sChat")
 public final class GatewayProviderRegistry {
 
     private final Map<String, MessengerGatewayProvider> providerMap = new HashMap<>();
@@ -45,7 +47,7 @@ public final class GatewayProviderRegistry {
         if (providerMap.containsKey(key))
             throw new IllegalArgumentException("A provider with the name " + key
                 + " already exists: " + providerMap.get(key).getClass().getCanonicalName());
-        else
-            providerMap.put(key, provider);
+        providerMap.put(key, provider);
+        log.info("Registered Messenger Type: " + name.toUpperCase() + "");
     }
 }
