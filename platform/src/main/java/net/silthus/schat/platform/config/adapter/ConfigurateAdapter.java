@@ -28,10 +28,14 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.function.Function;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.silthus.schat.platform.config.ChannelConfig;
 import net.silthus.schat.platform.config.serializers.ChannelSerializer;
+import net.silthus.schat.platform.config.serializers.ColorSerializer;
 import net.silthus.schat.platform.config.serializers.MiniMessageComponentSerializer;
 import net.silthus.schat.platform.config.serializers.SettingsSerializer;
+import net.silthus.schat.platform.config.serializers.TextDecorationSerializer;
 import net.silthus.schat.pointer.Settings;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -46,6 +50,8 @@ public abstract class ConfigurateAdapter<T extends AbstractConfigurationLoader.B
         .register(Component.class, new MiniMessageComponentSerializer())
         .register(Settings.class, new SettingsSerializer())
         .register(ChannelConfig.class, new ChannelSerializer())
+        .register(TextColor.class, new ColorSerializer())
+        .register(TextDecoration.class, new TextDecorationSerializer())
         .build();
 
     private static final Function<ConfigurationOptions, ConfigurationOptions> DEFAULT_OPTIONS = options ->
