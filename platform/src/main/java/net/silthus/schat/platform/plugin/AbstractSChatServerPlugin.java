@@ -152,12 +152,17 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     }
 
     private void loadFeatures() {
+        logger().info("Loading Features...");
         features.add(new GlobalChatFeature(messenger()));
         features.add(new AutoJoinChannelsFeature(channelRepository()));
 
         features.stream()
             .filter(o -> o instanceof EventListener)
             .forEach(o -> ((EventListener) o).bind(eventBus()));
+
+        for (final Object feature : features) {
+            logger().info("\t... " + feature.getClass().getSimpleName() + "\t" + "✔");
+        }
     }
 
     private void loadChannels() {
