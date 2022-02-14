@@ -25,13 +25,14 @@
 package net.silthus.schat.commands;
 
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.channel.ChannelHelper;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.command.Result;
+import net.silthus.schat.policies.JoinChannelPolicy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.commands.JoinChannelCommand.joinChannelBuilder;
 import static net.silthus.schat.policies.JoinChannelPolicy.ALLOW;
 import static net.silthus.schat.policies.JoinChannelPolicy.DENY;
@@ -45,8 +46,7 @@ class SetActiveChannelCommandTests {
     @BeforeEach
     void setUp() {
         chatter = ChatterMock.randomChatter();
-        channel = ChannelHelper.randomChannel();
-        JoinChannelCommand.prototype(builder -> builder.policy(ALLOW));
+        channel = channelWith(builder -> builder.policy(JoinChannelPolicy.class, ALLOW));
     }
 
     private Result setActiveChannel() {
@@ -93,7 +93,7 @@ class SetActiveChannelCommandTests {
         @Nested class given_join_fails {
             @BeforeEach
             void setUp() {
-                JoinChannelCommand.prototype(builder -> builder.policy(DENY));
+                channel = channelWith(builder -> builder.policy(JoinChannelPolicy.class, DENY));
             }
 
             @Test

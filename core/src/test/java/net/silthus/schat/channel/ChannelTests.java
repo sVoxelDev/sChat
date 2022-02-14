@@ -26,9 +26,11 @@ package net.silthus.schat.channel;
 
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.chatter.ChatterMock;
+import net.silthus.schat.commands.SendMessageResult;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.policies.JoinChannelPolicy;
+import net.silthus.schat.policies.SendChannelMessagePolicy;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -43,6 +45,7 @@ import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.channel.ChannelSettings.DISPLAY_NAME;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
+import static net.silthus.schat.policies.SendChannelMessagePolicy.DENY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
@@ -57,12 +60,6 @@ class ChannelTests {
     @BeforeEach
     void setUp() {
         channel = randomChannel();
-    }
-
-    private MessageTarget addMockTarget() {
-        final MessageTarget target = mock(MessageTarget.class);
-        channel.addTarget(target);
-        return target;
     }
 
     private void assertInvalidKey(String key) {
@@ -146,16 +143,19 @@ class ChannelTests {
     }
 
     @Nested class policy {
-        @Test
-        void is_empty_by_default() {
-            assertThat(channel.policy(JoinChannelPolicy.class)).isEmpty();
-        }
 
         @Test
         void given_policy_fetches_policy() {
             channel = Channel.channel("test").policy(JoinChannelPolicy.class, JoinChannelPolicy.ALLOW).create();
             assertThat(channel.policy(JoinChannelPolicy.class))
                 .isPresent().get().isEqualTo(JoinChannelPolicy.ALLOW);
+        }
+
+        @Test
+        void send_message_uses_channel_policy() {
+            Channel channel = channelWith(builder -> builder.policy(SendChannelMessagePolicy.class, DENY));
+            SendMessageResult result = channel.sendMessage(randomMessage());
+            assertThat(result.wasFailure()).isTrue();
         }
     }
 

@@ -36,6 +36,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.commands.SendMessageResult;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
@@ -44,12 +45,17 @@ import net.silthus.schat.message.Messages;
 import net.silthus.schat.message.Targets;
 import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.pointer.Settings;
+import net.silthus.schat.policies.JoinChannelPolicy;
 import net.silthus.schat.policies.Policy;
+import net.silthus.schat.policies.SendChannelMessagePolicy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.commands.SendMessageResult.failure;
+import static net.silthus.schat.policies.JoinChannelPolicy.JOIN_CHANNEL_POLICY;
+import static net.silthus.schat.policies.SendChannelMessagePolicy.SEND_CHANNEL_MESSAGE_POLICY;
 
 @Getter
 @Accessors(fluent = true)
@@ -57,11 +63,15 @@ import static net.kyori.adventure.text.Component.text;
 @ToString(of = {"key", "settings", "targets"})
 final class ChannelImpl implements Channel {
 
+    private static final Function<ChannelImpl.Builder, ChannelImpl.Builder> DEFAULTS = builder -> builder
+        .policy(JoinChannelPolicy.class, JOIN_CHANNEL_POLICY)
+        .policy(SendChannelMessagePolicy.class, SEND_CHANNEL_MESSAGE_POLICY);
+
     @Setter
     private static Function<ChannelImpl.Builder, ChannelImpl.Builder> prototype = builder -> builder;
 
     static ChannelImpl.Builder builder(String key) {
-        return prototype.apply(new Builder(key));
+        return prototype.apply(DEFAULTS.apply(new Builder(key)));
     }
 
     private static final String VALID_KEY_PATTERN = "^[a-zA-Z0-9_-]+$";
@@ -117,15 +127,19 @@ final class ChannelImpl implements Channel {
     }
 
     @Override
-    public void sendMessage(@NonNull Message message) {
+    public SendMessageResult sendMessage(@NonNull Message message) {
         if (messages.add(message))
-            processMessage(message);
+            return processMessage(message);
+        else
+            return failure(message);
     }
 
-    private void processMessage(Message message) {
-        SendChannelMessageEvent event = eventBus.post(new SendChannelMessageEvent(this, message));
-        if (event.isNotCancelled())
-            event.targets().sendMessage(event.message());
+    private SendMessageResult processMessage(Message message) {
+        SendChannelMessageEvent event = eventBus.post(new SendChannelMessageEvent(this, message, sendMessagePolicy()));
+        if (event.isNotCancelled() && event.policy().test(this, message))
+            return event.targets().sendMessage(event.message());
+        else
+            return failure(message);
     }
 
     @Getter
@@ -156,19 +170,19 @@ final class ChannelImpl implements Channel {
         }
 
         @Override
-        public Channel.@NotNull Builder settings(@NonNull Settings settings) {
+        public @NotNull Builder settings(@NonNull Settings settings) {
             this.settings = settings.toBuilder();
             return this;
         }
 
         @Override
-        public Channel.Builder targets(Targets targets) {
+        public @NotNull Builder targets(Targets targets) {
             this.targets = targets;
             return this;
         }
 
         @Override
-        public <P extends Policy> Channel.Builder policy(Class<P> type, P policy) {
+        public <P extends Policy> @NotNull Builder policy(Class<P> type, P policy) {
             policies.put(type, policy);
             return this;
         }

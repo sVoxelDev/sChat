@@ -27,10 +27,11 @@ package net.silthus.schat.message;
 import java.util.function.Predicate;
 import lombok.NonNull;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.commands.SendMessageResult;
 
 public interface MessageTarget {
 
     Predicate<MessageTarget> IS_CHATTER = target -> target instanceof Chatter;
 
-    void sendMessage(@NonNull Message message);
+    SendMessageResult sendMessage(@NonNull Message message);
 }

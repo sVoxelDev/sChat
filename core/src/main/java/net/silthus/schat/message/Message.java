@@ -30,6 +30,7 @@ import java.util.UUID;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.commands.SendMessageResult;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.pointer.Pointer;
 import net.silthus.schat.pointer.Pointered;
@@ -74,7 +75,7 @@ public sealed interface Message extends Pointered permits MessageImpl {
 
     @NotNull Type type();
 
-    @NotNull Message send();
+    @NotNull SendMessageResult send();
 
     @NotNull Draft copy();
 

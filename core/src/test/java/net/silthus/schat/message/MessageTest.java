@@ -28,6 +28,7 @@ import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.commands.SendMessageResult;
 import net.silthus.schat.identity.Identity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -143,7 +144,7 @@ class MessageTest {
     @Test
     void given_channel_target_then_adds_channels_targets_to_message() {
         Channel channel = randomChannel();
-        MessageTarget target = message -> {};
+        MessageTarget target = SendMessageResult::success;
         channel.addTarget(target);
         message().to(channel);
     }

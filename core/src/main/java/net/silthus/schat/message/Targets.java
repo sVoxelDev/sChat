@@ -33,9 +33,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.NonNull;
+import net.silthus.schat.commands.SendMessageResult;
 import net.silthus.schat.util.FilterableCollection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
+
+import static net.silthus.schat.commands.SendMessageResult.success;
 
 /**
  * A container for targets that can be used to combine and filter multiple targets into one target.
@@ -133,7 +136,8 @@ public final class Targets extends AbstractSet<MessageTarget> implements Message
     }
 
     @Override
-    public void sendMessage(@NotNull final Message message) {
+    public SendMessageResult sendMessage(@NotNull final Message message) {
         forEach(target -> target.sendMessage(message));
+        return success(message);
     }
 }

@@ -37,6 +37,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.commands.SendMessageResult;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.pointer.Pointers;
@@ -44,6 +45,9 @@ import net.silthus.schat.view.ViewConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
+
+import static net.silthus.schat.commands.SendMessageResult.failure;
+import static net.silthus.schat.commands.SendMessageResult.success;
 
 @Getter
 @Setter
@@ -143,9 +147,10 @@ non-sealed class ChatterImpl implements Chatter {
     }
 
     @Override
-    public void sendMessage(@NonNull Message message) {
+    public SendMessageResult sendMessage(@NonNull Message message) {
         messages.add(message);
         updateView();
+        return success(message);
     }
 
     @Override
@@ -240,8 +245,8 @@ non-sealed class ChatterImpl implements Chatter {
         }
 
         @Override
-        public void sendMessage(@NonNull Message message) {
-
+        public SendMessageResult sendMessage(@NonNull Message message) {
+            return failure(message);
         }
     }
 }
