@@ -24,16 +24,16 @@
 
 package net.silthus.schat.ui.format;
 
+import java.util.ArrayList;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.placeholder.Replacement;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.silthus.schat.pointer.Pointer;
 import net.silthus.schat.pointer.Pointered;
-import org.jetbrains.annotations.Nullable;
-
-import static net.kyori.adventure.text.minimessage.placeholder.PlaceholderResolver.dynamic;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Accessors(fluent = true)
@@ -47,29 +47,26 @@ public class MiniMessageFormat implements PointeredFormat {
 
     @Override
     public Component format(Pointered type) {
-        return formatter.deserialize(format, dynamic(replacement -> resolveReplacements(replacement, type)));
+        return formatter.deserialize(format, TagResolver.standard(), resolvePlaceholders(type, ""));
     }
 
-    private @Nullable Replacement<?> resolveReplacements(String replacement, Pointered type) {
-        final String key = replacement.split("\\.")[0];
-        for (final Pointer<?> pointer : type.pointers().pointers()) {
-            if (pointer.key().equalsIgnoreCase(key)) {
-                final Object value = type.getOrDefault(pointer, null);
-                if (value != null)
-                    return resolveReplacement(value, replacement);
-            }
+    private TagResolver resolvePlaceholders(Pointered type, String path) {
+        ArrayList<TagResolver> resolvers = new ArrayList<>();
+        for (Pointer<?> pointer : type.pointers().pointers()) {
+            resolvers.add(type.get(pointer)
+                .map(value -> placeholder(path + pointer.key(), value))
+                .orElse(TagResolver.empty()));
         }
-        return null;
+        return TagResolver.resolver(resolvers);
     }
 
-    private @Nullable Replacement<?> resolveReplacement(Object value, String path) {
-        if (value instanceof String str)
-            return Replacement.miniMessage(str);
-        else if (value instanceof Component component)
-            return Replacement.component(component);
-        else if (value instanceof Pointered subtype)
-            if (path.indexOf('.') + 1 < path.length())
-                return resolveReplacements(path.substring(path.indexOf('.') + 1), subtype);
-        return null;
+    private TagResolver placeholder(@NotNull String key, Object value) {
+        if (value instanceof String)
+            return Placeholder.parsed(key, (String) value);
+        if (value instanceof Component)
+            return Placeholder.component(key, (Component) value);
+        if (value instanceof Pointered)
+            return resolvePlaceholders((Pointered) value, key + ".");
+        return TagResolver.empty();
     }
 }

@@ -59,6 +59,10 @@ public interface Pointered {
         return getOrDefault(pointer, false);
     }
 
+    default boolean isNot(Pointer<Boolean> pointer) {
+        return !is(pointer);
+    }
+
     /**
      * Gets the pointers for this object.
      *

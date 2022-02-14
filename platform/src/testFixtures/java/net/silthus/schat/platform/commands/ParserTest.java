@@ -47,6 +47,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public abstract class ParserTest<T> {
 
     private final CommandManager<Sender> commandManager;
+    protected final SenderMock sender = SenderMock.randomSender();
     private ArgumentParser<Sender, T> parser;
 
     protected ParserTest() {
@@ -55,7 +56,7 @@ public abstract class ParserTest<T> {
 
     @NotNull
     private CommandContext<Sender> createContext() {
-        return new CommandContext<>(SenderMock.randomSender(), commandManager);
+        return new CommandContext<>(sender, commandManager);
     }
 
     protected ArgumentParseResult<T> parse(String... input) {
@@ -75,13 +76,21 @@ public abstract class ParserTest<T> {
         assertSuggestionContains("", suggestions);
     }
 
+    protected void assertSuggestionsDoNotContain(String... suggestions) {
+        assertSuggestionDoesNotContain("", suggestions);
+    }
+
     protected void assertSuggestionContains(String input, String... suggestions) {
         assertThat(parser.suggestions(createContext(), input)).contains(suggestions);
     }
 
+    protected void assertSuggestionDoesNotContain(String input, String... suggestions) {
+        assertThat(parser.suggestions(createContext(), input)).doesNotContain(suggestions);
+    }
+
     @NotNull
     protected String getCaption(Caption caption) {
-        return commandManager.getCaptionRegistry().getCaption(caption, SenderMock.randomSender());
+        return commandManager.getCaptionRegistry().getCaption(caption, sender);
     }
 
     @NotNull

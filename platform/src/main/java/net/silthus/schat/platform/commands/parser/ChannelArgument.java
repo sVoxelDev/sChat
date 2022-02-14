@@ -43,13 +43,12 @@ import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.platform.sender.Sender;
-import net.silthus.schat.policies.JoinChannelPolicy;
 import net.silthus.schat.repository.Repository;
 import org.jetbrains.annotations.NotNull;
 
 import static cloud.commandframework.arguments.parser.ArgumentParseResult.failure;
 import static cloud.commandframework.arguments.parser.ArgumentParseResult.success;
-import static net.silthus.schat.policies.JoinChannelPolicy.JOIN_CHANNEL_POLICY;
+import static net.silthus.schat.channel.ChannelSettings.HIDDEN;
 
 public final class ChannelArgument implements ArgumentParser<Sender, Channel> {
 
@@ -94,9 +93,10 @@ public final class ChannelArgument implements ArgumentParser<Sender, Channel> {
     public @NonNull List<@NonNull String> suggestions(@NonNull CommandContext<Sender> commandContext, @NonNull String input) {
         try {
             final Chatter chatter = chatterRepository.get(commandContext.getSender().uniqueId());
-            return repository
-                .filter(channel -> channel.policy(JoinChannelPolicy.class).orElse(JOIN_CHANNEL_POLICY).test(chatter, channel))
-                .stream().map(Channel::key)
+            return repository.all().stream()
+                .filter(channel -> channel.isNot(HIDDEN))
+                .filter(channel -> channel.joinPolicy().test(chatter, channel))
+                .map(Channel::key)
                 .toList();
         } catch (Repository.NotFound e) {
             return new ArrayList<>();
