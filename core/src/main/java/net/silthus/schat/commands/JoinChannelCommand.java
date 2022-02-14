@@ -37,11 +37,9 @@ import net.silthus.schat.command.Result;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.events.channel.PostChatterJoinChannelEvent;
 import net.silthus.schat.events.channel.PreJoinChannelEvent;
-import net.silthus.schat.policies.JoinChannelPolicy;
 
 import static net.silthus.schat.command.Result.error;
 import static net.silthus.schat.command.Result.success;
-import static net.silthus.schat.policies.JoinChannelPolicy.JOIN_CHANNEL_POLICY;
 
 @Getter
 @Accessors(fluent = true)
@@ -61,13 +59,11 @@ public class JoinChannelCommand implements Command {
 
     private final Chatter chatter;
     private final Channel channel;
-    private final JoinChannelPolicy policy;
     private final EventBus eventBus;
 
     protected JoinChannelCommand(Builder builder) {
         this.chatter = builder.chatter;
         this.channel = builder.channel;
-        this.policy = builder.policy;
         this.eventBus = builder.eventBus;
     }
 
@@ -80,8 +76,7 @@ public class JoinChannelCommand implements Command {
     }
 
     private PreJoinChannelEvent firePreJoinChannelEvent() {
-        JoinChannelPolicy policy = channel.policy(JoinChannelPolicy.class).orElse(this.policy);
-        return eventBus.post(new PreJoinChannelEvent(chatter, channel, policy));
+        return eventBus.post(new PreJoinChannelEvent(chatter, channel, channel.joinPolicy()));
     }
 
     private Result joinChannelAndUpdateView(Chatter chatter, Channel channel) {
@@ -103,7 +98,6 @@ public class JoinChannelCommand implements Command {
     public static class Builder extends CommandBuilder<Builder, JoinChannelCommand> {
         private final Chatter chatter;
         private final Channel channel;
-        private JoinChannelPolicy policy = JOIN_CHANNEL_POLICY;
         private EventBus eventBus = EventBus.empty();
 
         protected Builder(Chatter chatter, Channel channel) {

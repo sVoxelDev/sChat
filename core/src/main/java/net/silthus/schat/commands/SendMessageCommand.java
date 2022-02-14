@@ -98,8 +98,7 @@ public class SendMessageCommand implements Command {
     }
 
     protected SendMessageResult deliverMessage(MessageTarget target, Message message) {
-        target.sendMessage(message);
-        return new SendMessageResult(message, true);
+        return target.sendMessage(message);
     }
 
     private boolean targetsSingleChatter(Targets targets) {

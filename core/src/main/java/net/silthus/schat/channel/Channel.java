@@ -33,9 +33,13 @@ import net.silthus.schat.pointer.Configured;
 import net.silthus.schat.pointer.Pointer;
 import net.silthus.schat.policies.JoinChannelPolicy;
 import net.silthus.schat.policies.Policy;
+import net.silthus.schat.policies.SendChannelMessagePolicy;
 import net.silthus.schat.repository.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
+
+import static net.silthus.schat.policies.JoinChannelPolicy.JOIN_CHANNEL_POLICY;
+import static net.silthus.schat.policies.SendChannelMessagePolicy.SEND_CHANNEL_MESSAGE_POLICY;
 
 public sealed interface Channel extends Entity<String>, Configured.Modifiable<Channel>, MessageTarget permits ChannelImpl {
 
@@ -60,7 +64,11 @@ public sealed interface Channel extends Entity<String>, Configured.Modifiable<Ch
     <P extends Policy> Optional<P> policy(Class<P> policy);
 
     default JoinChannelPolicy joinPolicy() {
-        return policy(JoinChannelPolicy.class).orElse(JoinChannelPolicy.JOIN_CHANNEL_POLICY);
+        return policy(JoinChannelPolicy.class).orElse(JOIN_CHANNEL_POLICY);
+    }
+
+    default SendChannelMessagePolicy sendMessagePolicy() {
+        return policy(SendChannelMessagePolicy.class).orElse(SEND_CHANNEL_MESSAGE_POLICY);
     }
 
     @NotNull @Unmodifiable Targets targets();

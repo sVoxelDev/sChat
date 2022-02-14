@@ -29,6 +29,14 @@ import net.silthus.schat.message.Message;
 
 public record SendMessageResult(Message message, boolean success) implements Result {
 
+    public static SendMessageResult success(Message message) {
+        return new SendMessageResult(message, true);
+    }
+
+    public static SendMessageResult failure(Message message) {
+        return new SendMessageResult(message, false);
+    }
+
     @Override
     public boolean wasSuccessful() {
         return success;

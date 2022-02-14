@@ -27,7 +27,9 @@ package net.silthus.schat.message;
 import java.util.LinkedList;
 import java.util.Queue;
 import lombok.NonNull;
+import net.silthus.schat.commands.SendMessageResult;
 
+import static net.silthus.schat.commands.SendMessageResult.success;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MockTarget implements MessageTarget {
@@ -35,8 +37,9 @@ public class MockTarget implements MessageTarget {
     private final Queue<Message> messages = new LinkedList<>();
 
     @Override
-    public void sendMessage(@NonNull Message message) {
+    public SendMessageResult sendMessage(@NonNull Message message) {
         this.messages.add(message);
+        return success(message);
     }
 
     public void assertLastMessageIs(Message message) {

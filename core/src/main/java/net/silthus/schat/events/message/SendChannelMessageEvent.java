@@ -28,12 +28,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.events.Cancellable;
 import net.silthus.schat.events.SChatEvent;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.Targets;
+import net.silthus.schat.policies.SendChannelMessagePolicy;
 
 /**
  * The {@code SendChannelMessageEvent} is fired before a {@link Channel} forwards a message to its {@link Channel#targets()}.
@@ -49,12 +51,15 @@ import net.silthus.schat.message.Targets;
  *
  * @since next
  */
+@Getter
+@Setter
 @Accessors(fluent = true)
 public final class SendChannelMessageEvent implements SChatEvent, Cancellable {
 
     private final Channel channel;
     private Message message;
     private Targets targets;
+    private SendChannelMessagePolicy policy;
     @Getter
     private final AtomicBoolean cancellationState = new AtomicBoolean(false);
 
@@ -65,12 +70,14 @@ public final class SendChannelMessageEvent implements SChatEvent, Cancellable {
      *
      * @param channel the channel
      * @param message the message
+     * @param policy the policy
      * @since next
      */
-    public SendChannelMessageEvent(final @NonNull Channel channel, final @NonNull Message message) {
+    public SendChannelMessageEvent(final @NonNull Channel channel, final @NonNull Message message, final @NonNull SendChannelMessagePolicy policy) {
         this.channel = channel;
         this.message = message;
         this.targets = Targets.copyOf(channel.targets());
+        this.policy = policy;
     }
 
     /**
@@ -130,6 +137,26 @@ public final class SendChannelMessageEvent implements SChatEvent, Cancellable {
      */
     public SendChannelMessageEvent targets(@NonNull final Targets targets) {
         this.targets = targets;
+        return this;
+    }
+
+    /**
+     * Gets the policy that is checked before the message is sent to the channel.
+     *
+     * @return the policy of this message event
+     */
+    public SendChannelMessagePolicy policy() {
+        return policy;
+    }
+
+    /**
+     * Overrides the policy of the channel with the given temporary policy.
+     *
+     * @param policy the new policy for this message event
+     * @return this event
+     */
+    public SendChannelMessageEvent policy(SendChannelMessagePolicy policy) {
+        this.policy = policy;
         return this;
     }
 }

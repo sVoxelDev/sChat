@@ -24,14 +24,21 @@
 
 package net.silthus.schat.platform.commands;
 
+import cloud.commandframework.Command;
+import cloud.commandframework.arguments.standard.StringArgument;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.commands.JoinChannelCommand;
+import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.commands.parser.ChannelArgument;
+import net.silthus.schat.platform.sender.Sender;
+import net.silthus.schat.policies.JoinChannelPolicy;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.platform.locale.Messages.JOIN_CHANNEL_ERROR;
 import static net.silthus.schat.policies.JoinChannelPolicy.DENY;
@@ -45,7 +52,11 @@ class ChannelCommandsTests extends CommandTest {
     }
 
     private Channel addRandomChannel() {
-        final Channel channel = randomChannel();
+        return addChannel(randomChannel());
+    }
+
+    @NotNull
+    private Channel addChannel(Channel channel) {
         channelRepository.add(channel);
         return channel;
     }
@@ -53,7 +64,7 @@ class ChannelCommandsTests extends CommandTest {
     @Nested
     @DisplayName("/channel join <channel>")
     class joinChannel {
-        private static final String JOIN_CHANNEL_CMD = "channel join ";
+        private static final String JOIN_CHANNEL_CMD = "ch ";
 
         @Test
         void given_invalid_chanel_join_command_fails() {
@@ -68,6 +79,10 @@ class ChannelCommandsTests extends CommandTest {
                 channel = addRandomChannel();
             }
 
+            private void executeJoinCommand() {
+                cmd(JOIN_CHANNEL_CMD + channel.key());
+            }
+
             @Test
             void then_join_command_succeeds_and_calls_interactor() {
                 executeJoinCommand();
@@ -76,15 +91,11 @@ class ChannelCommandsTests extends CommandTest {
                     .isPresent().get().isEqualTo(channel);
             }
 
-            private void executeJoinCommand() {
-                cmd(JOIN_CHANNEL_CMD + channel.key());
-            }
-
             @Nested class given_join_fails {
 
                 @BeforeEach
                 void setUp() {
-                    JoinChannelCommand.prototype(builder -> builder.policy(DENY));
+                    channel = addChannel(channelWith(builder -> builder.policy(JoinChannelPolicy.class, DENY)));
                 }
 
                 @Test
@@ -106,6 +117,38 @@ class ChannelCommandsTests extends CommandTest {
                     assertLastMessageIs(null);
                 }
             }
+        }
+    }
+
+    @DisplayName("/channel message <channel> <message>")
+    @Nested class quick_message {
+        private Channel channel;
+
+        @BeforeEach
+        void setUp() {
+            channel = addRandomChannel();
+            chatter.join(channel);
+            // TODO: add events to channel repository and dynamically register commands for join with /<channel_name> and quickmessage: /<channel_name> <message>
+            Command<Sender> command = commandManager.commandBuilder(channel.key())
+                .argument(StringArgument.greedy("message"))
+                .handler(commandContext -> Message.message((String) commandContext.get("message"))
+                    .source(commandContext.getSender().identity())
+                    .to(channel)
+                    .send())
+                .build();
+            commandManager.command(command);
+        }
+
+        @Test
+        void quick_message_is_sent_to_channel() {
+            cmd("/ch " + channel.key() + " Hey there!");
+            chatter.assertReceivedMessage(text("Hey there!"));
+        }
+
+        @Test
+        void alias_command_works() {
+            cmd("/" + channel.key() + " test message");
+            chatter.assertReceivedMessage(text("test message"));
         }
     }
 }

@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
 import static net.silthus.schat.channel.ChannelAssertions.assertChannelHasNoTargets;
 import static net.silthus.schat.channel.ChannelAssertions.assertChannelHasOnlyTarget;
 import static net.silthus.schat.channel.ChannelAssertions.assertChannelHasTarget;
-import static net.silthus.schat.channel.ChannelHelper.randomChannel;
+import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.chatter.ChatterAssertions.assertChatterHasChannel;
 import static net.silthus.schat.chatter.ChatterAssertions.assertChatterHasNoChannels;
 import static net.silthus.schat.chatter.ChatterAssertions.assertChatterHasOnlyChannel;
@@ -57,15 +57,8 @@ class JoinChannelCommandTests {
     void setUp() {
         eventBus = new EventBusMock();
         chatter = randomChatter();
-        channel = randomChannel();
-        canJoin(true);
-    }
-
-    private void canJoin(boolean canJoin) {
-        if (canJoin)
-            JoinChannelCommand.prototype(builder -> builder.eventBus(eventBus).policy(ALLOW));
-        else
-            JoinChannelCommand.prototype(builder -> builder.eventBus(eventBus).policy(DENY));
+        channel = channelWith(builder -> builder.policy(JoinChannelPolicy.class, ALLOW));
+        JoinChannelCommand.prototype(builder -> builder.eventBus(eventBus));
     }
 
     private void assertJoinChannelError() {
@@ -95,10 +88,6 @@ class JoinChannelCommandTests {
     }
 
     @Nested class given_successful_can_join_check {
-        @BeforeEach
-        void setUp() {
-            canJoin(true);
-        }
 
         @Test
         void then_chatter_is_added_as_target_to_channel() {
@@ -149,7 +138,7 @@ class JoinChannelCommandTests {
     @Nested class given_failed_can_join_check {
         @BeforeEach
         void setUp() {
-            canJoin(false);
+            channel = channelWith(builder -> builder.policy(JoinChannelPolicy.class, DENY));
         }
 
         @Test

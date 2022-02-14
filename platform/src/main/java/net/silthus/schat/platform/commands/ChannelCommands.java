@@ -30,6 +30,7 @@ import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.CommandPermission;
 import cloud.commandframework.annotations.ProxiedBy;
+import cloud.commandframework.annotations.specifier.Greedy;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.sender.Sender;
@@ -58,5 +59,12 @@ public final class ChannelCommands implements Command {
         } catch (Throwable e) {
             JOIN_CHANNEL_ERROR.send(sender, channel);
         }
+    }
+
+    @ProxiedBy("ch")
+    @CommandMethod("channel message <channel> <message>")
+    @CommandPermission("schat.player.channel.quickmessage")
+    public void sendQuickMessage(Chatter source, @Argument("channel") Channel channel, @Argument("message") @Greedy String message) {
+        source.message(message).to(channel).send();
     }
 }

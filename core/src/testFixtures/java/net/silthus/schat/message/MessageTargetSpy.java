@@ -28,7 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.commands.SendMessageResult;
 
+import static net.silthus.schat.commands.SendMessageResult.success;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MessageTargetSpy implements MessageTarget {
@@ -40,8 +42,9 @@ public class MessageTargetSpy implements MessageTarget {
     private final List<Message> receivedMessages = new ArrayList<>();
 
     @Override
-    public void sendMessage(@NonNull Message message) {
+    public SendMessageResult sendMessage(@NonNull Message message) {
         receivedMessages.add(message);
+        return success(message);
     }
 
     public void assertReceivedMessage(Message message) {

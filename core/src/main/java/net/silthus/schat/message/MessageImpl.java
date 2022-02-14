@@ -37,6 +37,7 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.commands.SendMessageCommand;
+import net.silthus.schat.commands.SendMessageResult;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.pointer.Pointers;
 import org.jetbrains.annotations.NotNull;
@@ -92,8 +93,8 @@ final class MessageImpl implements Message {
     }
 
     @Override
-    public @NotNull Message send() {
-        return SendMessageCommand.sendMessage(this).message();
+    public @NotNull SendMessageResult send() {
+        return SendMessageCommand.sendMessage(this);
     }
 
     @Override
@@ -168,7 +169,7 @@ final class MessageImpl implements Message {
 
         @Override
         public @NotNull Message send() {
-            return create().send();
+            return create().send().message();
         }
 
         @Override

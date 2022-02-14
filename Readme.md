@@ -43,13 +43,13 @@ You can run `/schat reload` to reload your configuration without restarting the 
 Your players won't need to remember any commands. All they need to do is click on the various UI elements in the chat, *
 e.g. clicking on a channel will set the channel as active*. However, here are the commands if you like typing:
 
-| Commands                               | Alias | Permission | Description |
-|----------------------------------------| ----- | ---------- | ----------- |
-| `/channel join <channel>`              | `/ch <channel>` | `schat.player.channel.join` | Joins the given channel or sets it as active channel. |
-| `/channel leave <channel>`             | `/leave <channel>` | `schat.player.channel.leave` | Leaves the given channel. |
-| `/channel message <channel> <message>` | `/<channel> <message>` | `schat.player.channel.quickmessage` | Sends a message to the given channel without switching to it. |
-|                                        | | | |
-| `/tell <player> [message]`               | `/m`, `/w`, `/msg`, `/pm`, `/qm`, `/dm` | `schat.player.directmessage` | Sends a message to the given player or opens the conversation. |
+| Commands                               | Alias                     | Permission | Description |
+|----------------------------------------|---------------------------| ---------- | ----------- |
+| `/channel join <channel>`              | `/ch <channel>`           | `schat.player.channel.join` | Joins the given channel or sets it as active channel. |
+| `/channel leave <channel>`             | `/leave <channel>`        | `schat.player.channel.leave` | Leaves the given channel. |
+| `/channel message <channel> <message>` | `/ch <channel> <message>` | `schat.player.channel.quickmessage` | Sends a message to the given channel without switching to it. |
+|                                        |                           | | |
+| `/tell <player> [message]`               | `/m`, `/w`, `/pm`, `/dm`  | `schat.player.directmessage` | Sends a message to the given player or opens the conversation. |
 
 ### Admin Commands
 

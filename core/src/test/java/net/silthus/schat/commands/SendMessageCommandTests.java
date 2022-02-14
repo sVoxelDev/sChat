@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.events.message.SendMessageEvent;
@@ -35,14 +36,18 @@ import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.message.MockTarget;
 import net.silthus.schat.message.Targets;
+import net.silthus.schat.policies.SendChannelMessagePolicy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
+import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
+import static net.silthus.schat.policies.SendChannelMessagePolicy.DENY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -51,14 +56,14 @@ import static org.mockito.Mockito.verify;
 
 class SendMessageCommandTests {
 
-    private Message send(Message.Draft draft) {
-        return draft.send();
+    private SendMessageResult send(Message.Draft draft) {
+        return draft.create().send();
     }
 
     @Test
     void single_target_message_is_sent_to_target() {
         final MockTarget target = new MockTarget();
-        final Message message = send(message().to(target));
+        final Message message = message().to(target).send();
         target.assertReceivedMessage(message);
     }
 
@@ -84,6 +89,13 @@ class SendMessageCommandTests {
         void when_channel_is_targeted_then_message_is_sent_to_all_channel_targets() {
             send(message().to(channel));
             assertThat(targets).allSatisfy(MockTarget::assertReceivedMessage);
+        }
+
+        @Test
+        void send_message_policy_of_channel_is_checked() {
+            channel = channelWith(builder -> builder.policy(SendChannelMessagePolicy.class, DENY));
+            SendMessageResult result = channel.sendMessage(message().to(channel).create());
+            assertThat(result.wasFailure()).isTrue();
         }
 
         @Nested class events {
@@ -170,12 +182,12 @@ class SendMessageCommandTests {
 
         @Test
         void send_calls_event() {
-            final MessageTarget target = mock(MessageTarget.class);
+            ChatterMock target = randomChatter();
 
             final Message message = message().to(target).send();
 
             assertThat(eventCalled).isTrue();
-            verify(target).sendMessage(message);
+            target.assertReceivedMessage(message);
         }
 
         @Test
@@ -190,12 +202,12 @@ class SendMessageCommandTests {
 
         @Test
         void targets_are_modifiable_when_event_is_called() {
-            final MessageTarget target = mock(MessageTarget.class);
+            ChatterMock target = randomChatter();
             onEvent(event -> event.targets().add(target));
 
-            final Message message = randomMessage().send();
+            final Message message = randomMessage().send().message();
 
-            verify(target).sendMessage(message);
+            target.assertReceivedMessage(message);
         }
     }
 }
