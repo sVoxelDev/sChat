@@ -71,6 +71,14 @@ public abstract class ParserTest<T> {
         assertThat(parse(input).getParsedValue()).isPresent().get().isEqualTo(expected);
     }
 
+    protected void assertSuggestionsContain(String... suggestions) {
+        assertSuggestionContains("", suggestions);
+    }
+
+    protected void assertSuggestionContains(String input, String... suggestions) {
+        assertThat(parser.suggestions(createContext(), input)).contains(suggestions);
+    }
+
     @NotNull
     protected String getCaption(Caption caption) {
         return commandManager.getCaptionRegistry().getCaption(caption, SenderMock.randomSender());

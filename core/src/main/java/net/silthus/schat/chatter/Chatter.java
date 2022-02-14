@@ -35,6 +35,7 @@ import net.silthus.schat.identity.Identified;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.pointer.Pointer;
 import net.silthus.schat.repository.Entity;
 import net.silthus.schat.util.Permissable;
 import net.silthus.schat.view.ViewConnector;
@@ -43,6 +44,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified, Permissable permits ChatterImpl, ChatterImpl.EmptyChatter {
+
+    Pointer<Channel> ACTIVE_CHANNEL = Pointer.pointer(Channel.class, "active_channel");
 
     /**
      * Gets a chatter with no functionality and the {@link Identity#nil()}.

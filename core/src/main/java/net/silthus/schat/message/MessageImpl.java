@@ -45,6 +45,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import static net.silthus.schat.message.Targets.copyOf;
 import static net.silthus.schat.message.Targets.unmodifiable;
+import static net.silthus.schat.message.TargetsFilter.firstChannel;
 
 @Getter
 @Accessors(fluent = true)
@@ -75,6 +76,7 @@ final class MessageImpl implements Message {
             .withStatic(Message.TIMESTAMP, timestamp)
             .withStatic(Message.SOURCE, source)
             .withStatic(Message.TEXT, text)
+            .withDynamic(Message.CHANNEL, () -> firstChannel(targets()).orElse(null))
             .withStatic(Message.TYPE, type)
             .create();
     }

@@ -70,6 +70,12 @@ public final class ChannelSettings {
      */
     public static final Setting<Boolean> PRIVATE = setting(Boolean.class, "private", false);
     /**
+     * Hides the channel in commands, auto completion and listings.
+     *
+     * <p>Default: {@code false}</p>
+     */
+    public static final Setting<Boolean> HIDDEN = setting(Boolean.class, "hidden", false);
+    /**
      * If set to true auto joins players into the channel when they connect.
      *
      * <p>Default: {@code false}</p>

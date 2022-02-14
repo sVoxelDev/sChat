@@ -29,12 +29,15 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.platform.commands.ParserTest;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.channel.Channel.createChannel;
+import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
 import static net.silthus.schat.platform.commands.parser.ChannelArgument.ARGUMENT_PARSE_FAILURE_CHANNEL;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,6 +51,11 @@ class ChannelArgumentTests extends ParserTest<Channel> {
     void setUp() {
         channelRepository = createInMemoryChannelRepository();
         setParser(new ChannelArgument(channelRepository, createInMemoryChatterRepository()));
+    }
+
+    private Channel addChannel(@NotNull Channel channel) {
+        channelRepository.add(channel);
+        return channel;
     }
 
     private void registerChannelParser() {
@@ -74,8 +82,7 @@ class ChannelArgumentTests extends ParserTest<Channel> {
 
         @BeforeEach
         void setUp() {
-            channel = createChannel("test");
-            channelRepository.add(channel);
+            this.channel = addChannel(createChannel("test"));
         }
 
         @Test
@@ -96,6 +103,21 @@ class ChannelArgumentTests extends ParserTest<Channel> {
         void when_ChannelParser_is_registered_then_parser_is_registered() {
             registerChannelParser();
             assertThat(getParser(Channel.class)).isPresent();
+        }
+    }
+
+    @Nested class auto_completion {
+
+        @BeforeEach
+        void setUp() {
+            addChannel(channelWith("pub1", PROTECTED, false));
+            addChannel(channelWith("pub2", PROTECTED, false));
+            addChannel(channelWith("prot", PROTECTED, true));
+        }
+
+        @Test
+        void lists_public_channels() {
+
         }
     }
 }

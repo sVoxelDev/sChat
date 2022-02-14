@@ -24,8 +24,5 @@
 
 package net.silthus.schat.ui.format;
 
-@FunctionalInterface
-public interface Format<T> {
-    net.kyori.adventure.text.Component format(T type);
-
+public interface PointeredFormat extends Format<net.silthus.schat.pointer.Pointered> {
 }

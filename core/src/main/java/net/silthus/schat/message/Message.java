@@ -44,7 +44,8 @@ public sealed interface Message extends Pointered permits MessageImpl {
     Pointer<UUID> ID = pointer(UUID.class, "id");
     Pointer<Instant> TIMESTAMP = pointer(Instant.class, "timestamp");
     Pointer<Identity> SOURCE = pointer(Identity.class, "source");
-    Pointer<Component> TEXT = pointer(Component.class, "test");
+    Pointer<Component> TEXT = pointer(Component.class, "text");
+    Pointer<Channel> CHANNEL = pointer(Channel.class, "channel");
     Pointer<Type> TYPE = pointer(Type.class, "type");
 
     static @NotNull Draft message() {

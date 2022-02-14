@@ -38,7 +38,7 @@ import net.silthus.schat.message.Message;
 import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.ui.format.ChannelFormat;
-import net.silthus.schat.ui.format.Format;
+import net.silthus.schat.ui.format.PointeredFormat;
 import net.silthus.schat.ui.model.ChatterViewModel;
 import net.silthus.schat.ui.view.View;
 import org.jetbrains.annotations.NotNull;
@@ -63,7 +63,7 @@ public final class TabbedChannelsView implements View {
         .separator(text(" | "))
         .suffix(text(" |"))
         .build());
-    public static final Setting<Format.Pointered> MESSAGE_FORMAT = setting(Format.Pointered.class, "message", msg ->
+    public static final Setting<PointeredFormat> MESSAGE_FORMAT = setting(PointeredFormat.class, "message", msg ->
         msg.get(Message.SOURCE)
             .filter(Identity.IS_NOT_NIL)
             .map(identity -> identity.displayName().append(text(": ")))

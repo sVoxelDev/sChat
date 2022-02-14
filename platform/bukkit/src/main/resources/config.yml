@@ -6,9 +6,16 @@ channels:
       protected: false
       auto_join: true
       global: true
+      format:
+        message: "<yellow><source.display_name><gray>: <text>"
+        active_channel:
+          color: green
+          decoration: underlined
   team:
     name: Team
     settings:
       protected: true
       auto_join: true
       global: true
+      format:
+        message: "<blue><source.display_name><gray>: <text>"

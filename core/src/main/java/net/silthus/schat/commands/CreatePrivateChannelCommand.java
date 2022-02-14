@@ -42,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
+import static net.silthus.schat.channel.ChannelSettings.HIDDEN;
 import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 
 @Getter
@@ -103,6 +104,7 @@ public class CreatePrivateChannelCommand implements Command {
             .name(name)
             .set(GLOBAL, true)
             .set(PRIVATE, true)
+            .set(HIDDEN, true)
             .create();
         repository.add(channel);
         return channel;

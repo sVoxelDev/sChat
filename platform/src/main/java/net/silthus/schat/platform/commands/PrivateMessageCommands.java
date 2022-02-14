@@ -28,7 +28,7 @@ import cloud.commandframework.CommandManager;
 import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandMethod;
-import cloud.commandframework.annotations.ProxiedBy;
+import cloud.commandframework.annotations.CommandPermission;
 import cloud.commandframework.annotations.specifier.Greedy;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.sender.Sender;
@@ -45,8 +45,8 @@ public final class PrivateMessageCommands implements Command {
         parser.parse(this);
     }
 
-    @ProxiedBy(value = "w|pm|dm|msg|say")
-    @CommandMethod("tell <target> [message]")
+    @CommandMethod("tell|w|whisper|pm|dm <target> [message]")
+    @CommandPermission("schat.player.directmessage")
     public void privateMessageCommand(Chatter source, @Argument("target") Chatter target, @Greedy @Argument("message") String message) {
         if (source.equals(target))
             CANNOT_SEND_PM_TO_SELF.send(source);
