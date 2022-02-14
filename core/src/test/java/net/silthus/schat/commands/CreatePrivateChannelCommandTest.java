@@ -30,6 +30,11 @@ import net.silthus.schat.messenger.Messenger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
+import static net.silthus.schat.channel.ChannelSettings.HIDDEN;
+import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
+import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.commands.CreatePrivateChannelCommand.createPrivateChannel;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,5 +66,24 @@ class CreatePrivateChannelCommandTest {
         final Channel channel1 = createPrivateChannel(chatter1, chatter2).channel();
         final Channel channel2 = createPrivateChannel(chatter2, chatter3).channel();
         assertThat(channel1).isNotEqualTo(channel2);
+    }
+
+    @Test
+    void channel_settings() {
+        Channel channel = createPrivateChannel(randomChatter(), randomChatter()).channel();
+        assertThat(channel.is(PRIVATE)).isTrue();
+        assertThat(channel.is(HIDDEN)).isTrue();
+        assertThat(channel.is(PROTECTED)).isTrue();
+        assertThat(channel.is(GLOBAL)).isTrue();
+    }
+
+    @Test
+    void channel_name_is_combined_tagets_name() {
+        ChatterMock source = randomChatter();
+        ChatterMock target = randomChatter();
+        Channel channel = createPrivateChannel(source, target).channel();
+        assertThat(channel.displayName()).isEqualTo(source.displayName()
+            .append(text("<->"))
+            .append(target.displayName()));
     }
 }

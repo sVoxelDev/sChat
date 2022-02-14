@@ -27,8 +27,10 @@ package net.silthus.schat.platform.commands.parser;
 import cloud.commandframework.exceptions.parsing.NoInputProvidedException;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.platform.commands.ParserTest;
+import net.silthus.schat.policies.JoinChannelPolicy;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -37,6 +39,7 @@ import org.junit.jupiter.api.Test;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.channel.ChannelSettings.HIDDEN;
 import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
 import static net.silthus.schat.platform.commands.parser.ChannelArgument.ARGUMENT_PARSE_FAILURE_CHANNEL;
@@ -45,12 +48,15 @@ import static org.mockito.Mockito.mock;
 
 class ChannelArgumentTests extends ParserTest<Channel> {
 
+    private final @NotNull ChatterMock chatter = ChatterMock.chatterMock(sender.identity());
     private ChannelRepository channelRepository;
 
     @BeforeEach
     void setUp() {
         channelRepository = createInMemoryChannelRepository();
-        setParser(new ChannelArgument(channelRepository, createInMemoryChatterRepository()));
+        ChatterRepository chatterRepository = createInMemoryChatterRepository();
+        chatterRepository.add(chatter);
+        setParser(new ChannelArgument(channelRepository, chatterRepository));
     }
 
     private Channel addChannel(@NotNull Channel channel) {
@@ -113,11 +119,31 @@ class ChannelArgumentTests extends ParserTest<Channel> {
             addChannel(channelWith("pub1", PROTECTED, false));
             addChannel(channelWith("pub2", PROTECTED, false));
             addChannel(channelWith("prot", PROTECTED, true));
+            addChannel(channelWith("hidden", HIDDEN, true));
         }
 
         @Test
         void lists_public_channels() {
+            assertSuggestionsContain("pub1", "pub2");
+            assertSuggestionsDoNotContain("prot");
+        }
 
+        @Test
+        void chatter_with_permission_sees_protected_channel() {
+            chatter.mockHasPermission(true);
+            assertSuggestionsContain("pub1", "pub2", "prot");
+        }
+
+        @Test
+        void hidden_channels_are_hidden() {
+            assertSuggestionsDoNotContain("hidden");
+        }
+
+        @Test
+        void given_custom_channel_policy_uses_policy() {
+            addChannel(channelWith("custom", builder -> builder.set(PROTECTED, true)
+                .policy(JoinChannelPolicy.class, (chatter1, channel) -> true)));
+            assertSuggestionsContain("custom");
         }
     }
 }

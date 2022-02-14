@@ -40,10 +40,12 @@ import net.silthus.schat.command.CommandBuilder;
 import net.silthus.schat.messenger.Messenger;
 import org.jetbrains.annotations.NotNull;
 
+import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
 import static net.silthus.schat.channel.ChannelSettings.HIDDEN;
 import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
+import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 
 @Getter
 @Accessors(fluent = true)
@@ -78,7 +80,11 @@ public class CreatePrivateChannelCommand implements Command {
     @Override
     public Result execute() throws Error {
         final Channel channel = repository.find(privateChannelFilter())
-            .orElseGet(() -> createPrivateChannel(privateChannelKey(), target.displayName()));
+            .orElseGet(() -> createPrivateChannel(privateChannelKey(),
+                source.displayName()
+                .append(text("<->"))
+                .append(target.displayName()))
+            );
 
         updateChannelTargets(channel);
 
@@ -105,6 +111,7 @@ public class CreatePrivateChannelCommand implements Command {
             .set(GLOBAL, true)
             .set(PRIVATE, true)
             .set(HIDDEN, true)
+            .set(PROTECTED, true)
             .create();
         repository.add(channel);
         return channel;

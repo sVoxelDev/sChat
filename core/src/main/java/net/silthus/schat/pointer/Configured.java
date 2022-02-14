@@ -88,6 +88,10 @@ public interface Configured extends Pointered {
         return get(setting);
     }
 
+    default boolean isNot(Setting<Boolean> setting) {
+        return !is(setting);
+    }
+
     /**
      * Gets the settings for this object.
      *
