@@ -39,6 +39,7 @@ import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.pointer.Pointers;
 import net.silthus.schat.view.ViewConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,6 +61,7 @@ non-sealed class ChatterImpl implements Chatter {
     private final Identity identity;
     private final transient ViewConnector viewConnector;
     private final transient PermissionHandler permissionHandler;
+    private final transient Pointers pointers;
 
     private final Set<Channel> channels = new HashSet<>();
     private final transient Queue<Message> messages = new LinkedList<>();
@@ -70,6 +72,12 @@ non-sealed class ChatterImpl implements Chatter {
         this.identity = builder.identity();
         this.viewConnector = builder.viewConnector().create(this);
         this.permissionHandler = builder.permissionHandler();
+        this.pointers = Pointers.pointersBuilder()
+            .withForward(Identity.ID, identity(), Identity.ID)
+            .withForward(Identity.NAME, identity(), Identity.NAME)
+            .withForward(Identity.DISPLAY_NAME, identity(), Identity.DISPLAY_NAME)
+            .withDynamic(ACTIVE_CHANNEL, () -> activeChannel().orElse(null))
+            .create();
     }
 
     @Override

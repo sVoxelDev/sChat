@@ -5,4 +5,9 @@ channels:
     settings:
       protected: true
       auto_join: true
+      format:
+        message: "<yellow><source.display_name><gray>: <text>"
+        active_channel:
+          color: red
+          decoration: underlined
   invalid: null

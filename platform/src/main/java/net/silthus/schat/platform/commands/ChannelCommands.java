@@ -28,6 +28,7 @@ import cloud.commandframework.CommandManager;
 import cloud.commandframework.annotations.AnnotationParser;
 import cloud.commandframework.annotations.Argument;
 import cloud.commandframework.annotations.CommandMethod;
+import cloud.commandframework.annotations.CommandPermission;
 import cloud.commandframework.annotations.ProxiedBy;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
@@ -46,6 +47,7 @@ public final class ChannelCommands implements Command {
 
     @ProxiedBy("ch")
     @CommandMethod("channel join <channel>")
+    @CommandPermission("schat.player.channel.join")
     void setActiveChannelCmd(Sender sender, Chatter chatter, @Argument("channel") Channel channel) {
         try {
             if (chatter.isActiveChannel(channel))

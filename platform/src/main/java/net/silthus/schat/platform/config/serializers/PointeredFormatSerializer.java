@@ -22,10 +22,26 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.ui.format;
+package net.silthus.schat.platform.config.serializers;
 
-@FunctionalInterface
-public interface Format<T> {
-    net.kyori.adventure.text.Component format(T type);
+import java.lang.reflect.Type;
+import net.silthus.schat.ui.format.MiniMessageFormat;
+import net.silthus.schat.ui.format.PointeredFormat;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
+import org.spongepowered.configurate.serialize.TypeSerializer;
 
+public class PointeredFormatSerializer implements TypeSerializer<PointeredFormat> {
+    @Override
+    public void serialize(Type type, @Nullable PointeredFormat obj, ConfigurationNode node) throws SerializationException {
+        if (obj instanceof MiniMessageFormat format) {
+            node.set(format.format());
+        }
+    }
+
+    @Override
+    public PointeredFormat deserialize(Type type, ConfigurationNode node) throws SerializationException {
+        return new MiniMessageFormat(node.getString());
+    }
 }

@@ -59,7 +59,7 @@ public final class BungeecordProxyPlugin extends AbstractSChatProxyPlugin {
 
     @Override
     protected ConfigurationAdapter createConfigurationAdapter() {
-        return YAML.create(resolveConfig("config.yml").toFile());
+        return YAML.create(resolveConfigAndCreateDefaultConfig("config.yml").toFile());
     }
 
     @Override

@@ -121,6 +121,19 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     protected abstract void registerMessengerGateway(GatewayProviderRegistry registry);
 
+    protected final Path resolveConfigAndCreateDefaultConfig(String fileName) {
+        final Path config = resolveConfig(fileName);
+
+        if (fileName.lastIndexOf('.') > -1) {
+            final String fileExtension = fileName.substring(fileName.lastIndexOf('.'));
+            final String defaultConfigName = fileName.replace(fileExtension, ".default" + fileExtension);
+            final Path defaultConfig = bootstrap().configDirectory().resolve(defaultConfigName);
+            copyDefaultConfig(fileName, defaultConfig);
+        }
+
+        return config;
+    }
+
     protected final Path resolveConfig(String fileName) {
         Path configFile = bootstrap().configDirectory().resolve(fileName);
 

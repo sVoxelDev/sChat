@@ -29,6 +29,7 @@ import java.util.UUID;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.pointer.Pointers;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Holds the id, name and display name of an identified entity.
@@ -42,11 +43,8 @@ record IdentityImpl(@NonNull UUID uniqueId, @NonNull Pointers pointers) implemen
     static final Identity NIL = Identity.identity(NIL_IDENTITY_ID, "", Component.empty());
 
     @Override
-    public String toString() {
-        return "IdentityImpl{" +
-            "uniqueId=" + uniqueId + "," +
-            "name=" + name() +
-            '}';
+    public @NotNull String toString() {
+        return name();
     }
 
     @Override
