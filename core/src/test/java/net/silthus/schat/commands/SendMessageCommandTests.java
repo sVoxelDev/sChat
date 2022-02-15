@@ -104,7 +104,7 @@ class SendMessageCommandTests {
 
             @BeforeEach
             void setUp() {
-                eventBus = new EventBusMock();
+                eventBus = EventBusMock.eventBusMock();
                 channel = randomChannel();
             }
 
@@ -166,7 +166,7 @@ class SendMessageCommandTests {
 
         @BeforeEach
         void setUp() {
-            eventBus = new EventBusMock();
+            eventBus = EventBusMock.eventBusMock();
             SendMessageCommand.prototype(builder -> builder.eventBus(eventBus));
             onEvent(event -> eventCalled = true);
         }

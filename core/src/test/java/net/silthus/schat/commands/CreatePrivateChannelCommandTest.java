@@ -31,6 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
 import static net.silthus.schat.channel.ChannelSettings.HIDDEN;
 import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
@@ -46,7 +47,7 @@ class CreatePrivateChannelCommandTest {
 
     @BeforeEach
     void setUp() {
-        CreatePrivateChannelCommand.prototype(builder -> builder.messenger(messenger));
+        CreatePrivateChannelCommand.prototype(builder -> builder.messenger(messenger).channelRepository(createInMemoryChannelRepository()));
     }
 
     @Test

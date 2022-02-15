@@ -27,6 +27,9 @@ package net.silthus.schat.platform.commands;
 import cloud.commandframework.Command;
 import cloud.commandframework.arguments.standard.StringArgument;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.commands.JoinChannelCommand;
+import net.silthus.schat.commands.LeaveChannelCommand;
+import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.commands.parser.ChannelArgument;
 import net.silthus.schat.platform.sender.Sender;
@@ -41,14 +44,22 @@ import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.platform.locale.Messages.JOIN_CHANNEL_ERROR;
+import static net.silthus.schat.platform.locale.Messages.LEFT_CHANNEL;
 import static net.silthus.schat.policies.JoinChannelPolicy.DENY;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ChannelCommandsTests extends CommandTest {
 
+    private Channel channel;
+    private EventBusMock eventBus;
+
     @BeforeEach
     void setUp() {
         commands.register(new ChannelCommands());
+        channel = addRandomChannel();
+        eventBus = EventBusMock.eventBusMock();
+        LeaveChannelCommand.prototype(builder -> builder.eventBus(eventBus));
+        JoinChannelCommand.prototype(builder -> builder.eventBus(eventBus));
     }
 
     private Channel addRandomChannel() {
@@ -64,23 +75,16 @@ class ChannelCommandsTests extends CommandTest {
     @Nested
     @DisplayName("/channel join <channel>")
     class joinChannel {
-        private static final String JOIN_CHANNEL_CMD = "ch ";
 
         @Test
         void given_invalid_chanel_join_command_fails() {
-            cmdFails(JOIN_CHANNEL_CMD + "foobar", ChannelArgument.ChannelParseException.class);
+            cmdFails("ch " + "foobar", ChannelArgument.ChannelParseException.class);
         }
 
         @Nested class given_valid_channel {
-            private Channel channel;
-
-            @BeforeEach
-            void setUp() {
-                channel = addRandomChannel();
-            }
 
             private void executeJoinCommand() {
-                cmd(JOIN_CHANNEL_CMD + channel.key());
+                cmd("ch " + channel.key());
             }
 
             @Test
@@ -120,13 +124,30 @@ class ChannelCommandsTests extends CommandTest {
         }
     }
 
+    @DisplayName("/channel leave <channel>")
+    @Nested class leave_channel {
+        @BeforeEach
+        void setUp() {
+            chatter.join(channel);
+        }
+
+        private void executeLeaveCommand() {
+            cmd("leave " + channel.key());
+        }
+
+        @Test
+        void can_leave_channel() {
+            executeLeaveCommand();
+            chatter.assertNotJoinedChannel(channel);
+            assertLastMessageIs(LEFT_CHANNEL.build(channel));
+        }
+    }
+
     @DisplayName("/channel message <channel> <message>")
     @Nested class quick_message {
-        private Channel channel;
 
         @BeforeEach
         void setUp() {
-            channel = addRandomChannel();
             chatter.join(channel);
             // TODO: add events to channel repository and dynamically register commands for join with /<channel_name> and quickmessage: /<channel_name> <message>
             Command<Sender> command = commandManager.commandBuilder(channel.key())

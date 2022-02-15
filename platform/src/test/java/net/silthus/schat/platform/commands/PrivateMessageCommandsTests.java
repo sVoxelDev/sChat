@@ -27,6 +27,8 @@ package net.silthus.schat.platform.commands;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.commands.CreatePrivateChannelCommand;
+import net.silthus.schat.commands.SendMessageCommand;
+import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.platform.locale.Messages;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -41,12 +43,15 @@ class PrivateMessageCommandsTests extends CommandTest {
 
     public static final String TEXT = "Hi you there!";
     private ChatterMock target;
+    private EventBusMock eventBus;
 
     @BeforeEach
     void setUp() {
         commands.register(new PrivateMessageCommands());
         target = addChatter(randomChatter());
+        eventBus = EventBusMock.eventBusMock();
         CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(channelRepository));
+        SendMessageCommand.prototype(builder -> builder.eventBus(eventBus));
     }
 
     @DisplayName("/tell <player>")

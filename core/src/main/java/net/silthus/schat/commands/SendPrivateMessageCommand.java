@@ -54,9 +54,9 @@ public class SendPrivateMessageCommand implements Command {
         return prototype.apply(new Builder(source, target, text));
     }
 
-    private final Chatter source;
-    private final Chatter target;
-    private final Component text;
+    private final @NonNull Chatter source;
+    private final @NonNull Chatter target;
+    private final @NonNull Component text;
     private final boolean setActive;
 
     public SendPrivateMessageCommand(Builder builder) {

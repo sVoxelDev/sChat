@@ -31,21 +31,28 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.commands.LeaveChannelCommand;
 import net.silthus.schat.events.Cancellable;
 import net.silthus.schat.events.SChatEvent;
-import net.silthus.schat.policies.JoinChannelPolicy;
+import net.silthus.schat.policies.ChannelPolicy;
+import net.silthus.schat.policies.LeaveChannelPolicy;
 
+/**
+ * The event is fired before a chatter leaves a channel and allows the manipulation of the {@link LeaveChannelPolicy} and outcome of the {@link LeaveChannelCommand}.
+ *
+ * <p>The event will not be triggered if the channel is left directly via {@link Chatter#leave(Channel)}.</p>
+ */
 @Getter
 @Setter
 @Accessors(fluent = true)
-@EqualsAndHashCode(of = {"chatter", "channel", "policy"})
-public class PreJoinChannelEvent implements SChatEvent, Cancellable {
+@EqualsAndHashCode(of = {"chatter", "channel"})
+public class LeaveChannelEvent implements SChatEvent, Cancellable {
     private final Chatter chatter;
     private final Channel channel;
     private final AtomicBoolean cancellationState = new AtomicBoolean(false);
-    private JoinChannelPolicy policy;
+    private ChannelPolicy policy;
 
-    public PreJoinChannelEvent(Chatter chatter, Channel channel, JoinChannelPolicy policy) {
+    public LeaveChannelEvent(Chatter chatter, Channel channel, ChannelPolicy policy) {
         this.chatter = chatter;
         this.channel = channel;
         this.policy = policy;

@@ -22,41 +22,18 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.eventbus;
+package net.silthus.schat.events.channel;
 
-import java.util.LinkedList;
-import java.util.Queue;
-import lombok.NonNull;
-import net.silthus.schat.channel.ChannelPrototype;
-import net.silthus.schat.commands.SendMessageCommand;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.events.SChatEvent;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-public class EventBusMock extends EventBusImpl {
-
-    public static EventBusMock eventBusMock() {
-        return new EventBusMock();
-    }
-
-    private final Queue<SChatEvent> events = new LinkedList<>();
-
-    protected EventBusMock() {
-        ChannelPrototype.configure(this);
-        SendMessageCommand.prototype(builder -> builder.eventBus(this));
-    }
-
-    @Override
-    public <E extends SChatEvent> E post(@NonNull E event) {
-        events.add(event);
-        return super.post(event);
-    }
-
-    public <E extends SChatEvent> void assertEventFired(E event) {
-        assertThat(events).contains(event);
-    }
-
-    public <E extends SChatEvent> void assertNoEventFired(E event) {
-        assertThat(events).doesNotContain(event);
-    }
+/**
+ * The event is fired after a chatter has joined a channel.
+ *
+ * <p>Not to be mistaken by {@link JoinChannelEvent} which is fired before a chatter joins the channel.</p>
+ *
+ * <p>The event will not fire on subsequent joins to a channel the chatter is already a member of.</p>
+ */
+public record JoinedChannelEvent(Chatter chatter, Channel channel) implements SChatEvent {
 }

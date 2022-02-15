@@ -105,15 +105,9 @@ public interface Messages {
         );
     };
 
-    // Unable to join the channel: {0}.
-    Args1<Channel> JOIN_CHANNEL_ERROR = channel -> prefixed(translatable()
-        .key("schat.command.channel.join.error")
-        .color(RED)
-        .args(channel.displayName())
-        .append(FULL_STOP)
-    );
-
-    // Joined the channel: {0}.
+    /**
+     * Joined the channel: {0}.
+     */
     Args1<Channel> JOINED_CHANNEL = channel -> prefixed(translatable()
         .key("schat.command.channel.join.success")
         .color(GREEN)
@@ -121,7 +115,39 @@ public interface Messages {
         .append(FULL_STOP)
     );
 
-    // Join a channel with /channel join <channel>.
+    /**
+     * Unable to join the channel: {0}.
+     */
+    Args1<Channel> JOIN_CHANNEL_ERROR = channel -> prefixed(translatable()
+        .key("schat.command.channel.join.error")
+        .color(RED)
+        .args(channel.displayName())
+        .append(FULL_STOP)
+    );
+
+    /**
+     * Left the channel: {0}.
+     */
+    Args1<Channel> LEFT_CHANNEL = channel -> prefixed(translatable()
+        .key("schat.command.channel.leave.success")
+        .color(GREEN)
+        .args(channel.displayName())
+        .append(FULL_STOP)
+    );
+
+    /**
+     * Unable to leave the channel: {0}.
+     */
+    Args1<Channel> LEAVE_CHANNEL_ERROR = channel -> prefixed(translatable()
+        .key("schat.command.channel.leave.error")
+        .color(RED)
+        .args(channel.displayName())
+        .append(FULL_STOP)
+    );
+
+    /**
+     * Join a channel with {@code /channel join <channel>}.
+     */
     Args0 JOIN_CHANNEL_COMMAND = () -> translatable()
         .key("schat.suggest.command.join-channel")
         .color(RED)
@@ -131,7 +157,9 @@ public interface Messages {
         ).append(FULL_STOP)
         .build();
 
-    // No active channel to send message to. Join a channel with /channel join <channel>.
+    /**
+     * No active channel to send message to. Join a channel with {@code /channel join <channel>}.
+     */
     Args0 CANNOT_CHAT_NO_ACTIVE_CHANNEL = () -> prefixed(translatable()
         .key("schat.chat.no-active-channel")
         .color(RED)
@@ -140,10 +168,12 @@ public interface Messages {
         .build()
     );
 
+    /**
+     * You cannot chat with yourself, sorry :(.
+     */
     Args0 CANNOT_SEND_PM_TO_SELF = () -> prefixed(translatable()
         .key("schat.command.pm.cannot-send-to-self")
         .color(RED)
-        .append(FULL_STOP)
     );
 
     static TextComponent prefixed(ComponentLike component) {

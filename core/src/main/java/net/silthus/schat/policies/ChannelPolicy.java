@@ -22,41 +22,13 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.eventbus;
+package net.silthus.schat.policies;
 
-import java.util.LinkedList;
-import java.util.Queue;
-import lombok.NonNull;
-import net.silthus.schat.channel.ChannelPrototype;
-import net.silthus.schat.commands.SendMessageCommand;
-import net.silthus.schat.events.SChatEvent;
+import java.util.function.BiPredicate;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-public class EventBusMock extends EventBusImpl {
-
-    public static EventBusMock eventBusMock() {
-        return new EventBusMock();
-    }
-
-    private final Queue<SChatEvent> events = new LinkedList<>();
-
-    protected EventBusMock() {
-        ChannelPrototype.configure(this);
-        SendMessageCommand.prototype(builder -> builder.eventBus(this));
-    }
-
-    @Override
-    public <E extends SChatEvent> E post(@NonNull E event) {
-        events.add(event);
-        return super.post(event);
-    }
-
-    public <E extends SChatEvent> void assertEventFired(E event) {
-        assertThat(events).contains(event);
-    }
-
-    public <E extends SChatEvent> void assertNoEventFired(E event) {
-        assertThat(events).doesNotContain(event);
-    }
+public interface ChannelPolicy extends BiPredicate<Chatter, Channel>, Policy {
+    JoinChannelPolicy ALLOW = (chatter, channel) -> true;
+    JoinChannelPolicy DENY = (chatter, channel) -> false;
 }

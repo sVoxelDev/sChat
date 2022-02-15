@@ -29,6 +29,7 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterMock;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.message.Message;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,6 +56,7 @@ class SendPrivateMessageCommandTests {
     void setUp() {
         repository = createInMemoryChannelRepository();
         CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(repository));
+        SendMessageCommand.prototype(builder -> builder.eventBus(EventBus.empty()));
         source = randomChatter();
         target = randomChatter();
     }

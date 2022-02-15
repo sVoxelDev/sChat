@@ -27,6 +27,8 @@ package net.silthus.schat.features;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.ChatterMock;
+import net.silthus.schat.commands.JoinChannelCommand;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.chatter.ChatterJoinedServerEvent;
 import org.jetbrains.annotations.NotNull;
@@ -52,11 +54,12 @@ class AutoJoinChannelsFeatureTest {
     void setUp() {
         channelRepository = createInMemoryChannelRepository();
         AutoJoinChannelsFeature feature = new AutoJoinChannelsFeature(channelRepository);
-        events = new EventBusMock();
+        events = EventBusMock.eventBusMock();
         feature.bind(events);
         channel = channelWith(AUTO_JOIN, true);
         channelRepository.add(channel);
         chatter = randomChatter();
+        JoinChannelCommand.prototype(builder -> builder.eventBus(EventBus.empty()));
     }
 
     private void triggerJoinEvent() {

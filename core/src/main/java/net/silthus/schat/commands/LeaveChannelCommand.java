@@ -35,78 +35,73 @@ import net.silthus.schat.command.Command;
 import net.silthus.schat.command.CommandBuilder;
 import net.silthus.schat.command.Result;
 import net.silthus.schat.eventbus.EventBus;
-import net.silthus.schat.events.channel.JoinChannelEvent;
-import net.silthus.schat.events.channel.JoinedChannelEvent;
+import net.silthus.schat.events.channel.LeaveChannelEvent;
+import net.silthus.schat.events.channel.LeftChannelEvent;
 
-import static net.silthus.schat.command.Result.error;
+import static net.silthus.schat.command.Result.failure;
 import static net.silthus.schat.command.Result.success;
 
 @Getter
 @Accessors(fluent = true)
-public class JoinChannelCommand implements Command {
+public class LeaveChannelCommand implements Command {
 
     @Getter
     @Setter
-    private static @NonNull Function<Builder, Builder> prototype = builder -> builder;
+    private static @NonNull Function<LeaveChannelCommand.Builder, LeaveChannelCommand.Builder> prototype = builder -> builder;
 
-    public static Result joinChannel(Chatter chatter, Channel channel) {
-        return joinChannelBuilder(chatter, channel).create().execute();
+    public static Result leaveChannel(Chatter chatter, Channel channel) {
+        return leaveChannelBuilder(chatter, channel).execute();
     }
 
-    public static Builder joinChannelBuilder(Chatter chatter, Channel channel) {
-        return prototype().apply(new Builder(chatter, channel));
+    public static LeaveChannelCommand.Builder leaveChannelBuilder(Chatter chatter, Channel channel) {
+        return prototype().apply(new LeaveChannelCommand.Builder(chatter, channel));
     }
 
     private final @NonNull Chatter chatter;
     private final @NonNull Channel channel;
     private final @NonNull EventBus eventBus;
 
-    protected JoinChannelCommand(Builder builder) {
+    protected LeaveChannelCommand(Builder builder) {
         this.chatter = builder.chatter;
         this.channel = builder.channel;
         this.eventBus = builder.eventBus;
     }
 
+    @Override
     public Result execute() {
-        JoinChannelEvent event = firePreJoinChannelEvent();
+        final LeaveChannelEvent event = fireLeaveChannelEvent();
         if (event.isNotCancelled() && event.policy().test(chatter, channel))
-            return joinChannelAndUpdateView(chatter, channel);
+            return leaveChannel();
         else
-            return handleJoinChannelError(chatter, channel);
+            return failure();
     }
 
-    private JoinChannelEvent firePreJoinChannelEvent() {
-        return eventBus.post(new JoinChannelEvent(chatter, channel, channel.joinPolicy()));
-    }
-
-    private Result joinChannelAndUpdateView(Chatter chatter, Channel channel) {
-        if (chatter.isJoined(channel))
-            return success();
-        chatter.join(channel);
-        eventBus.post(new JoinedChannelEvent(chatter, channel));
+    private Result leaveChannel() {
+        chatter.leave(channel);
+        fireLeftChannelEvent();
         return success();
     }
 
-    private Result handleJoinChannelError(Chatter chatter, Channel channel) {
-        chatter.leave(channel);
-        return error(new AccessDenied());
+    private LeaveChannelEvent fireLeaveChannelEvent() {
+        return eventBus.post(new LeaveChannelEvent(chatter, channel, channel.leavePolicy()));
+    }
+
+    private void fireLeftChannelEvent() {
+        eventBus.post(new LeftChannelEvent(chatter, channel));
     }
 
     @Getter
     @Setter
     @Accessors(fluent = true)
-    public static class Builder extends CommandBuilder<Builder, JoinChannelCommand> {
+    public static class Builder extends CommandBuilder<LeaveChannelCommand.Builder, LeaveChannelCommand> {
         private final Chatter chatter;
         private final Channel channel;
         private EventBus eventBus;
 
         protected Builder(Chatter chatter, Channel channel) {
-            super(JoinChannelCommand::new);
+            super(LeaveChannelCommand::new);
             this.chatter = chatter;
             this.channel = channel;
         }
-    }
-
-    public static final class AccessDenied extends Error {
     }
 }

@@ -25,13 +25,16 @@
 package net.silthus.schat.channel;
 
 import java.util.Optional;
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.message.Messages;
 import net.silthus.schat.message.Targets;
 import net.silthus.schat.pointer.Configured;
 import net.silthus.schat.pointer.Pointer;
+import net.silthus.schat.policies.ChannelPolicy;
 import net.silthus.schat.policies.JoinChannelPolicy;
+import net.silthus.schat.policies.LeaveChannelPolicy;
 import net.silthus.schat.policies.Policy;
 import net.silthus.schat.policies.SendChannelMessagePolicy;
 import net.silthus.schat.repository.Entity;
@@ -39,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import static net.silthus.schat.policies.JoinChannelPolicy.JOIN_CHANNEL_POLICY;
+import static net.silthus.schat.policies.LeaveChannelPolicy.LEAVE_CHANNEL_POLICY;
 import static net.silthus.schat.policies.SendChannelMessagePolicy.SEND_CHANNEL_MESSAGE_POLICY;
 
 public sealed interface Channel extends Entity<String>, Configured.Modifiable<Channel>, MessageTarget permits ChannelImpl {
@@ -61,33 +65,37 @@ public sealed interface Channel extends Entity<String>, Configured.Modifiable<Ch
 
     @NotNull @Unmodifiable Messages messages();
 
-    <P extends Policy> Optional<P> policy(Class<P> policy);
+    <P extends Policy> @NotNull Optional<P> policy(@NonNull Class<P> policy);
 
-    default JoinChannelPolicy joinPolicy() {
+    default @NotNull ChannelPolicy joinPolicy() {
         return policy(JoinChannelPolicy.class).orElse(JOIN_CHANNEL_POLICY);
     }
 
-    default SendChannelMessagePolicy sendMessagePolicy() {
+    default @NotNull ChannelPolicy leavePolicy() {
+        return policy(LeaveChannelPolicy.class).orElse(LEAVE_CHANNEL_POLICY);
+    }
+
+    default @NotNull SendChannelMessagePolicy sendMessagePolicy() {
         return policy(SendChannelMessagePolicy.class).orElse(SEND_CHANNEL_MESSAGE_POLICY);
     }
 
     @NotNull @Unmodifiable Targets targets();
 
-    void addTarget(MessageTarget target);
+    void addTarget(@NonNull MessageTarget target);
 
-    void removeTarget(MessageTarget target);
+    void removeTarget(@NonNull MessageTarget target);
 
     void updateTargets();
 
     interface Builder extends Configured.Builder<Builder> {
 
-        Builder name(Component displayName);
+        Builder name(@NonNull Component displayName);
 
-        Builder targets(Targets targets);
+        Builder targets(@NonNull Targets targets);
 
-        <P extends Policy> Builder policy(Class<P> type, P policy);
+        <P extends Policy> Builder policy(@NonNull Class<P> type, @NonNull P policy);
 
-        Channel create();
+        @NotNull Channel create();
     }
 
     final class InvalidKey extends RuntimeException {

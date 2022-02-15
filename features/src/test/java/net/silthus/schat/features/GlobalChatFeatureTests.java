@@ -56,7 +56,7 @@ class GlobalChatFeatureTests implements Messenger {
 
     @BeforeEach
     void setUp() {
-        events = new EventBusMock();
+        events = EventBusMock.eventBusMock();
         final GsonProvider gsonProvider = GsonProvider.createGsonProvider();
         gsonProvider.registerTypeAdapter(ChannelSerializer.CHANNEL_TYPE, ChannelSerializer.createChannelSerializer(ChannelRepository.createInMemoryChannelRepository(), false));
         serializer = PluginMessageSerializer.gsonSerializer(gsonProvider);

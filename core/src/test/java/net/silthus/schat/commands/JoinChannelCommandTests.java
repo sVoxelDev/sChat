@@ -28,8 +28,8 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.command.Result;
 import net.silthus.schat.eventbus.EventBusMock;
-import net.silthus.schat.events.channel.PostChatterJoinChannelEvent;
-import net.silthus.schat.events.channel.PreJoinChannelEvent;
+import net.silthus.schat.events.channel.JoinChannelEvent;
+import net.silthus.schat.events.channel.JoinedChannelEvent;
 import net.silthus.schat.policies.JoinChannelPolicy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -55,7 +55,7 @@ class JoinChannelCommandTests {
 
     @BeforeEach
     void setUp() {
-        eventBus = new EventBusMock();
+        eventBus = EventBusMock.eventBusMock();
         chatter = randomChatter();
         channel = channelWith(builder -> builder.policy(JoinChannelPolicy.class, ALLOW));
         JoinChannelCommand.prototype(builder -> builder.eventBus(eventBus));
@@ -72,12 +72,12 @@ class JoinChannelCommandTests {
     @Test
     void pre_join_channel_event_is_fired() {
         joinChannel();
-        eventBus.assertEventFired(new PreJoinChannelEvent(chatter, channel, ALLOW));
+        eventBus.assertEventFired(new JoinChannelEvent(chatter, channel, ALLOW));
     }
 
     @Test
     void given_cancelled_pre_join_event_then_join_fails() {
-        eventBus.on(PreJoinChannelEvent.class, event -> event.cancelled(true));
+        eventBus.on(JoinChannelEvent.class, event -> event.cancelled(true));
         assertJoinChannelError();
     }
 
@@ -110,7 +110,7 @@ class JoinChannelCommandTests {
         @Test
         void then_the_post_join_channel_event_is_fired() {
             joinChannel();
-            eventBus.assertEventFired(new PostChatterJoinChannelEvent(chatter, channel));
+            eventBus.assertEventFired(new JoinedChannelEvent(chatter, channel));
         }
 
         @Nested class given_already_joined {
@@ -149,7 +149,7 @@ class JoinChannelCommandTests {
         @Test
         void then_no_post_join_channel_event_is_fired() {
             assertJoinChannelError();
-            eventBus.assertNoEventFired(new PostChatterJoinChannelEvent(chatter, channel));
+            eventBus.assertNoEventFired(new JoinedChannelEvent(chatter, channel));
         }
 
         @Nested class given_already_joined {

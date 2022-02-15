@@ -26,6 +26,7 @@ package net.silthus.schat.commands;
 
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.ChatterMock;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTargetSpy;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +49,7 @@ class ChatCommandTest {
     void setUp() {
         chatter = randomChatter();
         target = new MessageTargetSpy();
+        SendMessageCommand.prototype(builder -> builder.eventBus(EventBus.empty()));
     }
 
     @NotNull
