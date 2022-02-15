@@ -53,7 +53,7 @@ class ConnectionListenerTests {
     void setUp() {
         chatterRepository = createInMemoryChatterRepository();
         messenger = new MessagingServiceMock();
-        eventBus = new EventBusMock();
+        eventBus = EventBusMock.eventBusMock();
         scheduler = new SchedulerMock();
         listener = new ConnectionListener(chatterRepository, ChatterMock::randomChatter, messenger, eventBus, scheduler) {};
         sender = randomSender();

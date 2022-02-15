@@ -81,6 +81,12 @@ public final class ChannelSettings {
      * <p>Default: {@code false}</p>
      */
     public static final Setting<Boolean> AUTO_JOIN = setting(Boolean.class, "auto_join", false);
+    /**
+     * Forces the player to stay in the channel preventing him from leaving.
+     *
+     * <p>Default: {@code false}</p>
+     */
+    public static final Setting<Boolean> FORCED = setting(Boolean.class, "force", false);
 
     private ChannelSettings() {
     }

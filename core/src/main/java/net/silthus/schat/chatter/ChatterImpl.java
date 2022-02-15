@@ -123,7 +123,7 @@ non-sealed class ChatterImpl implements Chatter {
     @Override
     public boolean isJoined(@Nullable Channel channel) {
         if (channel == null) return false;
-        return channels.contains(channel);
+        return channels.contains(channel) && channel.targets().contains(this);
     }
 
     @Override

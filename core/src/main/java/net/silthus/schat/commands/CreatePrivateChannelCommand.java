@@ -41,7 +41,6 @@ import net.silthus.schat.messenger.Messenger;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
 import static net.silthus.schat.channel.ChannelSettings.HIDDEN;
 import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
@@ -65,10 +64,10 @@ public class CreatePrivateChannelCommand implements Command {
         return prototype.apply(new Builder(source, target));
     }
 
-    private final Chatter source;
-    private final Chatter target;
-    private final ChannelRepository repository;
-    private final Messenger messenger;
+    private final @NonNull Chatter source;
+    private final @NonNull Chatter target;
+    private final @NonNull ChannelRepository repository;
+    private final @NonNull Messenger messenger;
 
     protected CreatePrivateChannelCommand(Builder builder) {
         this.source = builder.source;
@@ -131,8 +130,8 @@ public class CreatePrivateChannelCommand implements Command {
 
         private final Chatter source;
         private final Chatter target;
-        private ChannelRepository channelRepository = createInMemoryChannelRepository();
-        private Messenger messenger = Messenger.empty();
+        private ChannelRepository channelRepository;
+        private Messenger messenger;
 
         protected Builder(Chatter source, Chatter target) {
             super(CreatePrivateChannelCommand::new);

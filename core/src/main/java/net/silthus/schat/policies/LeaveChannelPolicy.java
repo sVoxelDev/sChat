@@ -22,41 +22,13 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.eventbus;
+package net.silthus.schat.policies;
 
-import java.util.LinkedList;
-import java.util.Queue;
-import lombok.NonNull;
-import net.silthus.schat.channel.ChannelPrototype;
-import net.silthus.schat.commands.SendMessageCommand;
-import net.silthus.schat.events.SChatEvent;
+import static net.silthus.schat.channel.ChannelSettings.FORCED;
 
-import static org.assertj.core.api.Assertions.assertThat;
+public interface LeaveChannelPolicy extends ChannelPolicy {
 
-public class EventBusMock extends EventBusImpl {
+    LeaveChannelPolicy CANNOT_LEAVE_FORCED_CHANNEL = (chatter, channel) -> channel.isNot(FORCED);
 
-    public static EventBusMock eventBusMock() {
-        return new EventBusMock();
-    }
-
-    private final Queue<SChatEvent> events = new LinkedList<>();
-
-    protected EventBusMock() {
-        ChannelPrototype.configure(this);
-        SendMessageCommand.prototype(builder -> builder.eventBus(this));
-    }
-
-    @Override
-    public <E extends SChatEvent> E post(@NonNull E event) {
-        events.add(event);
-        return super.post(event);
-    }
-
-    public <E extends SChatEvent> void assertEventFired(E event) {
-        assertThat(events).contains(event);
-    }
-
-    public <E extends SChatEvent> void assertNoEventFired(E event) {
-        assertThat(events).doesNotContain(event);
-    }
+    LeaveChannelPolicy LEAVE_CHANNEL_POLICY = CANNOT_LEAVE_FORCED_CHANNEL;
 }

@@ -28,6 +28,8 @@ import be.seeseemelk.mockbukkit.entity.PlayerMock;
 import java.util.UUID;
 import net.silthus.schat.bukkit.BukkitTests;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.commands.SendMessageCommand;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.ui.ViewProviderStub;
 import org.bukkit.OfflinePlayer;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +47,7 @@ class BukkitChatterFactoryTests extends BukkitTests {
     @BeforeEach
     void setUp() {
         factory = new BukkitChatterFactory(audiences, new ViewProviderStub());
+        SendMessageCommand.prototype(builder -> builder.eventBus(EventBus.empty()));
     }
 
     private Chatter create(UUID id) {

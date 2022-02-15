@@ -46,6 +46,7 @@ import net.silthus.schat.message.Targets;
 import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.policies.JoinChannelPolicy;
+import net.silthus.schat.policies.LeaveChannelPolicy;
 import net.silthus.schat.policies.Policy;
 import net.silthus.schat.policies.SendChannelMessagePolicy;
 import org.jetbrains.annotations.NotNull;
@@ -55,6 +56,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.commands.SendMessageResult.failure;
 import static net.silthus.schat.policies.JoinChannelPolicy.JOIN_CHANNEL_POLICY;
+import static net.silthus.schat.policies.LeaveChannelPolicy.LEAVE_CHANNEL_POLICY;
 import static net.silthus.schat.policies.SendChannelMessagePolicy.SEND_CHANNEL_MESSAGE_POLICY;
 
 @Getter
@@ -65,7 +67,8 @@ final class ChannelImpl implements Channel {
 
     private static final Function<ChannelImpl.Builder, ChannelImpl.Builder> DEFAULTS = builder -> builder
         .policy(JoinChannelPolicy.class, JOIN_CHANNEL_POLICY)
-        .policy(SendChannelMessagePolicy.class, SEND_CHANNEL_MESSAGE_POLICY);
+        .policy(SendChannelMessagePolicy.class, SEND_CHANNEL_MESSAGE_POLICY)
+        .policy(LeaveChannelPolicy.class, LEAVE_CHANNEL_POLICY);
 
     @Setter
     private static Function<ChannelImpl.Builder, ChannelImpl.Builder> prototype = builder -> builder;
@@ -100,7 +103,7 @@ final class ChannelImpl implements Channel {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <P extends Policy> Optional<P> policy(Class<P> policy) {
+    public <P extends Policy> @NotNull Optional<P> policy(@NonNull Class<P> policy) {
         return Optional.ofNullable((P) policies.get(policy));
     }
 
@@ -110,12 +113,12 @@ final class ChannelImpl implements Channel {
     }
 
     @Override
-    public void addTarget(MessageTarget user) {
+    public void addTarget(@NonNull MessageTarget user) {
         targets.add(user);
     }
 
     @Override
-    public void removeTarget(MessageTarget target) {
+    public void removeTarget(@NonNull MessageTarget target) {
         targets.remove(target);
     }
 
@@ -176,19 +179,19 @@ final class ChannelImpl implements Channel {
         }
 
         @Override
-        public @NotNull Builder targets(Targets targets) {
+        public @NotNull Builder targets(@NonNull Targets targets) {
             this.targets = targets;
             return this;
         }
 
         @Override
-        public <P extends Policy> @NotNull Builder policy(Class<P> type, P policy) {
+        public <P extends Policy> @NotNull Builder policy(@NonNull Class<P> type, @NotNull P policy) {
             policies.put(type, policy);
             return this;
         }
 
         @Override
-        public ChannelImpl create() {
+        public @NotNull ChannelImpl create() {
             return new ChannelImpl(this);
         }
 

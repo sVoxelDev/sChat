@@ -33,6 +33,9 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterMock;
+import net.silthus.schat.commands.CreatePrivateChannelCommand;
+import net.silthus.schat.commands.SendMessageCommand;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.ui.view.View;
@@ -47,6 +50,7 @@ import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
+import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.channel.ChannelSettings.PRIORITY;
 import static net.silthus.schat.chatter.ChatterMock.chatterMock;
 import static net.silthus.schat.commands.CreatePrivateChannelCommand.createPrivateChannel;
@@ -75,6 +79,8 @@ class TabbedChannelsViewTests {
     void setUp() {
         chatter = chatterMock(Identity.identity("Player"));
         view = tabbedChannels(chatter);
+        CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(createInMemoryChannelRepository()));
+        SendMessageCommand.prototype(builder -> builder.eventBus(EventBus.empty()));
     }
 
     @NotNull

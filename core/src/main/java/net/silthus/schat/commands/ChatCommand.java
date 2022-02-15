@@ -42,6 +42,7 @@ import static net.silthus.schat.message.Message.message;
 
 public class ChatCommand implements Command {
 
+    // TODO: add event bus
     public static Message chat(Chatter chatter, Component text) throws NoActiveChannel {
         return new Builder(chatter).text(text).create().execute().message();
     }
@@ -50,8 +51,8 @@ public class ChatCommand implements Command {
         return new Builder(chatter);
     }
 
-    private final Chatter chatter;
-    private final Component text;
+    private final @NonNull Chatter chatter;
+    private final @NonNull Component text;
 
     protected ChatCommand(Builder builder) {
         this.chatter = builder.chatter;

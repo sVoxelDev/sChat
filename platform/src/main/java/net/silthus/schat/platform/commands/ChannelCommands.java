@@ -35,9 +35,12 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.sender.Sender;
 
+import static net.silthus.schat.commands.LeaveChannelCommand.leaveChannel;
 import static net.silthus.schat.commands.SetActiveChannelCommand.setActiveChannel;
 import static net.silthus.schat.platform.locale.Messages.JOINED_CHANNEL;
 import static net.silthus.schat.platform.locale.Messages.JOIN_CHANNEL_ERROR;
+import static net.silthus.schat.platform.locale.Messages.LEAVE_CHANNEL_ERROR;
+import static net.silthus.schat.platform.locale.Messages.LEFT_CHANNEL;
 
 public final class ChannelCommands implements Command {
 
@@ -58,6 +61,19 @@ public final class ChannelCommands implements Command {
             }
         } catch (Throwable e) {
             JOIN_CHANNEL_ERROR.send(sender, channel);
+        }
+    }
+
+    @ProxiedBy("leave")
+    @CommandMethod("channel leave <channel>")
+    @CommandPermission("schat.player.channel.leave")
+    void leaveChannelCmd(Sender sender, Chatter chatter, @Argument("channel") Channel channel) {
+        if (!chatter.isJoined(channel))
+            return;
+        if (leaveChannel(chatter, channel).wasSuccessful()) {
+            LEFT_CHANNEL.actionBar(sender, channel);
+        } else {
+            LEAVE_CHANNEL_ERROR.send(sender, channel);
         }
     }
 

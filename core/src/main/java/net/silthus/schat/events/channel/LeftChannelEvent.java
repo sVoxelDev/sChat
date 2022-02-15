@@ -26,12 +26,13 @@ package net.silthus.schat.events.channel;
 
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.commands.LeaveChannelCommand;
 import net.silthus.schat.events.SChatEvent;
 
 /**
- * The event is fired after a chatter has joined a channel.
+ * The event is fired after a chatter has left a channel.
  *
- * <p>The event will not fire on subsequent joins to a channel the chatter is already a member of.</p>
+ * <p>The event will not fire if {@link LeaveChannelCommand#leaveChannel(Chatter, Channel)} fails or {@link LeaveChannelEvent} is cancelled.</p>
  */
-public record PostChatterJoinChannelEvent(Chatter chatter, Channel channel) implements SChatEvent {
+public record LeftChannelEvent(Chatter chatter, Channel channel) implements SChatEvent {
 }

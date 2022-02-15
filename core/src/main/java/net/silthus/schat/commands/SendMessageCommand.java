@@ -57,8 +57,8 @@ public class SendMessageCommand implements Command {
         return prototype().apply(new Builder(message));
     }
 
-    private final Message message;
-    private final EventBus eventBus;
+    private final @NonNull Message message;
+    private final @NonNull EventBus eventBus;
 
     public SendMessageCommand(Builder builder) {
         this.message = builder.message;
@@ -111,7 +111,7 @@ public class SendMessageCommand implements Command {
     public static class Builder extends CommandBuilder<Builder, SendMessageCommand> {
 
         private final Message message;
-        private EventBus eventBus = EventBus.empty();
+        private EventBus eventBus;
 
         public Builder(Message message) {
             super(SendMessageCommand::new);

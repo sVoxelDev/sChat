@@ -24,19 +24,13 @@
 
 package net.silthus.schat.policies;
 
-import java.util.function.BiPredicate;
-import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelSettings;
-import net.silthus.schat.chatter.Chatter;
 
 import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 
 @FunctionalInterface
-public interface JoinChannelPolicy extends BiPredicate<Chatter, Channel>, Policy {
-
-    JoinChannelPolicy ALLOW = (chatter, channel) -> true;
-    JoinChannelPolicy DENY = (chatter, channel) -> false;
+public interface JoinChannelPolicy extends ChannelPolicy {
 
     JoinChannelPolicy CAN_JOIN_PRIVATE_CHANNEL = (chatter, channel) -> {
         if (channel.is(PRIVATE))
