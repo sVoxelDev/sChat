@@ -65,8 +65,7 @@ public class ChatterViewModel implements Configured.Modifiable<ChatterViewModel>
     }
 
     public @NotNull @Unmodifiable List<Message> messages() {
-        return Stream.concat(activeChannelMessages(), chatter.messages().stream())
-            .distinct()
+        return chatter.messages().stream()
             .filter(this::isMessageDisplayed)
             .sorted(MESSAGE_COMPARATOR)
             .toList();
