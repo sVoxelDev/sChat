@@ -25,8 +25,11 @@
 package net.silthus.schat.ui.views;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
@@ -35,9 +38,12 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.pointer.Configured;
+import net.silthus.schat.pointer.Pointered;
 import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.ui.format.ChannelFormat;
+import net.silthus.schat.ui.format.Format;
 import net.silthus.schat.ui.format.PointeredFormat;
 import net.silthus.schat.ui.model.ChatterViewModel;
 import net.silthus.schat.ui.view.View;
@@ -46,6 +52,7 @@ import org.jetbrains.annotations.NotNull;
 import static net.kyori.adventure.text.Component.join;
 import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.JoinConfiguration.newlines;
 import static net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND;
 import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
@@ -53,6 +60,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
 import static net.silthus.schat.pointer.Setting.setting;
 import static net.silthus.schat.pointer.Settings.createSettings;
+import static net.silthus.schat.util.Iterators.lastN;
 
 @Getter
 @Accessors(fluent = true)
@@ -89,7 +97,6 @@ public final class TabbedChannelsView implements View {
     );
 
     private final ChatterViewModel viewModel;
-    private final List<Tab> tabs = new ArrayList<>();
     private final Settings settings = createSettings();
 
     TabbedChannelsView(Chatter chatter) {
@@ -98,9 +105,38 @@ public final class TabbedChannelsView implements View {
 
     @Override
     public Component render() {
-        return renderBlankLines()
-            .append(combineMessagesAndChannels(renderMessages(), renderChannels()))
-            .append(VIEW_MARKER);
+        final TextComponent.Builder content = text();
+        final List<Component> tabNames = new ArrayList<>();
+
+        final List<Tab> tabs = tabs();
+        if (tabs.isEmpty())
+            return renderBlankLines().append(renderMessages()).append(VIEW_MARKER);
+
+        for (final Tab tab : tabs) {
+            if (tab.isActive())
+                content.append(tab.renderContent());
+            tabNames.add(tab.renderName());
+        }
+
+        return content
+            .append(newline())
+            .append(joinTabs(tabNames))
+            .append(VIEW_MARKER)
+            .build();
+    }
+
+    @NotNull
+    private Component joinTabs(List<Component> tabs) {
+        if (tabs.isEmpty())
+            return Component.empty();
+        else
+            return join(get(CHANNEL_JOIN_CONFIG), tabs);
+    }
+
+    private List<Tab> tabs() {
+        return viewModel().channels().stream()
+            .map(channel -> new Tab(viewModel, channel, settings))
+            .toList();
     }
 
     private Component renderBlankLines() {
@@ -125,14 +161,14 @@ public final class TabbedChannelsView implements View {
     }
 
     private Component renderMessages() {
-        return join(newline(), getRenderedMessages());
+        return join(newlines(), getRenderedMessages());
     }
 
-    private Component renderChannels() {
+    private Component renderCombinedChannels() {
         if (viewModel.channels().isEmpty())
             return Component.empty();
         else
-            return join(get(CHANNEL_JOIN_CONFIG), getRenderedChannels());
+            return join(get(CHANNEL_JOIN_CONFIG), renderChannels());
     }
 
     private List<Component> getRenderedMessages() {
@@ -152,7 +188,7 @@ public final class TabbedChannelsView implements View {
         return viewModel.isSystemMessage(message) || viewModel.isSentToActiveChannel(message);
     }
 
-    private List<Component> getRenderedChannels() {
+    private List<Component> renderChannels() {
         final ArrayList<Component> channels = new ArrayList<>();
         for (final Channel channel : viewModel.channels()) {
             if (viewModel.isActiveChannel(channel))
@@ -163,13 +199,80 @@ public final class TabbedChannelsView implements View {
         return channels;
     }
 
-    public static class Tab {
-        public Channel channel() {
-            return null;
+    @Getter
+    @Setter
+    @Accessors(fluent = true)
+    @EqualsAndHashCode(of = {"viewModel", "channel"})
+    public static class Tab implements Configured {
+        private final ChatterViewModel viewModel;
+        private final Channel channel;
+        private final Settings settings;
+
+        private Format<Pointered> messageFormat;
+        private Format<Channel> activeChannelFormat;
+        private Format<Channel> inactiveChannelFormat;
+
+        protected Tab(ChatterViewModel viewModel, Channel channel, Settings settings) {
+            this.viewModel = viewModel;
+            this.channel = channel;
+            this.settings = settings;
+
+            this.messageFormat = get(MESSAGE_FORMAT);
+            this.activeChannelFormat = new ChannelFormat(viewModel.chatter(), channel.get(FORMAT).get(ACTIVE_CHANNEL));
+            this.inactiveChannelFormat = new ChannelFormat(viewModel.chatter(), channel.get(FORMAT).get(INACTIVE_CHANNEL));
         }
 
-        public List<Message> messages() {
-            return null;
+        public Component renderName() {
+            if (isActive())
+                return activeChannelFormat().format(channel());
+            else
+                return inactiveChannelFormat().format(channel());
+        }
+
+        public Component renderContent() {
+            if (!isActive())
+                return Component.empty();
+            else
+                return renderBlankLines()
+                    .append(join(newlines(), renderMessages()));
+        }
+
+        private List<Component> renderMessages() {
+            return messages().stream()
+                .map(message -> messageFormat().format(message))
+                .toList();
+        }
+
+        public boolean isActive() {
+            return viewModel().isActiveChannel(channel());
+        }
+
+        @NotNull
+        private Collection<Message> messages() {
+            return viewModel().messages().stream()
+                .filter(this::isMessageDisplayed)
+                .collect(lastN(100));
+        }
+
+        private boolean isMessageDisplayed(Message message) {
+            if (viewModel.noActiveChannel() && viewModel.isSystemMessage(message))
+                return true;
+            if (viewModel.isPrivateChannel())
+                return viewModel.isSentToActiveChannel(message) && !viewModel().isSystemMessage(message);
+            return viewModel.isSystemMessage(message) || viewModel.isSentToActiveChannel(message);
+        }
+
+        private Component renderBlankLines() {
+            final int blankLineAmount = Math.max(0, get(VIEW_HEIGHT) - messages().size());
+            return blankLines(blankLineAmount);
+        }
+
+        private Component blankLines(int amount) {
+            final TextComponent.Builder builder = text();
+            for (int i = 0; i < amount; i++) {
+                builder.append(newline());
+            }
+            return builder.build();
         }
     }
 }

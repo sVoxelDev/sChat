@@ -24,16 +24,31 @@
 
 package net.silthus.schat.util;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
 
 public final class Iterators {
+
+    public static <T> Collector<T, ?, List<T>> lastN(int n) {
+        return Collector.<T, Deque<T>, List<T>>of(ArrayDeque::new, (acc, t) -> {
+            if (acc.size() == n)
+                acc.pollFirst();
+            acc.add(t);
+        }, (acc1, acc2) -> {
+            while (acc2.size() < n && !acc1.isEmpty())
+                acc2.addFirst(acc1.pollLast());
+            return acc2;
+        }, ArrayList::new);
+    }
 
     private Iterators() {
     }

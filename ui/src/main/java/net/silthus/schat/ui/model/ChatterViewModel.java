@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
@@ -45,6 +46,7 @@ import static net.silthus.schat.pointer.Settings.createSettings;
 
 @Getter
 @Accessors(fluent = true)
+@EqualsAndHashCode(of = {"chatter"})
 public class ChatterViewModel implements Configured.Modifiable<ChatterViewModel> {
 
     private static final Comparator<Channel> CHANNEL_COMPARATOR = Comparator.<Channel, Integer>
