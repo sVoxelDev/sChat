@@ -25,13 +25,21 @@
 package net.silthus.schat.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public final class Iterators {
+
     private Iterators() {
+    }
+
+    public static <T> Supplier<Optional<T>> tryGetFirstIn(Collection<T> collection) {
+        return () -> collection.stream().findFirst();
     }
 
     public static <E> boolean tryIterate(Iterable<E> iterable, Throwing.Consumer<E> action) {

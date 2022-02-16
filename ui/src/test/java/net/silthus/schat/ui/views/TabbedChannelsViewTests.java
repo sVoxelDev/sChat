@@ -108,6 +108,11 @@ class TabbedChannelsViewTests {
         assertEquals(expected, PLAIN_TEXT_SERIALIZER.serialize(view.render()).trim());
     }
 
+    private void assertTextContains(String... expected) {
+        assertThat(PLAIN_TEXT_SERIALIZER.serialize(view.render()).trim())
+            .contains(expected);
+    }
+
     private void assertTextDoesNotContain(String... unexpected) {
         assertThat(PLAIN_TEXT_SERIALIZER.serialize(view.render()).trim())
             .doesNotContain(unexpected);
@@ -289,8 +294,9 @@ class TabbedChannelsViewTests {
             }
 
             @Test
-            void when_no_channel_is_active_then_messages_are_not_displayed() {
-                assertTextDoesNotContain("Bob: one", "Bob: two");
+            void when_no_channel_is_active_then_first_channel_is_selected_active_and_displays_message() {
+                assertTextContains("Bob: one");
+                assertTextDoesNotContain("Bob: two");
             }
 
             @Nested class given_channel_one_is_active {
