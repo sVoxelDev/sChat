@@ -77,7 +77,9 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
 
     void activeChannel(@Nullable Channel activeChannel);
 
-    boolean isActiveChannel(@Nullable Channel channel);
+    default boolean isActiveChannel(@Nullable Channel channel) {
+        return activeChannel().map(c -> c.equals(channel)).orElse(false);
+    }
 
     void join(@NonNull Channel channel);
 

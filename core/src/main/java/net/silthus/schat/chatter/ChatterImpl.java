@@ -101,11 +101,6 @@ non-sealed class ChatterImpl implements Chatter {
     }
 
     @Override
-    public boolean isActiveChannel(@Nullable Channel channel) {
-        return activeChannel != null && activeChannel.equals(channel);
-    }
-
-    @Override
     public @NotNull @Unmodifiable List<Channel> channels() {
         return List.copyOf(channels);
     }
