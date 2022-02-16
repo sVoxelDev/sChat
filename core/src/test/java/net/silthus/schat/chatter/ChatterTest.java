@@ -95,6 +95,11 @@ class ChatterTest {
                 .isPresent()
                 .get().isEqualTo(channel);
         }
+
+        @Test
+        void then_isActive_returns_true_for_selected_channel() {
+            assertThat(chatter.isActiveChannel(channel)).isTrue();
+        }
     }
 
     @Nested class given_valid_channel {
