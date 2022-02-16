@@ -50,6 +50,7 @@ import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
+import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.channel.ChannelSettings.PRIORITY;
 import static net.silthus.schat.chatter.ChatterMock.chatterMock;
@@ -124,6 +125,10 @@ class TabbedChannelsViewTests {
 
     private void assertViewDoesNotContain(String... unexpected) {
         assertThat(COMPONENT_SERIALIZER.serialize(view.render()).trim()).doesNotContain(unexpected);
+    }
+
+    private void assertViewContains(String... expected) {
+        assertThat(COMPONENT_SERIALIZER.serialize(view.render()).trim()).contains(expected);
     }
 
     @Nested class given_null_chatter {
@@ -232,9 +237,14 @@ class TabbedChannelsViewTests {
         }
 
         @Nested class when_it_is_inactive {
+            @BeforeEach
+            void setUp() {
+                chatter.activeChannel(randomChannel());
+            }
+
             @Test
             void then_channel_click_executes_join_command() {
-                assertViewRenders("| <gray><click:run_command:\"/channel join test\">test</click></gray> |");
+                assertViewContains("| <gray><click:run_command:\"/channel join test\">test</click></gray> |");
             }
         }
     }
