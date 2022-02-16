@@ -24,8 +24,9 @@
 
 package net.silthus.schat.ui.format;
 
+import net.silthus.schat.ui.view.View;
+
 @FunctionalInterface
 public interface Format<T> {
-    net.kyori.adventure.text.Component format(T type);
-
+    net.kyori.adventure.text.Component format(View view, T type);
 }

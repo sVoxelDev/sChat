@@ -32,6 +32,7 @@ import net.silthus.schat.message.Messages;
 import net.silthus.schat.message.Targets;
 import net.silthus.schat.pointer.Configured;
 import net.silthus.schat.pointer.Pointer;
+import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.policies.ChannelPolicy;
 import net.silthus.schat.policies.JoinChannelPolicy;
 import net.silthus.schat.policies.LeaveChannelPolicy;
@@ -41,6 +42,7 @@ import net.silthus.schat.repository.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
+import static net.silthus.schat.pointer.Setting.setting;
 import static net.silthus.schat.policies.JoinChannelPolicy.JOIN_CHANNEL_POLICY;
 import static net.silthus.schat.policies.LeaveChannelPolicy.LEAVE_CHANNEL_POLICY;
 import static net.silthus.schat.policies.SendChannelMessagePolicy.SEND_CHANNEL_MESSAGE_POLICY;
@@ -48,6 +50,12 @@ import static net.silthus.schat.policies.SendChannelMessagePolicy.SEND_CHANNEL_M
 public sealed interface Channel extends Entity<String>, Configured.Modifiable<Channel>, MessageTarget permits ChannelImpl {
 
     Pointer<String> KEY = Pointer.pointer(String.class, "key");
+    /**
+     * The display name of the channel as it is shown in messages and the view.
+     *
+     * <p>Default: {@link Channel#key()}</p>
+     */
+    Setting<Component> DISPLAY_NAME = setting(Component.class, "name", Component.empty());
 
     static @NotNull Channel createChannel(String key) {
         return channel(key).create();
@@ -60,7 +68,7 @@ public sealed interface Channel extends Entity<String>, Configured.Modifiable<Ch
     @NotNull String key();
 
     default @NotNull Component displayName() {
-        return get(ChannelSettings.DISPLAY_NAME);
+        return get(DISPLAY_NAME);
     }
 
     @NotNull @Unmodifiable Messages messages();

@@ -24,5 +24,7 @@
 
 package net.silthus.schat.ui.format;
 
-public interface PointeredFormat extends Format<net.silthus.schat.pointer.Pointered> {
+import net.silthus.schat.pointer.Pointered;
+
+public interface PointeredFormat<T extends Pointered> extends Format<T> {
 }

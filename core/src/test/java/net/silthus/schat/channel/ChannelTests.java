@@ -42,7 +42,7 @@ import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
-import static net.silthus.schat.channel.ChannelSettings.DISPLAY_NAME;
+import static net.silthus.schat.channel.Channel.DISPLAY_NAME;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static net.silthus.schat.policies.SendChannelMessagePolicy.DENY;

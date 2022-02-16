@@ -28,11 +28,10 @@ import java.io.File;
 import java.util.List;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
+import net.silthus.schat.ui.view.View;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -45,9 +44,7 @@ import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 import static net.silthus.schat.platform.config.TestConfigurationAdapter.testConfigAdapter;
-import static net.silthus.schat.ui.format.ChannelFormat.COLOR;
-import static net.silthus.schat.ui.views.TabbedChannelsView.ACTIVE_CHANNEL;
-import static net.silthus.schat.ui.views.TabbedChannelsView.FORMAT;
+import static net.silthus.schat.ui.views.TabbedChannelsView.CHANNEL_FORMAT;
 import static net.silthus.schat.ui.views.TabbedChannelsView.MESSAGE_FORMAT;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -80,14 +77,8 @@ class ConfigTests {
     }
 
     @Test
-    void loads_channel_format() {
-        final TextColor color = getTestChannelConfig().settings().get(FORMAT).get(ACTIVE_CHANNEL).get(COLOR);
-        assertThat(color).isEqualTo(NamedTextColor.RED);
-    }
-
-    @Test
     void loads_message_format() {
-        final Component format = getTestChannelConfig().settings().get(FORMAT).get(MESSAGE_FORMAT).format(message("Hey").source(Identity.identity("Notch")).create());
+        final Component format = getTestChannelConfig().settings().get(CHANNEL_FORMAT).get(MESSAGE_FORMAT).format(View.empty(), message("Hey").source(Identity.identity("Notch")).create());
         assertThat(format).isEqualTo(text("Notch", YELLOW).append(text(": Hey", GRAY)));
     }
 
