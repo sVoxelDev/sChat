@@ -28,6 +28,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.ui.view.View;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -50,7 +51,7 @@ class MiniMessageFormatTest {
     }
 
     private void assertFormat(String format, Message.Draft message, String expected) {
-        final Component formatted = new MiniMessageFormat(format).format(message.create()).compact();
+        final Component formatted = new MiniMessageFormat(format).format(View.empty(), message.create()).compact();
         assertThat(SERIALIZER.serialize(formatted)).isEqualTo(expected);
     }
 

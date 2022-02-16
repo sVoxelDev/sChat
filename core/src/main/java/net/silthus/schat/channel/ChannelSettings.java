@@ -24,19 +24,12 @@
 
 package net.silthus.schat.channel;
 
-import net.kyori.adventure.text.Component;
 import net.silthus.schat.pointer.Setting;
 
 import static net.silthus.schat.pointer.Setting.setting;
 
 public final class ChannelSettings {
 
-    /**
-     * The display name of the channel as it is shown in messages and the view.
-     *
-     * <p>Default: {@link Channel#key()}</p>
-     */
-    public static final Setting<Component> DISPLAY_NAME = setting(Component.class, "name", Component.empty());
     /**
      * The priority of the channel may determine the position in the view.
      *

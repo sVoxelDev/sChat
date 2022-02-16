@@ -90,7 +90,7 @@ final class ChannelImpl implements Channel {
         this.key = builder.key;
         this.settings = builder.settings
             .withStatic(KEY, key)
-            .withStatic(ChannelSettings.DISPLAY_NAME, builder.name)
+            .withStatic(Channel.DISPLAY_NAME, builder.name)
             .create();
         this.targets = builder.targets;
         this.eventBus = builder.eventBus;

@@ -44,9 +44,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
 import static net.silthus.schat.AssertionHelper.assertNPE;
+import static net.silthus.schat.channel.Channel.DISPLAY_NAME;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
@@ -59,9 +62,9 @@ import static net.silthus.schat.commands.SendPrivateMessageCommand.sendPrivateMe
 import static net.silthus.schat.identity.Identity.identity;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
-import static net.silthus.schat.ui.format.ChannelFormat.COLOR;
 import static net.silthus.schat.ui.view.View.VIEW_HEIGHT;
-import static net.silthus.schat.ui.views.TabbedChannelsView.ACTIVE_CHANNEL;
+import static net.silthus.schat.ui.views.TabbedChannelsView.ACTIVE_CHANNEL_FORMAT;
+import static net.silthus.schat.ui.views.TabbedChannelsView.CHANNEL_FORMAT;
 import static net.silthus.schat.ui.views.TabbedChannelsView.CHANNEL_JOIN_CONFIG;
 import static net.silthus.schat.ui.views.TabbedChannelsView.MESSAGE_FORMAT;
 import static net.silthus.schat.ui.views.Views.tabbedChannels;
@@ -174,7 +177,7 @@ class TabbedChannelsViewTests {
             @Test
             void uses_format() {
                 view = tabbedChannels(chatter)
-                    .set(MESSAGE_FORMAT, msg ->
+                    .set(MESSAGE_FORMAT, (view, msg) ->
                         text("<")
                             .append(msg.getOrDefault(Message.SOURCE, Identity.nil()).displayName())
                             .append(text("> "))
@@ -226,7 +229,7 @@ class TabbedChannelsViewTests {
                 @BeforeEach
                 void setUp() {
                     view = tabbedChannels(chatter);
-                    view.get(ACTIVE_CHANNEL).set(COLOR, RED);
+                    channel.get(CHANNEL_FORMAT).set(ACTIVE_CHANNEL_FORMAT, (view, type) -> type.getOrDefault(DISPLAY_NAME, empty()).color(RED).decorate(UNDERLINED));
                 }
 
                 @Test
@@ -244,7 +247,7 @@ class TabbedChannelsViewTests {
 
             @Test
             void then_channel_click_executes_join_command() {
-                assertViewContains("| <gray><click:run_command:\"/channel join test\">test</click></gray> |");
+                assertViewContains("<click:run_command:\"/channel join test\">test</click>");
             }
         }
     }
@@ -270,11 +273,14 @@ class TabbedChannelsViewTests {
         }
 
         @Test
-        void displays_private_messages() {
+        void displays_private_messages() throws InterruptedException {
             sendPrivateMessage(chatter, target, text("Hi"));
-            assertTextRenders("""
-                Player: Hi
-                | target |""");
+            Thread.sleep(1L);
+            sendPrivateMessage(target, chatter, text("Hey back"));
+            assertViewRenders("""
+               <yellow><lang:schat.chat.private.you></yellow><gray>: Hi</gray>
+               <aqua>target</aqua><gray>: Hey back</gray>
+               | <green><underlined>target</underlined></green> |""");
         }
     }
 
@@ -385,7 +391,7 @@ class TabbedChannelsViewTests {
                 No Source!
                 Player: Hey
                 Player2: Hello
-                | <green><underlined>zzz</underlined></green> | <gray><click:run_command:"/channel join aaa">aaa</click></gray> |""");
+                | <green><underlined>zzz</underlined></green> | <gray><hover:show_text:"<gray><lang:schat.hover.join-channel:\\"aaa\\">"><click:run_command:"/channel join aaa">aaa</click></hover></gray> |""");
         }
     }
 

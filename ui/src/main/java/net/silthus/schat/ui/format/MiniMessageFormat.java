@@ -33,11 +33,12 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.silthus.schat.pointer.Pointer;
 import net.silthus.schat.pointer.Pointered;
+import net.silthus.schat.ui.view.View;
 import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Accessors(fluent = true)
-public class MiniMessageFormat implements PointeredFormat {
+public class MiniMessageFormat<T extends Pointered> implements PointeredFormat<T> {
     private final MiniMessage formatter = MiniMessage.miniMessage();
     private final String format;
 
@@ -46,7 +47,7 @@ public class MiniMessageFormat implements PointeredFormat {
     }
 
     @Override
-    public Component format(Pointered type) {
+    public Component format(View view, Pointered type) {
         return formatter.deserialize(format, TagResolver.standard(), resolvePlaceholders(type, ""));
     }
 
