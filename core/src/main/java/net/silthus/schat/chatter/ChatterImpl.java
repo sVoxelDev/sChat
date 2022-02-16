@@ -41,6 +41,7 @@ import net.silthus.schat.commands.SendMessageResult;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.pointer.Pointers;
+import net.silthus.schat.util.Iterators;
 import net.silthus.schat.view.ViewConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -95,7 +96,8 @@ non-sealed class ChatterImpl implements Chatter {
 
     @Override
     public @NotNull Optional<Channel> activeChannel() {
-        return Optional.ofNullable(activeChannel);
+        return Optional.ofNullable(activeChannel)
+            .or(Iterators.tryGetFirstIn(channels));
     }
 
     @Override
@@ -130,6 +132,8 @@ non-sealed class ChatterImpl implements Chatter {
     public void leave(Channel channel) {
         channel.removeTarget(this);
         this.channels.remove(channel);
+        if (channel.equals(activeChannel))
+            activeChannel = null;
     }
 
     public boolean hasPermission(String permission) {
