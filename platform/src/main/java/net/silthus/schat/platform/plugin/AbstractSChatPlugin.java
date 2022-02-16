@@ -26,8 +26,10 @@ package net.silthus.schat.platform.plugin;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.eventbus.EventBus;
@@ -128,7 +130,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
             final String fileExtension = fileName.substring(fileName.lastIndexOf('.'));
             final String defaultConfigName = fileName.replace(fileExtension, ".default" + fileExtension);
             final Path defaultConfig = bootstrap().configDirectory().resolve(defaultConfigName);
-            copyDefaultConfig(fileName, defaultConfig);
+            copyFromResource(fileName, defaultConfig, StandardCopyOption.REPLACE_EXISTING);
         }
 
         return config;
@@ -139,15 +141,15 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
         if (!Files.exists(configFile)) {
             createConfigDirectory(configFile);
-            copyDefaultConfig(fileName, configFile);
+            copyFromResource(fileName, configFile);
         }
 
         return configFile;
     }
 
-    private void copyDefaultConfig(String fileName, Path configFile) {
+    private void copyFromResource(String fileName, Path configFile, CopyOption... options) {
         try (InputStream is = bootstrap().resourceAsStream(fileName)) {
-            Files.copy(is, configFile);
+            Files.copy(is, configFile, options);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
