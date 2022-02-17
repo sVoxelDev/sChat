@@ -25,7 +25,7 @@
 package net.silthus.schat.platform.config;
 
 import java.io.File;
-import java.util.List;
+import java.util.Map;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
@@ -60,7 +60,7 @@ class ConfigTests {
     }
 
     private Channel getTestChannelConfig() {
-        return config.get(CHANNELS).stream()
+        return config.get(CHANNELS).values().stream()
             .filter(channel -> channel.key().equals("test"))
             .findFirst().orElseThrow()
             .toChannel();
@@ -89,10 +89,11 @@ class ConfigTests {
     void set_values_writes_and_loads_when_reloaded() {
         final TextComponent name = text("Test Name");
         final ChannelConfig channel = ChannelConfig.fromChannel(channelWith("test", builder -> builder.name(name)));
-        final List<ChannelConfig> channels = config.get(CHANNELS);
-        channels.add(channel);
+        final Map<String, ChannelConfig> configs = config.get(CHANNELS);
+        configs.put(channel.key(), channel);
 
-        config.set(CHANNELS, channels);
+        config.set(CHANNELS, configs);
+        config.save();
         config.reload();
 
         assertThat(getTestChannelConfig().displayName()).isEqualTo(name);

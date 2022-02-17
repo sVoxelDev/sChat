@@ -25,8 +25,11 @@
 package net.silthus.schat.platform.config.adapter;
 
 import java.io.File;
+import java.nio.file.Path;
 
 public interface ConfigurationAdapter extends ConfigurationSection {
+
+    Path configPath();
 
     void save() throws SaveFailed;
 

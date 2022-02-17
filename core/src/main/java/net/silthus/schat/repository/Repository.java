@@ -33,6 +33,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 /**
@@ -106,7 +107,7 @@ public interface Repository<K, E extends Entity<K>> {
      * @param key the key of the entity
      * @since next
      */
-    void remove(@NotNull K key);
+    @Nullable E remove(@NotNull K key);
 
     /**
      * Removes the given entity from the repository if it exists.
@@ -116,8 +117,8 @@ public interface Repository<K, E extends Entity<K>> {
      * @param entity the entity to remove
      * @since next
      */
-    default void remove(@NotNull E entity) {
-        remove(entity.key());
+    default @Nullable E remove(@NotNull E entity) {
+        return remove(entity.key());
     }
 
     /**
@@ -166,5 +167,8 @@ public interface Repository<K, E extends Entity<K>> {
     }
 
     class NotFound extends RuntimeException {
+        public <K> NotFound(K id) {
+            super("No entity with the id '" + id + "' exists.");
+        }
     }
 }

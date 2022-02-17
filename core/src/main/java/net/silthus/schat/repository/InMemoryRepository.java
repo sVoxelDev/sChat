@@ -81,7 +81,7 @@ public abstract class InMemoryRepository<K, E extends Entity<K>> implements Repo
     @Override
     public @NotNull E get(@NotNull final K id) throws NotFound {
         if (!entities.containsKey(id))
-            throw new NotFound();
+            throw new NotFound(id);
         return entities.get(id);
     }
 
@@ -91,7 +91,7 @@ public abstract class InMemoryRepository<K, E extends Entity<K>> implements Repo
     }
 
     @Override
-    public void remove(@NotNull final K key) {
-        entities.remove(key);
+    public E remove(@NotNull final K key) {
+        return entities.remove(key);
     }
 }

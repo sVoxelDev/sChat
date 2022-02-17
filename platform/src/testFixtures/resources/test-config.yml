@@ -10,4 +10,8 @@ channels:
         active_channel:
           color: red
           decoration: underlined
+  global:
+    name: Global
+    settings:
+      global: true
   invalid: null

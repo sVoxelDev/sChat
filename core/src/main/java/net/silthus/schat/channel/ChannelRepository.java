@@ -40,5 +40,8 @@ public interface ChannelRepository extends Repository<String, Channel> {
     }
 
     final class DuplicateChannel extends RuntimeException {
+        public DuplicateChannel(Channel channel) {
+            super("A channel with the key '" + channel.key() + "' already exists.");
+        }
     }
 }

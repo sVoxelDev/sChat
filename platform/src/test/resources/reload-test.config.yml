@@ -1,0 +1,9 @@
+messenger: mock
+channels:
+  test:
+    name: Test
+    settings:
+      protected: false
+      auto_join: true
+  new_channel:
+    name: Foobar

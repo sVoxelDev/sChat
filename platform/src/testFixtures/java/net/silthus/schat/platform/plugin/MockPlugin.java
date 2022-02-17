@@ -22,52 +22,66 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.velocity;
+package net.silthus.schat.platform.plugin;
 
-import lombok.Getter;
-import lombok.experimental.Accessors;
+import net.silthus.schat.platform.config.TestConfigurationAdapter;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.messaging.GatewayProviderRegistry;
-import net.silthus.schat.platform.plugin.AbstractSChatProxyPlugin;
+import net.silthus.schat.platform.plugin.bootstrap.Bootstrap;
 import net.silthus.schat.platform.sender.Sender;
-import net.silthus.schat.velocity.adapter.VelocityMessengerGateway;
-import net.silthus.schat.velocity.adapter.VelocitySenderFactory;
 
-import static net.silthus.schat.platform.config.adapter.ConfigurationAdapters.YAML;
-import static net.silthus.schat.velocity.adapter.VelocityMessengerGateway.GATEWAY_TYPE;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@Getter
-@Accessors(fluent = true)
-public final class SChatVelocityProxy extends AbstractSChatProxyPlugin {
+public class MockPlugin extends AbstractSChatPlugin {
 
-    private final VelocityBootstrap bootstrap;
-    private VelocitySenderFactory senderFactory;
+    private boolean reloadCalled;
 
-    public SChatVelocityProxy(VelocityBootstrap bootstrap) {
-        this.bootstrap = bootstrap;
+    @Override
+    protected void onReload() {
+        this.reloadCalled = true;
+    }
+
+    public void assertReloadCalled() {
+        assertThat(reloadCalled).isTrue();
+    }
+
+    @Override
+    protected void onLoad() {
+
+    }
+
+    @Override
+    protected void onEnable() {
+
+    }
+
+    @Override
+    protected void onDisable() {
+
     }
 
     @Override
     public Sender console() {
-        return senderFactory().wrap(bootstrap.proxy().getConsoleCommandSource());
-    }
-
-    @Override
-    protected ConfigurationAdapter createConfigurationAdapter() {
-        return YAML.create(resolveConfigAndCreateDefaultConfig("config.yml").toFile());
+        return null;
     }
 
     @Override
     protected void setupSenderFactory() {
-        senderFactory = new VelocitySenderFactory(bootstrap.proxy());
+
+    }
+
+    @Override
+    protected ConfigurationAdapter createConfigurationAdapter() {
+        return TestConfigurationAdapter.testConfigAdapter();
     }
 
     @Override
     protected void registerMessengerGateway(GatewayProviderRegistry registry) {
-        registry.register(GATEWAY_TYPE, consumer -> VelocityMessengerGateway.createVelocityMessengerGateway(bootstrap()));
+
     }
 
     @Override
-    protected void registerListeners() {
+    public Bootstrap bootstrap() {
+        return null;
     }
 }

@@ -48,7 +48,7 @@ public final class BungeecordProxyPlugin extends AbstractSChatProxyPlugin {
     }
 
     @Override
-    public Sender getConsole() {
+    public Sender console() {
         return senderFactory.wrap(bootstrap().proxy().getConsole());
     }
 

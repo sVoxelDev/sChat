@@ -25,7 +25,9 @@
 package net.silthus.schat.platform.config;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.silthus.schat.platform.config.key.ConfigKey;
 import net.silthus.schat.platform.config.key.KeyedConfiguration;
 
@@ -45,14 +47,14 @@ public final class ConfigKeys {
 
     public static final ConfigKey<Boolean> DEBUG = notReloadable(booleanKey("debug", false));
 
-    public static final ConfigKey<List<ChannelConfig>> CHANNELS = modifiable(key(config -> {
-        final ArrayList<ChannelConfig> channels = new ArrayList<>();
+    public static final ConfigKey<Map<String, ChannelConfig>> CHANNELS = modifiable(key(config -> {
+        final HashMap<String, ChannelConfig> channels = new HashMap<>();
         for (final String key : config.keys("channels", new ArrayList<>())) {
-            channels.add(requireNonNullElse(config.get("channels." + key, ChannelConfig.class), new ChannelConfig()).key(key));
+            channels.put(key, requireNonNullElse(config.get("channels." + key, ChannelConfig.class), new ChannelConfig()).key(key));
         }
         return channels;
     }), (c, value) -> {
-        for (final ChannelConfig channel : value) {
+        for (final ChannelConfig channel : value.values()) {
             c.set("channels." + channel.key(), channel);
         }
     });

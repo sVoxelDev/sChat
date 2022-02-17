@@ -27,11 +27,11 @@ package net.silthus.schat.platform.config.adapter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.function.Function;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.silthus.schat.platform.config.ChannelConfig;
-import net.silthus.schat.platform.config.serializers.ChannelSerializer;
 import net.silthus.schat.platform.config.serializers.ColorSerializer;
 import net.silthus.schat.platform.config.serializers.MiniMessageComponentSerializer;
 import net.silthus.schat.platform.config.serializers.MiniMessageFormatSerializer;
@@ -46,12 +46,13 @@ import org.spongepowered.configurate.loader.AbstractConfigurationLoader;
 import org.spongepowered.configurate.loader.ConfigurationLoader;
 import org.spongepowered.configurate.serialize.TypeSerializerCollection;
 
+@Getter
+@Accessors(fluent = true)
 public abstract class ConfigurateAdapter<T extends AbstractConfigurationLoader.Builder<T, L>, L extends AbstractConfigurationLoader<?>> extends ConfigurateConfigSection implements ConfigurationAdapter {
 
     private static final TypeSerializerCollection SERIALIZERS = TypeSerializerCollection.builder()
         .register(Component.class, new MiniMessageComponentSerializer())
         .register(Settings.class, new SettingsSerializer())
-        .register(ChannelConfig.class, new ChannelSerializer())
         .register(TextColor.class, new ColorSerializer())
         .register(TextDecoration.class, new TextDecorationSerializer())
         .register(Format.class, new MiniMessageFormatSerializer())
@@ -60,9 +61,11 @@ public abstract class ConfigurateAdapter<T extends AbstractConfigurationLoader.B
     private static final Function<ConfigurationOptions, ConfigurationOptions> DEFAULT_OPTIONS = options ->
         options.serializers(serializers -> serializers.registerAll(SERIALIZERS));
 
+    private final Path configPath;
     private final ConfigurationLoader<? extends ConfigurationNode> loader;
 
     protected ConfigurateAdapter(Path path) {
+        this.configPath = path;
         final AbstractConfigurationLoader.Builder<T, L> loader = createLoader(path);
         this.loader = loader.defaultOptions(DEFAULT_OPTIONS.apply(loader.defaultOptions())).build();
     }

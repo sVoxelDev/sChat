@@ -25,6 +25,7 @@
 package net.silthus.schat.platform.plugin;
 
 import cloud.commandframework.CommandManager;
+import java.nio.file.Path;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.chatter.ChatterFactory;
@@ -54,22 +55,22 @@ public class TestServer extends AbstractSChatServerPlugin {
     private static int serverCount = 0;
 
     private final String name;
-    static Command dummyCommand = spy(Command.class);
     private final BootstrapStub bootstrap = new BootstrapStub();
+    private final SenderMock console = SenderMock.randomSender();
+
+    static Command dummyCommand = spy(Command.class);
     private ChatterFactoryStub chatterFactory;
+    private Path configPath;
 
     public TestServer() {
         name = "Server" + ++serverCount;
     }
 
     @Override
-    public Sender getConsole() {
-        return SenderMock.randomSender();
-    }
-
-    @Override
     protected ConfigurationAdapter createConfigurationAdapter() {
-        return testConfigAdapter();
+        final ConfigurationAdapter adapter = testConfigAdapter();
+        configPath = adapter.configPath();
+        return adapter;
     }
 
     @Override

@@ -110,7 +110,6 @@ public class KeyedConfiguration implements Config {
      */
     @Override
     public void reload() {
-        save();
         load();
     }
 

@@ -33,6 +33,7 @@ import net.silthus.schat.message.Targets;
 import net.silthus.schat.pointer.Configured;
 import net.silthus.schat.pointer.Pointer;
 import net.silthus.schat.pointer.Setting;
+import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.policies.ChannelPolicy;
 import net.silthus.schat.policies.JoinChannelPolicy;
 import net.silthus.schat.policies.LeaveChannelPolicy;
@@ -47,7 +48,7 @@ import static net.silthus.schat.policies.JoinChannelPolicy.JOIN_CHANNEL_POLICY;
 import static net.silthus.schat.policies.LeaveChannelPolicy.LEAVE_CHANNEL_POLICY;
 import static net.silthus.schat.policies.SendChannelMessagePolicy.SEND_CHANNEL_MESSAGE_POLICY;
 
-public sealed interface Channel extends Entity<String>, Configured.Modifiable<Channel>, MessageTarget permits ChannelImpl {
+public sealed interface Channel extends Entity<String>, Configured.Modifiable<Channel>, MessageTarget, AutoCloseable permits ChannelImpl {
 
     Pointer<String> KEY = Pointer.pointer(String.class, "key");
     /**
@@ -70,6 +71,8 @@ public sealed interface Channel extends Entity<String>, Configured.Modifiable<Ch
     default @NotNull Component displayName() {
         return get(DISPLAY_NAME);
     }
+
+    @NotNull Channel settings(@NonNull Settings settings);
 
     @NotNull @Unmodifiable Messages messages();
 
@@ -94,6 +97,9 @@ public sealed interface Channel extends Entity<String>, Configured.Modifiable<Ch
     void removeTarget(@NonNull MessageTarget target);
 
     void updateTargets();
+
+    @Override
+    void close();
 
     interface Builder extends Configured.Builder<Builder> {
 

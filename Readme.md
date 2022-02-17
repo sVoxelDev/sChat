@@ -53,10 +53,10 @@ e.g. clicking on a channel will set the channel as active*. However, here are th
 
 ### Admin Commands
 
-| Commands | Alias | Permission | Description |
-| -------- | ----- | ---------- | ----------- |
-| `/schat reload` | | `schat.admin.reload` | Reloads the sChat config and all channels that have changes. This is non disruptive and will not touch unchanged channels. |
-| `/schat broadcast <message>` | `/broadcast <message>` | `schat.admin.broadcast` | Sends a message to all channels and private conversations. Every player will get this message. |
+| Commands | Alias | Permission | Description                                                                                                           |
+| -------- | ----- | ---------- |-----------------------------------------------------------------------------------------------------------------------|
+| `/schat reload` | | `schat.admin.reload` | Reloads the sChat config and all channels that changed. This is non disruptive and will not touch unchanged channels. |
+| `/schat broadcast <message>` | `/broadcast <message>` | `schat.admin.broadcast` | Sends a message to all channels and private conversations. Every player will get this message.                        |
 
 ## Permissions
 
@@ -78,8 +78,8 @@ e.g. clicking on a channel will set the channel as active*. However, here are th
 
 ### Channel Permissions
 
-Every channel that has the `protect: true` flag set will be assigned a `schat.channel.<channel_id>.join` permission. This
-permission is then required to join the channel.
+Every channel that has the `protected: true` flag set will be assigned a `schat.channel.<channel_id>.join` permission.
+This permission is then required to join the channel.
 
 For example the `team` channel requires the `schat.channel.team.join` permission to join it.
 

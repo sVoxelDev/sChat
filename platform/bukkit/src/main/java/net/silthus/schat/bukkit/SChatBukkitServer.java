@@ -69,7 +69,7 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
     }
 
     @Override
-    public Sender getConsole() {
+    public Sender console() {
         return senderFactory().wrap(bootstrap().loader().getServer().getConsoleSender());
     }
 

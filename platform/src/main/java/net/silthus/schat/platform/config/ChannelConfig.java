@@ -32,10 +32,12 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.pointer.Settings;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 @Getter
 @Setter
 @Accessors(fluent = true)
+@ConfigSerializable
 public final class ChannelConfig {
 
     public static ChannelConfig fromChannel(Channel channel) {
