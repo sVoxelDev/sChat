@@ -31,6 +31,7 @@ import net.silthus.schat.events.chatter.ChatterJoinedServerEvent;
 
 import static net.silthus.schat.channel.ChannelSettings.AUTO_JOIN;
 import static net.silthus.schat.commands.JoinChannelCommand.joinChannel;
+import static net.silthus.schat.commands.SetActiveChannelCommand.setActiveChannel;
 
 public class AutoJoinChannelsFeature implements EventListener {
     private final ChannelRepository channelRepository;
@@ -47,6 +48,11 @@ public class AutoJoinChannelsFeature implements EventListener {
     protected void onChatterJoin(ChatterJoinedServerEvent event) {
         channelRepository.all().stream()
             .filter(channel -> channel.is(AUTO_JOIN))
-            .forEach(channel -> joinChannel(event.chatter(), channel));
+            .forEach(channel -> {
+                if (event.chatter().activeChannel().isEmpty())
+                    setActiveChannel(event.chatter(), channel);
+                else
+                    joinChannel(event.chatter(), channel);
+            });
     }
 }
