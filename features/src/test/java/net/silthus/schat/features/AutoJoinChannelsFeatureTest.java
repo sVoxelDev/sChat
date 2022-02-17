@@ -42,6 +42,7 @@ import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelR
 import static net.silthus.schat.channel.ChannelSettings.AUTO_JOIN;
 import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class AutoJoinChannelsFeatureTest {
 
@@ -86,5 +87,13 @@ class AutoJoinChannelsFeatureTest {
         channelRepository.add(channel);
         triggerJoinEvent();
         chatter.assertNotJoinedChannel(channel);
+    }
+
+    @Test
+    void given_no_active_channel_sets_joined_channel_as_active() {
+        final Channel channel = randomChannel();
+        channelRepository.add(channel);
+        triggerJoinEvent();
+        assertThat(chatter.activeChannel().isPresent()).isTrue();
     }
 }
