@@ -1,3 +1,10 @@
+# [1.0.0-alpha.3](https://github.com/sVoxelDev/sChat/compare/v1.0.0-alpha.2...v1.0.0-alpha.3) (2022-02-17)
+
+
+### Bug Fixes
+
+* **release:** properly replace versions in velocity and bungeecord plugins ([0ad8140](https://github.com/sVoxelDev/sChat/commit/0ad81401280a67a8e170c402434a7950b5195cf6))
+
 # [1.0.0-alpha.2](https://github.com/sVoxelDev/sChat/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2022-02-17)
 
 
