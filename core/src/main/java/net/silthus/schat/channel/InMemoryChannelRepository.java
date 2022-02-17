@@ -33,7 +33,7 @@ class InMemoryChannelRepository extends InMemoryRepository<String, Channel> impl
     @Override
     public void add(@NotNull Channel channel) {
         if (contains(channel.key()))
-            throw new DuplicateChannel();
+            throw new DuplicateChannel(channel);
         super.add(channel);
     }
 
@@ -47,9 +47,11 @@ class InMemoryChannelRepository extends InMemoryRepository<String, Channel> impl
         }
 
         @Override
-        public void remove(@NotNull String key) {
-            super.remove(key);
-            log.info("Removed Channel: " + key);
+        public Channel remove(@NotNull String key) {
+            final Channel channel = super.remove(key);
+            if (channel != null)
+                log.info("Removed Channel: " + key);
+            return channel;
         }
     }
 }

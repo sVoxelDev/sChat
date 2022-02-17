@@ -44,7 +44,6 @@ import net.silthus.schat.util.gson.GsonProvider;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.messenger.PluginMessageSerializer.gsonSerializer;
-import static net.silthus.schat.platform.config.ConfigKeys.DEBUG;
 import static net.silthus.schat.platform.locale.Messages.STARTUP_BANNER;
 import static net.silthus.schat.platform.messaging.MessagingService.createMessagingService;
 import static net.silthus.schat.util.gson.GsonProvider.createGsonProvider;
@@ -67,6 +66,8 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
         translationManager = new TranslationManager(bootstrap().configDirectory());
         translationManager.reload();
 
+        eventBus = EventBus.eventBus();
+
         gsonProvider = createGsonProvider();
         serializer = gsonSerializer(gsonProvider);
         gatewayProviderRegistry = new GatewayProviderRegistry();
@@ -80,11 +81,9 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     public final void enable() {
         setupSenderFactory();
 
-        STARTUP_BANNER.send(getConsole(), bootstrap());
+        STARTUP_BANNER.send(console(), bootstrap());
 
         config = loadConfiguration();
-
-        eventBus = createEventBus();
 
         registerMessengerGateway(gatewayProviderRegistry());
         messenger = createMessagingService(gatewayProviderRegistry(), serializer(), config());
@@ -93,6 +92,13 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
     }
 
     protected abstract void onEnable();
+
+    public final void reload() {
+        config().reload();
+        onReload();
+    }
+
+    protected abstract void onReload();
 
     @Override
     public final void disable() {
@@ -104,11 +110,7 @@ public abstract class AbstractSChatPlugin implements SChatPlugin {
 
     protected abstract void onDisable();
 
-    protected EventBus createEventBus() {
-        return EventBus.eventBus(config().get(DEBUG));
-    }
-
-    public abstract Sender getConsole();
+    public abstract Sender console();
 
     protected abstract void setupSenderFactory();
 

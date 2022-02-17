@@ -118,7 +118,7 @@ final class SettingsImpl extends PointersImpl implements Settings {
         for (final Setting<?> setting : settings()) {
             keyValueMap.put(setting.key(), get(setting));
         }
-        return "SettingsImpl{" + keyValueMap + '}';
+        return "Settings{" + keyValueMap + '}';
     }
 
     static final class BuilderImpl implements Settings.Builder {

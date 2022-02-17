@@ -44,10 +44,10 @@ import net.silthus.schat.features.GlobalChatFeature;
 import net.silthus.schat.messenger.Messenger;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
 import net.silthus.schat.platform.chatter.ConnectionListener;
+import net.silthus.schat.platform.commands.AdminCommands;
 import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.commands.PrivateMessageCommands;
-import net.silthus.schat.platform.config.ChannelConfig;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.ui.view.ViewFactory;
 import net.silthus.schat.ui.view.ViewProvider;
@@ -59,7 +59,6 @@ import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelR
 import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
 import static net.silthus.schat.platform.commands.parser.ChannelArgument.registerChannelArgument;
 import static net.silthus.schat.platform.commands.parser.ChatterArgument.registerChatterArgument;
-import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 import static net.silthus.schat.platform.config.ConfigKeys.DEBUG;
 import static net.silthus.schat.ui.view.ViewProvider.cachingViewProvider;
 import static net.silthus.schat.util.gson.types.ChannelSerializer.CHANNEL_TYPE;
@@ -83,6 +82,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     private Commands commands;
 
     private final List<Object> features = new ArrayList<>();
+    private ChannelLoader channelLoader;
 
     protected void onLoad() {
     }
@@ -102,11 +102,17 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
         setupPrototypes();
         loadFeatures();
 
-        loadChannels();
+        this.channelLoader = new ChannelLoader(this);
+        channelLoader.load();
 
         commands = createCommands();
 
         registerListeners();
+    }
+
+    @Override
+    protected void onReload() {
+        channelLoader.load();
     }
 
     @Override
@@ -165,16 +171,8 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
             .forEach(o -> ((EventListener) o).bind(eventBus()));
 
         for (final Object feature : features) {
-            logger().info("\t... " + feature.getClass().getSimpleName() + "\t" + "✔");
+            logger().info("\t✔ " + feature.getClass().getSimpleName());
         }
-    }
-
-    private void loadChannels() {
-        logger().info("Loading channels...");
-        for (final ChannelConfig channelConfig : this.config().get(CHANNELS)) {
-            channelRepository().add(channelConfig.toChannel());
-        }
-        logger().info("... loaded " + channelRepository.keys().size() + " channels.");
     }
 
     @NotNull
@@ -203,6 +201,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     private void registerNativeCommands(Commands commands) {
         commands.register(new ChannelCommands());
         commands.register(new PrivateMessageCommands());
+        commands.register(new AdminCommands(this::reload));
     }
 
     @ApiStatus.OverrideOnly

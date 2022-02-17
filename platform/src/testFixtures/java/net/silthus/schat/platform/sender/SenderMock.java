@@ -100,4 +100,9 @@ public class SenderMock implements Sender {
         reset(permissionHandler);
         when(permissionHandler.hasPermission(anyString())).thenReturn(false);
     }
+
+    public void mockOp() {
+        reset(permissionHandler);
+        when(permissionHandler.hasPermission(anyString())).thenReturn(true);
+    }
 }

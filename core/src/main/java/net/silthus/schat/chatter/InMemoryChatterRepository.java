@@ -40,9 +40,11 @@ class InMemoryChatterRepository extends InMemoryRepository<UUID, Chatter> implem
         }
 
         @Override
-        public void remove(@NotNull UUID key) {
-            super.remove(key);
-            log.info("Removed Chatter: " + key);
+        public Chatter remove(@NotNull UUID key) {
+            final Chatter chatter = super.remove(key);
+            if (chatter != null)
+                log.info("Removed Chatter: " + key);
+            return chatter;
         }
     }
 }

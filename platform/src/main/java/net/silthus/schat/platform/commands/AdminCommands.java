@@ -22,31 +22,32 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.platform.config.serializers;
+package net.silthus.schat.platform.commands;
 
-import java.lang.reflect.Type;
-import net.kyori.adventure.text.Component;
-import net.silthus.schat.platform.config.ChannelConfig;
-import net.silthus.schat.pointer.Settings;
-import org.checkerframework.checker.nullness.qual.Nullable;
-import org.spongepowered.configurate.ConfigurationNode;
-import org.spongepowered.configurate.serialize.SerializationException;
-import org.spongepowered.configurate.serialize.TypeSerializer;
+import cloud.commandframework.CommandManager;
+import cloud.commandframework.annotations.AnnotationParser;
+import cloud.commandframework.annotations.CommandMethod;
+import cloud.commandframework.annotations.CommandPermission;
+import net.silthus.schat.platform.locale.Messages;
+import net.silthus.schat.platform.sender.Sender;
 
-public final class ChannelSerializer implements TypeSerializer<ChannelConfig> {
-    @Override
-    public ChannelConfig deserialize(Type type, ConfigurationNode node) throws SerializationException {
-        final ChannelConfig config = new ChannelConfig();
-        config.name(node.node("name").get(Component.class));
-        config.settings(node.node("settings").get(Settings.class));
-        return config;
+public final class AdminCommands implements Command {
+
+    private final Runnable reloadHandle;
+
+    public AdminCommands(Runnable reloadHandle) {
+        this.reloadHandle = reloadHandle;
     }
 
     @Override
-    public void serialize(Type type, @Nullable ChannelConfig obj, ConfigurationNode node) throws SerializationException {
-        if (obj == null)
-            return;
-        node.node("name").set(Component.class, obj.name());
-        node.node("settings").set(Settings.class, obj.settings());
+    public void register(CommandManager<Sender> commandManager, AnnotationParser<Sender> parser) {
+        parser.parse(this);
+    }
+
+    @CommandMethod("schat reload")
+    @CommandPermission("schat.admin.reload")
+    public void reload(Sender sender) {
+        reloadHandle.run();
+        Messages.RELOAD_SUCCESS.send(sender);
     }
 }

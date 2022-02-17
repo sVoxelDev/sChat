@@ -22,55 +22,28 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.platform.plugin;
+package net.silthus.schat.platform.commands;
 
+import net.silthus.schat.platform.locale.Messages;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
 
-class PluginTests {
+class AdminCommandsTest extends CommandTest {
 
-    @Nested class given_new_plugin {
-        private TestServer plugin;
+    private boolean reloadCalled = false;
 
-        @BeforeEach
-        void setUp() {
-            plugin = new TestServer();
-        }
+    @BeforeEach
+    void setUp() {
+        commands.register(new AdminCommands(() -> reloadCalled = true));
+    }
 
-        @Nested class when_enable_is_called {
-            @BeforeEach
-            void setUp() {
-                plugin.load();
-                plugin.enable();
-            }
-
-            @Test
-            void then_ChannelRepository_is_not_null() {
-                assertThat(plugin.channelRepository()).isNotNull();
-            }
-
-            @Test
-            void then_commands_are_registered() {
-                verify(TestServer.dummyCommand, atLeastOnce()).register(any(), any());
-            }
-
-            @Test
-            void then_config_is_loaded() {
-                assertThat(plugin.config()).isNotNull();
-                assertThat(plugin.config().get(CHANNELS)).isNotNull();
-            }
-
-            @Test
-            void then_channels_are_loaded() {
-                assertThat(plugin.channelRepository().all()).isNotEmpty();
-            }
-        }
+    @Test
+    void reload_calls_reload_and_sends_message() {
+        sender.mockOp();
+        cmd("/schat reload");
+        assertThat(reloadCalled).isTrue();
+        sender.assertLastMessageIs(Messages.RELOAD_SUCCESS.build());
     }
 }

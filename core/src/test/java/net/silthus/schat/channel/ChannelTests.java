@@ -39,10 +39,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.channel.Channel.DISPLAY_NAME;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
-import static net.silthus.schat.channel.Channel.DISPLAY_NAME;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static net.silthus.schat.policies.SendChannelMessagePolicy.DENY;
@@ -166,6 +166,22 @@ class ChannelTests {
             channel.addTarget(target);
             channel.updateTargets();
             target.assertJoinedChannel(channel);
+        }
+    }
+
+    @Nested class close {
+        private ChatterMock chatter;
+
+        @BeforeEach
+        void setUp() {
+            chatter = randomChatter();
+            chatter.join(channel);
+        }
+
+        @Test
+        void removes_chatter_channels() {
+            channel.close();
+            chatter.assertNotJoinedChannel(channel);
         }
     }
 }

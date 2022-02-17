@@ -60,6 +60,7 @@ import static net.silthus.schat.policies.LeaveChannelPolicy.LEAVE_CHANNEL_POLICY
 import static net.silthus.schat.policies.SendChannelMessagePolicy.SEND_CHANNEL_MESSAGE_POLICY;
 
 @Getter
+@Setter
 @Accessors(fluent = true)
 @EqualsAndHashCode(of = {"key"})
 @ToString(of = {"key", "settings", "targets"})
@@ -80,11 +81,11 @@ final class ChannelImpl implements Channel {
     private static final String VALID_KEY_PATTERN = "^[a-zA-Z0-9_-]+$";
 
     private final String key;
-    private final Settings settings;
     private final Targets targets;
     private final transient Messages messages = new Messages();
     private final transient EventBus eventBus;
     private final transient Map<Class<? extends Policy>, Policy> policies;
+    private @NonNull Settings settings;
 
     private ChannelImpl(Builder builder) {
         this.key = builder.key;
@@ -135,6 +136,14 @@ final class ChannelImpl implements Channel {
             return processMessage(message);
         else
             return failure(message);
+    }
+
+    @Override
+    public void close() {
+        for (MessageTarget target : targets())
+            if (target instanceof Chatter chatter)
+                chatter.leave(this);
+        targets.clear();
     }
 
     private SendMessageResult processMessage(Message message) {

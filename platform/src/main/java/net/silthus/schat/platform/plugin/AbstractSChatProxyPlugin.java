@@ -42,6 +42,11 @@ public abstract class AbstractSChatProxyPlugin extends AbstractSChatPlugin {
     }
 
     @Override
+    protected void onReload() {
+
+    }
+
+    @Override
     protected void onDisable() {
     }
 
