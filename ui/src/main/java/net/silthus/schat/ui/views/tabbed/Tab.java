@@ -22,19 +22,15 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.ui.views;
+package net.silthus.schat.ui.views.tabbed;
 
-import lombok.NonNull;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.ui.view.View;
-import net.silthus.schat.ui.views.tabbed.TabbedChannelsView;
+import net.kyori.adventure.text.Component;
 
-public final class Views {
+public interface Tab {
 
-    public static View tabbedChannels(@NonNull Chatter chatter) {
-        return new TabbedChannelsView(chatter);
-    }
+    Component renderName();
 
-    private Views() {
-    }
+    Component renderContent();
+
+    boolean isActive();
 }

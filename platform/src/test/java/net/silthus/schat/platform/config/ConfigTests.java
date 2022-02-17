@@ -44,8 +44,8 @@ import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 import static net.silthus.schat.platform.config.TestConfigurationAdapter.testConfigAdapter;
-import static net.silthus.schat.ui.views.TabbedChannelsView.CHANNEL_FORMAT;
-import static net.silthus.schat.ui.views.TabbedChannelsView.MESSAGE_FORMAT;
+import static net.silthus.schat.ui.views.tabbed.TabbedChannelsView.CHANNEL_FORMAT;
+import static net.silthus.schat.ui.views.tabbed.TabbedChannelsView.MESSAGE_FORMAT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ConfigTests {

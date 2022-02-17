@@ -92,7 +92,7 @@ class BukkitChatterFactoryTests extends BukkitTests {
 
             @Test
             void then_player_receives_message() {
-                assertLastMessageIs(player, "Hey");
+                assertLastMessageContains(player, "Hey");
             }
         }
     }

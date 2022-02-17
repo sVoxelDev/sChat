@@ -62,12 +62,11 @@ import static net.silthus.schat.commands.SendPrivateMessageCommand.sendPrivateMe
 import static net.silthus.schat.identity.Identity.identity;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
-import static net.silthus.schat.ui.view.View.VIEW_HEIGHT;
-import static net.silthus.schat.ui.views.TabbedChannelsView.ACTIVE_CHANNEL_FORMAT;
-import static net.silthus.schat.ui.views.TabbedChannelsView.CHANNEL_FORMAT;
-import static net.silthus.schat.ui.views.TabbedChannelsView.CHANNEL_JOIN_CONFIG;
-import static net.silthus.schat.ui.views.TabbedChannelsView.MESSAGE_FORMAT;
 import static net.silthus.schat.ui.views.Views.tabbedChannels;
+import static net.silthus.schat.ui.views.tabbed.TabbedChannelsView.ACTIVE_CHANNEL_FORMAT;
+import static net.silthus.schat.ui.views.tabbed.TabbedChannelsView.CHANNEL_FORMAT;
+import static net.silthus.schat.ui.views.tabbed.TabbedChannelsView.CHANNEL_JOIN_CONFIG;
+import static net.silthus.schat.ui.views.tabbed.TabbedChannelsView.MESSAGE_FORMAT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -143,20 +142,12 @@ class TabbedChannelsViewTests {
         }
     }
 
-    @Nested class given_no_messages_and_no_channels {
-
-        @Test
-        void renders_view_with_only_empty_lines() {
-            assertEquals("\n".repeat(Math.max(0, view.get(VIEW_HEIGHT))), COMPONENT_SERIALIZER.serialize(view.render()));
-        }
-    }
-
     @Nested class given_single_message {
 
         @Test
         void renders_message_text() {
             final Message message = sendMessage(randomMessage());
-            assertTextRenders(msgText(message));
+            assertTextContains(msgText(message));
         }
     }
 
@@ -169,7 +160,7 @@ class TabbedChannelsViewTests {
 
         @Test
         void renders_source_name_with_message_text() {
-            assertTextRenders("Bob: Hi");
+            assertTextContains("Bob: Hi");
         }
 
         @Nested class and_custom_message_source_format {
@@ -182,7 +173,7 @@ class TabbedChannelsViewTests {
                             .append(msg.getOrDefault(Message.SOURCE, Identity.nil()).displayName())
                             .append(text("> "))
                             .append(msg.getOrDefault(Message.TEXT, Component.empty())));
-                assertTextRenders("<Bob> Hi");
+                assertTextContains("<Bob> Hi");
             }
         }
     }
@@ -193,9 +184,10 @@ class TabbedChannelsViewTests {
         void renders_both_messages() {
             sendMessage("Hey");
             sendMessageWithSource("Silthus", "Yo");
-            assertTextRenders("""
-            Hey
-            Silthus: Yo"""
+            assertViewRenders("""
+                Hey
+                Silthus: Yo
+                | <red><lang:schat.view.no-channels></red> |"""
             );
         }
     }
