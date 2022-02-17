@@ -37,7 +37,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
-import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
 import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
@@ -72,14 +71,6 @@ class SendPrivateMessageCommandTests {
 
     private Message sendPrivateMessageFrom(Chatter source) {
         return send(message().source(source).to(target));
-    }
-
-    private String idOf(Chatter chatter) {
-        return chatter.uniqueId().toString();
-    }
-
-    private String targetId() {
-        return target.uniqueId().toString();
     }
 
     private Channel privateChannel() {
@@ -125,10 +116,8 @@ class SendPrivateMessageCommandTests {
 
     @Test
     void given_setActive_is_false_then_private_channel_is_not_set_as_active() {
-        final Channel channel = randomChannel();
-        source.activeChannel(channel);
         sendPrivateMessageBuilder(source, target, randomText()).setActive(false).execute();
-        assertThat(source.isActiveChannel(channel)).isTrue();
+        assertThat(source.activeChannel()).isEmpty();
         source.assertJoinedChannel(privateChannel().key());
     }
 

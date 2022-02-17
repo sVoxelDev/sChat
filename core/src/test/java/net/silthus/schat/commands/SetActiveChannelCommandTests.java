@@ -27,6 +27,7 @@ package net.silthus.schat.commands;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.command.Result;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.policies.JoinChannelPolicy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -47,6 +48,7 @@ class SetActiveChannelCommandTests {
     void setUp() {
         chatter = ChatterMock.randomChatter();
         channel = channelWith(builder -> builder.policy(JoinChannelPolicy.class, ALLOW));
+        JoinChannelCommand.prototype(builder -> builder.eventBus(EventBus.empty()));
     }
 
     private Result setActiveChannel() {
