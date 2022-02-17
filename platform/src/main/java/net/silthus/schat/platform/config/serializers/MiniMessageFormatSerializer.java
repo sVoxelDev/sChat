@@ -25,23 +25,23 @@
 package net.silthus.schat.platform.config.serializers;
 
 import java.lang.reflect.Type;
+import net.silthus.schat.ui.format.Format;
 import net.silthus.schat.ui.format.MiniMessageFormat;
-import net.silthus.schat.ui.format.PointeredFormat;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
 
-public class PointeredFormatSerializer implements TypeSerializer<PointeredFormat> {
+public class MiniMessageFormatSerializer implements TypeSerializer<Format> {
     @Override
-    public void serialize(Type type, @Nullable PointeredFormat obj, ConfigurationNode node) throws SerializationException {
+    public void serialize(Type type, @Nullable Format obj, ConfigurationNode node) throws SerializationException {
         if (obj instanceof MiniMessageFormat format) {
             node.set(format.format());
         }
     }
 
     @Override
-    public PointeredFormat deserialize(Type type, ConfigurationNode node) throws SerializationException {
+    public Format deserialize(Type type, ConfigurationNode node) throws SerializationException {
         return new MiniMessageFormat(node.getString());
     }
 }

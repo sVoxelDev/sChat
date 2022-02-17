@@ -24,9 +24,11 @@
 
 package net.silthus.schat.ui.format;
 
+import net.kyori.adventure.text.Component;
+import net.silthus.schat.pointer.Pointered;
 import net.silthus.schat.ui.view.View;
 
 @FunctionalInterface
-public interface Format<T> {
-    net.kyori.adventure.text.Component format(View view, T type);
+public interface Format {
+    Component format(View view, Pointered entity);
 }

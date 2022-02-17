@@ -38,7 +38,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Accessors(fluent = true)
-public class MiniMessageFormat<T extends Pointered> implements PointeredFormat<T> {
+public class MiniMessageFormat implements Format {
     private final MiniMessage formatter = MiniMessage.miniMessage();
     private final String format;
 
