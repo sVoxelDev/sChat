@@ -55,6 +55,7 @@ import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.channel.ChannelSettings.FORCED;
 import static net.silthus.schat.channel.ChannelSettings.PRIORITY;
 import static net.silthus.schat.chatter.ChatterMock.chatterMock;
 import static net.silthus.schat.commands.CreatePrivateChannelCommand.createPrivateChannel;
@@ -203,7 +204,7 @@ class TabbedChannelsViewTests {
 
         @Test
         void renders_channel_name() {
-            assertTextRenders("| test |");
+            assertTextRenders("| ❌test |");
         }
 
         @Nested class when_it_is_active {
@@ -214,7 +215,7 @@ class TabbedChannelsViewTests {
 
             @Test
             void underlines_channel() {
-                assertViewRenders("| <green><underlined>test</underlined></green> |");
+                assertViewRenders("| <red><hover:show_text:\"<lang:schat.hover.leave-channel:\\\"<gray>test\\\">\"><click:run_command:\"/channel leave test\">❌</red><green><underlined>test</click></hover></underlined></green> |");
             }
 
             @Nested class and_different_format_is_used {
@@ -226,7 +227,7 @@ class TabbedChannelsViewTests {
 
                 @Test
                 void uses_custom_format() {
-                    assertViewRenders("| <red><underlined>test</underlined></red> |");
+                    assertViewRenders("| <red><hover:show_text:\"<lang:schat.hover.leave-channel:\\\"<gray>test\\\">\"><click:run_command:\"/channel leave test\">❌<underlined>test</click></hover></underlined></red> |");
                 }
             }
         }
@@ -242,6 +243,18 @@ class TabbedChannelsViewTests {
                 assertViewContains("<click:run_command:\"/channel join test\">test</click>");
             }
         }
+
+        @Nested class given_it_is_forced {
+            @BeforeEach
+            void setUp() {
+                channel.set(FORCED, true);
+            }
+
+            @Test
+            void does_not_render_leave_symbol() {
+                assertTextRenders("| test |");
+            }
+        }
     }
 
     @Nested class given_private_channel {
@@ -255,13 +268,13 @@ class TabbedChannelsViewTests {
 
         @Test
         void renders_partner_name() {
-            assertTextRenders("| target |");
+            assertTextRenders("| ❌target |");
         }
 
         @Test
         void does_not_display_system_messages() {
             sendMessage("System");
-            assertTextRenders("| target |");
+            assertTextRenders("| ❌target |");
         }
 
         @Test
@@ -269,10 +282,9 @@ class TabbedChannelsViewTests {
             sendPrivateMessage(chatter, target, text("Hi"));
             Thread.sleep(1L);
             sendPrivateMessage(target, chatter, text("Hey back"));
-            assertViewRenders("""
-               <yellow><lang:schat.chat.private.you></yellow><gray>: Hi</gray>
-               <aqua>target</aqua><gray>: Hey back</gray>
-               | <green><underlined>target</underlined></green> |""");
+            assertViewContains("""
+                <yellow><lang:schat.chat.private.you></yellow><gray>: Hi</gray>
+                <aqua>target</aqua><gray>: Hey back</gray>""");
         }
     }
 
@@ -291,7 +303,7 @@ class TabbedChannelsViewTests {
 
         @Test
         void renders_both_seperated_by_a_divider() {
-            assertTextRenders("| one | two |");
+            assertTextRenders("| ❌one | ❌two |");
         }
 
         @Nested class given_both_channels_received_messages {
@@ -319,7 +331,7 @@ class TabbedChannelsViewTests {
                     assertTextRenders("""
                         System
                         Bob: one
-                        | one | two |""");
+                        | ❌one | ❌two |""");
                 }
 
                 @Test
@@ -338,7 +350,7 @@ class TabbedChannelsViewTests {
 
             @Test
             void renders_higher_priority_channel_first() {
-                assertTextRenders("| zzz | one | test | two |");
+                assertTextRenders("| ❌zzz | ❌one | ❌test | ❌two |");
             }
 
             @Nested class and_private_channel {
@@ -349,7 +361,7 @@ class TabbedChannelsViewTests {
 
                 @Test
                 void renders_private_channel_last() {
-                    assertTextRenders("| zzz | one | test | two | target |");
+                    assertTextRenders("| ❌zzz | ❌one | ❌test | ❌two | ❌target |");
                 }
             }
         }
@@ -364,7 +376,7 @@ class TabbedChannelsViewTests {
 
             @Test
             void uses_custom_format() {
-                assertTextRenders("one - two");
+                assertTextRenders("❌one - ❌two");
             }
         }
     }
@@ -385,7 +397,7 @@ class TabbedChannelsViewTests {
                 No Source!
                 Player: Hey
                 Player2: Hello
-                | <green><underlined>zzz</underlined></green> | <gray><hover:show_text:"<gray><lang:schat.hover.join-channel:\\"aaa\\">"><click:run_command:"/channel join aaa">aaa</click></hover></gray> |""");
+                | <red><hover:show_text:"<lang:schat.hover.leave-channel:\\"<gray>zzz\\">"><click:run_command:"/channel leave zzz">❌</red><green><underlined>zzz</click></hover></underlined></green> | <red><hover:show_text:"<lang:schat.hover.leave-channel:\\"<gray>aaa\\">"><click:run_command:"/channel leave aaa">❌</click></red><gray><click:run_command:"/channel join aaa">aaa</click></hover></gray> |""");
         }
     }
 
