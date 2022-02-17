@@ -33,10 +33,21 @@ import net.silthus.schat.message.Message;
 import net.silthus.schat.ui.format.Format;
 import net.silthus.schat.ui.model.ChatterViewModel;
 
+import static net.kyori.adventure.text.Component.empty;
+import static net.kyori.adventure.text.Component.translatable;
+import static net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND;
+import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.silthus.schat.channel.ChannelSettings.FORCED;
+
 @Getter
 @Setter
 @Accessors(fluent = true)
 public class ChannelTab extends AbstractTab {
+
+    private static final Component CLOSE_CHAR = Component.text("❌", RED);
+
     private final Channel channel;
 
     private Format activeFormat;
@@ -52,10 +63,13 @@ public class ChannelTab extends AbstractTab {
 
     @Override
     public Component renderName() {
+        final Component name;
         if (isActive())
-            return activeFormat().format(view(), channel());
+            name = activeFormat().format(view(), channel());
         else
-            return inactiveFormat().format(view(), channel());
+            name = inactiveFormat().format(view(), channel());
+
+        return closeChannel().append(name);
     }
 
     @Override
@@ -71,5 +85,17 @@ public class ChannelTab extends AbstractTab {
         if (viewModel.isPrivateChannel())
             return viewModel.isSentToActiveChannel(message) && !viewModel.isSystemMessage(message);
         return viewModel.isSystemMessage(message) || viewModel.isSentToActiveChannel(message);
+    }
+
+    private Component closeChannel() {
+        if (channel.isNot(FORCED))
+            return CLOSE_CHAR.hoverEvent(
+                translatable("schat.hover.leave-channel")
+                    .args(channel.displayName()
+                        .color(GRAY)
+                    )
+            ).clickEvent(clickEvent(RUN_COMMAND, "/channel leave " + channel.key()));
+        else
+            return empty();
     }
 }
