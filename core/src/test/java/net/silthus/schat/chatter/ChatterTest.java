@@ -80,28 +80,6 @@ class ChatterTest {
         assertThat(chatter.isJoined(null)).isFalse();
     }
 
-    @Nested class given_chatter_has_channels_but_no_active_channel {
-        private Channel channel;
-
-        @BeforeEach
-        void setUp() {
-            channel = randomChannel();
-            chatter.join(channel);
-        }
-
-        @Test
-        void then_active_channel_returns_first_channel() {
-            assertThat(chatter.activeChannel())
-                .isPresent()
-                .get().isEqualTo(channel);
-        }
-
-        @Test
-        void then_isActive_returns_true_for_selected_channel() {
-            assertThat(chatter.isActiveChannel(channel)).isTrue();
-        }
-    }
-
     @Nested class given_valid_channel {
         private Channel channel;
 
