@@ -46,7 +46,7 @@ import org.slf4j.Logger;
 
 @Plugin(id = "schat",
         name = "sChat",
-        version = "1.0.0",
+        version = "@version@",
         url = "https://github.com/sVoxelDev/sChat",
         description = "Supercharge your Minecraft Chat Experience!",
         authors = {"Silthus"}

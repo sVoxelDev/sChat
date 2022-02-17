@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
 /*
  * sChat, a Supercharged Minecraft Chat Plugin
  * Copyright (C) Silthus <https://www.github.com/silthus>
@@ -57,11 +59,27 @@ subprojects {
         mcVersion = project.property("mcVersion")
     }
 
+    task processSource(type: Sync) {
+        from sourceSets.main.java
+        inputs.property 'version', version
+        filter(ReplaceTokens, tokens: [version: version])
+        into "$buildDir/src"
+    }
+
     compileJava {
         options.encoding = 'UTF-8'
         options.compilerArgs += ["-parameters"]
         options.fork = true
         options.forkOptions.executable = 'javac'
+        source = processSource.outputs
+    }
+
+    processResources {
+        project.properties.put("version", this.version)
+        filesMatching('*.properties') {
+            expand(project.properties)
+        }
+        filter(ReplaceTokens, tokens:[version:this.version])
     }
 
     repositories {
@@ -104,13 +122,6 @@ subprojects {
             events "skipped", "failed"
         }
         ignoreFailures = false
-    }
-
-    processResources {
-        project.properties.put("version", this.version)
-        filesMatching('*.properties') {
-            expand(project.properties)
-        }
     }
 
     license {

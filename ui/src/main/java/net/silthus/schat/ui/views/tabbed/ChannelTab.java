@@ -41,12 +41,13 @@ import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.silthus.schat.channel.ChannelSettings.FORCED;
 
+@SuppressWarnings("CheckStyle")
 @Getter
 @Setter
 @Accessors(fluent = true)
 public class ChannelTab extends AbstractTab {
 
-    private static final Component CLOSE_CHAR = Component.text("❌", RED);
+    private static final Component CLOSE_CHAR = Component.text("\u274C", RED);
 
     private final Channel channel;
 

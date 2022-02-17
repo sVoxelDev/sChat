@@ -20,7 +20,7 @@
       {
         "assets": [
           {
-            "path": "**/build/libs/*.jar"
+            "path": "platform/{bukkit,velocity,bungeecord}/build/libs/*!(sources|javadoc|text-fixtures).jar"
           }
         ]
       }

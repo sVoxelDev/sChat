@@ -27,4 +27,5 @@ shadowJar {
     }
 
     relocate "net.kyori.event", "${packageName}.lib.event"
+    relocate "net.kyori.adventure", "${packageName}.lib.adventure"
 }
