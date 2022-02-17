@@ -8,7 +8,7 @@
 #|         /____  >\______  |___|  (____  |__|            |#
 #|              \/        \/     \/     \/                |#
 #|                                                        |#
-#|     Supercharge your Minecraft Chat Experience!        |#
+#|      Supercharge your Minecraft Chat Experience!       |#
 #|                                                        |#
 #+--------------------------------------------------------+#
 ############################################################
@@ -21,7 +21,7 @@ channels:
       auto_join: true
       global: true
       format:
-        message: "<yellow><source.display_name><gray>: <text>"
+        message: '<yellow><source.display_name><gray>: <text>'
         active_channel:
           color: green
           decoration: underlined
@@ -32,4 +32,4 @@ channels:
       auto_join: true
       global: true
       format:
-        message: "<blue><source.display_name><gray>: <text>"
+        message: '<blue><source.display_name><gray>: <text>'

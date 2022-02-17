@@ -108,7 +108,9 @@ subprojects {
 
     processResources {
         project.properties.put("version", this.version)
-        expand project.properties
+        filesMatching('*.properties') {
+            expand(project.properties)
+        }
     }
 
     license {
