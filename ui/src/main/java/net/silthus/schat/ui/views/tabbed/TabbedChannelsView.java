@@ -22,15 +22,12 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.ui.views;
+package net.silthus.schat.ui.views.tabbed;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
@@ -46,11 +43,11 @@ import net.silthus.schat.ui.model.ChatterViewModel;
 import net.silthus.schat.ui.view.View;
 import org.jetbrains.annotations.NotNull;
 
+import static java.util.stream.Collectors.toList;
 import static net.kyori.adventure.text.Component.join;
 import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.JoinConfiguration.newlines;
 import static net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND;
 import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
@@ -62,7 +59,6 @@ import static net.silthus.schat.pointer.Setting.setting;
 import static net.silthus.schat.pointer.Settings.createSettings;
 import static net.silthus.schat.ui.util.ViewHelper.renderPrivateChannelName;
 import static net.silthus.schat.ui.util.ViewHelper.renderPrivateMessage;
-import static net.silthus.schat.util.Iterators.lastN;
 
 @Getter
 @Accessors(fluent = true)
@@ -127,7 +123,7 @@ public final class TabbedChannelsView implements View {
     private final ChatterViewModel viewModel;
     private final Settings settings = createSettings();
 
-    TabbedChannelsView(Chatter chatter) {
+    public TabbedChannelsView(Chatter chatter) {
         this.chatter = chatter;
         this.viewModel = ChatterViewModel.of(this.chatter);
     }
@@ -135,21 +131,25 @@ public final class TabbedChannelsView implements View {
     @Override
     public Component render() {
         final TextComponent.Builder content = text();
-        final List<Component> tabNames = new ArrayList<>();
 
         final List<Tab> tabs = tabs();
         if (tabs.isEmpty())
-            return renderBlankLines().append(renderMessages()).append(VIEW_MARKER);
+            tabs.add(new NoChannelsTab(this, get(MESSAGE_FORMAT)));
 
+        boolean hasActiveTab = false;
         for (final Tab tab : tabs) {
-            if (tab.isActive())
+            if (tab.isActive()) {
                 content.append(tab.renderContent());
-            tabNames.add(tab.renderName());
+                hasActiveTab = true;
+            }
         }
+
+        if (!hasActiveTab)
+            content.append(new NoChannelsTab(this, get(MESSAGE_FORMAT)).renderContent());
 
         return content
             .append(newline())
-            .append(joinTabs(tabNames))
+            .append(joinTabs(tabs.stream().map(Tab::renderName).toList()))
             .append(VIEW_MARKER)
             .build();
     }
@@ -166,119 +166,13 @@ public final class TabbedChannelsView implements View {
         return viewModel().channels().stream()
             .map(channel -> {
                 Settings format = channel.is(PRIVATE) ? get(PRIVATE_CHANNEL_FORMAT) : channel.get(CHANNEL_FORMAT);
-                return new Tab(
+                return (Tab) new ChannelTab(
+                    this,
                     channel,
                     format.get(MESSAGE_FORMAT),
                     format.get(ACTIVE_CHANNEL_FORMAT),
                     format.get(INACTIVE_CHANNEL_FORMAT)
                 );
-            })
-            .toList();
-    }
-
-    private Component renderBlankLines() {
-        final int blankLineAmount = Math.max(0, get(VIEW_HEIGHT) - viewModel.messages().size());
-        return blankLines(blankLineAmount);
-    }
-
-    private Component blankLines(int amount) {
-        final TextComponent.Builder builder = text();
-        for (int i = 0; i < amount; i++) {
-            builder.append(newline());
-        }
-        return builder.build();
-    }
-
-    private Component renderMessages() {
-        return join(newlines(), getRenderedMessages());
-    }
-
-    private List<Component> getRenderedMessages() {
-        final ArrayList<Component> messages = new ArrayList<>();
-        for (final Message message : viewModel.messages()) {
-            if (isMessageDisplayed(message))
-                messages.add(get(MESSAGE_FORMAT).format(this, message));
-        }
-        return messages;
-    }
-
-    private boolean isMessageDisplayed(Message message) {
-        if (viewModel.noActiveChannel() && viewModel.isSystemMessage(message))
-            return true;
-        if (viewModel.isPrivateChannel())
-            return viewModel.isSentToActiveChannel(message) && !viewModel().isSystemMessage(message);
-        return viewModel.isSystemMessage(message) || viewModel.isSentToActiveChannel(message);
-    }
-
-    @Getter
-    @Setter
-    @Accessors(fluent = true)
-    public class Tab {
-        private final Channel channel;
-
-        private Format messageFormat;
-        private Format activeFormat;
-        private Format inactiveFormat;
-
-        protected Tab(Channel channel, Format messageFormat, Format activeFormat, Format inactiveFormat) {
-            this.channel = channel;
-
-            this.messageFormat = messageFormat;
-            this.activeFormat = activeFormat;
-            this.inactiveFormat = inactiveFormat;
-        }
-
-        public Component renderName() {
-            if (isActive())
-                return activeFormat().format(TabbedChannelsView.this, channel());
-            else
-                return inactiveFormat().format(TabbedChannelsView.this, channel());
-        }
-
-        public Component renderContent() {
-            if (!isActive())
-                return Component.empty();
-            else
-                return renderBlankLines()
-                    .append(join(newlines(), renderMessages()));
-        }
-
-        private List<Component> renderMessages() {
-            return messages().stream()
-                .map(message -> messageFormat().format(TabbedChannelsView.this, message))
-                .toList();
-        }
-
-        public boolean isActive() {
-            return viewModel().isActiveChannel(channel());
-        }
-
-        @NotNull
-        private Collection<Message> messages() {
-            return viewModel().messages().stream()
-                .filter(this::isMessageDisplayed)
-                .collect(lastN(100));
-        }
-
-        private boolean isMessageDisplayed(Message message) {
-            if (viewModel.noActiveChannel() && viewModel.isSystemMessage(message))
-                return true;
-            if (viewModel.isPrivateChannel())
-                return viewModel.isSentToActiveChannel(message) && !viewModel().isSystemMessage(message);
-            return viewModel.isSystemMessage(message) || viewModel.isSentToActiveChannel(message);
-        }
-
-        private Component renderBlankLines() {
-            final int blankLineAmount = Math.max(0, get(VIEW_HEIGHT) - messages().size());
-            return blankLines(blankLineAmount);
-        }
-
-        private Component blankLines(int amount) {
-            final TextComponent.Builder builder = text();
-            for (int i = 0; i < amount; i++) {
-                builder.append(newline());
-            }
-            return builder.build();
-        }
+            }).collect(toList());
     }
 }

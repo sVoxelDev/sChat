@@ -85,6 +85,10 @@ public abstract class BukkitTests {
         assertTrimmedEquals(getLastMessage(player::nextMessage), message);
     }
 
+    protected void assertLastMessageContains(PlayerMock player, String text) {
+        assertTrimmedContains(getLastMessage(player::nextMessage), text);
+    }
+
     @Nullable
     private String getLastMessage(Supplier<String> nextMessageSupplier) {
         String nextMessage;
@@ -96,8 +100,21 @@ public abstract class BukkitTests {
     }
 
     private void assertTrimmedEquals(String lastMessage, String message) {
-        if (lastMessage == null && message == null) return;
-        assertThat(lastMessage).isNotNull();
+        if (isEmpty(lastMessage, message))
+            return;
         assertThat(lastMessage.trim()).isEqualTo(message.trim());
+    }
+
+    private void assertTrimmedContains(String lastMessage, String text) {
+        if (isEmpty(lastMessage, text))
+            return;
+        assertThat(lastMessage.trim()).contains(text.trim());
+    }
+
+    private boolean isEmpty(String lastMessage, String message) {
+        if (lastMessage == null && message == null)
+            return true;
+        assertThat(lastMessage).isNotNull();
+        return false;
     }
 }

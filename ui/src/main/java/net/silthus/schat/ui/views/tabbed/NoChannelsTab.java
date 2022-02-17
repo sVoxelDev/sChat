@@ -22,19 +22,33 @@
  *  SOFTWARE.
  */
 
-package net.silthus.schat.ui.views;
+package net.silthus.schat.ui.views.tabbed;
 
-import lombok.NonNull;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.ui.view.View;
-import net.silthus.schat.ui.views.tabbed.TabbedChannelsView;
+import net.kyori.adventure.text.Component;
+import net.silthus.schat.message.Message;
+import net.silthus.schat.ui.format.Format;
 
-public final class Views {
+import static net.kyori.adventure.text.Component.translatable;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
-    public static View tabbedChannels(@NonNull Chatter chatter) {
-        return new TabbedChannelsView(chatter);
+public class NoChannelsTab extends AbstractTab {
+
+    protected NoChannelsTab(TabbedChannelsView view, Format messageFormat) {
+        super(view, messageFormat);
     }
 
-    private Views() {
+    @Override
+    protected boolean isMessageDisplayed(Message message) {
+        return message.type() == Message.Type.SYSTEM;
+    }
+
+    @Override
+    public Component renderName() {
+        return translatable("schat.view.no-channels").color(RED);
+    }
+
+    @Override
+    public boolean isActive() {
+        return true;
     }
 }
