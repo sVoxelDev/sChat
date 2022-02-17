@@ -1,3 +1,10 @@
+# [1.0.0-alpha.2](https://github.com/sVoxelDev/sChat/compare/v1.0.0-alpha.1...v1.0.0-alpha.2) (2022-02-17)
+
+
+### Bug Fixes
+
+* **release:** use correct mvn package ([b3034a1](https://github.com/sVoxelDev/sChat/commit/b3034a18f684708b730a6bb5bcf4ff46225fa256))
+
 # 1.0.0-alpha.1 (2022-02-17)
 
 
