@@ -34,11 +34,11 @@ import net.silthus.schat.platform.config.ChannelConfig;
 import net.silthus.schat.platform.config.serializers.ChannelSerializer;
 import net.silthus.schat.platform.config.serializers.ColorSerializer;
 import net.silthus.schat.platform.config.serializers.MiniMessageComponentSerializer;
-import net.silthus.schat.platform.config.serializers.PointeredFormatSerializer;
+import net.silthus.schat.platform.config.serializers.MiniMessageFormatSerializer;
 import net.silthus.schat.platform.config.serializers.SettingsSerializer;
 import net.silthus.schat.platform.config.serializers.TextDecorationSerializer;
 import net.silthus.schat.pointer.Settings;
-import net.silthus.schat.ui.format.PointeredFormat;
+import net.silthus.schat.ui.format.Format;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.ConfigurationOptions;
@@ -54,7 +54,7 @@ public abstract class ConfigurateAdapter<T extends AbstractConfigurationLoader.B
         .register(ChannelConfig.class, new ChannelSerializer())
         .register(TextColor.class, new ColorSerializer())
         .register(TextDecoration.class, new TextDecorationSerializer())
-        .register(PointeredFormat.class, new PointeredFormatSerializer())
+        .register(Format.class, new MiniMessageFormatSerializer())
         .build();
 
     private static final Function<ConfigurationOptions, ConfigurationOptions> DEFAULT_OPTIONS = options ->

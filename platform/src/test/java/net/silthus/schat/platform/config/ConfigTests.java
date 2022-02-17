@@ -78,7 +78,10 @@ class ConfigTests {
 
     @Test
     void loads_message_format() {
-        final Component format = getTestChannelConfig().settings().get(CHANNEL_FORMAT).get(MESSAGE_FORMAT).format(View.empty(), message("Hey").source(Identity.identity("Notch")).create());
+        final Component format = getTestChannelConfig().settings()
+            .get(CHANNEL_FORMAT)
+            .get(MESSAGE_FORMAT)
+            .format(View.empty(), message("Hey").source(Identity.identity("Notch")).create());
         assertThat(format).isEqualTo(text("Notch", YELLOW).append(text(": Hey", GRAY)));
     }
 

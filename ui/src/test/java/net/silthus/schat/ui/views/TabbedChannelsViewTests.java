@@ -305,14 +305,15 @@ class TabbedChannelsViewTests {
         @Nested class given_both_channels_received_messages {
             @BeforeEach
             void setUp() {
+                sendMessage("System");
                 message("one").source(identity("Bob")).to(channelOne).type(Message.Type.CHAT).send();
                 message("two").source(identity("Bob")).to(channelTwo).type(Message.Type.CHAT).send();
             }
 
             @Test
-            void when_no_channel_is_active_then_first_channel_is_selected_active_and_displays_message() {
-                assertTextContains("Bob: one");
-                assertTextDoesNotContain("Bob: two");
+            void when_no_channel_is_active_then_only_system_messages_are_displayed() {
+                assertTextContains("System");
+                assertTextDoesNotContain("Bob: one", "Bob: two");
             }
 
             @Nested class given_channel_one_is_active {
@@ -324,6 +325,7 @@ class TabbedChannelsViewTests {
                 @Test
                 void then_message_one_is_displayed() {
                     assertTextRenders("""
+                        System
                         Bob: one
                         | one | two |""");
                 }
