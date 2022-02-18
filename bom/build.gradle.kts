@@ -20,7 +20,8 @@ dependencies {
             "platform",
             "bukkit",
             "velocity",
-            "bungeecord"
+            "bungeecord",
+            "acceptance"
         ).forEach {
             api(project(":schat-$it"))
         }
