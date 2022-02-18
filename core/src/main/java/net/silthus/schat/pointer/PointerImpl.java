@@ -21,7 +21,6 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-
 package net.silthus.schat.pointer;
 
 record PointerImpl<T>(Class<T> type, String key) implements Pointer<T> {

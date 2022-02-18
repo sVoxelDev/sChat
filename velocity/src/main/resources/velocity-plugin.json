@@ -1,0 +1,12 @@
+{
+  "id": "schat",
+  "name": "sChat",
+  "version": "${version}",
+  "description": "Supercharge your Minecraft Chat Experience!",
+  "url": "https://github.com/sVoxelDev/sChat",
+  "authors": [
+    "Silthus"
+  ],
+  "dependencies": [],
+  "main": "net.silthus.schat.velocity.VelocityBootstrap"
+}

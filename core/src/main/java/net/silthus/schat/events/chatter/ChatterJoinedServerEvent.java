@@ -21,7 +21,6 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-
 package net.silthus.schat.events.chatter;
 
 import net.silthus.schat.chatter.Chatter;

@@ -21,7 +21,6 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-
 package net.silthus.schat.ui.model;
 
 import lombok.SneakyThrows;
@@ -33,10 +32,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.channel.ChannelSettings.PRIORITY;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
+import static net.silthus.schat.channel.ChannelSettings.PRIORITY;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.ui.model.ChatterViewModel.of;
 import static org.assertj.core.api.Assertions.assertThat;

@@ -21,14 +21,13 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-
 package net.silthus.schat.message;
 
 import net.kyori.adventure.text.Component;
-import org.apache.commons.lang3.RandomStringUtils;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.message.Message.message;
+import static net.silthus.schat.util.StringUtil.randomString;
 
 public final class MessageHelper {
 
@@ -36,7 +35,7 @@ public final class MessageHelper {
     }
 
     public static Component randomText() {
-        return text(RandomStringUtils.randomAlphanumeric(30));
+        return text(randomString());
     }
 
     public static Message randomMessage() {

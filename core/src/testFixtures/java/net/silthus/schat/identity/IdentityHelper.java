@@ -21,11 +21,11 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-
 package net.silthus.schat.identity;
 
 import java.util.UUID;
-import org.apache.commons.lang3.RandomStringUtils;
+
+import static net.silthus.schat.util.StringUtil.randomString;
 
 public final class IdentityHelper {
 
@@ -33,6 +33,6 @@ public final class IdentityHelper {
     }
 
     public static Identity randomIdentity() {
-        return Identity.identity(UUID.randomUUID(), RandomStringUtils.randomAlphanumeric(10));
+        return Identity.identity(UUID.randomUUID(), randomString());
     }
 }
