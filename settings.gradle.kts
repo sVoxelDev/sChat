@@ -6,16 +6,17 @@ pluginManagement {
 
 rootProject.name = "sChat"
 
-moonshineProject("bom")
-moonshineProject("core")
-moonshineProject("features")
-moonshineProject("ui")
-moonshineProject("platform")
-moonshineProject("bukkit")
-moonshineProject("velocity")
-moonshineProject("bungeecord")
+sChatProject("bom")
+sChatProject("core")
+sChatProject("features")
+sChatProject("ui")
+sChatProject("platform")
+sChatProject("bukkit")
+sChatProject("velocity")
+sChatProject("bungeecord")
+sChatProject("acceptance")
 
-fun moonshineProject(path: String, name: String = "schat-$path"): ProjectDescriptor {
+fun sChatProject(path: String, name: String = "schat-$path"): ProjectDescriptor {
     include(path)
     val project = project(":$path")
     project.name = name
