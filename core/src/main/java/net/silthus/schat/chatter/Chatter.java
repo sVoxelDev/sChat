@@ -21,7 +21,6 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-
 package net.silthus.schat.chatter;
 
 import java.util.List;
@@ -37,8 +36,8 @@ import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.pointer.Pointer;
 import net.silthus.schat.repository.Entity;
+import net.silthus.schat.ui.ViewConnector;
 import net.silthus.schat.util.Permissable;
-import net.silthus.schat.view.ViewConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;

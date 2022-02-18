@@ -21,14 +21,13 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-
 package net.silthus.schat.platform.chatter;
 
 import java.util.UUID;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.identity.Identity;
-import net.silthus.schat.view.ViewConnector;
+import net.silthus.schat.ui.ViewConnector;
 import net.silthus.schat.ui.view.ViewProvider;
 import org.jetbrains.annotations.NotNull;
 

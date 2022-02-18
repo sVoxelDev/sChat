@@ -21,7 +21,6 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-
 package net.silthus.schat.policies;
 
 import net.silthus.schat.channel.Channel;
@@ -30,11 +29,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.channel.ChannelSettings.JOIN_PERMISSION;
-import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
+import static net.silthus.schat.channel.ChannelSettings.JOIN_PERMISSION;
+import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.policies.JoinChannelPolicy.CAN_JOIN_PROTECTED_CHANNEL;
 import static org.assertj.core.api.Assertions.assertThat;

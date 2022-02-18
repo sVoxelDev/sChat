@@ -14,13 +14,28 @@
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
     "@semantic-release/changelog",
+    [
+      "@google/semantic-release-replace-plugin",
+      {
+        "replacements": [
+          {
+            "files": [
+              "**/src/main/java/**/*.java"
+            ],
+            "from": "@since next",
+            "to": "@since ${nextRelease.version}",
+            "countMatches": true
+          }
+        ]
+      }
+    ],
     "gradle-semantic-release-plugin",
     [
       "@semantic-release/github",
       {
         "assets": [
           {
-            "path": "platform/{bukkit,velocity,bungeecord}/build/libs/*!(sources|javadoc|text-fixtures).jar"
+            "path": "{bukkit,velocity,bungeecord}/build/libs/*!(sources|javadoc|text-fixtures).jar"
           }
         ]
       }
@@ -29,6 +44,7 @@
       "@semantic-release/git",
       {
         "assets": [
+          "**/src/main/java/**/*.java",
           "gradle.properties",
           "CHANGELOG.md"
         ]

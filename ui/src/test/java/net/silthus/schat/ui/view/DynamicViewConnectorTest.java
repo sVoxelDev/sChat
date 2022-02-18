@@ -21,14 +21,13 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-
 package net.silthus.schat.ui.view;
 
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.view.ViewConnector;
+import net.silthus.schat.ui.ViewConnector;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

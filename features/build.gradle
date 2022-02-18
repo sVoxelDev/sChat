@@ -1,9 +1,0 @@
-allprojects {
-    dependencies {
-        implementation project(':core')
-
-        testImplementation(testFixtures(project(":core")))
-
-        testFixturesImplementation(testFixtures(project(':core')))
-    }
-}

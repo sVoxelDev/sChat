@@ -88,6 +88,47 @@ jobs:
         with:
           files: "**/build/test-results/**/*.xml"
 
+  snapshots:
+    needs: [ build, test ]
+    if: github.ref == 'refs/heads/develop' || 'refs/heads/next'
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+
+      - name: Cache Gradle
+        id: cache-gradle
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle
+          key: ${{ runner.os }}-gradle
+
+      - uses: actions/checkout@v1
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Determine whether to deploy to Central
+        id: snapshot-check
+        shell: bash
+        run: |
+          if ! cat ./gradle.properties | grep --regexp 'version\s*=\s*.*".*-SNAPSHOT"' 2>&1 >/dev/null ; then
+            echo "::set-output name=snapshot::false"
+          else
+            echo "::set-output name=snapshot::true"
+          fi
+
+      - name: Deploy to OSSRH
+        if: ${{ github.ref_type != 'tag' && steps.snapshot-check.outputs.snapshot == 'true' }}
+        run: ./gradlew -PforceSign=true publish --no-daemon
+        env:
+          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
+          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+
   release:
     needs: [ build, test ]
     if: github.ref == 'refs/heads/master' || 'refs/heads/beta' || github.ref == 'refs/heads/alpha'
@@ -121,4 +162,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_URL: "https://api.github.com/"
-        run: npx --legacy-peer-deps -p @semantic-release/changelog -p @semantic-release/git -p gradle-semantic-release-plugin -p semantic-release semantic-release
+        run: npx --legacy-peer-deps -p @semantic-release/changelog -p @semantic-release/git -p @google/semantic-release-replace-plugin -p gradle-semantic-release-plugin -p semantic-release semantic-release
+
+      - name: Determine whether to deploy to Central
+        id: snapshot-check
+        shell: bash
+        run: |
+          if ! cat ./gradle.properties | grep --regexp 'version\s*=\s*.*".*-SNAPSHOT"' 2>&1 >/dev/null ; then
+            echo "::set-output name=snapshot::false"
+          else
+            echo "::set-output name=snapshot::true"
+          fi
+
+      - name: Deploy to Central
+        if: ${{ steps.snapshot-check.outputs.snapshot == 'false' }}
+        run: ./gradlew -PforceSign=true publish closeAndReleaseSonatypeStagingRepository --no-daemon
+        env:
+          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
+          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}

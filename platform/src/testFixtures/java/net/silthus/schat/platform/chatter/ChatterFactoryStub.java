@@ -21,7 +21,6 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-
 package net.silthus.schat.platform.chatter;
 
 import java.util.HashMap;
@@ -30,13 +29,13 @@ import java.util.UUID;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.platform.sender.SenderMock;
+import net.silthus.schat.ui.ViewConnector;
 import net.silthus.schat.ui.view.ViewProvider;
-import net.silthus.schat.view.ViewConnector;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.ui.view.ViewFactory.empty;
 import static net.silthus.schat.ui.view.ViewProvider.cachingViewProvider;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static net.silthus.schat.util.StringUtil.randomString;
 
 public class ChatterFactoryStub extends AbstractChatterFactory {
 
@@ -63,7 +62,7 @@ public class ChatterFactoryStub extends AbstractChatterFactory {
     protected @NotNull Identity createIdentity(UUID id) {
         if (chatterStubs.containsKey(id))
             return chatterStubs.get(id).identity();
-        return Identity.identity(id, randomAlphabetic(10));
+        return Identity.identity(id, randomString());
     }
 
     @Override

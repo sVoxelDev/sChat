@@ -21,7 +21,6 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-
 package net.silthus.schat.channel;
 
 import java.util.function.Function;
@@ -29,7 +28,7 @@ import net.silthus.schat.pointer.Configured;
 import net.silthus.schat.pointer.Setting;
 
 import static net.silthus.schat.channel.Channel.channel;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static net.silthus.schat.util.StringUtil.randomString;
 
 public final class ChannelHelper {
 
@@ -58,7 +57,7 @@ public final class ChannelHelper {
     }
 
     public static Channel channelWith(ConfiguredSetting<?>... settings) {
-        return channelWith(randomAlphabetic(10), settings);
+        return channelWith(randomString(), settings);
     }
 
     public static Channel channelWith(String key, Function<Channel.Builder, Channel.Builder> config) {
@@ -66,7 +65,7 @@ public final class ChannelHelper {
     }
 
     public static Channel channelWith(Function<Channel.Builder, Channel.Builder> config) {
-        return channelWith(randomAlphabetic(10).toLowerCase(), config);
+        return channelWith(randomString().toLowerCase(), config);
     }
 
     public record ConfiguredSetting<V>(Setting<V> setting, V value) {

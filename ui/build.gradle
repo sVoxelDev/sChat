@@ -1,7 +1,0 @@
-dependencies {
-    api project(':core')
-
-    testImplementation(testFixtures(project(':core')))
-
-    testFixturesImplementation 'net.kyori:adventure-text-minimessage:4.10.0-SNAPSHOT'
-}
