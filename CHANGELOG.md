@@ -1,3 +1,12 @@
+# [1.0.0-alpha.5](https://github.com/sVoxelDev/sChat/compare/v1.0.0-alpha.4...v1.0.0-alpha.5) (2022-02-19)
+
+
+### Bug Fixes
+
+* **release:** commit first then release ([f972730](https://github.com/sVoxelDev/sChat/commit/f9727302efeb846c9e3b2f5c24e2605877387106))
+* **release:** directly execute publish in semantic release exec step ([1aaaff0](https://github.com/sVoxelDev/sChat/commit/1aaaff0869a4ce11d54ecdbf770c53b1083780d3))
+* **release:** remove invalid verify step ([f857ef9](https://github.com/sVoxelDev/sChat/commit/f857ef9e2bfaf6fa48fb4a727d582e81e0e6fb6c))
+
 # [1.0.0-alpha.4](https://github.com/sVoxelDev/sChat/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2022-02-19)
 
 
