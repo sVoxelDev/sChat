@@ -10,22 +10,11 @@ jobs:
 
 
     steps:
+      - uses: actions/checkout@v2
       - name: Set up JDK 17
         uses: actions/setup-java@v1
         with:
           java-version: 17
-
-      - name: Cache Gradle
-        id: cache-gradle
-        uses: actions/cache@v1
-        with:
-          path: ~/.gradle
-          key: ${{ runner.os }}-gradle
-
-      - uses: actions/checkout@v1
-
-      - name: Grant execute permission to gradlew
-        run: chmod +x gradlew
 
       - name: Build
         run: ./gradlew build -x test
@@ -40,22 +29,11 @@ jobs:
   test:
     runs-on: ubuntu-18.04
     steps:
+      - uses: actions/checkout@v2
       - name: Set up JDK 17
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: 17
-
-      - name: Cache Gradle
-        id: cache-gradle
-        uses: actions/cache@v1
-        with:
-          path: ~/.gradle
-          key: ${{ runner.os }}-gradle
-
-      - uses: actions/checkout@v1
-
-      - name: Grant execute permission to gradlew
-        run: chmod +x gradlew
 
       - name: Test
         run: ./gradlew test
@@ -95,8 +73,9 @@ jobs:
     runs-on: ubuntu-18.04
 
     steps:
+      - uses: actions/checkout@v2
       - name: Set up JDK 17
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: 17
 
@@ -105,15 +84,14 @@ jobs:
         with:
           node-version: "16.x"
 
-      - uses: actions/checkout@v1
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
-
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_URL: "https://api.github.com/"
+          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
+          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: npx --legacy-peer-deps -p @semantic-release/changelog -p @semantic-release/git -p @google/semantic-release-replace-plugin -p gradle-semantic-release-plugin -p semantic-release semantic-release
 
       - name: Determine whether to deploy to Central
