@@ -4,8 +4,8 @@ const branch = ref.split('/').pop();
 const config = {
     branches: [
         'main',
-        { name: 'release', prerelease: "rc", channel: 'rc' },
-        { name: 'next', prerelease: "SNAPSHOT", channel: 'SNAPSHOT' }
+        { name: "release", prerelease: "rc", channel: false },
+        { name: "next", prerelease: "SNAPSHOT", channel: false }
     ],
     plugins: [
         '@semantic-release/commit-analyzer',
@@ -44,7 +44,7 @@ if (config.branches.some(it => it === branch || (it.name === branch && it.prerel
         ["@semantic-release/github", {
             "assets": [
                 {
-                    "path": "{bukkit,velocity,bungeecord}/build/libs/*!(sources|javadoc|text-fixtures).jar"
+                    "path": "{bukkit,velocity,bungeecord}/build/libs/*[0-9].jar"
                 }
             ]
         }]
