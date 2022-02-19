@@ -4,8 +4,8 @@ const branch = ref.split('/').pop();
 const config = {
     branches: [
         'main',
-        { name: 'release', prerelease: true, channel: 'rc' },
-        { name: 'next', prerelease: true, channel: 'SNAPSHOT' }
+        { name: 'release', prerelease: "rc", channel: 'rc' },
+        { name: 'next', prerelease: "SNAPSHOT", channel: 'SNAPSHOT' }
     ],
     plugins: [
         '@semantic-release/commit-analyzer',
