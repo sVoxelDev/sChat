@@ -19,6 +19,20 @@
       {
         "replacements": [
           {
+            "files": ["gradle.properties"],
+            "from": "version = .*",
+            "to": "version = ${nextRelease.version}",
+            "results": [
+              {
+                "file": "gradle.properties",
+                "hasChanged": true,
+                "numMatches": 1,
+                "numReplacements": 1
+              }
+            ],
+            "countMatches": true
+          },
+          {
             "files": [
               "**/src/main/java/**/*.java"
             ],
@@ -29,7 +43,12 @@
         ]
       }
     ],
-    "gradle-semantic-release-plugin",
+    [
+      "@semantic-release/exec", {
+        "verifyConditionsCmd": "./verify.sh",
+        "publishCmd": "./gradlew -PforceSign=true publish closeAndReleaseSonatypeStagingRepository --no-daemon"
+      }
+    ],
     [
       "@semantic-release/github",
       {
