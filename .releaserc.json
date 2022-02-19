@@ -55,7 +55,6 @@
     ],
     [
       "@semantic-release/exec", {
-      "verifyConditionsCmd": "./verify.sh",
       "publishCmd": "./gradlew -PforceSign=true publish closeAndReleaseSonatypeStagingRepository --no-daemon"
     }
     ],
