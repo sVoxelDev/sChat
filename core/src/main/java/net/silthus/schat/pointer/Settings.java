@@ -38,14 +38,14 @@ import org.jetbrains.annotations.Unmodifiable;
 /**
  * A collection of {@link Setting settings}.
  *
- * @since next
+ * @since 1.0.0-alpha.4
  */
 public sealed interface Settings extends Pointers permits SettingsImpl {
     /**
      * Gets an empty settings collection.
      *
      * @return the settings
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     static @NotNull Settings createSettings() {
         return settingsBuilder().create();
@@ -56,7 +56,7 @@ public sealed interface Settings extends Pointers permits SettingsImpl {
      *
      * @return the builder
      * @see Builder
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     static @NotNull Builder settingsBuilder() {
         return new SettingsImpl.BuilderImpl();
@@ -68,7 +68,7 @@ public sealed interface Settings extends Pointers permits SettingsImpl {
      * @param valueType the type class of the setting
      * @param <V>       the type of the setting
      * @return an unmodifiable set of settings filtered by the given type
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     @SuppressWarnings("unchecked")
     default <V> @NotNull @Unmodifiable Set<Setting<V>> settings(final @NonNull Class<V> valueType) {
@@ -85,7 +85,7 @@ public sealed interface Settings extends Pointers permits SettingsImpl {
      *
      * @return an unmodifiable set of settings in this settings collection
      * @throws UnsupportedOperationException if the implementing class does not support querying for settings
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     @NotNull @Unmodifiable Set<Setting<?>> settings();
 
@@ -97,7 +97,7 @@ public sealed interface Settings extends Pointers permits SettingsImpl {
      * @param setting the setting
      * @param <V>     the type
      * @return the value
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     <V> @UnknownNullability V get(final @NotNull Setting<V> setting);
 
@@ -110,7 +110,7 @@ public sealed interface Settings extends Pointers permits SettingsImpl {
      * @param defaultValue the default value
      * @param <V>          the type
      * @return the value
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     default <V> @Nullable V getOrDefault(final @NotNull Setting<V> setting, final @Nullable V defaultValue) {
         return getOrDefaultFrom(setting, () -> defaultValue);
@@ -125,7 +125,7 @@ public sealed interface Settings extends Pointers permits SettingsImpl {
      * @param defaultValue the default value supplier
      * @param <V>          the type
      * @return the value
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     <V> @UnknownNullability V getOrDefaultFrom(final @NotNull Setting<V> setting, final @NotNull Supplier<? extends V> defaultValue);
 
@@ -136,7 +136,7 @@ public sealed interface Settings extends Pointers permits SettingsImpl {
      * @param value   the new value of the setting
      * @param <V>     the type of the value
      * @return the old value if replaced
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     <V> @NotNull Optional<V> set(@NotNull Setting<V> setting, @Nullable V value);
 
@@ -146,7 +146,7 @@ public sealed interface Settings extends Pointers permits SettingsImpl {
      * A builder of settings.
      *
      * @see Settings
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     interface Builder extends Pointers.Builder {
 
@@ -157,7 +157,7 @@ public sealed interface Settings extends Pointers permits SettingsImpl {
          * @param value the value that will be resolved by the setting
          * @param <V> the type of the value
          * @return this builder
-         * @since next
+         * @since 1.0.0-alpha.4
          */
         <V> @NotNull Builder withUnknown(final @NotNull String key, @NotNull Function<Setting<?>, V> value);
 

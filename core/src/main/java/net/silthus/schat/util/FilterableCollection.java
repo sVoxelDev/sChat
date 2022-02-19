@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Unmodifiable;
  * Marks the collection as filterable and adds the {@link #filter(Predicate)} method.
  *
  * @param <T> the type of the collection
- * @since next
+ * @since 1.0.0-alpha.4
  */
 public interface FilterableCollection<T> extends Collection<T> {
 
@@ -48,7 +48,7 @@ public interface FilterableCollection<T> extends Collection<T> {
      *
      * @param filter the predicate to filter for
      * @return an unmodifiable filtered list
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     default @NotNull @Unmodifiable List<T> filter(final @NonNull Predicate<T> filter) {
         final ArrayList<T> elements = new ArrayList<>();
@@ -64,7 +64,7 @@ public interface FilterableCollection<T> extends Collection<T> {
      *
      * @param filter the filter used to search for the element
      * @return the element if found
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     default @NotNull Optional<T> find(final @NonNull Predicate<T> filter) {
         for (final T element : this) {

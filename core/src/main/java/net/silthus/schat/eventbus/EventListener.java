@@ -28,7 +28,7 @@ import net.silthus.schat.events.SChatEvent;
 /**
  * Defines a class which listens to {@link SChatEvent}s.
  *
- * @since next
+ * @since 1.0.0-alpha.4
  */
 @FunctionalInterface
 public interface EventListener {
@@ -37,7 +37,7 @@ public interface EventListener {
      * Binds the event listener to the event bus.
      *
      * @param bus the event bus
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     void bind(EventBus bus);
 }

@@ -39,14 +39,14 @@ import org.jetbrains.annotations.Unmodifiable;
 /**
  * A collection of {@link Pointer pointers}.
  *
- * @since next
+ * @since 1.0.0-alpha.4
  */
 public sealed interface Pointers permits PointersImpl, PointersImpl.EmptyPointers, Settings {
     /**
      * Gets an empty pointers collection.
      *
      * @return the pointers
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     @Contract(pure = true)
     static @NotNull Pointers empty() {
@@ -58,7 +58,7 @@ public sealed interface Pointers permits PointersImpl, PointersImpl.EmptyPointer
      *
      * @return the builder
      * @see Builder
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     @Contract(pure = true)
     static @NotNull Builder pointersBuilder() {
@@ -71,7 +71,7 @@ public sealed interface Pointers permits PointersImpl, PointersImpl.EmptyPointer
      * @param valueType the type class of the pointer
      * @param <V>       the type of the pointer
      * @return an unmodifiable set of pointers filtered by the given type
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     @SuppressWarnings("unchecked")
     default <V> @NotNull @Unmodifiable Set<Pointer<V>> getPointers(final @NotNull Class<V> valueType) {
@@ -92,7 +92,7 @@ public sealed interface Pointers permits PointersImpl, PointersImpl.EmptyPointer
      * and return an unfiltered set of pointers in this collection.</p>
      *
      * @return an unmodifiable set of pointers in this pointer collection
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     default @NotNull @Unmodifiable Set<Pointer<?>> pointers() {
         return Collections.emptySet();
@@ -107,7 +107,7 @@ public sealed interface Pointers permits PointersImpl, PointersImpl.EmptyPointer
      * @param defaultValue the default value
      * @param <T>          the type
      * @return the value
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     @Contract("_, null -> _; _, !null -> !null")
     @SuppressWarnings("checkstyle:MethodName")
@@ -121,7 +121,7 @@ public sealed interface Pointers permits PointersImpl, PointersImpl.EmptyPointer
      * @param pointer the pointer
      * @param <T>     the type
      * @return the value
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     <T> @NotNull Optional<T> get(final @NotNull Pointer<T> pointer);
 
@@ -134,7 +134,7 @@ public sealed interface Pointers permits PointersImpl, PointersImpl.EmptyPointer
      * @param defaultValue the default value supplier
      * @param <T>          the type
      * @return the value
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     @SuppressWarnings("checkstyle:MethodName")
     default <T> @UnknownNullability T getOrDefaultFrom(final @NotNull Pointer<T> pointer, final @NotNull Supplier<? extends T> defaultValue) {
@@ -149,7 +149,7 @@ public sealed interface Pointers permits PointersImpl, PointersImpl.EmptyPointer
      * @param pointer the pointer
      * @param <T>     the type
      * @return if the pointer is supported
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     <T> boolean supports(final @NotNull Pointer<T> pointer);
 
@@ -157,7 +157,7 @@ public sealed interface Pointers permits PointersImpl, PointersImpl.EmptyPointer
      * Create a builder from this thing.
      *
      * @return a builder
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     @Contract(value = "-> new", pure = true)
     @NotNull Pointers.Builder toBuilder();
@@ -166,7 +166,7 @@ public sealed interface Pointers permits PointersImpl, PointersImpl.EmptyPointer
      * A builder of pointers.
      *
      * @see Pointers
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     interface Builder {
         /**
@@ -176,7 +176,7 @@ public sealed interface Pointers permits PointersImpl, PointersImpl.EmptyPointer
          * @param value   the optional value
          * @param <T>     the type
          * @return this builder
-         * @since next
+         * @since 1.0.0-alpha.4
          */
         @Contract("_, _ -> this")
         default <T> @NotNull Builder withStatic(final @NonNull Pointer<T> pointer, final @Nullable T value) {
@@ -190,7 +190,7 @@ public sealed interface Pointers permits PointersImpl, PointersImpl.EmptyPointer
          * @param value   the value supplier
          * @param <T>     the type
          * @return this builder
-         * @since next
+         * @since 1.0.0-alpha.4
          */
         @Contract("_, _ -> this")
         <T> @NotNull Builder withDynamic(final @NonNull Pointer<T> pointer, @NonNull Supplier<@Nullable T> value);
@@ -203,7 +203,7 @@ public sealed interface Pointers permits PointersImpl, PointersImpl.EmptyPointer
          * @param targetPointer the pointer on the target
          * @param <T>           the value type of the pointer
          * @return this builder
-         * @since next
+         * @since 1.0.0-alpha.4
          */
         default <T> @NotNull Builder withForward(final @NonNull Pointer<T> pointer, final @NonNull Pointered target, final @NonNull Pointer<T> targetPointer) {
             return this.withDynamic(pointer, Pointer.forward(target, targetPointer));

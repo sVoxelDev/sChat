@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Marks an entity as identified requiring it to have an {@link IdentityImpl}.
  *
- * @since next
+ * @since 1.0.0-alpha.4
  */
 public non-sealed interface Identified extends Identity {
 
@@ -39,7 +39,7 @@ public non-sealed interface Identified extends Identity {
      * Gets the identity of the identified entity.
      *
      * @return the identity
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     @NotNull Identity identity();
 

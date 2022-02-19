@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Unmodifiable;
 /**
  * A container for messages that can be used to store and persist messages in memory.
  *
- * @since next
+ * @since 1.0.0-alpha.4
  */
 public final class Messages extends AbstractList<Message> implements FilterableCollection<Message> {
 
@@ -50,7 +50,7 @@ public final class Messages extends AbstractList<Message> implements FilterableC
      *
      * @param messages the messages for which an unmodifiable view is to be returned.
      * @return an unmodifiable view of the message container.
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     public @NotNull
     @Unmodifiable
@@ -63,7 +63,7 @@ public final class Messages extends AbstractList<Message> implements FilterableC
      *
      * @return an empty unmodifiable message container
      * @see #unmodifiable(Messages)
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     public static @NotNull @Unmodifiable Messages of() {
         return new Messages(List.of());
@@ -74,7 +74,7 @@ public final class Messages extends AbstractList<Message> implements FilterableC
      *
      * @param messages the initial messages
      * @return the new message container
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     public static Messages of(final @NonNull Message @NonNull ... messages) {
         return new Messages(new ArrayList<>(List.of(messages)));
@@ -90,7 +90,7 @@ public final class Messages extends AbstractList<Message> implements FilterableC
      * Creates a new message container with the given initial messages.
      *
      * @param messages the initial messages
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     public Messages(final @NonNull Collection<Message> messages) {
         this.messages = new ArrayList<>(messages);
@@ -99,7 +99,7 @@ public final class Messages extends AbstractList<Message> implements FilterableC
     /**
      * Creates a new empty but modifiable message container.
      *
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     public Messages() {
         this(new ArrayList<>());
@@ -130,7 +130,7 @@ public final class Messages extends AbstractList<Message> implements FilterableC
      * Gets the last message that was added or null if the collection is empty.
      *
      * @return the last added message or null
-     * @since next
+     * @since 1.0.0-alpha.4
      */
     public @Nullable Message last() {
         if (size() > 0)
