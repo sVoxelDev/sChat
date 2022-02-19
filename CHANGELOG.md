@@ -4,6 +4,21 @@
 ### Bug Fixes
 
 * **build:** add missing acceptance tests ([10e6ccd](https://github.com/sVoxelDev/sChat/commit/10e6ccd70a97e059577dbb8f96512561b2d3a7f2))
+* **build:** add missing java distribution to build ([22be756](https://github.com/sVoxelDev/sChat/commit/22be756ace82895d3f6e68e91514c63aeb03ef8a))
+* **release:** cleanup build process ([d278148](https://github.com/sVoxelDev/sChat/commit/d278148fe964cc743674e5a9cdd248212b93bd13))
+* **release:** do not trigger release on PRs ([8971948](https://github.com/sVoxelDev/sChat/commit/89719484b6bf85359f25c49fc46b6ee5bd25ff88))
+
+
+### Features
+
+* **build:** move to indra build and maven central release ([6823d17](https://github.com/sVoxelDev/sChat/commit/6823d17ee3491d81b62274a2aa0557b9fe541caa))
+
+# [1.0.0-alpha.4](https://github.com/sVoxelDev/sChat/compare/v1.0.0-alpha.3...v1.0.0-alpha.4) (2022-02-19)
+
+
+### Bug Fixes
+
+* **build:** add missing acceptance tests ([10e6ccd](https://github.com/sVoxelDev/sChat/commit/10e6ccd70a97e059577dbb8f96512561b2d3a7f2))
 * **release:** do not trigger release on PRs ([8971948](https://github.com/sVoxelDev/sChat/commit/89719484b6bf85359f25c49fc46b6ee5bd25ff88))
 
 
