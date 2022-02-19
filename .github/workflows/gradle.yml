@@ -107,15 +107,6 @@ jobs:
             echo "::set-output name=snapshot::true"
           fi
 
-      - name: Deploy to OSSRH
-        if: ${{ github.ref_type != 'tag' && steps.snapshot-check.outputs.snapshot == 'true' }}
-        run: ./gradlew -PforceSign=true publish --no-daemon
-        env:
-          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
-          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
-          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
-          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
-
       - name: Deploy to Central
         if: ${{ steps.snapshot-check.outputs.snapshot == 'false' }}
         run: ./gradlew -PforceSign=true publish closeAndReleaseSonatypeStagingRepository --no-daemon
