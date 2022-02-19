@@ -70,7 +70,7 @@ jobs:
 
   release:
     needs: [ build, test ]
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/beta' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/next'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/release' || github.ref == 'refs/heads/next'
 
     runs-on: ubuntu-18.04
 
