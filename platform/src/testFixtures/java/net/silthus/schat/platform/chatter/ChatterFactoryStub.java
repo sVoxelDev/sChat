@@ -30,11 +30,11 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.platform.sender.SenderMock;
 import net.silthus.schat.ui.ViewConnector;
-import net.silthus.schat.ui.view.ViewProvider;
+import net.silthus.schat.ui.ViewProvider;
 import org.jetbrains.annotations.NotNull;
 
-import static net.silthus.schat.ui.view.ViewFactory.empty;
-import static net.silthus.schat.ui.view.ViewProvider.cachingViewProvider;
+import static net.silthus.schat.ui.ViewFactory.empty;
+import static net.silthus.schat.ui.ViewProvider.cachingViewProvider;
 import static net.silthus.schat.util.StringUtil.randomString;
 
 public class ChatterFactoryStub extends AbstractChatterFactory {

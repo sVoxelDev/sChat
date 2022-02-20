@@ -21,7 +21,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui.view;
+package net.silthus.schat.ui;
 
 import net.silthus.schat.chatter.ChatterMock;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
-import static net.silthus.schat.ui.view.ViewProvider.cachingViewProvider;
+import static net.silthus.schat.ui.ViewProvider.cachingViewProvider;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CachingViewProviderTests {

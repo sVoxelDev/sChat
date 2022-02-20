@@ -34,7 +34,7 @@ import javax.inject.Inject;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.cucumber.models.User;
 import net.silthus.schat.platform.sender.SenderMock;
-import net.silthus.schat.ui.view.View;
+import net.silthus.schat.ui.View;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.identity.Identity.identity;

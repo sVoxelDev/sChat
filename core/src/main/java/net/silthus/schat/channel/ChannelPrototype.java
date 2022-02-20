@@ -24,9 +24,25 @@
 package net.silthus.schat.channel;
 
 import net.silthus.schat.eventbus.EventBus;
+import org.jetbrains.annotations.ApiStatus;
 
+/**
+ * Internal utility for configuring the prototype of channels.
+ *
+ * @since next
+ */
+@ApiStatus.Internal
 public final class ChannelPrototype {
 
+    /**
+     * Configures the prototype for creating new channels.
+     *
+     * <p>This is internal functionality and should not be used.</p>
+     *
+     * @param eventBus the event bus to use
+     * @since next
+     */
+    @ApiStatus.Internal
     public static void configure(EventBus eventBus) {
         ChannelImpl.prototype(builder -> builder.eventBus(eventBus));
     }

@@ -28,7 +28,7 @@ import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.command.Result;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.channel.LeaveChannelEvent;
-import net.silthus.schat.events.channel.LeftChannelEvent;
+import net.silthus.schat.events.chatter.ChatterLeftChannelEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -106,6 +106,6 @@ class LeaveChannelCommandTest {
     @Test
     void left_channel_event_is_fired() {
         assertCanLeaveChannel();
-        eventBus.assertEventFired(new LeftChannelEvent(chatter, channel));
+        eventBus.assertEventFired(new ChatterLeftChannelEvent(chatter, channel));
     }
 }

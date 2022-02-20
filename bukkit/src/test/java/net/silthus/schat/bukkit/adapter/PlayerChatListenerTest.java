@@ -24,6 +24,7 @@
 package net.silthus.schat.bukkit.adapter;
 
 import be.seeseemelk.mockbukkit.entity.PlayerMock;
+import java.util.Optional;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.bukkit.BukkitTests;
@@ -49,7 +50,7 @@ class PlayerChatListenerTest extends BukkitTests {
     @BeforeEach
     void setUp() {
         player = server.addPlayer();
-        chatter = Chatter.chatter(identity(player))
+        chatter = Chatter.chatterBuilder(identity(player))
             .viewConnector(c -> () -> handleMessage(c))
             .create();
         PlayerChatListener listener = new PlayerChatListener(createInMemoryChatterRepository());
@@ -57,7 +58,9 @@ class PlayerChatListenerTest extends BukkitTests {
     }
 
     private void handleMessage(Chatter chatter) {
-        lastMessage = chatter.lastMessage().map(Message::text).orElse(null);
+        lastMessage = Optional.ofNullable(chatter.messages().last())
+            .map(Message::text)
+            .orElse(null);
     }
 
     private void chat() {

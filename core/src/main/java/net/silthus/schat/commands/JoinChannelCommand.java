@@ -35,7 +35,6 @@ import net.silthus.schat.command.CommandBuilder;
 import net.silthus.schat.command.Result;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.events.channel.JoinChannelEvent;
-import net.silthus.schat.events.channel.JoinedChannelEvent;
 
 import static net.silthus.schat.command.Result.error;
 import static net.silthus.schat.command.Result.success;
@@ -82,7 +81,6 @@ public class JoinChannelCommand implements Command {
         if (chatter.isJoined(channel))
             return success();
         chatter.join(channel);
-        eventBus.post(new JoinedChannelEvent(chatter, channel));
         return success();
     }
 

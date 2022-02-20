@@ -25,19 +25,21 @@ package net.silthus.schat.chatter;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.identity.Identified;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.message.Messages;
 import net.silthus.schat.pointer.Pointer;
 import net.silthus.schat.repository.Entity;
 import net.silthus.schat.ui.ViewConnector;
 import net.silthus.schat.util.Permissable;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -55,11 +57,25 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
         return ChatterImpl.EMPTY;
     }
 
-    static Chatter createChatter(@NonNull Identity identity) {
-        return chatter(identity).create();
+    /**
+     * Creates a new chatter for the given identity.
+     *
+     * @param identity the identity of the chatter
+     * @return the created chatter
+     * @since next
+     */
+    static Chatter chatter(@NonNull Identity identity) {
+        return chatterBuilder(identity).create();
     }
 
-    static Builder chatter(@NonNull Identity identity) {
+    /**
+     * Creates a new chatter builder that allows modifying details of the underlying chatter implementation.
+     *
+     * @param identity the identity of the chatter
+     * @return the builder
+     * @since next
+     */
+    static Builder chatterBuilder(@NonNull Identity identity) {
         return ChatterImpl.builder(identity);
     }
 
@@ -84,11 +100,9 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
 
     boolean isJoined(@Nullable Channel channel);
 
-    void leave(Channel channel);
+    void leave(@NonNull Channel channel);
 
-    @NotNull @Unmodifiable Set<Message> messages();
-
-    Optional<Message> lastMessage();
+    @NotNull @Unmodifiable Messages messages();
 
     void updateView();
 
@@ -101,10 +115,39 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
     }
 
     interface Builder {
+        /**
+         * Sets the event bus to use by this chatter.
+         *
+         * <p>This should be set for all chatters using the {@link ChatterPrototype}.</p>
+         *
+         * @param eventBus the event bus
+         * @return this builder
+         * @since next
+         */
+        @ApiStatus.Internal
+        @NotNull Builder eventBus(EventBus eventBus);
+
+        @ApiStatus.Internal
         @NotNull Builder viewConnector(@NonNull ViewConnector.Factory viewConnectorFactory);
 
+        /**
+         * Sets the permission handler used by this chatter.
+         *
+         * <p>This should be done by the {@link ChatterFactory} of the implementing platform.</p>
+         *
+         * @param permissionHandler the permission handler
+         * @return this builder
+         * @since next
+         */
+        @ApiStatus.Internal
         @NotNull Builder permissionHandler(@NonNull PermissionHandler permissionHandler);
 
+        /**
+         * Creates the chatter.
+         *
+         * @return the newly created chatter
+         * @since next
+         */
         @NotNull Chatter create();
     }
 

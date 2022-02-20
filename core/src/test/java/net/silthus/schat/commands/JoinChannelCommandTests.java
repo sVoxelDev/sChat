@@ -25,10 +25,11 @@ package net.silthus.schat.commands;
 
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.ChatterMock;
+import net.silthus.schat.chatter.ChatterPrototype;
 import net.silthus.schat.command.Result;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.channel.JoinChannelEvent;
-import net.silthus.schat.events.channel.JoinedChannelEvent;
+import net.silthus.schat.events.chatter.ChatterJoinedChannelEvent;
 import net.silthus.schat.policies.JoinChannelPolicy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -55,9 +56,11 @@ class JoinChannelCommandTests {
     @BeforeEach
     void setUp() {
         eventBus = EventBusMock.eventBusMock();
+        JoinChannelCommand.prototype(builder -> builder.eventBus(eventBus));
+        ChatterPrototype.configure(eventBus);
+
         chatter = randomChatter();
         channel = channelWith(builder -> builder.policy(JoinChannelPolicy.class, ALLOW));
-        JoinChannelCommand.prototype(builder -> builder.eventBus(eventBus));
     }
 
     private void assertJoinChannelError() {
@@ -109,7 +112,7 @@ class JoinChannelCommandTests {
         @Test
         void then_the_post_join_channel_event_is_fired() {
             joinChannel();
-            eventBus.assertEventFired(new JoinedChannelEvent(chatter, channel));
+            eventBus.assertEventFired(new ChatterJoinedChannelEvent(chatter, channel));
         }
 
         @Nested class given_already_joined {
@@ -148,7 +151,7 @@ class JoinChannelCommandTests {
         @Test
         void then_no_post_join_channel_event_is_fired() {
             assertJoinChannelError();
-            eventBus.assertNoEventFired(new JoinedChannelEvent(chatter, channel));
+            eventBus.assertNoEventFired(new ChatterJoinedChannelEvent(chatter, channel));
         }
 
         @Nested class given_already_joined {

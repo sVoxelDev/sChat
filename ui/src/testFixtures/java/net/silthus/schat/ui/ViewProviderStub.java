@@ -25,9 +25,9 @@ package net.silthus.schat.ui;
 
 import lombok.NonNull;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.ui.view.View;
-import net.silthus.schat.ui.view.ViewConfig;
-import net.silthus.schat.ui.view.ViewProvider;
+import net.silthus.schat.ui.View;
+import net.silthus.schat.ui.ViewConfig;
+import net.silthus.schat.ui.ViewProvider;
 import net.silthus.schat.ui.views.Views;
 
 public class ViewProviderStub implements ViewProvider {
