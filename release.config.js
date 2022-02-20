@@ -21,14 +21,6 @@ if (config.branches.some(it => it === branch || (it.name === branch && it.prerel
                     "files": ["gradle.properties"],
                     "from": "version = .*",
                     "to": "version = ${nextRelease.version}",
-                    "results": [
-                        {
-                            "file": "gradle.properties",
-                            "hasChanged": true,
-                            "numMatches": 1,
-                            "numReplacements": 1
-                        }
-                    ],
                     "countMatches": true
                 }
             ]
@@ -57,14 +49,6 @@ if (config.branches.some(it => it === branch || (it.name === branch && it.prerel
                     "files": ["gradle.properties"],
                     "from": "version = .*",
                     "to": "version = ${nextRelease.version}",
-                    "results": [
-                        {
-                            "file": "gradle.properties",
-                            "hasChanged": true,
-                            "numMatches": 1,
-                            "numReplacements": 1
-                        }
-                    ],
                     "countMatches": true
                 },
                 {
