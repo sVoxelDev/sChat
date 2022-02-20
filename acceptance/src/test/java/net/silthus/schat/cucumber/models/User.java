@@ -29,9 +29,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.sender.SenderMock;
-import net.silthus.schat.ui.view.View;
+import net.silthus.schat.ui.View;
 
 @Getter
 @Setter
@@ -84,10 +83,6 @@ public class User {
 
     public View view() {
         return server().plugin().viewProvider().view(chatter());
-    }
-
-    public Message lastMessage() {
-        return chatter().lastMessage().orElse(null);
     }
 
     @Override

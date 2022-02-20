@@ -21,7 +21,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui.view;
+package net.silthus.schat.ui;
 
 import net.silthus.schat.chatter.Chatter;
 

@@ -35,7 +35,7 @@ import net.silthus.schat.command.CommandBuilder;
 import net.silthus.schat.command.Result;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.events.channel.LeaveChannelEvent;
-import net.silthus.schat.events.channel.LeftChannelEvent;
+import net.silthus.schat.events.chatter.ChatterLeftChannelEvent;
 
 import static net.silthus.schat.command.Result.failure;
 import static net.silthus.schat.command.Result.success;
@@ -86,7 +86,7 @@ public class LeaveChannelCommand implements Command {
     }
 
     private void fireLeftChannelEvent() {
-        eventBus.post(new LeftChannelEvent(chatter, channel));
+        eventBus.post(new ChatterLeftChannelEvent(chatter, channel));
     }
 
     @Getter

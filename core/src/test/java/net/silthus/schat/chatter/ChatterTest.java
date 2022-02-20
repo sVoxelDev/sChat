@@ -24,6 +24,11 @@
 package net.silthus.schat.chatter;
 
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.eventbus.EventBusMock;
+import net.silthus.schat.events.chatter.ChatterChangedActiveChannelEvent;
+import net.silthus.schat.events.chatter.ChatterJoinedChannelEvent;
+import net.silthus.schat.events.chatter.ChatterLeftChannelEvent;
+import net.silthus.schat.events.chatter.ChatterReceivedMessageEvent;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.ui.ViewConnectorMock;
@@ -33,26 +38,29 @@ import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
-import static net.silthus.schat.chatter.Chatter.chatter;
+import static net.silthus.schat.eventbus.EventBusMock.eventBusMock;
 import static net.silthus.schat.identity.IdentityHelper.randomIdentity;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
 class ChatterTest {
-    private Chatter chatter;
+    private ChatterMock chatter;
     private Identity identity;
+    private EventBusMock eventBus;
 
     @BeforeEach
     void setUp() {
         identity = randomIdentity();
-        chatter = Chatter.createChatter(identity);
+        eventBus = eventBusMock();
+        ChatterPrototype.configure(eventBus);
+        chatter = ChatterMock.chatterMock(identity);
     }
 
     @Test
     @SuppressWarnings("ConstantConditions")
     void given_null_identity_then_create_throws() {
-        assertNPE(() -> Chatter.createChatter(null));
+        assertNPE(() -> Chatter.chatter(null));
     }
 
     @Test
@@ -113,6 +121,20 @@ class ChatterTest {
             }
 
             @Test
+            void fires_ActiveChannelChangedEvent() {
+                setActiveChannel(channel);
+                eventBus.assertEventFired(new ChatterChangedActiveChannelEvent(chatter, null, channel));
+            }
+
+            @Test
+            void given_channel_is_active_when_it_is_set_active_then_ActiveChannelChangedEvent_is_not_fired() {
+                setActiveChannel(channel);
+                eventBus.reset();
+                setActiveChannel(channel);
+                eventBus.assertNoEventFired(ChatterChangedActiveChannelEvent.class);
+            }
+
+            @Test
             void leave_clears_active_channel() {
                 setActiveChannel(channel);
                 chatter.leave(channel);
@@ -128,7 +150,7 @@ class ChatterTest {
             }
         }
 
-        @Nested class when_channel_set_as_active_channel {
+        @Nested class when_channel_is_active_channel {
             @BeforeEach
             void setUp() {
                 setActiveChannel(channel);
@@ -174,6 +196,41 @@ class ChatterTest {
                 joinChannel();
                 assertThat(chatter.isJoined(channel)).isTrue();
             }
+
+            @Test
+            void fires_JoinedChannelEvent() {
+                joinChannel();
+                eventBus.assertEventFired(new ChatterJoinedChannelEvent(chatter, channel));
+            }
+        }
+
+        @Nested class leave {
+            @Test
+            void chatter_is_not_joined_then_left_event_is_not_fired() {
+                chatter.leave(channel);
+                eventBus.assertNoEventFired(ChatterLeftChannelEvent.class);
+            }
+
+            @Test
+            void chatter_has_joined_channel_then_left_event_is_fired() {
+                chatter.join(channel);
+                chatter.leave(channel);
+                eventBus.assertEventFired(new ChatterLeftChannelEvent(chatter, channel));
+            }
+
+            @Test
+            void removes_chatter_from_channel_targets() {
+                channel.addTarget(chatter);
+                chatter.leave(channel);
+                assertThat(channel.targets()).doesNotContain(chatter);
+            }
+
+            @Test
+            void removes_channel_from_chatter_channels() {
+                chatter.join(channel);
+                chatter.leave(channel);
+                chatter.assertNotJoinedChannel(channel);
+            }
         }
 
         @Test
@@ -209,13 +266,19 @@ class ChatterTest {
             assertThat(chatter.messages()).contains(message);
         }
 
+        @Test
+        void ReceivedMessage_event_is_fired() {
+            final Message message = randomMessage();
+            chatter.sendMessage(message);
+            eventBus.assertEventFired(new ChatterReceivedMessageEvent(chatter, message));
+        }
+
         @Nested class given_valid_view_connector {
             private final ViewConnectorMock view = new ViewConnectorMock();
 
             @BeforeEach
             void setUp() {
-                chatter = chatter(randomIdentity())
-                    .viewConnector(c -> view).create();
+                chatter = ChatterMock.chatterMock(identity, builder -> builder.viewConnector(c -> view));
             }
 
             private void assertViewUpdated() {
@@ -227,7 +290,7 @@ class ChatterTest {
             }
 
             private void assertLastMessageIs(Message message) {
-                assertThat(chatter.lastMessage()).isPresent().get().isEqualTo(message);
+                assertThat(chatter.messages().last()).isEqualTo(message);
             }
 
             @Test
@@ -268,7 +331,7 @@ class ChatterTest {
                 void given_no_messages_when_update_is_called_then_context_has_no_last_message() {
                     chatter.updateView();
                     assertViewUpdated();
-                    assertThat(chatter.lastMessage()).isNotPresent();
+                    assertThat(chatter.messages().last()).isNull();
                 }
 
                 @Test
@@ -296,11 +359,12 @@ class ChatterTest {
 
         @Nested class given_permission_handler {
 
+            private Chatter chatter;
             private boolean permissionHandlerCalled = false;
 
             @BeforeEach
             void setUp() {
-                chatter = chatter(randomIdentity()).permissionHandler(permission -> {
+                chatter = Chatter.chatterBuilder(randomIdentity()).permissionHandler(permission -> {
                     permissionHandlerCalled = true;
                     return false;
                 }).create();

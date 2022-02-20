@@ -47,7 +47,7 @@ import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.messaging.GatewayProviderRegistry;
 import net.silthus.schat.platform.plugin.AbstractSChatServerPlugin;
 import net.silthus.schat.platform.sender.Sender;
-import net.silthus.schat.ui.view.ViewProvider;
+import net.silthus.schat.ui.ViewProvider;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 

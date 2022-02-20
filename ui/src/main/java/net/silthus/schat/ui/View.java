@@ -21,16 +21,31 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui.view;
+package net.silthus.schat.ui;
 
-import lombok.NonNull;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.pointer.Setting;
 
-public interface ViewProvider {
+import static net.silthus.schat.pointer.Setting.setting;
 
-    static ViewProvider cachingViewProvider(ViewFactory factory) {
-        return new CachingViewProvider(factory);
+public interface View {
+
+    Key VIEW_MARKER_KEY = Key.key("schat", "view");
+    Component VIEW_MARKER = Component.storageNBT(VIEW_MARKER_KEY.asString(), VIEW_MARKER_KEY);
+
+    Setting<Integer> VIEW_HEIGHT = setting(Integer.class, "height", 100); // minecraft chat box height in lines
+
+    static View empty() {
+        return EmptyView.EMPTY;
     }
 
-    View view(@NonNull Chatter chatter);
+    Chatter chatter();
+
+    Component render();
+
+    default boolean isRenderedView(Component render) {
+        return render.contains(VIEW_MARKER) || render.children().contains(VIEW_MARKER);
+    }
 }

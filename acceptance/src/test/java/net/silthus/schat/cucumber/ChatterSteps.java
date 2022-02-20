@@ -59,14 +59,14 @@ public class ChatterSteps {
 
     @Then("{chatter} receives the message")
     public void receiveMessage(Chatter chatter) {
-        assertThat(chatter.lastMessage()).isPresent()
-            .get().extracting(Message::text)
+        assertThat(chatter.messages().last()).isNotNull()
+            .extracting(Message::text)
             .isEqualTo(context.lastMessageText());
     }
 
     @Then("{chatter} does not receive a message")
     public void playerDoesNotReceiveAMessage(Chatter chatter) {
-        assertThat(chatter.lastMessage()).isEmpty();
+        assertThat(chatter.messages().last()).isNull();
     }
 
     @Then("{chatter} am/is a member of the {channel} channel")

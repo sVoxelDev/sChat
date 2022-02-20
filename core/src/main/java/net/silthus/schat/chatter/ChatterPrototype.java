@@ -21,17 +21,31 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.events.channel;
+package net.silthus.schat.chatter;
 
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.commands.LeaveChannelCommand;
-import net.silthus.schat.events.SChatEvent;
+import net.silthus.schat.eventbus.EventBus;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
- * The event is fired after a chatter has left a channel.
+ * Internal utility for configuring the prototype of chatters.
  *
- * <p>The event will not fire if {@link LeaveChannelCommand#leaveChannel(Chatter, Channel)} fails or {@link LeaveChannelEvent} is cancelled.</p>
+ * @since next
  */
-public record LeftChannelEvent(Chatter chatter, Channel channel) implements SChatEvent {
+@ApiStatus.Internal
+public final class ChatterPrototype {
+    /**
+     * Configures the prototype for creating new chatters.
+     *
+     * <p>This is internal functionality and should not be used.</p>
+     *
+     * @param eventBus the event bus to use
+     * @since next
+     */
+    @ApiStatus.Internal
+    public static void configure(EventBus eventBus) {
+        ChatterImpl.prototype(builder -> builder.eventBus(eventBus));
+    }
+
+    private ChatterPrototype() {
+    }
 }

@@ -31,6 +31,7 @@ import lombok.experimental.Accessors;
 import net.silthus.schat.channel.ChannelPrototype;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.ChatterFactory;
+import net.silthus.schat.chatter.ChatterPrototype;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.commands.CreatePrivateChannelCommand;
 import net.silthus.schat.commands.JoinChannelCommand;
@@ -51,6 +52,8 @@ import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.ui.view.ViewController;
 import net.silthus.schat.ui.view.ViewFactory;
 import net.silthus.schat.ui.view.ViewProvider;
+import net.silthus.schat.ui.ViewFactory;
+import net.silthus.schat.ui.ViewProvider;
 import net.silthus.schat.ui.views.Views;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -60,6 +63,7 @@ import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterR
 import static net.silthus.schat.platform.commands.parser.ChannelArgument.registerChannelArgument;
 import static net.silthus.schat.platform.commands.parser.ChatterArgument.registerChatterArgument;
 import static net.silthus.schat.platform.config.ConfigKeys.DEBUG;
+import static net.silthus.schat.ui.ViewProvider.cachingViewProvider;
 import static net.silthus.schat.platform.config.ConfigKeys.VIEW_CONFIG;
 import static net.silthus.schat.ui.view.ViewProvider.cachingViewProvider;
 import static net.silthus.schat.util.gson.types.ChannelSerializer.CHANNEL_TYPE;
@@ -162,7 +166,9 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
         LeaveChannelCommand.prototype(builder -> builder
             .eventBus(eventBus())
         );
+
         ChannelPrototype.configure(eventBus());
+        ChatterPrototype.configure(eventBus());
     }
 
     private void loadFeatures() {

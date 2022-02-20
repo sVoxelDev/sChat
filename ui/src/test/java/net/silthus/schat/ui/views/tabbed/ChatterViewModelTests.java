@@ -21,7 +21,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui.model;
+package net.silthus.schat.ui.views.tabbed;
 
 import lombok.SneakyThrows;
 import net.silthus.schat.channel.Channel;
@@ -37,7 +37,7 @@ import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.channel.ChannelSettings.PRIORITY;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
-import static net.silthus.schat.ui.model.ChatterViewModel.of;
+import static net.silthus.schat.ui.views.tabbed.ChatterViewModel.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ChatterViewModelTests {

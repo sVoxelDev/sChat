@@ -30,7 +30,6 @@ import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.ui.format.Format;
-import net.silthus.schat.ui.model.ChatterViewModel;
 
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.translatable;
@@ -46,7 +45,7 @@ import static net.silthus.schat.channel.ChannelSettings.FORCED;
 @Accessors(fluent = true)
 public class ChannelTab extends AbstractTab {
 
-    private static final Component CLOSE_CHAR = Component.text("\u274C", RED);
+    private static final Component CLOSE_CHAR = Component.text("\u274C", RED); // ❌
 
     private final Channel channel;
 

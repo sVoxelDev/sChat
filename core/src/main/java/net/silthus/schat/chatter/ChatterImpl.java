@@ -24,11 +24,10 @@
 package net.silthus.schat.chatter;
 
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Queue;
 import java.util.Set;
+import java.util.function.Function;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
@@ -37,8 +36,14 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.commands.SendMessageResult;
+import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.events.chatter.ChatterChangedActiveChannelEvent;
+import net.silthus.schat.events.chatter.ChatterJoinedChannelEvent;
+import net.silthus.schat.events.chatter.ChatterLeftChannelEvent;
+import net.silthus.schat.events.chatter.ChatterReceivedMessageEvent;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.message.Messages;
 import net.silthus.schat.pointer.Pointers;
 import net.silthus.schat.ui.ViewConnector;
 import org.jetbrains.annotations.NotNull;
@@ -56,23 +61,28 @@ import static net.silthus.schat.commands.SendMessageResult.success;
 non-sealed class ChatterImpl implements Chatter {
 
     static final Chatter EMPTY = new EmptyChatter();
+    @Getter
+    @Setter
+    static Function<ChatterImpl.Builder, ChatterImpl.Builder> prototype = builder -> builder;
 
-    static ChatterImpl.Builder builder(Identity identity) {
-        return new Builder(identity);
+    static Builder builder(Identity identity) {
+        return prototype().apply(new Builder(identity));
     }
 
     private final Identity identity;
-    private final transient ViewConnector viewConnector;
-    private final transient PermissionHandler permissionHandler;
-    private final transient Pointers pointers;
+    private final transient @NonNull EventBus eventBus;
+    private final transient @NonNull ViewConnector viewConnector;
+    private final transient @NonNull PermissionHandler permissionHandler;
+    private final transient @NonNull Pointers pointers;
 
     private final Set<Channel> channels = new HashSet<>();
-    private final transient Queue<Message> messages = new LinkedList<>();
+    private final transient Messages messages = new Messages();
 
     private @Nullable Channel activeChannel;
 
     protected ChatterImpl(Builder builder) {
         this.identity = builder.identity();
+        this.eventBus = builder.eventBus();
         this.viewConnector = builder.viewConnector().create(this);
         this.permissionHandler = builder.permissionHandler();
         this.pointers = Pointers.pointersBuilder()
@@ -88,8 +98,14 @@ non-sealed class ChatterImpl implements Chatter {
         if (isActiveChannel(activeChannel)) return;
         if (activeChannel != null)
             join(activeChannel);
+        Channel oldChannel = this.activeChannel;
         this.activeChannel = activeChannel;
+        fireChangedActiveChannelEvent(oldChannel, activeChannel);
         this.updateView();
+    }
+
+    private void fireChangedActiveChannelEvent(@Nullable Channel oldChannel, @Nullable Channel newChannel) {
+        eventBus().post(new ChatterChangedActiveChannelEvent(this, oldChannel, newChannel));
     }
 
     @Override
@@ -110,8 +126,14 @@ non-sealed class ChatterImpl implements Chatter {
     @Override
     public void join(@NonNull Channel channel) {
         channel.addTarget(this);
-        if (this.channels.add(channel))
+        if (this.channels.add(channel)) {
+            fireJoinedChannelEvent(channel);
             updateView();
+        }
+    }
+
+    private void fireJoinedChannelEvent(@NotNull Channel channel) {
+        eventBus.post(new ChatterJoinedChannelEvent(this, channel));
     }
 
     @Override
@@ -121,11 +143,16 @@ non-sealed class ChatterImpl implements Chatter {
     }
 
     @Override
-    public void leave(Channel channel) {
+    public void leave(@NonNull Channel channel) {
         channel.removeTarget(this);
-        this.channels.remove(channel);
+        if (this.channels.remove(channel))
+            fireLeftChannelEvent(channel);
         if (channel.equals(activeChannel))
             activeChannel = null;
+    }
+
+    private void fireLeftChannelEvent(@NotNull Channel channel) {
+        eventBus().post(new ChatterLeftChannelEvent(this, channel));
     }
 
     public boolean hasPermission(String permission) {
@@ -133,20 +160,21 @@ non-sealed class ChatterImpl implements Chatter {
     }
 
     @Override
-    public @NotNull @Unmodifiable Set<Message> messages() {
-        return Set.copyOf(messages);
-    }
-
-    @Override
-    public Optional<Message> lastMessage() {
-        return Optional.ofNullable(messages.peek());
+    public @NotNull @Unmodifiable Messages messages() {
+        return Messages.unmodifiable(messages);
     }
 
     @Override
     public SendMessageResult sendMessage(@NonNull Message message) {
-        messages.add(message);
-        updateView();
+        if (messages.add(message)) {
+            fireReceivedMessageEvent(message);
+            updateView();
+        }
         return success(message);
+    }
+
+    private void fireReceivedMessageEvent(@NotNull Message message) {
+        eventBus().post(new ChatterReceivedMessageEvent(this, message));
     }
 
     @Override
@@ -162,6 +190,7 @@ non-sealed class ChatterImpl implements Chatter {
         private final Identity identity;
         private @NonNull ViewConnector.Factory viewConnector = chatter -> () -> {};
         private @NonNull PermissionHandler permissionHandler = permission -> false;
+        private @NonNull EventBus eventBus = EventBus.empty();
 
         private Builder(Identity identity) {
             this.identity = identity;
@@ -211,18 +240,13 @@ non-sealed class ChatterImpl implements Chatter {
         }
 
         @Override
-        public void leave(Channel channel) {
+        public void leave(@NonNull Channel channel) {
 
         }
 
         @Override
-        public @NotNull @Unmodifiable Set<Message> messages() {
-            return Set.of();
-        }
-
-        @Override
-        public Optional<Message> lastMessage() {
-            return Optional.empty();
+        public @NotNull @Unmodifiable Messages messages() {
+            return Messages.of();
         }
 
         @Override

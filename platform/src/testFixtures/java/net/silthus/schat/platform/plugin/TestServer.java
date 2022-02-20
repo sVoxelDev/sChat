@@ -41,7 +41,7 @@ import net.silthus.schat.platform.messaging.GatewayProviderRegistry;
 import net.silthus.schat.platform.messaging.MockMessagingGatewayProvider;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.platform.sender.SenderMock;
-import net.silthus.schat.ui.view.ViewProvider;
+import net.silthus.schat.ui.ViewProvider;
 
 import static net.silthus.schat.platform.commands.CommandTestUtils.createCommandManager;
 import static net.silthus.schat.platform.config.TestConfigurationAdapter.testConfigAdapter;

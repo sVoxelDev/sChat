@@ -21,49 +21,15 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.eventbus;
+package net.silthus.schat.ui;
 
-import java.util.LinkedList;
-import java.util.Queue;
-import lombok.NonNull;
-import net.silthus.schat.channel.ChannelPrototype;
-import net.silthus.schat.commands.SendMessageCommand;
-import net.silthus.schat.events.SChatEvent;
+import net.silthus.schat.chatter.Chatter;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-public class EventBusMock extends EventBusImpl {
-
-    public static EventBusMock eventBusMock() {
-        return new EventBusMock();
-    }
-
-    private final Queue<SChatEvent> events = new LinkedList<>();
-
-    protected EventBusMock() {
-        ChannelPrototype.configure(this);
-        SendMessageCommand.prototype(builder -> builder.eventBus(this));
-    }
-
+public record DynamicViewConnector(Chatter chatter,
+                                   ViewProvider viewProvider,
+                                   ViewConnector.Out out) implements ViewConnector {
     @Override
-    public <E extends SChatEvent> E post(@NonNull E event) {
-        events.add(event);
-        return super.post(event);
-    }
-
-    public <E extends SChatEvent> void assertEventFired(E event) {
-        assertThat(events).contains(event);
-    }
-
-    public <E extends SChatEvent> void assertNoEventFired(E event) {
-        assertThat(events).doesNotContain(event);
-    }
-
-    public <E extends SChatEvent> void assertNoEventFired(Class<E> type) {
-        assertThat(events).doesNotHaveAnyElementsOfTypes(type);
-    }
-
-    public void reset() {
-        events.clear();
+    public void update() {
+        out.send(viewProvider.view(chatter).render());
     }
 }

@@ -28,10 +28,10 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.ui.ViewConnector;
-import net.silthus.schat.ui.view.ViewProvider;
+import net.silthus.schat.ui.ViewProvider;
 import org.jetbrains.annotations.NotNull;
 
-import static net.silthus.schat.chatter.Chatter.chatter;
+import static net.silthus.schat.chatter.Chatter.chatterBuilder;
 
 public abstract class AbstractChatterFactory implements ChatterFactory {
     protected final ViewProvider viewProvider;
@@ -42,7 +42,7 @@ public abstract class AbstractChatterFactory implements ChatterFactory {
 
     @Override
     public final Chatter createChatter(UUID id) {
-        return chatter(createIdentity(id))
+        return chatterBuilder(createIdentity(id))
             .viewConnector(createViewConnector(id))
             .permissionHandler(createPermissionHandler(id))
             .create();

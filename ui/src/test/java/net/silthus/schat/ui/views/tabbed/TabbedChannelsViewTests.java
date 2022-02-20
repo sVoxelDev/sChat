@@ -21,7 +21,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui.views;
+package net.silthus.schat.ui.views.tabbed;
 
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
@@ -37,8 +37,8 @@ import net.silthus.schat.commands.SendMessageCommand;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.ui.view.View;
-import net.silthus.schat.ui.view.ViewConfig;
+import net.silthus.schat.ui.View;
+import net.silthus.schat.ui.ViewConfig;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

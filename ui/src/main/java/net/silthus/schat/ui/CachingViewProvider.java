@@ -21,16 +21,24 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui.view;
+package net.silthus.schat.ui;
 
+import java.util.Map;
+import java.util.WeakHashMap;
+import lombok.NonNull;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.ui.ViewConnector;
 
-public record DynamicViewConnector(Chatter chatter,
-                                   ViewProvider viewProvider,
-                                   ViewConnector.Out out) implements ViewConnector {
+final class CachingViewProvider implements ViewProvider {
+
+    private final ViewFactory factory;
+    private final Map<Chatter, View> views = new WeakHashMap<>();
+
+    CachingViewProvider(ViewFactory factory) {
+        this.factory = factory;
+    }
+
     @Override
-    public void update() {
-        out.send(viewProvider.view(chatter).render());
+    public View view(@NonNull Chatter chatter) {
+        return views.computeIfAbsent(chatter, factory::createView);
     }
 }

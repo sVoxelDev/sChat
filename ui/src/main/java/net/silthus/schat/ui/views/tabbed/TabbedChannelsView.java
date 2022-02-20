@@ -32,10 +32,11 @@ import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.pointer.Settings;
+import net.silthus.schat.ui.View;
 import net.silthus.schat.ui.format.Format;
 import net.silthus.schat.ui.model.ChatterViewModel;
-import net.silthus.schat.ui.view.View;
-import net.silthus.schat.ui.view.ViewConfig;
+import net.silthus.schat.ui.View;
+import net.silthus.schat.ui.ViewConfig;
 import org.jetbrains.annotations.NotNull;
 
 import static java.util.stream.Collectors.toList;

@@ -28,6 +28,8 @@ import net.silthus.schat.events.SChatEvent;
 
 /**
  * The {@code ChatterJoinedServerEvent} is fired when a chatter has joined the server.
+ *
+ * @since next
  */
 public record ChatterJoinedServerEvent(Chatter chatter) implements SChatEvent {
 }

@@ -43,8 +43,8 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.ui.view.View;
-import net.silthus.schat.ui.view.ViewProvider;
+import net.silthus.schat.ui.View;
+import net.silthus.schat.ui.ViewProvider;
 import org.bukkit.plugin.Plugin;
 
 import static net.silthus.schat.message.Message.message;

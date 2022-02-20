@@ -49,11 +49,15 @@ public final class ChatterMock extends ChatterImpl {
     }
 
     public static @NotNull ChatterMock chatterMock(Identity identity) {
-        return new ChatterMock((Builder) Chatter.chatter(identity));
+        return new ChatterMock((Builder) Chatter.chatterBuilder(identity));
     }
 
     public static @NotNull ChatterMock chatterMock(Consumer<Chatter.Builder> builder) {
-        final Chatter.Builder chatter = Chatter.chatter(randomIdentity());
+        return chatterMock(randomIdentity(), builder);
+    }
+
+    public static @NotNull ChatterMock chatterMock(Identity identity, Consumer<Chatter.Builder> builder) {
+        final Chatter.Builder chatter = Chatter.chatterBuilder(identity);
         builder.accept(chatter);
         return new ChatterMock((Builder) chatter);
     }

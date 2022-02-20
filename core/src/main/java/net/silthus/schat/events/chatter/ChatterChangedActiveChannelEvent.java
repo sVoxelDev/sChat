@@ -21,18 +21,22 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.events.channel;
+package net.silthus.schat.events.chatter;
 
+import lombok.NonNull;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.events.SChatEvent;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * The event is fired after a chatter has joined a channel.
+ * This event is fired after a chatter changed his active channel.
  *
- * <p>Not to be mistaken by {@link JoinChannelEvent} which is fired before a chatter joins the channel.</p>
- *
- * <p>The event will not fire on subsequent joins to a channel the chatter is already a member of.</p>
+ * @since next
  */
-public record JoinedChannelEvent(Chatter chatter, Channel channel) implements SChatEvent {
+public record ChatterChangedActiveChannelEvent(
+    @NonNull Chatter chatter,
+    @Nullable Channel oldChannel,
+    @Nullable Channel newChannel
+) implements SChatEvent {
 }
