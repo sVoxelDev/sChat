@@ -59,6 +59,11 @@ repositories {
             includeGroup("com.comphenix.protocol")
         }
     }
+    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") {
+        content {
+            includeGroup("me.clip")
+        }
+    }
 }
 
 dependencies {

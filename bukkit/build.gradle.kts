@@ -13,6 +13,7 @@ dependencies {
     implementation(libs.spigot)
 
     implementation(libs.protocollib)
+    implementation(libs.placeholderapi)
     implementation(libs.cloud.commands.paper)
     implementation(libs.adventure.platform.bukkit)
 

@@ -14,6 +14,7 @@ velocity = "3.0.1"
 protocollib = "4.7.0"
 bstats = "3.0.0"
 mockbukkit = "1.15.5"
+placeholderapi = "2.11.1"
 
 checkerframework = "3.21.2"
 junit-jupiter = "5.8.1"
@@ -91,6 +92,7 @@ cloud-commands-paper = { module = "cloud.commandframework:cloud-paper", version.
 protocollib = { module = "com.comphenix.protocol:ProtocolLib", version.ref = "protocollib" }
 bstats-bukkit = { module = "org.bstats:bstats-bukkit", version.ref = "bstats" }
 mockbukkit = { module = "com.github.seeseemelk:MockBukkit-v1.18", version.ref = "mockbukkit" }
+placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholderapi" }
 
 [bundles]
 testing-api = [
