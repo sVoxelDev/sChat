@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
-import net.silthus.schat.ui.view.ViewController;
+import net.silthus.schat.ui.ViewController;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

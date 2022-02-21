@@ -35,9 +35,6 @@ import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.ui.View;
 import net.silthus.schat.ui.ViewConfig;
 import net.silthus.schat.ui.format.Format;
-import net.silthus.schat.ui.model.ChatterViewModel;
-import net.silthus.schat.ui.View;
-import net.silthus.schat.ui.ViewConfig;
 import org.jetbrains.annotations.NotNull;
 
 import static java.util.stream.Collectors.toList;
