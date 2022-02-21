@@ -58,8 +58,6 @@ import static net.silthus.schat.message.Message.message;
 @Log(topic = "sChat")
 public final class ChatPacketListener extends PacketAdapter {
 
-    private static final GsonComponentSerializer GSON_SERIALIZER = GsonComponentSerializer.gson();
-
     private static Object PAPER_GSON_SERIALIZER;
     private static Method PAPER_SERIALIZE;
 
