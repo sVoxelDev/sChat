@@ -30,7 +30,6 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
@@ -43,6 +42,7 @@ import net.silthus.schat.velocity.VelocityBootstrap;
 
 import static com.velocitypowered.api.event.connection.PluginMessageEvent.ForwardResult.forward;
 import static com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier.create;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class VelocityMessengerGateway implements MessengerGateway {
 
@@ -71,7 +71,7 @@ public class VelocityMessengerGateway implements MessengerGateway {
 
     @Override
     public void sendOutgoingMessage(String encodedMessage) {
-        sendToAllServers(encodedMessage.getBytes(StandardCharsets.UTF_8));
+        sendToAllServers(encodedMessage.getBytes(UTF_8));
     }
 
     private void sendToAllServers(byte[] bytes) {
@@ -126,7 +126,7 @@ public class VelocityMessengerGateway implements MessengerGateway {
 
         @Override
         public void onIncomingMessage(PluginMessageEvent event) {
-            log.info("Received Plugin Message on '" + event.getIdentifier() + "': " + new String(event.getData()));
+            log.info("Received Plugin Message on '" + event.getIdentifier() + "': " + new String(event.getData(), UTF_8));
             super.onIncomingMessage(event);
         }
 
