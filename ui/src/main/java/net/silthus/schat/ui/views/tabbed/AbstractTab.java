@@ -32,7 +32,6 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.ui.View;
 import net.silthus.schat.ui.format.Format;
 import org.jetbrains.annotations.NotNull;
 
@@ -70,7 +69,7 @@ public abstract class AbstractTab implements Tab {
     }
 
     protected Component renderMessage(Message message) {
-        return messageFormat().format(view, message);
+        return message.getOrDefault(FORMATTED, messageFormat().format(view, message));
     }
 
     protected @NotNull Collection<Message> messages() {

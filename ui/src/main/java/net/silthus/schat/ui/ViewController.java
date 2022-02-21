@@ -21,7 +21,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui.view;
+package net.silthus.schat.ui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,8 +34,8 @@ import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
 
 import static net.silthus.schat.message.Message.FORMATTED;
+import static net.silthus.schat.ui.View.empty;
 import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
-import static net.silthus.schat.ui.view.View.empty;
 
 public class ViewController implements EventListener {
 
