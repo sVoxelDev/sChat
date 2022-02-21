@@ -83,7 +83,7 @@ public final class ChannelSettings {
      *
      * <p>Default: {@code false}</p>
      */
-    public static final Setting<Boolean> FORCED = setting(Boolean.class, "force", false);
+    public static final Setting<Boolean> FORCED = setting(Boolean.class, "forced", false);
 
     private ChannelSettings() {
     }

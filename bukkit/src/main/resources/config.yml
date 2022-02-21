@@ -12,7 +12,10 @@
 #|                                                        |#
 #+--------------------------------------------------------+#
 ############################################################
+
+
 messenger: pluginmessage
+
 channels:
   global:
     name: Global
@@ -20,16 +23,15 @@ channels:
       protected: false
       auto_join: true
       global: true
-      format:
-        message: '<yellow><source.display_name><gray>: <text>'
-        active_channel:
-          color: green
-          decoration: underlined
+      forced: true
+      message_format: "<yellow><source.display_name></yellow><gray>: <text>"
+      active_channel_format: "<green><underlined><channel.name></underlined></green>"
+      inactive_channel_format: "<gray><click:run_command:'/channel join <channel.key>'><channel.name></click></gray>"
   team:
     name: Team
     settings:
       protected: true
       auto_join: true
       global: true
-      format:
-        message: '<blue><source.display_name><gray>: <text>'
+      forced: false
+      message_format: "<#189AB4><source.display_name><gray>: <text>"

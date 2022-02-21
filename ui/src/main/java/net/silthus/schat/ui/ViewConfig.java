@@ -21,7 +21,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui.view;
+package net.silthus.schat.ui;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -63,4 +63,22 @@ public class ViewConfig {
         .separator(text(" | "))
         .suffix(text(" |"))
         .build();
+
+    public ViewConfig messageFormat(Format messageFormat) {
+        if (messageFormat != null)
+            this.messageFormat = messageFormat;
+        return this;
+    }
+
+    public ViewConfig privateChat(Settings privateChat) {
+        if (privateChat != null)
+            this.privateChat = privateChat;
+        return this;
+    }
+
+    public ViewConfig channelJoinConfig(JoinConfiguration channelJoinConfig) {
+        if (channelJoinConfig != null)
+            this.channelJoinConfig = channelJoinConfig;
+        return this;
+    }
 }
