@@ -119,7 +119,7 @@ public class TestServer extends AbstractSChatServerPlugin {
     private final class TestConnectionListener extends ConnectionListener {
 
         private TestConnectionListener() {
-            super(chatterRepository(), chatterFactory(), messenger(), eventBus(), bootstrap().scheduler());
+            super(chatterRepository(), chatterFactory(), messenger(), eventBus());
         }
 
         public void joinServer(Sender sender) {

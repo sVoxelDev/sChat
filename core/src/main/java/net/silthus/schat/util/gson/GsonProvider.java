@@ -25,7 +25,6 @@ package net.silthus.schat.util.gson;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParser;
 import java.lang.reflect.Type;
 import lombok.NonNull;
 import net.silthus.schat.util.gson.types.ComponentSerializer;
@@ -54,7 +53,6 @@ public final class GsonProvider {
         .registerTypeAdapter(IDENTITY_TYPE, new IdentitySerializer())
         .registerTypeAdapter(SETTINGS_TYPE, new SettingsSerializer());
     private final GsonBuilder prettyPrinting = base.setPrettyPrinting();
-    private final JsonParser normalParser = new JsonParser();
 
     public Gson normalGson() {
         return base.create();
@@ -62,10 +60,6 @@ public final class GsonProvider {
 
     public Gson prettyGson() {
         return prettyPrinting.create();
-    }
-
-    public JsonParser gsonParser() {
-        return normalParser;
     }
 
     public void registerTypeAdapter(Type type, @NonNull Object adapter) {

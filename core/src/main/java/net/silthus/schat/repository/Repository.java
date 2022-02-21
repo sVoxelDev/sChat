@@ -23,6 +23,7 @@
  */
 package net.silthus.schat.repository;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -138,10 +139,26 @@ public interface Repository<K, E extends Entity<K>> {
         return Collections.unmodifiableList(entities);
     }
 
+    /**
+     * Tries to find an entity in this repository with the given key.
+     *
+     * @param key the key of the entity
+     * @return the found entity or an empty optional
+     * @since next
+     */
     default Optional<E> find(K key) {
         return find(e -> e.key().equals(key));
     }
 
+    /**
+     * Tries to find an entity with the given key in this repository
+     * or creates it if it does not exist.
+     *
+     * @param key the key of the entity
+     * @param creator the function used to create the entity if it does not exist
+     * @return the existing or newly created entity
+     * @since next
+     */
     default E findOrCreate(K key, Function<K, E> creator) {
         return find(e -> e.key().equals(key)).orElseGet(() -> {
             final E entity = creator.apply(key);
@@ -165,7 +182,12 @@ public interface Repository<K, E extends Entity<K>> {
         return Optional.empty();
     }
 
+    /**
+     * The exception is thrown if no entity with the given key exists inside the repository.
+     */
     class NotFound extends RuntimeException {
+        @Serial private static final long serialVersionUID = -7891198283474320245L;
+
         public <K> NotFound(K id) {
             super("No entity with the id '" + id + "' exists.");
         }

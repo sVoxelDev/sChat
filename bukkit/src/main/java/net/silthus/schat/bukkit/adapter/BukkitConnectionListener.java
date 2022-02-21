@@ -39,7 +39,7 @@ public final class BukkitConnectionListener extends ConnectionListener implement
     private final BukkitSenderFactory senderFactory;
 
     public BukkitConnectionListener(SChatBukkitServer server) {
-        super(server.chatterRepository(), server.chatterFactory(), server.messenger(), server.eventBus(), server.bootstrap().scheduler());
+        super(server.chatterRepository(), server.chatterFactory(), server.messenger(), server.eventBus());
         this.plugin = server.bootstrap().loader();
         this.senderFactory = server.senderFactory();
         Bukkit.getServer().getPluginManager().registerEvents(this, server.bootstrap().loader());
