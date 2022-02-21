@@ -37,6 +37,8 @@ import net.silthus.schat.messenger.MessengerGateway;
 import net.silthus.schat.platform.config.ConfigKeys;
 import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class BungeecordMessengerGateway implements MessengerGateway, Listener {
 
     public static final String GATEWAY_TYPE = "pluginmessage";
@@ -103,7 +105,7 @@ public class BungeecordMessengerGateway implements MessengerGateway, Listener {
 
         @Override
         public void onIncomingMessage(PluginMessageEvent event) {
-            log.info("Received Plugin Message on '" + event.getTag() + "': " + new String(event.getData()));
+            log.info("Received Plugin Message on '" + event.getTag() + "': " + new String(event.getData(), UTF_8));
             super.onIncomingMessage(event);
         }
 

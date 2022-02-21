@@ -37,6 +37,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class BukkitMessengerGateway implements MessengerGateway, PluginMessageListener {
 
     public static final String GATEWAY_TYPE = "pluginmessage";
@@ -100,7 +102,7 @@ public class BukkitMessengerGateway implements MessengerGateway, PluginMessageLi
 
         @Override
         public void onPluginMessageReceived(@NotNull String channel, @NotNull Player player, byte[] message) {
-            log.info("Received Plugin Message on '" + channel + "': " + new String(message));
+            log.info("Received Plugin Message on '" + channel + "': " + new String(message, UTF_8));
             super.onPluginMessageReceived(channel, player, message);
         }
 
