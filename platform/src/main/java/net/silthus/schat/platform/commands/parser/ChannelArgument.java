@@ -33,6 +33,7 @@ import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.exceptions.parsing.NoInputProvidedException;
 import cloud.commandframework.exceptions.parsing.ParserException;
 import io.leangen.geantyref.TypeToken;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -120,6 +121,8 @@ public final class ChannelArgument implements ArgumentParser<Sender, Channel> {
     }
 
     public static final class ChannelParseException extends ParserException {
+        @Serial private static final long serialVersionUID = -7889625810183952627L;
+
         public ChannelParseException(@NonNull CommandContext<?> context, String input) {
             super(ChannelArgument.class,
                 context,

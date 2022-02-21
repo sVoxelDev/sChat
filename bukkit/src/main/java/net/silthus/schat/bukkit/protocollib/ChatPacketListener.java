@@ -29,6 +29,7 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.google.gson.JsonParseException;
+import java.io.Serial;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -215,6 +216,7 @@ public final class ChatPacketListener extends PacketAdapter {
      * @since next
      */
     public static final class HandleChatPacket extends RuntimeException {
+        @Serial private static final long serialVersionUID = -8061095814474497204L;
 
         HandleChatPacket(final String message) {
             super(message);

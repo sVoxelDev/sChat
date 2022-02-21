@@ -24,6 +24,7 @@
 package net.silthus.schat.platform.config.adapter;
 
 import java.io.File;
+import java.io.Serial;
 import java.nio.file.Path;
 
 public interface ConfigurationAdapter extends ConfigurationSection {
@@ -39,6 +40,7 @@ public interface ConfigurationAdapter extends ConfigurationSection {
     }
 
     class LoadFailed extends RuntimeException {
+        @Serial private static final long serialVersionUID = 5479783390057437837L;
 
         public LoadFailed(Throwable cause) {
             super(cause);
@@ -46,6 +48,7 @@ public interface ConfigurationAdapter extends ConfigurationSection {
     }
 
     class SaveFailed extends RuntimeException {
+        @Serial private static final long serialVersionUID = -2373407050480274400L;
 
         public SaveFailed(Throwable cause) {
             super(cause);
