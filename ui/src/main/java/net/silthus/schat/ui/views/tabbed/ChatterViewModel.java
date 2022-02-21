@@ -23,10 +23,8 @@
  */
 package net.silthus.schat.ui.views.tabbed;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
@@ -72,14 +70,6 @@ public class ChatterViewModel implements Configurable<ChatterViewModel> {
             .toList();
     }
 
-    @NotNull
-    private Stream<Message> activeChannelMessages() {
-        return chatter.activeChannel()
-            .map(Channel::messages)
-            .stream()
-            .flatMap(Collection::stream);
-    }
-
     private boolean isMessageDisplayed(Message message) {
         return true;
     }
@@ -96,10 +86,6 @@ public class ChatterViewModel implements Configurable<ChatterViewModel> {
         return message.type() == Message.Type.SYSTEM;
     }
 
-    public boolean hasActiveChannel() {
-        return chatter.activeChannel().isPresent();
-    }
-
     public @NotNull @Unmodifiable List<Channel> channels() {
         return chatter.channels().stream()
             .sorted(CHANNEL_COMPARATOR)
@@ -110,15 +96,7 @@ public class ChatterViewModel implements Configurable<ChatterViewModel> {
         return chatter.isActiveChannel(channel);
     }
 
-    public boolean isNotSentToChannel(Message message) {
-        return message.channels().isEmpty();
-    }
-
     public boolean isSentToActiveChannel(Message message) {
         return chatter.activeChannel().map(channel -> message.channels().contains(channel)).orElse(false);
-    }
-
-    public boolean isSentToChannel(Message message) {
-        return message.targets().filter(target -> target instanceof Channel).size() > 0;
     }
 }
