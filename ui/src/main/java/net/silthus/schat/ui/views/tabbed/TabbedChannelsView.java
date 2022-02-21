@@ -33,6 +33,7 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.ui.View;
+import net.silthus.schat.ui.ViewConfig;
 import net.silthus.schat.ui.format.Format;
 import net.silthus.schat.ui.model.ChatterViewModel;
 import net.silthus.schat.ui.View;
