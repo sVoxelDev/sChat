@@ -23,6 +23,7 @@
  */
 package net.silthus.schat.platform.sender;
 
+import java.io.Serial;
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.identity.Identity;
@@ -77,5 +78,6 @@ public abstract class SenderFactory<T> implements AutoCloseable {
     }
 
     public static final class IllegalSenderType extends RuntimeException {
+        @Serial private static final long serialVersionUID = 2811239543180957459L;
     }
 }

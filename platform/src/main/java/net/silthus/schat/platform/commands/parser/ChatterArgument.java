@@ -35,6 +35,7 @@ import cloud.commandframework.context.CommandContext;
 import cloud.commandframework.exceptions.parsing.NoInputProvidedException;
 import cloud.commandframework.exceptions.parsing.ParserException;
 import io.leangen.geantyref.TypeToken;
+import java.io.Serial;
 import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
@@ -134,6 +135,8 @@ public final class ChatterArgument implements ParameterInjector<Sender, Chatter>
     }
 
     public static class ChatterParseException extends ParserException {
+        @Serial private static final long serialVersionUID = 4706467902121186885L;
+
         protected ChatterParseException(@NonNull CommandContext<?> context, String input) {
             super(ChatterArgument.class,
                 context,
