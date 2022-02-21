@@ -29,6 +29,7 @@ import com.velocitypowered.api.event.player.ServerPostConnectEvent;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
+import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import java.util.LinkedList;
 import java.util.Map;
@@ -41,13 +42,12 @@ import net.silthus.schat.platform.plugin.scheduler.SchedulerAdapter;
 import net.silthus.schat.velocity.VelocityBootstrap;
 
 import static com.velocitypowered.api.event.connection.PluginMessageEvent.ForwardResult.forward;
-import static com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier.create;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class VelocityMessengerGateway implements MessengerGateway {
 
     public static final String GATEWAY_TYPE = "pluginmessage";
-    public static final ChannelIdentifier CHANNEL = create("schat", "update");
+    public static final ChannelIdentifier CHANNEL = MinecraftChannelIdentifier.create("schat", "update");
 
     public static VelocityMessengerGateway createVelocityMessengerGateway(VelocityBootstrap bootstrap) {
         if (bootstrap.plugin().config().get(ConfigKeys.DEBUG))
