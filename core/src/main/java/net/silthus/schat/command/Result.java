@@ -23,6 +23,7 @@
  */
 package net.silthus.schat.command;
 
+import java.io.Serial;
 import java.util.Optional;
 
 /**
@@ -47,18 +48,43 @@ public interface Result {
      */
     Result GENERIC_FAILURE = () -> false;
 
+    /**
+     * Creates a new generic success result.
+     *
+     * @return a success
+     * @since next
+     */
     static Result success() {
         return GENERIC_SUCCESS;
     }
 
+    /**
+     * Creates a new generic failure result.
+     *
+     * @return a failure
+     * @since next
+     */
     static Result failure() {
         return GENERIC_FAILURE;
     }
 
+    /**
+     * Creates a new generic error result containing the given exception.
+     *
+     * @return a failure with an exception
+     * @since next
+     */
     static Result error(Throwable exception) {
         return new ResultImpl(false, exception);
     }
 
+    /**
+     * Creates a success or failure based on the given boolean.
+     *
+     * @param result the result
+     * @return the result based on the input
+     * @since next
+     */
     static Result of(boolean result) {
         return new ResultImpl(result, null);
     }
@@ -71,6 +97,15 @@ public interface Result {
      */
     boolean wasSuccessful();
 
+    /**
+     * Gets if the operation which produced this result failed.
+     *
+     * <p>You can get the {@link #failureReason()} or directly {@link #raiseError()}
+     * to throw the reason of failure if one is present.</p>
+     *
+     * @return if the result indicates a failure
+     * @since next
+     */
     default boolean wasFailure() {
         return !wasSuccessful();
     }
@@ -88,8 +123,9 @@ public interface Result {
     /**
      * Raises an {@link Error} if the result {@link #wasFailure()} and contains a {@link #failureReason()}.
      *
-     * @return the result if no error occured
+     * @return the result if no error occurred
      * @throws Error the error encapsulating the underlying {@link #failureReason()}
+     * @since next
      */
     default Result raiseError() throws Error {
         final Throwable throwable = failureReason().orElse(null);
@@ -98,8 +134,16 @@ public interface Result {
         return this;
     }
 
-    class Error extends RuntimeException {
-        public Error(Throwable cause) {
+    /**
+     * Encapsulates an exception thrown during the execution of a {@link Command}.
+     *
+     * @since next
+     */
+    final class Error extends RuntimeException {
+        @Serial
+        private static final long serialVersionUID = 7484250245467394159L;
+
+        Error(Throwable cause) {
             super(cause);
         }
     }

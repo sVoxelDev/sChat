@@ -21,23 +21,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.chatter;
-
-import java.util.UUID;
-
 /**
- * Used to create new instances of a chatter based on the type of the implementing platform.
- *
- * @since next
+ * Contains the API for creating {@link net.silthus.schat.command.Command}s.
  */
-public interface ChatterFactory {
-
-    /**
-     * Creates a new chatter from the given id.
-     *
-     * @param id the id of the chatter
-     * @return the created chatter
-     * @since next
-     */
-    Chatter createChatter(UUID id);
-}
+package net.silthus.schat.command;

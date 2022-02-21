@@ -27,6 +27,15 @@ import java.util.function.Function;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+/**
+ * An abstract base class of the {@link Command.Builder}.
+ *
+ * <p>Extend this class to create your own command builders.</p>
+ *
+ * @param <B> the type of the builder
+ * @param <C> the type of the command
+ * @since next
+ */
 @Getter
 @Accessors(fluent = true)
 public abstract class CommandBuilder<B extends Command.Builder<B, C>, C extends Command> implements Command.Builder<B, C> {

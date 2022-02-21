@@ -123,13 +123,6 @@ final class ChannelImpl implements Channel {
     }
 
     @Override
-    public void updateTargets() {
-        for (MessageTarget target : targets())
-            if (target instanceof Chatter chatter)
-                chatter.join(this);
-    }
-
-    @Override
     public SendMessageResult sendMessage(@NonNull Message message) {
         if (messages.add(message))
             return processMessage(message);
@@ -146,7 +139,7 @@ final class ChannelImpl implements Channel {
     }
 
     private SendMessageResult processMessage(Message message) {
-        SendChannelMessageEvent event = eventBus.post(new SendChannelMessageEvent(this, message, sendMessagePolicy()));
+        SendChannelMessageEvent event = eventBus.post(new SendChannelMessageEvent(this, message, policy(SendChannelMessagePolicy.class).orElse(SEND_CHANNEL_MESSAGE_POLICY)));
         if (event.isNotCancelled() && event.policy().test(this, message))
             return event.targets().sendMessage(event.message());
         else

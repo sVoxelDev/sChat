@@ -23,6 +23,7 @@
  */
 package net.silthus.schat.commands;
 
+import java.io.Serial;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -39,14 +40,34 @@ import org.jetbrains.annotations.NotNull;
 import static net.silthus.schat.message.Message.Type.CHAT;
 import static net.silthus.schat.message.Message.message;
 
+/**
+ * Sends a chat message to the active channel of the chatter.
+ *
+ * @since next
+ */
 public class ChatCommand implements Command {
 
-    // TODO: add event bus
+    /**
+     * Sends the given chat message to the active channel of the chatter.
+     *
+     * @param chatter the chatter that is chatting
+     * @param text the message
+     * @return the message that was sent
+     * @throws NoActiveChannel if the chatter has no active channel
+     * @since next
+     */
     public static Message chat(Chatter chatter, Component text) throws NoActiveChannel {
         return new Builder(chatter).text(text).create().execute().message();
     }
 
-    public static Builder chat(Chatter chatter) {
+    /**
+     * Creates a new chat command builder.
+     *
+     * @param chatter the chatter that is chatting
+     * @return the builder
+     * @since next
+     */
+    public static Builder chatCommand(Chatter chatter) {
         return new Builder(chatter);
     }
 
@@ -74,6 +95,11 @@ public class ChatCommand implements Command {
             .send();
     }
 
+    /**
+     * The result of the {@link ChatCommand} containing the final message.
+     *
+     * @since next
+     */
     public record ChatResult(Message message) implements Result {
         @Override
         public boolean wasSuccessful() {
@@ -81,6 +107,11 @@ public class ChatCommand implements Command {
         }
     }
 
+    /**
+     * The builder of a {@link ChatCommand}.
+     *
+     * @since next
+     */
     @Getter
     @Setter
     @Accessors(fluent = true)
@@ -95,6 +126,12 @@ public class ChatCommand implements Command {
         }
     }
 
+    /**
+     * The exception is thrown if a chatter tries to chat without an active channel.
+     *
+     * @since next
+     */
     public static final class NoActiveChannel extends Error {
+        @Serial private static final long serialVersionUID = 6326031138206622013L;
     }
 }

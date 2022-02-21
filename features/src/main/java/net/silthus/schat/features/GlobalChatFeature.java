@@ -28,10 +28,12 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelSettings;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.eventbus.EventListener;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.messenger.Messenger;
 import net.silthus.schat.messenger.PluginMessage;
 
@@ -69,8 +71,14 @@ public class GlobalChatFeature implements EventListener {
 
         @Override
         public void process() {
-            channel.updateTargets();
+            updateChannelTargets();
             message.copy().to(channel).send();
+        }
+
+        private void updateChannelTargets() {
+            for (MessageTarget target : channel.targets())
+                if (target instanceof Chatter chatter)
+                    chatter.join(channel);
         }
     }
 }

@@ -26,6 +26,7 @@ package net.silthus.schat.ui.views.tabbed;
 import java.util.Collection;
 import java.util.List;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
@@ -49,7 +50,7 @@ public abstract class AbstractTab implements Tab {
     private final TabbedChannelsView view;
     private Format messageFormat;
 
-    protected AbstractTab(TabbedChannelsView view, Format messageFormat) {
+    protected AbstractTab(@NonNull TabbedChannelsView view, @NonNull Format messageFormat) {
         this.view = view;
         this.messageFormat = messageFormat;
     }
