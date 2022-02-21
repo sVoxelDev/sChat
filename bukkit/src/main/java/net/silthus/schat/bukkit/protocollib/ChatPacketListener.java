@@ -103,8 +103,9 @@ public final class ChatPacketListener extends PacketAdapter {
 
     @Override
     public void onPacketSending(final PacketEvent event) {
-        if (event.getPacketType() != PacketType.Play.Server.CHAT)
+        if (!event.getPacketType().equals(PacketType.Play.Server.CHAT)) {
             return;
+        }
 
         final Component rawMessage = messageFromPacket(event);
         if (rawMessage == null)
