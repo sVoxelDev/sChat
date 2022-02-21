@@ -24,56 +24,30 @@
 package net.silthus.schat.ui.views.tabbed;
 
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
-import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.identity.Identity;
-import net.silthus.schat.message.Message;
 import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.ui.format.Format;
 import net.silthus.schat.ui.model.ChatterViewModel;
 import net.silthus.schat.ui.view.View;
+import net.silthus.schat.ui.view.ViewConfig;
 import org.jetbrains.annotations.NotNull;
 
 import static java.util.stream.Collectors.toList;
 import static net.kyori.adventure.text.Component.join;
 import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND;
-import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
-import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
-import static net.silthus.schat.channel.Channel.DISPLAY_NAME;
 import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.pointer.Setting.setting;
-import static net.silthus.schat.pointer.Settings.createSettings;
-import static net.silthus.schat.ui.util.ViewHelper.renderPrivateChannelName;
-import static net.silthus.schat.ui.util.ViewHelper.renderPrivateMessage;
 
 @Getter
 @Accessors(fluent = true)
 public final class TabbedChannelsView implements View {
-
-    public static final Function<Component, Component> ACTIVE_CHANNEL_DECORATION = name ->
-        name.colorIfAbsent(GREEN).decorate(UNDERLINED);
-
-    public static final BiFunction<Channel, Component, Component> INACTIVE_CHANNEL_DECORATION = (channel, name) ->
-        name.colorIfAbsent(GRAY)
-            .hoverEvent(translatable("schat.hover.join-channel")
-                .args(channel.get(DISPLAY_NAME))
-                .color(GRAY)
-            ).clickEvent(
-                clickEvent(RUN_COMMAND, "/channel join " + channel.key())
-            );
 
     public static final Setting<JoinConfiguration> CHANNEL_JOIN_CONFIG = setting(JoinConfiguration.class, "channel_join_config", JoinConfiguration.builder()
         .prefix(text("| "))
@@ -81,49 +55,13 @@ public final class TabbedChannelsView implements View {
         .suffix(text(" |"))
         .build());
 
-    public static final Setting<Format> MESSAGE_FORMAT = setting(Format.class, "message", (view, msg) ->
-        msg.get(Message.SOURCE)
-            .filter(Identity.IS_NOT_NIL)
-            .map(identity -> identity.displayName().append(text(": ")))
-            .orElse(Component.empty())
-            .append(msg.getOrDefault(Message.TEXT, Component.empty())));
-
-    public static final Setting<Format> ACTIVE_CHANNEL_FORMAT = setting(Format.class, "active_channel", (view, channel) ->
-        channel.getOrDefault(DISPLAY_NAME, Component.empty())
-            .colorIfAbsent(GREEN)
-            .decorate(UNDERLINED)
-    );
-
-    public static final Setting<Format> INACTIVE_CHANNEL_FORMAT = setting(Format.class, "inactive_channel", (view, channel) ->
-        channel.getOrDefault(DISPLAY_NAME, Component.empty())
-            .colorIfAbsent(GRAY)
-            .hoverEvent(translatable("schat.hover.join-channel")
-                .args(channel.getOrDefault(DISPLAY_NAME, Component.empty()))
-                .color(GRAY)
-            ).clickEvent(
-                clickEvent(RUN_COMMAND, "/channel join " + channel.getOrDefault(Channel.KEY, "unknown"))
-            )
-    );
-
-    public static final Settings.Builder DEFAULT_FORMAT_SETTINGS = Settings.settingsBuilder()
-        .withStatic(MESSAGE_FORMAT, MESSAGE_FORMAT.defaultValue())
-        .withStatic(ACTIVE_CHANNEL_FORMAT, (view, channel) -> ACTIVE_CHANNEL_DECORATION.apply(channel.getOrDefault(DISPLAY_NAME, Component.empty())))
-        .withStatic(INACTIVE_CHANNEL_FORMAT, (view, channel) -> INACTIVE_CHANNEL_DECORATION.apply((Channel) channel, channel.getOrDefault(DISPLAY_NAME, Component.empty())));
-
-    public static final Setting<Settings> CHANNEL_FORMAT = setting(Settings.class, "format", DEFAULT_FORMAT_SETTINGS.create());
-    public static final Setting<Settings> PRIVATE_CHANNEL_FORMAT = setting(Settings.class, "private_channel_format", Settings.settingsBuilder()
-        .withStatic(MESSAGE_FORMAT, (view, message) -> renderPrivateMessage(((TabbedChannelsView) view).chatter(), (Message) message))
-        .withStatic(ACTIVE_CHANNEL_FORMAT, (view, channel) -> ACTIVE_CHANNEL_DECORATION.apply(renderPrivateChannelName(((TabbedChannelsView) view).chatter(), (Channel) channel)))
-        .withStatic(INACTIVE_CHANNEL_FORMAT, (view, channel) -> INACTIVE_CHANNEL_DECORATION.apply((Channel) channel, renderPrivateChannelName(((TabbedChannelsView) view).chatter(), (Channel) channel)))
-        .create()
-    );
-
     private final Chatter chatter;
     private final ChatterViewModel viewModel;
-    private final Settings settings = createSettings();
+    private final ViewConfig config;
 
-    public TabbedChannelsView(Chatter chatter) {
+    public TabbedChannelsView(Chatter chatter, ViewConfig config) {
         this.chatter = chatter;
+        this.config = config;
         this.viewModel = ChatterViewModel.of(this.chatter);
     }
 
@@ -133,7 +71,7 @@ public final class TabbedChannelsView implements View {
 
         final List<Tab> tabs = tabs();
         if (tabs.isEmpty())
-            tabs.add(new NoChannelsTab(this, get(MESSAGE_FORMAT)));
+            tabs.add(new NoChannelsTab(this, config().messageFormat()));
 
         boolean hasActiveTab = false;
         for (final Tab tab : tabs) {
@@ -144,7 +82,7 @@ public final class TabbedChannelsView implements View {
         }
 
         if (!hasActiveTab)
-            content.append(new NoChannelsTab(this, get(MESSAGE_FORMAT)).renderContent());
+            content.append(new NoChannelsTab(this, config().messageFormat()).renderContent());
 
         return content
             .append(newline())
@@ -158,19 +96,19 @@ public final class TabbedChannelsView implements View {
         if (tabs.isEmpty())
             return Component.empty();
         else
-            return join(get(CHANNEL_JOIN_CONFIG), tabs);
+            return join(config().channelJoinConfig(), tabs);
     }
 
     private List<Tab> tabs() {
         return viewModel().channels().stream()
             .map(channel -> {
-                Settings format = channel.is(PRIVATE) ? get(PRIVATE_CHANNEL_FORMAT) : channel.get(CHANNEL_FORMAT);
+                Settings format = channel.is(PRIVATE) ? config.privateChat() : channel.settings();
                 return (Tab) new ChannelTab(
                     this,
                     channel,
-                    format.get(MESSAGE_FORMAT),
-                    format.get(ACTIVE_CHANNEL_FORMAT),
-                    format.get(INACTIVE_CHANNEL_FORMAT)
+                    format.get(Format.MESSAGE_FORMAT),
+                    format.get(Format.ACTIVE_CHANNEL_FORMAT),
+                    format.get(Format.INACTIVE_CHANNEL_FORMAT)
                 );
             }).collect(toList());
     }

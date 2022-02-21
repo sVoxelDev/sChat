@@ -8,6 +8,7 @@ dependencies {
     api(project(":schat-core"))
 
     implementation(libs.adventure.minimessage)
+    implementation(libs.configurate.core)
 
     testImplementation(libs.adventure.plain)
     testImplementation(libs.adventure.minimessage)

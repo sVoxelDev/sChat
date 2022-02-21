@@ -58,7 +58,8 @@ public abstract class ConfigurateAdapter<T extends AbstractConfigurationLoader.B
         .build();
 
     private static final Function<ConfigurationOptions, ConfigurationOptions> DEFAULT_OPTIONS = options ->
-        options.serializers(serializers -> serializers.registerAll(SERIALIZERS));
+        options.serializers(serializers -> serializers.registerAll(SERIALIZERS))
+            .shouldCopyDefaults(true);
 
     private final Path configPath;
     private final ConfigurationLoader<? extends ConfigurationNode> loader;

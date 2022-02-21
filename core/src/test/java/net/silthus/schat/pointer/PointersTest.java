@@ -40,18 +40,18 @@ final class PointersTest {
     public void ofPointers() {
         final Pointer<String> pointer = Pointer.pointer(String.class, "test");
 
-        assertFalse(Pointers.empty().supports(pointer));
+        assertFalse(Pointers.empty().contains(pointer));
 
         final Pointers p0 = Pointers.pointersBuilder()
             .withStatic(pointer, null)
             .create();
-        assertTrue(p0.supports(pointer));
+        assertTrue(p0.contains(pointer));
         assertFalse(p0.get(pointer).isPresent());
 
         final Pointers p1 = Pointers.pointersBuilder()
             .withStatic(pointer, "test")
             .create();
-        assertTrue(p1.supports(pointer));
+        assertTrue(p1.contains(pointer));
         assertTrue(p1.get(pointer).isPresent());
         assertEquals("test", p1.get(pointer).get());
         assertEquals("test", p1.get(pointer).get()); // make sure the value doesn't change
@@ -65,7 +65,7 @@ final class PointersTest {
         final Pointers p2 = Pointers.pointersBuilder()
             .withDynamic(pointer, supplier)
             .create();
-        assertTrue(p2.supports(pointer));
+        assertTrue(p2.contains(pointer));
         assertEquals("test", p2.getOrDefault(pointer, null));
         assertEquals("tset", p2.getOrDefault(pointer, null)); // make sure the value does change
     }
@@ -85,7 +85,7 @@ final class PointersTest {
         void then_always_returns_empty() {
             assertThat(pointers.get(pointer)).isEmpty();
             assertThat(pointers.pointers()).isEmpty();
-            assertThat(pointers.supports(pointer)).isFalse();
+            assertThat(pointers.contains(pointer)).isFalse();
             AssertionHelper.assertUnmodifiable(pointers.pointers(), () -> pointer);
         }
     }

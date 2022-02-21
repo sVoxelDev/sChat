@@ -21,23 +21,22 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.eventbus;
+package net.silthus.schat.ui.view;
 
-import net.silthus.schat.events.SChatEvent;
+import net.kyori.adventure.text.Component;
+import net.silthus.schat.chatter.Chatter;
 
-/**
- * Defines a class which listens to {@link SChatEvent}s.
- *
- * @since next
- */
-@FunctionalInterface
-public interface EventListener {
+final class EmptyView implements View {
 
-    /**
-     * Binds the event listener to the event bus.
-     *
-     * @param bus the event bus
-     * @since next
-     */
-    void bind(EventBus bus);
+    static final EmptyView EMPTY = new EmptyView();
+
+    @Override
+    public Chatter chatter() {
+        return Chatter.empty();
+    }
+
+    @Override
+    public Component render() {
+        return Component.empty();
+    }
 }

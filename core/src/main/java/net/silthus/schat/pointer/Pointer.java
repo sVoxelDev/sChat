@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
  * A pointer to a resource.
  *
  * @param <V> the value type
- * @since 1.0.0-alpha.4
+ * @since next
  */
 public sealed interface Pointer<V> permits PointerImpl, Setting {
     /**
@@ -44,7 +44,7 @@ public sealed interface Pointer<V> permits PointerImpl, Setting {
      * @param key  the key
      * @param <V>  the value type
      * @return the pointer
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     static <V> @NotNull Pointer<V> pointer(final @NonNull Class<V> type, final @NonNull String key) {
         return new PointerImpl<>(type, key);
@@ -59,7 +59,7 @@ public sealed interface Pointer<V> permits PointerImpl, Setting {
      * @param targetPointer the pointer on the forward target
      * @param <T>           the value type of the pointer
      * @return a supplier that forwards to the given pointer
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     static <T> @NotNull Supplier<T> forward(@NonNull final Pointered pointered, @NonNull final Pointer<T> targetPointer) {
         return forwardWithDefault(pointered, targetPointer, null);
@@ -75,7 +75,7 @@ public sealed interface Pointer<V> permits PointerImpl, Setting {
      * @param defaultValue  the default value to use if the target pointer does not exist
      * @param <T>           the value type of the pointer
      * @return a supplier that forwards to the given pointer
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     static <T> @NotNull Supplier<T> forwardWithDefault(@NonNull final Pointered pointered, @NonNull final Pointer<T> targetPointer, @Nullable final T defaultValue) {
         return () -> pointered.getOrDefault(targetPointer, defaultValue);
@@ -119,7 +119,7 @@ public sealed interface Pointer<V> permits PointerImpl, Setting {
      * Gets the value type.
      *
      * @return the value type
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     @NotNull Class<V> type();
 
@@ -127,7 +127,7 @@ public sealed interface Pointer<V> permits PointerImpl, Setting {
      * Gets the key.
      *
      * @return the key
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     @NotNull String key();
 }

@@ -28,7 +28,7 @@ import net.silthus.schat.events.SChatEvent;
 /**
  * Dispatched when the configuration was reloaded.
  *
- * @since 1.0.0-alpha.4
+ * @since next
  */
 public final class ConfigReloadedEvent implements SChatEvent {
 }

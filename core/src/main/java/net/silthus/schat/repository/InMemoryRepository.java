@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Unmodifiable;
  * <p>The entity store uses a {@link ConcurrentHashMap} by default.
  * This can be changed using the {@link #InMemoryRepository(Map)} constructor.</p>
  *
- * @since 1.0.0-alpha.4
+ * @since next
  */
 public abstract class InMemoryRepository<K, E extends Entity<K>> implements Repository<K, E> {
 
@@ -46,7 +46,7 @@ public abstract class InMemoryRepository<K, E extends Entity<K>> implements Repo
     /**
      * Creates a new repository using a {@link ConcurrentHashMap}.
      *
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     public InMemoryRepository() {
         this.entities = new ConcurrentHashMap<>();
@@ -56,7 +56,7 @@ public abstract class InMemoryRepository<K, E extends Entity<K>> implements Repo
      * Creates a new repository using the provided map as the store.
      *
      * @param entities the entity store
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     public InMemoryRepository(final Map<K, E> entities) {
         this.entities = entities;

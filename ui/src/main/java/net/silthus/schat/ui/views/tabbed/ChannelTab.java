@@ -56,7 +56,6 @@ public class ChannelTab extends AbstractTab {
     protected ChannelTab(TabbedChannelsView view, Channel channel, Format messageFormat, Format activeFormat, Format inactiveFormat) {
         super(view, messageFormat);
         this.channel = channel;
-
         this.activeFormat = activeFormat;
         this.inactiveFormat = inactiveFormat;
     }

@@ -23,11 +23,64 @@
  */
 package net.silthus.schat.ui.format;
 
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.identity.Identity;
+import net.silthus.schat.message.Message;
 import net.silthus.schat.pointer.Pointered;
+import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.ui.view.View;
+
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.translatable;
+import static net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND;
+import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
+import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
+import static net.silthus.schat.channel.Channel.DISPLAY_NAME;
+import static net.silthus.schat.pointer.Setting.setting;
 
 @FunctionalInterface
 public interface Format {
+    /**
+     * The default decoration of an active channel.
+     */
+    Function<Component, Component> ACTIVE_CHANNEL_DECORATION = name -> name.colorIfAbsent(GREEN).decorate(UNDERLINED);
+    /**
+     * The default decoration of an inactive channel.
+     */
+    BiFunction<Channel, Component, Component> INACTIVE_CHANNEL_DECORATION = (channel, name) ->
+        name.colorIfAbsent(GRAY)
+            .hoverEvent(translatable("schat.hover.join-channel")
+                .args(channel.get(DISPLAY_NAME))
+                .color(GRAY)
+            ).clickEvent(
+                clickEvent(RUN_COMMAND, "/channel join " + channel.key())
+            );
+    /**
+     * The default format of a message.
+     */
+    Setting<Format> MESSAGE_FORMAT = setting(Format.class, "message_format", (view, msg) ->
+        msg.get(Message.SOURCE)
+            .filter(Identity.IS_NOT_NIL)
+            .map(identity -> identity.displayName().append(text(": ")))
+            .orElse(Component.empty())
+            .append(msg.getOrDefault(Message.TEXT, Component.empty())));
+    /**
+     * The default format of an active channel.
+     */
+    Setting<Format> ACTIVE_CHANNEL_FORMAT = setting(Format.class, "active_channel_format", (view, channel) ->
+        ACTIVE_CHANNEL_DECORATION.apply(((Channel) channel).displayName())
+    );
+    /**
+     * The default format of an inactive channel.
+     */
+    Setting<Format> INACTIVE_CHANNEL_FORMAT = setting(Format.class, "inactive_channel_format", (view, channel) ->
+        INACTIVE_CHANNEL_DECORATION.apply((Channel) channel, ((Channel) channel).displayName())
+    );
+
     Component format(View view, Pointered entity);
 }

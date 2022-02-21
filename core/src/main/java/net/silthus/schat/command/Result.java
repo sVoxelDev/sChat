@@ -28,7 +28,7 @@ import java.util.Optional;
 /**
  * Represents a generic result, which can either be successful or fail.
  *
- * @since 1.0.0-alpha.4
+ * @since next
  */
 @FunctionalInterface
 public interface Result {
@@ -36,14 +36,14 @@ public interface Result {
     /**
      * Instance of {@link Result} which always reports success.
      *
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     Result GENERIC_SUCCESS = () -> true;
 
     /**
      * Instance of {@link Result} which always reports failure.
      *
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     Result GENERIC_FAILURE = () -> false;
 
@@ -67,7 +67,7 @@ public interface Result {
      * Gets if the operation which produced this result completed successfully.
      *
      * @return if the result indicates a success
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     boolean wasSuccessful();
 
@@ -79,7 +79,7 @@ public interface Result {
      * The exception that lead to the failed result.
      *
      * @return the exception responsible for the result failure
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     default Optional<Throwable> failureReason() {
         return Optional.empty();

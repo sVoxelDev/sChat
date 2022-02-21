@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
  * A setting of a resource with an optional default value.
  *
  * @param <V> the type of the value
- * @since 1.0.0-alpha.4
+ * @since next
  */
 public sealed interface Setting<V> extends Pointer<V> permits SettingImpl {
 
@@ -44,7 +44,7 @@ public sealed interface Setting<V> extends Pointer<V> permits SettingImpl {
      * @param defaultValue the default value to use if the setting is not set
      * @param <V>          the type of the value
      * @return the setting
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     static @NotNull <V> Setting<V> setting(final @NonNull Class<V> type, final @NonNull String key, final @Nullable V defaultValue) {
         return dynamicSetting(type, key, () -> defaultValue);
@@ -58,17 +58,21 @@ public sealed interface Setting<V> extends Pointer<V> permits SettingImpl {
      * @param defaultValue the default value to use if the setting is not set
      * @param <V>          the type of the value
      * @return the setting
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     static @NotNull <V> Setting<V> dynamicSetting(final @NonNull Class<V> type, final @NonNull String key, final @NonNull Supplier<@Nullable V> defaultValue) {
         return new SettingImpl<>(type, key, defaultValue);
+    }
+
+    static @NotNull Setting<Settings> settings(final @NonNull String key, final @NonNull Settings.Builder settingsBuilder) {
+        return new SettingImpl<>(Settings.class, key, settingsBuilder::create);
     }
 
     /**
      * The default value of the setting that is used if the setting is not set.
      *
      * @return the default value
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     V defaultValue();
 }

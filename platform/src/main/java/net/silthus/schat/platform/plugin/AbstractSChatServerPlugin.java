@@ -48,6 +48,7 @@ import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.commands.PrivateMessageCommands;
 import net.silthus.schat.platform.sender.Sender;
+import net.silthus.schat.ui.view.ViewController;
 import net.silthus.schat.ui.view.ViewFactory;
 import net.silthus.schat.ui.view.ViewProvider;
 import net.silthus.schat.ui.views.Views;
@@ -59,6 +60,7 @@ import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterR
 import static net.silthus.schat.platform.commands.parser.ChannelArgument.registerChannelArgument;
 import static net.silthus.schat.platform.commands.parser.ChatterArgument.registerChatterArgument;
 import static net.silthus.schat.platform.config.ConfigKeys.DEBUG;
+import static net.silthus.schat.platform.config.ConfigKeys.VIEW_CONFIG;
 import static net.silthus.schat.ui.view.ViewProvider.cachingViewProvider;
 import static net.silthus.schat.util.gson.types.ChannelSerializer.CHANNEL_TYPE;
 import static net.silthus.schat.util.gson.types.ChannelSerializer.createChannelSerializer;
@@ -71,6 +73,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
     private ViewFactory viewFactory;
     private ViewProvider viewProvider;
+    private ViewController viewController;
 
     private ChatterFactory chatterFactory;
     private ChatterRepository chatterRepository;
@@ -90,6 +93,8 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     protected void onEnable() {
         viewFactory = createViewFactory();
         viewProvider = createViewProvider(viewFactory);
+        viewController = new ViewController();
+        viewController.bind(eventBus());
 
         chatterRepository = createInMemoryChatterRepository(config().get(DEBUG));
         chatterFactory = createChatterFactory(viewProvider);
@@ -120,7 +125,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
     @ApiStatus.OverrideOnly
     protected ViewFactory createViewFactory() {
-        return Views::tabbedChannels;
+        return chatter -> Views.tabbedChannels(chatter, config().get(VIEW_CONFIG));
     }
 
     @ApiStatus.OverrideOnly

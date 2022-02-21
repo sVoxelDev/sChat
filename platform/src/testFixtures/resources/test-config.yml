@@ -1,15 +1,15 @@
 messenger: mock
+view:
+  private_chat:
+    message_format: "<yellow><source.display_name><gray>: <text>"
 channels:
   test:
     name: Test
     settings:
       protected: true
       auto_join: true
-      format:
-        message: "<yellow><source.display_name><gray>: <text>"
-        active_channel:
-          color: red
-          decoration: underlined
+      message_format: "<yellow><source.display_name><gray>: <text>"
+      active_channel_format: "<red><underlined><channel.name>"
   global:
     name: Global
     settings:

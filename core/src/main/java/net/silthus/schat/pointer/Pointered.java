@@ -33,7 +33,7 @@ import org.jetbrains.annotations.UnknownNullability;
 /**
  * Something that can retrieve values based on a given {@link Pointer}.
  *
- * @since 1.0.0-alpha.4
+ * @since next
  */
 public interface Pointered {
     /**
@@ -42,7 +42,7 @@ public interface Pointered {
      * @param pointer the pointer
      * @param <T>     the type
      * @return the value
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     default <T> @NotNull Optional<T> get(final @NotNull Pointer<T> pointer) {
         return this.pointers().get(pointer);
@@ -66,7 +66,7 @@ public interface Pointered {
      * Gets the pointers for this object.
      *
      * @return the pointers
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     default @NotNull Pointers pointers() {
         return Pointers.empty();
@@ -81,7 +81,7 @@ public interface Pointered {
      * @param defaultValue the default value
      * @param <T>          the type
      * @return the value
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     @Contract("_, null -> _; _, !null -> !null")
     @SuppressWarnings("checkstyle:MethodName")
@@ -98,7 +98,7 @@ public interface Pointered {
      * @param defaultValue the default value supplier
      * @param <T>          the type
      * @return the value
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     @SuppressWarnings("checkstyle:MethodName")
     default <T> @UnknownNullability T getOrDefaultFrom(final @NotNull Pointer<T> pointer, final @NotNull Supplier<? extends T> defaultValue) {
