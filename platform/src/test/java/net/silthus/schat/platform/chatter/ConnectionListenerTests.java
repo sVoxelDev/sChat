@@ -27,7 +27,6 @@ import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.chatter.ChatterJoinedServerEvent;
-import net.silthus.schat.platform.SchedulerMock;
 import net.silthus.schat.platform.messaging.MessagingServiceMock;
 import net.silthus.schat.platform.sender.SenderMock;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,15 +45,14 @@ class ConnectionListenerTests {
     private EventBusMock eventBus;
     private ConnectionListener listener;
     private SenderMock sender;
-    private SchedulerMock scheduler;
 
     @BeforeEach
     void setUp() {
         chatterRepository = createInMemoryChatterRepository();
         messenger = new MessagingServiceMock();
         eventBus = EventBusMock.eventBusMock();
-        scheduler = new SchedulerMock();
-        listener = new ConnectionListener(chatterRepository, ChatterMock::randomChatter, messenger, eventBus, scheduler) {};
+        listener = new ConnectionListener(chatterRepository, ChatterMock::randomChatter, messenger, eventBus) {
+        };
         sender = randomSender();
     }
 
