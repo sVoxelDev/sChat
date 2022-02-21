@@ -25,7 +25,8 @@ package net.silthus.schat.ui.views.tabbed;
 
 import java.util.Collection;
 import java.util.List;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -41,7 +42,8 @@ import static net.kyori.adventure.text.JoinConfiguration.newlines;
 import static net.silthus.schat.message.Message.FORMATTED;
 import static net.silthus.schat.util.Iterators.lastN;
 
-@Data
+@Getter
+@Setter
 @Accessors(fluent = true)
 public abstract class AbstractTab implements Tab {
     private final TabbedChannelsView view;
