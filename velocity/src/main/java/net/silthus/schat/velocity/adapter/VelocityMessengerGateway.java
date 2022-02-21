@@ -31,7 +31,7 @@ import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import java.util.LinkedList;
+import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -82,7 +82,7 @@ public class VelocityMessengerGateway implements MessengerGateway {
 
     protected boolean sendToServer(RegisteredServer server, byte[] bytes) {
         if (!server.sendPluginMessage(CHANNEL, bytes)) {
-            queuedPackets.computeIfAbsent(server.getServerInfo().getName(), s -> new LinkedList<>()).add(bytes);
+            queuedPackets.computeIfAbsent(server.getServerInfo().getName(), s -> new ArrayDeque<>()).add(bytes);
             return false;
         } else {
             return true;
