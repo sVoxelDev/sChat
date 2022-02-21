@@ -29,6 +29,7 @@ import net.kyori.adventure.text.Component;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.message.Messages;
 import net.silthus.schat.message.Targets;
+import net.silthus.schat.pointer.Configurable;
 import net.silthus.schat.pointer.Configured;
 import net.silthus.schat.pointer.Pointer;
 import net.silthus.schat.pointer.Setting;
@@ -47,7 +48,7 @@ import static net.silthus.schat.policies.JoinChannelPolicy.JOIN_CHANNEL_POLICY;
 import static net.silthus.schat.policies.LeaveChannelPolicy.LEAVE_CHANNEL_POLICY;
 import static net.silthus.schat.policies.SendChannelMessagePolicy.SEND_CHANNEL_MESSAGE_POLICY;
 
-public sealed interface Channel extends Entity<String>, Configured.Modifiable<Channel>, MessageTarget, AutoCloseable permits ChannelImpl {
+public sealed interface Channel extends Entity<String>, Configurable<Channel>, MessageTarget, AutoCloseable permits ChannelImpl {
 
     Pointer<String> KEY = Pointer.pointer(String.class, "key");
     /**

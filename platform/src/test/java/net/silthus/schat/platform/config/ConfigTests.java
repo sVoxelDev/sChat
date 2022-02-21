@@ -42,9 +42,9 @@ import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
+import static net.silthus.schat.platform.config.ConfigKeys.VIEW_CONFIG;
 import static net.silthus.schat.platform.config.TestConfigurationAdapter.testConfigAdapter;
-import static net.silthus.schat.ui.views.tabbed.TabbedChannelsView.CHANNEL_FORMAT;
-import static net.silthus.schat.ui.views.tabbed.TabbedChannelsView.MESSAGE_FORMAT;
+import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ConfigTests {
@@ -78,10 +78,16 @@ class ConfigTests {
     @Test
     void loads_message_format() {
         final Component format = getTestChannelConfig().settings()
-            .get(CHANNEL_FORMAT)
             .get(MESSAGE_FORMAT)
             .format(View.empty(), message("Hey").source(Identity.identity("Notch")).create());
         assertThat(format).isEqualTo(text("Notch", YELLOW).append(text(": Hey", GRAY)));
+    }
+
+    @Test
+    void view_config() {
+        final Component format = config.get(VIEW_CONFIG).privateChat().get(MESSAGE_FORMAT)
+            .format(View.empty(), message("Hey").source(Identity.identity("Bob")).create());
+        assertThat(format).isEqualTo(text("Bob", YELLOW).append(text(": Hey", GRAY)));
     }
 
     @Test

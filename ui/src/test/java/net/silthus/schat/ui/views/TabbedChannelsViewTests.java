@@ -38,6 +38,7 @@ import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.ui.view.View;
+import net.silthus.schat.ui.view.ViewConfig;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -60,13 +61,11 @@ import static net.silthus.schat.chatter.ChatterMock.chatterMock;
 import static net.silthus.schat.commands.CreatePrivateChannelCommand.createPrivateChannel;
 import static net.silthus.schat.commands.SendPrivateMessageCommand.sendPrivateMessage;
 import static net.silthus.schat.identity.Identity.identity;
+import static net.silthus.schat.message.Message.FORMATTED;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
+import static net.silthus.schat.ui.format.Format.ACTIVE_CHANNEL_FORMAT;
 import static net.silthus.schat.ui.views.Views.tabbedChannels;
-import static net.silthus.schat.ui.views.tabbed.TabbedChannelsView.ACTIVE_CHANNEL_FORMAT;
-import static net.silthus.schat.ui.views.tabbed.TabbedChannelsView.CHANNEL_FORMAT;
-import static net.silthus.schat.ui.views.tabbed.TabbedChannelsView.CHANNEL_JOIN_CONFIG;
-import static net.silthus.schat.ui.views.tabbed.TabbedChannelsView.MESSAGE_FORMAT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -81,7 +80,7 @@ class TabbedChannelsViewTests {
     @BeforeEach
     void setUp() {
         chatter = chatterMock(Identity.identity("Player"));
-        view = tabbedChannels(chatter);
+        view = tabbedChannels(chatter, new ViewConfig());
         CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(createInMemoryChannelRepository()));
         SendMessageCommand.prototype(builder -> builder.eventBus(EventBus.empty()));
     }
@@ -138,7 +137,7 @@ class TabbedChannelsViewTests {
         @Test
         @SuppressWarnings("ConstantConditions")
         void throws_npe() {
-            assertNPE(() -> tabbedChannels(null));
+            assertNPE(() -> tabbedChannels(null, new ViewConfig()));
         }
     }
 
@@ -167,12 +166,13 @@ class TabbedChannelsViewTests {
 
             @Test
             void uses_format() {
-                view = tabbedChannels(chatter)
-                    .set(MESSAGE_FORMAT, (view, msg) ->
+                final ViewConfig config = new ViewConfig()
+                    .messageFormat((view, msg) ->
                         text("<")
                             .append(msg.getOrDefault(Message.SOURCE, Identity.nil()).displayName())
                             .append(text("> "))
                             .append(msg.getOrDefault(Message.TEXT, Component.empty())));
+                view = tabbedChannels(chatter, config);
                 assertTextContains("<Bob> Hi");
             }
         }
@@ -189,6 +189,20 @@ class TabbedChannelsViewTests {
                 Silthus: Yo
                 | <red><lang:schat.view.no-channels></red> |"""
             );
+        }
+    }
+
+    @Nested class given_message_with_formatted_setting {
+        @BeforeEach
+        void setUp() {
+            final Message message = randomMessage();
+            message.set(FORMATTED, text("FORMATTED"));
+            sendMessage(message);
+        }
+
+        @Test
+        void renders_formatted_message() {
+            assertViewContains("FORMATTED");
         }
     }
 
@@ -220,8 +234,8 @@ class TabbedChannelsViewTests {
             @Nested class and_different_format_is_used {
                 @BeforeEach
                 void setUp() {
-                    view = tabbedChannels(chatter);
-                    channel.get(CHANNEL_FORMAT).set(ACTIVE_CHANNEL_FORMAT, (view, type) -> type.getOrDefault(DISPLAY_NAME, empty()).color(RED).decorate(UNDERLINED));
+                    view = tabbedChannels(chatter, new ViewConfig());
+                    channel.set(ACTIVE_CHANNEL_FORMAT, (view, type) -> type.getOrDefault(DISPLAY_NAME, empty()).color(RED).decorate(UNDERLINED));
                 }
 
                 @Test
@@ -369,8 +383,9 @@ class TabbedChannelsViewTests {
 
             @BeforeEach
             void setUp() {
-                view = tabbedChannels(chatter)
-                    .set(CHANNEL_JOIN_CONFIG, JoinConfiguration.builder().separator(text(" - ")).build());
+                final ViewConfig config = new ViewConfig();
+                config.channelJoinConfig(JoinConfiguration.builder().separator(text(" - ")).build());
+                view = tabbedChannels(chatter, config);
             }
 
             @Test

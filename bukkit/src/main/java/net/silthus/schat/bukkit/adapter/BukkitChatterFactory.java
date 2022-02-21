@@ -62,10 +62,10 @@ public final class BukkitChatterFactory extends AbstractChatterFactory {
 
     @Override
     protected ViewConnector.Factory createViewConnector(UUID id) {
-        return chatter -> new DynamicViewConnector(chatter, viewProvider, getViewOut(id));
+        return chatter -> new DynamicViewConnector(chatter, viewProvider, createViewOut(id));
     }
 
-    private ViewConnector.Out getViewOut(UUID id) {
+    private ViewConnector.Out createViewOut(UUID id) {
         return renderedView -> audiences.player(id).sendMessage(renderedView);
     }
 }

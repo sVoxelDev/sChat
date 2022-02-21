@@ -76,7 +76,7 @@ class EventBusImpl implements EventBus, AutoCloseable {
      * Removes a specific handler from the bus.
      *
      * @param handler the handler to remove
-     * @since 1.0.0-alpha.4
+     * @since next
      */
     public void unregisterHandler(final EventSubscriber<?> handler) {
         this.bus.unregister(handler);

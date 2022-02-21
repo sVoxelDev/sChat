@@ -5,7 +5,7 @@
 
     <!-- no javadoc on test and internal classes -->
     <suppress files="src[\\/](test|testFixtures|jmh)[\\/]java[\\/].*"
-              checks="(FilteringWriteTag|JavadocPackage|MissingJavadoc.*)"/>
+              checks="(MethodName|FilteringWriteTag|JavadocPackage|MissingJavadoc.*)"/>
     <suppress
             files="(platform|bukkit|velocity|bungeecord|features|ui)[\\/]src[\\/]main[\\/]java[\\/]net[\\/]silthus[\\/]schat.*"
             checks="(FilteringWriteTag|JavadocPackage|MissingJavadoc.*)"/>

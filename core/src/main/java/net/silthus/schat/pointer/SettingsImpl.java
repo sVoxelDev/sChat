@@ -95,7 +95,7 @@ final class SettingsImpl extends PointersImpl implements Settings {
     }
 
     private <V> boolean notContains(@NotNull Setting<V> setting) {
-        return !supports(setting);
+        return !contains(setting);
     }
 
     private <V> boolean matchesUnknownValue(@NotNull Setting<V> setting) {

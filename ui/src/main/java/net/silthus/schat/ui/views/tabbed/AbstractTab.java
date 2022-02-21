@@ -31,13 +31,13 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.ui.format.Format;
-import net.silthus.schat.ui.view.View;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.join;
 import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.JoinConfiguration.newlines;
+import static net.silthus.schat.message.Message.FORMATTED;
 import static net.silthus.schat.util.Iterators.lastN;
 
 @Data
@@ -61,8 +61,12 @@ public abstract class AbstractTab implements Tab {
 
     protected List<Component> renderMessages() {
         return messages().stream()
-            .map(message -> messageFormat().format(view, message))
+            .map(this::formatMessage)
             .toList();
+    }
+
+    private Component formatMessage(Message message) {
+        return message.getOrDefault(FORMATTED, messageFormat().format(view, message));
     }
 
     protected @NotNull Collection<Message> messages() {
@@ -72,7 +76,7 @@ public abstract class AbstractTab implements Tab {
     }
 
     protected final Component renderBlankLines() {
-        final int blankLineAmount = Math.max(0, view.get(View.VIEW_HEIGHT) - messages().size());
+        final int blankLineAmount = Math.max(0, view().config().height() - messages().size());
         return renderBlankLines(blankLineAmount);
     }
 

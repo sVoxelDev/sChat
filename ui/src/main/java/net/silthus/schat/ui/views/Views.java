@@ -26,12 +26,13 @@ package net.silthus.schat.ui.views;
 import lombok.NonNull;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.ui.view.View;
+import net.silthus.schat.ui.view.ViewConfig;
 import net.silthus.schat.ui.views.tabbed.TabbedChannelsView;
 
 public final class Views {
 
-    public static View tabbedChannels(@NonNull Chatter chatter) {
-        return new TabbedChannelsView(chatter);
+    public static View tabbedChannels(@NonNull Chatter chatter, ViewConfig config) {
+        return new TabbedChannelsView(chatter, config);
     }
 
     private Views() {

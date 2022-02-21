@@ -21,23 +21,38 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.eventbus;
+package net.silthus.schat.bukkit.placeholderapi;
 
-import net.silthus.schat.events.SChatEvent;
+import java.util.regex.Pattern;
+import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.silthus.schat.ui.view.ViewController;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
-/**
- * Defines a class which listens to {@link SChatEvent}s.
- *
- * @since next
- */
-@FunctionalInterface
-public interface EventListener {
+public class PlaceholderApiIntegration {
 
-    /**
-     * Binds the event listener to the event bus.
-     *
-     * @param bus the event bus
-     * @since next
-     */
-    void bind(EventBus bus);
+    private final ViewController viewController;
+
+    public PlaceholderApiIntegration(ViewController viewController) {
+        this.viewController = viewController;
+    }
+
+    public void init() {
+        viewController.addMessageReplacement(message -> {
+            final Player player = Bukkit.getPlayer(message.source().uniqueId());
+            if (player != null)
+                return replacePlaceholderAPIPlaceholders(player);
+            else
+                return null;
+        });
+    }
+
+    private TextReplacementConfig replacePlaceholderAPIPlaceholders(Player player) {
+        return TextReplacementConfig.builder()
+            .match(Pattern.compile("(%[a-zA-Z0-9_-]+%)"))
+            .replacement((matchResult, builder) -> Component.text(PlaceholderAPI.setPlaceholders(player, matchResult.group())))
+            .build();
+    }
 }

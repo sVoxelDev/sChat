@@ -35,6 +35,7 @@ import net.silthus.schat.bukkit.adapter.BukkitMessengerGateway;
 import net.silthus.schat.bukkit.adapter.BukkitSchedulerAdapter;
 import net.silthus.schat.bukkit.adapter.BukkitSenderFactory;
 import net.silthus.schat.bukkit.adapter.PlayerChatListener;
+import net.silthus.schat.bukkit.placeholderapi.PlaceholderApiIntegration;
 import net.silthus.schat.bukkit.protocollib.ChatPacketListener;
 import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.chatter.ChatterRepository;
@@ -68,6 +69,16 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
     }
 
     @Override
+    protected void onEnable() {
+        super.onEnable();
+
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            new PlaceholderApiIntegration(viewController()).init();
+            logger().info("Enabled PlaceholderAPI integration.");
+        }
+    }
+
+    @Override
     public Sender console() {
         return senderFactory().wrap(bootstrap().loader().getServer().getConsoleSender());
     }
@@ -79,7 +90,7 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
 
     @Override
     protected void setupSenderFactory() {
-        senderFactory = new BukkitSenderFactory(getAudiences(), new BukkitSchedulerAdapter(bootstrap.loader()));
+        senderFactory = new BukkitSenderFactory(audiences(), new BukkitSchedulerAdapter(bootstrap.loader()));
     }
 
     @Override
@@ -94,7 +105,7 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
 
     @Override
     protected AbstractChatterFactory createChatterFactory(final ViewProvider viewProvider) {
-        return new BukkitChatterFactory(getAudiences(), viewProvider());
+        return new BukkitChatterFactory(audiences(), viewProvider());
     }
 
     @Override
@@ -103,7 +114,7 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
     }
 
     @NotNull
-    private BukkitAudiences getAudiences() {
+    private BukkitAudiences audiences() {
         return BukkitAudiences.create(bootstrap().loader());
     }
 

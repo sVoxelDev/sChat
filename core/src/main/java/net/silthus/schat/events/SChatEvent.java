@@ -26,7 +26,7 @@ package net.silthus.schat.events;
 /**
  * The root sChat event that must be implemented by all events.
  *
- * @since 1.0.0-alpha.4
+ * @since next
  */
 public interface SChatEvent {
 }

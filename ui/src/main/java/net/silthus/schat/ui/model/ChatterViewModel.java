@@ -35,7 +35,7 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelSettings;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.pointer.Configured;
+import net.silthus.schat.pointer.Configurable;
 import net.silthus.schat.pointer.Settings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -46,7 +46,7 @@ import static net.silthus.schat.pointer.Settings.createSettings;
 @Getter
 @Accessors(fluent = true)
 @EqualsAndHashCode(of = {"chatter"})
-public class ChatterViewModel implements Configured.Modifiable<ChatterViewModel> {
+public class ChatterViewModel implements Configurable<ChatterViewModel> {
 
     private static final Comparator<Channel> CHANNEL_COMPARATOR = Comparator.<Channel, Integer>
             comparing(c -> c.get(ChannelSettings.PRIORITY))

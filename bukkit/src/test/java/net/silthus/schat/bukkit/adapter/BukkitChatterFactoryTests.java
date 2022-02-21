@@ -45,7 +45,7 @@ class BukkitChatterFactoryTests extends BukkitTests {
 
     @BeforeEach
     void setUp() {
-        factory = new BukkitChatterFactory(audiences, new ViewProviderStub());
+        factory = new BukkitChatterFactory(audiences, ViewProviderStub.viewProviderStub());
         SendMessageCommand.prototype(builder -> builder.eventBus(EventBus.empty()));
     }
 

@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import net.silthus.schat.platform.config.key.ConfigKey;
 import net.silthus.schat.platform.config.key.KeyedConfiguration;
+import net.silthus.schat.ui.format.Format;
+import net.silthus.schat.ui.view.ViewConfig;
 
 import static java.util.Objects.requireNonNullElse;
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.booleanKey;
@@ -39,13 +41,8 @@ import static net.silthus.schat.platform.config.key.ConfigKeyFactory.notReloadab
 
 public final class ConfigKeys {
 
-    private ConfigKeys() {
-    }
-
     public static final ConfigKey<String> MESSENGER = notReloadable(lowercaseStringKey("messenger", "pluginmessage"));
-
     public static final ConfigKey<Boolean> DEBUG = notReloadable(booleanKey("debug", false));
-
     public static final ConfigKey<Map<String, ChannelConfig>> CHANNELS = modifiable(key(config -> {
         final HashMap<String, ChannelConfig> channels = new HashMap<>();
         for (final String key : config.keys("channels", new ArrayList<>())) {
@@ -57,11 +54,19 @@ public final class ConfigKeys {
             c.set("channels." + channel.key(), channel);
         }
     });
-
+    public static final ConfigKey<ViewConfig> VIEW_CONFIG = key(config ->
+        new ViewConfig()
+            .height(config.integer("view.height", 100))
+            .privateChat(config.settings("view.private_chat"))
+            .messageFormat(config.get("view.message_format", Format.class))
+    );
     /**
      * A list of the keys defined in this class.
      */
     private static final List<? extends ConfigKey<?>> KEYS = KeyedConfiguration.initialise(ConfigKeys.class);
+
+    private ConfigKeys() {
+    }
 
     public static List<? extends ConfigKey<?>> getKeys() {
         return KEYS;

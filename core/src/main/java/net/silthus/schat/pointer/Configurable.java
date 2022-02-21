@@ -21,23 +21,32 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.eventbus;
+package net.silthus.schat.pointer;
 
-import net.silthus.schat.events.SChatEvent;
+import lombok.NonNull;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * Defines a class which listens to {@link SChatEvent}s.
+ * Marks a type as configurable allowing the direct setting of settings at runtime.
  *
+ * @param <T> the type
  * @since next
  */
-@FunctionalInterface
-public interface EventListener {
-
+public interface Configurable<T> extends Configured {
     /**
-     * Binds the event listener to the event bus.
+     * Sets a setting of the configured type to the given value.
      *
-     * @param bus the event bus
+     * @param setting the setting
+     * @param value   the value of the setting
+     * @param <V>     the type of the setting
+     * @return this builder
      * @since next
      */
-    void bind(EventBus bus);
+    @SuppressWarnings("unchecked")
+    default <V> @NotNull T set(@NonNull Setting<V> setting, @Nullable V value) {
+        final T type = (T) this;
+        settings().set(setting, value);
+        return type;
+    }
 }

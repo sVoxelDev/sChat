@@ -59,7 +59,7 @@ non-sealed class PointersImpl implements Pointers {
     }
 
     @Override
-    public <T> boolean supports(final @NonNull Pointer<T> pointer) {
+    public <T> boolean contains(final @NonNull Pointer<T> pointer) {
         return this.pointers.containsKey(pointer);
     }
 
@@ -103,7 +103,7 @@ non-sealed class PointersImpl implements Pointers {
         }
 
         @Override
-        public <T> boolean supports(final @NonNull Pointer<T> pointer) {
+        public <T> boolean contains(final @NonNull Pointer<T> pointer) {
             return false;
         }
 

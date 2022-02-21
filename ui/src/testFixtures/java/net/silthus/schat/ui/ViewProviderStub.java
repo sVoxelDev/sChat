@@ -26,12 +26,18 @@ package net.silthus.schat.ui;
 import lombok.NonNull;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.ui.view.View;
+import net.silthus.schat.ui.view.ViewConfig;
 import net.silthus.schat.ui.view.ViewProvider;
 import net.silthus.schat.ui.views.Views;
 
 public class ViewProviderStub implements ViewProvider {
+
+    public static ViewProviderStub viewProviderStub() {
+        return new ViewProviderStub();
+    }
+
     @Override
     public View view(@NonNull Chatter chatter) {
-        return Views.tabbedChannels(chatter);
+        return Views.tabbedChannels(chatter, new ViewConfig());
     }
 }
