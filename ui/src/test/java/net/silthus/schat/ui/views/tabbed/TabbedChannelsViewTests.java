@@ -65,6 +65,7 @@ import static net.silthus.schat.message.Message.FORMATTED;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static net.silthus.schat.ui.format.Format.ACTIVE_CHANNEL_FORMAT;
+import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
 import static net.silthus.schat.ui.views.Views.tabbedChannels;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -399,7 +400,10 @@ class TabbedChannelsViewTests {
         @BeforeEach
         void setUp() {
             chatter.join(createChannel("aaa"));
-            chatter.activeChannel(channelWith("zzz", set(PRIORITY, 10)));
+            chatter.activeChannel(channelWith("zzz",
+                set(PRIORITY, 10),
+                set(MESSAGE_FORMAT, (v, message) -> message.get(Message.SOURCE).orElse(Identity.nil()).displayName().append(text(": ").append(message.getOrDefault(Message.TEXT, empty())))))
+            );
             sendMessage("No Source!");
             sendMessageWithSource("Player", "Hey");
             sendMessageWithSource("Player2", "Hello");
