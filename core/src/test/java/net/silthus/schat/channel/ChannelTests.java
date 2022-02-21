@@ -158,16 +158,6 @@ class ChannelTests {
         }
     }
 
-    @Nested class updateTargets {
-        @Test
-        void given_targets_are_not_joined_then_targets_join() {
-            final ChatterMock target = randomChatter();
-            channel.addTarget(target);
-            channel.updateTargets();
-            target.assertJoinedChannel(channel);
-        }
-    }
-
     @Nested class close {
         private ChatterMock chatter;
 

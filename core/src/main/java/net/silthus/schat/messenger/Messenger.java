@@ -23,6 +23,7 @@
  */
 package net.silthus.schat.messenger;
 
+import java.io.Serial;
 import java.lang.reflect.Type;
 import lombok.NonNull;
 import org.jetbrains.annotations.ApiStatus.OverrideOnly;
@@ -68,5 +69,6 @@ public interface Messenger extends AutoCloseable {
     }
 
     class UnsupportedMessageException extends RuntimeException {
+        @Serial private static final long serialVersionUID = -416281090378294557L;
     }
 }

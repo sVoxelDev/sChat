@@ -70,6 +70,7 @@ jobs:
 
   javadoc:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 17
@@ -90,6 +91,7 @@ jobs:
         with:
           branch: javadocs
           folder: core/build/docs/javadoc
+
   release:
     needs: [ build, test ]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/release' || github.ref == 'refs/heads/next'

@@ -23,6 +23,7 @@
  */
 package net.silthus.schat.commands;
 
+import java.io.Serial;
 import java.util.function.Function;
 import lombok.Getter;
 import lombok.NonNull;
@@ -35,9 +36,11 @@ import net.silthus.schat.command.CommandBuilder;
 import net.silthus.schat.command.Result;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.events.channel.JoinChannelEvent;
+import net.silthus.schat.policies.JoinChannelPolicy;
 
 import static net.silthus.schat.command.Result.error;
 import static net.silthus.schat.command.Result.success;
+import static net.silthus.schat.policies.JoinChannelPolicy.JOIN_CHANNEL_POLICY;
 
 @Getter
 @Accessors(fluent = true)
@@ -74,7 +77,8 @@ public class JoinChannelCommand implements Command {
     }
 
     private JoinChannelEvent firePreJoinChannelEvent() {
-        return eventBus.post(new JoinChannelEvent(chatter, channel, channel.joinPolicy()));
+        return eventBus.post(new JoinChannelEvent(chatter, channel, channel.policy(JoinChannelPolicy.class)
+            .orElse(JOIN_CHANNEL_POLICY)));
     }
 
     private Result joinChannelAndUpdateView(Chatter chatter, Channel channel) {
@@ -105,5 +109,6 @@ public class JoinChannelCommand implements Command {
     }
 
     public static final class AccessDenied extends Error {
+        @Serial private static final long serialVersionUID = -5780339463195577903L;
     }
 }

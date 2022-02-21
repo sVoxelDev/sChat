@@ -23,6 +23,7 @@
  */
 package net.silthus.schat.ui.views.tabbed;
 
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.ui.format.Format;
@@ -32,7 +33,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.RED;
 
 public class NoChannelsTab extends AbstractTab {
 
-    protected NoChannelsTab(TabbedChannelsView view, Format messageFormat) {
+    protected NoChannelsTab(@NonNull TabbedChannelsView view, @NonNull Format messageFormat) {
         super(view, messageFormat);
     }
 

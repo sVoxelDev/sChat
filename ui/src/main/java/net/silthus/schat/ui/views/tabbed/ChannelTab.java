@@ -24,6 +24,7 @@
 package net.silthus.schat.ui.views.tabbed;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
@@ -52,7 +53,11 @@ public class ChannelTab extends AbstractTab {
     private Format activeFormat;
     private Format inactiveFormat;
 
-    protected ChannelTab(TabbedChannelsView view, Channel channel, Format messageFormat, Format activeFormat, Format inactiveFormat) {
+    protected ChannelTab(@NonNull TabbedChannelsView view,
+                         @NonNull Channel channel,
+                         @NonNull Format messageFormat,
+                         @NonNull Format activeFormat,
+                         @NonNull Format inactiveFormat) {
         super(view, messageFormat);
         this.channel = channel;
         this.activeFormat = activeFormat;

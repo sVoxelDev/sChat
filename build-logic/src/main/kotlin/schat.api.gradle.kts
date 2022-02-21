@@ -120,3 +120,7 @@ tasks {
         dependsOn(test)
     }
 }
+
+if (project.hasProperty("local_script")) {
+    apply(file("${project.property("local_script")}/build.local.gradle"))
+}

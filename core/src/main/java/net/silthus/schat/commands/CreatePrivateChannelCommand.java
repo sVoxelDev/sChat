@@ -45,6 +45,11 @@ import static net.silthus.schat.channel.ChannelSettings.HIDDEN;
 import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 
+/**
+ * Creates a new private channel between the two chatters.
+ *
+ * @since next
+ */
 @Getter
 @Accessors(fluent = true)
 public class CreatePrivateChannelCommand implements Command {

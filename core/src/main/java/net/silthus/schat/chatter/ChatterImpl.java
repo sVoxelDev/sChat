@@ -94,14 +94,15 @@ non-sealed class ChatterImpl implements Chatter {
     }
 
     @Override
-    public void activeChannel(@Nullable Channel activeChannel) {
-        if (isActiveChannel(activeChannel)) return;
+    public Chatter activeChannel(@Nullable Channel activeChannel) {
+        if (isActiveChannel(activeChannel)) return this;
         if (activeChannel != null)
             join(activeChannel);
         Channel oldChannel = this.activeChannel;
         this.activeChannel = activeChannel;
         fireChangedActiveChannelEvent(oldChannel, activeChannel);
         this.updateView();
+        return this;
     }
 
     private void fireChangedActiveChannelEvent(@Nullable Channel oldChannel, @Nullable Channel newChannel) {
@@ -177,7 +178,6 @@ non-sealed class ChatterImpl implements Chatter {
         eventBus().post(new ChatterReceivedMessageEvent(this, message));
     }
 
-    @Override
     public void updateView() {
         viewConnector.update();
     }
@@ -225,8 +225,8 @@ non-sealed class ChatterImpl implements Chatter {
         }
 
         @Override
-        public void activeChannel(@Nullable Channel activeChannel) {
-
+        public Chatter activeChannel(@Nullable Channel activeChannel) {
+            return this;
         }
 
         @Override
@@ -247,11 +247,6 @@ non-sealed class ChatterImpl implements Chatter {
         @Override
         public @NotNull @Unmodifiable Messages messages() {
             return Messages.of();
-        }
-
-        @Override
-        public void updateView() {
-
         }
 
         @Override
