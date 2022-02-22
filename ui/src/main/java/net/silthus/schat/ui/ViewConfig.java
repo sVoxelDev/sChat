@@ -30,6 +30,7 @@ import net.kyori.adventure.text.JoinConfiguration;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.ui.format.Format;
 
@@ -71,15 +72,20 @@ public class ViewConfig {
     }
 
     public ViewConfig privateChat(Settings settings) {
-        if (settings != null) {
-            if (settings.contains(MESSAGE_FORMAT))
-                this.privateChat.set(MESSAGE_FORMAT, settings.get(MESSAGE_FORMAT));
-            if (settings.contains(ACTIVE_CHANNEL_FORMAT))
-                this.privateChat.set(ACTIVE_CHANNEL_FORMAT, settings.get(ACTIVE_CHANNEL_FORMAT));
-            if (settings.contains(INACTIVE_CHANNEL_FORMAT))
-                this.privateChat.set(INACTIVE_CHANNEL_FORMAT, settings.get(INACTIVE_CHANNEL_FORMAT));
-        }
+        if (settings != null)
+            copyPrivateChatSettings(settings);
         return this;
+    }
+
+    private void copyPrivateChatSettings(Settings settings) {
+        copyIfPresent(settings, MESSAGE_FORMAT);
+        copyIfPresent(settings, ACTIVE_CHANNEL_FORMAT);
+        copyIfPresent(settings, INACTIVE_CHANNEL_FORMAT);
+    }
+
+    private void copyIfPresent(Settings settings, Setting<Format> messageFormat) {
+        if (settings.contains(messageFormat))
+            this.privateChat.set(messageFormat, settings.get(messageFormat));
     }
 
     public ViewConfig channelJoinConfig(JoinConfiguration channelJoinConfig) {
