@@ -67,11 +67,10 @@ class ChannelLoader {
     }
 
     private void printSummary() {
-        logger.info("... loaded (" + SUCCESS_SYMBOL + ") " + newCount + " new channel(s)\n"
-            + "... updated (" + UPDATE_SYMBOL + ") " + updateCount + " channel(s)\n"
-            + "... removed (" + TRASH_SYMBOL + ") " + removedCount + " channel(s)\n"
-            + "... failed to update or load (" + ERROR_SYMBOL + ") " + errorCount + " channel(s)"
-        );
+        if (newCount > 0) logger.info("... loaded (" + SUCCESS_SYMBOL + ") " + newCount + " new channel(s)");
+        if (updateCount > 0) logger.info("... updated (" + UPDATE_SYMBOL + ") " + updateCount + " channel(s)");
+        if (removedCount > 0) logger.info("... removed (" + TRASH_SYMBOL + ") " + removedCount + " channel(s)");
+        if (errorCount > 0) logger.info("... failed to update or load (" + ERROR_SYMBOL + ") " + errorCount + " channel(s)");
         resetCounter();
     }
 
