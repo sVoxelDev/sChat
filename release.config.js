@@ -74,7 +74,7 @@ if (config.branches.some(it => it === branch || (it.name === branch && it.prerel
         ["@semantic-release/github", {
             "assets": [
                 {
-                    "path": "{bukkit,velocity,bungeecord}/build/libs/*[0-9].jar"
+                    "path": "{bukkit,velocity,bungeecord}/build/libs/*([0-9]|SNAPSHOT).jar"
                 }
             ]
         }]
