@@ -57,12 +57,12 @@ final class SettingsImpl extends PointersImpl implements Settings {
 
     @Override
     public @UnknownNullability <V> V get(final @NonNull Setting<V> setting) {
-        return this.valueFromSupplier(setting, getValueSupplier(setting));
+        return this.valueFromSupplier(setting, valueSupplier(setting));
     }
 
     @Override
     public <V> @UnknownNullability V getOrDefaultFrom(@NotNull Setting<V> setting, @NotNull Supplier<? extends V> defaultValue) {
-        final Supplier<?> supplier = getValueSupplier(setting);
+        final Supplier<?> supplier = valueSupplier(setting);
         return supplier == null ? defaultValue.get() : this.valueFromSupplier(setting, supplier);
     }
 
@@ -81,29 +81,30 @@ final class SettingsImpl extends PointersImpl implements Settings {
         }
     }
 
-    private <V> Supplier<?> getValueSupplier(@NotNull Setting<V> setting) {
-        return matchesUnknownValue(setting) ? getUnknownValue(setting) : getConfiguredValue(setting);
+    private <V> Supplier<?> valueSupplier(@NotNull Setting<V> setting) {
+        return matchesUnknownValue(setting) ? unknownValue(setting) : configuredValue(setting);
     }
 
-    private <V> Supplier<?> getConfiguredValue(@NotNull Setting<V> setting) {
+    private <V> Supplier<?> configuredValue(@NotNull Setting<V> setting) {
         return this.pointers.get(setting);
     }
 
     @NotNull
-    private <V> Supplier<Object> getUnknownValue(@NotNull Setting<V> setting) {
+    private <V> Supplier<Object> unknownValue(@NotNull Setting<V> setting) {
         return () -> unknowns.get(setting.key()).apply(setting);
     }
 
-    private <V> boolean notContains(@NotNull Setting<V> setting) {
-        return !contains(setting);
-    }
-
     private <V> boolean matchesUnknownValue(@NotNull Setting<V> setting) {
-        return notContains(setting) && isUnknownKey(setting.key());
+        return !super.contains(setting) && isUnknownKey(setting.key());
     }
 
     private boolean isUnknownKey(String key) {
         return unknowns.containsKey(key);
+    }
+
+    @Override
+    public <T> boolean contains(@NonNull Pointer<T> pointer) {
+        return super.contains(pointer) || isUnknownKey(pointer.key());
     }
 
     @Override

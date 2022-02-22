@@ -27,11 +27,14 @@ import java.io.File;
 import java.util.Map;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.identity.Identity;
+import net.silthus.schat.chatter.ChatterMock;
+import net.silthus.schat.commands.CreatePrivateChannelCommand;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.ui.View;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -39,16 +42,24 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
+import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
+import static net.silthus.schat.chatter.ChatterMock.chatterMock;
+import static net.silthus.schat.commands.CreatePrivateChannelCommand.createPrivateChannel;
+import static net.silthus.schat.identity.Identity.identity;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 import static net.silthus.schat.platform.config.ConfigKeys.VIEW_CONFIG;
 import static net.silthus.schat.platform.config.TestConfigurationAdapter.testConfigAdapter;
+import static net.silthus.schat.ui.format.Format.ACTIVE_CHANNEL_FORMAT;
 import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ConfigTests {
 
+    private static final MiniMessage FORMATTER = MiniMessage.miniMessage();
     private SChatConfig config;
 
     @BeforeEach
@@ -56,6 +67,7 @@ class ConfigTests {
         final ConfigurationAdapter adapter = testConfigAdapter(new File(temp, "test-config.yml"));
         config = new SChatConfig(adapter);
         config.load();
+        CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(createInMemoryChannelRepository()));
     }
 
     private Channel getTestChannelConfig() {
@@ -79,15 +91,8 @@ class ConfigTests {
     void loads_message_format() {
         final Component format = getTestChannelConfig().settings()
             .get(MESSAGE_FORMAT)
-            .format(View.empty(), message("Hey").source(Identity.identity("Notch")).create());
+            .format(View.empty(), message("Hey").source(identity("Notch")).create());
         assertThat(format).isEqualTo(text("Notch", YELLOW).append(text(": Hey", GRAY)));
-    }
-
-    @Test
-    void view_config() {
-        final Component format = config.get(VIEW_CONFIG).privateChat().get(MESSAGE_FORMAT)
-            .format(View.empty(), message("Hey").source(Identity.identity("Bob")).create());
-        assertThat(format).isEqualTo(text("Bob", YELLOW).append(text(": Hey", GRAY)));
     }
 
     @Test
@@ -102,5 +107,27 @@ class ConfigTests {
         config.reload();
 
         assertThat(getTestChannelConfig().displayName()).isEqualTo(name);
+    }
+
+    @Nested class view_config {
+
+        @Test
+        void loads_custom_private_chat_message_format() {
+            final Component format = config.get(VIEW_CONFIG).privateChat().get(MESSAGE_FORMAT)
+                .format(View.empty(), message("Hey").source(identity("Bob")).create());
+            assertThat(FORMATTER.serialize(format)).isEqualTo("<yellow>Bob</yellow><gray>: Hey");
+        }
+
+        @Test
+        void uses_default_format_if_no_config_is_set() {
+            final View view = mock(View.class);
+            final ChatterMock source = chatterMock(identity("Bob"));
+            final ChatterMock target = chatterMock(identity("Karl"));
+            when(view.chatter()).thenReturn(source);
+            final Channel channel = createPrivateChannel(source, target).channel();
+            source.activeChannel(channel);
+            final Component format = config.get(VIEW_CONFIG).privateChat().get(ACTIVE_CHANNEL_FORMAT).format(view, channel);
+            assertThat(FORMATTER.serialize(format)).isEqualTo("<green><underlined>Karl");
+        }
     }
 }

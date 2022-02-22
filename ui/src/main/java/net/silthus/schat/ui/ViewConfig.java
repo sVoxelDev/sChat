@@ -70,9 +70,15 @@ public class ViewConfig {
         return this;
     }
 
-    public ViewConfig privateChat(Settings privateChat) {
-        if (privateChat != null)
-            this.privateChat = privateChat;
+    public ViewConfig privateChat(Settings settings) {
+        if (settings != null) {
+            if (settings.contains(MESSAGE_FORMAT))
+                this.privateChat.set(MESSAGE_FORMAT, settings.get(MESSAGE_FORMAT));
+            if (settings.contains(ACTIVE_CHANNEL_FORMAT))
+                this.privateChat.set(ACTIVE_CHANNEL_FORMAT, settings.get(ACTIVE_CHANNEL_FORMAT));
+            if (settings.contains(INACTIVE_CHANNEL_FORMAT))
+                this.privateChat.set(INACTIVE_CHANNEL_FORMAT, settings.get(INACTIVE_CHANNEL_FORMAT));
+        }
         return this;
     }
 

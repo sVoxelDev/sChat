@@ -111,4 +111,12 @@ class SettingsTest {
         assertThat(settings.get(TEST_POINTER)).isPresent().get().isEqualTo("foobar");
         assertThat(settings.get(DYNAMIC_TEST)).isEqualTo("barfoo");
     }
+
+    @Test
+    void contains_returns_true_if_unknown_setting_exists() {
+        final Settings settings = Settings.settingsBuilder()
+            .withUnknown("default", setting -> "foobar")
+            .create();
+        assertThat(settings.contains(DEFAULT_VAL_TEST)).isTrue();
+    }
 }
