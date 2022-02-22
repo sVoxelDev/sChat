@@ -30,15 +30,58 @@
 #+----------------------------------------------------------------------------------------------+
 
 # Here you define a list of channels that your players can join and chat in.
-# Every channel needs a key that must be unique across servers and only contains letters, numbers, dashes (-) and underscores (_).
+# Every channel needs a key that must be unique across servers and
+# only contains letters, numbers, dashes (-) or underscores (_).
 channels:
+
+  # This is the unique key of the channel.
+  # The key is used when referencing the channel, e.g. in commands and permission nodes.
   global:
-    name: Global
+
+    # The friendly display name of the channel as it is shown in the GUI and messages.
+    # The name is parsed with the MiniMessage format (see documentation).
+    name: "<#189AB4>Global" # colors the name with the given hex formatted color
+
+    # Every channel can have an unlimited number of settings added and controlled by various features.
+    # The settings documented here are the ones that come out of the box with sChat.
     settings:
+
+      #
+      # Channels can be 'protected' to require a special permission to join.
+      # The permission is composed of the channel key: 'schat.channel.<key>.join'.
+      # This 'global' channel would require the 'schat.channel.global.join' permission if 'protected: true' is set.
+      #
+      # default: false
+      #
       protected: false
+
+      #
+      # Channels with the 'auto_join' setting are automatically added to players when they join the server
+      # if they have the permission to join the channel.
+      #
+      # default: false
+      #
       auto_join: true
+
+      #
+      # 'global' channels are automatically synchronized across servers.
+      # Messages sent to global channels are forwarded to all other servers in the network.
+      # This requires the Bungeecord or Velocity sChat plugin. See the 'messenger' configuration below for more details.
+      #
+      # default: true
+      #
       global: true
+
+      #
+      # A 'forced' channel cannot be left by players.
+      # Combined with 'auto_join' makes for perfect server wide default channels.
+      #
+      # default: false
+      #
       forced: true
+
+      #
+      # 
       message_format: "<yellow><source.display_name></yellow><gray>: <text>"
       active_channel_format: "<green><underlined><channel.name></underlined></green>"
       inactive_channel_format: "<gray><click:run_command:'/channel join <channel.key>'><channel.name></click></gray>"

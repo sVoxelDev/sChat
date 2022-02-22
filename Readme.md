@@ -107,7 +107,7 @@ example `[<channel.name>]%vault_rank% %player_name%: <text>` will work and repla
 
 ### Are HEX colors supported?
 
-Yes they are. Use them just like the other colors, e.g. `<#ffffff><message>`. See this [formatting documentation][6] for
+Yes they are. Use them just like the other colors, e.g. `<#ffffff><text>`. See this [formatting documentation][6] for
 more details.
 
 [1]: https://papermc.io/
