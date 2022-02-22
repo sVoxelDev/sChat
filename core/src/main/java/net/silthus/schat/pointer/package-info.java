@@ -21,34 +21,8 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui.views.tabbed;
-
-import lombok.NonNull;
-import net.kyori.adventure.text.Component;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.pointer.Settings;
-
-import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
-
-public class NoChannelsTab extends AbstractTab {
-
-    protected NoChannelsTab(@NonNull TabbedChannelsView view, @NonNull Settings settings) {
-        super(view, settings);
-    }
-
-    @Override
-    protected boolean isMessageDisplayed(Message message) {
-        return message.type() == Message.Type.SYSTEM;
-    }
-
-    @Override
-    public Component renderName() {
-        return translatable("schat.view.no-channels").color(RED);
-    }
-
-    @Override
-    public boolean isActive() {
-        return true;
-    }
-}
+/**
+ * Contains the {@link net.silthus.schat.pointer.Pointer} and {@link net.silthus.schat.pointer.Setting} API
+ * for the dynamic configuration of {@link net.silthus.schat.channel.ChannelSettings}.
+ */
+package net.silthus.schat.pointer;

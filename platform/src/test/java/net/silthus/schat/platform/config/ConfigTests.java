@@ -113,9 +113,9 @@ class ConfigTests {
 
         @Test
         void loads_custom_private_chat_message_format() {
-            final Component format = config.get(VIEW_CONFIG).privateChat().get(MESSAGE_FORMAT)
+            final Component format = config.get(VIEW_CONFIG).format().get(MESSAGE_FORMAT)
                 .format(View.empty(), message("Hey").source(identity("Bob")).create());
-            assertThat(FORMATTER.serialize(format)).isEqualTo("<yellow>Bob</yellow><gray>: Hey");
+            assertThat(FORMATTER.serialize(format)).isEqualTo("<aqua><Bob></aqua>: Hey");
         }
 
         @Test
@@ -126,7 +126,7 @@ class ConfigTests {
             when(view.chatter()).thenReturn(source);
             final Channel channel = createPrivateChannel(source, target).channel();
             source.activeChannel(channel);
-            final Component format = config.get(VIEW_CONFIG).privateChat().get(ACTIVE_CHANNEL_FORMAT).format(view, channel);
+            final Component format = config.get(VIEW_CONFIG).privateChatFormat().get(ACTIVE_CHANNEL_FORMAT).format(view, channel);
             assertThat(FORMATTER.serialize(format)).isEqualTo("<green><underlined>Karl");
         }
     }

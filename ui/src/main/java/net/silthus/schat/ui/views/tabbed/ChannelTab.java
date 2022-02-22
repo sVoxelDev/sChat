@@ -30,7 +30,6 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.ui.format.Format;
 
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.translatable;
@@ -39,6 +38,8 @@ import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.silthus.schat.channel.ChannelSettings.FORCED;
+import static net.silthus.schat.ui.format.Format.ACTIVE_CHANNEL_FORMAT;
+import static net.silthus.schat.ui.format.Format.INACTIVE_CHANNEL_FORMAT;
 
 @SuppressWarnings("CheckStyle")
 @Getter
@@ -50,27 +51,19 @@ public class ChannelTab extends AbstractTab {
 
     private final Channel channel;
 
-    private Format activeFormat;
-    private Format inactiveFormat;
-
     protected ChannelTab(@NonNull TabbedChannelsView view,
-                         @NonNull Channel channel,
-                         @NonNull Format messageFormat,
-                         @NonNull Format activeFormat,
-                         @NonNull Format inactiveFormat) {
-        super(view, messageFormat);
+                         @NonNull Channel channel) {
+        super(view, channel.settings());
         this.channel = channel;
-        this.activeFormat = activeFormat;
-        this.inactiveFormat = inactiveFormat;
     }
 
     @Override
     public Component renderName() {
         final Component name;
         if (isActive())
-            name = activeFormat().format(view(), channel());
+            name = get(ACTIVE_CHANNEL_FORMAT).format(view(), channel());
         else
-            name = inactiveFormat().format(view(), channel());
+            name = get(INACTIVE_CHANNEL_FORMAT).format(view(), channel());
 
         return closeChannel().append(name);
     }

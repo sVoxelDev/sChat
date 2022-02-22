@@ -31,17 +31,14 @@ import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.pointer.Setting;
-import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.ui.View;
 import net.silthus.schat.ui.ViewConfig;
-import net.silthus.schat.ui.format.Format;
 import org.jetbrains.annotations.NotNull;
 
 import static java.util.stream.Collectors.toList;
 import static net.kyori.adventure.text.Component.join;
 import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.pointer.Setting.setting;
 
 @Getter
@@ -70,7 +67,7 @@ public final class TabbedChannelsView implements View {
 
         final List<Tab> tabs = tabs();
         if (tabs.isEmpty())
-            tabs.add(new NoChannelsTab(this, config().messageFormat()));
+            tabs.add(createNoChannelsTab());
 
         boolean hasActiveTab = false;
         for (final Tab tab : tabs) {
@@ -81,13 +78,18 @@ public final class TabbedChannelsView implements View {
         }
 
         if (!hasActiveTab)
-            content.append(new NoChannelsTab(this, config().messageFormat()).renderContent());
+            content.append(createNoChannelsTab().renderContent());
 
         return content
             .append(newline())
             .append(joinTabs(tabs.stream().map(Tab::renderName).toList()))
             .append(VIEW_MARKER)
             .build();
+    }
+
+    @NotNull
+    private NoChannelsTab createNoChannelsTab() {
+        return new NoChannelsTab(this, config().format());
     }
 
     @NotNull
@@ -100,15 +102,9 @@ public final class TabbedChannelsView implements View {
 
     private List<Tab> tabs() {
         return viewModel().channels().stream()
-            .map(channel -> {
-                Settings format = channel.is(PRIVATE) ? config.privateChat() : channel.settings();
-                return (Tab) new ChannelTab(
-                    this,
-                    channel,
-                    format.get(Format.MESSAGE_FORMAT),
-                    format.get(Format.ACTIVE_CHANNEL_FORMAT),
-                    format.get(Format.INACTIVE_CHANNEL_FORMAT)
-                );
-            }).collect(toList());
+            .map(channel -> new ChannelTab(
+                this,
+                channel
+            )).collect(toList());
     }
 }

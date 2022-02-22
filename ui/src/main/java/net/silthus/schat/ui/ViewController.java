@@ -23,50 +23,33 @@
  */
 package net.silthus.schat.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextReplacementConfig;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.eventbus.EventListener;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
-
-import static net.silthus.schat.message.Message.FORMATTED;
-import static net.silthus.schat.ui.View.empty;
-import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
+import net.silthus.schat.ui.format.Format;
 
 public class ViewController implements EventListener {
 
-    private final List<Function<Message, TextReplacementConfig>> replacements = new ArrayList<>();
+    private final ViewModule viewModule;
+
+    public ViewController(ViewModule viewModule) {
+        this.viewModule = viewModule;
+    }
 
     @Override
     public void bind(EventBus bus) {
         bus.on(SendChannelMessageEvent.class, this::handleMessage);
     }
 
-    public void addMessageReplacement(Function<Message, TextReplacementConfig> replacement) {
-        replacements.add(replacement);
-    }
-
     private void handleMessage(SendChannelMessageEvent event) {
         final Component formatted = formatMessage(event);
-        event.message().set(FORMATTED, applyReplacements(event.message(), formatted));
+        event.message().set(Message.FORMATTED, viewModule.replacements().applyTo(event.message(), formatted));
     }
 
     private Component formatMessage(SendChannelMessageEvent event) {
-        return event.channel().get(MESSAGE_FORMAT)
-            .format(empty(), event.message());
-    }
-
-    private Component applyReplacements(final Message message, final Component formatted) {
-        Component result = formatted;
-        for (final Function<Message, TextReplacementConfig> replacement : replacements) {
-            final TextReplacementConfig config = replacement.apply(message);
-            if (config != null)
-                result = formatted.replaceText(config);
-        }
-        return result;
+        return event.channel().get(Format.MESSAGE_FORMAT)
+            .format(View.empty(), event.message());
     }
 }

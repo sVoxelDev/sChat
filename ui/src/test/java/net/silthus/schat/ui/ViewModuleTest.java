@@ -23,7 +23,6 @@
  */
 package net.silthus.schat.ui;
 
-import net.kyori.adventure.text.TextReplacementConfig;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
@@ -31,28 +30,23 @@ import net.silthus.schat.message.Message;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.eventbus.EventBusMock.eventBusMock;
 import static net.silthus.schat.message.Message.FORMATTED;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static net.silthus.schat.policies.SendChannelMessagePolicy.ALLOW;
-import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ViewControllerTest {
+class ViewModuleTest {
 
-    private ViewController controller;
     private EventBusMock eventBus;
 
     @BeforeEach
     void setUp() {
         eventBus = eventBusMock();
-        controller = new ViewController();
-        controller.bind(eventBus);
+        new ViewModule(new ViewConfig(), eventBus).init();
     }
 
     @AfterEach
@@ -73,27 +67,4 @@ class ViewControllerTest {
         assertThat(message.settings().contains(FORMATTED)).isTrue();
     }
 
-    @Nested class replacements {
-        @BeforeEach
-        void setUp() {
-            controller.addMessageReplacement(message -> TextReplacementConfig.builder().match("test").replacement("success").build());
-        }
-
-        @Test
-        void replaces_message_text_after_format() {
-            final Channel channel = randomChannel();
-            channel.set(MESSAGE_FORMAT, (view, entity) -> text("test"));
-            final Message message = sendMessage(channel);
-
-            assertThat(message.get(FORMATTED)).isEqualTo(text("success"));
-        }
-
-        @Test
-        void null_replacements_are_ignored() {
-            controller.addMessageReplacement(message -> null);
-            final Message message = sendMessage(randomChannel());
-            assertThat(message.get(FORMATTED)).isNotNull()
-                .isEqualTo(text().append(message.text()).build());
-        }
-    }
 }

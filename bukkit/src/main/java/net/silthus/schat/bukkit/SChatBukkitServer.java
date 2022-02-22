@@ -73,7 +73,7 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
         super.onEnable();
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new PlaceholderApiIntegration(viewController()).init();
+            new PlaceholderApiIntegration(viewModule().replacements()).init();
             logger().info("Enabled PlaceholderAPI integration.");
         }
     }

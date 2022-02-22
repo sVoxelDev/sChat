@@ -31,7 +31,6 @@ import net.silthus.schat.platform.config.adapter.ConfigurationSection;
 import net.silthus.schat.platform.config.key.ConfigKey;
 import net.silthus.schat.platform.config.key.KeyedConfiguration;
 import net.silthus.schat.ui.ViewConfig;
-import net.silthus.schat.ui.format.Format;
 
 import static java.util.Objects.requireNonNullElse;
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.booleanKey;
@@ -57,10 +56,10 @@ public final class ConfigKeys {
     });
     public static final ConfigKey<ViewConfig> VIEW_CONFIG = key(config -> {
         ConfigurationSection view = config.scoped("view");
-        return new ViewConfig()
-            .height(view.integer("height", 100))
-            .privateChat(view.settings("private_chat"))
-            .messageFormat(view.get("message_format", Format.class));
+        ViewConfig viewConfig = new ViewConfig();
+        viewConfig.format().copyFrom((config.settings("view")));
+        viewConfig.privateChatFormat().copyFrom((config.settings("private_chat")));
+        return viewConfig.height(view.integer("height", 100));
     });
     /**
      * A list of the keys defined in this class.
@@ -70,7 +69,7 @@ public final class ConfigKeys {
     private ConfigKeys() {
     }
 
-    public static List<? extends ConfigKey<?>> getKeys() {
+    public static List<? extends ConfigKey<?>> keys() {
         return KEYS;
     }
 }

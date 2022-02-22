@@ -64,10 +64,6 @@ public sealed interface Setting<V> extends Pointer<V> permits SettingImpl {
         return new SettingImpl<>(type, key, defaultValue);
     }
 
-    static @NotNull Setting<Settings> settings(final @NonNull String key, final @NonNull Settings.Builder settingsBuilder) {
-        return new SettingImpl<>(Settings.class, key, settingsBuilder::create);
-    }
-
     /**
      * The default value of the setting that is used if the setting is not set.
      *
