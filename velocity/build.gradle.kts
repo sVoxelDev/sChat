@@ -20,5 +20,5 @@ tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
 
     val lib = "net.silthus.schat.lib"
     relocate("net.kyori.event", "$lib.kyori.event")
-    relocate("net.kyori.adventure", "$lib.kyori.adventure")
+    relocate("net.kyori.adventure.text.minimessage", "$lib.kyori.adventure.text.minimessage")
 }
