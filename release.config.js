@@ -20,7 +20,7 @@ if (config.branches.some(it => it === branch || (it.name === branch && it.prerel
                 {
                     "files": ["gradle.properties"],
                     "from": "version = .*",
-                    "to": "version = ${nextRelease.version}",
+                    "to": "version = " + $nextRelease.version.replace("/-SNAPSHOT\.\d+/", "-SNAPSHOT"),
                     "countMatches": true
                 }
             ]
