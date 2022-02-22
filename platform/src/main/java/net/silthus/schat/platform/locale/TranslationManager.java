@@ -131,8 +131,9 @@ public final class TranslationManager {
         registerRegistryAsGlobalSource();
     }
 
+    @SuppressWarnings("UnstableApiUsage") // > 4.9.3 - native platforms do not support translator() yet
     private void registerRegistryAsGlobalSource() {
-        GlobalTranslator.translator().addSource(this.registry);
+        GlobalTranslator.get().addSource(this.registry);
     }
 
     private void loadTranslations() {
@@ -154,9 +155,10 @@ public final class TranslationManager {
         this.registry.defaultLocale(DEFAULT_LOCALE);
     }
 
+    @SuppressWarnings("UnstableApiUsage") // > 4.9.3 - native platforms do not support translator() yet
     private void clearPreviousRegistry() {
         if (this.registry != null) {
-            GlobalTranslator.translator().removeSource(this.registry);
+            GlobalTranslator.get().removeSource(this.registry);
             this.installed.clear();
         }
     }
