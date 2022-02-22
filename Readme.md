@@ -2,7 +2,8 @@
 
 [![Build Status](https://github.com/sVoxelDev/sChat/workflows/Build/badge.svg)](../../actions?query=workflow%3ABuild)
 [![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/sVoxelDev/sChat?include_prereleases&label=release)](../../releases)
-[![Maven Central](https://img.shields.io/maven-central/v/net.silthus.schat/schat-core)](https://search.maven.org/search?q=g:net.silthus.schat)
+[![Stable API](https://img.shields.io/maven-central/v/net.silthus.schat/schat-core?label=API)](https://search.maven.org/search?q=g:net.silthus.schat)
+[![Dev API](https://img.shields.io/nexus/s/net.silthus.schat/schat-core?label=dev&server=https%3A%2F%2Fs01.oss.sonatype.org)](https://search.maven.org/search?q=g:net.silthus.schat)
 [![codecov](https://codecov.io/gh/sVoxelDev/sChat/branch/main/graph/badge.svg)](https://codecov.io/gh/sVoxelDev/sChat)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
