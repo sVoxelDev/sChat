@@ -24,6 +24,7 @@
 package net.silthus.schat.commands;
 
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.command.Result;
 import net.silthus.schat.eventbus.EventBus;
@@ -33,6 +34,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
+import static net.silthus.schat.channel.ChannelHelper.randomChannel;
+import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.chatter.ChatterMock.randomChatter;
+import static net.silthus.schat.commands.CreatePrivateChannelCommand.createPrivateChannel;
 import static net.silthus.schat.commands.JoinChannelCommand.joinChannelBuilder;
 import static net.silthus.schat.policies.JoinChannelPolicy.ALLOW;
 import static net.silthus.schat.policies.JoinChannelPolicy.DENY;
@@ -102,6 +107,25 @@ class SetActiveChannelCommandTests {
                 assertThat(setActiveChannel().wasFailure()).isTrue();
                 assertThat(chatter.activeChannel()).isNotPresent();
             }
+        }
+    }
+
+    @Nested class given_private_channel {
+
+        @BeforeEach
+        void setUp() {
+            final ChannelRepository channelRepository = createInMemoryChannelRepository();
+            CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(channelRepository));
+
+            channel = createPrivateChannel(chatter, randomChatter()).channel();
+        }
+
+        @Test
+        void chatter_can_set_channel_active_after_leaving_it() {
+            chatter.activeChannel(randomChannel());
+
+            assertThat(setActiveChannel().wasSuccessful()).isTrue();
+            assertThat(chatter.isActiveChannel(channel)).isTrue();
         }
     }
 }

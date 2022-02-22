@@ -37,6 +37,7 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.command.Command;
 import net.silthus.schat.command.CommandBuilder;
 import net.silthus.schat.messenger.Messenger;
+import net.silthus.schat.policies.JoinChannelPolicy;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
@@ -115,6 +116,7 @@ public class CreatePrivateChannelCommand implements Command {
             .set(PRIVATE, true)
             .set(HIDDEN, true)
             .set(PROTECTED, true)
+            .policy(JoinChannelPolicy.class, Chatter::isJoined)
             .create();
         repository.add(channel);
         return channel;
