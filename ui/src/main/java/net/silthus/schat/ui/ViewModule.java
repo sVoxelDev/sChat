@@ -23,41 +23,45 @@
  */
 package net.silthus.schat.ui;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.experimental.Accessors;
-import net.kyori.adventure.text.JoinConfiguration;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.message.Message;
+import net.silthus.schat.channel.PrivateChannel;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.pointer.Settings;
-import net.silthus.schat.ui.util.ViewHelper;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.ui.format.Format.ACTIVE_CHANNEL_DECORATION;
 import static net.silthus.schat.ui.format.Format.ACTIVE_CHANNEL_FORMAT;
-import static net.silthus.schat.ui.format.Format.INACTIVE_CHANNEL_DECORATION;
 import static net.silthus.schat.ui.format.Format.INACTIVE_CHANNEL_FORMAT;
 import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
-import static net.silthus.schat.ui.util.ViewHelper.renderPrivateChannelName;
+import static net.silthus.schat.ui.format.Format.SELF_MESSAGE_FORMAT;
 
-@Data
+@Getter
 @Accessors(fluent = true)
-public class ViewConfig {
+public final class ViewModule {
 
-    private int height = 100;
-    private Settings format = Settings.createSettings();
-    private Settings privateChatFormat = Settings.settingsBuilder()
-        .withStatic(MESSAGE_FORMAT, (view, message) -> ViewHelper.renderPrivateMessage(view.chatter(), (Message) message))
-        .withStatic(ACTIVE_CHANNEL_FORMAT, (view, channel) -> ACTIVE_CHANNEL_DECORATION.apply(renderPrivateChannelName(view.chatter(), (Channel) channel)))
-        .withStatic(INACTIVE_CHANNEL_FORMAT, (view, channel) -> INACTIVE_CHANNEL_DECORATION.apply((Channel) channel, renderPrivateChannelName(view.chatter(), (Channel) channel)))
-        .create();
-    private JoinConfiguration channelJoinConfig = JoinConfiguration.builder()
-        .prefix(text("| "))
-        .separator(text(" | "))
-        .suffix(text(" |"))
-        .build();
+    private final ViewConfig config;
+    private final EventBus eventBus;
+    private final Replacements replacements = new Replacements();
+    private final ViewController viewController = new ViewController(this);
 
-    public void channelJoinConfig(JoinConfiguration channelJoinConfig) {
-        if (channelJoinConfig != null)
-            this.channelJoinConfig = channelJoinConfig;
+    public ViewModule(ViewConfig config, EventBus eventBus) {
+        this.config = config;
+        this.eventBus = eventBus;
+
+        init();
+    }
+
+    public void init() {
+        configurePrivateChannel(config);
+        viewController.bind(eventBus);
+    }
+
+    private void configurePrivateChannel(ViewConfig config) {
+        Settings format = config.privateChatFormat();
+        PrivateChannel.configure(channel -> channel
+            .set(MESSAGE_FORMAT, format.get(MESSAGE_FORMAT))
+            .set(SELF_MESSAGE_FORMAT, format.get(SELF_MESSAGE_FORMAT))
+            .set(ACTIVE_CHANNEL_FORMAT, format.get(ACTIVE_CHANNEL_FORMAT))
+            .set(INACTIVE_CHANNEL_FORMAT, format.get(INACTIVE_CHANNEL_FORMAT))
+        );
     }
 }

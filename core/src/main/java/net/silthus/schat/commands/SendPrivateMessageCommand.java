@@ -23,7 +23,7 @@
  */
 package net.silthus.schat.commands;
 
-import java.util.function.Function;
+import java.util.function.Consumer;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -42,15 +42,20 @@ import static net.silthus.schat.commands.CreatePrivateChannelCommand.createPriva
 public class SendPrivateMessageCommand implements Command {
 
     @Getter
-    @Setter
-    private static @NonNull Function<SendPrivateMessageCommand.Builder, SendPrivateMessageCommand.Builder> prototype = builder -> builder;
+    private static @NonNull Consumer<Builder> prototype = builder -> {};
+
+    public static void prototype(Consumer<Builder> consumer) {
+        prototype = prototype().andThen(consumer);
+    }
 
     public static SendMessageResult sendPrivateMessage(Chatter source, Chatter target, Component text) {
         return sendPrivateMessageBuilder(source, target, text).create().execute();
     }
 
     public static Builder sendPrivateMessageBuilder(Chatter source, Chatter target, Component text) {
-        return prototype.apply(new Builder(source, target, text));
+        final Builder builder = new Builder(source, target, text);
+        prototype().accept(builder);
+        return builder;
     }
 
     private final @NonNull Chatter source;

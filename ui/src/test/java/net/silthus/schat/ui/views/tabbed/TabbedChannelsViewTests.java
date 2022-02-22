@@ -91,16 +91,16 @@ class TabbedChannelsViewTests {
         return COMPONENT_SERIALIZER.serialize(message.text());
     }
 
+    private void sendMessage(String text) {
+        sendMessage(message(text).create());
+    }
+
     @SneakyThrows
     @NotNull
     private Message sendMessage(Message message) {
         chatter.sendMessage(message);
         Thread.sleep(1L); // required to order messages by time
         return message;
-    }
-
-    private void sendMessage(String text) {
-        sendMessage(message(text).create());
     }
 
     private void sendMessageWithSource(String source, String text) {
@@ -133,7 +133,8 @@ class TabbedChannelsViewTests {
         assertThat(COMPONENT_SERIALIZER.serialize(view.render()).trim()).contains(expected);
     }
 
-    @Nested class given_null_chatter {
+    @Nested
+    class given_null_chatter {
 
         @Test
         @SuppressWarnings("ConstantConditions")
@@ -142,7 +143,8 @@ class TabbedChannelsViewTests {
         }
     }
 
-    @Nested class given_single_message {
+    @Nested
+    class given_single_message {
 
         @Test
         void renders_message_text() {
@@ -151,7 +153,8 @@ class TabbedChannelsViewTests {
         }
     }
 
-    @Nested class given_single_message_with_source {
+    @Nested
+    class given_single_message_with_source {
 
         @BeforeEach
         void setUp() {
@@ -163,23 +166,25 @@ class TabbedChannelsViewTests {
             assertTextContains("Bob: Hi");
         }
 
-        @Nested class and_custom_message_source_format {
+        @Nested
+        class and_custom_message_source_format {
 
             @Test
             void uses_format() {
-                final ViewConfig config = new ViewConfig()
-                    .messageFormat((view, msg) ->
-                        text("<")
-                            .append(msg.getOrDefault(Message.SOURCE, Identity.nil()).displayName())
-                            .append(text("> "))
-                            .append(msg.getOrDefault(Message.TEXT, Component.empty())));
+                final ViewConfig config = new ViewConfig();
+                config.format().set(MESSAGE_FORMAT, (view, msg) ->
+                    text("<")
+                        .append(msg.getOrDefault(Message.SOURCE, Identity.nil()).displayName())
+                        .append(text("> "))
+                        .append(msg.getOrDefault(Message.TEXT, Component.empty())));
                 view = tabbedChannels(chatter, config);
                 assertTextContains("<Bob> Hi");
             }
         }
     }
 
-    @Nested class given_two_messages {
+    @Nested
+    class given_two_messages {
 
         @Test
         void renders_both_messages() {
@@ -187,13 +192,14 @@ class TabbedChannelsViewTests {
             sendMessageWithSource("Silthus", "Yo");
             assertViewRenders("""
                 Hey
-                Silthus: Yo
+                <yellow>Silthus</yellow><gray>: Yo</gray>
                 | <red><lang:schat.view.no-channels></red> |"""
             );
         }
     }
 
-    @Nested class given_message_with_formatted_setting {
+    @Nested
+    class given_message_with_formatted_setting {
         @BeforeEach
         void setUp() {
             final Message message = randomMessage();
@@ -207,7 +213,8 @@ class TabbedChannelsViewTests {
         }
     }
 
-    @Nested class given_single_channel {
+    @Nested
+    class given_single_channel {
         private Channel channel;
 
         @BeforeEach
@@ -221,7 +228,8 @@ class TabbedChannelsViewTests {
             assertTextRenders("| ❌test |");
         }
 
-        @Nested class when_it_is_active {
+        @Nested
+        class when_it_is_active {
             @BeforeEach
             void setUp() {
                 chatter.activeChannel(channel);
@@ -232,11 +240,14 @@ class TabbedChannelsViewTests {
                 assertViewRenders("| <red><hover:show_text:\"<lang:schat.hover.leave-channel:\\\"<gray>test\\\">\"><click:run_command:\"/channel leave test\">❌</red><green><underlined>test</click></hover></underlined></green> |");
             }
 
-            @Nested class and_different_format_is_used {
+            @Nested
+            class and_different_format_is_used {
                 @BeforeEach
                 void setUp() {
                     view = tabbedChannels(chatter, new ViewConfig());
-                    channel.set(ACTIVE_CHANNEL_FORMAT, (view, type) -> type.getOrDefault(DISPLAY_NAME, empty()).color(RED).decorate(UNDERLINED));
+                    channel.set(ACTIVE_CHANNEL_FORMAT, (view, type) -> type.getOrDefault(DISPLAY_NAME, empty())
+                        .color(RED)
+                        .decorate(UNDERLINED));
                 }
 
                 @Test
@@ -246,7 +257,8 @@ class TabbedChannelsViewTests {
             }
         }
 
-        @Nested class when_it_is_inactive {
+        @Nested
+        class when_it_is_inactive {
             @BeforeEach
             void setUp() {
                 chatter.activeChannel(randomChannel());
@@ -258,7 +270,8 @@ class TabbedChannelsViewTests {
             }
         }
 
-        @Nested class given_it_is_forced {
+        @Nested
+        class given_it_is_forced {
             @BeforeEach
             void setUp() {
                 channel.set(FORCED, true);
@@ -271,7 +284,8 @@ class TabbedChannelsViewTests {
         }
     }
 
-    @Nested class given_private_channel {
+    @Nested
+    class given_private_channel {
         private ChatterMock target;
 
         @BeforeEach
@@ -297,12 +311,13 @@ class TabbedChannelsViewTests {
             Thread.sleep(1L);
             sendPrivateMessage(target, chatter, text("Hey back"));
             assertViewContains("""
-                <yellow><lang:schat.chat.private.you></yellow><gray>: Hi</gray>
+                <yellow><lang:schat.chat.message.you></yellow><gray>: Hi</gray>
                 <aqua>target</aqua><gray>: Hey back</gray>""");
         }
     }
 
-    @Nested class given_two_channels {
+    @Nested
+    class given_two_channels {
 
         private @NotNull Channel channelOne;
         private @NotNull Channel channelTwo;
@@ -320,7 +335,8 @@ class TabbedChannelsViewTests {
             assertTextRenders("| ❌one | ❌two |");
         }
 
-        @Nested class given_both_channels_received_messages {
+        @Nested
+        class given_both_channels_received_messages {
             @BeforeEach
             void setUp() {
                 sendMessage("System");
@@ -334,7 +350,8 @@ class TabbedChannelsViewTests {
                 assertTextDoesNotContain("Bob: one", "Bob: two");
             }
 
-            @Nested class given_channel_one_is_active {
+            @Nested
+            class given_channel_one_is_active {
                 @BeforeEach
                 void setUp() {
                     chatter.activeChannel(channelOne);
@@ -355,7 +372,8 @@ class TabbedChannelsViewTests {
             }
         }
 
-        @Nested class with_different_priorities {
+        @Nested
+        class with_different_priorities {
             @BeforeEach
             void setUp() {
                 chatter.join(channelWith("zzz", PRIORITY, 1));
@@ -367,7 +385,8 @@ class TabbedChannelsViewTests {
                 assertTextRenders("| ❌zzz | ❌one | ❌test | ❌two |");
             }
 
-            @Nested class and_private_channel {
+            @Nested
+            class and_private_channel {
                 @BeforeEach
                 void setUp() {
                     createPrivateChannel(chatter, chatterMock(Identity.identity("target")));
@@ -380,7 +399,8 @@ class TabbedChannelsViewTests {
             }
         }
 
-        @Nested class with_custom_channel_join_config_format {
+        @Nested
+        class with_custom_channel_join_config_format {
 
             @BeforeEach
             void setUp() {
@@ -396,13 +416,19 @@ class TabbedChannelsViewTests {
         }
     }
 
-    @Nested class given_messages_and_channels {
+    @Nested
+    class given_messages_and_channels {
         @BeforeEach
         void setUp() {
             chatter.join(createChannel("aaa"));
-            chatter.activeChannel(channelWith("zzz",
-                set(PRIORITY, 10),
-                set(MESSAGE_FORMAT, (v, message) -> message.get(Message.SOURCE).orElse(Identity.nil()).displayName().append(text(": ").append(message.getOrDefault(Message.TEXT, empty())))))
+            chatter.activeChannel(channelWith(
+                    "zzz",
+                    set(PRIORITY, 10),
+                    set(MESSAGE_FORMAT, (v, message) -> message.get(Message.SOURCE)
+                        .orElse(Identity.nil())
+                        .displayName()
+                        .append(text(": ").append(message.getOrDefault(Message.TEXT, empty()))))
+                )
             );
             sendMessage("No Source!");
             sendMessageWithSource("Player", "Hey");
@@ -419,7 +445,8 @@ class TabbedChannelsViewTests {
         }
     }
 
-    @Nested class given_rendered_view {
+    @Nested
+    class given_rendered_view {
         private Component render;
 
         @BeforeEach

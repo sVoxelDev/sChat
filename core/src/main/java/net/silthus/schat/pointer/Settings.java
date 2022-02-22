@@ -151,6 +151,17 @@ public sealed interface Settings extends Pointers permits SettingsImpl {
     @NotNull Builder toBuilder();
 
     /**
+     * Copies the settings of the given settings container into this container.
+     *
+     * <p>Any settings in this container that exist in the given container will be overwritten.</p>
+     *
+     * @param settings the settings to copy
+     * @return this settings
+     * @since next
+     */
+    @NotNull Settings copyFrom(Settings settings);
+
+    /**
      * A builder of settings.
      *
      * @see Settings

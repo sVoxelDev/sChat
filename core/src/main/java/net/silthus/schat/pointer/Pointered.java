@@ -53,11 +53,21 @@ public interface Pointered {
      *
      * @param pointer the pointer to resolve
      * @return the value of the pointer. false if it does not exist.
+     * @since next
      */
     default boolean is(Pointer<Boolean> pointer) {
         return getOrDefault(pointer, false);
     }
 
+    /**
+     * Tries to resolve the value of the boolean pointer and returns the opposite.
+     *
+     * <p>Returns {@code false} if the pointer does not exist.</p>
+     *
+     * @param pointer the pointer to resolve
+     * @return the negated value of the pointer. true if it does not exist.
+     * @since next
+     */
     default boolean isNot(Pointer<Boolean> pointer) {
         return !is(pointer);
     }

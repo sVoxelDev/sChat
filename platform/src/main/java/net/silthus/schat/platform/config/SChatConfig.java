@@ -33,7 +33,7 @@ public class SChatConfig extends KeyedConfiguration {
     private final EventBus eventBus;
 
     public SChatConfig(ConfigurationAdapter adapter, EventBus eventBus) {
-        super(adapter, ConfigKeys.getKeys());
+        super(adapter, ConfigKeys.keys());
         this.eventBus = eventBus;
 
         init();

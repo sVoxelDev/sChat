@@ -24,8 +24,9 @@
 package net.silthus.schat.commands;
 
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -33,18 +34,15 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.channel.PrivateChannel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.command.Command;
 import net.silthus.schat.command.CommandBuilder;
 import net.silthus.schat.messenger.Messenger;
-import net.silthus.schat.policies.JoinChannelPolicy;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
-import static net.silthus.schat.channel.ChannelSettings.HIDDEN;
 import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
-import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 
 /**
  * Creates a new private channel between the two chatters.
@@ -56,29 +54,35 @@ import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 public class CreatePrivateChannelCommand implements Command {
 
     private static final @NonNull Predicate<Channel> IS_PRIVATE = channel -> channel.is(PRIVATE);
+    @Getter(AccessLevel.PROTECTED)
+    private static @NonNull Consumer<CreatePrivateChannelCommand.Builder> prototype = builder -> builder.channelSettings(PrivateChannel.prototype());
 
-    @Getter
-    @Setter
-    private static @NonNull Function<CreatePrivateChannelCommand.Builder, CreatePrivateChannelCommand.Builder> prototype = builder -> builder;
+    public static void prototype(@NonNull Consumer<Builder> consumer) {
+        prototype = prototype.andThen(consumer);
+    }
 
     public static Result createPrivateChannel(Chatter source, Chatter target) {
         return createPrivateChannelBuilder(source, target).create().execute();
     }
 
     public static Builder createPrivateChannelBuilder(Chatter source, Chatter target) {
-        return prototype.apply(new Builder(source, target));
+        final Builder builder = new Builder(source, target);
+        prototype().accept(builder);
+        return builder;
     }
 
     private final @NonNull Chatter source;
     private final @NonNull Chatter target;
     private final @NonNull ChannelRepository repository;
     private final @NonNull Messenger messenger;
+    private final @NonNull Consumer<Channel.Builder> channelSettings;
 
     protected CreatePrivateChannelCommand(Builder builder) {
         this.source = builder.source;
         this.target = builder.target;
         this.repository = builder.channelRepository;
         this.messenger = builder.messenger;
+        this.channelSettings = builder.channelSettings;
     }
 
     @Override
@@ -110,14 +114,10 @@ public class CreatePrivateChannelCommand implements Command {
     }
 
     private Channel createPrivateChannel(String key, Component name) {
-        final Channel channel = Channel.channel(key)
-            .name(name)
-            .set(GLOBAL, true)
-            .set(PRIVATE, true)
-            .set(HIDDEN, true)
-            .set(PROTECTED, true)
-            .policy(JoinChannelPolicy.class, Chatter::isJoined)
-            .create();
+        final Channel.Builder builder = Channel.channel(key).name(name);
+        channelSettings().accept(builder);
+
+        final Channel channel = builder.create();
         repository.add(channel);
         return channel;
     }
@@ -136,6 +136,7 @@ public class CreatePrivateChannelCommand implements Command {
 
         private final Chatter source;
         private final Chatter target;
+        private Consumer<Channel.Builder> channelSettings = builder -> {};
         private ChannelRepository channelRepository;
         private Messenger messenger;
 

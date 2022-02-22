@@ -21,34 +21,44 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui.views.tabbed;
+package net.silthus.schat.ui;
 
-import lombok.NonNull;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.pointer.Settings;
+import net.kyori.adventure.text.TextReplacementConfig;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
-import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.message.MessageHelper.randomMessage;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class NoChannelsTab extends AbstractTab {
+@Nested
+class ReplacementsTests {
 
-    protected NoChannelsTab(@NonNull TabbedChannelsView view, @NonNull Settings settings) {
-        super(view, settings);
+    private Replacements replacements;
+
+    @BeforeEach
+    void setUp() {
+        replacements = new Replacements();
+        replacements.addMessageReplacement(message -> TextReplacementConfig.builder()
+                .match("test")
+                .replacement("success")
+                .build());
     }
 
-    @Override
-    protected boolean isMessageDisplayed(Message message) {
-        return message.type() == Message.Type.SYSTEM;
+    @Test
+    void replaces_message_text_after_format() {
+        Component result = replacements.applyTo(randomMessage(), text("test"));
+
+        assertThat(result).isEqualTo(text("success"));
     }
 
-    @Override
-    public Component renderName() {
-        return translatable("schat.view.no-channels").color(RED);
-    }
+    @Test
+    void null_replacements_are_ignored() {
+        replacements.addMessageReplacement(message -> null);
+        Component result = replacements.applyTo(randomMessage(), text("foo"));
 
-    @Override
-    public boolean isActive() {
-        return true;
+        assertThat(result).isNotNull().isEqualTo(text("foo"));
     }
 }
