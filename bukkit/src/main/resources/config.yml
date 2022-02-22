@@ -1,21 +1,36 @@
-############################################################
-#+--------------------------------------------------------+#
-#|                                                        |#
-#|                _________ .__            __             |#
-#|           _____\_   ___ \|  |__ _____ _/  |_           |#
-#|          /  ___/    \  \/|  |  \\__  \\   __\          |#
-#|          \___ \\     \___|   Y  \/ __ \|  |            |#
-#|         /____  >\______  |___|  (____  |__|            |#
-#|              \/        \/     \/     \/                |#
-#|                                                        |#
-#|      Supercharge your Minecraft Chat Experience!       |#
-#|                                                        |#
-#+--------------------------------------------------------+#
-############################################################
+##################################################################################################
+#+----------------------------------------------------------------------------------------------+#
+#|                                                                                              |#
+#|                                    _________ .__            __                               |#
+#|                               _____\_   ___ \|  |__ _____ _/  |_                             |#
+#|                              /  ___/    \  \/|  |  \\__  \\   __\                            |#
+#|                              \___ \\     \___|   Y  \/ __ \|  |                              |#
+#|                             /____  >\______  |___|  (____  |__|                              |#
+#|                                  \/        \/     \/     \/                                  |#
+#|                                                                                              |#
+#|                         Supercharge your Minecraft Chat Experience!                          |#
+#|                                                                                              |#
+#|            WIKI:        https://github.com/sVoxelDev/sChat                                   |#
+#|            DISCORD:     https://discord.gg/R4st4QxAjb                                        |#
+#|            BUG REPORTS: https://github.com/sVoxelDev/sChat/issues                            |#
+#|                                                                                              |#
+#|     New options are not added to this file automatically. Default values are used if an      |#
+#|     option cannot be found. There will always be an up-to-date config.default.yml which      |#
+#|     also explains all of the available config options in detail.                             |#
+#+----------------------------------------------------------------------------------------------+#
+##################################################################################################
 
 
-messenger: pluginmessage
+#+----------------------------------------------------------------------------------------------+
+#|                                                                                              |
+#|                                        CHANNELS                                              |
+#|                                      ------------                                            |                               -
+#| This is the main part where you configure all the chat channels on your server.              |
+#| The channels need to be configured on every server. Global channels are synced automatically.|
+#+----------------------------------------------------------------------------------------------+
 
+# Here you define a list of channels that your players can join and chat in.
+# Every channel needs a key that must be unique across servers and only contains letters, numbers, dashes (-) and underscores (_).
 channels:
   global:
     name: Global
@@ -35,3 +50,5 @@ channels:
       global: true
       forced: false
       message_format: "<#189AB4><source.display_name><gray>: <text>"
+
+messenger: pluginmessage
