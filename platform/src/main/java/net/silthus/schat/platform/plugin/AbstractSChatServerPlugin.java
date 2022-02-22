@@ -49,8 +49,8 @@ import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.commands.PrivateMessageCommands;
 import net.silthus.schat.platform.sender.Sender;
-import net.silthus.schat.ui.ViewController;
 import net.silthus.schat.ui.ViewFactory;
+import net.silthus.schat.ui.ViewModule;
 import net.silthus.schat.ui.ViewProvider;
 import net.silthus.schat.ui.views.Views;
 import org.jetbrains.annotations.ApiStatus;
@@ -74,7 +74,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
     private ViewFactory viewFactory;
     private ViewProvider viewProvider;
-    private ViewController viewController;
+    private ViewModule viewModule;
 
     private ChatterFactory chatterFactory;
     private ChatterRepository chatterRepository;
@@ -94,8 +94,8 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     protected void onEnable() {
         viewFactory = createViewFactory();
         viewProvider = createViewProvider(viewFactory);
-        viewController = new ViewController();
-        viewController.bind(eventBus());
+        viewModule = new ViewModule(config().get(VIEW_CONFIG), eventBus());
+        viewModule.init();
 
         chatterRepository = createInMemoryChatterRepository(config().get(DEBUG));
         chatterFactory = createChatterFactory(viewProvider);

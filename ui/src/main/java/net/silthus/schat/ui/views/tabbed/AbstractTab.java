@@ -33,7 +33,8 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.ui.format.Format;
+import net.silthus.schat.pointer.Configured;
+import net.silthus.schat.pointer.Settings;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.join;
@@ -41,18 +42,19 @@ import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.JoinConfiguration.newlines;
 import static net.silthus.schat.message.Message.FORMATTED;
+import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
 import static net.silthus.schat.util.Iterators.lastN;
 
 @Getter
 @Setter
 @Accessors(fluent = true)
-public abstract class AbstractTab implements Tab {
+public abstract class AbstractTab implements Tab, Configured {
     private final TabbedChannelsView view;
-    private Format messageFormat;
+    private final Settings settings;
 
-    protected AbstractTab(@NonNull TabbedChannelsView view, @NonNull Format messageFormat) {
+    protected AbstractTab(@NonNull TabbedChannelsView view, @NonNull Settings settings) {
         this.view = view;
-        this.messageFormat = messageFormat;
+        this.settings = settings;
     }
 
     @Override
@@ -73,7 +75,7 @@ public abstract class AbstractTab implements Tab {
         if (Identity.nil().equals(message.source()))
             return message.getOrDefault(FORMATTED, message.text());
         else
-            return message.getOrDefault(FORMATTED, messageFormat().format(view, message));
+            return message.getOrDefault(FORMATTED, get(MESSAGE_FORMAT).format(view, message));
     }
 
     protected @NotNull Collection<Message> messages() {

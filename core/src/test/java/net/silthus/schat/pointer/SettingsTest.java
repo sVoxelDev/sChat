@@ -23,6 +23,8 @@
  */
 package net.silthus.schat.pointer;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -118,5 +120,44 @@ class SettingsTest {
             .withUnknown("default", setting -> "foobar")
             .create();
         assertThat(settings.contains(DEFAULT_VAL_TEST)).isTrue();
+    }
+
+    @Nested class copyFrom {
+        private Settings source;
+        private Setting<Boolean> booleanSetting;
+
+        @BeforeEach
+        void setUp() {
+            booleanSetting = Setting.setting(Boolean.class, "bool", false);
+            source = Settings.settingsBuilder()
+                .withUnknown("default", s -> "foobar")
+                .withStatic(booleanSetting, true)
+                .create();
+        }
+
+        @Test
+        void existing_settings_are_copied_into_the_container() {
+            Settings settings = Settings.createSettings().copyFrom(source);
+            assertThat(settings.get(DEFAULT_VAL_TEST)).isEqualTo("foobar");
+            assertThat(settings.get(booleanSetting)).isEqualTo(true);
+        }
+
+        @Test
+        void overwrites_existing_settings() {
+            Settings settings = Settings.settingsBuilder()
+                .withUnknown("default", setting -> "bar")
+                .create()
+                .copyFrom(source);
+            assertThat(settings.get(DEFAULT_VAL_TEST)).isEqualTo("foobar");
+        }
+
+        @Test
+        void leaves_existing_settings_intact() {
+            Settings settings = Settings.settingsBuilder()
+                .withStatic(DYNAMIC_TEST, "my_val")
+                .create()
+                .copyFrom(source);
+            assertThat(settings.get(DYNAMIC_TEST)).isEqualTo("my_val");
+        }
     }
 }

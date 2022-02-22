@@ -24,7 +24,7 @@
 package net.silthus.schat.commands;
 
 import java.io.Serial;
-import java.util.function.Function;
+import java.util.function.Consumer;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -47,15 +47,20 @@ import static net.silthus.schat.policies.JoinChannelPolicy.JOIN_CHANNEL_POLICY;
 public class JoinChannelCommand implements Command {
 
     @Getter
-    @Setter
-    private static @NonNull Function<Builder, Builder> prototype = builder -> builder;
+    private static @NonNull Consumer<Builder> prototype = builder -> {};
+
+    public static void prototype(Consumer<Builder> consumer) {
+        prototype = prototype().andThen(consumer);
+    }
 
     public static Result joinChannel(Chatter chatter, Channel channel) {
         return joinChannelBuilder(chatter, channel).create().execute();
     }
 
     public static Builder joinChannelBuilder(Chatter chatter, Channel channel) {
-        return prototype().apply(new Builder(chatter, channel));
+        final Builder builder = new Builder(chatter, channel);
+        prototype().accept(builder);
+        return builder;
     }
 
     private final @NonNull Chatter chatter;

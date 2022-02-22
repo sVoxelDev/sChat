@@ -39,6 +39,7 @@ import static net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND;
 import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
+import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
 import static net.silthus.schat.channel.Channel.DISPLAY_NAME;
 import static net.silthus.schat.pointer.Setting.setting;
@@ -66,9 +67,16 @@ public interface Format {
     Setting<Format> MESSAGE_FORMAT = setting(Format.class, "message_format", (view, msg) ->
         msg.get(Message.SOURCE)
             .filter(Identity.IS_NOT_NIL)
-            .map(identity -> identity.displayName().append(text(": ")))
+            .map(identity -> identity.displayName().colorIfAbsent(YELLOW).append(text(": ", GRAY)))
             .orElse(Component.empty())
-            .append(msg.getOrDefault(Message.TEXT, Component.empty())));
+            .append(((Message) msg).text().colorIfAbsent(GRAY)));
+    /**
+     * The default format of a message where the source is the viewer.
+     */
+    Setting<Format> SELF_MESSAGE_FORMAT = setting(Format.class, "self_message_format", (view, msg) ->
+        translatable("schat.chat.message.you").color(YELLOW)
+            .append(text(": ", GRAY))
+            .append(((Message) msg).text().colorIfAbsent(GRAY)));
     /**
      * The default format of an active channel.
      */

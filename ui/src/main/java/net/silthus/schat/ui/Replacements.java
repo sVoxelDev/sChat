@@ -21,34 +21,32 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui.views.tabbed;
+package net.silthus.schat.ui;
 
-import lombok.NonNull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.pointer.Settings;
 
-import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
+public class Replacements {
 
-public class NoChannelsTab extends AbstractTab {
+    private final List<Function<Message, TextReplacementConfig>> replacements = new ArrayList<>();
 
-    protected NoChannelsTab(@NonNull TabbedChannelsView view, @NonNull Settings settings) {
-        super(view, settings);
+    public void addMessageReplacement(Function<Message, TextReplacementConfig> replacement) {
+        replacements.add(replacement);
     }
 
-    @Override
-    protected boolean isMessageDisplayed(Message message) {
-        return message.type() == Message.Type.SYSTEM;
-    }
-
-    @Override
-    public Component renderName() {
-        return translatable("schat.view.no-channels").color(RED);
-    }
-
-    @Override
-    public boolean isActive() {
-        return true;
+    Component applyTo(final Message message, final Component formatted) {
+        Component result = formatted;
+        for (TextReplacementConfig replacement : replacements.stream()
+            .map(fn -> fn.apply(message))
+            .filter(Objects::nonNull)
+            .toList()) {
+            result = result.replaceText(replacement);
+        }
+        return result;
     }
 }

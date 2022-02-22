@@ -27,20 +27,20 @@ import java.util.regex.Pattern;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
-import net.silthus.schat.ui.ViewController;
+import net.silthus.schat.ui.Replacements;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class PlaceholderApiIntegration {
 
-    private final ViewController viewController;
+    private final Replacements replacements;
 
-    public PlaceholderApiIntegration(ViewController viewController) {
-        this.viewController = viewController;
+    public PlaceholderApiIntegration(Replacements replacements) {
+        this.replacements = replacements;
     }
 
     public void init() {
-        viewController.addMessageReplacement(message -> {
+        replacements.addMessageReplacement(message -> {
             final Player player = Bukkit.getPlayer(message.source().uniqueId());
             if (player != null)
                 return replacePlaceholderAPIPlaceholders(player);

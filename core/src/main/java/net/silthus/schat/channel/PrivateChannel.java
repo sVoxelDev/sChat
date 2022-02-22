@@ -21,34 +21,36 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui.views.tabbed;
+package net.silthus.schat.channel;
 
-import lombok.NonNull;
-import net.kyori.adventure.text.Component;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.pointer.Settings;
+import java.util.function.Consumer;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.policies.JoinChannelPolicy;
 
-import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
+import static net.silthus.schat.channel.ChannelSettings.HIDDEN;
+import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
+import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 
-public class NoChannelsTab extends AbstractTab {
+@Accessors(fluent = true)
+public final class PrivateChannel {
 
-    protected NoChannelsTab(@NonNull TabbedChannelsView view, @NonNull Settings settings) {
-        super(view, settings);
+    private static final Consumer<Channel.Builder> DEFAULTS = builder -> builder
+        .set(GLOBAL, true)
+        .set(PRIVATE, true)
+        .set(HIDDEN, true)
+        .set(PROTECTED, true)
+        .policy(JoinChannelPolicy.class, Chatter::isJoined);
+
+    @Getter
+    private static Consumer<Channel.Builder> prototype = DEFAULTS;
+
+    public static void configure(Consumer<Channel.Builder> channel) {
+        prototype = prototype.andThen(channel);
     }
 
-    @Override
-    protected boolean isMessageDisplayed(Message message) {
-        return message.type() == Message.Type.SYSTEM;
-    }
-
-    @Override
-    public Component renderName() {
-        return translatable("schat.view.no-channels").color(RED);
-    }
-
-    @Override
-    public boolean isActive() {
-        return true;
+    private PrivateChannel() {
     }
 }

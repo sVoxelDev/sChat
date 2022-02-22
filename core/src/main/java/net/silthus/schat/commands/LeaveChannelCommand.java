@@ -23,7 +23,7 @@
  */
 package net.silthus.schat.commands;
 
-import java.util.function.Function;
+import java.util.function.Consumer;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -47,15 +47,20 @@ import static net.silthus.schat.policies.LeaveChannelPolicy.LEAVE_CHANNEL_POLICY
 public class LeaveChannelCommand implements Command {
 
     @Getter
-    @Setter
-    private static @NonNull Function<LeaveChannelCommand.Builder, LeaveChannelCommand.Builder> prototype = builder -> builder;
+    private static @NonNull Consumer<Builder> prototype = builder -> {};
+
+    public static void prototype(Consumer<Builder> consumer) {
+        prototype = prototype().andThen(consumer);
+    }
 
     public static Result leaveChannel(Chatter chatter, Channel channel) {
         return leaveChannelBuilder(chatter, channel).execute();
     }
 
     public static LeaveChannelCommand.Builder leaveChannelBuilder(Chatter chatter, Channel channel) {
-        return prototype().apply(new LeaveChannelCommand.Builder(chatter, channel));
+        final Builder builder = new Builder(chatter, channel);
+        prototype().accept(builder);
+        return builder;
     }
 
     private final @NonNull Chatter chatter;

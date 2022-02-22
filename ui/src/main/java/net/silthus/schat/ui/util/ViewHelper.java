@@ -63,7 +63,7 @@ public final class ViewHelper {
     public static Component renderPrivateMessage(Chatter viewer, Message message) {
         Component name;
         if (message.source().equals(viewer))
-            name = translatable("schat.chat.private.you").color(YELLOW);
+            name = translatable("schat.chat.message.you").color(YELLOW);
         else
             name = renderPartnerName(viewer, message).colorIfAbsent(AQUA);
 

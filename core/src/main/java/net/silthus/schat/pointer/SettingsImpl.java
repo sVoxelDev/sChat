@@ -113,6 +113,14 @@ final class SettingsImpl extends PointersImpl implements Settings {
     }
 
     @Override
+    public @NotNull SettingsImpl copyFrom(Settings settings) {
+        SettingsImpl s = (SettingsImpl) settings;
+        unknowns.putAll(s.unknowns);
+        pointers.putAll(s.pointers);
+        return this;
+    }
+
+    @Override
     public String toString() {
         final HashMap<String, Object> keyValueMap = new HashMap<>();
         for (final Setting<?> setting : settings()) {
