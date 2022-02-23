@@ -26,8 +26,8 @@ channels:
       forced: true # the channel cannot be left
 ```
 
-[configuration-channel]: /configuration/channel
-[config-global]: /configuration/channel#global
-[config-protected]: /configuration/channel#protected
+[configuration-channel]: ../configuration/channel
+[config-global]: ../configuration/channel#global
+[config-protected]: ../configuration/channel#protected
 [download]: https://github.com/sVoxelDev/sChat/releases/latest
 [ProtocolLib]: https://www.spigotmc.org/resources/protocollib.1997/

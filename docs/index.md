@@ -20,4 +20,4 @@ sChat comes with the following features out of the box and can be extended using
 - [X] Network-wide Global Private Chats
 - [X] PlaceholderAPI Support
 
- [API]: /developer
+ [API]: developer
