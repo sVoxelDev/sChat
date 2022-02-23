@@ -93,6 +93,21 @@ jobs:
           folder: core/build/docs/javadoc
           target-folder: javadocs
 
+  docs:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/next'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      
+      - name: Install pip dependencies
+        run: pip install mkdocs-material mkdocs-git-revision-date-localized-plugin mike
+
+      - name: Deploy Documentation
+        run: mike deploy --prefix docs --push --update-aliases next latest
+
   release:
     needs: [ build, test ]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/release' || github.ref == 'refs/heads/next'
@@ -117,7 +132,7 @@ jobs:
           python-version: '3.x'
       
       - name: Install pip dependencies
-        run: pip install mkdocs-material git-revision-date-localized mike
+        run: pip install mkdocs-material mkdocs-git-revision-date-localized-plugin mike
 
       - name: Release
         env:
