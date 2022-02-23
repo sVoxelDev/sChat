@@ -33,7 +33,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.pointer.Configured;
 import net.silthus.schat.pointer.Settings;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,7 +47,7 @@ import static net.silthus.schat.util.Iterators.lastN;
 @Getter
 @Setter
 @Accessors(fluent = true)
-public abstract class AbstractTab implements Tab, Configured {
+public abstract class AbstractTab implements Tab {
     private final TabbedChannelsView view;
     private final Settings settings;
 

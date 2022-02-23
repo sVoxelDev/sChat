@@ -26,16 +26,16 @@ package net.silthus.schat.ui;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.JoinConfiguration;
-import net.silthus.schat.channel.Channel;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.ui.util.ViewHelper;
+import net.silthus.schat.ui.views.tabbed.Tab;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.ui.format.Format.ACTIVE_CHANNEL_DECORATION;
-import static net.silthus.schat.ui.format.Format.ACTIVE_CHANNEL_FORMAT;
-import static net.silthus.schat.ui.format.Format.INACTIVE_CHANNEL_DECORATION;
-import static net.silthus.schat.ui.format.Format.INACTIVE_CHANNEL_FORMAT;
+import static net.silthus.schat.ui.format.Format.ACTIVE_TAB_DECORATION;
+import static net.silthus.schat.ui.format.Format.ACTIVE_TAB_FORMAT;
+import static net.silthus.schat.ui.format.Format.INACTIVE_TAB_DECORATION;
+import static net.silthus.schat.ui.format.Format.INACTIVE_TAB_FORMAT;
 import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
 import static net.silthus.schat.ui.util.ViewHelper.renderPrivateChannelName;
 
@@ -47,8 +47,16 @@ public class ViewConfig {
     private Settings format = Settings.createSettings();
     private Settings privateChatFormat = Settings.settingsBuilder()
         .withStatic(MESSAGE_FORMAT, (view, message) -> ViewHelper.renderPrivateMessage(view.chatter(), (Message) message))
-        .withStatic(ACTIVE_CHANNEL_FORMAT, (view, channel) -> ACTIVE_CHANNEL_DECORATION.apply(renderPrivateChannelName(view.chatter(), (Channel) channel)))
-        .withStatic(INACTIVE_CHANNEL_FORMAT, (view, channel) -> INACTIVE_CHANNEL_DECORATION.apply((Channel) channel, renderPrivateChannelName(view.chatter(), (Channel) channel)))
+        .withStatic(ACTIVE_TAB_FORMAT, (view, tab) ->
+            tab.get(Tab.CHANNEL)
+                .map(channel -> ACTIVE_TAB_DECORATION.apply(renderPrivateChannelName(view.chatter(), channel)))
+                .orElse(text("Unknown"))
+        )
+        .withStatic(INACTIVE_TAB_FORMAT, (view, tab) ->
+            tab.get(Tab.CHANNEL)
+                .map(channel -> INACTIVE_TAB_DECORATION.apply((Tab) tab, renderPrivateChannelName(view.chatter(), channel)))
+                .orElse(text("Unknown"))
+        )
         .create();
     private JoinConfiguration channelJoinConfig = JoinConfiguration.builder()
         .prefix(text("| "))

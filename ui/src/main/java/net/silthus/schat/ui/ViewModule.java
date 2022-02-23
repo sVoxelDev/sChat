@@ -29,8 +29,8 @@ import net.silthus.schat.channel.PrivateChannel;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.pointer.Settings;
 
-import static net.silthus.schat.ui.format.Format.ACTIVE_CHANNEL_FORMAT;
-import static net.silthus.schat.ui.format.Format.INACTIVE_CHANNEL_FORMAT;
+import static net.silthus.schat.ui.format.Format.ACTIVE_TAB_FORMAT;
+import static net.silthus.schat.ui.format.Format.INACTIVE_TAB_FORMAT;
 import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
 import static net.silthus.schat.ui.format.Format.SELF_MESSAGE_FORMAT;
 
@@ -60,8 +60,8 @@ public final class ViewModule {
         PrivateChannel.configure(channel -> channel
             .set(MESSAGE_FORMAT, format.get(MESSAGE_FORMAT))
             .set(SELF_MESSAGE_FORMAT, format.get(SELF_MESSAGE_FORMAT))
-            .set(ACTIVE_CHANNEL_FORMAT, format.get(ACTIVE_CHANNEL_FORMAT))
-            .set(INACTIVE_CHANNEL_FORMAT, format.get(INACTIVE_CHANNEL_FORMAT))
+            .set(ACTIVE_TAB_FORMAT, format.get(ACTIVE_TAB_FORMAT))
+            .set(INACTIVE_TAB_FORMAT, format.get(INACTIVE_TAB_FORMAT))
         );
     }
 }

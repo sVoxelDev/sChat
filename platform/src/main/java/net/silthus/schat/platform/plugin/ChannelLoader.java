@@ -26,13 +26,15 @@ package net.silthus.schat.platform.plugin;
 import java.util.HashMap;
 import java.util.Map;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.platform.config.ChannelConfig;
 import net.silthus.schat.platform.config.ConfigKeys;
+import net.silthus.schat.platform.config.SChatConfig;
 import net.silthus.schat.platform.plugin.logging.PluginLogger;
 import net.silthus.schat.repository.Repository;
 
 @SuppressWarnings("checkstyle:AvoidEscapedUnicodeCharacters")
-class ChannelLoader {
+final class ChannelLoader {
 
     private static final String UPDATE_SYMBOL = "\uD83D\uDDD8";
     private static final String TRASH_SYMBOL = "\uD83D\uDDD1";
@@ -40,8 +42,9 @@ class ChannelLoader {
     private static final String SUCCESS_SYMBOL = "✔";
     public static final String ARROW_SYMBOL = " ➔ ";
 
-    private final AbstractSChatServerPlugin server;
-    private final PluginLogger logger;
+    private final SChatConfig config;
+    private final ChannelRepository repository;
+    private final PluginLogger log;
 
     private int newCount = 0;
     private int updateCount = 0;
@@ -49,14 +52,15 @@ class ChannelLoader {
     private int errorCount = 0;
     private Map<String, ChannelConfig> previousChannels = new HashMap<>();
 
-    ChannelLoader(AbstractSChatServerPlugin server) {
-        this.server = server;
-        logger = server.logger();
+    ChannelLoader(SChatConfig config, ChannelRepository repository, PluginLogger logger) {
+        this.config = config;
+        this.repository = repository;
+        this.log = logger;
     }
 
     void load() {
-        final Map<String, ChannelConfig> configs = server.config().get(ConfigKeys.CHANNELS);
-        logger.info("Loading channels from config...");
+        final Map<String, ChannelConfig> configs = config.get(ConfigKeys.CHANNELS);
+        log.info("Loading channels from config...");
 
         removeOldChannels(configs);
         loadOrUpdateChannels(configs);
@@ -67,10 +71,10 @@ class ChannelLoader {
     }
 
     private void printSummary() {
-        if (newCount > 0) logger.info("... loaded (" + SUCCESS_SYMBOL + ") " + newCount + " new channel(s)");
-        if (updateCount > 0) logger.info("... updated (" + UPDATE_SYMBOL + ") " + updateCount + " channel(s)");
-        if (removedCount > 0) logger.info("... removed (" + TRASH_SYMBOL + ") " + removedCount + " channel(s)");
-        if (errorCount > 0) logger.info("... failed to update or load (" + ERROR_SYMBOL + ") " + errorCount + " channel(s)");
+        if (newCount > 0) log.info("... loaded (" + SUCCESS_SYMBOL + ") " + newCount + " new channel(s)");
+        if (updateCount > 0) log.info("... updated (" + UPDATE_SYMBOL + ") " + updateCount + " channel(s)");
+        if (removedCount > 0) log.info("... removed (" + TRASH_SYMBOL + ") " + removedCount + " channel(s)");
+        if (errorCount > 0) log.info("... failed to update or load (" + ERROR_SYMBOL + ") " + errorCount + " channel(s)");
         resetCounter();
     }
 
@@ -96,23 +100,23 @@ class ChannelLoader {
     }
 
     private void removeChannel(String oldKey) {
-        final Channel channel = server.channelRepository().remove(oldKey);
+        final Channel channel = repository.remove(oldKey);
         if (channel != null) {
             channel.close();
-            logger.info("\t" + TRASH_SYMBOL + " " + oldKey);
+            log.info("\t" + TRASH_SYMBOL + " " + oldKey);
             removedCount++;
         }
     }
 
     private void updateChannel(Map.Entry<String, ChannelConfig> entry) {
         try {
-            server.channelRepository().get(entry.getKey())
+            repository.get(entry.getKey())
                 .settings(entry.getValue().settings());
-            logger.info("\t" + UPDATE_SYMBOL + " " + entry.getKey());
+            log.info("\t" + UPDATE_SYMBOL + " " + entry.getKey());
             updateCount++;
         } catch (Repository.NotFound e) {
             errorCount++;
-            logger.info("\t" + UPDATE_SYMBOL + ARROW_SYMBOL + ERROR_SYMBOL + entry.getKey() + ": " + e.getMessage());
+            log.info("\t" + UPDATE_SYMBOL + ARROW_SYMBOL + ERROR_SYMBOL + entry.getKey() + ": " + e.getMessage());
         }
     }
 
@@ -121,14 +125,14 @@ class ChannelLoader {
             tryLoadChannelFromConfig(channelConfig);
         } catch (Exception e) {
             errorCount++;
-            logger.info("\t" + ERROR_SYMBOL + " " + channelConfig.key() + ": " + e.getMessage());
+            log.info("\t" + ERROR_SYMBOL + " " + channelConfig.key() + ": " + e.getMessage());
         }
     }
 
     private void tryLoadChannelFromConfig(ChannelConfig channelConfig) {
         final Channel channel = channelConfig.toChannel();
-        server.channelRepository().add(channel);
-        logger.info("\t" + SUCCESS_SYMBOL + " " + channel.key());
+        repository.add(channel);
+        log.info("\t" + SUCCESS_SYMBOL + " " + channel.key());
         newCount++;
     }
 }
