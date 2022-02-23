@@ -5,4 +5,24 @@
          <lastmod>2022-02-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
+    <url>
+         <loc>https://schat.silthus.net/next/configuration/</loc>
+         <lastmod>2022-02-23</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://schat.silthus.net/next/configuration/channel/</loc>
+         <lastmod>2022-02-23</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://schat.silthus.net/next/developer/</loc>
+         <lastmod>2022-02-23</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://schat.silthus.net/next/getting-started/</loc>
+         <lastmod>2022-02-23</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
 </urlset>
