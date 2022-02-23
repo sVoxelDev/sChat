@@ -31,8 +31,7 @@ if (config.branches.some(it => it === branch || (it.name === branch && it.prerel
             ]
         }],
         ["@semantic-release/exec", {
-            "publishCmd": "./gradlew -PforceSign=true publish --no-daemon",
-            "successCmd": "mike deploy --prefix docs --push --update-aliases next latest"
+            "publishCmd": "./gradlew -PforceSign=true publish --no-daemon"
         }],
         ["@semantic-release/github", {
             "assets": [
