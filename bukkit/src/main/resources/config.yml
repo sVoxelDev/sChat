@@ -24,26 +24,32 @@
 #+----------------------------------------------------------------------------------------------+#
 #|                                                                                              |#
 #|                                        CHANNELS                                              |#
-#|                                      ------------                                            |#                               -
+#|                                      ------------                                            |#
 #| This is the main part where you configure all the chat channels on your server.              |#
 #| The channels need to be configured on every server. Global channels are synced automatically.|#
 #+----------------------------------------------------------------------------------------------+#
-
-# Here you define a list of channels that your players can join and chat in.
-# Every channel needs a key that must be unique across servers and
-# only contains letters, numbers, dashes (-) or underscores (_).
 channels:
 
+  #
   # This is the unique key of the channel.
+  #
+  # Every channel needs a key that must be unique across servers and
+  # only contains letters, numbers, dashes (-) or underscores (_).
+  #
   # The key is used when referencing the channel, e.g. in commands and permission nodes.
+  #
   global:
 
+    #
     # The friendly display name of the channel as it is shown in the GUI and messages.
     # The name is parsed with the MiniMessage format (see documentation).
+    #
     name: "<#189AB4>Global" # colors the name with the given hex formatted color
 
+    #
     # Every channel can have an unlimited number of settings added and controlled by various features.
     # The settings documented here are the ones that come out of the box with sChat.
+    #
     settings:
 
       #
@@ -127,5 +133,21 @@ channels:
       global: true
       forced: false
       message_format: "<#189AB4><source.display_name><gray>: <text>"
+
+#+----------------------------------------------------------------------------------------------+#
+#|                                                                                              |#
+#|                                    PRIVATE MESSAGES                                          |#
+#|                                      ------------                                            |#
+#|                      Configure the behaviour of private chats here.                          |#
+#+----------------------------------------------------------------------------------------------+#
+private_chat:
+
+#+----------------------------------------------------------------------------------------------+#
+#|                                                                                              |#
+#|                                   VIEW CONFIGURATION                                         |#
+#|                                      ------------                                            |#
+#|                      Configure the behaviour of private chats here.                          |#
+#+----------------------------------------------------------------------------------------------+#
+view:
 
 messenger: pluginmessage
