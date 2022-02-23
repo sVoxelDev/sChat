@@ -107,7 +107,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
         setupPrototypes();
         loadFeatures();
 
-        this.channelLoader = new ChannelLoader(this);
+        this.channelLoader = new ChannelLoader(config(), channelRepository(), logger());
         channelLoader.load();
 
         commands = createCommands();

@@ -25,6 +25,7 @@ package net.silthus.schat.platform.config;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Optional;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -33,6 +34,7 @@ import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.commands.CreatePrivateChannelCommand;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.ui.View;
+import net.silthus.schat.ui.views.tabbed.Tab;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -51,7 +53,7 @@ import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 import static net.silthus.schat.platform.config.ConfigKeys.VIEW_CONFIG;
 import static net.silthus.schat.platform.config.TestConfigurationAdapter.testConfigAdapter;
-import static net.silthus.schat.ui.format.Format.ACTIVE_CHANNEL_FORMAT;
+import static net.silthus.schat.ui.format.Format.ACTIVE_TAB_FORMAT;
 import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -126,7 +128,9 @@ class ConfigTests {
             when(view.chatter()).thenReturn(source);
             final Channel channel = createPrivateChannel(source, target).channel();
             source.activeChannel(channel);
-            final Component format = config.get(VIEW_CONFIG).privateChatFormat().get(ACTIVE_CHANNEL_FORMAT).format(view, channel);
+            final Tab tab = mock(Tab.class);
+            when(tab.get(Tab.CHANNEL)).thenReturn(Optional.of(channel));
+            final Component format = config.get(VIEW_CONFIG).privateChatFormat().get(ACTIVE_TAB_FORMAT).format(view, tab);
             assertThat(FORMATTER.serialize(format)).isEqualTo("<green><underlined>Karl");
         }
     }

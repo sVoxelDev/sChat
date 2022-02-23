@@ -64,7 +64,7 @@ import static net.silthus.schat.identity.Identity.identity;
 import static net.silthus.schat.message.Message.FORMATTED;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
-import static net.silthus.schat.ui.format.Format.ACTIVE_CHANNEL_FORMAT;
+import static net.silthus.schat.ui.format.Format.ACTIVE_TAB_FORMAT;
 import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
 import static net.silthus.schat.ui.views.Views.tabbedChannels;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -245,7 +245,7 @@ class TabbedChannelsViewTests {
                 @BeforeEach
                 void setUp() {
                     view = tabbedChannels(chatter, new ViewConfig());
-                    channel.set(ACTIVE_CHANNEL_FORMAT, (view, type) -> type.getOrDefault(DISPLAY_NAME, empty())
+                    channel.set(ACTIVE_TAB_FORMAT, (view, type) -> type.getOrDefault(DISPLAY_NAME, empty())
                         .color(RED)
                         .decorate(UNDERLINED));
                 }

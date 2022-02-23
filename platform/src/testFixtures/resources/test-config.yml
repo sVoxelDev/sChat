@@ -10,7 +10,7 @@ channels:
       protected: true
       auto_join: true
       message_format: "<yellow><source.display_name><gray>: <text>"
-      active_channel_format: "<red><underlined><channel.name>"
+      active_tab_format: "<red><underlined><channel.name>"
   global:
     name: Global
     settings:
