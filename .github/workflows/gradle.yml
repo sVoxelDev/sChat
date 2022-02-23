@@ -89,8 +89,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          branch: javadocs
+          branch: gh-pages
           folder: core/build/docs/javadoc
+          target-folder: javadocs
 
   release:
     needs: [ build, test ]
@@ -110,6 +111,13 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: "16.x"
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      
+      - name: Install pip dependencies
+        run: pip install mkdocs-material git-revision-date-localized mike
 
       - name: Release
         env:
