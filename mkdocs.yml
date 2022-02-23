@@ -1,4 +1,15 @@
-site_name: My Docs
-site_dir: site/docs
+site_name: sChat
+site_url: https://schat.silthus.net/
+site_author: Silthus
+
+repo_name: sVoxelDev/sChat
+repo_url: https://github.com/sVoxelDev/sChat
+edit_uri: ""
+
 theme:
   name: material
+  custom_dir: docs-overrides
+
+extra:
+  version:
+    provider: mike
