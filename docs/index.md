@@ -1,17 +1,23 @@
-# Welcome to MkDocs
+![sChat Logo](assets/logo_text.png){ align=left width=200px loading=lazy }
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+# About sChat
 
-## Commands
+sChat is a chat plugin for Minecraft using a unique technique to split up messy chats into tabs.
+Like in other games the flooded Minecraft chat will be no more.  
+??? tip "Click to see sChat in action."
+    ![sChat Demo](assets/demo.gif){ loading=lazy}
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+## Features
 
-## Project layout
+sChat comes with the following features out of the box and can be extended using its [API][API].
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+- [X] Multi-Platform Support
+    - [X] Bukkit/Spigot/Paper
+    - [X] Bungeecord
+    - [X] Velocity
+- [X] Seperate Tabs for each conversation keeping the chat clean
+- [X] Network-wide Global Channels
+- [X] Network-wide Global Private Chats
+- [X] PlaceholderAPI Support
+
+ [API]: /developer
