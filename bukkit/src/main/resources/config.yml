@@ -21,13 +21,13 @@
 ##################################################################################################
 
 
-#+----------------------------------------------------------------------------------------------+
-#|                                                                                              |
-#|                                        CHANNELS                                              |
-#|                                      ------------                                            |                               -
-#| This is the main part where you configure all the chat channels on your server.              |
-#| The channels need to be configured on every server. Global channels are synced automatically.|
-#+----------------------------------------------------------------------------------------------+
+#+----------------------------------------------------------------------------------------------+#
+#|                                                                                              |#
+#|                                        CHANNELS                                              |#
+#|                                      ------------                                            |#                               -
+#| This is the main part where you configure all the chat channels on your server.              |#
+#| The channels need to be configured on every server. Global channels are synced automatically.|#
+#+----------------------------------------------------------------------------------------------+#
 
 # Here you define a list of channels that your players can join and chat in.
 # Every channel needs a key that must be unique across servers and
@@ -80,11 +80,45 @@ channels:
       #
       forced: true
 
+
+      #+-------------------------------------------------------------------+#
+      #|                                                                   |#
+      #|                    CHANNEL MESSAGE FORMAT                         |#
+      #|                 ----------------------------                      |#
+      #|      Controls the format of messages sent to the channel.         |#
+      #|                                                                   |#
+      #|  Wiki: https://docs.adventure.kyori.net/minimessage/format.html   |#
+      #|  Web Viewer: https://bit.ly/3hpYRQF                               |#
+      #|                                                                   |#
+      #+-------------------------------------------------------------------+#
+
       #
-      # 
-      message_format: "<yellow><source.display_name></yellow><gray>: <text>"
-      active_channel_format: "<green><underlined><channel.name></underlined></green>"
-      inactive_channel_format: "<gray><click:run_command:'/channel join <channel.key>'><channel.name></click></gray>"
+      # The 'message_format' is used to format messages NOT sent by the viewer.
+      # You can use the full power of MiniMessage (see above) and PlaceholderAPI placeholders.
+      #
+      message_format: "<yellow><hover:show_text:'<gray>Click to send <yellow><source.diplay_name></yellow> a message.\n<gray>Since: <aqua>%player_first_played_formatted%'><click:run_command:'/tell <source.name>'><source.display_name></click></yellow><gray>: <text>"
+
+      #
+      # The 'self_message_format' is applied to messages sent by the viewer.
+      # You can reference translations with the <lang:...> MiniMessage tag.
+      #
+      self_message_format: "<dark_gray><lang:schat.chat.message.you></dark_gray><gray>: <text>"
+
+      #
+      # The 'active_tab_format' is applied to the name of the channel tab when it is active.
+      #
+      # Currently, PlaceholderAPI placeholders cannot be used here.
+      # Send a feature request on discord if your need that feature.
+      #
+      active_tab_format: "<green><underlined><channel.name></underlined></green>"
+
+      #
+      # The 'inactive_tab_format' is applied to the name of the channel tab when it is inactive.
+      #
+      # Currently, PlaceholderAPI placeholders cannot be used here.
+      # Send a feature request on discord if your need that feature.
+      #
+      inactive_tab_format: "<gray><hover:show_text:'<lang:schat.hover.join-channel:<channel.name>'><click:run_command:'/channel join <channel.key>'><channel.name></click></hover></gray>"
   team:
     name: Team
     settings:
