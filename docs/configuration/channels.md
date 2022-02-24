@@ -3,7 +3,7 @@
 
 ### protected
 
-[:octicons-tag-24: next][next] · :octicons-beaker-24: Experimental · `boolean`
+[:octicons-milestone-24: next][next] · :octicons-beaker-24: Experimental · `boolean`
 
 Protected channels cannot 
 
