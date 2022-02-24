@@ -2,27 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://schat.silthus.net/next/</loc>
-         <lastmod>2022-02-23</lastmod>
+         <lastmod>2022-02-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://schat.silthus.net/next/configuration/</loc>
-         <lastmod>2022-02-23</lastmod>
+         <lastmod>2022-02-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://schat.silthus.net/next/configuration/channel/</loc>
-         <lastmod>2022-02-23</lastmod>
+         <lastmod>2022-02-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://schat.silthus.net/next/developer/</loc>
-         <lastmod>2022-02-23</lastmod>
+         <lastmod>2022-02-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://schat.silthus.net/next/getting-started/</loc>
-         <lastmod>2022-02-23</lastmod>
+         <lastmod>2022-02-24</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
