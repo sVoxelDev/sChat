@@ -13,9 +13,19 @@ These are all of the available config options for sChat.
 
 Set to `true` and restart your server to produce an enormous amount of debug logs.
 
+```yaml
+debug: true
+```
+
 ## Private Chat
 
-The following options control how private chats behave.
+The following options control how private chats behave.  
+All config options reside under the `private_chat` section.
+
+```yaml
+private_chat:
+  ...
+```
 
 ### `message_format`
 
@@ -25,7 +35,7 @@ Controls how messages are displayed inside private chats. By default this will r
 
 --8<-- "docs/partials/_minimessage.md"
 
-```yaml title="Example"
+```yaml
 private_chat:
     message_format: "<dark_aqua><<yellow><source.display_name><dark_aqua>> <gray><text>"
 ```
@@ -44,7 +54,14 @@ The messenger controls how [`global`][channels] messages are forwarded to the ot
 
 | Type | Description | Since |
 | ---- | ----------- | ----- |
-| `pluginmessage` :material-check-all: | Messages are sent thru the [Plugin Messaging Channel][pluginmessage] to the proxy. The proxy then forwards them to all other servers in the network. **sChat must be installed on the proxy** for this to work. | [:octicons-milestone-24: next][next] |
+| :octicons-pin-24: `pluginmessage` | Messages are sent thru the [Plugin Messaging Channel][pluginmessage] to the proxy. The proxy then forwards them to all other servers in the network. **sChat must be installed on the proxy** for this to work. | [:octicons-milestone-24: next][next] |
+
+```yaml
+messenger: "pluginmessage"
+```
+
+!!! error "Invalid Messenger"
+    An invalid messenger type will prevent your server from starting.
 
 [channels]: channels.md
 [minimessage]: minimessage.md
