@@ -18,6 +18,7 @@ nav:
     - Channel: configuration/channel.md
   - Developer API:
     - developer/index.md
+  - Javadocs: https://schat.silthus.net/javadocs/" target="_blank
 
 theme:
   name: material
