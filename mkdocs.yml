@@ -1,5 +1,5 @@
 site_name: sChat
-site_url: https://schat.silthus.net/
+site_url: https://schat.silthus.net/docs
 site_author: Silthus
 
 repo_name: sVoxelDev/sChat
@@ -10,14 +10,18 @@ copyright: Copyright &copy; 2021 - 2022 sVoxelDev
 
 nav:
   - Home:
-    - index.md
+    - About sChat: index.md
   - Getting Started:
-    - getting-started/index.md
+    - getting-started.md
+    - Commands: commands.md
+    - Permissions: permissions.md
   - Configuration:
     - configuration/index.md
-    - Channel: configuration/channel.md
+    - Reference: configuration/reference.md
+    - Channel: configuration/channels.md
+    - MiniMessage Format: configuration/minimessage.md
   - Developer API:
-    - developer/index.md
+    - Developer API: developer/index.md
   - Javadocs: https://schat.silthus.net/javadocs/" target="_blank
 
 theme:
@@ -54,6 +58,7 @@ theme:
 markdown_extensions:
   - attr_list
   - md_in_html
+  - tables
   - admonition
   - pymdownx.details
   - pymdownx.superfences

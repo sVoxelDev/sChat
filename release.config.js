@@ -64,15 +64,15 @@ if (config.branches.some(it => it === branch || (it.name === branch && it.prerel
                         "docs/**/*.md"
                     ],
                     "from": "[next]: https://github.com/sVoxelDev/sChat/releases/latest",
-                    "to": "[${nextRelease.version}]: https://github.com/sVoxelDev/sChat/releases/tag/${nextRelease.version}",
+                    "to": "[next]: https://github.com/sVoxelDev/sChat/releases/latest\n[${nextRelease.version}]: https://github.com/sVoxelDev/sChat/releases/tag/${nextRelease.version}",
                     "countMatches": true
                 },
                 {
                     "files": [
                         "docs/**/*.md"
                     ],
-                    "from": "[:octicons-tag-24: next][next]",
-                    "to": "[:octicons-tag-24: ${nextRelease.version}][${nextRelease.version}]",
+                    "from": "[:octicons-milestone-24: next][next]",
+                    "to": "[:octicons-milestone-24: ${nextRelease.version}][${nextRelease.version}]",
                     "countMatches": true
                 }
             ]
