@@ -18,8 +18,11 @@ nav:
   - Configuration:
     - configuration/index.md
     - Reference: configuration/reference.md
-    - Channel: configuration/channels.md
+    - Channels: configuration/channels.md
     - MiniMessage Format: configuration/minimessage.md
+  - Extensions:
+    - extensions/index.md
+    - PlaceholderAPI: extensions/placeholderapi.md
   - Developer API:
     - Developer API: developer/index.md
   - Javadocs: https://schat.silthus.net/javadocs/" target="_blank
