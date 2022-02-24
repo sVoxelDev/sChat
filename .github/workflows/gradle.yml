@@ -107,6 +107,11 @@ jobs:
       - name: Install pip dependencies
         run: pip install -r requirements.txt
 
+      - name: Setup mkdocs deployment
+        run: |
+          git config --global user.name MkDocs Deploy
+          git config --global user.email mkdocs-deploy@users.noreply.github.com
+
       - name: Deploy Documentation
         run: mike deploy --prefix docs --push --update-aliases next latest
         env:
