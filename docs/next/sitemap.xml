@@ -46,6 +46,16 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://schat.silthus.net/docs/next/extensions/</loc>
+         <lastmod>2022-02-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://schat.silthus.net/docs/next/extensions/placeholderapi/</loc>
+         <lastmod>2022-02-24</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://schat.silthus.net/docs/next/partials/_config/</loc>
          <lastmod>2022-02-24</lastmod>
          <changefreq>daily</changefreq>
