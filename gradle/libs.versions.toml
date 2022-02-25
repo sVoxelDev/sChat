@@ -90,9 +90,12 @@ cloud-annotations = { module = "cloud.commandframework:cloud-annotations", versi
 cloud-commands-paper = { module = "cloud.commandframework:cloud-paper", version.ref = "cloud-commands" }
 
 protocollib = { module = "com.comphenix.protocol:ProtocolLib", version.ref = "protocollib" }
-bstats-bukkit = { module = "org.bstats:bstats-bukkit", version.ref = "bstats" }
 mockbukkit = { module = "com.github.seeseemelk:MockBukkit-v1.18", version.ref = "mockbukkit" }
 placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholderapi" }
+
+bstats-bukkit = { module = "org.bstats:bstats-bukkit", version.ref = "bstats" }
+bstats-velocity = { module = "org.bstats:bstats-velocity", version.ref = "bstats" }
+bstats-bungeecord = { module = "org.bstats:bstats-bungeecord", version.ref = "bstats" }
 
 [bundles]
 testing-api = [
