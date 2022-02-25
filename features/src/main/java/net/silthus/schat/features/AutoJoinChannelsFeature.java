@@ -23,35 +23,62 @@
  */
 package net.silthus.schat.features;
 
+import java.util.stream.Stream;
+import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.eventbus.EventListener;
 import net.silthus.schat.events.chatter.ChatterJoinedServerEvent;
+import net.silthus.schat.events.config.ConfigReloadedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.channel.ChannelSettings.AUTO_JOIN;
 import static net.silthus.schat.commands.JoinChannelCommand.joinChannel;
 import static net.silthus.schat.commands.SetActiveChannelCommand.setActiveChannel;
 
 public class AutoJoinChannelsFeature implements EventListener {
+    private final ChatterRepository chatterRepository;
     private final ChannelRepository channelRepository;
 
-    public AutoJoinChannelsFeature(ChannelRepository channelRepository) {
+    public AutoJoinChannelsFeature(ChatterRepository chatterRepository, ChannelRepository channelRepository) {
+        this.chatterRepository = chatterRepository;
         this.channelRepository = channelRepository;
     }
 
     @Override
     public void bind(EventBus bus) {
         bus.on(ChatterJoinedServerEvent.class, this::onChatterJoin);
+        bus.on(ConfigReloadedEvent.class, this::onConfigReload);
     }
 
     protected void onChatterJoin(ChatterJoinedServerEvent event) {
-        channelRepository.all().stream()
-            .filter(channel -> channel.is(AUTO_JOIN))
-            .forEach(channel -> {
-                if (event.chatter().activeChannel().isEmpty())
-                    setActiveChannel(event.chatter(), channel);
-                else
-                    joinChannel(event.chatter(), channel);
-            });
+        autoJoinChannels(event.chatter());
+    }
+
+    protected void onConfigReload(ConfigReloadedEvent event) {
+        autoJoinableChannels().forEach(channel -> {
+            for (final Chatter chatter : chatterRepository.all())
+                autoJoinChannel(chatter, channel);
+        });
+    }
+
+    private void autoJoinChannels(Chatter chatter) {
+        autoJoinableChannels()
+            .forEach(channel -> autoJoinChannel(chatter, channel));
+    }
+
+    @NotNull
+    private Stream<Channel> autoJoinableChannels() {
+        return channelRepository.all().stream()
+            .filter(channel -> channel.is(AUTO_JOIN));
+    }
+
+    private void autoJoinChannel(Chatter chatter, Channel channel) {
+        if (chatter.activeChannel().isEmpty())
+            setActiveChannel(chatter, channel);
+        else
+            joinChannel(chatter, channel);
     }
 }
