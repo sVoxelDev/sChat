@@ -114,7 +114,7 @@ class SetActiveChannelCommandTests {
 
         @BeforeEach
         void setUp() {
-            final ChannelRepository channelRepository = createInMemoryChannelRepository();
+            final ChannelRepository channelRepository = createInMemoryChannelRepository(EventBus.empty());
             CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(channelRepository));
 
             channel = createPrivateChannel(chatter, randomChatter()).channel();

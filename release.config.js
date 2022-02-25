@@ -61,6 +61,14 @@ if (config.branches.some(it => it === branch || (it.name === branch && it.prerel
                 },
                 {
                     "files": [
+                        "**/src/main/java/**/*.java"
+                    ],
+                    "from": "since = \"next\"",
+                    "to": "since = \"${nextRelease.version}\"",
+                    "countMatches": true
+                },
+                {
+                    "files": [
                         "docs/**/*.md"
                     ],
                     "from": "[next]: https://github.com/sVoxelDev/sChat/releases/latest",

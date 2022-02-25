@@ -34,29 +34,72 @@ import net.silthus.schat.command.Command;
 import net.silthus.schat.command.CommandBuilder;
 import net.silthus.schat.command.Result;
 import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.events.channel.ChatterLeftChannelEvent;
 import net.silthus.schat.events.channel.LeaveChannelEvent;
-import net.silthus.schat.events.chatter.ChatterLeftChannelEvent;
 import net.silthus.schat.policies.LeaveChannelPolicy;
+import org.jetbrains.annotations.ApiStatus;
 
 import static net.silthus.schat.command.Result.failure;
 import static net.silthus.schat.command.Result.success;
 import static net.silthus.schat.policies.LeaveChannelPolicy.LEAVE_CHANNEL_POLICY;
 
+/**
+ * Command to leave a channel.
+ *
+ * <p>The command will check the {@link LeaveChannelPolicy} before executing and
+ * then update both the channel and the chatter.</p>
+ *
+ * <p>This is different from the {@link Chatter#leave(Channel)} method in such a way,
+ * that this command fires events, checks the policies and then calls the method.
+ * Use the direct method on the chatter to bypass all events and policy checks.</p>
+ *
+ * <p>If extended, the {@link Builder} must also be overwritten.</p>
+ *
+ * @see Chatter#leave(Channel)
+ * @since next
+ */
 @Getter
 @Accessors(fluent = true)
 public class LeaveChannelCommand implements Command {
 
     @Getter
-    private static @NonNull Consumer<Builder> prototype = builder -> {};
+    private static @NonNull Consumer<Builder> prototype = builder -> {
+    };
 
+    /**
+     * Configures the prototype of the command.
+     *
+     * @param consumer the prototype builder
+     * @since next
+     */
+    @ApiStatus.Internal
     public static void prototype(Consumer<Builder> consumer) {
         prototype = prototype().andThen(consumer);
     }
 
+    /**
+     * Creates and directly executes the leave channel command
+     * causing the chatter to leave the channel if the policy allows it.
+     *
+     * <p>The {@link LeaveChannelEvent} is fired in the process and can cancel the command.</p>
+     *
+     * @param chatter the chatter that is leaving the channel
+     * @param channel the channel to be left
+     * @return the result of the command. unsuccessful if the policy or event denied the request.
+     * @since next
+     */
     public static Result leaveChannel(Chatter chatter, Channel channel) {
         return leaveChannelBuilder(chatter, channel).execute();
     }
 
+    /**
+     * Creates a new command builder that can be further customized.
+     *
+     * @param chatter the chatter that is leaving the channel
+     * @param channel the channel to be left
+     * @return the builder of the command
+     * @since next
+     */
     public static LeaveChannelCommand.Builder leaveChannelBuilder(Chatter chatter, Channel channel) {
         final Builder builder = new Builder(chatter, channel);
         prototype().accept(builder);
@@ -97,6 +140,13 @@ public class LeaveChannelCommand implements Command {
         eventBus.post(new ChatterLeftChannelEvent(chatter, channel));
     }
 
+    /**
+     * The builder of the {@link LeaveChannelCommand}.
+     *
+     * <p>The builder can be extended together with the command itself to add new features to it.</p>
+     *
+     * @since next
+     */
     @Getter
     @Setter
     @Accessors(fluent = true)

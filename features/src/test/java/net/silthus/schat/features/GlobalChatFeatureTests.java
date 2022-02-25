@@ -49,15 +49,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class GlobalChatFeatureTests implements Messenger {
 
+    private final EventBusMock events = EventBusMock.eventBusMock();
     private boolean messengerCalled = false;
-    private EventBusMock events;
     private GsonPluginMessageSerializer serializer;
 
     @BeforeEach
     void setUp() {
-        events = EventBusMock.eventBusMock();
         final GsonProvider gsonProvider = GsonProvider.createGsonProvider();
-        gsonProvider.registerTypeAdapter(ChannelSerializer.CHANNEL_TYPE, ChannelSerializer.createChannelSerializer(ChannelRepository.createInMemoryChannelRepository(), false));
+        gsonProvider.registerTypeAdapter(ChannelSerializer.CHANNEL_TYPE, ChannelSerializer.createChannelSerializer(ChannelRepository.createInMemoryChannelRepository(events), false));
         serializer = PluginMessageSerializer.gsonSerializer(gsonProvider);
         new GlobalChatFeature(this).bind(events);
     }

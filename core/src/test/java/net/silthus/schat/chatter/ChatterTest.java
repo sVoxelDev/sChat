@@ -25,9 +25,9 @@ package net.silthus.schat.chatter;
 
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.eventbus.EventBusMock;
+import net.silthus.schat.events.channel.ChatterJoinedChannelEvent;
+import net.silthus.schat.events.channel.ChatterLeftChannelEvent;
 import net.silthus.schat.events.chatter.ChatterChangedActiveChannelEvent;
-import net.silthus.schat.events.chatter.ChatterJoinedChannelEvent;
-import net.silthus.schat.events.chatter.ChatterLeftChannelEvent;
 import net.silthus.schat.events.chatter.ChatterReceivedMessageEvent;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;

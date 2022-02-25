@@ -82,7 +82,7 @@ class TabbedChannelsViewTests {
     void setUp() {
         chatter = chatterMock(Identity.identity("Player"));
         view = tabbedChannels(chatter, new ViewConfig());
-        CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(createInMemoryChannelRepository()));
+        CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(createInMemoryChannelRepository(EventBus.empty())));
         SendMessageCommand.prototype(builder -> builder.eventBus(EventBus.empty()));
     }
 

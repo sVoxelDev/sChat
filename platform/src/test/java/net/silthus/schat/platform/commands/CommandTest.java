@@ -30,6 +30,7 @@ import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.platform.sender.SenderMock;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +56,7 @@ public abstract class CommandTest {
     @BeforeEach
     void setUpBase() {
         commandManager = createCommandManager();
-        channelRepository = createInMemoryChannelRepository();
+        channelRepository = createInMemoryChannelRepository(EventBus.empty());
 
         chatter = randomChatter();
         sender = new SenderMock(chatter.identity());

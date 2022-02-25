@@ -28,6 +28,7 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.platform.commands.ParserTest;
 import net.silthus.schat.policies.JoinChannelPolicy;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +53,7 @@ class ChannelArgumentTests extends ParserTest<Channel> {
 
     @BeforeEach
     void setUp() {
-        channelRepository = createInMemoryChannelRepository();
+        channelRepository = createInMemoryChannelRepository(EventBus.empty());
         ChatterRepository chatterRepository = createInMemoryChatterRepository();
         chatterRepository.add(chatter);
         setParser(new ChannelArgument(channelRepository, chatterRepository));
