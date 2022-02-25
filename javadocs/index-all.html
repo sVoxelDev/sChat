@@ -31,6 +31,7 @@ loadScripts(document, 'script');</script>
 <li>Package</li>
 <li>Class</li>
 <li><a href="overview-tree.html">Tree</a></li>
+<li><a href="deprecated-list.html">Deprecated</a></li>
 <li class="nav-bar-cell1-rev">Index</li>
 <li><a href="help-doc.html#index">Help</a></li>
 </ul>
@@ -178,15 +179,19 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/commands/LeaveChannelCommand.html#channel()" class="member-name-link">channel()</a> - Method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/LeaveChannelCommand.html" title="class in net.silthus.schat.commands">LeaveChannelCommand</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html#channel()" class="member-name-link">channel()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterJoinedChannelEvent</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>channel</code> record component.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/ChatterLeftChannelEvent.html#channel()" class="member-name-link">channel()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChatterLeftChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterLeftChannelEvent</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>channel</code> record component.</div>
+</dd>
 <dt><a href="net/silthus/schat/events/channel/JoinChannelEvent.html#channel()" class="member-name-link">channel()</a> - Method in class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/JoinChannelEvent.html" title="class in net.silthus.schat.events.channel">JoinChannelEvent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/events/channel/LeaveChannelEvent.html#channel()" class="member-name-link">channel()</a> - Method in class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/LeaveChannelEvent.html" title="class in net.silthus.schat.events.channel">LeaveChannelEvent</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/events/chatter/ChatterJoinedChannelEvent.html#channel()" class="member-name-link">channel()</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterJoinedChannelEvent.html" title="class in net.silthus.schat.events.chatter">ChatterJoinedChannelEvent</a></dt>
-<dd>
-<div class="block">Returns the value of the <code>channel</code> record component.</div>
-</dd>
-<dt><a href="net/silthus/schat/events/chatter/ChatterLeftChannelEvent.html#channel()" class="member-name-link">channel()</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterLeftChannelEvent.html" title="class in net.silthus.schat.events.chatter">ChatterLeftChannelEvent</a></dt>
+<dt><a href="net/silthus/schat/events/channel/RegisteredChannelEvent.html#channel()" class="member-name-link">channel()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/RegisteredChannelEvent.html" title="class in net.silthus.schat.events.channel">RegisteredChannelEvent</a></dt>
 <dd>
 <div class="block">Returns the value of the <code>channel</code> record component.</div>
 </dd>
@@ -247,7 +252,9 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/silthus/schat/message/Message.Draft.html#channels()" class="member-name-link">channels()</a> - Method in interface net.silthus.schat.message.<a href="net/silthus/schat/message/Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/util/gson/types/ChannelSerializer.html" class="type-name-link" title="class in net.silthus.schat.util.gson.types">ChannelSerializer</a> - Class in <a href="net/silthus/schat/util/gson/types/package-summary.html">net.silthus.schat.util.gson.types</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">A Gson serializer to serialize and deserialize a <a href="net/silthus/schat/channel/Channel.html" title="interface in net.silthus.schat.channel"><code>Channel</code></a> into JSON format.</div>
+</dd>
 <dt><a href="net/silthus/schat/commands/CreatePrivateChannelCommand.Builder.html#channelSettings()" class="member-name-link">channelSettings()</a> - Method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/CreatePrivateChannelCommand.Builder.html" title="class in net.silthus.schat.commands">CreatePrivateChannelCommand.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/commands/CreatePrivateChannelCommand.html#channelSettings()" class="member-name-link">channelSettings()</a> - Method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/CreatePrivateChannelCommand.html" title="class in net.silthus.schat.commands">CreatePrivateChannelCommand</a></dt>
@@ -300,6 +307,14 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/commands/LeaveChannelCommand.html#chatter()" class="member-name-link">chatter()</a> - Method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/LeaveChannelCommand.html" title="class in net.silthus.schat.commands">LeaveChannelCommand</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html#chatter()" class="member-name-link">chatter()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterJoinedChannelEvent</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>chatter</code> record component.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/ChatterLeftChannelEvent.html#chatter()" class="member-name-link">chatter()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChatterLeftChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterLeftChannelEvent</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>chatter</code> record component.</div>
+</dd>
 <dt><a href="net/silthus/schat/events/channel/JoinChannelEvent.html#chatter()" class="member-name-link">chatter()</a> - Method in class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/JoinChannelEvent.html" title="class in net.silthus.schat.events.channel">JoinChannelEvent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/events/channel/LeaveChannelEvent.html#chatter()" class="member-name-link">chatter()</a> - Method in class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/LeaveChannelEvent.html" title="class in net.silthus.schat.events.channel">LeaveChannelEvent</a></dt>
@@ -308,15 +323,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <code>chatter</code> record component.</div>
 </dd>
-<dt><a href="net/silthus/schat/events/chatter/ChatterJoinedChannelEvent.html#chatter()" class="member-name-link">chatter()</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterJoinedChannelEvent.html" title="class in net.silthus.schat.events.chatter">ChatterJoinedChannelEvent</a></dt>
-<dd>
-<div class="block">Returns the value of the <code>chatter</code> record component.</div>
-</dd>
 <dt><a href="net/silthus/schat/events/chatter/ChatterJoinedServerEvent.html#chatter()" class="member-name-link">chatter()</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterJoinedServerEvent.html" title="class in net.silthus.schat.events.chatter">ChatterJoinedServerEvent</a></dt>
-<dd>
-<div class="block">Returns the value of the <code>chatter</code> record component.</div>
-</dd>
-<dt><a href="net/silthus/schat/events/chatter/ChatterLeftChannelEvent.html#chatter()" class="member-name-link">chatter()</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterLeftChannelEvent.html" title="class in net.silthus.schat.events.chatter">ChatterLeftChannelEvent</a></dt>
 <dd>
 <div class="block">Returns the value of the <code>chatter</code> record component.</div>
 </dd>
@@ -356,11 +363,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Used to create new instances of a chatter based on the type of the implementing platform.</div>
 </dd>
-<dt><a href="net/silthus/schat/events/chatter/ChatterJoinedChannelEvent.html" class="type-name-link" title="class in net.silthus.schat.events.chatter">ChatterJoinedChannelEvent</a> - Record Class in <a href="net/silthus/schat/events/chatter/package-summary.html">net.silthus.schat.events.chatter</a></dt>
+<dt><a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html" class="type-name-link" title="class in net.silthus.schat.events.channel">ChatterJoinedChannelEvent</a> - Record Class in <a href="net/silthus/schat/events/channel/package-summary.html">net.silthus.schat.events.channel</a></dt>
 <dd>
 <div class="block">The event is fired after a chatter has joined a channel.</div>
 </dd>
-<dt><a href="net/silthus/schat/events/chatter/ChatterJoinedChannelEvent.html#%3Cinit%3E(net.silthus.schat.chatter.Chatter,net.silthus.schat.channel.Channel)" class="member-name-link">ChatterJoinedChannelEvent(Chatter, Channel)</a> - Constructor for record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterJoinedChannelEvent.html" title="class in net.silthus.schat.events.chatter">ChatterJoinedChannelEvent</a></dt>
+<dt><a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html#%3Cinit%3E(net.silthus.schat.chatter.Chatter,net.silthus.schat.channel.Channel)" class="member-name-link">ChatterJoinedChannelEvent(Chatter, Channel)</a> - Constructor for record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterJoinedChannelEvent</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>ChatterJoinedChannelEvent</code> record class.</div>
 </dd>
@@ -372,11 +379,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates an instance of a <code>ChatterJoinedServerEvent</code> record class.</div>
 </dd>
-<dt><a href="net/silthus/schat/events/chatter/ChatterLeftChannelEvent.html" class="type-name-link" title="class in net.silthus.schat.events.chatter">ChatterLeftChannelEvent</a> - Record Class in <a href="net/silthus/schat/events/chatter/package-summary.html">net.silthus.schat.events.chatter</a></dt>
+<dt><a href="net/silthus/schat/events/channel/ChatterLeftChannelEvent.html" class="type-name-link" title="class in net.silthus.schat.events.channel">ChatterLeftChannelEvent</a> - Record Class in <a href="net/silthus/schat/events/channel/package-summary.html">net.silthus.schat.events.channel</a></dt>
 <dd>
 <div class="block">The event is fired after a chatter has left a channel.</div>
 </dd>
-<dt><a href="net/silthus/schat/events/chatter/ChatterLeftChannelEvent.html#%3Cinit%3E(net.silthus.schat.chatter.Chatter,net.silthus.schat.channel.Channel)" class="member-name-link">ChatterLeftChannelEvent(Chatter, Channel)</a> - Constructor for record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterLeftChannelEvent.html" title="class in net.silthus.schat.events.chatter">ChatterLeftChannelEvent</a></dt>
+<dt><a href="net/silthus/schat/events/channel/ChatterLeftChannelEvent.html#%3Cinit%3E(net.silthus.schat.chatter.Chatter,net.silthus.schat.channel.Channel)" class="member-name-link">ChatterLeftChannelEvent(Chatter, Channel)</a> - Constructor for record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChatterLeftChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterLeftChannelEvent</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>ChatterLeftChannelEvent</code> record class.</div>
 </dd>
@@ -439,7 +446,9 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/silthus/schat/util/gson/types/ComponentSerializer.html#COMPONENT_TYPE" class="member-name-link">COMPONENT_TYPE</a> - Static variable in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/ComponentSerializer.html" title="class in net.silthus.schat.util.gson.types">ComponentSerializer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/util/gson/types/ComponentSerializer.html" class="type-name-link" title="class in net.silthus.schat.util.gson.types">ComponentSerializer</a> - Class in <a href="net/silthus/schat/util/gson/types/package-summary.html">net.silthus.schat.util.gson.types</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">A Gson serializer to serialize and deserialize a <code>Component</code> into JSON format.</div>
+</dd>
 <dt><a href="net/silthus/schat/util/gson/types/ComponentSerializer.html#%3Cinit%3E()" class="member-name-link">ComponentSerializer()</a> - Constructor for class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/ComponentSerializer.html" title="class in net.silthus.schat.util.gson.types">ComponentSerializer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/events/config/ConfigReloadedEvent.html" class="type-name-link" title="class in net.silthus.schat.events.config">ConfigReloadedEvent</a> - Class in <a href="net/silthus/schat/events/config/package-summary.html">net.silthus.schat.events.config</a></dt>
@@ -539,18 +548,20 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/silthus/schat/util/gson/types/ChannelSerializer.html#createChannel(java.lang.String,com.google.gson.JsonObject,com.google.gson.JsonDeserializationContext)" class="member-name-link">createChannel(String, JsonObject, JsonDeserializationContext)</a> - Method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/ChannelSerializer.html" title="class in net.silthus.schat.util.gson.types">ChannelSerializer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/util/gson/types/ChannelSerializer.html#createChannelSerializer(net.silthus.schat.channel.ChannelRepository,boolean)" class="member-name-link">createChannelSerializer(ChannelRepository, boolean)</a> - Static method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/ChannelSerializer.html" title="class in net.silthus.schat.util.gson.types">ChannelSerializer</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Creates a new channel serializer.</div>
+</dd>
 <dt><a href="net/silthus/schat/chatter/ChatterFactory.html#createChatter(java.util.UUID)" class="member-name-link">createChatter(UUID)</a> - Method in interface net.silthus.schat.chatter.<a href="net/silthus/schat/chatter/ChatterFactory.html" title="interface in net.silthus.schat.chatter">ChatterFactory</a></dt>
 <dd>
 <div class="block">Creates a new chatter from the given id.</div>
 </dd>
 <dt><a href="net/silthus/schat/util/gson/GsonProvider.html#createGsonProvider()" class="member-name-link">createGsonProvider()</a> - Static method in class net.silthus.schat.util.gson.<a href="net/silthus/schat/util/gson/GsonProvider.html" title="class in net.silthus.schat.util.gson">GsonProvider</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/channel/ChannelRepository.html#createInMemoryChannelRepository()" class="member-name-link">createInMemoryChannelRepository()</a> - Static method in interface net.silthus.schat.channel.<a href="net/silthus/schat/channel/ChannelRepository.html" title="interface in net.silthus.schat.channel">ChannelRepository</a></dt>
+<dt><a href="net/silthus/schat/channel/ChannelRepository.html#createInMemoryChannelRepository(net.silthus.schat.eventbus.EventBus)" class="member-name-link">createInMemoryChannelRepository(EventBus)</a> - Static method in interface net.silthus.schat.channel.<a href="net/silthus/schat/channel/ChannelRepository.html" title="interface in net.silthus.schat.channel">ChannelRepository</a></dt>
 <dd>
 <div class="block">Creates a new in memory channel repository.</div>
 </dd>
-<dt><a href="net/silthus/schat/channel/ChannelRepository.html#createInMemoryChannelRepository(boolean)" class="member-name-link">createInMemoryChannelRepository(boolean)</a> - Static method in interface net.silthus.schat.channel.<a href="net/silthus/schat/channel/ChannelRepository.html" title="interface in net.silthus.schat.channel">ChannelRepository</a></dt>
+<dt><a href="net/silthus/schat/channel/ChannelRepository.html#createInMemoryChannelRepository(net.silthus.schat.eventbus.EventBus,boolean)" class="member-name-link">createInMemoryChannelRepository(EventBus, boolean)</a> - Static method in interface net.silthus.schat.channel.<a href="net/silthus/schat/channel/ChannelRepository.html" title="interface in net.silthus.schat.channel">ChannelRepository</a></dt>
 <dd>
 <div class="block">Creates a new in memory channel repository.</div>
 </dd>
@@ -678,23 +689,27 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </dd>
+<dt><a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterJoinedChannelEvent</a></dt>
+<dd>
+<div class="block">Indicates whether some other object is "equal to" this one.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/ChatterLeftChannelEvent.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChatterLeftChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterLeftChannelEvent</a></dt>
+<dd>
+<div class="block">Indicates whether some other object is "equal to" this one.</div>
+</dd>
 <dt><a href="net/silthus/schat/events/channel/JoinChannelEvent.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/JoinChannelEvent.html" title="class in net.silthus.schat.events.channel">JoinChannelEvent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/events/channel/LeaveChannelEvent.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/LeaveChannelEvent.html" title="class in net.silthus.schat.events.channel">LeaveChannelEvent</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/events/channel/RegisteredChannelEvent.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/RegisteredChannelEvent.html" title="class in net.silthus.schat.events.channel">RegisteredChannelEvent</a></dt>
+<dd>
+<div class="block">Indicates whether some other object is "equal to" this one.</div>
+</dd>
 <dt><a href="net/silthus/schat/events/chatter/ChatterChangedActiveChannelEvent.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterChangedActiveChannelEvent.html" title="class in net.silthus.schat.events.chatter">ChatterChangedActiveChannelEvent</a></dt>
 <dd>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </dd>
-<dt><a href="net/silthus/schat/events/chatter/ChatterJoinedChannelEvent.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterJoinedChannelEvent.html" title="class in net.silthus.schat.events.chatter">ChatterJoinedChannelEvent</a></dt>
-<dd>
-<div class="block">Indicates whether some other object is "equal to" this one.</div>
-</dd>
 <dt><a href="net/silthus/schat/events/chatter/ChatterJoinedServerEvent.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterJoinedServerEvent.html" title="class in net.silthus.schat.events.chatter">ChatterJoinedServerEvent</a></dt>
-<dd>
-<div class="block">Indicates whether some other object is "equal to" this one.</div>
-</dd>
-<dt><a href="net/silthus/schat/events/chatter/ChatterLeftChannelEvent.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterLeftChannelEvent.html" title="class in net.silthus.schat.events.chatter">ChatterLeftChannelEvent</a></dt>
 <dd>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </dd>
@@ -932,23 +947,27 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns a hash code value for this object.</div>
 </dd>
+<dt><a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterJoinedChannelEvent</a></dt>
+<dd>
+<div class="block">Returns a hash code value for this object.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/ChatterLeftChannelEvent.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChatterLeftChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterLeftChannelEvent</a></dt>
+<dd>
+<div class="block">Returns a hash code value for this object.</div>
+</dd>
 <dt><a href="net/silthus/schat/events/channel/JoinChannelEvent.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/JoinChannelEvent.html" title="class in net.silthus.schat.events.channel">JoinChannelEvent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/events/channel/LeaveChannelEvent.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/LeaveChannelEvent.html" title="class in net.silthus.schat.events.channel">LeaveChannelEvent</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/events/channel/RegisteredChannelEvent.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/RegisteredChannelEvent.html" title="class in net.silthus.schat.events.channel">RegisteredChannelEvent</a></dt>
+<dd>
+<div class="block">Returns a hash code value for this object.</div>
+</dd>
 <dt><a href="net/silthus/schat/events/chatter/ChatterChangedActiveChannelEvent.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterChangedActiveChannelEvent.html" title="class in net.silthus.schat.events.chatter">ChatterChangedActiveChannelEvent</a></dt>
 <dd>
 <div class="block">Returns a hash code value for this object.</div>
 </dd>
-<dt><a href="net/silthus/schat/events/chatter/ChatterJoinedChannelEvent.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterJoinedChannelEvent.html" title="class in net.silthus.schat.events.chatter">ChatterJoinedChannelEvent</a></dt>
-<dd>
-<div class="block">Returns a hash code value for this object.</div>
-</dd>
 <dt><a href="net/silthus/schat/events/chatter/ChatterJoinedServerEvent.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterJoinedServerEvent.html" title="class in net.silthus.schat.events.chatter">ChatterJoinedServerEvent</a></dt>
-<dd>
-<div class="block">Returns a hash code value for this object.</div>
-</dd>
-<dt><a href="net/silthus/schat/events/chatter/ChatterLeftChannelEvent.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterLeftChannelEvent.html" title="class in net.silthus.schat.events.chatter">ChatterLeftChannelEvent</a></dt>
 <dd>
 <div class="block">Returns a hash code value for this object.</div>
 </dd>
@@ -1186,15 +1205,24 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/silthus/schat/policies/LeaveChannelPolicy.html#LEAVE_CHANNEL_POLICY" class="member-name-link">LEAVE_CHANNEL_POLICY</a> - Static variable in interface net.silthus.schat.policies.<a href="net/silthus/schat/policies/LeaveChannelPolicy.html" title="interface in net.silthus.schat.policies">LeaveChannelPolicy</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/commands/LeaveChannelCommand.html#leaveChannel(net.silthus.schat.chatter.Chatter,net.silthus.schat.channel.Channel)" class="member-name-link">leaveChannel(Chatter, Channel)</a> - Static method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/LeaveChannelCommand.html" title="class in net.silthus.schat.commands">LeaveChannelCommand</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Creates and directly executes the leave channel command
+ causing the chatter to leave the channel if the policy allows it.</div>
+</dd>
 <dt><a href="net/silthus/schat/commands/LeaveChannelCommand.html#leaveChannelBuilder(net.silthus.schat.chatter.Chatter,net.silthus.schat.channel.Channel)" class="member-name-link">leaveChannelBuilder(Chatter, Channel)</a> - Static method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/LeaveChannelCommand.html" title="class in net.silthus.schat.commands">LeaveChannelCommand</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Creates a new command builder that can be further customized.</div>
+</dd>
 <dt><a href="net/silthus/schat/commands/LeaveChannelCommand.html" class="type-name-link" title="class in net.silthus.schat.commands">LeaveChannelCommand</a> - Class in <a href="net/silthus/schat/commands/package-summary.html">net.silthus.schat.commands</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Command to leave a channel.</div>
+</dd>
 <dt><a href="net/silthus/schat/commands/LeaveChannelCommand.html#%3Cinit%3E(net.silthus.schat.commands.LeaveChannelCommand.Builder)" class="member-name-link">LeaveChannelCommand(LeaveChannelCommand.Builder)</a> - Constructor for class net.silthus.schat.commands.<a href="net/silthus/schat/commands/LeaveChannelCommand.html" title="class in net.silthus.schat.commands">LeaveChannelCommand</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/commands/LeaveChannelCommand.Builder.html" class="type-name-link" title="class in net.silthus.schat.commands">LeaveChannelCommand.Builder</a> - Class in <a href="net/silthus/schat/commands/package-summary.html">net.silthus.schat.commands</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">The builder of the <a href="net/silthus/schat/commands/LeaveChannelCommand.html" title="class in net.silthus.schat.commands"><code>LeaveChannelCommand</code></a>.</div>
+</dd>
 <dt><a href="net/silthus/schat/events/channel/LeaveChannelEvent.html" class="type-name-link" title="class in net.silthus.schat.events.channel">LeaveChannelEvent</a> - Class in <a href="net/silthus/schat/events/channel/package-summary.html">net.silthus.schat.events.channel</a></dt>
 <dd>
 <div class="block">The event is fired before a chatter leaves a channel and allows the manipulation of the <a href="net/silthus/schat/policies/LeaveChannelPolicy.html" title="interface in net.silthus.schat.policies"><code>LeaveChannelPolicy</code></a> and outcome of the <a href="net/silthus/schat/commands/LeaveChannelCommand.html" title="class in net.silthus.schat.commands"><code>LeaveChannelCommand</code></a>.</div>
@@ -1328,15 +1356,21 @@ loadScripts(document, 'script');</script>
 <div class="block">Contains the API for creating <a href="net/silthus/schat/command/Command.html" title="interface in net.silthus.schat.command"><code>Command</code></a>s.</div>
 </dd>
 <dt><a href="net/silthus/schat/commands/package-summary.html">net.silthus.schat.commands</a> - package net.silthus.schat.commands</dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Contains the central business logic implemented using the command pattern.</div>
+</dd>
 <dt><a href="net/silthus/schat/eventbus/package-summary.html">net.silthus.schat.eventbus</a> - package net.silthus.schat.eventbus</dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/events/package-summary.html">net.silthus.schat.events</a> - package net.silthus.schat.events</dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/events/channel/package-summary.html">net.silthus.schat.events.channel</a> - package net.silthus.schat.events.channel</dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Contains all events that have to do with a <a href="net/silthus/schat/channel/Channel.html" title="interface in net.silthus.schat.channel"><code>Channel</code></a>.</div>
+</dd>
 <dt><a href="net/silthus/schat/events/chatter/package-summary.html">net.silthus.schat.events.chatter</a> - package net.silthus.schat.events.chatter</dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Contains all events for <a href="net/silthus/schat/chatter/Chatter.html" title="interface in net.silthus.schat.chatter"><code>Chatter</code></a>s.</div>
+</dd>
 <dt><a href="net/silthus/schat/events/config/package-summary.html">net.silthus.schat.events.config</a> - package net.silthus.schat.events.config</dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/events/message/package-summary.html">net.silthus.schat.events.message</a> - package net.silthus.schat.events.message</dt>
@@ -1534,7 +1568,9 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/silthus/schat/commands/JoinChannelCommand.html#prototype(java.util.function.Consumer)" class="member-name-link">prototype(Consumer&lt;JoinChannelCommand.Builder&gt;)</a> - Static method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/JoinChannelCommand.html" title="class in net.silthus.schat.commands">JoinChannelCommand</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/commands/LeaveChannelCommand.html#prototype(java.util.function.Consumer)" class="member-name-link">prototype(Consumer&lt;LeaveChannelCommand.Builder&gt;)</a> - Static method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/LeaveChannelCommand.html" title="class in net.silthus.schat.commands">LeaveChannelCommand</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Configures the prototype of the command.</div>
+</dd>
 <dt><a href="net/silthus/schat/commands/SendMessageCommand.html#prototype(java.util.function.Consumer)" class="member-name-link">prototype(Consumer&lt;SendMessageCommand.Builder&gt;)</a> - Static method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/SendMessageCommand.html" title="class in net.silthus.schat.commands">SendMessageCommand</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/commands/SendPrivateMessageCommand.html#prototype(java.util.function.Consumer)" class="member-name-link">prototype(Consumer&lt;SendPrivateMessageCommand.Builder&gt;)</a> - Static method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/SendPrivateMessageCommand.html" title="class in net.silthus.schat.commands">SendPrivateMessageCommand</a></dt>
@@ -1545,6 +1581,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/silthus/schat/command/Result.html#raiseError()" class="member-name-link">raiseError()</a> - Method in interface net.silthus.schat.command.<a href="net/silthus/schat/command/Result.html" title="interface in net.silthus.schat.command">Result</a></dt>
 <dd>
 <div class="block">Raises an <a href="net/silthus/schat/command/Result.Error.html" title="class in net.silthus.schat.command"><code>Result.Error</code></a> if the result <a href="net/silthus/schat/command/Result.html#wasFailure()"><code>Result.wasFailure()</code></a> and contains a <a href="net/silthus/schat/command/Result.html#failureReason()"><code>Result.failureReason()</code></a>.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/RegisteredChannelEvent.html" class="type-name-link" title="class in net.silthus.schat.events.channel">RegisteredChannelEvent</a> - Record Class in <a href="net/silthus/schat/events/channel/package-summary.html">net.silthus.schat.events.channel</a></dt>
+<dd>
+<div class="block">The event is fired when a new channel is added to the <a href="net/silthus/schat/channel/ChannelRepository.html" title="interface in net.silthus.schat.channel"><code>ChannelRepository</code></a>.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/RegisteredChannelEvent.html#%3Cinit%3E(net.silthus.schat.channel.Channel)" class="member-name-link">RegisteredChannelEvent(Channel)</a> - Constructor for record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/RegisteredChannelEvent.html" title="class in net.silthus.schat.events.channel">RegisteredChannelEvent</a></dt>
+<dd>
+<div class="block">Creates an instance of a <code>RegisteredChannelEvent</code> record class.</div>
 </dd>
 <dt><a href="net/silthus/schat/messenger/GsonPluginMessageSerializer.html#registerMessageType(java.lang.reflect.Type)" class="member-name-link">registerMessageType(Type)</a> - Method in class net.silthus.schat.messenger.<a href="net/silthus/schat/messenger/GsonPluginMessageSerializer.html" title="class in net.silthus.schat.messenger">GsonPluginMessageSerializer</a></dt>
 <dd>&nbsp;</dd>
@@ -1907,19 +1951,23 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns a string representation of this record class.</div>
 </dd>
+<dt><a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html#toString()" class="member-name-link">toString()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterJoinedChannelEvent</a></dt>
+<dd>
+<div class="block">Returns a string representation of this record class.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/ChatterLeftChannelEvent.html#toString()" class="member-name-link">toString()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChatterLeftChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterLeftChannelEvent</a></dt>
+<dd>
+<div class="block">Returns a string representation of this record class.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/RegisteredChannelEvent.html#toString()" class="member-name-link">toString()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/RegisteredChannelEvent.html" title="class in net.silthus.schat.events.channel">RegisteredChannelEvent</a></dt>
+<dd>
+<div class="block">Returns a string representation of this record class.</div>
+</dd>
 <dt><a href="net/silthus/schat/events/chatter/ChatterChangedActiveChannelEvent.html#toString()" class="member-name-link">toString()</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterChangedActiveChannelEvent.html" title="class in net.silthus.schat.events.chatter">ChatterChangedActiveChannelEvent</a></dt>
 <dd>
 <div class="block">Returns a string representation of this record class.</div>
 </dd>
-<dt><a href="net/silthus/schat/events/chatter/ChatterJoinedChannelEvent.html#toString()" class="member-name-link">toString()</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterJoinedChannelEvent.html" title="class in net.silthus.schat.events.chatter">ChatterJoinedChannelEvent</a></dt>
-<dd>
-<div class="block">Returns a string representation of this record class.</div>
-</dd>
 <dt><a href="net/silthus/schat/events/chatter/ChatterJoinedServerEvent.html#toString()" class="member-name-link">toString()</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterJoinedServerEvent.html" title="class in net.silthus.schat.events.chatter">ChatterJoinedServerEvent</a></dt>
-<dd>
-<div class="block">Returns a string representation of this record class.</div>
-</dd>
-<dt><a href="net/silthus/schat/events/chatter/ChatterLeftChannelEvent.html#toString()" class="member-name-link">toString()</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterLeftChannelEvent.html" title="class in net.silthus.schat.events.chatter">ChatterLeftChannelEvent</a></dt>
 <dd>
 <div class="block">Returns a string representation of this record class.</div>
 </dd>
@@ -1993,7 +2041,11 @@ loadScripts(document, 'script');</script>
 the order they are declared.</div>
 </dd>
 <dt><a href="net/silthus/schat/chatter/Chatter.Builder.html#viewConnector(net.silthus.schat.ui.ViewConnector.Factory)" class="member-name-link">viewConnector(ViewConnector.Factory)</a> - Method in interface net.silthus.schat.chatter.<a href="net/silthus/schat/chatter/Chatter.Builder.html" title="interface in net.silthus.schat.chatter">Chatter.Builder</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated, for removal: This API element is subject to removal in a future version.</span>
+<div class="deprecation-comment">will be removed in favor of event driven view updates</div>
+</div>
+</dd>
 <dt><a href="net/silthus/schat/ui/ViewConnector.html" class="type-name-link" title="interface in net.silthus.schat.ui">ViewConnector</a> - Interface in <a href="net/silthus/schat/ui/package-summary.html">net.silthus.schat.ui</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/ui/ViewConnector.Factory.html" class="type-name-link" title="interface in net.silthus.schat.ui">ViewConnector.Factory</a> - Interface in <a href="net/silthus/schat/ui/package-summary.html">net.silthus.schat.ui</a></dt>
