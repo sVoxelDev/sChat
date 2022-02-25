@@ -29,6 +29,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import java.lang.reflect.Type;
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.message.Targets;
@@ -37,6 +38,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.util.gson.JObject.json;
@@ -46,6 +48,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ChannelSerializerTest {
     private static final SerializationContextStub SERIALIZATION_CONTEXT = new SerializationContextStub();
     private static final SettingsDeserializationContextStub DESERIALIZATION_CONTEXT = new SettingsDeserializationContextStub();
+
+    private static final SettingsSerializer SETTINGS_SERIALIZER = new SettingsSerializer();
+    private static final ComponentSerializer COMPONENT_SERIALIZER = new ComponentSerializer();
 
     private ChannelSerializer serializer;
     private ChannelRepository repository;
@@ -70,6 +75,10 @@ class ChannelSerializerTest {
         return serializer.deserialize(json, Channel.class, DESERIALIZATION_CONTEXT);
     }
 
+    private Channel serializeAndDeserialize(Channel channel) {
+        return deserialize(serialize(channel));
+    }
+
     @Test
     void serialization_writes_key() {
         final JsonElement json = serialize(channelWith("test"));
@@ -90,16 +99,28 @@ class ChannelSerializerTest {
         assertThat(repository.all()).contains(channel);
     }
 
+    @Test
+    void keeps_formatted_channel_name() {
+        final Channel channel = channelWith("test", builder -> builder.name(text("My Channel")));
+        final Channel result = serializeAndDeserialize(channel);
+        assertThat(result.displayName()).isEqualTo(channel.displayName());
+    }
+
     private static class SerializationContextStub implements JsonSerializationContext {
         @Override
         public JsonElement serialize(Object o) {
+            if (o instanceof Component)
+                return serialize(o, o.getClass());
             return new JsonObject();
         }
 
         @Override
         public JsonElement serialize(Object o, Type type) {
+            if (o instanceof Component)
+                return COMPONENT_SERIALIZER.serialize((Component) o, type, SERIALIZATION_CONTEXT);
             return new JsonObject();
         }
+
     }
 
     private static class SettingsDeserializationContextStub implements JsonDeserializationContext {
@@ -110,6 +131,8 @@ class ChannelSerializerTest {
                 return (T) Settings.createSettings();
             if (type.equals(Targets.class))
                 return (T) new Targets();
+            if (type.equals(Component.class))
+                return (T) COMPONENT_SERIALIZER.deserialize(jsonElement, type, DESERIALIZATION_CONTEXT);
             return null;
         }
     }

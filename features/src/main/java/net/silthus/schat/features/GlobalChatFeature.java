@@ -27,7 +27,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.channel.ChannelSettings;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.eventbus.EventListener;
@@ -36,6 +35,9 @@ import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.messenger.Messenger;
 import net.silthus.schat.messenger.PluginMessage;
+
+import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
+import static net.silthus.schat.commands.JoinChannelCommand.joinChannel;
 
 public class GlobalChatFeature implements EventListener {
 
@@ -52,7 +54,7 @@ public class GlobalChatFeature implements EventListener {
     }
 
     private void onChannelMessage(SendChannelMessageEvent event) {
-        if (event.channel().is(ChannelSettings.GLOBAL))
+        if (event.channel().is(GLOBAL))
             messenger.sendPluginMessage(new GlobalChannelPluginMessage(event.channel(), event.message()));
     }
 
@@ -78,7 +80,7 @@ public class GlobalChatFeature implements EventListener {
         private void updateChannelTargets() {
             for (MessageTarget target : channel.targets())
                 if (target instanceof Chatter chatter)
-                    chatter.join(channel);
+                    joinChannel(chatter, channel);
         }
     }
 }

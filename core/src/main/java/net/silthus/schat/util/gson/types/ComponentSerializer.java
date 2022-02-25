@@ -34,6 +34,13 @@ import java.lang.reflect.Type;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
+/**
+ * A Gson serializer to serialize and deserialize a {@link Component} into JSON format.
+ *
+ * <p>Used for sending packets across servers.</p>
+ *
+ * @since next
+ */
 public final class ComponentSerializer implements JsonSerializer<Component>, JsonDeserializer<Component> {
 
     public static final Type COMPONENT_TYPE = new TypeToken<Component>() {
@@ -48,6 +55,8 @@ public final class ComponentSerializer implements JsonSerializer<Component>, Jso
 
     @Override
     public Component deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        if (json == null)
+            return Component.empty();
         return componentSerializer.deserializeFromTree(json);
     }
 }
