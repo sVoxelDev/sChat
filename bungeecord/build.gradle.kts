@@ -10,6 +10,7 @@ dependencies {
 
     implementation(libs.bungeecord)
     implementation(libs.adventure.platform.bungeecord)
+    implementation(libs.bstats.bungeecord)
 
     testImplementation(libs.mockbukkit)
     testImplementation(testFixtures(project(":schat-platform")))
@@ -20,8 +21,10 @@ dependencies {
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     dependencies {
         include(dependency("net.kyori::"))
+        include(dependency("org.bstats:bstats-bungeecord:"))
     }
 
     val lib = "net.silthus.schat.lib"
     relocate("net.kyori", "$lib.kyori")
+    relocate("org.bstats", "$lib.bstats")
 }

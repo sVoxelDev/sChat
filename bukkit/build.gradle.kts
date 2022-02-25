@@ -16,6 +16,7 @@ dependencies {
     implementation(libs.placeholderapi)
     implementation(libs.cloud.commands.paper)
     implementation(libs.adventure.platform.bukkit)
+    implementation(libs.bstats.bukkit)
 
     testImplementation(libs.mockbukkit)
     testImplementation(testFixtures(project(":schat-core")))
@@ -26,8 +27,10 @@ dependencies {
 tasks.withType<ShadowJar> {
     dependencies {
         include(dependency("net.kyori::"))
+        include(dependency("org.bstats:bstats-bukkit:"))
     }
 
     val lib = "net.silthus.schat.lib"
     relocate("net.kyori", "$lib.kyori")
+    relocate("org.bstats", "$lib.bstats")
 }

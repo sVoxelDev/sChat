@@ -40,11 +40,13 @@ import net.silthus.schat.platform.plugin.bootstrap.Platform;
 import net.silthus.schat.platform.plugin.logging.PluginLogger;
 import net.silthus.schat.velocity.adapter.Slf4jPluginLogger;
 import net.silthus.schat.velocity.adapter.VelocitySchedulerAdapter;
+import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
 @Getter
 @Accessors(fluent = true)
 public final class VelocityBootstrap implements Bootstrap {
+    private static final int BSTATS_ID = 13304;
 
     private final PluginLogger pluginLogger;
     private final VelocitySchedulerAdapter scheduler;
@@ -54,6 +56,8 @@ public final class VelocityBootstrap implements Bootstrap {
     private ProxyServer proxy;
     @Inject
     private PluginContainer pluginContainer;
+    @Inject
+    private Metrics.Factory metricsFactory;
 
     @Inject
     @DataDirectory
@@ -95,6 +99,7 @@ public final class VelocityBootstrap implements Bootstrap {
 
     @Subscribe(order = PostOrder.FIRST)
     public void onEnable(ProxyInitializeEvent e) {
+        enableBStats();
         this.plugin.load();
         this.plugin.enable();
     }
@@ -102,5 +107,9 @@ public final class VelocityBootstrap implements Bootstrap {
     @Subscribe(order = PostOrder.LAST)
     public void onDisable(ProxyShutdownEvent e) {
         this.plugin.disable();
+    }
+
+    private void enableBStats() {
+        metricsFactory().make(this, BSTATS_ID);
     }
 }

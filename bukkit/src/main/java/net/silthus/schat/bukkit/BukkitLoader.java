@@ -26,6 +26,7 @@ package net.silthus.schat.bukkit;
 import java.io.File;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
@@ -34,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 @Getter
 @Accessors(fluent = true)
 public final class BukkitLoader extends JavaPlugin {
+    private static final int BSTATS_ID = 13304;
 
     private final BukkitBootstrap bootstrap;
 
@@ -57,11 +59,16 @@ public final class BukkitLoader extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        enableBStats();
         bootstrap.onEnable();
     }
 
     @Override
     public void onDisable() {
         bootstrap.onDisable();
+    }
+
+    private void enableBStats() {
+        new Metrics(this, BSTATS_ID);
     }
 }
