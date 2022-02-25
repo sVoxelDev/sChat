@@ -39,6 +39,7 @@ import static net.silthus.schat.channel.ChannelAssertions.assertChannelHasNoTarg
 import static net.silthus.schat.channel.ChannelAssertions.assertChannelHasOnlyTarget;
 import static net.silthus.schat.channel.ChannelAssertions.assertChannelHasTarget;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
+import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.chatter.ChatterAssertions.assertChatterHasChannel;
 import static net.silthus.schat.chatter.ChatterAssertions.assertChatterHasNoChannels;
 import static net.silthus.schat.chatter.ChatterAssertions.assertChatterHasOnlyChannel;
@@ -66,8 +67,12 @@ class JoinChannelCommandTests {
         eventBus.close();
     }
 
-    private void assertJoinChannelError() {
+    private void assertJoinChannelFailure() {
         assertThat(joinChannel().wasFailure()).isTrue();
+    }
+
+    private void assertJoinChannelSuccess() {
+        assertThat(joinChannel().wasSuccessful()).isTrue();
     }
 
     private Result joinChannel() {
@@ -83,13 +88,13 @@ class JoinChannelCommandTests {
     @Test
     void given_cancelled_pre_join_event_then_join_fails() {
         eventBus.on(JoinChannelEvent.class, event -> event.cancelled(true));
-        assertJoinChannelError();
+        assertJoinChannelFailure();
     }
 
     @Test
     void given_channel_with_policy_then_uses_policy() {
         channel = Channel.channel("test").policy(JoinChannelPolicy.class, DENY).create();
-        assertJoinChannelError();
+        assertJoinChannelFailure();
     }
 
     @Nested class given_successful_can_join_check {
@@ -148,12 +153,12 @@ class JoinChannelCommandTests {
 
         @Test
         void then_throws_access_defined_exception() {
-            assertJoinChannelError();
+            assertJoinChannelFailure();
         }
 
         @Test
         void then_no_post_join_channel_event_is_fired() {
-            assertJoinChannelError();
+            assertJoinChannelFailure();
             eventBus.assertNoEventFired(new ChatterJoinedChannelEvent(chatter, channel));
         }
 
@@ -165,14 +170,28 @@ class JoinChannelCommandTests {
 
             @Test
             void then_removes_chatter_as_channel_target() {
-                assertJoinChannelError();
+                assertJoinChannelFailure();
                 assertChannelHasNoTargets(channel);
             }
 
             @Test
             void then_removes_channel_from_chatter() {
-                assertJoinChannelError();
+                assertJoinChannelFailure();
                 assertChatterHasNoChannels(chatter);
+            }
+
+            @Nested class given_channel_is_private {
+                @BeforeEach
+                void setUp() {
+                    channel = channelWith(PRIVATE, true);
+                    chatter.join(channel);
+                }
+
+                @Test
+                void then_chatter_is_not_kicked_from_channel() {
+                    assertJoinChannelSuccess();
+                    chatter.assertJoinedChannel(channel);
+                }
             }
         }
     }
