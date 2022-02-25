@@ -29,6 +29,7 @@ import net.silthus.schat.command.Result;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.channel.LeaveChannelEvent;
 import net.silthus.schat.events.chatter.ChatterLeftChannelEvent;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -52,7 +53,11 @@ class LeaveChannelCommandTest {
         chatter = randomChatter();
         channel = randomChannel();
         eventBus = eventBusMock();
-        LeaveChannelCommand.prototype(builder -> builder.eventBus(eventBus));
+    }
+
+    @AfterEach
+    void tearDown() {
+        eventBus.close();
     }
 
     private Result executeLeaveChannel() {

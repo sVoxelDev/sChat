@@ -32,6 +32,7 @@ import net.silthus.schat.events.chatter.ChatterReceivedMessageEvent;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.ui.ViewConnectorMock;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -53,8 +54,12 @@ class ChatterTest {
     void setUp() {
         identity = randomIdentity();
         eventBus = eventBusMock();
-        ChatterPrototype.configure(eventBus);
         chatter = ChatterMock.chatterMock(identity);
+    }
+
+    @AfterEach
+    void tearDown() {
+        eventBus.close();
     }
 
     @Test

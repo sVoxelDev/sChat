@@ -166,7 +166,6 @@ class SendMessageCommandTests {
         @BeforeEach
         void setUp() {
             eventBus = EventBusMock.eventBusMock();
-            SendMessageCommand.prototype(builder -> builder.eventBus(eventBus));
             onEvent(event -> eventCalled = true);
         }
 

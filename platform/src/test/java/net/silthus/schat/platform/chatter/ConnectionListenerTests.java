@@ -29,6 +29,7 @@ import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.chatter.ChatterJoinedServerEvent;
 import net.silthus.schat.platform.messaging.MessagingServiceMock;
 import net.silthus.schat.platform.sender.SenderMock;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -54,6 +55,11 @@ class ConnectionListenerTests {
         listener = new ConnectionListener(chatterRepository, ChatterMock::randomChatter, messenger, eventBus) {
         };
         sender = randomSender();
+    }
+
+    @AfterEach
+    void tearDown() {
+        eventBus.close();
     }
 
     private ConnectionListener.ChatterJoined createRandomPluginMessage() {
