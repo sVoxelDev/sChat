@@ -26,11 +26,11 @@ package net.silthus.schat.features;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.ChatterMock;
-import net.silthus.schat.commands.JoinChannelCommand;
-import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.chatter.ChatterJoinedServerEvent;
-import org.jetbrains.annotations.NotNull;
+import net.silthus.schat.events.config.ConfigReloadedEvent;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -41,35 +41,47 @@ import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelR
 import static net.silthus.schat.channel.ChannelSettings.AUTO_JOIN;
 import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
+import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class AutoJoinChannelsFeatureTest {
 
-    private EventBusMock events;
-    private Channel channel;
-    private @NotNull ChatterMock chatter;
-    private ChannelRepository channelRepository;
+    private final EventBusMock events = EventBusMock.eventBusMock();
+    private final ChannelRepository channelRepository = createInMemoryChannelRepository();
+    private final ChatterRepository chatterRepository = createInMemoryChatterRepository();
+
+    private final Channel channel = channelWith(AUTO_JOIN, true);
+    private final ChatterMock chatter = randomChatter();
 
     @BeforeEach
     void setUp() {
-        channelRepository = createInMemoryChannelRepository();
-        AutoJoinChannelsFeature feature = new AutoJoinChannelsFeature(channelRepository);
-        events = EventBusMock.eventBusMock();
-        feature.bind(events);
-        channel = channelWith(AUTO_JOIN, true);
         channelRepository.add(channel);
-        chatter = randomChatter();
-        JoinChannelCommand.prototype(builder -> builder.eventBus(EventBus.empty()));
+        chatterRepository.add(chatter);
+
+        new AutoJoinChannelsFeature(chatterRepository, channelRepository).bind(events);
+    }
+
+    @AfterEach
+    void tearDown() {
+        events.close();
+    }
+
+    private void assertAutoJoinedChannel() {
+        chatter.assertJoinedChannel(channel);
     }
 
     private void triggerJoinEvent() {
         events.post(new ChatterJoinedServerEvent(chatter));
     }
 
+    private void triggerReloadEvent() {
+        events.post(new ConfigReloadedEvent());
+    }
+
     @Test
     void onJoin_auto_joins_channels() {
         triggerJoinEvent();
-        chatter.assertJoinedChannel(channel);
+        assertAutoJoinedChannel();
     }
 
     @Test
@@ -94,5 +106,11 @@ class AutoJoinChannelsFeatureTest {
         channelRepository.add(channel);
         triggerJoinEvent();
         assertThat(chatter.activeChannel().isPresent()).isTrue();
+    }
+
+    @Test
+    void onReload_triggers_auto_join() {
+        triggerReloadEvent();
+        assertAutoJoinedChannel();
     }
 }
