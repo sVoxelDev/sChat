@@ -25,12 +25,12 @@ package net.silthus.schat.commands;
 
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.ChatterMock;
-import net.silthus.schat.chatter.ChatterPrototype;
 import net.silthus.schat.command.Result;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.channel.JoinChannelEvent;
 import net.silthus.schat.events.chatter.ChatterJoinedChannelEvent;
 import net.silthus.schat.policies.JoinChannelPolicy;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -56,11 +56,14 @@ class JoinChannelCommandTests {
     @BeforeEach
     void setUp() {
         eventBus = EventBusMock.eventBusMock();
-        JoinChannelCommand.prototype(builder -> builder.eventBus(eventBus));
-        ChatterPrototype.configure(eventBus);
 
         chatter = randomChatter();
         channel = channelWith(builder -> builder.policy(JoinChannelPolicy.class, ALLOW));
+    }
+
+    @AfterEach
+    void tearDown() {
+        eventBus.close();
     }
 
     private void assertJoinChannelError() {

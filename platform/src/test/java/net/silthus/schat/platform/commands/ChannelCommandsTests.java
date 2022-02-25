@@ -26,14 +26,13 @@ package net.silthus.schat.platform.commands;
 import cloud.commandframework.Command;
 import cloud.commandframework.arguments.standard.StringArgument;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.commands.JoinChannelCommand;
-import net.silthus.schat.commands.LeaveChannelCommand;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.commands.parser.ChannelArgument;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.policies.JoinChannelPolicy;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -57,8 +56,11 @@ class ChannelCommandsTests extends CommandTest {
         commands.register(new ChannelCommands());
         channel = addRandomChannel();
         eventBus = EventBusMock.eventBusMock();
-        LeaveChannelCommand.prototype(builder -> builder.eventBus(eventBus));
-        JoinChannelCommand.prototype(builder -> builder.eventBus(eventBus));
+    }
+
+    @AfterEach
+    void tearDown() {
+        eventBus.close();
     }
 
     private Channel addRandomChannel() {

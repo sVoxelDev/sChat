@@ -27,6 +27,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 import lombok.NonNull;
 import net.silthus.schat.channel.ChannelPrototype;
+import net.silthus.schat.chatter.ChatterPrototype;
+import net.silthus.schat.commands.JoinChannelCommand;
+import net.silthus.schat.commands.LeaveChannelCommand;
 import net.silthus.schat.commands.SendMessageCommand;
 import net.silthus.schat.events.SChatEvent;
 
@@ -42,7 +45,10 @@ public class EventBusMock extends EventBusImpl {
 
     protected EventBusMock() {
         ChannelPrototype.configure(this);
+        ChatterPrototype.configure(this);
         SendMessageCommand.prototype(builder -> builder.eventBus(this));
+        JoinChannelCommand.prototype(builder -> builder.eventBus(this));
+        LeaveChannelCommand.prototype(builder -> builder.eventBus(this));
     }
 
     @Override
