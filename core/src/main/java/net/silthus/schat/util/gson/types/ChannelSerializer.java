@@ -33,17 +33,33 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import lombok.extern.java.Log;
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.message.Targets;
 import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.util.gson.JObject;
 
+/**
+ * A Gson serializer to serialize and deserialize a {@link Channel} into JSON format.
+ *
+ * <p>Used for sending packets across servers.</p>
+ *
+ * @since next
+ */
 public class ChannelSerializer implements JsonSerializer<Channel>, JsonDeserializer<Channel> {
 
     public static final Type CHANNEL_TYPE = new TypeToken<Channel>() {
     }.getType();
 
+    /**
+     * Creates a new channel serializer.
+     *
+     * @param channelRepository the channel repository to lookup existing channels
+     * @param debug             set true to log the serialization process
+     * @return the created serializer
+     * @since next
+     */
     public static ChannelSerializer createChannelSerializer(ChannelRepository channelRepository, boolean debug) {
         if (debug)
             return new Logging(channelRepository);
@@ -61,6 +77,7 @@ public class ChannelSerializer implements JsonSerializer<Channel>, JsonDeseriali
     public JsonElement serialize(Channel src, Type typeOfSrc, JsonSerializationContext context) {
         return JObject.json()
             .add("key", src.key())
+            .add("name", context.serialize(src.displayName(), Component.class))
             .add("settings", context.serialize(src.settings(), Settings.class))
             .add("targets", context.serialize(src.targets(), Targets.class))
             .create();
@@ -75,6 +92,7 @@ public class ChannelSerializer implements JsonSerializer<Channel>, JsonDeseriali
 
     protected Channel createChannel(String key, JsonObject object, JsonDeserializationContext context) {
         return Channel.channel(key)
+            .name(context.deserialize(object.get("name"), Component.class))
             .settings(context.deserialize(object.get("settings"), Settings.class))
             .targets(context.deserialize(object.get("targets"), Targets.class))
             .create();
