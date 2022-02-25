@@ -47,7 +47,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AutoJoinChannelsFeatureTest {
 
     private final EventBusMock events = EventBusMock.eventBusMock();
-    private final ChannelRepository channelRepository = createInMemoryChannelRepository();
+    private final ChannelRepository channelRepository = createInMemoryChannelRepository(events);
     private final ChatterRepository chatterRepository = createInMemoryChatterRepository();
 
     private final Channel channel = channelWith(AUTO_JOIN, true);
@@ -109,8 +109,15 @@ class AutoJoinChannelsFeatureTest {
     }
 
     @Test
-    void onReload_triggers_auto_join() {
+    void on_ConfigReloaded_triggers_auto_join() {
         triggerReloadEvent();
         assertAutoJoinedChannel();
+    }
+
+    @Test
+    void on_RegisteredChannel_triggers_auto_join() {
+        final Channel channel = channelWith(AUTO_JOIN, true);
+        channelRepository.add(channel);
+        chatter.assertJoinedChannel(channel);
     }
 }

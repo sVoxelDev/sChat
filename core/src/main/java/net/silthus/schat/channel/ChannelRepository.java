@@ -26,6 +26,7 @@ package net.silthus.schat.channel;
 import java.io.Serial;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.repository.Repository;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,25 +40,27 @@ public interface ChannelRepository extends Repository<String, Channel> {
     /**
      * Creates a new in memory channel repository.
      *
+     * @param eventBus the event bus
      * @return the new in memory repository
      * @since next
      */
-    static ChannelRepository createInMemoryChannelRepository() {
-        return createInMemoryChannelRepository(false);
+    static ChannelRepository createInMemoryChannelRepository(EventBus eventBus) {
+        return createInMemoryChannelRepository(eventBus, false);
     }
 
     /**
      * Creates a new in memory channel repository.
      *
-     * @param debug true to print all operations into the log
+     * @param eventBus the event bus
+     * @param debug    true to print all operations into the log
      * @return the new in memory repository
      * @since next
      */
-    static ChannelRepository createInMemoryChannelRepository(boolean debug) {
+    static ChannelRepository createInMemoryChannelRepository(EventBus eventBus, boolean debug) {
         if (debug)
-            return new InMemoryChannelRepository.Logging();
+            return new InMemoryChannelRepository.Logging(eventBus);
         else
-            return new InMemoryChannelRepository();
+            return new InMemoryChannelRepository(eventBus);
     }
 
     /**

@@ -140,7 +140,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
     @ApiStatus.OverrideOnly
     protected ChannelRepository createChannelRepository() {
-        return createInMemoryChannelRepository(config().get(DEBUG));
+        return createInMemoryChannelRepository(eventBus(), config().get(DEBUG));
     }
 
     private void registerSerializers() {

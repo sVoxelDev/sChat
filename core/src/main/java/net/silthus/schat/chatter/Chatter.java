@@ -32,9 +32,9 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.commands.JoinChannelCommand;
 import net.silthus.schat.commands.LeaveChannelCommand;
 import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.events.channel.ChatterJoinedChannelEvent;
+import net.silthus.schat.events.channel.ChatterLeftChannelEvent;
 import net.silthus.schat.events.chatter.ChatterChangedActiveChannelEvent;
-import net.silthus.schat.events.chatter.ChatterJoinedChannelEvent;
-import net.silthus.schat.events.chatter.ChatterLeftChannelEvent;
 import net.silthus.schat.identity.Identified;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
@@ -235,6 +235,15 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
         @ApiStatus.Internal
         @NotNull Builder eventBus(EventBus eventBus);
 
+        /**
+         * Sets the view connector that is updated when the view of the chatter must be updated.
+         *
+         * @param viewConnectorFactory the view connector
+         * @return this builder
+         * @since next
+         * @deprecated will be removed in favor of event driven view updates
+         */
+        @Deprecated(since = "next", forRemoval = true)
         @ApiStatus.Internal
         @NotNull Builder viewConnector(@NonNull ViewConnector.Factory viewConnectorFactory);
 

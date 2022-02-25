@@ -37,6 +37,7 @@ import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.commands.CreatePrivateChannelCommand.createPrivateChannel;
+import static net.silthus.schat.eventbus.EventBusMock.eventBusMock;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -46,7 +47,7 @@ class CreatePrivateChannelCommandTest {
 
     @BeforeEach
     void setUp() {
-        CreatePrivateChannelCommand.prototype(builder -> builder.messenger(messenger).channelRepository(createInMemoryChannelRepository()));
+        CreatePrivateChannelCommand.prototype(builder -> builder.messenger(messenger).channelRepository(createInMemoryChannelRepository(eventBusMock())));
     }
 
     @Test

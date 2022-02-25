@@ -61,6 +61,10 @@ public class EventBusMock extends EventBusImpl {
         assertThat(events).contains(event);
     }
 
+    public <E extends SChatEvent> void assertEventFired(Class<E> type) {
+        assertThat(events).hasAtLeastOneElementOfType(type);
+    }
+
     public <E extends SChatEvent> void assertNoEventFired(E event) {
         assertThat(events).doesNotContain(event);
     }

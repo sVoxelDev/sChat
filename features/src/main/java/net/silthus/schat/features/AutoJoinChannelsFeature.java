@@ -30,6 +30,7 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.eventbus.EventListener;
+import net.silthus.schat.events.channel.RegisteredChannelEvent;
 import net.silthus.schat.events.chatter.ChatterJoinedServerEvent;
 import net.silthus.schat.events.config.ConfigReloadedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -51,6 +52,7 @@ public class AutoJoinChannelsFeature implements EventListener {
     public void bind(EventBus bus) {
         bus.on(ChatterJoinedServerEvent.class, this::onChatterJoin);
         bus.on(ConfigReloadedEvent.class, this::onConfigReload);
+        bus.on(RegisteredChannelEvent.class, this::onRegisteredChannel);
     }
 
     protected void onChatterJoin(ChatterJoinedServerEvent event) {
@@ -58,10 +60,17 @@ public class AutoJoinChannelsFeature implements EventListener {
     }
 
     protected void onConfigReload(ConfigReloadedEvent event) {
-        autoJoinableChannels().forEach(channel -> {
-            for (final Chatter chatter : chatterRepository.all())
-                autoJoinChannel(chatter, channel);
-        });
+        autoJoinableChannels().forEach(this::autojoinAllChattersToChannel);
+    }
+
+    private void autojoinAllChattersToChannel(Channel channel) {
+        for (final Chatter chatter : chatterRepository.all())
+            autoJoinChannel(chatter, channel);
+    }
+
+    protected void onRegisteredChannel(RegisteredChannelEvent event) {
+        if (event.channel().is(AUTO_JOIN))
+            autojoinAllChattersToChannel(event.channel());
     }
 
     private void autoJoinChannels(Chatter chatter) {

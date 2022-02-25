@@ -21,20 +21,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.events.chatter;
-
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.commands.LeaveChannelCommand;
-import net.silthus.schat.events.SChatEvent;
-import net.silthus.schat.events.channel.LeaveChannelEvent;
-
 /**
- * The event is fired after a chatter has left a channel.
- *
- * <p>The event will not fire if {@link LeaveChannelCommand#leaveChannel(Chatter, Channel)} fails or {@link LeaveChannelEvent} is cancelled.</p>
- *
- * @since next
+ * Contains the central business logic implemented using the command pattern.
  */
-public record ChatterLeftChannelEvent(Chatter chatter, Channel channel) implements SChatEvent {
-}
+package net.silthus.schat.commands;

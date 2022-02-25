@@ -32,6 +32,7 @@ import java.lang.reflect.Type;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.message.Targets;
 import net.silthus.schat.pointer.Settings;
 import org.jetbrains.annotations.NotNull;
@@ -57,7 +58,7 @@ class ChannelSerializerTest {
 
     @BeforeEach
     void setUp() {
-        repository = createInMemoryChannelRepository();
+        repository = createInMemoryChannelRepository(EventBus.empty());
         serializer = createChannelSerializer(repository, false);
     }
 

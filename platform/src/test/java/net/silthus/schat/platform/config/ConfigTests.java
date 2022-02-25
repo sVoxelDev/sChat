@@ -32,6 +32,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.commands.CreatePrivateChannelCommand;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.ui.View;
 import net.silthus.schat.ui.views.tabbed.Tab;
@@ -69,7 +70,7 @@ class ConfigTests {
         final ConfigurationAdapter adapter = testConfigAdapter(new File(temp, "test-config.yml"));
         config = new SChatConfig(adapter);
         config.load();
-        CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(createInMemoryChannelRepository()));
+        CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(createInMemoryChannelRepository(EventBus.empty())));
     }
 
     private Channel getTestChannelConfig() {
