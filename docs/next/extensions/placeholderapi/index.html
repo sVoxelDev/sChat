@@ -65,6 +65,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#placeholderapi" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -621,6 +626,8 @@
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
       
+        
+      
       
       <a href="./" class="md-nav__link md-nav__link--active">
         PlaceholderAPI
@@ -703,6 +710,24 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content" data-md-component="content">
             <article class="md-content__inner md-typeset">
@@ -714,16 +739,25 @@
 
 
 
-  <h1>PlaceholderAPI</h1>
-
-
+<h1 id="placeholderapi">PlaceholderAPI<a class="headerlink" href="#placeholderapi" title="Permanent link">&para;</a></h1>
+<p>The very popular <a href="https://www.spigotmc.org/resources/placeholderapi.6245/">PlaceholderAPI plugin</a> allows the use of <em>placeholders</em> in various text formats and messages.
+A placeholder could be the current world, biome, player level, money or any other information provided by plugins supporting the PlaceholderAPI.</p>
+<p>Placeholders can be used inside the <a href="/configuration/channels#message_format"><code>message_format</code></a> of <a href="/configuration/channels">channels</a>.</p>
+<div class="admonition example">
+<p class="admonition-title">Example</p>
+<p>The following examples displays the player's rank and money inside the hover.
+Colors have been omitted on puprose to make the snippet smaller.
+See the <a href="/configuration/minimessage">MiniMessage Format</a> documentation for more formatting options.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">message_format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;hover:show_text:&#39;Rank:</span><span class="nv"> </span><span class="s">%vault_rank%&lt;br&gt;Money:</span><span class="nv"> </span><span class="s">%vault_eco_balance_formatted%&#39;&gt;&lt;source.display_name&gt;:</span><span class="nv"> </span><span class="s">&lt;text&gt;&quot;</span><span class="w"></span>
+</code></pre></div>
+</div>
 
   <hr>
 <div class="md-source-file">
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">February 24, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">February 25, 2022</span>
       
         <br>
         Created:

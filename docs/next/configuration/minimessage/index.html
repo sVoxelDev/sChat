@@ -565,9 +565,40 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          MiniMessage Format
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         MiniMessage Format
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -723,6 +754,21 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -740,13 +786,41 @@
 
 
 <h1 id="minimessage-format">MiniMessage Format<a class="headerlink" href="#minimessage-format" title="Permanent link">&para;</a></h1>
+<p>The <a href="https://docs.adventure.kyori.net/minimessage/format.html">MiniMessage Format</a> is a special parser that makes reading formatted messages a lot easier.  </p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You can use the <a href="https://webui.adventure.kyori.net/?mode=chat_closed&amp;input=%3Caqua%3E%5B%3Cgreen%3E%3Cchannel.name%3E%3C%2Fgreen%3E%5D%3C%2Faqua%3E%3Cdark_aqua%3E%5BDev%5D%3Cyellow%3E%3Chover%3Ashow_text%3A'%3Csource.display_name%3E%0A%3Cgray%3ERank%3A%20%3Caqua%3EDev'%3E%3Csource.display_name%3E%3C%2Fhover%3E%3C%2Fyellow%3E%3Cgray%3E%3A%20%3Ctext%3E&amp;bg=grass&amp;st=%7B%22channel.name%22%3A%22Global%22%2C%22text%22%3A%22Hi%22%2C%22channel.key%22%3A%22global%22%2C%22source.name%22%3A%22Silthus%22%2C%22source.display_name%22%3A%22Silthus%22%7D">MiniMessage Web Viewer</a> to test your formats and preview them without a running server.</p>
+</div>
+<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
+<p>The following examples all set the <a href="../channels/#message_format"><code>message_format</code></a> of the channel. Formatting the messages sent to the channel.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>You can click on the images to open the web viewer with the example and play around with it.</p>
+</div>
+<p><a href="https://webui.adventure.kyori.net/?mode=chat_closed&amp;input=%3Cyellow%3E%3Csource.display_name%3E%3Cgray%3E%3A%20%3Ctext%3E&amp;bg=grass&amp;st=%7B%22channel.name%22%3A%22Global%22%2C%22text%22%3A%22Hi%22%2C%22channel.key%22%3A%22global%22%2C%22source.name%22%3A%22Silthus%22%2C%22source.display_name%22%3A%22Silthus%22%7D"><img align="right" alt="Example 1" src="../images/mm_example1.png" /></a></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">message_format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;yellow&gt;&lt;source.display_name&gt;&lt;gray&gt;:</span><span class="nv"> </span><span class="s">&lt;text&gt;&quot;</span><span class="w"></span>
+</code></pre></div>
+<hr>
+
+<p><a href="https://webui.adventure.kyori.net/?mode=chat_closed&amp;input=%3Chover%3Ashow_text%3A'%3Csource.name%3E'%3E%3Csource.display_name%3E%3C%2Fhover%3E%20%3E%20%3C%23fa9411%3E%3Ctext%3E&amp;bg=grass&amp;st=%7B%22channel.name%22%3A%22Global%22%2C%22text%22%3A%22Hi%22%2C%22channel.key%22%3A%22global%22%2C%22source.name%22%3A%22Silthus%22%2C%22source.display_name%22%3A%22Silthus%22%7D"><img align="right" alt="Example 2" src="../images/mm_example2.png" /></a></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">message_format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;hover:show_text:&#39;&lt;source.name&gt;&#39;&gt;&lt;source.display_name&gt;&lt;/hover&gt;</span><span class="nv"> </span><span class="s">&gt;</span><span class="nv"> </span><span class="s">&lt;#fa9411&gt;&lt;text&gt;&quot;</span><span class="w"></span>
+</code></pre></div>
+<hr>
+
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">message_format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;yellow&gt;&lt;source.name&gt;:</span><span class="nv"> </span><span class="s">&lt;gradient:#5e4fa2:#f79459:red&gt;&lt;text&gt;&lt;/gradient&gt;&quot;</span><span class="w"></span>
+</code></pre></div>
+<p><a href="https://webui.adventure.kyori.net/?mode=chat_closed&amp;input=%3Cyellow%3E%3Csource.name%3E%3A%20%3Cgradient%3A%235e4fa2%3A%23f79459%3Ared%3E%3Ctext%3E%3C%2Fgradient%3E%20&amp;bg=grass&amp;st=%7B%22channel.name%22%3A%22Global%22%2C%22text%22%3A%22Hi%20there%20how%20are%20you%20Mr.%20Gradient%3F%22%2C%22channel.key%22%3A%22global%22%2C%22source.name%22%3A%22Silthus%22%2C%22source.display_name%22%3A%22Silthus%22%7D"><img alt="Example 3" src="../images/mm_example3.png" /></a></p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Visit the official <a href="https://docs.adventure.kyori.net/minimessage/format.html">MiniMessage Documentation</a> for even more cool features and in depth explanation.</p>
+</div>
 
   <hr>
 <div class="md-source-file">
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">February 24, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">February 25, 2022</span>
       
         <br>
         Created:
