@@ -37,7 +37,9 @@ import net.silthus.schat.command.Result;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.events.channel.JoinChannelEvent;
 import net.silthus.schat.policies.JoinChannelPolicy;
+import org.jetbrains.annotations.NotNull;
 
+import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.command.Result.error;
 import static net.silthus.schat.command.Result.success;
 import static net.silthus.schat.policies.JoinChannelPolicy.JOIN_CHANNEL_POLICY;
@@ -94,6 +96,14 @@ public class JoinChannelCommand implements Command {
     }
 
     private Result handleJoinChannelError(Chatter chatter, Channel channel) {
+        if (channel.isNot(PRIVATE))
+            return leaveChannel(chatter, channel);
+        else
+            return success();
+    }
+
+    @NotNull
+    private Result leaveChannel(Chatter chatter, Channel channel) {
         chatter.leave(channel);
         return error(new AccessDenied());
     }
