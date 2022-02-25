@@ -97,6 +97,15 @@ final class ChannelImpl implements Channel {
         this.policies = Map.copyOf(builder.policies);
     }
 
+    @Override
+    public @NotNull ChannelImpl settings(@NonNull Settings settings) {
+        this.settings = settings.toBuilder()
+            .withStatic(KEY, key())
+            .withStatic(DISPLAY_NAME, displayName())
+            .create();
+        return this;
+    }
+
     public @NotNull @Unmodifiable Messages messages() {
         return Messages.unmodifiable(messages);
     }

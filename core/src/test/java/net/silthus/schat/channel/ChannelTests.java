@@ -28,6 +28,7 @@ import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.commands.SendMessageResult;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.policies.JoinChannelPolicy;
 import net.silthus.schat.policies.SendChannelMessagePolicy;
 import org.jetbrains.annotations.NotNull;
@@ -39,6 +40,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.channel.Channel.DISPLAY_NAME;
+import static net.silthus.schat.channel.Channel.KEY;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
@@ -108,14 +110,25 @@ class ChannelTests {
         verify(target).sendMessage(message);
     }
 
-    @Nested class given_no_display_name {
+    @Nested
+    class given_no_display_name {
         @Test
         void uses_key_as_display_name() {
             assertThat(channel.displayName()).isEqualTo(text(channel.key()));
         }
     }
 
-    @Nested class given_display_name {
+    @Test
+    void when_settings_are_overwritten_key_and_name_is_kept() {
+        final Channel channel = channelWith("test");
+        channel.settings(Settings.createSettings());
+
+        assertThat(channel.get(KEY)).isPresent().get().isEqualTo("test");
+        assertThat(channel.get(DISPLAY_NAME)).isEqualTo(text("test"));
+    }
+
+    @Nested
+    class given_display_name {
         private final TextComponent name = text("Test Channel");
 
         @BeforeEach
