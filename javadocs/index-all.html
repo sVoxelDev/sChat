@@ -409,7 +409,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Closes this channel and removes all targets from it.</div>
 </dd>
 <dt><a href="net/silthus/schat/eventbus/EventBus.html#close()" class="member-name-link">close()</a> - Method in interface net.silthus.schat.eventbus.<a href="net/silthus/schat/eventbus/EventBus.html" title="interface in net.silthus.schat.eventbus">EventBus</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Closes the event bus unsubscribing all event handlers freeing up resource locks.</div>
+</dd>
 <dt><a href="net/silthus/schat/eventbus/EventSubscription.html#close()" class="member-name-link">close()</a> - Method in interface net.silthus.schat.eventbus.<a href="net/silthus/schat/eventbus/EventSubscription.html" title="interface in net.silthus.schat.eventbus">EventSubscription</a></dt>
 <dd>
 <div class="block">Unregisters this handler from the event bus.</div>
@@ -733,9 +735,13 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/silthus/schat/commands/SendMessageCommand.html#eventBus()" class="member-name-link">eventBus()</a> - Method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/SendMessageCommand.html" title="class in net.silthus.schat.commands">SendMessageCommand</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/eventbus/EventBus.html#eventBus()" class="member-name-link">eventBus()</a> - Static method in interface net.silthus.schat.eventbus.<a href="net/silthus/schat/eventbus/EventBus.html" title="interface in net.silthus.schat.eventbus">EventBus</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Creates a new event bus instance.</div>
+</dd>
 <dt><a href="net/silthus/schat/eventbus/EventBus.html#eventBus(boolean)" class="member-name-link">eventBus(boolean)</a> - Static method in interface net.silthus.schat.eventbus.<a href="net/silthus/schat/eventbus/EventBus.html" title="interface in net.silthus.schat.eventbus">EventBus</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Creates a new event bus that is optionally logging all interactions.</div>
+</dd>
 <dt><a href="net/silthus/schat/chatter/Chatter.Builder.html#eventBus(net.silthus.schat.eventbus.EventBus)" class="member-name-link">eventBus(EventBus)</a> - Method in interface net.silthus.schat.chatter.<a href="net/silthus/schat/chatter/Chatter.Builder.html" title="interface in net.silthus.schat.chatter">Chatter.Builder</a></dt>
 <dd>
 <div class="block">Sets the event bus to use by this chatter.</div>
@@ -1359,7 +1365,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Contains the central business logic implemented using the command pattern.</div>
 </dd>
 <dt><a href="net/silthus/schat/eventbus/package-summary.html">net.silthus.schat.eventbus</a> - package net.silthus.schat.eventbus</dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">The API for dispatching and listening to internal <a href="net/silthus/schat/events/SChatEvent.html" title="interface in net.silthus.schat.events"><code>SChatEvent</code></a>s.</div>
+</dd>
 <dt><a href="net/silthus/schat/events/package-summary.html">net.silthus.schat.events</a> - package net.silthus.schat.events</dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/events/channel/package-summary.html">net.silthus.schat.events.channel</a> - package net.silthus.schat.events.channel</dt>
@@ -1578,6 +1586,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/silthus/schat/command/Result.html#raiseError()" class="member-name-link">raiseError()</a> - Method in interface net.silthus.schat.command.<a href="net/silthus/schat/command/Result.html" title="interface in net.silthus.schat.command">Result</a></dt>
 <dd>
 <div class="block">Raises an <a href="net/silthus/schat/command/Result.Error.html" title="class in net.silthus.schat.command"><code>Result.Error</code></a> if the result <a href="net/silthus/schat/command/Result.html#wasFailure()"><code>Result.wasFailure()</code></a> and contains a <a href="net/silthus/schat/command/Result.html#failureReason()"><code>Result.failureReason()</code></a>.</div>
+</dd>
+<dt><a href="net/silthus/schat/eventbus/EventBus.html#register(java.lang.Object)" class="member-name-link">register(Object)</a> - Method in interface net.silthus.schat.eventbus.<a href="net/silthus/schat/eventbus/EventBus.html" title="interface in net.silthus.schat.eventbus">EventBus</a></dt>
+<dd>
+<div class="block">Registers all methods of the given listener annotated with <a href="net/silthus/schat/eventbus/Subscribe.html" title="annotation interface in net.silthus.schat.eventbus"><code>Subscribe</code></a> as event handlers.</div>
 </dd>
 <dt><a href="net/silthus/schat/events/channel/RegisteredChannelEvent.html" class="type-name-link" title="class in net.silthus.schat.events.channel">RegisteredChannelEvent</a> - Record Class in <a href="net/silthus/schat/events/channel/package-summary.html">net.silthus.schat.events.channel</a></dt>
 <dd>
@@ -1829,6 +1841,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/message/Message.html#SOURCE" class="member-name-link">SOURCE</a> - Static variable in interface net.silthus.schat.message.<a href="net/silthus/schat/message/Message.html" title="interface in net.silthus.schat.message">Message</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/eventbus/Subscribe.html" class="type-name-link" title="annotation interface in net.silthus.schat.eventbus">Subscribe</a> - Annotation Interface in <a href="net/silthus/schat/eventbus/package-summary.html">net.silthus.schat.eventbus</a></dt>
+<dd>
+<div class="block">Subscribes the event in the method parameters to the event bus.</div>
+</dd>
 <dt><a href="net/silthus/schat/eventbus/EventBus.html#subscriptions(java.lang.Class)" class="member-name-link">subscriptions(Class&lt;E&gt;)</a> - Method in interface net.silthus.schat.eventbus.<a href="net/silthus/schat/eventbus/EventBus.html" title="interface in net.silthus.schat.eventbus">EventBus</a></dt>
 <dd>
 <div class="block">Gets a set of all registered handlers for a given event.</div>

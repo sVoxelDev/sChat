@@ -101,7 +101,9 @@ extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/ja
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#close()" class="member-name-link">close</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Closes the event bus unsubscribing all event handlers freeing up resource locks.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="EventBus.html" title="interface in net.silthus.schat.eventbus">EventBus</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#empty()" class="member-name-link">empty</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
@@ -109,10 +111,14 @@ extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/ja
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="EventBus.html" title="interface in net.silthus.schat.eventbus">EventBus</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#eventBus()" class="member-name-link">eventBus</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Creates a new event bus instance.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static <a href="EventBus.html" title="interface in net.silthus.schat.eventbus">EventBus</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#eventBus(boolean)" class="member-name-link">eventBus</a><wbr>(boolean&nbsp;debug)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
+<div class="block">Creates a new event bus that is optionally logging all interactions.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;E extends <a href="../events/SChatEvent.html" title="interface in net.silthus.schat.events">SChatEvent</a>&gt;<br>@NonNull <a href="EventSubscription.html" title="interface in net.silthus.schat.eventbus">EventSubscription</a>&lt;E&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#on(java.lang.Class,java.util.function.Consumer)" class="member-name-link">on</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;E&gt;&nbsp;eventClass,
  @NonNull <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;? super E&gt;&nbsp;handler)</code></div>
@@ -124,9 +130,14 @@ extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/ja
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Posts a new event to the event bus informing all subscribers about the event.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;E extends <a href="../events/SChatEvent.html" title="interface in net.silthus.schat.events">SChatEvent</a>&gt;<br>@NonNull @Unmodifiable <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="EventSubscription.html" title="interface in net.silthus.schat.eventbus">EventSubscription</a>&lt;E&gt;&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#subscriptions(java.lang.Class)" class="member-name-link">subscriptions</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;E&gt;&nbsp;eventClass)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NonNull @Unmodifiable <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="EventSubscription.html" title="interface in net.silthus.schat.eventbus">EventSubscription</a>&lt;?&gt;&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#register(java.lang.Object)" class="member-name-link">register</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;listener)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Registers all methods of the given listener annotated with <a href="Subscribe.html" title="annotation interface in net.silthus.schat.eventbus"><code>Subscribe</code></a> as event handlers.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;E extends <a href="../events/SChatEvent.html" title="interface in net.silthus.schat.events">SChatEvent</a>&gt;<br>@NonNull @Unmodifiable <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="EventSubscription.html" title="interface in net.silthus.schat.eventbus">EventSubscription</a>&lt;E&gt;&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#subscriptions(java.lang.Class)" class="member-name-link">subscriptions</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;E&gt;&nbsp;eventClass)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets a set of all registered handlers for a given event.</div>
 </div>
 </div>
@@ -160,12 +171,30 @@ extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/ja
 <section class="detail" id="eventBus()">
 <h3>eventBus</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="EventBus.html" title="interface in net.silthus.schat.eventbus">EventBus</a></span>&nbsp;<span class="element-name">eventBus</span>()</div>
+<div class="block">Creates a new event bus instance.
+
+ <p>Make sure to free up the event bus calling <a href="#close()"><code>close()</code></a>.</p></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the created event bus</dd>
+<dt>Since:</dt>
+<dd>next</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="eventBus(boolean)">
 <h3>eventBus</h3>
 <div class="member-signature"><span class="modifiers">static</span>&nbsp;<span class="return-type"><a href="EventBus.html" title="interface in net.silthus.schat.eventbus">EventBus</a></span>&nbsp;<span class="element-name">eventBus</span><wbr><span class="parameters">(boolean&nbsp;debug)</span></div>
+<div class="block">Creates a new event bus that is optionally logging all interactions.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>debug</code> - true to log all calls to the bus</dd>
+<dt>Returns:</dt>
+<dd>the created event bus</dd>
+<dt>Since:</dt>
+<dd>next</dd>
+</dl>
 </section>
 </li>
 <li>
@@ -210,6 +239,24 @@ extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/ja
 </section>
 </li>
 <li>
+<section class="detail" id="register(java.lang.Object)">
+<h3>register</h3>
+<div class="member-signature"><span class="annotations">@NonNull
+</span><span class="return-type">@NonNull @Unmodifiable <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Set.html" title="class or interface in java.util" class="external-link">Set</a>&lt;<a href="EventSubscription.html" title="interface in net.silthus.schat.eventbus">EventSubscription</a>&lt;?&gt;&gt;</span>&nbsp;<span class="element-name">register</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;listener)</span></div>
+<div class="block">Registers all methods of the given listener annotated with <a href="Subscribe.html" title="annotation interface in net.silthus.schat.eventbus"><code>Subscribe</code></a> as event handlers.
+
+ <p>All event handler methods must have a single parameter, being the event they want to subscribe to.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>listener</code> - the listener to search for events</dd>
+<dt>Returns:</dt>
+<dd>a list of registered event subscriptions</dd>
+<dt>Since:</dt>
+<dd>next</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="subscriptions(java.lang.Class)">
 <h3>subscriptions</h3>
 <div class="member-signature"><span class="annotations">@NonNull
@@ -233,9 +280,12 @@ extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/ja
 <section class="detail" id="close()">
 <h3>close</h3>
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">close</span>()</div>
+<div class="block">Closes the event bus unsubscribing all event handlers freeing up resource locks.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/AutoCloseable.html#close()" title="class or interface in java.lang" class="external-link">close</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/AutoCloseable.html" title="class or interface in java.lang" class="external-link">AutoCloseable</a></code></dd>
+<dt>Since:</dt>
+<dd>next</dd>
 </dl>
 </section>
 </li>
