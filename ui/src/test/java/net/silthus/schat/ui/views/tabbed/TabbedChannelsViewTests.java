@@ -444,19 +444,4 @@ class TabbedChannelsViewTests {
                 | <red><hover:show_text:"<lang:schat.hover.leave-channel:\\"<gray>zzz\\">"><click:run_command:"/channel leave zzz">❌</red><green><underlined>zzz</click></hover></underlined></green> | <red><hover:show_text:"<lang:schat.hover.leave-channel:\\"<gray>aaa\\">"><click:run_command:"/channel leave aaa">❌</click></red><gray><click:run_command:"/channel join aaa">aaa</click></hover></gray> |""");
         }
     }
-
-    @Nested
-    class given_rendered_view {
-        private Component render;
-
-        @BeforeEach
-        void setUp() {
-            render = view.render();
-        }
-
-        @Test
-        void isRenderedView_returns_true() {
-            assertThat(view.isRenderedView(render)).isTrue();
-        }
-    }
 }
