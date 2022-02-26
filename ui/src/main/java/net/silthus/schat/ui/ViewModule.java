@@ -28,7 +28,9 @@ import lombok.experimental.Accessors;
 import net.silthus.schat.channel.PrivateChannel;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.pointer.Settings;
+import net.silthus.schat.ui.views.Views;
 
+import static net.silthus.schat.ui.ViewProvider.cachingViewProvider;
 import static net.silthus.schat.ui.format.Format.ACTIVE_TAB_FORMAT;
 import static net.silthus.schat.ui.format.Format.INACTIVE_TAB_FORMAT;
 import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
@@ -40,12 +42,18 @@ public final class ViewModule {
 
     private final ViewConfig config;
     private final EventBus eventBus;
+    private final ViewFactory viewFactory;
+    private final ViewProvider viewProvider;
+    private final ViewController viewController;
     private final Replacements replacements = new Replacements();
-    private final ViewController viewController = new ViewController(this);
 
     public ViewModule(ViewConfig config, EventBus eventBus) {
         this.config = config;
         this.eventBus = eventBus;
+        this.viewFactory = chatter -> Views.tabbedChannels(chatter, config());
+        this.viewProvider = cachingViewProvider(viewFactory());
+
+        this.viewController = new ViewController(viewProvider, replacements);
 
         init();
     }

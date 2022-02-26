@@ -41,7 +41,6 @@ import net.silthus.schat.platform.messaging.GatewayProviderRegistry;
 import net.silthus.schat.platform.messaging.MockMessagingGatewayProvider;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.platform.sender.SenderMock;
-import net.silthus.schat.ui.ViewProvider;
 
 import static net.silthus.schat.platform.commands.CommandTestUtils.createCommandManager;
 import static net.silthus.schat.platform.config.TestConfigurationAdapter.testConfigAdapter;
@@ -83,8 +82,8 @@ public class TestServer extends AbstractSChatServerPlugin {
     }
 
     @Override
-    protected AbstractChatterFactory createChatterFactory(final ViewProvider viewProvider) {
-        chatterFactory = new ChatterFactoryStub(viewProvider);
+    protected AbstractChatterFactory createChatterFactory() {
+        chatterFactory = new ChatterFactoryStub();
         return chatterFactory;
     }
 

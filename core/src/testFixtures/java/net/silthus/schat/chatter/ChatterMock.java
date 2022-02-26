@@ -62,8 +62,6 @@ public final class ChatterMock extends ChatterImpl {
         return new ChatterMock((Builder) chatter);
     }
 
-    private int viewUpdateCount = 0;
-    private boolean viewUpdated = false;
     private final PermissionHandler permissionHandler = mock(PermissionHandler.class);
 
     private ChatterMock(Builder builder) {
@@ -73,13 +71,6 @@ public final class ChatterMock extends ChatterImpl {
     @Override
     public boolean hasPermission(String permission) {
         return permissionHandler.hasPermission(permission);
-    }
-
-    @Override
-    public void updateView() {
-        super.updateView();
-        this.viewUpdateCount++;
-        this.viewUpdated = true;
     }
 
     public void mockHasPermission(boolean result) {
@@ -116,23 +107,6 @@ public final class ChatterMock extends ChatterImpl {
     public void assertActiveChannel(Channel channel) {
         assertThat(activeChannel()).isPresent().get()
             .isEqualTo(channel);
-    }
-
-    public void assertViewUpdated() {
-        assertThat(viewUpdated).isTrue();
-    }
-
-    public void assertViewUpdated(int times) {
-        assertThat(viewUpdateCount).isEqualTo(times);
-    }
-
-    public void assertViewNotUpdated() {
-        assertThat(viewUpdated).isFalse();
-    }
-
-    public void resetViewUpdate() {
-        viewUpdateCount = 0;
-        viewUpdated = false;
     }
 
     public void assertJoinedChannel(Channel channel) {

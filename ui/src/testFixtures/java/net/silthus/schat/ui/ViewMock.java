@@ -23,30 +23,45 @@
  */
 package net.silthus.schat.ui;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
 
-public interface ViewConnector {
+import static org.assertj.core.api.Assertions.assertThat;
 
-    static ViewConnector empty() {
-        return () -> {};
+@Getter
+@Setter
+@Accessors(fluent = true)
+public class ViewMock implements View {
+
+    public static ViewMock viewMock(Chatter chatter) {
+        return new ViewMock(chatter);
     }
 
-    void update();
+    private final Chatter chatter;
+    private Component render = Component.empty();
+    private boolean renderCalled = false;
+    private int updateCalls = 0;
 
-    interface Factory {
-        static Factory empty() {
-            return chatter -> ViewConnector.empty();
-        }
-
-        ViewConnector create(Chatter chatter);
+    protected ViewMock(Chatter chatter) {
+        this.chatter = chatter;
     }
 
-    interface Out {
-        static Out empty() {
-            return renderedView -> {};
-        }
+    @Override
+    public Component render() {
+        this.renderCalled = true;
+        return render;
+    }
 
-        void send(Component renderedView);
+    @Override
+    public void update() {
+        View.super.update();
+        updateCalls++;
+    }
+
+    public void assertUpdateCalled() {
+        assertThat(updateCalls).isGreaterThan(0);
     }
 }

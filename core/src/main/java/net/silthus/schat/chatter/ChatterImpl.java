@@ -34,6 +34,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.commands.SendMessageResult;
 import net.silthus.schat.eventbus.EventBus;
@@ -45,7 +46,6 @@ import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.Messages;
 import net.silthus.schat.pointer.Pointers;
-import net.silthus.schat.ui.ViewConnector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -71,7 +71,7 @@ non-sealed class ChatterImpl implements Chatter {
 
     private final Identity identity;
     private final transient @NonNull EventBus eventBus;
-    private final transient @NonNull ViewConnector viewConnector;
+    private final transient @NonNull MessageHandler messageHandler;
     private final transient @NonNull PermissionHandler permissionHandler;
     private final transient @NonNull Pointers pointers;
 
@@ -83,7 +83,7 @@ non-sealed class ChatterImpl implements Chatter {
     protected ChatterImpl(Builder builder) {
         this.identity = builder.identity();
         this.eventBus = builder.eventBus();
-        this.viewConnector = builder.viewConnector().create(this);
+        this.messageHandler = builder.messageHandler;
         this.permissionHandler = builder.permissionHandler();
         this.pointers = Pointers.pointersBuilder()
             .withForward(Identity.ID, identity(), Identity.ID)
@@ -98,10 +98,11 @@ non-sealed class ChatterImpl implements Chatter {
         if (isActiveChannel(activeChannel)) return this;
         if (activeChannel != null)
             join(activeChannel);
+
         Channel oldChannel = this.activeChannel;
         this.activeChannel = activeChannel;
         fireChangedActiveChannelEvent(oldChannel, activeChannel);
-        this.updateView();
+
         return this;
     }
 
@@ -127,10 +128,8 @@ non-sealed class ChatterImpl implements Chatter {
     @Override
     public void join(@NonNull Channel channel) {
         channel.addTarget(this);
-        if (this.channels.add(channel)) {
+        if (this.channels.add(channel))
             fireJoinedChannelEvent(channel);
-            updateView();
-        }
     }
 
     private void fireJoinedChannelEvent(@NotNull Channel channel) {
@@ -166,20 +165,19 @@ non-sealed class ChatterImpl implements Chatter {
     }
 
     @Override
+    public void sendRawMessage(Component message) {
+        messageHandler().sendRawMessage(message);
+    }
+
+    @Override
     public SendMessageResult sendMessage(@NonNull Message message) {
-        if (messages.add(message)) {
+        if (messages.add(message))
             fireReceivedMessageEvent(message);
-            updateView();
-        }
         return success(message);
     }
 
     private void fireReceivedMessageEvent(@NotNull Message message) {
         eventBus().post(new ChatterReceivedMessageEvent(this, message));
-    }
-
-    public void updateView() {
-        viewConnector.update();
     }
 
     @Getter
@@ -188,7 +186,8 @@ non-sealed class ChatterImpl implements Chatter {
     static final class Builder implements Chatter.Builder {
 
         private final Identity identity;
-        private @NonNull ViewConnector.Factory viewConnector = chatter -> () -> {};
+        private @NonNull MessageHandler messageHandler = message -> {
+        };
         private @NonNull PermissionHandler permissionHandler = permission -> false;
         private @NonNull EventBus eventBus = EventBus.empty();
 
@@ -247,6 +246,11 @@ non-sealed class ChatterImpl implements Chatter {
         @Override
         public @NotNull @Unmodifiable Messages messages() {
             return Messages.of();
+        }
+
+        @Override
+        public void sendRawMessage(Component message) {
+
         }
 
         @Override

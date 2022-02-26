@@ -44,7 +44,6 @@ import net.silthus.schat.pointer.Pointer;
 import net.silthus.schat.policies.JoinChannelPolicy;
 import net.silthus.schat.policies.LeaveChannelPolicy;
 import net.silthus.schat.repository.Entity;
-import net.silthus.schat.ui.ViewConnector;
 import net.silthus.schat.util.Permissable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -196,6 +195,16 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
     @NotNull @Unmodifiable Messages messages();
 
     /**
+     * Sends a raw message to the chatter that will not be wrapped into a {@link Message}.
+     *
+     * <p>The message is directly forwarded to the underlying platform consumer using the {@link MessageHandler}.</p>
+     *
+     * @param message the message to sent
+     * @since next
+     */
+    void sendRawMessage(Component message);
+
+    /**
      * Helper method to send a message using this chatter as the source.
      *
      * @param text the text of the message
@@ -233,19 +242,19 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
          * @since next
          */
         @ApiStatus.Internal
-        @NotNull Builder eventBus(EventBus eventBus);
+        @NotNull Builder eventBus(@NonNull EventBus eventBus);
 
         /**
-         * Sets the view connector that is updated when the view of the chatter must be updated.
+         * Sets the message handler used by this chatter.
          *
-         * @param viewConnectorFactory the view connector
+         * <p>This is the gateway to the consuming client that processes and forwards the actual rendered messages.</p>
+         *
+         * @param messageHandler the message handler to set
          * @return this builder
          * @since next
-         * @deprecated will be removed in favor of event driven view updates
          */
-        @Deprecated(since = "next", forRemoval = true)
         @ApiStatus.Internal
-        @NotNull Builder viewConnector(@NonNull ViewConnector.Factory viewConnectorFactory);
+        @NotNull Builder messageHandler(@NonNull MessageHandler messageHandler);
 
         /**
          * Sets the permission handler used by this chatter.
@@ -282,5 +291,25 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
          * @since next
          */
         boolean hasPermission(String permission);
+    }
+
+    /**
+     * The message handler is used to dispatch raw rendered messages to the chatter.
+     *
+     * <p>The message is directly forwarded to the receiver on the implementing platform.</p>
+     *
+     * @since next
+     */
+    interface MessageHandler {
+
+        /**
+         * Sends a raw rendered message or view to the chatter.
+         *
+         * <p>This method should, in the most cases, only be called by the view after it has been rendered.</p>
+         *
+         * @param message the raw message to sent
+         * @since next
+         */
+        void sendRawMessage(Component message);
     }
 }

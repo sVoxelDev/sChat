@@ -29,25 +29,13 @@ import java.util.UUID;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.platform.sender.SenderMock;
-import net.silthus.schat.ui.ViewConnector;
-import net.silthus.schat.ui.ViewProvider;
 import org.jetbrains.annotations.NotNull;
 
-import static net.silthus.schat.ui.ViewFactory.empty;
-import static net.silthus.schat.ui.ViewProvider.cachingViewProvider;
 import static net.silthus.schat.util.StringUtil.randomString;
 
 public class ChatterFactoryStub extends AbstractChatterFactory {
 
     private final Map<UUID, SenderMock> chatterStubs = new HashMap<>();
-
-    public ChatterFactoryStub() {
-        super(cachingViewProvider(empty()));
-    }
-
-    public ChatterFactoryStub(ViewProvider viewProvider) {
-        super(viewProvider);
-    }
 
     public Chatter stubSenderAsChatter(SenderMock sender) {
         chatterStubs.put(sender.uniqueId(), sender);
@@ -73,7 +61,10 @@ public class ChatterFactoryStub extends AbstractChatterFactory {
     }
 
     @Override
-    protected ViewConnector.Factory createViewConnector(UUID id) {
-        return ViewConnector.Factory.empty();
+    protected Chatter.MessageHandler createMessageHandler(UUID id) {
+        if (chatterStubs.containsKey(id))
+            return msg -> chatterStubs.get(id).sendMessage(msg);
+        return message -> {
+        };
     }
 }

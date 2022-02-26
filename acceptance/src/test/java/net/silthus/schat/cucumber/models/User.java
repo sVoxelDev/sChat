@@ -82,7 +82,7 @@ public class User {
     }
 
     public View view() {
-        return server().plugin().viewProvider().view(chatter());
+        return server().plugin().viewModule().viewProvider().view(chatter());
     }
 
     @Override

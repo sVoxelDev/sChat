@@ -27,24 +27,17 @@ import java.util.UUID;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.identity.Identity;
-import net.silthus.schat.ui.ViewConnector;
-import net.silthus.schat.ui.ViewProvider;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.chatter.Chatter.chatterBuilder;
 
 public abstract class AbstractChatterFactory implements ChatterFactory {
-    protected final ViewProvider viewProvider;
-
-    public AbstractChatterFactory(ViewProvider viewProvider) {
-        this.viewProvider = viewProvider;
-    }
 
     @Override
     public final Chatter createChatter(UUID id) {
         return chatterBuilder(createIdentity(id))
-            .viewConnector(createViewConnector(id))
             .permissionHandler(createPermissionHandler(id))
+            .messageHandler(createMessageHandler(id))
             .create();
     }
 
@@ -53,5 +46,6 @@ public abstract class AbstractChatterFactory implements ChatterFactory {
 
     protected abstract Chatter.PermissionHandler createPermissionHandler(UUID id);
 
-    protected abstract ViewConnector.Factory createViewConnector(UUID id);
+    protected abstract Chatter.MessageHandler createMessageHandler(UUID id);
+
 }

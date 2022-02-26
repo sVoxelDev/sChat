@@ -112,12 +112,6 @@ class JoinChannelCommandTests {
         }
 
         @Test
-        void then_view_is_updated() {
-            joinChannel();
-            chatter.assertViewUpdated();
-        }
-
-        @Test
         void then_the_post_join_channel_event_is_fired() {
             joinChannel();
             eventBus.assertEventFired(new ChatterJoinedChannelEvent(chatter, channel));
@@ -134,13 +128,6 @@ class JoinChannelCommandTests {
                 joinChannel();
                 assertChannelHasOnlyTarget(channel, chatter);
                 assertChatterHasOnlyChannel(chatter, channel);
-            }
-
-            @Test
-            void then_view_does_not_update() {
-                chatter.resetViewUpdate();
-                joinChannel();
-                chatter.assertViewNotUpdated();
             }
         }
     }

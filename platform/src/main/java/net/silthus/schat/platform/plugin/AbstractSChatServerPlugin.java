@@ -49,10 +49,7 @@ import net.silthus.schat.platform.commands.ChannelCommands;
 import net.silthus.schat.platform.commands.Commands;
 import net.silthus.schat.platform.commands.PrivateMessageCommands;
 import net.silthus.schat.platform.sender.Sender;
-import net.silthus.schat.ui.ViewFactory;
 import net.silthus.schat.ui.ViewModule;
-import net.silthus.schat.ui.ViewProvider;
-import net.silthus.schat.ui.views.Views;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -62,7 +59,6 @@ import static net.silthus.schat.platform.commands.parser.ChannelArgument.registe
 import static net.silthus.schat.platform.commands.parser.ChatterArgument.registerChatterArgument;
 import static net.silthus.schat.platform.config.ConfigKeys.DEBUG;
 import static net.silthus.schat.platform.config.ConfigKeys.VIEW_CONFIG;
-import static net.silthus.schat.ui.ViewProvider.cachingViewProvider;
 import static net.silthus.schat.util.gson.types.ChannelSerializer.CHANNEL_TYPE;
 import static net.silthus.schat.util.gson.types.ChannelSerializer.createChannelSerializer;
 import static net.silthus.schat.util.gson.types.TargetsSerializer.TARGETS_TYPE;
@@ -72,8 +68,6 @@ import static net.silthus.schat.util.gson.types.TargetsSerializer.createTargetsS
 @Accessors(fluent = true)
 public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
-    private ViewFactory viewFactory;
-    private ViewProvider viewProvider;
     private ViewModule viewModule;
 
     private ChatterFactory chatterFactory;
@@ -92,13 +86,11 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
     @Override
     protected void onEnable() {
-        viewFactory = createViewFactory();
-        viewProvider = createViewProvider(viewFactory);
         viewModule = new ViewModule(config().get(VIEW_CONFIG), eventBus());
         viewModule.init();
 
         chatterRepository = createInMemoryChatterRepository(config().get(DEBUG));
-        chatterFactory = createChatterFactory(viewProvider);
+        chatterFactory = createChatterFactory();
         connectionListener = registerConnectionListener(chatterRepository, chatterFactory, messenger(), eventBus());
 
         channelRepository = createChannelRepository();
@@ -124,17 +116,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     protected void onDisable() {
     }
 
-    @ApiStatus.OverrideOnly
-    protected ViewFactory createViewFactory() {
-        return chatter -> Views.tabbedChannels(chatter, config().get(VIEW_CONFIG));
-    }
-
-    @ApiStatus.OverrideOnly
-    protected ViewProvider createViewProvider(ViewFactory viewFactory) {
-        return cachingViewProvider(viewFactory);
-    }
-
-    protected abstract AbstractChatterFactory createChatterFactory(final ViewProvider viewProvider);
+    protected abstract AbstractChatterFactory createChatterFactory();
 
     protected abstract ConnectionListener registerConnectionListener(ChatterRepository repository, ChatterFactory factory, Messenger messenger, EventBus eventBus);
 

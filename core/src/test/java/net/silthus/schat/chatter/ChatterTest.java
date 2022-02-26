@@ -31,7 +31,6 @@ import net.silthus.schat.events.chatter.ChatterChangedActiveChannelEvent;
 import net.silthus.schat.events.chatter.ChatterReceivedMessageEvent;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.ui.ViewConnectorMock;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -276,77 +275,6 @@ class ChatterTest {
             final Message message = randomMessage();
             chatter.sendMessage(message);
             eventBus.assertEventFired(new ChatterReceivedMessageEvent(chatter, message));
-        }
-
-        @Nested class given_valid_view_connector {
-            private final ViewConnectorMock view = new ViewConnectorMock();
-
-            @BeforeEach
-            void setUp() {
-                chatter = ChatterMock.chatterMock(identity, builder -> builder.viewConnector(c -> view));
-            }
-
-            private void assertViewUpdated() {
-                view.assertUpdateCalled();
-            }
-
-            private void assertViewNotUpdated() {
-                view.assertUpdateNotCalled();
-            }
-
-            private void assertLastMessageIs(Message message) {
-                assertThat(chatter.messages().last()).isEqualTo(message);
-            }
-
-            @Test
-            void then_message_handler_is_called() {
-                sendRandomMessage();
-                assertViewUpdated();
-            }
-
-            @Test
-            void then_context_holds_last_message() {
-                final Message message = sendRandomMessage();
-                assertLastMessageIs(message);
-            }
-
-            @Test
-            void when_active_channel_is_set_then_view_is_updated() {
-                chatter.activeChannel(randomChannel());
-                assertViewUpdated();
-            }
-
-            @Test
-            void when_channel_is_joined_then_view_is_updated() {
-                chatter.join(randomChannel());
-                assertViewUpdated();
-            }
-
-            @Test
-            void when_channel_is_already_joined_then_view_is_not_updated() {
-                final Channel channel = randomChannel();
-                chatter.join(channel);
-                view.resetUpdateCalls();
-                chatter.join(channel);
-                assertViewNotUpdated();
-            }
-
-            @Nested class update {
-                @Test
-                void given_no_messages_when_update_is_called_then_context_has_no_last_message() {
-                    chatter.updateView();
-                    assertViewUpdated();
-                    assertThat(chatter.messages().last()).isNull();
-                }
-
-                @Test
-                void given_messages_when_update_is_called_holds_last_message() {
-                    final Message message = sendRandomMessage();
-                    chatter.updateView();
-                    assertViewUpdated();
-                    assertLastMessageIs(message);
-                }
-            }
         }
     }
 
