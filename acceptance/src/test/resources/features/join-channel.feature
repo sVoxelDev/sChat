@@ -6,7 +6,6 @@ Feature: Join Channel
     When I execute '/ch global'
     Then I am a member of the global channel
     And the global channel is active
-    And I received the joined global channel message
 
   Scenario: User cannot join protected channel
     Given a protected channel protected
@@ -19,4 +18,3 @@ Feature: Join Channel
     And I have the 'schat.channel.protected.join' permission
     When I execute '/ch protected'
     Then I am a member of the protected channel
-    And I received the joined protected channel message
