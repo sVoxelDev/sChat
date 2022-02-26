@@ -30,7 +30,7 @@ import java.util.Map;
 import net.silthus.schat.platform.config.adapter.ConfigurationSection;
 import net.silthus.schat.platform.config.key.ConfigKey;
 import net.silthus.schat.platform.config.key.KeyedConfiguration;
-import net.silthus.schat.ui.ViewConfig;
+import net.silthus.schat.ui.view.ViewConfig;
 
 import static java.util.Objects.requireNonNullElse;
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.booleanKey;

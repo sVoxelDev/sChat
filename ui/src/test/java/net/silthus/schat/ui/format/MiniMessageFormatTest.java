@@ -27,8 +27,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.ui.View;
-import org.junit.jupiter.api.BeforeEach;
+import net.silthus.schat.ui.view.View;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.text;

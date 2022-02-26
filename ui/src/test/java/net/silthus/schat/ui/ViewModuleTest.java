@@ -27,6 +27,7 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.ui.view.ViewConfig;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

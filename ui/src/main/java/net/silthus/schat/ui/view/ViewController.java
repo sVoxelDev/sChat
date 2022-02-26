@@ -21,44 +21,36 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui;
+package net.silthus.schat.ui.view;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextReplacementConfig;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.eventbus.EventListener;
+import net.silthus.schat.events.message.SendChannelMessageEvent;
+import net.silthus.schat.message.Message;
+import net.silthus.schat.ui.format.Format;
+import net.silthus.schat.ui.placeholder.Replacements;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.message.MessageHelper.randomMessage;
-import static org.assertj.core.api.Assertions.assertThat;
+public class ViewController implements EventListener {
 
-@Nested
-class ReplacementsTests {
+    private final Replacements replacements;
 
-    private Replacements replacements;
-
-    @BeforeEach
-    void setUp() {
-        replacements = new Replacements();
-        replacements.addMessageReplacement(message -> TextReplacementConfig.builder()
-                .match("test")
-                .replacement("success")
-                .build());
+    public ViewController(Replacements replacements) {
+        this.replacements = replacements;
     }
 
-    @Test
-    void replaces_message_text_after_format() {
-        Component result = replacements.applyTo(randomMessage(), text("test"));
-
-        assertThat(result).isEqualTo(text("success"));
+    @Override
+    public void bind(EventBus bus) {
+        bus.on(SendChannelMessageEvent.class, this::handleMessage);
     }
 
-    @Test
-    void null_replacements_are_ignored() {
-        replacements.addMessageReplacement(message -> null);
-        Component result = replacements.applyTo(randomMessage(), text("foo"));
+    private void handleMessage(SendChannelMessageEvent event) {
+        final Component formatted = formatMessage(event);
+        event.message().set(Message.FORMATTED, replacements.applyTo(event.message(), formatted));
+    }
 
-        assertThat(result).isNotNull().isEqualTo(text("foo"));
+    private Component formatMessage(SendChannelMessageEvent event) {
+        return event.channel().get(Format.MESSAGE_FORMAT)
+            .format(View.empty(), event.message());
     }
 }

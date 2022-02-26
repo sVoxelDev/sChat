@@ -28,19 +28,20 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.flattener.ComponentFlattener;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.commands.CreatePrivateChannelCommand;
-import net.silthus.schat.commands.SendMessageCommand;
-import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.ui.View;
-import net.silthus.schat.ui.ViewConfig;
+import net.silthus.schat.ui.ViewModule;
+import net.silthus.schat.ui.view.ViewConfig;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -66,6 +67,7 @@ import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static net.silthus.schat.ui.format.Format.ACTIVE_TAB_FORMAT;
 import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
+import static net.silthus.schat.ui.util.ViewHelper.subscriptOf;
 import static net.silthus.schat.ui.views.Views.tabbedChannels;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -73,17 +75,27 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class TabbedChannelsViewTests {
 
     private static final @NotNull MiniMessage COMPONENT_SERIALIZER = MiniMessage.miniMessage();
+    private static final @NotNull MiniMessage COLOR_ONLY_SERIALIZER = MiniMessage.builder().tags(StandardTags.color()).build();
     private static final @NotNull PlainTextComponentSerializer PLAIN_TEXT_SERIALIZER = PlainTextComponentSerializer.plainText()
         .toBuilder().flattener(ComponentFlattener.textOnly()).build();
-    private Chatter chatter;
-    private View view;
+
+    private final EventBusMock eventBus = EventBusMock.eventBusMock();
+    private ChatterMock chatter;
+    private TabbedChannelsView view;
 
     @BeforeEach
     void setUp() {
         chatter = chatterMock(Identity.identity("Player"));
-        view = tabbedChannels(chatter, new ViewConfig());
-        CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(createInMemoryChannelRepository(EventBus.empty())));
-        SendMessageCommand.prototype(builder -> builder.eventBus(EventBus.empty()));
+        view = new TabbedChannelsView(chatter, new ViewConfig());
+        eventBus.register(view);
+
+        CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(createInMemoryChannelRepository(eventBus)));
+        ViewModule.configurePrivateChannel(new ViewConfig());
+    }
+
+    @AfterEach
+    void tearDown() {
+        eventBus.close();
     }
 
     @NotNull
@@ -133,6 +145,16 @@ class TabbedChannelsViewTests {
         assertThat(COMPONENT_SERIALIZER.serialize(view.render()).trim()).contains(expected);
     }
 
+    private void assertColorOnlyViewContains(String... expected) {
+        assertThat(COLOR_ONLY_SERIALIZER.serialize(view.render()).trim()).contains(expected);
+    }
+
+    @Test
+    void update_renders_view_and_sends_message() {
+        view.update();
+        chatter.assertReceivedRawMessage(view.render());
+    }
+
     @Nested
     class given_null_chatter {
 
@@ -171,13 +193,12 @@ class TabbedChannelsViewTests {
 
             @Test
             void uses_format() {
-                final ViewConfig config = new ViewConfig();
-                config.format().set(MESSAGE_FORMAT, (view, msg) ->
-                    text("<")
-                        .append(msg.getOrDefault(Message.SOURCE, Identity.nil()).displayName())
-                        .append(text("> "))
-                        .append(msg.getOrDefault(Message.TEXT, Component.empty())));
-                view = tabbedChannels(chatter, config);
+                view.config()
+                    .format().set(MESSAGE_FORMAT, (view, msg) ->
+                        text("<")
+                            .append(msg.getOrDefault(Message.SOURCE, Identity.nil()).displayName())
+                            .append(text("> "))
+                            .append(msg.getOrDefault(Message.TEXT, Component.empty())));
                 assertTextContains("<Bob> Hi");
             }
         }
@@ -192,8 +213,7 @@ class TabbedChannelsViewTests {
             sendMessageWithSource("Silthus", "Yo");
             assertViewRenders("""
                 Hey
-                <yellow>Silthus</yellow><gray>: Yo</gray>
-                | <red><lang:schat.view.no-channels></red> |"""
+                <yellow>Silthus</yellow><gray>: Yo</gray>"""
             );
         }
     }
@@ -244,7 +264,6 @@ class TabbedChannelsViewTests {
             class and_different_format_is_used {
                 @BeforeEach
                 void setUp() {
-                    view = tabbedChannels(chatter, new ViewConfig());
                     channel.set(ACTIVE_TAB_FORMAT, (view, type) -> type.getOrDefault(DISPLAY_NAME, empty())
                         .color(RED)
                         .decorate(UNDERLINED));
@@ -369,6 +388,12 @@ class TabbedChannelsViewTests {
                 void then_message_two_is_not_displayed() {
                     assertTextDoesNotContain("Bob: two");
                 }
+
+                @Test
+                @Disabled
+                void then_channel_two_has_unread_indicator() {
+                    assertColorOnlyViewContains("<red>" + subscriptOf(1));
+                }
             }
         }
 
@@ -404,9 +429,7 @@ class TabbedChannelsViewTests {
 
             @BeforeEach
             void setUp() {
-                final ViewConfig config = new ViewConfig();
-                config.channelJoinConfig(JoinConfiguration.builder().separator(text(" - ")).build());
-                view = tabbedChannels(chatter, config);
+                view.config().channelJoinConfig(JoinConfiguration.builder().separator(text(" - ")).build());
             }
 
             @Test
@@ -442,6 +465,56 @@ class TabbedChannelsViewTests {
                 Player: Hey
                 Player2: Hello
                 | <red><hover:show_text:"<lang:schat.hover.leave-channel:\\"<gray>zzz\\">"><click:run_command:"/channel leave zzz">❌</red><green><underlined>zzz</click></hover></underlined></green> | <red><hover:show_text:"<lang:schat.hover.leave-channel:\\"<gray>aaa\\">"><click:run_command:"/channel leave aaa">❌</click></red><gray><click:run_command:"/channel join aaa">aaa</click></hover></gray> |""");
+        }
+    }
+
+    @Nested
+    class dynamic_view_updates {
+
+        private void assertViewUpdated() {
+            chatter.assertLastRawMessage(view.render());
+        }
+
+        @Test
+        void joined_channel_updates_view() {
+            chatter.join(randomChannel());
+            assertViewUpdated();
+        }
+
+        @Test
+        void left_channel_removes_channel() {
+            final Channel channel = channelWith("test");
+            chatter.join(channel);
+            chatter.leave(channel);
+
+            assertTextDoesNotContain("test");
+            assertViewUpdated();
+        }
+
+        @Test
+        void changed_active_channel_updates_view() {
+            final Channel test = channelWith("test");
+            chatter.join(test);
+            chatter.activeChannel(channelWith("active"));
+            chatter.activeChannel(test);
+
+            assertViewUpdated();
+        }
+
+        @Test
+        void sendMessage_updates_view() {
+            chatter.sendMessage(randomMessage());
+
+            assertViewUpdated();
+        }
+
+        @Test
+        void sendChannelMessage_updates_view() {
+            final Channel channel = randomChannel();
+            chatter.activeChannel(channel);
+            channel.sendMessage(randomMessage());
+
+            assertViewUpdated();
         }
     }
 }

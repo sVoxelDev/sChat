@@ -75,7 +75,7 @@ import static net.silthus.schat.pointer.Setting.setting;
  *
  * @since next
  */
-public sealed interface Channel extends Entity<String>, Configurable<Channel>, MessageTarget, AutoCloseable permits ChannelImpl {
+public sealed interface Channel extends Entity<String>, Configurable<Channel>, MessageTarget, Comparable<Channel>, AutoCloseable permits ChannelImpl {
 
     /**
      * This is a pointer to the {@link #key()} of the channel.

@@ -34,7 +34,7 @@ import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.commands.CreatePrivateChannelCommand;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
-import net.silthus.schat.ui.View;
+import net.silthus.schat.ui.view.View;
 import net.silthus.schat.ui.views.tabbed.Tab;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -118,7 +118,7 @@ class ConfigTests {
         void loads_custom_private_chat_message_format() {
             final Component format = config.get(VIEW_CONFIG).format().get(MESSAGE_FORMAT)
                 .format(View.empty(), message("Hey").source(identity("Bob")).create());
-            assertThat(FORMATTER.serialize(format)).isEqualTo("<aqua><Bob></aqua>: Hey");
+            assertThat(FORMATTER.serialize(format)).isEqualTo("<aqua>[Bob]</aqua>: Hey");
         }
 
         @Test

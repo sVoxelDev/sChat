@@ -23,11 +23,15 @@
  */
 package net.silthus.schat.ui;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.message.Message;
+import net.silthus.schat.ui.view.View;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,9 +45,14 @@ public class ViewMock implements View {
     }
 
     private final Chatter chatter;
+    private final List<Message> messages = new ArrayList<>();
+
     private Component render = Component.empty();
     private boolean renderCalled = false;
     private int updateCalls = 0;
+    private boolean changedChannel = false;
+    private boolean joinedChannel = false;
+    private boolean leftChannel = false;
 
     protected ViewMock(Chatter chatter) {
         this.chatter = chatter;
@@ -63,5 +72,21 @@ public class ViewMock implements View {
 
     public void assertUpdateCalled() {
         assertThat(updateCalls).isGreaterThan(0);
+    }
+
+    public void assertMessageAdded(Message message) {
+        assertThat(messages).contains(message);
+    }
+
+    public void assertJoinedChannel() {
+        assertThat(joinedChannel).isTrue();
+    }
+
+    public void assertChangedChannel() {
+        assertThat(changedChannel).isTrue();
+    }
+
+    public void assertLeftChannel() {
+        assertThat(leftChannel).isTrue();
     }
 }

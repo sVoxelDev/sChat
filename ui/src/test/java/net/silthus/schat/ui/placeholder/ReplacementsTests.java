@@ -21,24 +21,44 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui;
+package net.silthus.schat.ui.placeholder;
 
-import java.util.Map;
-import java.util.WeakHashMap;
-import lombok.NonNull;
-import net.silthus.schat.chatter.Chatter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
-final class CachingViewProvider implements ViewProvider {
+import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.message.MessageHelper.randomMessage;
+import static org.assertj.core.api.Assertions.assertThat;
 
-    private final ViewFactory factory;
-    private final Map<Chatter, View> views = new WeakHashMap<>();
+@Nested
+class ReplacementsTests {
 
-    CachingViewProvider(ViewFactory factory) {
-        this.factory = factory;
+    private Replacements replacements;
+
+    @BeforeEach
+    void setUp() {
+        replacements = new Replacements();
+        replacements.addMessageReplacement(message -> TextReplacementConfig.builder()
+                .match("test")
+                .replacement("success")
+                .build());
     }
 
-    @Override
-    public View view(@NonNull Chatter chatter) {
-        return views.computeIfAbsent(chatter, factory::createView);
+    @Test
+    void replaces_message_text_after_format() {
+        Component result = replacements.applyTo(randomMessage(), text("test"));
+
+        assertThat(result).isEqualTo(text("success"));
+    }
+
+    @Test
+    void null_replacements_are_ignored() {
+        replacements.addMessageReplacement(message -> null);
+        Component result = replacements.applyTo(randomMessage(), text("foo"));
+
+        assertThat(result).isNotNull().isEqualTo(text("foo"));
     }
 }

@@ -23,6 +23,7 @@
  */
 package net.silthus.schat.channel;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -53,6 +54,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.channel.ChannelSettings.PRIORITY;
+import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.commands.SendMessageResult.failure;
 import static net.silthus.schat.policies.JoinChannelPolicy.JOIN_CHANNEL_POLICY;
 import static net.silthus.schat.policies.LeaveChannelPolicy.LEAVE_CHANNEL_POLICY;
@@ -137,6 +140,15 @@ final class ChannelImpl implements Channel {
             return processMessage(message);
         else
             return failure(message);
+    }
+
+    @Override
+    public int compareTo(@NotNull Channel o) {
+        return Comparator.<Channel, Integer>
+                comparing(c -> c.get(PRIORITY))
+            .thenComparing(c -> c.get(PRIVATE))
+            .thenComparing(Channel::key)
+            .compare(this, o);
     }
 
     @Override

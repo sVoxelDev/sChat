@@ -30,7 +30,7 @@ import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.pointer.Pointered;
 import net.silthus.schat.pointer.Setting;
-import net.silthus.schat.ui.View;
+import net.silthus.schat.ui.view.View;
 import net.silthus.schat.ui.views.tabbed.Tab;
 
 import static net.kyori.adventure.text.Component.text;

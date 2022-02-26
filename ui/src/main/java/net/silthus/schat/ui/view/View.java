@@ -21,32 +21,27 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui;
+package net.silthus.schat.ui.view;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Function;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextReplacementConfig;
-import net.silthus.schat.message.Message;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.pointer.Setting;
 
-public class Replacements {
+import static net.silthus.schat.pointer.Setting.setting;
 
-    private final List<Function<Message, TextReplacementConfig>> replacements = new ArrayList<>();
+public interface View {
 
-    public void addMessageReplacement(Function<Message, TextReplacementConfig> replacement) {
-        replacements.add(replacement);
+    Setting<Integer> VIEW_HEIGHT = setting(Integer.class, "height", 100); // minecraft chat box height in lines
+
+    static View empty() {
+        return EmptyView.EMPTY;
     }
 
-    Component applyTo(final Message message, final Component formatted) {
-        Component result = formatted;
-        for (TextReplacementConfig replacement : replacements.stream()
-            .map(fn -> fn.apply(message))
-            .filter(Objects::nonNull)
-            .toList()) {
-            result = result.replaceText(replacement);
-        }
-        return result;
+    Chatter chatter();
+
+    Component render();
+
+    default void update() {
+        chatter().sendRawMessage(render());
     }
 }

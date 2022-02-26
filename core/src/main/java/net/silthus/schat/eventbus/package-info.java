@@ -21,29 +21,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui.views.tabbed;
-
-import net.kyori.adventure.text.Component;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.pointer.Configurable;
-import net.silthus.schat.pointer.Pointer;
-import net.silthus.schat.pointer.Setting;
-import org.jetbrains.annotations.NotNull;
-
-import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.pointer.Pointer.pointer;
-
-public interface Tab extends Configurable<Tab> {
-
-    @NotNull Setting<Component> NAME = Setting.setting(Component.class, "name", text("Unknown"));
-    @NotNull Pointer<String> KEY = pointer(String.class, "key");
-    @NotNull Pointer<Channel> CHANNEL = pointer(Channel.class, "channel");
-    @NotNull Pointer<Chatter> VIEWER = pointer(Chatter.class, "viewer");
-
-    Component name();
-
-    Component render();
-
-    boolean isActive();
-}
+/**
+ * The API for dispatching and listening to internal {@link net.silthus.schat.events.SChatEvent}s.
+ */
+package net.silthus.schat.eventbus;

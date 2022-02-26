@@ -32,7 +32,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.silthus.schat.pointer.Pointer;
 import net.silthus.schat.pointer.Pointered;
-import net.silthus.schat.ui.View;
+import net.silthus.schat.ui.view.View;
 import org.jetbrains.annotations.NotNull;
 
 @Getter

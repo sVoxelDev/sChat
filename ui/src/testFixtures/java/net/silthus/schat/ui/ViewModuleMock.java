@@ -21,34 +21,30 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui.views.tabbed;
+package net.silthus.schat.ui;
 
-import lombok.NonNull;
-import net.kyori.adventure.text.Component;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.pointer.Settings;
+import net.silthus.schat.commands.CreatePrivateChannelCommand;
+import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.ui.view.ViewConfig;
 
-import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.RED;
+import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 
-public class NoChannelsTab extends AbstractTab {
+public final class ViewModuleMock extends ViewModule {
 
-    protected NoChannelsTab(@NonNull TabbedChannelsView view, @NonNull Settings settings) {
-        super(view, settings);
+    public static ViewModuleMock viewModuleMock(EventBus eventBus) {
+        final ViewModuleMock module = new ViewModuleMock(new ViewConfig(), eventBus);
+        module.init();
+        return module;
+    }
+
+    private ViewModuleMock(ViewConfig config, EventBus eventBus) {
+        super(config, eventBus);
     }
 
     @Override
-    protected boolean isMessageDisplayed(Message message) {
-        return message.type() == Message.Type.SYSTEM;
-    }
+    public void init() {
+        super.init();
 
-    @Override
-    public Component renderName() {
-        return translatable("schat.view.no-channels").color(RED);
-    }
-
-    @Override
-    public boolean isActive() {
-        return true;
+        CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(createInMemoryChannelRepository(eventBus())));
     }
 }

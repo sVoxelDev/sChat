@@ -28,17 +28,23 @@ import lombok.experimental.Accessors;
 import net.silthus.schat.channel.PrivateChannel;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.pointer.Settings;
+import net.silthus.schat.ui.placeholder.Replacements;
+import net.silthus.schat.ui.view.ViewConfig;
+import net.silthus.schat.ui.view.ViewController;
+import net.silthus.schat.ui.view.ViewFactory;
+import net.silthus.schat.ui.view.ViewProvider;
 import net.silthus.schat.ui.views.Views;
+import net.silthus.schat.ui.views.tabbed.TabbedChannelsView;
 
-import static net.silthus.schat.ui.ViewProvider.cachingViewProvider;
 import static net.silthus.schat.ui.format.Format.ACTIVE_TAB_FORMAT;
 import static net.silthus.schat.ui.format.Format.INACTIVE_TAB_FORMAT;
 import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
 import static net.silthus.schat.ui.format.Format.SELF_MESSAGE_FORMAT;
+import static net.silthus.schat.ui.view.ViewProvider.cachingViewProvider;
 
 @Getter
 @Accessors(fluent = true)
-public final class ViewModule {
+public class ViewModule {
 
     private final ViewConfig config;
     private final EventBus eventBus;
@@ -50,10 +56,14 @@ public final class ViewModule {
     public ViewModule(ViewConfig config, EventBus eventBus) {
         this.config = config;
         this.eventBus = eventBus;
-        this.viewFactory = chatter -> Views.tabbedChannels(chatter, config());
+        this.viewFactory = chatter -> {
+            final TabbedChannelsView view = Views.tabbedChannels(chatter, config());
+            eventBus.register(view);
+            return view;
+        };
         this.viewProvider = cachingViewProvider(viewFactory());
 
-        this.viewController = new ViewController(viewProvider, replacements);
+        this.viewController = new ViewController(replacements);
 
         init();
     }
@@ -63,7 +73,7 @@ public final class ViewModule {
         viewController.bind(eventBus);
     }
 
-    private void configurePrivateChannel(ViewConfig config) {
+    public static void configurePrivateChannel(ViewConfig config) {
         Settings format = config.privateChatFormat();
         PrivateChannel.configure(channel -> channel
             .set(MESSAGE_FORMAT, format.get(MESSAGE_FORMAT))

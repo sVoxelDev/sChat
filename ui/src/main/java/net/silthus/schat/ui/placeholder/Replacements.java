@@ -21,16 +21,32 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui;
+package net.silthus.schat.ui.placeholder;
 
-import lombok.NonNull;
-import net.silthus.schat.chatter.Chatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.silthus.schat.message.Message;
 
-public interface ViewProvider {
+public class Replacements {
 
-    static ViewProvider cachingViewProvider(ViewFactory factory) {
-        return new CachingViewProvider(factory);
+    private final List<Function<Message, TextReplacementConfig>> replacements = new ArrayList<>();
+
+    public void addMessageReplacement(Function<Message, TextReplacementConfig> replacement) {
+        replacements.add(replacement);
     }
 
-    View view(@NonNull Chatter chatter);
+    public Component applyTo(final Message message, final Component formatted) {
+        Component result = formatted;
+        for (TextReplacementConfig replacement : replacements.stream()
+            .map(fn -> fn.apply(message))
+            .filter(Objects::nonNull)
+            .toList()) {
+            result = result.replaceText(replacement);
+        }
+        return result;
+    }
 }

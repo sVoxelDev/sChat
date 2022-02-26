@@ -21,22 +21,42 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui;
+package net.silthus.schat.ui.util;
 
-import net.kyori.adventure.text.Component;
-import net.silthus.schat.chatter.Chatter;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 
-final class EmptyView implements View {
+import static org.assertj.core.api.Assertions.assertThat;
 
-    static final EmptyView EMPTY = new EmptyView();
+class ViewHelperTest {
 
-    @Override
-    public Chatter chatter() {
-        return Chatter.empty();
+    private static final Map<Character, Character> subscriptMap = Map.of(
+        '0', '₀',
+        '1', '₁',
+        '2', '₂',
+        '3', '₃',
+        '4', '₄',
+        '5', '₅',
+        '6', '₆',
+        '7', '₇',
+        '8', '₈',
+        '9', '₉'
+    );
+
+    private void assertSubscript(int number, String expected) {
+        final char[] chars = expected.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            chars[i] = subscriptMap.get(chars[i]);
+        }
+        assertThat(ViewHelper.subscriptOf(number)).isEqualTo(String.valueOf(chars));
     }
 
-    @Override
-    public Component render() {
-        return Component.empty();
+    @Test
+    void subscript_tests() {
+        assertSubscript(1, "1");
+        assertSubscript(10, "10");
+        assertSubscript(11, "11");
+        assertSubscript(25, "25");
+        assertSubscript(10327032, "10327032");
     }
 }

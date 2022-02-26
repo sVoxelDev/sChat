@@ -23,6 +23,8 @@
  */
 package net.silthus.schat.chatter;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
 import java.util.UUID;
 import java.util.function.Consumer;
 import net.kyori.adventure.text.Component;
@@ -63,6 +65,7 @@ public final class ChatterMock extends ChatterImpl {
     }
 
     private final PermissionHandler permissionHandler = mock(PermissionHandler.class);
+    private final Queue<Component> receivesMessages = new ArrayDeque<>();
 
     private ChatterMock(Builder builder) {
         super(builder);
@@ -73,6 +76,20 @@ public final class ChatterMock extends ChatterImpl {
         return permissionHandler.hasPermission(permission);
     }
 
+    @Override
+    public void sendRawMessage(Component message) {
+        receivesMessages.add(message);
+    }
+
+    public void assertReceivedRawMessage(Component component) {
+        assertThat(receivesMessages).contains(component);
+    }
+
+    public void assertLastRawMessage(Component render) {
+        assertThat(receivesMessages).last()
+            .isEqualTo(render);
+    }
+
     public void mockHasPermission(boolean result) {
         when(permissionHandler.hasPermission(any())).thenReturn(result);
     }
@@ -81,7 +98,7 @@ public final class ChatterMock extends ChatterImpl {
         when(permissionHandler.hasPermission(permission)).thenReturn(state);
     }
 
-    public void assertReceivedMessage(Component text) {
+    public void assertReceivedMessageWithText(Component text) {
         assertThat(messages())
             .extracting(Message::text)
             .contains(text);

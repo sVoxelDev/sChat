@@ -23,27 +23,37 @@
  */
 package net.silthus.schat.ui.views.tabbed;
 
+import java.util.Collection;
+import lombok.NonNull;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.pointer.Configurable;
-import net.silthus.schat.pointer.Pointer;
-import net.silthus.schat.pointer.Setting;
-import org.jetbrains.annotations.NotNull;
+import net.silthus.schat.identity.Identity;
+import net.silthus.schat.message.Message;
+import net.silthus.schat.ui.format.Format;
+import net.silthus.schat.ui.view.View;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.pointer.Pointer.pointer;
+import static net.kyori.adventure.text.Component.join;
+import static net.kyori.adventure.text.JoinConfiguration.newlines;
 
-public interface Tab extends Configurable<Tab> {
+public class MessageRenderer {
 
-    @NotNull Setting<Component> NAME = Setting.setting(Component.class, "name", text("Unknown"));
-    @NotNull Pointer<String> KEY = pointer(String.class, "key");
-    @NotNull Pointer<Channel> CHANNEL = pointer(Channel.class, "channel");
-    @NotNull Pointer<Chatter> VIEWER = pointer(Chatter.class, "viewer");
+    private final View view;
+    private final Format messageFormat;
 
-    Component name();
+    public MessageRenderer(View view, @NonNull Format messageFormat) {
+        this.view = view;
+        this.messageFormat = messageFormat;
+    }
 
-    Component render();
+    public Component renderMessages(@NonNull Collection<Message> messages) {
+        return join(newlines(), messages.stream()
+            .map(this::renderMessage)
+            .toList());
+    }
 
-    boolean isActive();
+    public Component renderMessage(Message message) {
+        if (Identity.nil().equals(message.source()))
+            return message.getOrDefault(Message.FORMATTED, message.text());
+        else
+            return message.getOrDefault(Message.FORMATTED, messageFormat.format(view, message));
+    }
 }

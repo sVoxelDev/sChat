@@ -164,13 +164,13 @@ class ChannelCommandsTests extends CommandTest {
         @Test
         void quick_message_is_sent_to_channel() {
             cmd("/ch " + channel.key() + " Hey there!");
-            chatter.assertReceivedMessage(text("Hey there!"));
+            chatter.assertReceivedMessageWithText(text("Hey there!"));
         }
 
         @Test
         void alias_command_works() {
             cmd("/" + channel.key() + " test message");
-            chatter.assertReceivedMessage(text("test message"));
+            chatter.assertReceivedMessageWithText(text("test message"));
         }
     }
 }

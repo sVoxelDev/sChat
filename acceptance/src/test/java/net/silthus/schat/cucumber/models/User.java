@@ -30,7 +30,7 @@ import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.platform.sender.SenderMock;
-import net.silthus.schat.ui.View;
+import net.silthus.schat.ui.view.View;
 
 @Getter
 @Setter

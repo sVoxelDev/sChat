@@ -72,7 +72,7 @@ class PrivateMessageCommandsTests extends CommandTest {
         @Test
         void sends_private_message() {
             sendPM();
-            target.assertReceivedMessage(Component.text(TEXT));
+            target.assertReceivedMessageWithText(Component.text(TEXT));
         }
 
         @Test
@@ -90,7 +90,7 @@ class PrivateMessageCommandsTests extends CommandTest {
         @Test
         void given_target_and_source_are_same_prints_error_message() {
             cmd("/tell " + chatter.name() + " hey");
-            chatter.assertReceivedMessage(Messages.CANNOT_SEND_PM_TO_SELF.build());
+            chatter.assertReceivedMessageWithText(Messages.CANNOT_SEND_PM_TO_SELF.build());
         }
     }
 }

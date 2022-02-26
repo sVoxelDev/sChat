@@ -23,13 +23,16 @@
  */
 package net.silthus.schat.ui.util;
 
+import java.util.Map;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identified;
 import net.silthus.schat.message.Message;
 import org.jetbrains.annotations.NotNull;
 
+import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
@@ -38,6 +41,28 @@ import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 
 public final class ViewHelper {
+
+    private static final Map<Integer, Character> numberMap = Map.of(
+        0, '₀',
+        1, '₁',
+        2, '₂',
+        3, '₃',
+        4, '₄',
+        5, '₅',
+        6, '₆',
+        7, '₇',
+        8, '₈',
+        9, '₉'
+    );
+
+    public static String subscriptOf(int number) {
+        StringBuilder str = new StringBuilder();
+        while (number > 0) {
+            str.insert(0, numberMap.get(number % 10));
+            number = number / 10;
+        }
+        return str.toString();
+    }
 
     @NotNull
     public static Component renderPrivateChannelName(Chatter chatter, Channel channel) {
@@ -69,6 +94,14 @@ public final class ViewHelper {
 
         return name.append(text(": ", GRAY))
             .append(message.text().colorIfAbsent(GRAY));
+    }
+
+    public static Component renderBlankLines(int amount) {
+        final TextComponent.Builder builder = text();
+        for (int i = 0; i < amount; i++) {
+            builder.append(newline());
+        }
+        return builder.build();
     }
 
     private ViewHelper() {

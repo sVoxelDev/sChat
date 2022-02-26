@@ -1,6 +1,6 @@
 messenger: mock
 view:
-  message_format: "<aqua><<source.display_name>></aqua>: <text>"
+  message_format: "<aqua>[<source.display_name>]</aqua>: <text>"
 private_chat:
   message_format: "<red><source.display_name><gray>: <text>"
 channels:

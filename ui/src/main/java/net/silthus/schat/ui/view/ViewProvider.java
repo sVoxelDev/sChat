@@ -21,29 +21,16 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui.views.tabbed;
+package net.silthus.schat.ui.view;
 
-import net.kyori.adventure.text.Component;
-import net.silthus.schat.channel.Channel;
+import lombok.NonNull;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.pointer.Configurable;
-import net.silthus.schat.pointer.Pointer;
-import net.silthus.schat.pointer.Setting;
-import org.jetbrains.annotations.NotNull;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.pointer.Pointer.pointer;
+public interface ViewProvider {
 
-public interface Tab extends Configurable<Tab> {
+    static ViewProvider cachingViewProvider(ViewFactory factory) {
+        return new CachingViewProvider(factory);
+    }
 
-    @NotNull Setting<Component> NAME = Setting.setting(Component.class, "name", text("Unknown"));
-    @NotNull Pointer<String> KEY = pointer(String.class, "key");
-    @NotNull Pointer<Channel> CHANNEL = pointer(Channel.class, "channel");
-    @NotNull Pointer<Chatter> VIEWER = pointer(Chatter.class, "viewer");
-
-    Component name();
-
-    Component render();
-
-    boolean isActive();
+    View view(@NonNull Chatter chatter);
 }

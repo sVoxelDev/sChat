@@ -23,6 +23,9 @@
  */
 package net.silthus.schat.channel;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.commands.SendMessageResult;
@@ -44,6 +47,8 @@ import static net.silthus.schat.channel.Channel.KEY;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
+import static net.silthus.schat.channel.ChannelSettings.PRIORITY;
+import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static net.silthus.schat.policies.SendChannelMessagePolicy.DENY;
@@ -171,7 +176,48 @@ class ChannelTests {
         }
     }
 
-    @Nested class close {
+    @Nested
+    class comparison {
+
+        private void assertSorted(Channel... channels) {
+            final List<Channel> random = new ArrayList<>(List.of(channels));
+            Collections.shuffle(random);
+            random.sort(Channel::compareTo);
+
+            assertThat(random).containsExactly(channels);
+        }
+
+        @Test
+        void channels_are_sorted_by_name() {
+            assertSorted(
+                channelWith("abc"),
+                channelWith("kln"),
+                channelWith("zio")
+            );
+        }
+
+        @Test
+        void channels_are_sorted_by_priority() {
+            assertSorted(
+                channelWith("zzz", PRIORITY, 1),
+                channelWith("aaa"),
+                channelWith("bcd"),
+                channelWith("aaa", PRIORITY, 101)
+            );
+        }
+
+        @Test
+        void private_channels_come_last() {
+            assertSorted(
+                channelWith("zzz"),
+                channelWith("dcb", PRIVATE, true),
+                channelWith("abc", PRIORITY, 110)
+            );
+        }
+    }
+
+    @Nested
+    class close {
         private ChatterMock chatter;
 
         @BeforeEach

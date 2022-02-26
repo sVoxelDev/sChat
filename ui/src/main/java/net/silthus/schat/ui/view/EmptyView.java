@@ -21,27 +21,22 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui;
+package net.silthus.schat.ui.view;
 
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.pointer.Setting;
 
-import static net.silthus.schat.pointer.Setting.setting;
+final class EmptyView implements View {
 
-public interface View {
+    static final EmptyView EMPTY = new EmptyView();
 
-    Setting<Integer> VIEW_HEIGHT = setting(Integer.class, "height", 100); // minecraft chat box height in lines
-
-    static View empty() {
-        return EmptyView.EMPTY;
+    @Override
+    public Chatter chatter() {
+        return Chatter.empty();
     }
 
-    Chatter chatter();
-
-    Component render();
-
-    default void update() {
-        chatter().sendRawMessage(render());
+    @Override
+    public Component render() {
+        return Component.empty();
     }
 }
