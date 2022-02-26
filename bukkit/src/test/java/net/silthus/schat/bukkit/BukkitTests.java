@@ -76,20 +76,20 @@ public abstract class BukkitTests {
 
     @SuppressWarnings("SameParameterValue")
     protected void assertLastMessageIs(ConsoleCommandSenderMock mock, String message) {
-        assertTrimmedEquals(getLastMessage(mock::nextMessage), message);
+        assertTrimmedEquals(lastMessage(mock::nextMessage), message);
     }
 
     @SuppressWarnings("SameParameterValue")
     protected void assertLastMessageIs(PlayerMock player, String message) {
-        assertTrimmedEquals(getLastMessage(player::nextMessage), message);
+        assertTrimmedEquals(lastMessage(player::nextMessage), message);
     }
 
     protected void assertLastMessageContains(PlayerMock player, String text) {
-        assertTrimmedContains(getLastMessage(player::nextMessage), text);
+        assertTrimmedContains(lastMessage(player::nextMessage), text);
     }
 
     @Nullable
-    private String getLastMessage(Supplier<String> nextMessageSupplier) {
+    private String lastMessage(Supplier<String> nextMessageSupplier) {
         String nextMessage;
         String lastMessage = null;
         while ((nextMessage = nextMessageSupplier.get()) != null) {
