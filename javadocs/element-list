@@ -14,7 +14,6 @@ net.silthus.schat.messenger
 net.silthus.schat.pointer
 net.silthus.schat.policies
 net.silthus.schat.repository
-net.silthus.schat.ui
 net.silthus.schat.util
 net.silthus.schat.util.gson
 net.silthus.schat.util.gson.types
