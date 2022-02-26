@@ -35,7 +35,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.message.Message.message;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BukkitChatterFactoryTests extends BukkitTests {
@@ -85,7 +84,7 @@ class BukkitChatterFactoryTests extends BukkitTests {
         @Nested class when_message_is_send {
             @BeforeEach
             void setUp() {
-                message("Hey").to(createChatter()).send();
+                createChatter().sendRawMessage(text("Hey"));
             }
 
             @Test
