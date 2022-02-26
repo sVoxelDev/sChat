@@ -23,6 +23,9 @@
  */
 package net.silthus.schat.eventbus;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -33,6 +36,7 @@ import net.kyori.event.EventSubscriber;
 import net.kyori.event.SimpleEventBus;
 import net.silthus.schat.events.SChatEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 @Accessors(fluent = true)
 class EventBusImpl implements EventBus, AutoCloseable {
@@ -52,6 +56,29 @@ class EventBusImpl implements EventBus, AutoCloseable {
     public <T extends SChatEvent> @NonNull EventSubscription<T> on(final @NonNull Class<T> eventClass,
                                                                    final @NonNull Consumer<? super T> handler) {
         return registerSubscription(eventClass, handler);
+    }
+
+    @Override
+    public @NonNull @Unmodifiable Set<EventSubscription<?>> register(Object listener) {
+        return Arrays.stream(listener.getClass().getDeclaredMethods())
+            .filter(method -> method.isAnnotationPresent(Subscribe.class))
+            .filter(method -> method.getParameterCount() == 1)
+            .filter(method -> SChatEvent.class.isAssignableFrom(method.getParameterTypes()[0]))
+            .map(method -> registerSubscription(listener, method))
+            .collect(Collectors.toUnmodifiableSet());
+    }
+
+    @NotNull
+    @SuppressWarnings("unchecked")
+    private EventSubscription<? extends SChatEvent> registerSubscription(Object listener, Method method) {
+        method.setAccessible(true);
+        return registerSubscription((Class<? extends SChatEvent>) method.getParameterTypes()[0], event -> {
+            try {
+                method.invoke(listener, event);
+            } catch (IllegalAccessException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private <T extends SChatEvent> EventSubscription<T> registerSubscription(final Class<T> eventClass,

@@ -23,6 +23,7 @@
  */
 package net.silthus.schat.eventbus;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 import lombok.NonNull;
@@ -38,7 +39,12 @@ final class EmptyEventBus implements EventBus {
 
     @Override
     public @NonNull <E extends SChatEvent> EventSubscription<E> on(@NonNull Class<E> eventClass, @NonNull Consumer<? super E> handler) {
-        return new EmptySubscription<E>(eventClass, handler);
+        return new EmptySubscription<>(eventClass, handler);
+    }
+
+    @Override
+    public @NonNull @Unmodifiable Set<EventSubscription<?>> register(Object listener) {
+        return new HashSet<>();
     }
 
     @Override

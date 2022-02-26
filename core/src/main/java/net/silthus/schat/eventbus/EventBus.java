@@ -48,10 +48,25 @@ public interface EventBus extends AutoCloseable {
         return new EmptyEventBus();
     }
 
+    /**
+     * Creates a new event bus instance.
+     *
+     * <p>Make sure to free up the event bus calling {@link #close()}.</p>
+     *
+     * @return the created event bus
+     * @since next
+     */
     static EventBus eventBus() {
         return eventBus(false);
     }
 
+    /**
+     * Creates a new event bus that is optionally logging all interactions.
+     *
+     * @param debug true to log all calls to the bus
+     * @return the created event bus
+     * @since next
+     */
     static EventBus eventBus(boolean debug) {
         if (debug)
             return new EventBusImpl.Logging();
@@ -83,6 +98,17 @@ public interface EventBus extends AutoCloseable {
     <E extends SChatEvent> @NonNull EventSubscription<E> on(@NonNull Class<E> eventClass, @NonNull Consumer<? super E> handler);
 
     /**
+     * Registers all methods of the given listener annotated with {@link Subscribe} as event handlers.
+     *
+     * <p>All event handler methods must have a single parameter, being the event they want to subscribe to.</p>
+     *
+     * @param listener the listener to search for events
+     * @return a list of registered event subscriptions
+     * @since next
+     */
+    @NonNull @Unmodifiable Set<EventSubscription<?>> register(Object listener);
+
+    /**
      * Gets a set of all registered handlers for a given event.
      *
      * @param eventClass the event to find handlers for
@@ -92,5 +118,10 @@ public interface EventBus extends AutoCloseable {
      */
     <E extends SChatEvent> @NonNull @Unmodifiable Set<EventSubscription<E>> subscriptions(@NonNull Class<E> eventClass);
 
+    /**
+     * Closes the event bus unsubscribing all event handlers freeing up resource locks.
+     *
+     * @since next
+     */
     void close();
 }

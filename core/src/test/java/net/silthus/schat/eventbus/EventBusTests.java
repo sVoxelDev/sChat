@@ -23,12 +23,55 @@
  */
 package net.silthus.schat.eventbus;
 
+import java.util.Set;
+import net.silthus.schat.events.channel.ChatterJoinedChannelEvent;
+import net.silthus.schat.events.config.ConfigReloadedEvent;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class EventBusTests {
 
+    private EventBusMock eventBus;
+    private boolean eventCalled = false;
+
+    @BeforeEach
+    void setUp() {
+        eventBus = new EventBusMock();
+    }
+
+    @AfterEach
+    void tearDown() {
+        eventBus.close();
+    }
+
     @Test
-    void create() {
+    void registers_annotated_events() {
+        final Set<EventSubscription<?>> subscriptions = eventBus.register(this);
+        assertThat(subscriptions).hasSizeGreaterThanOrEqualTo(1);
+    }
+
+    @Test
+    void calls_annotated_event_handlers() {
+        eventBus.register(this);
+        eventBus.post(new ConfigReloadedEvent());
+        assertThat(eventCalled).isTrue();
+    }
+
+    @Test
+    void ignores_invalid_events() {
+        assertThat(eventBus.register(this)).hasSize(1);
+    }
+
+    @Subscribe
+    private void onJoinedChannel(ConfigReloadedEvent event) {
+        eventCalled = true;
+    }
+
+    @Subscribe
+    private void twoEvents(ConfigReloadedEvent event, ChatterJoinedChannelEvent event2) {
 
     }
 }
