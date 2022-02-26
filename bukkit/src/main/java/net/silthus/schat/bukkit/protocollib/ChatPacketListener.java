@@ -37,6 +37,7 @@ import java.util.Arrays;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.java.Log;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -44,8 +45,6 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.ui.View;
-import net.silthus.schat.ui.ViewProvider;
 import org.bukkit.plugin.Plugin;
 
 import static net.silthus.schat.message.Message.message;
@@ -57,6 +56,9 @@ import static net.silthus.schat.message.Message.message;
  */
 @Log(topic = "sChat")
 public final class ChatPacketListener extends PacketAdapter {
+
+    private static final Key MESSAGE_MARKER_KEY = Key.key("schat", "message");
+    public static final Component MESSAGE_MARKER = Component.storageNBT(MESSAGE_MARKER_KEY.asString(), MESSAGE_MARKER_KEY);
 
     private static Object PAPER_GSON_SERIALIZER;
     private static Method PAPER_SERIALIZE;
@@ -77,12 +79,10 @@ public final class ChatPacketListener extends PacketAdapter {
 
     private final ProtocolManager protocolManager;
     private final ChatterRepository chatterRepository;
-    private final ViewProvider viewProvider;
 
-    public ChatPacketListener(final Plugin plugin, ChatterRepository chatterRepository, ViewProvider viewProvider) {
+    public ChatPacketListener(final Plugin plugin, ChatterRepository chatterRepository) {
         super(plugin, PacketType.Play.Server.CHAT);
         this.chatterRepository = chatterRepository;
-        this.viewProvider = viewProvider;
         this.protocolManager = ProtocolLibrary.getProtocolManager();
     }
 
@@ -112,12 +112,15 @@ public final class ChatPacketListener extends PacketAdapter {
             return;
 
         final Chatter chatter = chatterRepository.get(event.getPlayer().getUniqueId());
-        final View view = viewProvider.view(chatter);
-        if (view.isRenderedView(rawMessage))
+        if (isMarkedMessage(rawMessage))
             return;
 
         message(rawMessage).to(chatter).type(Message.Type.SYSTEM).send();
         event.setCancelled(true);
+    }
+
+    private boolean isMarkedMessage(Component message) {
+        return message.contains(MESSAGE_MARKER) || message.children().contains(MESSAGE_MARKER);
     }
 
     @SneakyThrows

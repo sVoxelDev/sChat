@@ -146,7 +146,7 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
     }
 
     private void createChatPacketListener() {
-        chatPacketListener = new ChatPacketListener(bootstrap().loader(), chatterRepository(), viewModule().viewProvider());
+        chatPacketListener = new ChatPacketListener(bootstrap().loader(), chatterRepository());
         chatPacketListener.enable();
     }
 }

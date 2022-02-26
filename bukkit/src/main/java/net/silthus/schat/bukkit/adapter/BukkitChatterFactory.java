@@ -33,6 +33,7 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.bukkit.adapter.BukkitIdentityAdapter.identity;
+import static net.silthus.schat.bukkit.protocollib.ChatPacketListener.MESSAGE_MARKER;
 import static org.bukkit.Bukkit.getOfflinePlayer;
 
 public final class BukkitChatterFactory extends AbstractChatterFactory {
@@ -58,7 +59,7 @@ public final class BukkitChatterFactory extends AbstractChatterFactory {
 
     @Override
     protected Chatter.MessageHandler createMessageHandler(UUID id) {
-        return msg -> audiences.player(id).sendMessage(msg);
+        return msg -> audiences.player(id).sendMessage(msg.append(MESSAGE_MARKER));
     }
 
 }

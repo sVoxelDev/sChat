@@ -83,7 +83,6 @@ public final class TabbedChannelsView implements View {
         return content
             .append(newline())
             .append(joinTabs(tabs.stream().map(Tab::renderName).toList()))
-            .append(VIEW_MARKER)
             .build();
     }
 

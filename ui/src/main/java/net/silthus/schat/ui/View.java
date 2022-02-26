@@ -23,7 +23,6 @@
  */
 package net.silthus.schat.ui;
 
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.pointer.Setting;
@@ -31,9 +30,6 @@ import net.silthus.schat.pointer.Setting;
 import static net.silthus.schat.pointer.Setting.setting;
 
 public interface View {
-
-    Key VIEW_MARKER_KEY = Key.key("schat", "view");
-    Component VIEW_MARKER = Component.storageNBT(VIEW_MARKER_KEY.asString(), VIEW_MARKER_KEY);
 
     Setting<Integer> VIEW_HEIGHT = setting(Integer.class, "height", 100); // minecraft chat box height in lines
 
@@ -47,9 +43,5 @@ public interface View {
 
     default void update() {
         chatter().sendRawMessage(render());
-    }
-
-    default boolean isRenderedView(Component render) {
-        return render.contains(VIEW_MARKER) || render.children().contains(VIEW_MARKER);
     }
 }
