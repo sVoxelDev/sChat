@@ -47,7 +47,6 @@ import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.messaging.GatewayProviderRegistry;
 import net.silthus.schat.platform.plugin.AbstractSChatServerPlugin;
 import net.silthus.schat.platform.sender.Sender;
-import net.silthus.schat.ui.ViewProvider;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -104,8 +103,8 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
     }
 
     @Override
-    protected AbstractChatterFactory createChatterFactory(final ViewProvider viewProvider) {
-        return new BukkitChatterFactory(audiences(), viewProvider());
+    protected AbstractChatterFactory createChatterFactory() {
+        return new BukkitChatterFactory(audiences());
     }
 
     @Override
@@ -147,7 +146,7 @@ public final class SChatBukkitServer extends AbstractSChatServerPlugin {
     }
 
     private void createChatPacketListener() {
-        chatPacketListener = new ChatPacketListener(bootstrap().loader(), chatterRepository(), viewProvider());
+        chatPacketListener = new ChatPacketListener(bootstrap().loader(), chatterRepository(), viewModule().viewProvider());
         chatPacketListener.enable();
     }
 }

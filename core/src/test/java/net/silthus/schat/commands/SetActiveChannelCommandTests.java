@@ -38,7 +38,6 @@ import static net.silthus.schat.channel.ChannelHelper.randomChannel;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.commands.CreatePrivateChannelCommand.createPrivateChannel;
-import static net.silthus.schat.commands.JoinChannelCommand.joinChannelBuilder;
 import static net.silthus.schat.policies.JoinChannelPolicy.ALLOW;
 import static net.silthus.schat.policies.JoinChannelPolicy.DENY;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -66,26 +65,6 @@ class SetActiveChannelCommandTests {
             setActiveChannel();
             assertThat(chatter.isActiveChannel(channel)).isTrue();
             assertThat(chatter.activeChannel()).isPresent().get().isEqualTo(channel);
-        }
-
-        @Test
-        void then_view_is_updated_twice() {
-            setActiveChannel();
-            chatter.assertViewUpdated(2);
-        }
-
-        @Nested class given_chatter_already_joined_channel {
-            @BeforeEach
-            void setUp() {
-                joinChannelBuilder(chatter, channel).execute();
-                chatter.resetViewUpdate();
-            }
-
-            @Test
-            void then_view_is_updated_once() {
-                setActiveChannel();
-                chatter.assertViewUpdated(1);
-            }
         }
 
         @Nested class given_chatter_has_not_joined_channel {

@@ -21,28 +21,36 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui;
+package net.silthus.schat.chatter;
+
+import lombok.Getter;
+import lombok.experimental.Accessors;
+import net.kyori.adventure.text.Component;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ViewConnectorMock implements ViewConnector {
+@Getter
+@Accessors(fluent = true)
+public class MessageHandlerMock implements Chatter.MessageHandler {
 
-    private boolean updateCalled = false;
+    private boolean messageSent = false;
+    private Component lastMessage;
 
     @Override
-    public void update() {
-        updateCalled = true;
+    public void sendRawMessage(Component message) {
+        messageSent = true;
+        this.lastMessage = message;
     }
 
-    public void assertUpdateCalled() {
-        assertThat(updateCalled).isTrue();
+    public void assertMessageSent() {
+        assertThat(messageSent).isTrue();
     }
 
     public void assertUpdateNotCalled() {
-        assertThat(updateCalled).isFalse();
+        assertThat(messageSent).isFalse();
     }
 
     public void resetUpdateCalls() {
-        updateCalled = false;
+        messageSent = false;
     }
 }

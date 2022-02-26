@@ -29,7 +29,6 @@ import net.silthus.schat.bukkit.BukkitTests;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.commands.SendMessageCommand;
 import net.silthus.schat.eventbus.EventBus;
-import net.silthus.schat.ui.ViewProviderStub;
 import org.bukkit.OfflinePlayer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -45,7 +44,7 @@ class BukkitChatterFactoryTests extends BukkitTests {
 
     @BeforeEach
     void setUp() {
-        factory = new BukkitChatterFactory(audiences, ViewProviderStub.viewProviderStub());
+        factory = new BukkitChatterFactory(audiences);
         SendMessageCommand.prototype(builder -> builder.eventBus(EventBus.empty()));
     }
 

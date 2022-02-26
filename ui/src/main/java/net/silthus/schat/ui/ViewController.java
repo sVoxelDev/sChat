@@ -24,28 +24,48 @@
 package net.silthus.schat.ui;
 
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.eventbus.EventListener;
+import net.silthus.schat.events.channel.ChatterJoinedChannelEvent;
+import net.silthus.schat.events.channel.ChatterLeftChannelEvent;
+import net.silthus.schat.events.chatter.ChatterChangedActiveChannelEvent;
+import net.silthus.schat.events.chatter.ChatterReceivedMessageEvent;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.ui.format.Format;
 
 public class ViewController implements EventListener {
 
-    private final ViewModule viewModule;
+    private final Replacements replacements;
+    private final ViewProvider viewProvider;
 
-    public ViewController(ViewModule viewModule) {
-        this.viewModule = viewModule;
+    public ViewController(ViewProvider viewProvider, Replacements replacements) {
+        this.viewProvider = viewProvider;
+        this.replacements = replacements;
     }
 
     @Override
     public void bind(EventBus bus) {
         bus.on(SendChannelMessageEvent.class, this::handleMessage);
+
+        bindViewUpdateEvents(bus);
+    }
+
+    private void bindViewUpdateEvents(EventBus bus) {
+        bus.on(ChatterReceivedMessageEvent.class, event -> updateView(event.chatter()));
+        bus.on(ChatterLeftChannelEvent.class, event -> updateView(event.chatter()));
+        bus.on(ChatterJoinedChannelEvent.class, event -> updateView(event.chatter()));
+        bus.on(ChatterChangedActiveChannelEvent.class, event -> updateView(event.chatter()));
+    }
+
+    private void updateView(Chatter chatter) {
+        viewProvider.view(chatter).update();
     }
 
     private void handleMessage(SendChannelMessageEvent event) {
         final Component formatted = formatMessage(event);
-        event.message().set(Message.FORMATTED, viewModule.replacements().applyTo(event.message(), formatted));
+        event.message().set(Message.FORMATTED, replacements.applyTo(event.message(), formatted));
     }
 
     private Component formatMessage(SendChannelMessageEvent event) {

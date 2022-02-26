@@ -29,9 +29,6 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
-import net.silthus.schat.ui.DynamicViewConnector;
-import net.silthus.schat.ui.ViewConnector;
-import net.silthus.schat.ui.ViewProvider;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,8 +39,7 @@ public final class BukkitChatterFactory extends AbstractChatterFactory {
 
     private final BukkitAudiences audiences;
 
-    public BukkitChatterFactory(BukkitAudiences audiences, ViewProvider viewProvider) {
-        super(viewProvider);
+    public BukkitChatterFactory(BukkitAudiences audiences) {
         this.audiences = audiences;
     }
 
@@ -61,11 +57,8 @@ public final class BukkitChatterFactory extends AbstractChatterFactory {
     }
 
     @Override
-    protected ViewConnector.Factory createViewConnector(UUID id) {
-        return chatter -> new DynamicViewConnector(chatter, viewProvider, createViewOut(id));
+    protected Chatter.MessageHandler createMessageHandler(UUID id) {
+        return msg -> audiences.player(id).sendMessage(msg);
     }
 
-    private ViewConnector.Out createViewOut(UUID id) {
-        return renderedView -> audiences.player(id).sendMessage(renderedView);
-    }
 }

@@ -45,6 +45,10 @@ public interface View {
 
     Component render();
 
+    default void update() {
+        chatter().sendRawMessage(render());
+    }
+
     default boolean isRenderedView(Component render) {
         return render.contains(VIEW_MARKER) || render.children().contains(VIEW_MARKER);
     }
