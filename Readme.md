@@ -39,7 +39,6 @@ Head over to the [documentation][documentation] to learn more. Or directly [down
 - Network-wide Global Channels
 - Network-wide Global Private Chats
 - [PlaceholderAPI][placeholderapi] Support
-- [Developer API][developer] with good documentation and examples
 
 [documentation]: https://schat.silthus.net/docs
 [download]: https://github.com/sVoxelDev/sChat/releases/latest
