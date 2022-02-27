@@ -27,6 +27,8 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.channel.PrivateChannel;
 import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.eventbus.Subscribe;
+import net.silthus.schat.events.chatter.ChatterJoinedServerEvent;
 import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.ui.placeholder.Replacements;
 import net.silthus.schat.ui.view.ViewConfig;
@@ -71,6 +73,12 @@ public class ViewModule {
     public void init() {
         configurePrivateChannel(config);
         viewController.bind(eventBus);
+        eventBus().register(this);
+    }
+
+    @Subscribe
+    private void onChatterJoin(ChatterJoinedServerEvent event) {
+        viewProvider.view(event.chatter()).update();
     }
 
     public static void configurePrivateChannel(ViewConfig config) {

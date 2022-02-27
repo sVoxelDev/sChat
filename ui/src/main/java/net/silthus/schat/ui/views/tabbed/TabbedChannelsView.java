@@ -70,6 +70,8 @@ public class TabbedChannelsView implements View {
     public TabbedChannelsView(Chatter chatter, ViewConfig config) {
         this.chatter = chatter;
         this.config = config;
+        chatter.channels().forEach(channel -> addTab(new ChannelTab(this, channel)));
+        update();
     }
 
     @NotNull
@@ -82,6 +84,7 @@ public class TabbedChannelsView implements View {
         if (isNotApplicable(event.chatter()))
             return;
         addTab(new ChannelTab(this, event.channel()));
+        update();
     }
 
     @Subscribe
@@ -89,6 +92,7 @@ public class TabbedChannelsView implements View {
         if (isNotApplicable(event.chatter()))
             return;
         removeTab(event.channel());
+        update();
     }
 
     @Subscribe
@@ -144,12 +148,10 @@ public class TabbedChannelsView implements View {
 
     private void addTab(ChannelTab tab) {
         tabs.put(tab.channel(), tab);
-        update();
     }
 
     private void removeTab(Channel channel) {
         tabs.remove(channel);
-        update();
     }
 
     private Optional<ChannelTab> tab(Channel channel) {

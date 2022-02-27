@@ -59,6 +59,7 @@ import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelR
 import static net.silthus.schat.channel.ChannelSettings.FORCED;
 import static net.silthus.schat.channel.ChannelSettings.PRIORITY;
 import static net.silthus.schat.chatter.ChatterMock.chatterMock;
+import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.commands.CreatePrivateChannelCommand.createPrivateChannel;
 import static net.silthus.schat.commands.SendPrivateMessageCommand.sendPrivateMessage;
 import static net.silthus.schat.identity.Identity.identity;
@@ -163,6 +164,18 @@ class TabbedChannelsViewTests {
         void throws_npe() {
             assertNPE(() -> tabbedChannels(null, new ViewConfig()));
         }
+    }
+
+    @Test
+    void adds_channel_tabs_when_view_is_created() {
+        chatter = randomChatter();
+        final Channel one = channelWith("one");
+        final Channel two = channelWith("two");
+        chatter.join(one);
+        chatter.join(two);
+        view = new TabbedChannelsView(chatter, new ViewConfig());
+
+        assertThat(view.tabs()).containsKeys(one, two);
     }
 
     @Nested
