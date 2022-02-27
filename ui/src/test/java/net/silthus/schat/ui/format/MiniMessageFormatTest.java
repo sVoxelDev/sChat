@@ -61,7 +61,7 @@ class MiniMessageFormatTest {
     void formatted_text_message() {
         assertFormat("<gray><text>",
             message(text("Hi").append(text(" there!", RED, BOLD))),
-            "<gray>Hi</gray><red><bold> there!"
+            "<gray>Hi<bold><red> there!"
         );
     }
 
@@ -69,7 +69,7 @@ class MiniMessageFormatTest {
     void message_without_source_but_source_format() {
         assertFormat("<source>: <text>",
             message("Hey"),
-            "<source>: Hey"
+            "\\<source>: Hey"
         );
     }
 
@@ -89,7 +89,7 @@ class MiniMessageFormatTest {
 
         assertFormat("<aqua>(<source.active_channel.name><aqua>) <yellow><source.display_name><gray>: <text>",
             message,
-            "<aqua>(</aqua><green>Test</green><aqua>) </aqua><yellow></yellow><dark_red>Bobby</dark_red><gray>: Hey </gray><red><bold>@Silthus"
+            "<aqua>(<green>Test</green>) <yellow><dark_red>Bobby</dark_red><gray>: Hey <bold><red>@Silthus"
         );
     }
 }

@@ -134,15 +134,15 @@ class TabbedChannelsViewTests {
     }
 
     private void assertViewRenders(String expected) {
-        assertEquals(expected, COMPONENT_SERIALIZER.serialize(view.render()).trim());
+        assertEquals(expected, COMPONENT_SERIALIZER.serialize(view.render()).replaceAll("<br></br>", "\n").trim());
     }
 
     private void assertViewDoesNotContain(String... unexpected) {
-        assertThat(COMPONENT_SERIALIZER.serialize(view.render()).trim()).doesNotContain(unexpected);
+        assertThat(COMPONENT_SERIALIZER.serialize(view.render()).replaceAll("<br></br>", "\n").trim()).doesNotContain(unexpected);
     }
 
     private void assertViewContains(String... expected) {
-        assertThat(COMPONENT_SERIALIZER.serialize(view.render()).trim()).contains(expected);
+        assertThat(COMPONENT_SERIALIZER.serialize(view.render()).replaceAll("<br></br>", "\n").trim()).contains(expected);
     }
 
     private void assertColorOnlyViewContains(String... expected) {
@@ -213,7 +213,7 @@ class TabbedChannelsViewTests {
             sendMessageWithSource("Silthus", "Yo");
             assertViewRenders("""
                 Hey
-                <yellow>Silthus</yellow><gray>: Yo</gray>"""
+                <yellow>Silthus<gray>: </gray><gray>Yo</gray></yellow><br>"""
             );
         }
     }
@@ -257,7 +257,7 @@ class TabbedChannelsViewTests {
 
             @Test
             void underlines_channel() {
-                assertViewRenders("| <red><hover:show_text:\"<lang:schat.hover.leave-channel:\\\"<gray>test\\\">\"><click:run_command:\"/channel leave test\">❌</red><green><underlined>test</click></hover></underlined></green> |");
+                assertViewRenders("| <red><click:run_command:'/channel leave test'><hover:show_text:\"<lang:schat.hover.leave-channel:'<gray>test'>\">❌<underlined><green>test</green></underlined></hover></click></red> |");
             }
 
             @Nested
@@ -271,7 +271,7 @@ class TabbedChannelsViewTests {
 
                 @Test
                 void uses_custom_format() {
-                    assertViewRenders("| <red><hover:show_text:\"<lang:schat.hover.leave-channel:\\\"<gray>test\\\">\"><click:run_command:\"/channel leave test\">❌<underlined>test</click></hover></underlined></red> |");
+                    assertViewRenders("| <red><click:run_command:'/channel leave test'><hover:show_text:\"<lang:schat.hover.leave-channel:'<gray>test'>\">❌<underlined><red>test</red></underlined></hover></click></red> |");
                 }
             }
         }
@@ -285,7 +285,7 @@ class TabbedChannelsViewTests {
 
             @Test
             void then_channel_click_executes_join_command() {
-                assertViewContains("<click:run_command:\"/channel join test\">test</click>");
+                assertViewContains("<click:run_command:'/channel join test'>");
             }
         }
 
@@ -330,8 +330,8 @@ class TabbedChannelsViewTests {
             Thread.sleep(1L);
             sendPrivateMessage(target, chatter, text("Hey back"));
             assertViewContains("""
-                <yellow><lang:schat.chat.message.you></yellow><gray>: Hi</gray>
-                <aqua>target</aqua><gray>: Hey back</gray>""");
+                <yellow><lang:schat.chat.message.you><gray>: </gray><gray>Hi</gray></lang></yellow>
+                <aqua>target<gray>: </gray><gray>Hey back</gray></aqua>""");
         }
     }
 
@@ -464,7 +464,7 @@ class TabbedChannelsViewTests {
                 No Source!
                 Player: Hey
                 Player2: Hello
-                | <red><hover:show_text:"<lang:schat.hover.leave-channel:\\"<gray>zzz\\">"><click:run_command:"/channel leave zzz">❌</red><green><underlined>zzz</click></hover></underlined></green> | <red><hover:show_text:"<lang:schat.hover.leave-channel:\\"<gray>aaa\\">"><click:run_command:"/channel leave aaa">❌</click></red><gray><click:run_command:"/channel join aaa">aaa</click></hover></gray> |""");
+                | <red><click:run_command:'/channel leave zzz'><hover:show_text:"<lang:schat.hover.leave-channel:'<gray>zzz'>">❌<underlined><green>zzz</green></underlined></hover></click></red> | <red><click:run_command:'/channel leave aaa'><hover:show_text:"<lang:schat.hover.leave-channel:'<gray>aaa'>">❌<gray><click:run_command:'/channel join aaa'><hover:show_text:"<gray><lang:schat.hover.join-channel:'aaa'>">aaa</hover></click></gray></hover></click></red> |""");
         }
     }
 

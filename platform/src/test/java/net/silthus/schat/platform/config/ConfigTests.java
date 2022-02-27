@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Optional;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.commands.CreatePrivateChannelCommand;
@@ -42,8 +41,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.GREEN;
 import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
+import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
@@ -62,7 +64,6 @@ import static org.mockito.Mockito.when;
 
 class ConfigTests {
 
-    private static final MiniMessage FORMATTER = MiniMessage.miniMessage();
     private SChatConfig config;
 
     @BeforeEach
@@ -118,7 +119,7 @@ class ConfigTests {
         void loads_custom_private_chat_message_format() {
             final Component format = config.get(VIEW_CONFIG).format().get(MESSAGE_FORMAT)
                 .format(View.empty(), message("Hey").source(identity("Bob")).create());
-            assertThat(FORMATTER.serialize(format)).isEqualTo("<aqua>[Bob]</aqua>: Hey");
+            assertThat(format).isEqualTo(text().append(text("[Bob]", AQUA)).append(text(": Hey")).build());
         }
 
         @Test
@@ -132,7 +133,7 @@ class ConfigTests {
             final Tab tab = mock(Tab.class);
             when(tab.get(Tab.CHANNEL)).thenReturn(Optional.of(channel));
             final Component format = config.get(VIEW_CONFIG).privateChatFormat().get(ACTIVE_TAB_FORMAT).format(view, tab);
-            assertThat(FORMATTER.serialize(format)).isEqualTo("<green><underlined>Karl");
+            assertThat(format).isEqualTo(text("Karl", GREEN, UNDERLINED));
         }
     }
 }
