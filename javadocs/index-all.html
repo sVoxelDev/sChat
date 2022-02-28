@@ -214,8 +214,6 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/messenger/MessengerGateway.html#CHANNEL" class="member-name-link">CHANNEL</a> - Static variable in interface net.silthus.schat.messenger.<a href="net/silthus/schat/messenger/MessengerGateway.html" title="interface in net.silthus.schat.messenger">MessengerGateway</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/ChannelSerializer.html#CHANNEL_TYPE" class="member-name-link">CHANNEL_TYPE</a> - Static variable in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/ChannelSerializer.html" title="class in net.silthus.schat.util.gson.types">ChannelSerializer</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/channel/Channel.Builder.html" class="type-name-link" title="interface in net.silthus.schat.channel">Channel.Builder</a> - Interface in <a href="net/silthus/schat/channel/package-summary.html">net.silthus.schat.channel</a></dt>
 <dd>
 <div class="block">The builder of a <a href="net/silthus/schat/channel/Channel.html" title="interface in net.silthus.schat.channel"><code>Channel</code></a>.</div>
@@ -250,10 +248,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/message/Message.Draft.html#channels()" class="member-name-link">channels()</a> - Method in interface net.silthus.schat.message.<a href="net/silthus/schat/message/Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/ChannelSerializer.html" class="type-name-link" title="class in net.silthus.schat.util.gson.types">ChannelSerializer</a> - Class in <a href="net/silthus/schat/util/gson/types/package-summary.html">net.silthus.schat.util.gson.types</a></dt>
-<dd>
-<div class="block">A Gson serializer to serialize and deserialize a <a href="net/silthus/schat/channel/Channel.html" title="interface in net.silthus.schat.channel"><code>Channel</code></a> into JSON format.</div>
-</dd>
+<dt><a href="net/silthus/schat/util/gson/serializers/ChannelSerializer.html" class="type-name-link" title="class in net.silthus.schat.util.gson.serializers">ChannelSerializer</a> - Class in <a href="net/silthus/schat/util/gson/serializers/package-summary.html">net.silthus.schat.util.gson.serializers</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/util/gson/serializers/ChannelSerializer.html#%3Cinit%3E(net.silthus.schat.channel.ChannelRepository)" class="member-name-link">ChannelSerializer(ChannelRepository)</a> - Constructor for class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/ChannelSerializer.html" title="class in net.silthus.schat.util.gson.serializers">ChannelSerializer</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/commands/CreatePrivateChannelCommand.Builder.html#channelSettings()" class="member-name-link">channelSettings()</a> - Method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/CreatePrivateChannelCommand.Builder.html" title="class in net.silthus.schat.commands">CreatePrivateChannelCommand.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/commands/CreatePrivateChannelCommand.html#channelSettings()" class="member-name-link">channelSettings()</a> - Method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/CreatePrivateChannelCommand.html" title="class in net.silthus.schat.commands">CreatePrivateChannelCommand</a></dt>
@@ -404,6 +402,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/silthus/schat/chatter/ChatterRepository.html" class="type-name-link" title="interface in net.silthus.schat.chatter">ChatterRepository</a> - Interface in <a href="net/silthus/schat/chatter/package-summary.html">net.silthus.schat.chatter</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/util/gson/serializers/ChatterSerializer.html" class="type-name-link" title="class in net.silthus.schat.util.gson.serializers">ChatterSerializer</a> - Class in <a href="net/silthus/schat/util/gson/serializers/package-summary.html">net.silthus.schat.util.gson.serializers</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/util/gson/serializers/ChatterSerializer.html#%3Cinit%3E(net.silthus.schat.chatter.ChatterRepository)" class="member-name-link">ChatterSerializer(ChatterRepository)</a> - Constructor for class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/ChatterSerializer.html" title="class in net.silthus.schat.util.gson.serializers">ChatterSerializer</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/channel/Channel.html#close()" class="member-name-link">close()</a> - Method in interface net.silthus.schat.channel.<a href="net/silthus/schat/channel/Channel.html" title="interface in net.silthus.schat.channel">Channel</a></dt>
 <dd>
 <div class="block">Closes this channel and removes all targets from it.</div>
@@ -448,13 +450,9 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/silthus/schat/command/CommandBuilder.html#%3Cinit%3E(java.util.function.Function)" class="member-name-link">CommandBuilder(Function&lt;B, ? extends C&gt;)</a> - Constructor for class net.silthus.schat.command.<a href="net/silthus/schat/command/CommandBuilder.html" title="class in net.silthus.schat.command">CommandBuilder</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/ComponentSerializer.html#COMPONENT_TYPE" class="member-name-link">COMPONENT_TYPE</a> - Static variable in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/ComponentSerializer.html" title="class in net.silthus.schat.util.gson.types">ComponentSerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/ComponentSerializer.html" class="type-name-link" title="class in net.silthus.schat.util.gson.serializers">ComponentSerializer</a> - Class in <a href="net/silthus/schat/util/gson/serializers/package-summary.html">net.silthus.schat.util.gson.serializers</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/ComponentSerializer.html" class="type-name-link" title="class in net.silthus.schat.util.gson.types">ComponentSerializer</a> - Class in <a href="net/silthus/schat/util/gson/types/package-summary.html">net.silthus.schat.util.gson.types</a></dt>
-<dd>
-<div class="block">A Gson serializer to serialize and deserialize a <code>Component</code> into JSON format.</div>
-</dd>
-<dt><a href="net/silthus/schat/util/gson/types/ComponentSerializer.html#%3Cinit%3E()" class="member-name-link">ComponentSerializer()</a> - Constructor for class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/ComponentSerializer.html" title="class in net.silthus.schat.util.gson.types">ComponentSerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/ComponentSerializer.html#%3Cinit%3E()" class="member-name-link">ComponentSerializer()</a> - Constructor for class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/ComponentSerializer.html" title="class in net.silthus.schat.util.gson.serializers">ComponentSerializer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/events/config/ConfigReloadedEvent.html" class="type-name-link" title="class in net.silthus.schat.events.config">ConfigReloadedEvent</a> - Class in <a href="net/silthus/schat/events/config/package-summary.html">net.silthus.schat.events.config</a></dt>
 <dd>
@@ -548,18 +546,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates a new channel using the given key.</div>
 </dd>
-<dt><a href="net/silthus/schat/util/gson/types/ChannelSerializer.html#createChannel(java.lang.String,com.google.gson.JsonObject,com.google.gson.JsonDeserializationContext)" class="member-name-link">createChannel(String, JsonObject, JsonDeserializationContext)</a> - Method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/ChannelSerializer.html" title="class in net.silthus.schat.util.gson.types">ChannelSerializer</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/ChannelSerializer.html#createChannelSerializer(net.silthus.schat.channel.ChannelRepository,boolean)" class="member-name-link">createChannelSerializer(ChannelRepository, boolean)</a> - Static method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/ChannelSerializer.html" title="class in net.silthus.schat.util.gson.types">ChannelSerializer</a></dt>
-<dd>
-<div class="block">Creates a new channel serializer.</div>
-</dd>
 <dt><a href="net/silthus/schat/chatter/ChatterFactory.html#createChatter(java.util.UUID)" class="member-name-link">createChatter(UUID)</a> - Method in interface net.silthus.schat.chatter.<a href="net/silthus/schat/chatter/ChatterFactory.html" title="interface in net.silthus.schat.chatter">ChatterFactory</a></dt>
 <dd>
 <div class="block">Creates a new chatter from the given id.</div>
 </dd>
-<dt><a href="net/silthus/schat/util/gson/GsonProvider.html#createGsonProvider()" class="member-name-link">createGsonProvider()</a> - Static method in class net.silthus.schat.util.gson.<a href="net/silthus/schat/util/gson/GsonProvider.html" title="class in net.silthus.schat.util.gson">GsonProvider</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/channel/ChannelRepository.html#createInMemoryChannelRepository(net.silthus.schat.eventbus.EventBus)" class="member-name-link">createInMemoryChannelRepository(EventBus)</a> - Static method in interface net.silthus.schat.channel.<a href="net/silthus/schat/channel/ChannelRepository.html" title="interface in net.silthus.schat.channel">ChannelRepository</a></dt>
 <dd>
 <div class="block">Creates a new in memory channel repository.</div>
@@ -590,8 +580,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets an empty settings collection.</div>
 </dd>
-<dt><a href="net/silthus/schat/util/gson/types/TargetsSerializer.html#createTargetsSerializer(net.silthus.schat.chatter.ChatterRepository,boolean)" class="member-name-link">createTargetsSerializer(ChatterRepository, boolean)</a> - Static method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/TargetsSerializer.html" title="class in net.silthus.schat.util.gson.types">TargetsSerializer</a></dt>
-<dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:D">D</h2>
 <dl class="index">
@@ -615,19 +603,23 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/policies/SendChannelMessagePolicy.html#DENY" class="member-name-link">DENY</a> - Static variable in interface net.silthus.schat.policies.<a href="net/silthus/schat/policies/SendChannelMessagePolicy.html" title="interface in net.silthus.schat.policies">SendChannelMessagePolicy</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/ChannelSerializer.html#deserialize(com.google.gson.JsonElement,java.lang.reflect.Type,com.google.gson.JsonDeserializationContext)" class="member-name-link">deserialize(JsonElement, Type, JsonDeserializationContext)</a> - Method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/ChannelSerializer.html" title="class in net.silthus.schat.util.gson.types">ChannelSerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/ChannelSerializer.html#deserialize(com.google.gson.JsonElement,java.lang.reflect.Type,com.google.gson.JsonDeserializationContext)" class="member-name-link">deserialize(JsonElement, Type, JsonDeserializationContext)</a> - Method in class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/ChannelSerializer.html" title="class in net.silthus.schat.util.gson.serializers">ChannelSerializer</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/ComponentSerializer.html#deserialize(com.google.gson.JsonElement,java.lang.reflect.Type,com.google.gson.JsonDeserializationContext)" class="member-name-link">deserialize(JsonElement, Type, JsonDeserializationContext)</a> - Method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/ComponentSerializer.html" title="class in net.silthus.schat.util.gson.types">ComponentSerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/ChatterSerializer.html#deserialize(com.google.gson.JsonElement,java.lang.reflect.Type,com.google.gson.JsonDeserializationContext)" class="member-name-link">deserialize(JsonElement, Type, JsonDeserializationContext)</a> - Method in class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/ChatterSerializer.html" title="class in net.silthus.schat.util.gson.serializers">ChatterSerializer</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/IdentitySerializer.html#deserialize(com.google.gson.JsonElement,java.lang.reflect.Type,com.google.gson.JsonDeserializationContext)" class="member-name-link">deserialize(JsonElement, Type, JsonDeserializationContext)</a> - Method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/IdentitySerializer.html" title="class in net.silthus.schat.util.gson.types">IdentitySerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/ComponentSerializer.html#deserialize(com.google.gson.JsonElement,java.lang.reflect.Type,com.google.gson.JsonDeserializationContext)" class="member-name-link">deserialize(JsonElement, Type, JsonDeserializationContext)</a> - Method in class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/ComponentSerializer.html" title="class in net.silthus.schat.util.gson.serializers">ComponentSerializer</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/InstantSerializer.html#deserialize(com.google.gson.JsonElement,java.lang.reflect.Type,com.google.gson.JsonDeserializationContext)" class="member-name-link">deserialize(JsonElement, Type, JsonDeserializationContext)</a> - Method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/InstantSerializer.html" title="class in net.silthus.schat.util.gson.types">InstantSerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/IdentitySerializer.html#deserialize(com.google.gson.JsonElement,java.lang.reflect.Type,com.google.gson.JsonDeserializationContext)" class="member-name-link">deserialize(JsonElement, Type, JsonDeserializationContext)</a> - Method in class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/IdentitySerializer.html" title="class in net.silthus.schat.util.gson.serializers">IdentitySerializer</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/MessageSerializer.html#deserialize(com.google.gson.JsonElement,java.lang.reflect.Type,com.google.gson.JsonDeserializationContext)" class="member-name-link">deserialize(JsonElement, Type, JsonDeserializationContext)</a> - Method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/MessageSerializer.html" title="class in net.silthus.schat.util.gson.types">MessageSerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/InstantSerializer.html#deserialize(com.google.gson.JsonElement,java.lang.reflect.Type,com.google.gson.JsonDeserializationContext)" class="member-name-link">deserialize(JsonElement, Type, JsonDeserializationContext)</a> - Method in class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/InstantSerializer.html" title="class in net.silthus.schat.util.gson.serializers">InstantSerializer</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/SettingsSerializer.html#deserialize(com.google.gson.JsonElement,java.lang.reflect.Type,com.google.gson.JsonDeserializationContext)" class="member-name-link">deserialize(JsonElement, Type, JsonDeserializationContext)</a> - Method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/SettingsSerializer.html" title="class in net.silthus.schat.util.gson.types">SettingsSerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/MessageSerializer.html#deserialize(com.google.gson.JsonElement,java.lang.reflect.Type,com.google.gson.JsonDeserializationContext)" class="member-name-link">deserialize(JsonElement, Type, JsonDeserializationContext)</a> - Method in class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/MessageSerializer.html" title="class in net.silthus.schat.util.gson.serializers">MessageSerializer</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/TargetsSerializer.html#deserialize(com.google.gson.JsonElement,java.lang.reflect.Type,com.google.gson.JsonDeserializationContext)" class="member-name-link">deserialize(JsonElement, Type, JsonDeserializationContext)</a> - Method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/TargetsSerializer.html" title="class in net.silthus.schat.util.gson.types">TargetsSerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/MessageSourceSerializer.html#deserialize(com.google.gson.JsonElement,java.lang.reflect.Type,com.google.gson.JsonDeserializationContext)" class="member-name-link">deserialize(JsonElement, Type, JsonDeserializationContext)</a> - Method in class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/MessageSourceSerializer.html" title="class in net.silthus.schat.util.gson.serializers">MessageSourceSerializer</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/util/gson/serializers/SettingsSerializer.html#deserialize(com.google.gson.JsonElement,java.lang.reflect.Type,com.google.gson.JsonDeserializationContext)" class="member-name-link">deserialize(JsonElement, Type, JsonDeserializationContext)</a> - Method in class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/SettingsSerializer.html" title="class in net.silthus.schat.util.gson.serializers">SettingsSerializer</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/util/gson/serializers/TargetsSerializer.html#deserialize(com.google.gson.JsonElement,java.lang.reflect.Type,com.google.gson.JsonDeserializationContext)" class="member-name-link">deserialize(JsonElement, Type, JsonDeserializationContext)</a> - Method in class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/TargetsSerializer.html" title="class in net.silthus.schat.util.gson.serializers">TargetsSerializer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/channel/Channel.html#DISPLAY_NAME" class="member-name-link">DISPLAY_NAME</a> - Static variable in interface net.silthus.schat.channel.<a href="net/silthus/schat/channel/Channel.html" title="interface in net.silthus.schat.channel">Channel</a></dt>
 <dd>
@@ -640,9 +632,13 @@ loadScripts(document, 'script');</script>
 <div class="block">The display name of the channel.</div>
 </dd>
 <dt><a href="net/silthus/schat/identity/Identified.html#displayName()" class="member-name-link">displayName()</a> - Method in interface net.silthus.schat.identity.<a href="net/silthus/schat/identity/Identified.html" title="interface in net.silthus.schat.identity">Identified</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">A delegate to the display name of the <a href="net/silthus/schat/identity/Identified.html#identity()"><code>Identified.identity()</code></a>.</div>
+</dd>
 <dt><a href="net/silthus/schat/identity/Identity.html#displayName()" class="member-name-link">displayName()</a> - Method in interface net.silthus.schat.identity.<a href="net/silthus/schat/identity/Identity.html" title="interface in net.silthus.schat.identity">Identity</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Gets the display name of the identity.</div>
+</dd>
 <dt><a href="net/silthus/schat/util/Iterators.html#divideIterable(java.lang.Iterable,int)" class="member-name-link">divideIterable(Iterable&lt;E&gt;, int)</a> - Static method in class net.silthus.schat.util.<a href="net/silthus/schat/util/Iterators.html" title="class in net.silthus.schat.util">Iterators</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/pointer/Setting.html#dynamicSetting(java.lang.Class,java.lang.String,java.util.function.Supplier)" class="member-name-link">dynamicSetting(Class&lt;V&gt;, String, Supplier&lt;V&gt;)</a> - Static method in interface net.silthus.schat.pointer.<a href="net/silthus/schat/pointer/Setting.html" title="interface in net.silthus.schat.pointer">Setting</a></dt>
@@ -923,7 +919,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sets the channel as global, relaying messages to all servers in the network.</div>
 </dd>
+<dt><a href="net/silthus/schat/util/gson/GsonProvider.html#gson()" class="member-name-link">gson()</a> - Method in class net.silthus.schat.util.gson.<a href="net/silthus/schat/util/gson/GsonProvider.html" title="class in net.silthus.schat.util.gson">GsonProvider</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/messenger/GsonPluginMessageSerializer.html" class="type-name-link" title="class in net.silthus.schat.messenger">GsonPluginMessageSerializer</a> - Class in <a href="net/silthus/schat/messenger/package-summary.html">net.silthus.schat.messenger</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/util/gson/GsonProvider.html#gsonProvider()" class="member-name-link">gsonProvider()</a> - Static method in class net.silthus.schat.util.gson.<a href="net/silthus/schat/util/gson/GsonProvider.html" title="class in net.silthus.schat.util.gson">GsonProvider</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/util/gson/GsonProvider.html" class="type-name-link" title="class in net.silthus.schat.util.gson">GsonProvider</a> - Class in <a href="net/silthus/schat/util/gson/package-summary.html">net.silthus.schat.util.gson</a></dt>
 <dd>&nbsp;</dd>
@@ -1007,7 +1007,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/identity/Identified.html" class="type-name-link" title="interface in net.silthus.schat.identity">Identified</a> - Interface in <a href="net/silthus/schat/identity/package-summary.html">net.silthus.schat.identity</a></dt>
 <dd>
-<div class="block">Marks an entity as identified requiring it to have an <code>IdentityImpl</code>.</div>
+<div class="block">Marks an entity as identified requiring it to hold an <a href="net/silthus/schat/identity/Identity.html" title="interface in net.silthus.schat.identity"><code>Identity</code></a>.</div>
 </dd>
 <dt><a href="net/silthus/schat/identity/Identified.html#identity()" class="member-name-link">identity()</a> - Method in interface net.silthus.schat.identity.<a href="net/silthus/schat/identity/Identified.html" title="interface in net.silthus.schat.identity">Identified</a></dt>
 <dd>
@@ -1042,12 +1042,12 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates a new identity using the provided values.</div>
 </dd>
 <dt><a href="net/silthus/schat/identity/Identity.html" class="type-name-link" title="interface in net.silthus.schat.identity">Identity</a> - Interface in <a href="net/silthus/schat/identity/package-summary.html">net.silthus.schat.identity</a></dt>
+<dd>
+<div class="block">An identity is an object identified by its unique id.</div>
+</dd>
+<dt><a href="net/silthus/schat/util/gson/serializers/IdentitySerializer.html" class="type-name-link" title="class in net.silthus.schat.util.gson.serializers">IdentitySerializer</a> - Class in <a href="net/silthus/schat/util/gson/serializers/package-summary.html">net.silthus.schat.util.gson.serializers</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/IdentitySerializer.html#IDENTITY_TYPE" class="member-name-link">IDENTITY_TYPE</a> - Static variable in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/IdentitySerializer.html" title="class in net.silthus.schat.util.gson.types">IdentitySerializer</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/IdentitySerializer.html" class="type-name-link" title="class in net.silthus.schat.util.gson.types">IdentitySerializer</a> - Class in <a href="net/silthus/schat/util/gson/types/package-summary.html">net.silthus.schat.util.gson.types</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/IdentitySerializer.html#%3Cinit%3E()" class="member-name-link">IdentitySerializer()</a> - Constructor for class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/IdentitySerializer.html" title="class in net.silthus.schat.util.gson.types">IdentitySerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/IdentitySerializer.html#%3Cinit%3E()" class="member-name-link">IdentitySerializer()</a> - Constructor for class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/IdentitySerializer.html" title="class in net.silthus.schat.util.gson.serializers">IdentitySerializer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/messenger/IncomingMessageConsumer.html" class="type-name-link" title="interface in net.silthus.schat.messenger">IncomingMessageConsumer</a> - Interface in <a href="net/silthus/schat/messenger/package-summary.html">net.silthus.schat.messenger</a></dt>
 <dd>
@@ -1066,11 +1066,9 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates a new repository using the provided map as the store.</div>
 </dd>
-<dt><a href="net/silthus/schat/util/gson/types/InstantSerializer.html#INSTANT_TYPE" class="member-name-link">INSTANT_TYPE</a> - Static variable in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/InstantSerializer.html" title="class in net.silthus.schat.util.gson.types">InstantSerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/InstantSerializer.html" class="type-name-link" title="class in net.silthus.schat.util.gson.serializers">InstantSerializer</a> - Class in <a href="net/silthus/schat/util/gson/serializers/package-summary.html">net.silthus.schat.util.gson.serializers</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/InstantSerializer.html" class="type-name-link" title="class in net.silthus.schat.util.gson.types">InstantSerializer</a> - Class in <a href="net/silthus/schat/util/gson/types/package-summary.html">net.silthus.schat.util.gson.types</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/InstantSerializer.html#%3Cinit%3E()" class="member-name-link">InstantSerializer()</a> - Constructor for class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/InstantSerializer.html" title="class in net.silthus.schat.util.gson.types">InstantSerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/InstantSerializer.html#%3Cinit%3E()" class="member-name-link">InstantSerializer()</a> - Constructor for class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/InstantSerializer.html" title="class in net.silthus.schat.util.gson.serializers">InstantSerializer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/channel/Channel.InvalidKey.html#%3Cinit%3E()" class="member-name-link">InvalidKey()</a> - Constructor for exception net.silthus.schat.channel.<a href="net/silthus/schat/channel/Channel.InvalidKey.html" title="class in net.silthus.schat.channel">Channel.InvalidKey</a></dt>
 <dd>&nbsp;</dd>
@@ -1086,7 +1084,11 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/identity/Identity.html#IS_NIL" class="member-name-link">IS_NIL</a> - Static variable in interface net.silthus.schat.identity.<a href="net/silthus/schat/identity/Identity.html" title="interface in net.silthus.schat.identity">Identity</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/message/MessageSource.html#IS_NIL" class="member-name-link">IS_NIL</a> - Static variable in interface net.silthus.schat.message.<a href="net/silthus/schat/message/MessageSource.html" title="interface in net.silthus.schat.message">MessageSource</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/identity/Identity.html#IS_NOT_NIL" class="member-name-link">IS_NOT_NIL</a> - Static variable in interface net.silthus.schat.identity.<a href="net/silthus/schat/identity/Identity.html" title="interface in net.silthus.schat.identity">Identity</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/message/MessageSource.html#IS_NOT_NIL" class="member-name-link">IS_NOT_NIL</a> - Static variable in interface net.silthus.schat.message.<a href="net/silthus/schat/message/MessageSource.html" title="interface in net.silthus.schat.message">MessageSource</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/eventbus/EventSubscription.html#isActive()" class="member-name-link">isActive()</a> - Method in interface net.silthus.schat.eventbus.<a href="net/silthus/schat/eventbus/EventSubscription.html" title="interface in net.silthus.schat.eventbus">EventSubscription</a></dt>
 <dd>
@@ -1281,8 +1283,6 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/silthus/schat/message/Message.html" class="type-name-link" title="interface in net.silthus.schat.message">Message</a> - Interface in <a href="net/silthus/schat/message/package-summary.html">net.silthus.schat.message</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/MessageSerializer.html#MESSAGE_TYPE" class="member-name-link">MESSAGE_TYPE</a> - Static variable in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/MessageSerializer.html" title="class in net.silthus.schat.util.gson.types">MessageSerializer</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/message/Message.Draft.html" class="type-name-link" title="interface in net.silthus.schat.message">Message.Draft</a> - Interface in <a href="net/silthus/schat/message/package-summary.html">net.silthus.schat.message</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/message/Message.Type.html" class="type-name-link" title="enum class in net.silthus.schat.message">Message.Type</a> - Enum Class in <a href="net/silthus/schat/message/package-summary.html">net.silthus.schat.message</a></dt>
@@ -1311,12 +1311,23 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates a new message container with the given initial messages.</div>
 </dd>
-<dt><a href="net/silthus/schat/util/gson/types/MessageSerializer.html" class="type-name-link" title="class in net.silthus.schat.util.gson.types">MessageSerializer</a> - Class in <a href="net/silthus/schat/util/gson/types/package-summary.html">net.silthus.schat.util.gson.types</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/MessageSerializer.html" class="type-name-link" title="class in net.silthus.schat.util.gson.serializers">MessageSerializer</a> - Class in <a href="net/silthus/schat/util/gson/serializers/package-summary.html">net.silthus.schat.util.gson.serializers</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/MessageSerializer.html#%3Cinit%3E()" class="member-name-link">MessageSerializer()</a> - Constructor for class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/MessageSerializer.html" title="class in net.silthus.schat.util.gson.types">MessageSerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/MessageSerializer.html#%3Cinit%3E()" class="member-name-link">MessageSerializer()</a> - Constructor for class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/MessageSerializer.html" title="class in net.silthus.schat.util.gson.serializers">MessageSerializer</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/message/MessageSource.html" class="type-name-link" title="interface in net.silthus.schat.message">MessageSource</a> - Interface in <a href="net/silthus/schat/message/package-summary.html">net.silthus.schat.message</a></dt>
+<dd>
+<div class="block">A message source can be anything that is <a href="net/silthus/schat/identity/Identified.html" title="interface in net.silthus.schat.identity"><code>Identified</code></a>
+ and used to send messages.</div>
+</dd>
+<dt><a href="net/silthus/schat/util/gson/serializers/MessageSourceSerializer.html" class="type-name-link" title="class in net.silthus.schat.util.gson.serializers">MessageSourceSerializer</a> - Class in <a href="net/silthus/schat/util/gson/serializers/package-summary.html">net.silthus.schat.util.gson.serializers</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/util/gson/serializers/MessageSourceSerializer.html#%3Cinit%3E(net.silthus.schat.chatter.ChatterRepository)" class="member-name-link">MessageSourceSerializer(ChatterRepository)</a> - Constructor for class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/MessageSourceSerializer.html" title="class in net.silthus.schat.util.gson.serializers">MessageSourceSerializer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/message/MessageTarget.html" class="type-name-link" title="interface in net.silthus.schat.message">MessageTarget</a> - Interface in <a href="net/silthus/schat/message/package-summary.html">net.silthus.schat.message</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Represents an object that can receive messages.</div>
+</dd>
 <dt><a href="net/silthus/schat/commands/CreatePrivateChannelCommand.Builder.html#messenger()" class="member-name-link">messenger()</a> - Method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/CreatePrivateChannelCommand.Builder.html" title="class in net.silthus.schat.commands">CreatePrivateChannelCommand.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/commands/CreatePrivateChannelCommand.html#messenger()" class="member-name-link">messenger()</a> - Method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/CreatePrivateChannelCommand.html" title="class in net.silthus.schat.commands">CreatePrivateChannelCommand</a></dt>
@@ -1339,9 +1350,13 @@ loadScripts(document, 'script');</script>
 <h2 class="title" id="I:N">N</h2>
 <dl class="index">
 <dt><a href="net/silthus/schat/identity/Identified.html#name()" class="member-name-link">name()</a> - Method in interface net.silthus.schat.identity.<a href="net/silthus/schat/identity/Identified.html" title="interface in net.silthus.schat.identity">Identified</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">A delegate to the name of the <a href="net/silthus/schat/identity/Identified.html#identity()"><code>Identified.identity()</code></a>.</div>
+</dd>
 <dt><a href="net/silthus/schat/identity/Identity.html#name()" class="member-name-link">name()</a> - Method in interface net.silthus.schat.identity.<a href="net/silthus/schat/identity/Identity.html" title="interface in net.silthus.schat.identity">Identity</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Gets the name of the identity.</div>
+</dd>
 <dt><a href="net/silthus/schat/channel/Channel.Builder.html#name(net.kyori.adventure.text.Component)" class="member-name-link">name(Component)</a> - Method in interface net.silthus.schat.channel.<a href="net/silthus/schat/channel/Channel.Builder.html" title="interface in net.silthus.schat.channel">Channel.Builder</a></dt>
 <dd>
 <div class="block">Sets the display name of the channel.</div>
@@ -1383,9 +1398,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/silthus/schat/events/message/package-summary.html">net.silthus.schat.events.message</a> - package net.silthus.schat.events.message</dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/identity/package-summary.html">net.silthus.schat.identity</a> - package net.silthus.schat.identity</dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">The <a href="net/silthus/schat/identity/Identity.html" title="interface in net.silthus.schat.identity"><code>Identity</code></a> is used to identify unique entities using the <a href="net/silthus/schat/identity/Identified.html" title="interface in net.silthus.schat.identity"><code>Identified</code></a> interface.</div>
+</dd>
 <dt><a href="net/silthus/schat/message/package-summary.html">net.silthus.schat.message</a> - package net.silthus.schat.message</dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Contains the API for the <a href="net/silthus/schat/message/Message.html" title="interface in net.silthus.schat.message"><code>Message</code></a> and everything
+ that is encapsulated by the message.</div>
+</dd>
 <dt><a href="net/silthus/schat/messenger/package-summary.html">net.silthus.schat.messenger</a> - package net.silthus.schat.messenger</dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/pointer/package-summary.html">net.silthus.schat.pointer</a> - package net.silthus.schat.pointer</dt>
@@ -1401,7 +1421,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/util/gson/package-summary.html">net.silthus.schat.util.gson</a> - package net.silthus.schat.util.gson</dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/package-summary.html">net.silthus.schat.util.gson.types</a> - package net.silthus.schat.util.gson.types</dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/package-summary.html">net.silthus.schat.util.gson.serializers</a> - package net.silthus.schat.util.gson.serializers</dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/events/chatter/ChatterChangedActiveChannelEvent.html#newChannel()" class="member-name-link">newChannel()</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterChangedActiveChannelEvent.html" title="class in net.silthus.schat.events.chatter">ChatterChangedActiveChannelEvent</a></dt>
 <dd>
@@ -1410,6 +1430,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/silthus/schat/identity/Identity.html#nil()" class="member-name-link">nil()</a> - Static method in interface net.silthus.schat.identity.<a href="net/silthus/schat/identity/Identity.html" title="interface in net.silthus.schat.identity">Identity</a></dt>
 <dd>
 <div class="block">Gets a <code>nil</code> identity.</div>
+</dd>
+<dt><a href="net/silthus/schat/message/MessageSource.html#nil()" class="member-name-link">nil()</a> - Static method in interface net.silthus.schat.message.<a href="net/silthus/schat/message/MessageSource.html" title="interface in net.silthus.schat.message">MessageSource</a></dt>
+<dd>
+<div class="block">Gets an empty message source represented by the <a href="net/silthus/schat/identity/Identity.html#nil()"><code>Identity.nil()</code></a>.</div>
 </dd>
 <dt><a href="net/silthus/schat/identity/Identity.html#NIL_IDENTITY_ID" class="member-name-link">NIL_IDENTITY_ID</a> - Static variable in interface net.silthus.schat.identity.<a href="net/silthus/schat/identity/Identity.html" title="interface in net.silthus.schat.identity">Identity</a></dt>
 <dd>&nbsp;</dd>
@@ -1446,6 +1470,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/silthus/schat/message/Targets.html#of(net.silthus.schat.message.MessageTarget...)" class="member-name-link">of(MessageTarget...)</a> - Static method in class net.silthus.schat.message.<a href="net/silthus/schat/message/Targets.html" title="class in net.silthus.schat.message">Targets</a></dt>
 <dd>
 <div class="block">Creates a new target container with the given initial targets.</div>
+</dd>
+<dt><a href="net/silthus/schat/message/MessageSource.html#of(net.silthus.schat.identity.Identity)" class="member-name-link">of(Identity)</a> - Static method in interface net.silthus.schat.message.<a href="net/silthus/schat/message/MessageSource.html" title="interface in net.silthus.schat.message">MessageSource</a></dt>
+<dd>
+<div class="block">Wraps the given identity into a message source.</div>
 </dd>
 <dt><a href="net/silthus/schat/events/chatter/ChatterChangedActiveChannelEvent.html#oldChannel()" class="member-name-link">oldChannel()</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterChangedActiveChannelEvent.html" title="class in net.silthus.schat.events.chatter">ChatterChangedActiveChannelEvent</a></dt>
 <dd>
@@ -1540,6 +1568,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/silthus/schat/util/gson/GsonProvider.html#prettyGson()" class="member-name-link">prettyGson()</a> - Method in class net.silthus.schat.util.gson.<a href="net/silthus/schat/util/gson/GsonProvider.html" title="class in net.silthus.schat.util.gson">GsonProvider</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/util/gson/GsonProvider.html#prettyPrinting()" class="member-name-link">prettyPrinting()</a> - Method in class net.silthus.schat.util.gson.<a href="net/silthus/schat/util/gson/GsonProvider.html" title="class in net.silthus.schat.util.gson">GsonProvider</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/channel/ChannelSettings.html#PRIORITY" class="member-name-link">PRIORITY</a> - Static variable in class net.silthus.schat.channel.<a href="net/silthus/schat/channel/ChannelSettings.html" title="class in net.silthus.schat.channel">ChannelSettings</a></dt>
 <dd>
 <div class="block">The priority of the channel may determine the position in the view.</div>
@@ -1591,6 +1621,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Registers all methods of the given listener annotated with <a href="net/silthus/schat/eventbus/Subscribe.html" title="annotation interface in net.silthus.schat.eventbus"><code>Subscribe</code></a> as event handlers.</div>
 </dd>
+<dt><a href="net/silthus/schat/util/gson/GsonProvider.html#registerChannelSerializer(net.silthus.schat.channel.ChannelRepository)" class="member-name-link">registerChannelSerializer(ChannelRepository)</a> - Method in class net.silthus.schat.util.gson.<a href="net/silthus/schat/util/gson/GsonProvider.html" title="class in net.silthus.schat.util.gson">GsonProvider</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/util/gson/GsonProvider.html#registerChatterSerializer(net.silthus.schat.chatter.ChatterRepository)" class="member-name-link">registerChatterSerializer(ChatterRepository)</a> - Method in class net.silthus.schat.util.gson.<a href="net/silthus/schat/util/gson/GsonProvider.html" title="class in net.silthus.schat.util.gson">GsonProvider</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/events/channel/RegisteredChannelEvent.html" class="type-name-link" title="class in net.silthus.schat.events.channel">RegisteredChannelEvent</a> - Record Class in <a href="net/silthus/schat/events/channel/package-summary.html">net.silthus.schat.events.channel</a></dt>
 <dd>
 <div class="block">The event is fired when a new channel is added to the <a href="net/silthus/schat/channel/ChannelRepository.html" title="interface in net.silthus.schat.channel"><code>ChannelRepository</code></a>.</div>
@@ -1599,6 +1633,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates an instance of a <code>RegisteredChannelEvent</code> record class.</div>
 </dd>
+<dt><a href="net/silthus/schat/util/gson/GsonProvider.html#registerMessageSourceSerializer(net.silthus.schat.chatter.ChatterRepository)" class="member-name-link">registerMessageSourceSerializer(ChatterRepository)</a> - Method in class net.silthus.schat.util.gson.<a href="net/silthus/schat/util/gson/GsonProvider.html" title="class in net.silthus.schat.util.gson">GsonProvider</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/messenger/GsonPluginMessageSerializer.html#registerMessageType(java.lang.reflect.Type)" class="member-name-link">registerMessageType(Type)</a> - Method in class net.silthus.schat.messenger.<a href="net/silthus/schat/messenger/GsonPluginMessageSerializer.html" title="class in net.silthus.schat.messenger">GsonPluginMessageSerializer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/messenger/Messenger.html#registerMessageType(java.lang.reflect.Type)" class="member-name-link">registerMessageType(Type)</a> - Method in interface net.silthus.schat.messenger.<a href="net/silthus/schat/messenger/Messenger.html" title="interface in net.silthus.schat.messenger">Messenger</a></dt>
@@ -1609,6 +1645,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Registers the given message type for serialization and deserialization.</div>
 </dd>
+<dt><a href="net/silthus/schat/util/gson/GsonProvider.html#registerTargetsSerializer(net.silthus.schat.chatter.ChatterRepository)" class="member-name-link">registerTargetsSerializer(ChatterRepository)</a> - Method in class net.silthus.schat.util.gson.<a href="net/silthus/schat/util/gson/GsonProvider.html" title="class in net.silthus.schat.util.gson">GsonProvider</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/util/gson/GsonProvider.html#registerTypeAdapter(java.lang.reflect.Type,java.lang.Object)" class="member-name-link">registerTypeAdapter(Type, Object)</a> - Method in class net.silthus.schat.util.gson.<a href="net/silthus/schat/util/gson/GsonProvider.html" title="class in net.silthus.schat.util.gson">GsonProvider</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/messenger/GsonPluginMessageSerializer.html#registerTypeAdapter(java.lang.reflect.Type,java.lang.Object)" class="member-name-link">registerTypeAdapter(Type, Object)</a> - Method in class net.silthus.schat.messenger.<a href="net/silthus/schat/messenger/GsonPluginMessageSerializer.html" title="class in net.silthus.schat.messenger">GsonPluginMessageSerializer</a></dt>
@@ -1679,7 +1717,9 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/silthus/schat/policies/SendChannelMessagePolicy.html" class="type-name-link" title="interface in net.silthus.schat.policies">SendChannelMessagePolicy</a> - Interface in <a href="net/silthus/schat/policies/package-summary.html">net.silthus.schat.policies</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/message/MessageTarget.html#sendMessage(net.silthus.schat.message.Message)" class="member-name-link">sendMessage(Message)</a> - Method in interface net.silthus.schat.message.<a href="net/silthus/schat/message/MessageTarget.html" title="interface in net.silthus.schat.message">MessageTarget</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Sends a message to the target.</div>
+</dd>
 <dt><a href="net/silthus/schat/message/Targets.html#sendMessage(net.silthus.schat.message.Message)" class="member-name-link">sendMessage(Message)</a> - Method in class net.silthus.schat.message.<a href="net/silthus/schat/message/Targets.html" title="class in net.silthus.schat.message">Targets</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/commands/SendMessageCommand.html#sendMessage(net.silthus.schat.message.Message)" class="member-name-link">sendMessage(Message)</a> - Static method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/SendMessageCommand.html" title="class in net.silthus.schat.commands">SendMessageCommand</a></dt>
@@ -1735,19 +1775,23 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sends a raw message to the chatter that will not be wrapped into a <a href="net/silthus/schat/message/Message.html" title="interface in net.silthus.schat.message"><code>Message</code></a>.</div>
 </dd>
-<dt><a href="net/silthus/schat/util/gson/types/InstantSerializer.html#serialize(java.time.Instant,java.lang.reflect.Type,com.google.gson.JsonSerializationContext)" class="member-name-link">serialize(Instant, Type, JsonSerializationContext)</a> - Method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/InstantSerializer.html" title="class in net.silthus.schat.util.gson.types">InstantSerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/InstantSerializer.html#serialize(java.time.Instant,java.lang.reflect.Type,com.google.gson.JsonSerializationContext)" class="member-name-link">serialize(Instant, Type, JsonSerializationContext)</a> - Method in class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/InstantSerializer.html" title="class in net.silthus.schat.util.gson.serializers">InstantSerializer</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/ComponentSerializer.html#serialize(net.kyori.adventure.text.Component,java.lang.reflect.Type,com.google.gson.JsonSerializationContext)" class="member-name-link">serialize(Component, Type, JsonSerializationContext)</a> - Method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/ComponentSerializer.html" title="class in net.silthus.schat.util.gson.types">ComponentSerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/ComponentSerializer.html#serialize(net.kyori.adventure.text.Component,java.lang.reflect.Type,com.google.gson.JsonSerializationContext)" class="member-name-link">serialize(Component, Type, JsonSerializationContext)</a> - Method in class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/ComponentSerializer.html" title="class in net.silthus.schat.util.gson.serializers">ComponentSerializer</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/ChannelSerializer.html#serialize(net.silthus.schat.channel.Channel,java.lang.reflect.Type,com.google.gson.JsonSerializationContext)" class="member-name-link">serialize(Channel, Type, JsonSerializationContext)</a> - Method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/ChannelSerializer.html" title="class in net.silthus.schat.util.gson.types">ChannelSerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/ChannelSerializer.html#serialize(net.silthus.schat.channel.Channel,java.lang.reflect.Type,com.google.gson.JsonSerializationContext)" class="member-name-link">serialize(Channel, Type, JsonSerializationContext)</a> - Method in class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/ChannelSerializer.html" title="class in net.silthus.schat.util.gson.serializers">ChannelSerializer</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/IdentitySerializer.html#serialize(net.silthus.schat.identity.Identity,java.lang.reflect.Type,com.google.gson.JsonSerializationContext)" class="member-name-link">serialize(Identity, Type, JsonSerializationContext)</a> - Method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/IdentitySerializer.html" title="class in net.silthus.schat.util.gson.types">IdentitySerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/ChatterSerializer.html#serialize(net.silthus.schat.chatter.Chatter,java.lang.reflect.Type,com.google.gson.JsonSerializationContext)" class="member-name-link">serialize(Chatter, Type, JsonSerializationContext)</a> - Method in class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/ChatterSerializer.html" title="class in net.silthus.schat.util.gson.serializers">ChatterSerializer</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/MessageSerializer.html#serialize(net.silthus.schat.message.Message,java.lang.reflect.Type,com.google.gson.JsonSerializationContext)" class="member-name-link">serialize(Message, Type, JsonSerializationContext)</a> - Method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/MessageSerializer.html" title="class in net.silthus.schat.util.gson.types">MessageSerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/IdentitySerializer.html#serialize(net.silthus.schat.identity.Identity,java.lang.reflect.Type,com.google.gson.JsonSerializationContext)" class="member-name-link">serialize(Identity, Type, JsonSerializationContext)</a> - Method in class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/IdentitySerializer.html" title="class in net.silthus.schat.util.gson.serializers">IdentitySerializer</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/TargetsSerializer.html#serialize(net.silthus.schat.message.Targets,java.lang.reflect.Type,com.google.gson.JsonSerializationContext)" class="member-name-link">serialize(Targets, Type, JsonSerializationContext)</a> - Method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/TargetsSerializer.html" title="class in net.silthus.schat.util.gson.types">TargetsSerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/MessageSerializer.html#serialize(net.silthus.schat.message.Message,java.lang.reflect.Type,com.google.gson.JsonSerializationContext)" class="member-name-link">serialize(Message, Type, JsonSerializationContext)</a> - Method in class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/MessageSerializer.html" title="class in net.silthus.schat.util.gson.serializers">MessageSerializer</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/SettingsSerializer.html#serialize(net.silthus.schat.pointer.Settings,java.lang.reflect.Type,com.google.gson.JsonSerializationContext)" class="member-name-link">serialize(Settings, Type, JsonSerializationContext)</a> - Method in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/SettingsSerializer.html" title="class in net.silthus.schat.util.gson.types">SettingsSerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/MessageSourceSerializer.html#serialize(net.silthus.schat.message.MessageSource,java.lang.reflect.Type,com.google.gson.JsonSerializationContext)" class="member-name-link">serialize(MessageSource, Type, JsonSerializationContext)</a> - Method in class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/MessageSourceSerializer.html" title="class in net.silthus.schat.util.gson.serializers">MessageSourceSerializer</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/util/gson/serializers/TargetsSerializer.html#serialize(net.silthus.schat.message.Targets,java.lang.reflect.Type,com.google.gson.JsonSerializationContext)" class="member-name-link">serialize(Targets, Type, JsonSerializationContext)</a> - Method in class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/TargetsSerializer.html" title="class in net.silthus.schat.util.gson.serializers">TargetsSerializer</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/util/gson/serializers/SettingsSerializer.html#serialize(net.silthus.schat.pointer.Settings,java.lang.reflect.Type,com.google.gson.JsonSerializationContext)" class="member-name-link">serialize(Settings, Type, JsonSerializationContext)</a> - Method in class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/SettingsSerializer.html" title="class in net.silthus.schat.util.gson.serializers">SettingsSerializer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/pointer/Configurable.html#set(net.silthus.schat.pointer.Setting,V)" class="member-name-link">set(Setting&lt;V&gt;, V)</a> - Method in interface net.silthus.schat.pointer.<a href="net/silthus/schat/pointer/Configurable.html" title="interface in net.silthus.schat.pointer">Configurable</a></dt>
 <dd>
@@ -1807,8 +1851,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A collection of <a href="net/silthus/schat/pointer/Setting.html" title="interface in net.silthus.schat.pointer"><code>settings</code></a>.</div>
 </dd>
-<dt><a href="net/silthus/schat/util/gson/types/SettingsSerializer.html#SETTINGS_TYPE" class="member-name-link">SETTINGS_TYPE</a> - Static variable in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/SettingsSerializer.html" title="class in net.silthus.schat.util.gson.types">SettingsSerializer</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/pointer/Settings.Builder.html" class="type-name-link" title="interface in net.silthus.schat.pointer">Settings.Builder</a> - Interface in <a href="net/silthus/schat/pointer/package-summary.html">net.silthus.schat.pointer</a></dt>
 <dd>
 <div class="block">A builder of settings.</div>
@@ -1817,9 +1859,9 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets a new settings builder.</div>
 </dd>
-<dt><a href="net/silthus/schat/util/gson/types/SettingsSerializer.html" class="type-name-link" title="class in net.silthus.schat.util.gson.types">SettingsSerializer</a> - Class in <a href="net/silthus/schat/util/gson/types/package-summary.html">net.silthus.schat.util.gson.types</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/SettingsSerializer.html" class="type-name-link" title="class in net.silthus.schat.util.gson.serializers">SettingsSerializer</a> - Class in <a href="net/silthus/schat/util/gson/serializers/package-summary.html">net.silthus.schat.util.gson.serializers</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/SettingsSerializer.html#%3Cinit%3E()" class="member-name-link">SettingsSerializer()</a> - Constructor for class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/SettingsSerializer.html" title="class in net.silthus.schat.util.gson.types">SettingsSerializer</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/SettingsSerializer.html#%3Cinit%3E()" class="member-name-link">SettingsSerializer()</a> - Constructor for class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/SettingsSerializer.html" title="class in net.silthus.schat.util.gson.serializers">SettingsSerializer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/message/Messages.html#size()" class="member-name-link">size()</a> - Method in class net.silthus.schat.message.<a href="net/silthus/schat/message/Messages.html" title="class in net.silthus.schat.message">Messages</a></dt>
 <dd>&nbsp;</dd>
@@ -1837,7 +1879,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/message/Message.html#source()" class="member-name-link">source()</a> - Method in interface net.silthus.schat.message.<a href="net/silthus/schat/message/Message.html" title="interface in net.silthus.schat.message">Message</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/message/Message.Draft.html#source(net.silthus.schat.identity.Identity)" class="member-name-link">source(Identity)</a> - Method in interface net.silthus.schat.message.<a href="net/silthus/schat/message/Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></dt>
+<dt><a href="net/silthus/schat/message/Message.Draft.html#source(net.silthus.schat.message.MessageSource)" class="member-name-link">source(MessageSource)</a> - Method in interface net.silthus.schat.message.<a href="net/silthus/schat/message/Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/message/Message.html#SOURCE" class="member-name-link">SOURCE</a> - Static variable in interface net.silthus.schat.message.<a href="net/silthus/schat/message/Message.html" title="interface in net.silthus.schat.message">Message</a></dt>
 <dd>&nbsp;</dd>
@@ -1910,11 +1952,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates a new target container with the given initial targets.</div>
 </dd>
-<dt><a href="net/silthus/schat/util/gson/types/TargetsSerializer.html#TARGETS_TYPE" class="member-name-link">TARGETS_TYPE</a> - Static variable in class net.silthus.schat.util.gson.types.<a href="net/silthus/schat/util/gson/types/TargetsSerializer.html" title="class in net.silthus.schat.util.gson.types">TargetsSerializer</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/message/TargetsFilter.html" class="type-name-link" title="class in net.silthus.schat.message">TargetsFilter</a> - Class in <a href="net/silthus/schat/message/package-summary.html">net.silthus.schat.message</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/silthus/schat/util/gson/types/TargetsSerializer.html" class="type-name-link" title="class in net.silthus.schat.util.gson.types">TargetsSerializer</a> - Class in <a href="net/silthus/schat/util/gson/types/package-summary.html">net.silthus.schat.util.gson.types</a></dt>
+<dt><a href="net/silthus/schat/util/gson/serializers/TargetsSerializer.html" class="type-name-link" title="class in net.silthus.schat.util.gson.serializers">TargetsSerializer</a> - Class in <a href="net/silthus/schat/util/gson/serializers/package-summary.html">net.silthus.schat.util.gson.serializers</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/util/gson/serializers/TargetsSerializer.html#%3Cinit%3E(net.silthus.schat.chatter.ChatterRepository)" class="member-name-link">TargetsSerializer(ChatterRepository)</a> - Constructor for class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/TargetsSerializer.html" title="class in net.silthus.schat.util.gson.serializers">TargetsSerializer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/commands/ChatCommand.Builder.html#text()" class="member-name-link">text()</a> - Method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/ChatCommand.Builder.html" title="class in net.silthus.schat.commands">ChatCommand.Builder</a></dt>
 <dd>&nbsp;</dd>
@@ -2022,9 +2064,13 @@ loadScripts(document, 'script');</script>
 <h2 class="title" id="I:U">U</h2>
 <dl class="index">
 <dt><a href="net/silthus/schat/identity/Identified.html#uniqueId()" class="member-name-link">uniqueId()</a> - Method in interface net.silthus.schat.identity.<a href="net/silthus/schat/identity/Identified.html" title="interface in net.silthus.schat.identity">Identified</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">A delegate to the unique id of the <a href="net/silthus/schat/identity/Identified.html#identity()"><code>Identified.identity()</code></a>.</div>
+</dd>
 <dt><a href="net/silthus/schat/identity/Identity.html#uniqueId()" class="member-name-link">uniqueId()</a> - Method in interface net.silthus.schat.identity.<a href="net/silthus/schat/identity/Identity.html" title="interface in net.silthus.schat.identity">Identity</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Gets the unique id of the identity.</div>
+</dd>
 <dt><a href="net/silthus/schat/message/Messages.html#unmodifiable(net.silthus.schat.message.Messages)" class="member-name-link">unmodifiable(Messages)</a> - Static method in class net.silthus.schat.message.<a href="net/silthus/schat/message/Messages.html" title="class in net.silthus.schat.message">Messages</a></dt>
 <dd>
 <div class="block">Returns an <a href="./net/silthus/schat/message/Collection.html#unmodview">unmodifiable view</a> of the

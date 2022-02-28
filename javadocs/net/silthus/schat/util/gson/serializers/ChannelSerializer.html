@@ -5,7 +5,7 @@
 <title>ChannelSerializer (schat-core 1.0.0-SNAPSHOT API)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="description" content="declaration: package: net.silthus.schat.util.gson.types, class: ChannelSerializer">
+<meta name="description" content="declaration: package: net.silthus.schat.util.gson.serializers, class: ChannelSerializer">
 <meta name="generator" content="javadoc/ClassWriterImpl">
 <link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
 <link rel="stylesheet" type="text/css" href="../../../../../../script-dir/jquery-ui.min.css" title="Style">
@@ -44,14 +44,14 @@ loadScripts(document, 'script');</script>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
 <ul class="sub-nav-list">
 <li>Detail:&nbsp;</li>
-<li><a href="#field-detail">Field</a>&nbsp;|&nbsp;</li>
-<li>Constr&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor-detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-detail">Method</a></li>
 </ul>
 </div>
@@ -67,11 +67,11 @@ loadScripts(document, 'script');</script>
 <main role="main">
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
-<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">net.silthus.schat.util.gson.types</a></div>
+<div class="sub-title"><span class="package-label-in-type">Package</span>&nbsp;<a href="package-summary.html">net.silthus.schat.util.gson.serializers</a></div>
 <h1 title="Class ChannelSerializer" class="title">Class ChannelSerializer</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">net.silthus.schat.util.gson.types.ChannelSerializer</div>
+<div class="inheritance">net.silthus.schat.util.gson.serializers.ChannelSerializer</div>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
@@ -79,30 +79,21 @@ loadScripts(document, 'script');</script>
 <dd><code>com.google.gson.JsonDeserializer&lt;<a href="../../../channel/Channel.html" title="interface in net.silthus.schat.channel">Channel</a>&gt;</code>, <code>com.google.gson.JsonSerializer&lt;<a href="../../../channel/Channel.html" title="interface in net.silthus.schat.channel">Channel</a>&gt;</code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">ChannelSerializer</span>
+<div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">ChannelSerializer</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements com.google.gson.JsonSerializer&lt;<a href="../../../channel/Channel.html" title="interface in net.silthus.schat.channel">Channel</a>&gt;, com.google.gson.JsonDeserializer&lt;<a href="../../../channel/Channel.html" title="interface in net.silthus.schat.channel">Channel</a>&gt;</span></div>
-<div class="block">A Gson serializer to serialize and deserialize a <a href="../../../channel/Channel.html" title="interface in net.silthus.schat.channel"><code>Channel</code></a> into JSON format.
-
- <p>Used for sending packets across servers.</p></div>
-<dl class="notes">
-<dt>Since:</dt>
-<dd>next</dd>
-</dl>
 </section>
 <section class="summary">
 <ul class="summary-list">
-<!-- =========== FIELD SUMMARY =========== -->
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <li>
-<section class="field-summary" id="field-summary">
-<h2>Field Summary</h2>
-<div class="caption"><span>Fields</span></div>
-<div class="summary-table three-column-summary">
-<div class="table-header col-first">Modifier and Type</div>
-<div class="table-header col-second">Field</div>
+<section class="constructor-summary" id="constructor-summary">
+<h2>Constructor Summary</h2>
+<div class="caption"><span>Constructors</span></div>
+<div class="summary-table two-column-summary">
+<div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static final <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html" title="class or interface in java.lang.reflect" class="external-link">Type</a></code></div>
-<div class="col-second even-row-color"><code><a href="#CHANNEL_TYPE" class="member-name-link">CHANNEL_TYPE</a></code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(net.silthus.schat.channel.ChannelRepository)" class="member-name-link">ChannelSerializer</a><wbr>(<a href="../../../channel/ChannelRepository.html" title="interface in net.silthus.schat.channel">ChannelRepository</a>&nbsp;channelRepository)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
@@ -112,23 +103,12 @@ implements com.google.gson.JsonSerializer&lt;<a href="../../../channel/Channel.h
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel">
 <div class="summary-table three-column-summary" aria-labelledby="method-summary-table-tab0">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected <a href="../../../channel/Channel.html" title="interface in net.silthus.schat.channel">Channel</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createChannel(java.lang.String,com.google.gson.JsonObject,com.google.gson.JsonDeserializationContext)" class="member-name-link">createChannel</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
- com.google.gson.JsonObject&nbsp;object,
- com.google.gson.JsonDeserializationContext&nbsp;context)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="ChannelSerializer.html" title="class in net.silthus.schat.util.gson.types">ChannelSerializer</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createChannelSerializer(net.silthus.schat.channel.ChannelRepository,boolean)" class="member-name-link">createChannelSerializer</a><wbr>(<a href="../../../channel/ChannelRepository.html" title="interface in net.silthus.schat.channel">ChannelRepository</a>&nbsp;channelRepository,
- boolean&nbsp;debug)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates a new channel serializer.</div>
-</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../../../channel/Channel.html" title="interface in net.silthus.schat.channel">Channel</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#deserialize(com.google.gson.JsonElement,java.lang.reflect.Type,com.google.gson.JsonDeserializationContext)" class="member-name-link">deserialize</a><wbr>(com.google.gson.JsonElement&nbsp;json,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html" title="class or interface in java.lang.reflect" class="external-link">Type</a>&nbsp;typeOfT,
@@ -151,15 +131,15 @@ implements com.google.gson.JsonSerializer&lt;<a href="../../../channel/Channel.h
 </section>
 <section class="details">
 <ul class="details-list">
-<!-- ============ FIELD DETAIL =========== -->
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
 <li>
-<section class="field-details" id="field-detail">
-<h2>Field Details</h2>
+<section class="constructor-details" id="constructor-detail">
+<h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="CHANNEL_TYPE">
-<h3>CHANNEL_TYPE</h3>
-<div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/reflect/Type.html" title="class or interface in java.lang.reflect" class="external-link">Type</a></span>&nbsp;<span class="element-name">CHANNEL_TYPE</span></div>
+<section class="detail" id="&lt;init&gt;(net.silthus.schat.channel.ChannelRepository)">
+<h3>ChannelSerializer</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">ChannelSerializer</span><wbr><span class="parameters">(<a href="../../../channel/ChannelRepository.html" title="interface in net.silthus.schat.channel">ChannelRepository</a>&nbsp;channelRepository)</span></div>
 </section>
 </li>
 </ul>
@@ -170,23 +150,6 @@ implements com.google.gson.JsonSerializer&lt;<a href="../../../channel/Channel.h
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
-<li>
-<section class="detail" id="createChannelSerializer(net.silthus.schat.channel.ChannelRepository,boolean)">
-<h3>createChannelSerializer</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="ChannelSerializer.html" title="class in net.silthus.schat.util.gson.types">ChannelSerializer</a></span>&nbsp;<span class="element-name">createChannelSerializer</span><wbr><span class="parameters">(<a href="../../../channel/ChannelRepository.html" title="interface in net.silthus.schat.channel">ChannelRepository</a>&nbsp;channelRepository,
- boolean&nbsp;debug)</span></div>
-<div class="block">Creates a new channel serializer.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>channelRepository</code> - the channel repository to lookup existing channels</dd>
-<dd><code>debug</code> - set true to log the serialization process</dd>
-<dt>Returns:</dt>
-<dd>the created serializer</dd>
-<dt>Since:</dt>
-<dd>next</dd>
-</dl>
-</section>
-</li>
 <li>
 <section class="detail" id="serialize(net.silthus.schat.channel.Channel,java.lang.reflect.Type,com.google.gson.JsonSerializationContext)">
 <h3>serialize</h3>
@@ -212,14 +175,6 @@ implements com.google.gson.JsonSerializer&lt;<a href="../../../channel/Channel.h
 <dt>Throws:</dt>
 <dd><code>com.google.gson.JsonParseException</code></dd>
 </dl>
-</section>
-</li>
-<li>
-<section class="detail" id="createChannel(java.lang.String,com.google.gson.JsonObject,com.google.gson.JsonDeserializationContext)">
-<h3>createChannel</h3>
-<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="../../../channel/Channel.html" title="interface in net.silthus.schat.channel">Channel</a></span>&nbsp;<span class="element-name">createChannel</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;key,
- com.google.gson.JsonObject&nbsp;object,
- com.google.gson.JsonDeserializationContext&nbsp;context)</span></div>
 </section>
 </li>
 </ul>

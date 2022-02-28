@@ -44,7 +44,7 @@ loadScripts(document, 'script');</script>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
 </ul>
@@ -73,16 +73,16 @@ loadScripts(document, 'script');</script>
 <section class="class-description" id="class-description">
 <dl class="notes">
 <dt>All Superinterfaces:</dt>
-<dd><code><a href="Identity.html" title="interface in net.silthus.schat.identity">Identity</a></code>, <code><a href="../pointer/Pointered.html" title="interface in net.silthus.schat.pointer">Pointered</a></code></dd>
+<dd><code><a href="../pointer/Pointered.html" title="interface in net.silthus.schat.pointer">Pointered</a></code></dd>
 </dl>
 <dl class="notes">
 <dt>All Known Subinterfaces:</dt>
-<dd><code><a href="../chatter/Chatter.html" title="interface in net.silthus.schat.chatter">Chatter</a></code></dd>
+<dd><code><a href="../chatter/Chatter.html" title="interface in net.silthus.schat.chatter">Chatter</a></code>, <code><a href="../message/MessageSource.html" title="interface in net.silthus.schat.message">MessageSource</a></code></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public non-sealed interface </span><span class="element-name type-name-label">Identified</span><span class="extends-implements">
-extends <a href="Identity.html" title="interface in net.silthus.schat.identity">Identity</a></span></div>
-<div class="block">Marks an entity as identified requiring it to have an <code>IdentityImpl</code>.</div>
+<div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">Identified</span><span class="extends-implements">
+extends <a href="../pointer/Pointered.html" title="interface in net.silthus.schat.pointer">Pointered</a></span></div>
+<div class="block">Marks an entity as identified requiring it to hold an <a href="Identity.html" title="interface in net.silthus.schat.identity"><code>Identity</code></a>.</div>
 <dl class="notes">
 <dt>Since:</dt>
 <dd>next</dd>
@@ -90,15 +90,6 @@ extends <a href="Identity.html" title="interface in net.silthus.schat.identity">
 </section>
 <section class="summary">
 <ul class="summary-list">
-<!-- =========== FIELD SUMMARY =========== -->
-<li>
-<section class="field-summary" id="field-summary">
-<h2>Field Summary</h2>
-<div class="inherited-list">
-<h3 id="fields-inherited-from-class-net.silthus.schat.identity.Identity">Fields inherited from interface&nbsp;net.silthus.schat.identity.<a href="Identity.html" title="interface in net.silthus.schat.identity">Identity</a></h3>
-<code><a href="Identity.html#DISPLAY_NAME">DISPLAY_NAME</a>, <a href="Identity.html#ID">ID</a>, <a href="Identity.html#IS_NIL">IS_NIL</a>, <a href="Identity.html#IS_NOT_NIL">IS_NOT_NIL</a>, <a href="Identity.html#NAME">NAME</a>, <a href="Identity.html#NIL_IDENTITY_ID">NIL_IDENTITY_ID</a></code></div>
-</section>
-</li>
 <!-- ========== METHOD SUMMARY =========== -->
 <li>
 <section class="method-summary" id="method-summary">
@@ -112,7 +103,9 @@ extends <a href="Identity.html" title="interface in net.silthus.schat.identity">
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default net.kyori.adventure.text.Component</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#displayName()" class="member-name-link">displayName</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">A delegate to the display name of the <a href="#identity()"><code>identity()</code></a>.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="Identity.html" title="interface in net.silthus.schat.identity">Identity</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#identity()" class="member-name-link">identity</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
@@ -120,10 +113,14 @@ extends <a href="Identity.html" title="interface in net.silthus.schat.identity">
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#name()" class="member-name-link">name</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">A delegate to the name of the <a href="#identity()"><code>identity()</code></a>.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#uniqueId()" class="member-name-link">uniqueId</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">A delegate to the unique id of the <a href="#identity()"><code>identity()</code></a>.</div>
+</div>
 </div>
 </div>
 </div>
@@ -160,9 +157,12 @@ extends <a href="Identity.html" title="interface in net.silthus.schat.identity">
 <h3>uniqueId</h3>
 <div class="member-signature"><span class="annotations">@NonExtendable
 </span><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a></span>&nbsp;<span class="element-name">uniqueId</span>()</div>
+<div class="block">A delegate to the unique id of the <a href="#identity()"><code>identity()</code></a>.</div>
 <dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="Identity.html#uniqueId()">uniqueId</a></code>&nbsp;in interface&nbsp;<code><a href="Identity.html" title="interface in net.silthus.schat.identity">Identity</a></code></dd>
+<dt>Returns:</dt>
+<dd>the unique id</dd>
+<dt>Since:</dt>
+<dd>next</dd>
 </dl>
 </section>
 </li>
@@ -171,9 +171,12 @@ extends <a href="Identity.html" title="interface in net.silthus.schat.identity">
 <h3>name</h3>
 <div class="member-signature"><span class="annotations">@NonExtendable
 </span><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">name</span>()</div>
+<div class="block">A delegate to the name of the <a href="#identity()"><code>identity()</code></a>.</div>
 <dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="Identity.html#name()">name</a></code>&nbsp;in interface&nbsp;<code><a href="Identity.html" title="interface in net.silthus.schat.identity">Identity</a></code></dd>
+<dt>Returns:</dt>
+<dd>the name</dd>
+<dt>Since:</dt>
+<dd>next</dd>
 </dl>
 </section>
 </li>
@@ -182,9 +185,12 @@ extends <a href="Identity.html" title="interface in net.silthus.schat.identity">
 <h3>displayName</h3>
 <div class="member-signature"><span class="annotations">@NonExtendable
 </span><span class="modifiers">default</span>&nbsp;<span class="return-type">net.kyori.adventure.text.Component</span>&nbsp;<span class="element-name">displayName</span>()</div>
+<div class="block">A delegate to the display name of the <a href="#identity()"><code>identity()</code></a>.</div>
 <dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="Identity.html#displayName()">displayName</a></code>&nbsp;in interface&nbsp;<code><a href="Identity.html" title="interface in net.silthus.schat.identity">Identity</a></code></dd>
+<dt>Returns:</dt>
+<dd>the display name</dd>
+<dt>Since:</dt>
+<dd>next</dd>
 </dl>
 </section>
 </li>

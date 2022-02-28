@@ -75,14 +75,21 @@ loadScripts(document, 'script');</script>
 <dt>All Superinterfaces:</dt>
 <dd><code><a href="../pointer/Pointered.html" title="interface in net.silthus.schat.pointer">Pointered</a></code></dd>
 </dl>
-<dl class="notes">
-<dt>All Known Subinterfaces:</dt>
-<dd><code><a href="../chatter/Chatter.html" title="interface in net.silthus.schat.chatter">Chatter</a></code>, <code><a href="Identified.html" title="interface in net.silthus.schat.identity">Identified</a></code></dd>
-</dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public sealed interface </span><span class="element-name type-name-label">Identity</span><span class="extends-implements">
-extends <a href="../pointer/Pointered.html" title="interface in net.silthus.schat.pointer">Pointered</a></span>
-<span class="permits">permits <a href="Identified.html" title="interface in net.silthus.schat.identity">Identified</a> <span class="permits-note">(not exhaustive)</span></span></div>
+extends <a href="../pointer/Pointered.html" title="interface in net.silthus.schat.pointer">Pointered</a></span></div>
+<div class="block">An identity is an object identified by its unique id.
+
+ <p>The identity can optionally hold a <a href="#name()"><code>name()</code></a> and <a href="#displayName()"><code>displayName()</code></a>.</p>
+
+ <p>No other class is allowed to extend identity. The <a href="Identified.html" title="interface in net.silthus.schat.identity"><code>Identified</code></a> interface must be used instead
+ and point the <a href="Identified.html#identity()"><code>Identified.identity()</code></a> to an instance of this class.</p>
+
+ <p>No <code>null</code> reference to an identity should be used. Use the <a href="#nil()"><code>nil()</code></a> object instead.</p></div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>next</dd>
+</dl>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -129,7 +136,9 @@ extends <a href="../pointer/Pointered.html" title="interface in net.silthus.scha
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default net.kyori.adventure.text.Component</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#displayName()" class="member-name-link">displayName</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Gets the display name of the identity.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static @NotNull <a href="Identity.html" title="interface in net.silthus.schat.identity">Identity</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#identity(java.lang.String)" class="member-name-link">identity</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
@@ -174,7 +183,9 @@ extends <a href="../pointer/Pointered.html" title="interface in net.silthus.scha
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#name()" class="member-name-link">name</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Gets the name of the identity.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1"><code>static @NotNull <a href="Identity.html" title="interface in net.silthus.schat.identity">Identity</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#nil()" class="member-name-link">nil</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
@@ -182,7 +193,9 @@ extends <a href="../pointer/Pointered.html" title="interface in net.silthus.scha
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#uniqueId()" class="member-name-link">uniqueId</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the unique id of the identity.</div>
+</div>
 </div>
 </div>
 </div>
@@ -259,6 +272,8 @@ extends <a href="../pointer/Pointered.html" title="interface in net.silthus.scha
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>the nil identity</dd>
+<dt>Since:</dt>
+<dd>next</dd>
 </dl>
 </section>
 </li>
@@ -275,6 +290,8 @@ extends <a href="../pointer/Pointered.html" title="interface in net.silthus.scha
 <dd><code>id</code> - the id</dd>
 <dt>Returns:</dt>
 <dd>the identity</dd>
+<dt>Since:</dt>
+<dd>next</dd>
 </dl>
 </section>
 </li>
@@ -293,6 +310,8 @@ extends <a href="../pointer/Pointered.html" title="interface in net.silthus.scha
 <dd><code>name</code> - the name</dd>
 <dt>Returns:</dt>
 <dd>the identity</dd>
+<dt>Since:</dt>
+<dd>next</dd>
 </dl>
 </section>
 </li>
@@ -311,6 +330,8 @@ extends <a href="../pointer/Pointered.html" title="interface in net.silthus.scha
 <dd><code>displayName</code> - the display name</dd>
 <dt>Returns:</dt>
 <dd>the identity</dd>
+<dt>Since:</dt>
+<dd>next</dd>
 </dl>
 </section>
 </li>
@@ -329,6 +350,8 @@ extends <a href="../pointer/Pointered.html" title="interface in net.silthus.scha
 <dd><code>displayName</code> - the display name provider</dd>
 <dt>Returns:</dt>
 <dd>the identity</dd>
+<dt>Since:</dt>
+<dd>next</dd>
 </dl>
 </section>
 </li>
@@ -349,6 +372,8 @@ extends <a href="../pointer/Pointered.html" title="interface in net.silthus.scha
 <dd><code>name</code> - the name</dd>
 <dt>Returns:</dt>
 <dd>the identity</dd>
+<dt>Since:</dt>
+<dd>next</dd>
 </dl>
 </section>
 </li>
@@ -366,6 +391,8 @@ extends <a href="../pointer/Pointered.html" title="interface in net.silthus.scha
 <dd><code>displayName</code> - the display name</dd>
 <dt>Returns:</dt>
 <dd>the identity</dd>
+<dt>Since:</dt>
+<dd>next</dd>
 </dl>
 </section>
 </li>
@@ -383,6 +410,8 @@ extends <a href="../pointer/Pointered.html" title="interface in net.silthus.scha
 <dd><code>displayName</code> - the display name supplier</dd>
 <dt>Returns:</dt>
 <dd>the identity</dd>
+<dt>Since:</dt>
+<dd>next</dd>
 </dl>
 </section>
 </li>
@@ -390,18 +419,44 @@ extends <a href="../pointer/Pointered.html" title="interface in net.silthus.scha
 <section class="detail" id="uniqueId()">
 <h3>uniqueId</h3>
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/UUID.html" title="class or interface in java.util" class="external-link">UUID</a></span>&nbsp;<span class="element-name">uniqueId</span>()</div>
+<div class="block">Gets the unique id of the identity.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the unique id</dd>
+<dt>Since:</dt>
+<dd>next</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="name()">
 <h3>name</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">name</span>()</div>
+<div class="block">Gets the name of the identity.
+
+ <p>Defaults to an empty string if the identity has no name.</p></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the name</dd>
+<dt>Since:</dt>
+<dd>next</dd>
+</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="displayName()">
 <h3>displayName</h3>
 <div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">net.kyori.adventure.text.Component</span>&nbsp;<span class="element-name">displayName</span>()</div>
+<div class="block">Gets the display name of the identity.
+
+ <p>Defaults to a <code>Component.empty()</code> if the identity has no display name.
+ The <a href="#name()"><code>name()</code></a> is used if the identity has one.</p></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the display name</dd>
+<dt>Since:</dt>
+<dd>next</dd>
+</dl>
 </section>
 </li>
 </ul>
