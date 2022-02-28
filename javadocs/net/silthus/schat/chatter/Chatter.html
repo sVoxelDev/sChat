@@ -134,7 +134,7 @@ extends <a href="../repository/Entity.html" title="interface in net.silthus.scha
 <code><a href="../message/MessageSource.html#IS_NIL">IS_NIL</a>, <a href="../message/MessageSource.html#IS_NOT_NIL">IS_NOT_NIL</a></code></div>
 <div class="inherited-list">
 <h3 id="fields-inherited-from-class-net.silthus.schat.message.MessageTarget">Fields inherited from interface&nbsp;net.silthus.schat.message.<a href="../message/MessageTarget.html" title="interface in net.silthus.schat.message">MessageTarget</a></h3>
-<code><a href="../message/MessageTarget.html#IS_CHATTER">IS_CHATTER</a></code></div>
+<code><a href="../message/MessageTarget.html#IS_CHATTER">IS_CHATTER</a>, <a href="../message/MessageTarget.html#IS_PRIVATE_CHANNEL">IS_PRIVATE_CHANNEL</a></code></div>
 </section>
 </li>
 <!-- ========== METHOD SUMMARY =========== -->
@@ -208,16 +208,6 @@ extends <a href="../repository/Entity.html" title="interface in net.silthus.scha
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Leaves the given channel ignoring any <a href="../policies/LeaveChannelPolicy.html" title="interface in net.silthus.schat.policies"><code>LeaveChannelPolicy</code></a>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="../message/Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#message(java.lang.String)" class="member-name-link">message</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Helper method to send a message using this chatter as the source.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="../message/Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#message(net.kyori.adventure.text.Component)" class="member-name-link">message</a><wbr>(net.kyori.adventure.text.Component&nbsp;text)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
-<div class="block">Helper method to send a message using this chatter as the source.</div>
-</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull @Unmodifiable <a href="../message/Messages.html" title="class in net.silthus.schat.message">Messages</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#messages()" class="member-name-link">messages</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
@@ -234,6 +224,9 @@ extends <a href="../repository/Entity.html" title="interface in net.silthus.scha
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-net.silthus.schat.identity.Identified">Methods inherited from interface&nbsp;net.silthus.schat.identity.<a href="../identity/Identified.html" title="interface in net.silthus.schat.identity">Identified</a></h3>
 <code><a href="../identity/Identified.html#displayName()">displayName</a>, <a href="../identity/Identified.html#identity()">identity</a>, <a href="../identity/Identified.html#name()">name</a>, <a href="../identity/Identified.html#uniqueId()">uniqueId</a></code></div>
+<div class="inherited-list">
+<h3 id="methods-inherited-from-class-net.silthus.schat.message.MessageSource">Methods inherited from interface&nbsp;net.silthus.schat.message.<a href="../message/MessageSource.html" title="interface in net.silthus.schat.message">MessageSource</a></h3>
+<code><a href="../message/MessageSource.html#message(java.lang.String)">message</a>, <a href="../message/MessageSource.html#message(net.kyori.adventure.text.Component)">message</a></code></div>
 <div class="inherited-list">
 <h3 id="methods-inherited-from-class-net.silthus.schat.message.MessageTarget">Methods inherited from interface&nbsp;net.silthus.schat.message.<a href="../message/MessageTarget.html" title="interface in net.silthus.schat.message">MessageTarget</a></h3>
 <code><a href="../message/MessageTarget.html#sendMessage(net.silthus.schat.message.Message)">sendMessage</a></code></div>
@@ -498,36 +491,6 @@ extends <a href="../repository/Entity.html" title="interface in net.silthus.scha
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>message</code> - the message to sent</dd>
-<dt>Since:</dt>
-<dd>next</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="message(java.lang.String)">
-<h3>message</h3>
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="../message/Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></span>&nbsp;<span class="element-name">message</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</span></div>
-<div class="block">Helper method to send a message using this chatter as the source.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>text</code> - the text of the message</dd>
-<dt>Returns:</dt>
-<dd>the message draft</dd>
-<dt>Since:</dt>
-<dd>next</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="message(net.kyori.adventure.text.Component)">
-<h3>message</h3>
-<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="../message/Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></span>&nbsp;<span class="element-name">message</span><wbr><span class="parameters">(net.kyori.adventure.text.Component&nbsp;text)</span></div>
-<div class="block">Helper method to send a message using this chatter as the source.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>text</code> - the text of the message</dd>
-<dt>Returns:</dt>
-<dd>the message draft</dd>
 <dt>Since:</dt>
 <dd>next</dd>
 </dl>

@@ -15,7 +15,11 @@
 <script type="text/javascript" src="../../../../script-dir/jquery-ui.min.js"></script>
 </head>
 <body class="class-declaration-page">
-<script type="text/javascript">var pathtoroot = "../../../../";
+<script type="text/javascript">var evenRowColor = "even-row-color";
+var oddRowColor = "odd-row-color";
+var tableTab = "table-tab";
+var activeTableTab = "active-table-tab";
+var pathtoroot = "../../../../";
 loadScripts(document, 'script');</script>
 <noscript>
 <div>JavaScript is disabled on your browser.</div>
@@ -113,11 +117,22 @@ extends <a href="../identity/Identified.html" title="interface in net.silthus.sc
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="caption"><span>Static Methods</span></div>
-<div class="summary-table three-column-summary">
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab5" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab5', 3)" class="table-tab">Default Methods</button></div>
+<div id="method-summary-table.tabpanel" role="tabpanel">
+<div class="summary-table three-column-summary" aria-labelledby="method-summary-table-tab0">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#message(java.lang.String)" class="member-name-link">message</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Helper method to send a message using this chatter as the source.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default <a href="Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#message(net.kyori.adventure.text.Component)" class="member-name-link">message</a><wbr>(net.kyori.adventure.text.Component&nbsp;text)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Helper method to send a message using this chatter as the source.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1"><code>static <a href="MessageSource.html" title="interface in net.silthus.schat.message">MessageSource</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1"><code><a href="#nil()" class="member-name-link">nil</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1">
@@ -127,6 +142,7 @@ extends <a href="../identity/Identified.html" title="interface in net.silthus.sc
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1"><code><a href="#of(net.silthus.schat.identity.Identity)" class="member-name-link">of</a><wbr>(<a href="../identity/Identity.html" title="interface in net.silthus.schat.identity">Identity</a>&nbsp;identity)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1">
 <div class="block">Wraps the given identity into a message source.</div>
+</div>
 </div>
 </div>
 </div>
@@ -190,6 +206,36 @@ extends <a href="../identity/Identified.html" title="interface in net.silthus.sc
 <dd><code>identity</code> - the identity to wrap as a source</dd>
 <dt>Returns:</dt>
 <dd>the wrapped message source</dd>
+<dt>Since:</dt>
+<dd>next</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="message(java.lang.String)">
+<h3>message</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></span>&nbsp;<span class="element-name">message</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</span></div>
+<div class="block">Helper method to send a message using this chatter as the source.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>text</code> - the text of the message</dd>
+<dt>Returns:</dt>
+<dd>the message draft</dd>
+<dt>Since:</dt>
+<dd>next</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="message(net.kyori.adventure.text.Component)">
+<h3>message</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type"><a href="Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></span>&nbsp;<span class="element-name">message</span><wbr><span class="parameters">(net.kyori.adventure.text.Component&nbsp;text)</span></div>
+<div class="block">Helper method to send a message using this chatter as the source.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>text</code> - the text of the message</dd>
+<dt>Returns:</dt>
+<dd>the message draft</dd>
 <dt>Since:</dt>
 <dd>next</dd>
 </dl>

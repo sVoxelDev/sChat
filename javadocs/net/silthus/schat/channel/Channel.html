@@ -151,7 +151,7 @@ extends <a href="../repository/Entity.html" title="interface in net.silthus.scha
 </div>
 <div class="inherited-list">
 <h3 id="fields-inherited-from-class-net.silthus.schat.message.MessageTarget">Fields inherited from interface&nbsp;net.silthus.schat.message.<a href="../message/MessageTarget.html" title="interface in net.silthus.schat.message">MessageTarget</a></h3>
-<code><a href="../message/MessageTarget.html#IS_CHATTER">IS_CHATTER</a></code></div>
+<code><a href="../message/MessageTarget.html#IS_CHATTER">IS_CHATTER</a>, <a href="../message/MessageTarget.html#IS_PRIVATE_CHANNEL">IS_PRIVATE_CHANNEL</a></code></div>
 </section>
 </li>
 <!-- ========== METHOD SUMMARY =========== -->
@@ -219,6 +219,12 @@ extends <a href="../repository/Entity.html" title="interface in net.silthus.scha
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#targets()" class="member-name-link">targets</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets all targets of this channel.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#updateTargets()" class="member-name-link">updateTargets</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="block">Updates the targets of this channel joining all
+ chatters that are a member of this channel.</div>
 </div>
 </div>
 </div>
@@ -419,6 +425,18 @@ extends <a href="../repository/Entity.html" title="interface in net.silthus.scha
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>target</code> - the target to remove</dd>
+<dt>Since:</dt>
+<dd>next</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="updateTargets()">
+<h3>updateTargets</h3>
+<div class="member-signature"><span class="modifiers">default</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">updateTargets</span>()</div>
+<div class="block">Updates the targets of this channel joining all
+ chatters that are a member of this channel.</div>
+<dl class="notes">
 <dt>Since:</dt>
 <dd>next</dd>
 </dl>

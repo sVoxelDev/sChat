@@ -77,6 +77,16 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public final class </span><span class="element-name type-name-label">PrivateChannel</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block">Prototype class for configuring the settings of a private channel.
+
+ <p>The here configured template will be used for every private channel
+ that is created using the <a href="../commands/CreatePrivateChannelCommand.html" title="class in net.silthus.schat.commands"><code>CreatePrivateChannelCommand</code></a>.</p>
+
+ <p>The <a href="#configure(java.util.function.Consumer)"><code>configure(Consumer)</code></a> method is non destructive adding to the builder.</p></div>
+<dl class="notes">
+<dt>Since:</dt>
+<dd>next</dd>
+</dl>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -93,7 +103,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#configure(java.util.function.Consumer)" class="member-name-link">configure</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="Channel.Builder.html" title="interface in net.silthus.schat.channel">Channel.Builder</a>&gt;&nbsp;channel)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Configures the private channel prototype template.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="Channel.Builder.html" title="interface in net.silthus.schat.channel">Channel.Builder</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#prototype()" class="member-name-link">prototype</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
@@ -118,6 +130,16 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="configure(java.util.function.Consumer)">
 <h3>configure</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">configure</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="Channel.Builder.html" title="interface in net.silthus.schat.channel">Channel.Builder</a>&gt;&nbsp;channel)</span></div>
+<div class="block">Configures the private channel prototype template.
+
+ <p>The previous builder will not be replaced, but same
+ settings are replaced with the values from this call.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>channel</code> - the private channel builder</dd>
+<dt>Since:</dt>
+<dd>next</dd>
+</dl>
 </section>
 </li>
 <li>

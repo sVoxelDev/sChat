@@ -465,7 +465,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Marks a type as configurable allowing the direct setting of settings at runtime.</div>
 </dd>
 <dt><a href="net/silthus/schat/channel/PrivateChannel.html#configure(java.util.function.Consumer)" class="member-name-link">configure(Consumer&lt;Channel.Builder&gt;)</a> - Static method in class net.silthus.schat.channel.<a href="net/silthus/schat/channel/PrivateChannel.html" title="class in net.silthus.schat.channel">PrivateChannel</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Configures the private channel prototype template.</div>
+</dd>
 <dt><a href="net/silthus/schat/channel/ChannelPrototype.html#configure(net.silthus.schat.eventbus.EventBus)" class="member-name-link">configure(EventBus)</a> - Static method in class net.silthus.schat.channel.<a href="net/silthus/schat/channel/ChannelPrototype.html" title="class in net.silthus.schat.channel">ChannelPrototype</a></dt>
 <dd>
 <div class="block">Configures the prototype for creating new channels.</div>
@@ -1090,6 +1092,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/message/MessageSource.html#IS_NOT_NIL" class="member-name-link">IS_NOT_NIL</a> - Static variable in interface net.silthus.schat.message.<a href="net/silthus/schat/message/MessageSource.html" title="interface in net.silthus.schat.message">MessageSource</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/message/MessageTarget.html#IS_PRIVATE_CHANNEL" class="member-name-link">IS_PRIVATE_CHANNEL</a> - Static variable in interface net.silthus.schat.message.<a href="net/silthus/schat/message/MessageTarget.html" title="interface in net.silthus.schat.message">MessageTarget</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/eventbus/EventSubscription.html#isActive()" class="member-name-link">isActive()</a> - Method in interface net.silthus.schat.eventbus.<a href="net/silthus/schat/eventbus/EventSubscription.html" title="interface in net.silthus.schat.eventbus">EventSubscription</a></dt>
 <dd>
 <div class="block">Returns true if this handler is active.</div>
@@ -1273,11 +1277,11 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Replaces the message that will be forwarded with a new message.</div>
 </dd>
-<dt><a href="net/silthus/schat/chatter/Chatter.html#message(java.lang.String)" class="member-name-link">message(String)</a> - Method in interface net.silthus.schat.chatter.<a href="net/silthus/schat/chatter/Chatter.html" title="interface in net.silthus.schat.chatter">Chatter</a></dt>
+<dt><a href="net/silthus/schat/message/MessageSource.html#message(java.lang.String)" class="member-name-link">message(String)</a> - Method in interface net.silthus.schat.message.<a href="net/silthus/schat/message/MessageSource.html" title="interface in net.silthus.schat.message">MessageSource</a></dt>
 <dd>
 <div class="block">Helper method to send a message using this chatter as the source.</div>
 </dd>
-<dt><a href="net/silthus/schat/chatter/Chatter.html#message(net.kyori.adventure.text.Component)" class="member-name-link">message(Component)</a> - Method in interface net.silthus.schat.chatter.<a href="net/silthus/schat/chatter/Chatter.html" title="interface in net.silthus.schat.chatter">Chatter</a></dt>
+<dt><a href="net/silthus/schat/message/MessageSource.html#message(net.kyori.adventure.text.Component)" class="member-name-link">message(Component)</a> - Method in interface net.silthus.schat.message.<a href="net/silthus/schat/message/MessageSource.html" title="interface in net.silthus.schat.message">MessageSource</a></dt>
 <dd>
 <div class="block">Helper method to send a message using this chatter as the source.</div>
 </dd>
@@ -1579,7 +1583,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Marks the channel as a private conversation between two players.</div>
 </dd>
 <dt><a href="net/silthus/schat/channel/PrivateChannel.html" class="type-name-link" title="class in net.silthus.schat.channel">PrivateChannel</a> - Class in <a href="net/silthus/schat/channel/package-summary.html">net.silthus.schat.channel</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Prototype class for configuring the settings of a private channel.</div>
+</dd>
 <dt><a href="net/silthus/schat/messenger/PluginMessage.html#process()" class="member-name-link">process()</a> - Method in class net.silthus.schat.messenger.<a href="net/silthus/schat/messenger/PluginMessage.html" title="class in net.silthus.schat.messenger">PluginMessage</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/channel/ChannelSettings.html#PROTECTED" class="member-name-link">PROTECTED</a> - Static variable in class net.silthus.schat.channel.<a href="net/silthus/schat/channel/ChannelSettings.html" title="class in net.silthus.schat.channel">ChannelSettings</a></dt>
@@ -2083,6 +2089,11 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/silthus/schat/messenger/Messenger.UnsupportedMessageException.html#%3Cinit%3E()" class="member-name-link">UnsupportedMessageException()</a> - Constructor for exception net.silthus.schat.messenger.<a href="net/silthus/schat/messenger/Messenger.UnsupportedMessageException.html" title="class in net.silthus.schat.messenger">Messenger.UnsupportedMessageException</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/channel/Channel.html#updateTargets()" class="member-name-link">updateTargets()</a> - Method in interface net.silthus.schat.channel.<a href="net/silthus/schat/channel/Channel.html" title="interface in net.silthus.schat.channel">Channel</a></dt>
+<dd>
+<div class="block">Updates the targets of this channel joining all
+ chatters that are a member of this channel.</div>
+</dd>
 <dt><a href="net/silthus/schat/command/Command.Builder.html#use(java.util.function.Function)" class="member-name-link">use(Function&lt;B, ? extends C&gt;)</a> - Method in interface net.silthus.schat.command.<a href="net/silthus/schat/command/Command.Builder.html" title="interface in net.silthus.schat.command">Command.Builder</a></dt>
 <dd>
 <div class="block">Instructs this builder to use the given command factory.</div>
