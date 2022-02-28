@@ -47,6 +47,7 @@ import net.silthus.schat.repository.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
+import static net.silthus.schat.commands.JoinChannelCommand.joinChannel;
 import static net.silthus.schat.pointer.Setting.setting;
 
 /**
@@ -182,10 +183,22 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
     void removeTarget(@NonNull MessageTarget target);
 
     /**
+     * Updates the targets of this channel joining all
+     * chatters that are a member of this channel.
+     *
+     * @since next
+     */
+    default void updateTargets() {
+        for (MessageTarget target : targets())
+            if (target instanceof Chatter chatter)
+                joinChannel(chatter, this);
+    }
+
+    /**
      * Tries to find a policy attached to this channel.
      *
      * @param policy the policy to find
-     * @param <P> the policy type
+     * @param <P>    the policy type
      * @return the policy if the channel has one
      * @since next
      */

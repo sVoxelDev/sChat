@@ -131,13 +131,23 @@ final class ChannelImpl implements Channel {
 
     @Override
     public void removeTarget(@NonNull MessageTarget target) {
-        targets.remove(target);
+        if (isNot(PRIVATE))
+            targets.remove(target);
     }
 
     @Override
     public SendMessageResult sendMessage(@NonNull Message message) {
         if (messages.add(message))
             return processMessage(message);
+        else
+            return failure(message);
+    }
+
+    private SendMessageResult processMessage(Message message) {
+        updateTargets();
+        SendChannelMessageEvent event = eventBus.post(new SendChannelMessageEvent(this, message, policy(SendChannelMessagePolicy.class).orElse(SEND_CHANNEL_MESSAGE_POLICY)));
+        if (event.isNotCancelled() && event.policy().test(this, message))
+            return event.targets().sendMessage(event.message());
         else
             return failure(message);
     }
@@ -157,14 +167,6 @@ final class ChannelImpl implements Channel {
             if (target instanceof Chatter chatter)
                 chatter.leave(this);
         targets.clear();
-    }
-
-    private SendMessageResult processMessage(Message message) {
-        SendChannelMessageEvent event = eventBus.post(new SendChannelMessageEvent(this, message, policy(SendChannelMessagePolicy.class).orElse(SEND_CHANNEL_MESSAGE_POLICY)));
-        if (event.isNotCancelled() && event.policy().test(this, message))
-            return event.targets().sendMessage(event.message());
-        else
-            return failure(message);
     }
 
     @Getter

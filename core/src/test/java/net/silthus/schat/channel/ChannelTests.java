@@ -28,7 +28,9 @@ import java.util.Collections;
 import java.util.List;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.chatter.ChatterMock;
+import net.silthus.schat.commands.JoinChannelCommand;
 import net.silthus.schat.commands.SendMessageResult;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.pointer.Settings;
@@ -66,6 +68,7 @@ class ChannelTests {
     @BeforeEach
     void setUp() {
         channel = randomChannel();
+        JoinChannelCommand.prototype(builder -> builder.eventBus(EventBus.empty()));
     }
 
     private void assertInvalidKey(String key) {
@@ -130,6 +133,17 @@ class ChannelTests {
 
         assertThat(channel.get(KEY)).isPresent().get().isEqualTo("test");
         assertThat(channel.get(DISPLAY_NAME)).isEqualTo(text("test"));
+    }
+
+    @Test
+    void sendMessage_updates_channel_targets() {
+        final ChatterMock chatter = randomChatter();
+        channel.addTarget(chatter);
+        assertThat(chatter.isJoined(channel)).isFalse();
+
+        channel.sendMessage(randomMessage());
+
+        assertThat(chatter.isJoined(channel)).isTrue();
     }
 
     @Nested

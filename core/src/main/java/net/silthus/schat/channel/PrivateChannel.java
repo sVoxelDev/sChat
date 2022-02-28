@@ -26,14 +26,24 @@ package net.silthus.schat.channel;
 import java.util.function.Consumer;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.policies.JoinChannelPolicy;
 
 import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
 import static net.silthus.schat.channel.ChannelSettings.HIDDEN;
 import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
+import static net.silthus.schat.policies.JoinChannelPolicy.CAN_JOIN_PRIVATE_CHANNEL;
 
+/**
+ * Prototype class for configuring the settings of a private channel.
+ *
+ * <p>The here configured template will be used for every private channel
+ * that is created using the {@link net.silthus.schat.commands.CreatePrivateChannelCommand}.</p>
+ *
+ * <p>The {@link #configure(Consumer)} method is non destructive adding to the builder.</p>
+ *
+ * @since next
+ */
 @Accessors(fluent = true)
 public final class PrivateChannel {
 
@@ -42,11 +52,20 @@ public final class PrivateChannel {
         .set(PRIVATE, true)
         .set(HIDDEN, true)
         .set(PROTECTED, true)
-        .policy(JoinChannelPolicy.class, Chatter::isJoined);
+        .policy(JoinChannelPolicy.class, CAN_JOIN_PRIVATE_CHANNEL);
 
     @Getter
     private static Consumer<Channel.Builder> prototype = DEFAULTS;
 
+    /**
+     * Configures the private channel prototype template.
+     *
+     * <p>The previous builder will not be replaced, but same
+     * settings are replaced with the values from this call.</p>
+     *
+     * @param channel the private channel builder
+     * @since next
+     */
     public static void configure(Consumer<Channel.Builder> channel) {
         prototype = prototype.andThen(channel);
     }

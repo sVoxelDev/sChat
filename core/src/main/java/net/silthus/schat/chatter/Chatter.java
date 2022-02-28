@@ -206,28 +206,6 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
     void sendRawMessage(Component message);
 
     /**
-     * Helper method to send a message using this chatter as the source.
-     *
-     * @param text the text of the message
-     * @return the message draft
-     * @since next
-     */
-    default Message.Draft message(String text) {
-        return Message.message(text).source(this);
-    }
-
-    /**
-     * Helper method to send a message using this chatter as the source.
-     *
-     * @param text the text of the message
-     * @return the message draft
-     * @since next
-     */
-    default Message.Draft message(Component text) {
-        return Message.message(text).source(this);
-    }
-
-    /**
      * The builder of a {@link Chatter}.
      *
      * @since next

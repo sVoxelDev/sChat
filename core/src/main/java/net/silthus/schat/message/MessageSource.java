@@ -24,6 +24,7 @@
 package net.silthus.schat.message;
 
 import java.util.function.Predicate;
+import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identified;
 import net.silthus.schat.identity.Identity;
@@ -62,5 +63,27 @@ public interface MessageSource extends Identified, Pointered {
      */
     static MessageSource of(Identity identity) {
         return new IdentityMessageSource(identity);
+    }
+
+    /**
+     * Helper method to send a message using this chatter as the source.
+     *
+     * @param text the text of the message
+     * @return the message draft
+     * @since next
+     */
+    default Message.Draft message(String text) {
+        return Message.message(text).source(this);
+    }
+
+    /**
+     * Helper method to send a message using this chatter as the source.
+     *
+     * @param text the text of the message
+     * @return the message draft
+     * @since next
+     */
+    default Message.Draft message(Component text) {
+        return Message.message(text).source(this);
     }
 }

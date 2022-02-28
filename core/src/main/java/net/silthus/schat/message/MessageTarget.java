@@ -25,8 +25,11 @@ package net.silthus.schat.message;
 
 import java.util.function.Predicate;
 import lombok.NonNull;
+import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.commands.SendMessageResult;
+
+import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 
 /**
  * Represents an object that can receive messages.
@@ -38,6 +41,7 @@ import net.silthus.schat.commands.SendMessageResult;
 public interface MessageTarget {
 
     Predicate<MessageTarget> IS_CHATTER = target -> target instanceof Chatter;
+    Predicate<MessageTarget> IS_PRIVATE_CHANNEL = target -> (target instanceof Channel channel) && channel.is(PRIVATE);
 
     /**
      * Sends a message to the target.

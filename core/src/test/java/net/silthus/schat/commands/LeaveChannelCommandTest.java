@@ -31,10 +31,12 @@ import net.silthus.schat.events.channel.ChatterLeftChannelEvent;
 import net.silthus.schat.events.channel.LeaveChannelEvent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
+import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.channel.ChannelSettings.FORCED;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.commands.LeaveChannelCommand.leaveChannel;
@@ -112,5 +114,20 @@ class LeaveChannelCommandTest {
     void left_channel_event_is_fired() {
         assertCanLeaveChannel();
         eventBus.assertEventFired(new ChatterLeftChannelEvent(chatter, channel));
+    }
+
+    @Nested
+    class given_private_channel {
+        @BeforeEach
+        void setUp() {
+            CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(createInMemoryChannelRepository(eventBus)));
+            channel = CreatePrivateChannelCommand.createPrivateChannel(chatter, randomChatter()).channel();
+        }
+
+        @Test
+        void leaves_only_chatter_channel_list() {
+            executeLeaveChannel();
+            assertThat(channel.targets()).contains(chatter);
+        }
     }
 }

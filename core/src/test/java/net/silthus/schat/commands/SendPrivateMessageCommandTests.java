@@ -56,6 +56,7 @@ class SendPrivateMessageCommandTests {
         repository = createInMemoryChannelRepository(EventBus.empty());
         CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(repository));
         SendMessageCommand.prototype(builder -> builder.eventBus(EventBus.empty()));
+        JoinChannelCommand.prototype(builder -> builder.eventBus(EventBus.empty()));
         source = randomChatter();
         target = randomChatter();
     }
