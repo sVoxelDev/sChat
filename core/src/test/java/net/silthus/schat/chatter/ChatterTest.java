@@ -235,6 +235,15 @@ class ChatterTest {
                 chatter.leave(channel);
                 chatter.assertNotJoinedChannel(channel);
             }
+
+            @Test
+            void selects_different_channel_as_active() {
+                chatter.activeChannel(channel);
+                final Channel differentChannel = randomChannel();
+                chatter.join(differentChannel);
+                chatter.leave(channel);
+                assertThat(chatter.activeChannel()).isPresent().get().isEqualTo(differentChannel);
+            }
         }
 
         @Test

@@ -145,10 +145,11 @@ non-sealed class ChatterImpl implements Chatter {
     @Override
     public void leave(@NonNull Channel channel) {
         channel.removeTarget(this);
-        if (this.channels.remove(channel))
+        if (this.channels.remove(channel)) {
+            if (channel.equals(activeChannel))
+                activeChannel = channels().stream().findFirst().orElse(null);
             fireLeftChannelEvent(channel);
-        if (channel.equals(activeChannel))
-            activeChannel = null;
+        }
     }
 
     private void fireLeftChannelEvent(@NotNull Channel channel) {
