@@ -68,6 +68,7 @@ public final class ViewHelper {
     public static Component renderPrivateChannelName(Chatter chatter, Channel channel) {
         return channel.targets().stream()
             .filter(target -> target instanceof Chatter)
+            .filter(target -> !target.equals(Chatter.empty()))
             .filter(target -> !target.equals(chatter))
             .findFirst()
             .map(target -> (Chatter) target)

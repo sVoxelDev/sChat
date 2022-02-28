@@ -31,6 +31,8 @@ import net.silthus.schat.message.Message;
 import net.silthus.schat.ui.format.Format;
 import net.silthus.schat.ui.placeholder.Replacements;
 
+import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
+
 public class ViewController implements EventListener {
 
     private final Replacements replacements;
@@ -45,6 +47,8 @@ public class ViewController implements EventListener {
     }
 
     private void handleMessage(SendChannelMessageEvent event) {
+        if (event.channel().is(PRIVATE))
+            return;
         final Component formatted = formatMessage(event);
         event.message().set(Message.FORMATTED, replacements.applyTo(event.message(), formatted));
     }
