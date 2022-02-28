@@ -85,10 +85,7 @@ public class SenderMock implements Sender {
         if (component == null)
             assertThat(messages.peek()).isNull();
         else
-            assertThat(messages.peek()).isNotNull()
-                .extracting(SERIALIZER::serialize)
-                .asString()
-                .isEqualTo(SERIALIZER.serialize(component));
+            assertThat(messages.peek()).isEqualTo(component);
     }
 
     public void mockPermission(String permission, boolean state) {

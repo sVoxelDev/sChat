@@ -11,7 +11,6 @@ Feature: Join Channel
     Given a protected channel protected
     When I execute '/ch protected'
     Then I am not a member of the protected channel
-    And I received the cannot join protected channel message
 
   Scenario: User can join protected channel
     Given a protected channel protected

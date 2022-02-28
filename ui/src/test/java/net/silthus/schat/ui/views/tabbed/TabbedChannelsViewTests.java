@@ -137,19 +137,23 @@ class TabbedChannelsViewTests {
     }
 
     private void assertViewRenders(String expected) {
-        assertEquals(expected, COMPONENT_SERIALIZER.serialize(view.render()).replaceAll("<br></br>", "\n").trim());
+        assertEquals(expected, replaceNewLines(COMPONENT_SERIALIZER.serialize(view.render())).trim());
     }
 
     private void assertViewDoesNotContain(String... unexpected) {
-        assertThat(COMPONENT_SERIALIZER.serialize(view.render()).replaceAll("<br></br>", "\n").trim()).doesNotContain(unexpected);
+        assertThat(replaceNewLines(COMPONENT_SERIALIZER.serialize(view.render())).trim()).doesNotContain(unexpected);
     }
 
     private void assertViewContains(String... expected) {
-        assertThat(COMPONENT_SERIALIZER.serialize(view.render()).replaceAll("<br></br>", "\n").trim()).contains(expected);
+        assertThat(replaceNewLines(COMPONENT_SERIALIZER.serialize(view.render())).trim()).contains(expected);
     }
 
     private void assertColorOnlyViewContains(String... expected) {
-        assertThat(COLOR_ONLY_SERIALIZER.serialize(view.render()).trim()).contains(expected);
+        assertThat(replaceNewLines(COLOR_ONLY_SERIALIZER.serialize(view.render())).trim()).contains(expected);
+    }
+
+    private String replaceNewLines(String input) {
+        return input.replaceAll("<br></br>", "\n").replaceAll("<br>", "\n");
     }
 
     @Test
@@ -228,7 +232,7 @@ class TabbedChannelsViewTests {
             sendMessageWithSource("Silthus", "Yo");
             assertViewRenders("""
                 Hey
-                <yellow>Silthus<gray>: </gray><gray>Yo</gray></yellow><br>"""
+                <yellow>Silthus<gray>: </gray><gray>Yo</gray></yellow>"""
             );
         }
     }
