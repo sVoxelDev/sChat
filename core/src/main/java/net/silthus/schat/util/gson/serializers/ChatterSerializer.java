@@ -21,7 +21,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.util.gson.types;
+package net.silthus.schat.util.gson.serializers;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -30,34 +30,41 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
-import java.util.UUID;
-import net.kyori.adventure.text.Component;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.util.gson.JObject;
 
-public final class IdentitySerializer implements JsonSerializer<Identity>, JsonDeserializer<Identity> {
+public final class ChatterSerializer implements JsonSerializer<Chatter>, JsonDeserializer<Chatter> {
 
-    public static final Type IDENTITY_TYPE = new TypeToken<Identity>() {
-    }.getType();
+    private final ChatterRepository chatters;
+
+    public ChatterSerializer(ChatterRepository chatters) {
+        this.chatters = chatters;
+    }
 
     @Override
-    public JsonElement serialize(Identity src, Type typeOfSrc, JsonSerializationContext context) {
+    public JsonElement serialize(Chatter src, Type typeOfSrc, JsonSerializationContext context) {
         return JObject.json()
-            .add("id", context.serialize(src.uniqueId(), UUID.class))
-            .add("name", src.name())
-            .add("display_name", context.serialize(src.displayName(), Component.class))
+            .add("identity", context.serialize(src.identity()))
+            .add("active_channel", src.activeChannel().map(Channel::key).orElse(null))
+            .add("channels", context.serialize(src.channels().stream().map(Channel::key).toList()))
             .create();
     }
 
     @Override
-    public Identity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public Chatter deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         final JsonObject object = json.getAsJsonObject();
-        return Identity.identity(
-            context.deserialize(object.get("id"), UUID.class),
-            object.get("name").getAsString(),
-            (Component) context.deserialize(object.get("display_name"), Component.class)
-        );
+        final Identity identity = context.deserialize(object.get("identity"), Identity.class);
+        final Chatter chatter = chatters.findOrCreate(identity.uniqueId(), uuid -> Chatter.chatter(identity))
+            .activeChannel(context.deserialize(object.get("active_channel"), Channel.class));
+        for (final JsonElement element : object.getAsJsonArray("channels")) {
+            Channel channel = context.deserialize(element, Channel.class);
+            if (channel != null)
+                chatter.join(channel);
+        }
+        return chatter;
     }
 }

@@ -21,40 +21,31 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.platform.sender;
+package net.silthus.schat.util.gson.serializers;
 
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.identity.Identified;
-import net.silthus.schat.message.MessageSource;
-import net.silthus.schat.util.Permissable;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
-/**
- * Wrapper interface to represent a CommandSender/CommandSource within the common command implementations.
- */
-public interface Sender extends Identified, MessageSource, Permissable {
+public final class ComponentSerializer implements JsonSerializer<Component>, JsonDeserializer<Component> {
 
-    /**
-     * Send a json message to the Sender.
-     *
-     * @param message the message to send.
-     */
-    void sendMessage(Component message);
+    private final GsonComponentSerializer componentSerializer = GsonComponentSerializer.gson();
 
-    void sendActionBar(Component message);
+    @Override
+    public JsonElement serialize(Component src, Type typeOfSrc, JsonSerializationContext context) {
+        return componentSerializer.serializeToTree(src);
+    }
 
-    /**
-     * Gets whether this sender is the console.
-     *
-     * @return if the sender is the console
-     */
-    boolean isConsole();
-
-    /**
-     * Gets whether this sender is still valid and receiving messages.
-     *
-     * @return if this sender is valid
-     */
-    default boolean isValid() {
-        return true;
+    @Override
+    public Component deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        if (json == null)
+            return Component.empty();
+        return componentSerializer.deserializeFromTree(json);
     }
 }

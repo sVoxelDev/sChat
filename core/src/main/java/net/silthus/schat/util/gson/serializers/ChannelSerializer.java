@@ -21,7 +21,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.util.gson.types;
+package net.silthus.schat.util.gson.serializers;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -30,42 +30,43 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
-import java.time.Instant;
-import java.util.UUID;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.identity.Identity;
-import net.silthus.schat.message.Message;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.message.Targets;
+import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.util.gson.JObject;
 
-import static net.silthus.schat.message.Message.message;
+public final class ChannelSerializer implements JsonSerializer<Channel>, JsonDeserializer<Channel> {
 
-public final class MessageSerializer implements JsonSerializer<Message>, JsonDeserializer<Message> {
+    private final ChannelRepository channelRepository;
 
-    public static final Type MESSAGE_TYPE = new TypeToken<Message>() {
-    }.getType();
+    public ChannelSerializer(ChannelRepository channelRepository) {
+        this.channelRepository = channelRepository;
+    }
 
     @Override
-    public JsonElement serialize(Message src, Type typeOfSrc, JsonSerializationContext context) {
+    public JsonElement serialize(Channel src, Type typeOfSrc, JsonSerializationContext context) {
         return JObject.json()
-            .add("id", context.serialize(src.id(), UUID.class))
-            .add("timestamp", context.serialize(src.timestamp(), Instant.class))
-            .add("text", context.serialize(src.text(), Component.class))
-            .add("type", context.serialize(src.type(), Message.Type.class))
-            .add("source", context.serialize(src.source(), Identity.class))
+            .add("key", src.key())
+            .add("name", context.serialize(src.displayName(), Component.class))
+            .add("settings", context.serialize(src.settings(), Settings.class))
+            .add("targets", context.serialize(src.targets(), Targets.class))
             .create();
     }
 
     @Override
-    public Message deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public Channel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        if (json.isJsonPrimitive())
+            return channelRepository.find(json.getAsString()).orElse(null);
+
         final JsonObject object = json.getAsJsonObject();
-        return message()
-            .id(context.deserialize(object.get("id"), UUID.class))
-            .timestamp(context.deserialize(object.get("timestamp"), Instant.class))
-            .text(context.deserialize(object.get("text"), Component.class))
-            .type(context.deserialize(object.get("type"), Message.Type.class))
-            .source(context.deserialize(object.get("source"), Identity.class))
-            .create();
+        final String key = object.get("key").getAsString();
+        return channelRepository.findOrCreate(key, s -> Channel.channel(s)
+            .name(context.deserialize(object.get("name"), Component.class))
+            .settings(context.deserialize(object.get("settings"), Settings.class))
+            .targets(context.deserialize(object.get("targets"), Targets.class))
+            .create());
     }
 }

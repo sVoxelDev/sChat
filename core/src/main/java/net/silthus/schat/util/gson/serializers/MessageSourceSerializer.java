@@ -21,32 +21,33 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.util.gson.types;
+package net.silthus.schat.util.gson.serializers;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
+import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.message.MessageSource;
 
-public final class InstantSerializer implements JsonSerializer<Instant>, JsonDeserializer<Instant> {
+public final class MessageSourceSerializer implements JsonSerializer<MessageSource>, JsonDeserializer<MessageSource> {
 
-    public static final Type INSTANT_TYPE = new TypeToken<Instant>(){}.getType();
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_INSTANT;
+    private final ChatterRepository chatters;
 
-    @Override
-    public JsonElement serialize(Instant src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(FORMATTER.format(src));
+    public MessageSourceSerializer(ChatterRepository chatters) {
+        this.chatters = chatters;
     }
 
     @Override
-    public Instant deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        return FORMATTER.parse(json.getAsString(), Instant::from);
+    public JsonElement serialize(MessageSource src, Type typeOfSrc, JsonSerializationContext context) {
+        return null;
+    }
+
+    @Override
+    public MessageSource deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        return null;
     }
 }

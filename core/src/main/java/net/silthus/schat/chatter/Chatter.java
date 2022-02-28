@@ -38,6 +38,7 @@ import net.silthus.schat.events.chatter.ChatterChangedActiveChannelEvent;
 import net.silthus.schat.identity.Identified;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.message.MessageSource;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.message.Messages;
 import net.silthus.schat.pointer.Pointer;
@@ -58,7 +59,7 @@ import org.jetbrains.annotations.Unmodifiable;
  *
  * @since next
  */
-public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified, Permissable permits ChatterImpl, ChatterImpl.EmptyChatter {
+public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified, MessageSource, Permissable permits ChatterImpl, ChatterImpl.EmptyChatter {
 
     Pointer<Channel> ACTIVE_CHANNEL = Pointer.pointer(Channel.class, "active_channel");
 

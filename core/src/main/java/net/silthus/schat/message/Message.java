@@ -30,7 +30,6 @@ import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.commands.SendMessageResult;
-import net.silthus.schat.identity.Identity;
 import net.silthus.schat.pointer.Configurable;
 import net.silthus.schat.pointer.Pointer;
 import net.silthus.schat.pointer.Setting;
@@ -44,7 +43,7 @@ public sealed interface Message extends Configurable<Message> permits MessageImp
 
     Pointer<UUID> ID = pointer(UUID.class, "id");
     Pointer<Instant> TIMESTAMP = pointer(Instant.class, "timestamp");
-    Pointer<Identity> SOURCE = pointer(Identity.class, "source");
+    Pointer<MessageSource> SOURCE = pointer(MessageSource.class, "source");
     Pointer<Component> TEXT = pointer(Component.class, "text");
     Pointer<Channel> CHANNEL = pointer(Channel.class, "channel");
     Pointer<Type> TYPE = pointer(Type.class, "type");
@@ -67,7 +66,7 @@ public sealed interface Message extends Configurable<Message> permits MessageImp
 
     @NotNull Instant timestamp();
 
-    @NotNull Identity source();
+    @NotNull MessageSource source();
 
     @NotNull @Unmodifiable Collection<Channel> channels();
 
@@ -91,9 +90,9 @@ public sealed interface Message extends Configurable<Message> permits MessageImp
 
         @NotNull Draft timestamp(@NonNull Instant timestamp);
 
-        @NotNull Identity source();
+        @NotNull MessageSource source();
 
-        @NotNull Draft source(@Nullable Identity identity);
+        @NotNull Draft source(@Nullable MessageSource identity);
 
         @NotNull Draft to(@NonNull MessageTarget target);
 

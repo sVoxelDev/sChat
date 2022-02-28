@@ -21,42 +21,49 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.util.gson.types;
+package net.silthus.schat.util.gson.serializers;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import java.util.UUID;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.message.Targets;
 
-/**
- * A Gson serializer to serialize and deserialize a {@link Component} into JSON format.
- *
- * <p>Used for sending packets across servers.</p>
- *
- * @since next
- */
-public final class ComponentSerializer implements JsonSerializer<Component>, JsonDeserializer<Component> {
+import static net.silthus.schat.message.MessageTarget.IS_CHATTER;
+import static net.silthus.schat.util.UUIDUtil.isUuid;
 
-    public static final Type COMPONENT_TYPE = new TypeToken<Component>() {
-    }.getType();
+public final class TargetsSerializer implements JsonSerializer<Targets>, JsonDeserializer<Targets> {
 
-    private final GsonComponentSerializer componentSerializer = GsonComponentSerializer.gson();
+    private final ChatterRepository chatterRepository;
 
-    @Override
-    public JsonElement serialize(Component src, Type typeOfSrc, JsonSerializationContext context) {
-        return componentSerializer.serializeToTree(src);
+    public TargetsSerializer(ChatterRepository chatterRepository) {
+        this.chatterRepository = chatterRepository;
     }
 
     @Override
-    public Component deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        if (json == null)
-            return Component.empty();
-        return componentSerializer.deserializeFromTree(json);
+    public JsonElement serialize(Targets targets, Type type, JsonSerializationContext jsonSerializationContext) {
+        final JsonArray elements = new JsonArray();
+        targets.stream()
+            .filter(IS_CHATTER)
+            .map(target -> (Chatter) target)
+            .forEach(target -> elements.add(target.uniqueId().toString()));
+        return elements;
+    }
+
+    @Override
+    public Targets deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+        final Targets targets = new Targets();
+        for (final JsonElement element : jsonElement.getAsJsonArray())
+            if (isUuid(element.getAsString()))
+                chatterRepository.find(UUID.fromString(element.getAsString())).ifPresent(targets::add);
+
+        return targets;
     }
 }

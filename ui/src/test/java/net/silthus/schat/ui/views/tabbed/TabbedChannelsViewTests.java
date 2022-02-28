@@ -36,6 +36,7 @@ import net.silthus.schat.commands.CreatePrivateChannelCommand;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.message.MessageSource;
 import net.silthus.schat.ui.ViewModule;
 import net.silthus.schat.ui.view.ViewConfig;
 import org.jetbrains.annotations.NotNull;
@@ -66,6 +67,7 @@ import static net.silthus.schat.identity.Identity.identity;
 import static net.silthus.schat.message.Message.FORMATTED;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
+import static net.silthus.schat.message.MessageSource.of;
 import static net.silthus.schat.ui.format.Format.ACTIVE_TAB_FORMAT;
 import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
 import static net.silthus.schat.ui.util.ViewHelper.subscriptOf;
@@ -117,7 +119,7 @@ class TabbedChannelsViewTests {
     }
 
     private void sendMessageWithSource(String source, String text) {
-        sendMessage(message(text).source(identity(source)).create());
+        sendMessage(message(text).source(of(identity(source))).create());
     }
 
     private void assertTextRenders(String expected) {
@@ -209,7 +211,7 @@ class TabbedChannelsViewTests {
                 view.config()
                     .format().set(MESSAGE_FORMAT, (view, msg) ->
                         text("<")
-                            .append(msg.getOrDefault(Message.SOURCE, Identity.nil()).displayName())
+                            .append(msg.getOrDefault(Message.SOURCE, MessageSource.nil()).displayName())
                             .append(text("> "))
                             .append(msg.getOrDefault(Message.TEXT, Component.empty())));
                 assertTextContains("<Bob> Hi");
@@ -372,8 +374,8 @@ class TabbedChannelsViewTests {
             @BeforeEach
             void setUp() {
                 sendMessage("System");
-                message("one").source(identity("Bob")).to(channelOne).type(Message.Type.CHAT).send();
-                message("two").source(identity("Bob")).to(channelTwo).type(Message.Type.CHAT).send();
+                message("one").source(of(identity("Bob"))).to(channelOne).type(Message.Type.CHAT).send();
+                message("two").source(of(identity("Bob"))).to(channelTwo).type(Message.Type.CHAT).send();
             }
 
             @Test
@@ -461,7 +463,7 @@ class TabbedChannelsViewTests {
                     "zzz",
                     set(PRIORITY, 10),
                     set(MESSAGE_FORMAT, (v, message) -> message.get(Message.SOURCE)
-                        .orElse(Identity.nil())
+                        .orElse(MessageSource.nil())
                         .displayName()
                         .append(text(": ").append(message.getOrDefault(Message.TEXT, empty()))))
                 )

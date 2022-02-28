@@ -21,43 +21,30 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.util.gson.types;
+package net.silthus.schat.util.gson.serializers;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
-import java.util.Map;
-import net.silthus.schat.pointer.Setting;
-import net.silthus.schat.pointer.Settings;
-import net.silthus.schat.util.gson.JObject;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 
-public final class SettingsSerializer implements JsonSerializer<Settings>, JsonDeserializer<Settings> {
+public final class InstantSerializer implements JsonSerializer<Instant>, JsonDeserializer<Instant> {
 
-    public static final Type SETTINGS_TYPE = new TypeToken<Settings>() {
-    }.getType();
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_INSTANT;
 
     @Override
-    public JsonElement serialize(Settings src, Type typeOfSrc, JsonSerializationContext context) {
-        final JObject object = JObject.json();
-        for (Setting<?> setting : src.settings()) {
-            object.add(setting.key(), context.serialize(src.get(setting), setting.type()));
-        }
-        return object.create();
+    public JsonElement serialize(Instant src, Type typeOfSrc, JsonSerializationContext context) {
+        return new JsonPrimitive(FORMATTER.format(src));
     }
 
     @Override
-    public Settings deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        final JsonObject object = json.getAsJsonObject();
-        final Settings.Builder settings = Settings.settingsBuilder();
-        for (Map.Entry<String, JsonElement> entry : object.entrySet()) {
-            settings.withUnknown(entry.getKey(), setting -> context.deserialize(entry.getValue(), setting.type()));
-        }
-        return settings.create();
+    public Instant deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        return FORMATTER.parse(json.getAsString(), Instant::from);
     }
 }

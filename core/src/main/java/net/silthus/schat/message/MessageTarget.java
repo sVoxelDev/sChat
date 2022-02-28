@@ -28,9 +28,23 @@ import lombok.NonNull;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.commands.SendMessageResult;
 
+/**
+ * Represents an object that can receive messages.
+ *
+ * <p>The primary example for this would be the {@link Chatter}.</p>
+ *
+ * @since next
+ */
 public interface MessageTarget {
 
     Predicate<MessageTarget> IS_CHATTER = target -> target instanceof Chatter;
 
+    /**
+     * Sends a message to the target.
+     *
+     * @param message the message to sent
+     * @return the result if the message was processed
+     * @since next
+     */
     SendMessageResult sendMessage(@NonNull Message message);
 }

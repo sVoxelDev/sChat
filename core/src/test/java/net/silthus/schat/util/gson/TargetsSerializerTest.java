@@ -21,8 +21,9 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.util.gson.types;
+package net.silthus.schat.util.gson;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
@@ -50,23 +51,25 @@ class TargetsSerializerTest {
     private static final SerializationContextStub SERIALIZATION_CONTEXT = new SerializationContextStub();
     private static final DeserializationContextStub DESERIALIZATION_CONTEXT = new DeserializationContextStub();
 
-    private TargetsSerializer serializer;
+    private Gson gson;
     private ChatterRepository chatterRepository;
 
     @BeforeEach
     void setUp() {
         chatterRepository = createInMemoryChatterRepository();
-        serializer = TargetsSerializer.createTargetsSerializer(chatterRepository, false);
+        gson = GsonProvider.gsonProvider()
+            .registerTargetsSerializer(chatterRepository)
+            .prettyGson();
     }
 
     @NotNull
     private Targets deserialize(JsonArray elements) {
-        return serializer.deserialize(elements, Targets.class, DESERIALIZATION_CONTEXT);
+        return gson.fromJson(elements, Targets.class);
     }
 
     @NotNull
     private JsonElement serialize(Chatter... chatter) {
-        return serializer.serialize(Targets.of(chatter), Targets.class, SERIALIZATION_CONTEXT);
+        return gson.toJsonTree(Targets.of(chatter));
     }
 
     private void assertSerializedJsonContains(Chatter... chatters) {

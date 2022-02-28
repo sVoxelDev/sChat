@@ -26,8 +26,8 @@ package net.silthus.schat.ui.format;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.message.MessageSource;
 import net.silthus.schat.pointer.Pointered;
 import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.ui.view.View;
@@ -65,7 +65,7 @@ public interface Format {
      */
     Setting<Format> MESSAGE_FORMAT = setting(Format.class, "message_format", (view, msg) ->
         msg.get(Message.SOURCE)
-            .filter(Identity.IS_NOT_NIL)
+            .filter(MessageSource.IS_NOT_NIL)
             .map(identity -> identity.displayName().colorIfAbsent(YELLOW).append(text(": ", GRAY)))
             .orElse(Component.empty())
             .append(((Message) msg).text().colorIfAbsent(GRAY)));

@@ -28,7 +28,6 @@ import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.commands.SendMessageResult;
-import net.silthus.schat.identity.Identity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -72,7 +71,7 @@ class MessageTest {
 
         @Test
         void then_source_is_nil_source() {
-            assertThat(message.source()).isEqualTo(Identity.nil());
+            assertThat(message.source()).isEqualTo(MessageSource.nil());
         }
 
         @Test

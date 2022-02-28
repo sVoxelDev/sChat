@@ -26,36 +26,73 @@ package net.silthus.schat.util.gson;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.lang.reflect.Type;
+import java.time.Instant;
+import lombok.Getter;
 import lombok.NonNull;
-import net.silthus.schat.util.gson.types.ComponentSerializer;
-import net.silthus.schat.util.gson.types.IdentitySerializer;
-import net.silthus.schat.util.gson.types.InstantSerializer;
-import net.silthus.schat.util.gson.types.MessageSerializer;
-import net.silthus.schat.util.gson.types.SettingsSerializer;
+import lombok.experimental.Accessors;
+import net.kyori.adventure.text.Component;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.identity.Identity;
+import net.silthus.schat.message.Message;
+import net.silthus.schat.message.MessageSource;
+import net.silthus.schat.message.Targets;
+import net.silthus.schat.pointer.Settings;
+import net.silthus.schat.util.gson.serializers.ChannelSerializer;
+import net.silthus.schat.util.gson.serializers.ChatterSerializer;
+import net.silthus.schat.util.gson.serializers.ComponentSerializer;
+import net.silthus.schat.util.gson.serializers.IdentitySerializer;
+import net.silthus.schat.util.gson.serializers.InstantSerializer;
+import net.silthus.schat.util.gson.serializers.MessageSerializer;
+import net.silthus.schat.util.gson.serializers.MessageSourceSerializer;
+import net.silthus.schat.util.gson.serializers.SettingsSerializer;
+import net.silthus.schat.util.gson.serializers.TargetsSerializer;
 
-import static net.silthus.schat.util.gson.types.ComponentSerializer.COMPONENT_TYPE;
-import static net.silthus.schat.util.gson.types.IdentitySerializer.IDENTITY_TYPE;
-import static net.silthus.schat.util.gson.types.InstantSerializer.INSTANT_TYPE;
-import static net.silthus.schat.util.gson.types.MessageSerializer.MESSAGE_TYPE;
-import static net.silthus.schat.util.gson.types.SettingsSerializer.SETTINGS_TYPE;
-
+@Getter
+@Accessors(fluent = true)
 public final class GsonProvider {
 
-    public static GsonProvider createGsonProvider() {
+    public static GsonProvider gsonProvider() {
         return new GsonProvider();
     }
 
-    private final GsonBuilder base = new GsonBuilder()
+    private final GsonBuilder gson = new GsonBuilder()
         .disableHtmlEscaping()
-        .registerTypeAdapter(INSTANT_TYPE, new InstantSerializer())
-        .registerTypeAdapter(COMPONENT_TYPE, new ComponentSerializer())
-        .registerTypeAdapter(MESSAGE_TYPE, new MessageSerializer())
-        .registerTypeAdapter(IDENTITY_TYPE, new IdentitySerializer())
-        .registerTypeAdapter(SETTINGS_TYPE, new SettingsSerializer());
-    private final GsonBuilder prettyPrinting = base.setPrettyPrinting();
+        .registerTypeAdapter(Instant.class, new InstantSerializer())
+        .registerTypeHierarchyAdapter(Component.class, new ComponentSerializer())
+        .registerTypeHierarchyAdapter(Message.class, new MessageSerializer())
+        .registerTypeHierarchyAdapter(Settings.class, new SettingsSerializer())
+        .registerTypeHierarchyAdapter(Identity.class, new IdentitySerializer());
+
+    private final GsonBuilder prettyPrinting = gson.setPrettyPrinting();
+
+    private GsonProvider() {
+    }
+
+    public GsonProvider registerTargetsSerializer(ChatterRepository chatters) {
+        gson.registerTypeAdapter(Targets.class, new TargetsSerializer(chatters));
+        return this;
+    }
+
+    public GsonProvider registerChatterSerializer(ChatterRepository chatters) {
+        gson.registerTypeHierarchyAdapter(Chatter.class, new ChatterSerializer(chatters));
+        return this;
+    }
+
+    public GsonProvider registerChannelSerializer(ChannelRepository channelRepository) {
+        gson.registerTypeHierarchyAdapter(Channel.class, new ChannelSerializer(channelRepository));
+        return this;
+    }
+
+    public GsonProvider registerMessageSourceSerializer(ChatterRepository chatters) {
+        gson.registerTypeHierarchyAdapter(MessageSource.class, new MessageSourceSerializer(chatters));
+        return this;
+    }
 
     public Gson normalGson() {
-        return base.create();
+        return gson.create();
     }
 
     public Gson prettyGson() {
@@ -63,9 +100,6 @@ public final class GsonProvider {
     }
 
     public void registerTypeAdapter(Type type, @NonNull Object adapter) {
-        base.registerTypeAdapter(type, adapter);
-    }
-
-    private GsonProvider() {
+        gson.registerTypeAdapter(type, adapter);
     }
 }

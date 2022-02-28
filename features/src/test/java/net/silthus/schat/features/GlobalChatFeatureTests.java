@@ -27,7 +27,6 @@ import java.lang.reflect.Type;
 import lombok.NonNull;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelHelper;
-import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.channel.ChannelSettings;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.eventbus.EventBusMock;
@@ -38,7 +37,6 @@ import net.silthus.schat.messenger.Messenger;
 import net.silthus.schat.messenger.PluginMessage;
 import net.silthus.schat.messenger.PluginMessageSerializer;
 import net.silthus.schat.util.gson.GsonProvider;
-import net.silthus.schat.util.gson.types.ChannelSerializer;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,8 +53,7 @@ class GlobalChatFeatureTests implements Messenger {
 
     @BeforeEach
     void setUp() {
-        final GsonProvider gsonProvider = GsonProvider.createGsonProvider();
-        gsonProvider.registerTypeAdapter(ChannelSerializer.CHANNEL_TYPE, ChannelSerializer.createChannelSerializer(ChannelRepository.createInMemoryChannelRepository(events), false));
+        final GsonProvider gsonProvider = GsonProvider.gsonProvider();
         serializer = PluginMessageSerializer.gsonSerializer(gsonProvider);
         new GlobalChatFeature(this).bind(events);
     }

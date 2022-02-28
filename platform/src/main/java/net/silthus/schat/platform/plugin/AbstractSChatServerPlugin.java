@@ -59,10 +59,6 @@ import static net.silthus.schat.platform.commands.parser.ChannelArgument.registe
 import static net.silthus.schat.platform.commands.parser.ChatterArgument.registerChatterArgument;
 import static net.silthus.schat.platform.config.ConfigKeys.DEBUG;
 import static net.silthus.schat.platform.config.ConfigKeys.VIEW_CONFIG;
-import static net.silthus.schat.util.gson.types.ChannelSerializer.CHANNEL_TYPE;
-import static net.silthus.schat.util.gson.types.ChannelSerializer.createChannelSerializer;
-import static net.silthus.schat.util.gson.types.TargetsSerializer.TARGETS_TYPE;
-import static net.silthus.schat.util.gson.types.TargetsSerializer.createTargetsSerializer;
 
 @Getter
 @Accessors(fluent = true)
@@ -126,8 +122,11 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     }
 
     private void registerSerializers() {
-        gsonProvider().registerTypeAdapter(CHANNEL_TYPE, createChannelSerializer(channelRepository(), config().get(DEBUG)));
-        gsonProvider().registerTypeAdapter(TARGETS_TYPE, createTargetsSerializer(chatterRepository(), config().get(DEBUG)));
+        gsonProvider()
+            .registerChannelSerializer(channelRepository())
+            .registerChatterSerializer(chatterRepository())
+            .registerMessageSourceSerializer(chatterRepository())
+            .registerTargetsSerializer(chatterRepository());
     }
 
     private void setupPrototypes() {

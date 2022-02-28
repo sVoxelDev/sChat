@@ -53,6 +53,7 @@ import static net.silthus.schat.chatter.ChatterMock.chatterMock;
 import static net.silthus.schat.commands.CreatePrivateChannelCommand.createPrivateChannel;
 import static net.silthus.schat.identity.Identity.identity;
 import static net.silthus.schat.message.Message.message;
+import static net.silthus.schat.message.MessageSource.of;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 import static net.silthus.schat.platform.config.ConfigKeys.VIEW_CONFIG;
 import static net.silthus.schat.platform.config.TestConfigurationAdapter.testConfigAdapter;
@@ -95,7 +96,7 @@ class ConfigTests {
     void loads_message_format() {
         final Component format = getTestChannelConfig().settings()
             .get(MESSAGE_FORMAT)
-            .format(View.empty(), message("Hey").source(identity("Notch")).create());
+            .format(View.empty(), message("Hey").source(of(identity("Notch"))).create());
         assertThat(format).isEqualTo(text("Notch", YELLOW).append(text(": Hey", GRAY)));
     }
 
@@ -118,7 +119,7 @@ class ConfigTests {
         @Test
         void loads_custom_private_chat_message_format() {
             final Component format = config.get(VIEW_CONFIG).format().get(MESSAGE_FORMAT)
-                .format(View.empty(), message("Hey").source(identity("Bob")).create());
+                .format(View.empty(), message("Hey").source(of(identity("Bob"))).create());
             assertThat(format).isEqualTo(text().append(text("[Bob]", AQUA)).append(text(": Hey")).build());
         }
 

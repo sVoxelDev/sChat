@@ -21,40 +21,46 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.platform.sender;
+package net.silthus.schat.message;
 
-import net.kyori.adventure.text.Component;
+import java.util.function.Predicate;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identified;
-import net.silthus.schat.message.MessageSource;
-import net.silthus.schat.util.Permissable;
+import net.silthus.schat.identity.Identity;
+import net.silthus.schat.pointer.Pointered;
 
 /**
- * Wrapper interface to represent a CommandSender/CommandSource within the common command implementations.
+ * A message source can be anything that is {@link Identified}
+ * and used to send messages.
+ *
+ * <p>The primary source of messages is the {@link Chatter},
+ * but any {@link Identity} can be wrapped as a source using the {@link #of(Identity)} method.</p>
+ *
+ * @since next
  */
-public interface Sender extends Identified, MessageSource, Permissable {
+public interface MessageSource extends Identified, Pointered {
+
+    Predicate<MessageSource> IS_NIL = messageSource -> messageSource.identity().equals(Identity.nil());
+    Predicate<MessageSource> IS_NOT_NIL = IS_NIL.negate();
 
     /**
-     * Send a json message to the Sender.
+     * Gets an empty message source represented by the {@link Identity#nil()}.
      *
-     * @param message the message to send.
+     * @return the empty message source
+     * @since next
      */
-    void sendMessage(Component message);
-
-    void sendActionBar(Component message);
-
-    /**
-     * Gets whether this sender is the console.
-     *
-     * @return if the sender is the console
-     */
-    boolean isConsole();
+    static MessageSource nil() {
+        return IdentityMessageSource.NIL;
+    }
 
     /**
-     * Gets whether this sender is still valid and receiving messages.
+     * Wraps the given identity into a message source.
      *
-     * @return if this sender is valid
+     * @param identity the identity to wrap as a source
+     * @return the wrapped message source
+     * @since next
      */
-    default boolean isValid() {
-        return true;
+    static MessageSource of(Identity identity) {
+        return new IdentityMessageSource(identity);
     }
 }

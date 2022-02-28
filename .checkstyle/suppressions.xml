@@ -10,5 +10,9 @@
             files="(platform|bukkit|velocity|bungeecord|features|ui)[\\/]src[\\/]main[\\/]java[\\/]net[\\/]silthus[\\/]schat.*"
             checks="(FilteringWriteTag|JavadocPackage|MissingJavadoc.*)"/>
 
+    <suppress
+            files="src[\\/]main[\\/]java[\\/]net[\\/]silthus[\\/]schat[\\/]util[\\/]gson[\\/]serializers.*"
+            checks="(FilteringWriteTag|JavadocPackage|MissingJavadoc.*)"/>
+
     <suppress files=".*[\\/]nbt[\\/](List|Compound)BinaryTag.java" checks="MethodName"/>
 </suppressions>

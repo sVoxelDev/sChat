@@ -39,6 +39,7 @@ import static net.silthus.schat.channel.Channel.channel;
 import static net.silthus.schat.chatter.ChatterMock.chatterMock;
 import static net.silthus.schat.identity.Identity.identity;
 import static net.silthus.schat.message.Message.message;
+import static net.silthus.schat.message.MessageSource.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MiniMessageFormatTest {
@@ -76,7 +77,7 @@ class MiniMessageFormatTest {
     @Test
     void message_with_source_and_source_format() {
         assertFormat("<source.display_name>: <text>",
-            message("Hey").source(identity("Bob", text("Bobby"))),
+            message("Hey").source(of(identity("Bob", text("Bobby")))),
             "Bobby: Hey"
         );
     }

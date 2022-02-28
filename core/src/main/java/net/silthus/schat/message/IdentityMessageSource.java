@@ -21,40 +21,32 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.platform.sender;
+package net.silthus.schat.message;
 
-import net.kyori.adventure.text.Component;
-import net.silthus.schat.identity.Identified;
-import net.silthus.schat.message.MessageSource;
-import net.silthus.schat.util.Permissable;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+import net.silthus.schat.identity.Identity;
+import net.silthus.schat.pointer.Pointers;
 
-/**
- * Wrapper interface to represent a CommandSender/CommandSource within the common command implementations.
- */
-public interface Sender extends Identified, MessageSource, Permissable {
+import static net.silthus.schat.pointer.Pointers.pointersBuilder;
 
-    /**
-     * Send a json message to the Sender.
-     *
-     * @param message the message to send.
-     */
-    void sendMessage(Component message);
+@Getter
+@Accessors(fluent = true)
+@EqualsAndHashCode(of = {"identity"})
+final class IdentityMessageSource implements MessageSource {
 
-    void sendActionBar(Component message);
+    static final IdentityMessageSource NIL = new IdentityMessageSource(Identity.nil());
 
-    /**
-     * Gets whether this sender is the console.
-     *
-     * @return if the sender is the console
-     */
-    boolean isConsole();
+    private final Identity identity;
+    private final Pointers pointers;
 
-    /**
-     * Gets whether this sender is still valid and receiving messages.
-     *
-     * @return if this sender is valid
-     */
-    default boolean isValid() {
-        return true;
+    IdentityMessageSource(Identity identity) {
+        this.identity = identity;
+        pointers = pointersBuilder()
+            .withForward(Identity.ID, identity(), Identity.ID)
+            .withForward(Identity.NAME, identity(), Identity.NAME)
+            .withForward(Identity.DISPLAY_NAME, identity(), Identity.DISPLAY_NAME)
+            .create();
     }
 }

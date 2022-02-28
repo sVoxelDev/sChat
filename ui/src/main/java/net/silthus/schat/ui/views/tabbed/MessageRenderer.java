@@ -26,8 +26,8 @@ package net.silthus.schat.ui.views.tabbed;
 import java.util.Collection;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
-import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.message.MessageSource;
 import net.silthus.schat.ui.format.Format;
 import net.silthus.schat.ui.view.View;
 
@@ -51,7 +51,7 @@ public class MessageRenderer {
     }
 
     public Component renderMessage(Message message) {
-        if (Identity.nil().equals(message.source()))
+        if (MessageSource.IS_NIL.test(message.source()))
             return message.getOrDefault(Message.FORMATTED, message.text());
         else
             return message.getOrDefault(Message.FORMATTED, messageFormat.format(view, message));

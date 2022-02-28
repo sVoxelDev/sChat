@@ -25,15 +25,16 @@ package net.silthus.schat.identity;
 
 import java.util.UUID;
 import net.kyori.adventure.text.Component;
+import net.silthus.schat.pointer.Pointered;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Marks an entity as identified requiring it to have an {@link IdentityImpl}.
+ * Marks an entity as identified requiring it to hold an {@link Identity}.
  *
  * @since next
  */
-public non-sealed interface Identified extends Identity {
+public interface Identified extends Pointered {
 
     /**
      * Gets the identity of the identified entity.
@@ -43,19 +44,34 @@ public non-sealed interface Identified extends Identity {
      */
     @NotNull Identity identity();
 
-    @Override
+    /**
+     * A delegate to the unique id of the {@link #identity()}.
+     *
+     * @return the unique id
+     * @since next
+     */
     @ApiStatus.NonExtendable
     default /*final*/ UUID uniqueId() {
         return identity().uniqueId();
     }
 
-    @Override
+    /**
+     * A delegate to the name of the {@link #identity()}.
+     *
+     * @return the name
+     * @since next
+     */
     @ApiStatus.NonExtendable
     default /*final*/ String name() {
         return identity().name();
     }
 
-    @Override
+    /**
+     * A delegate to the display name of the {@link #identity()}.
+     *
+     * @return the display name
+     * @since next
+     */
     @ApiStatus.NonExtendable
     default /*final*/ Component displayName() {
         return identity().displayName();

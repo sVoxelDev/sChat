@@ -37,7 +37,6 @@ import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.commands.SendMessageCommand;
 import net.silthus.schat.commands.SendMessageResult;
-import net.silthus.schat.identity.Identity;
 import net.silthus.schat.pointer.Settings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +57,7 @@ final class MessageImpl implements Message {
 
     private final UUID id;
     private final Instant timestamp;
-    private final Identity source;
+    private final MessageSource source;
     private final transient Targets targets;
     private final Component text;
     private final Type type;
@@ -109,7 +108,7 @@ final class MessageImpl implements Message {
     static final class Draft implements Message.Draft {
         private UUID id = UUID.randomUUID();
         private Instant timestamp = Instant.now();
-        private Identity source = Identity.nil();
+        private MessageSource source = MessageSource.nil();
         private Targets targets = new Targets();
         private Component text = Component.empty();
         private Type type = Type.SYSTEM;
@@ -133,7 +132,7 @@ final class MessageImpl implements Message {
         }
 
         @Override
-        public @NotNull Draft source(@Nullable Identity source) {
+        public @NotNull Draft source(@Nullable MessageSource source) {
             if (source != null)
                 this.source = source;
             return this;

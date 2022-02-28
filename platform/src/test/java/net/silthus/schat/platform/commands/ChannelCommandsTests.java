@@ -154,7 +154,7 @@ class ChannelCommandsTests extends CommandTest {
             Command<Sender> command = commandManager.commandBuilder(channel.key())
                 .argument(StringArgument.greedy("message"))
                 .handler(commandContext -> Message.message((String) commandContext.get("message"))
-                    .source(commandContext.getSender().identity())
+                    .source(commandContext.getSender())
                     .to(channel)
                     .send())
                 .build();
