@@ -726,6 +726,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#configuration-reference-legend" class="md-nav__link">
+    Configuration Reference Legend
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -745,15 +752,14 @@
 
 
 <h1 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h1>
-<p>The configuration documentation of sChat is split into two parts.
-One for <a href="reference/">common settings</a>, like logging, private chats and so on.
-The second part goes into detail how you can configure and setup <a href="channels/">channels</a>.</p>
+<p>The configuration documentation of sChat is split into two parts. One for <a href="reference/">common settings</a>, like logging,
+private chats and so on. The second part goes into detail how you can configure and setup <a href="channels/">channels</a>.</p>
 <div class="admonition warning">
 <p class="admonition-title">New Config Options</p>
+</div>
 <p>New config options are not automatically added to the <code>config.yml</code>.<br />
 The default option will be used if nothing is configured.<br />
 Take a look at the <a href="reference/">configuration reference</a> to see what options where added when.</p>
-</div>
 <h2 id="complete-config">Complete Config<a class="headerlink" href="#complete-config" title="Permanent link">&para;</a></h2>
 <p>Here is the complete <code>config.yml</code> how it is shipped with the plugin. sChat will automatically save and overwrite a <code>config.default.yml</code> on every start.
 The default config always contains the latest settings.<br />
@@ -772,13 +778,13 @@ You can also take a look at the <a href="/configuration/reference">configuration
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1">#|                                                                                              |#</span><span class="w"></span>
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1">#|                         Supercharge your Minecraft Chat Experience!                          |#</span><span class="w"></span>
 <a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="c1">#|                                                                                              |#</span><span class="w"></span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="c1">#|            WIKI:        https://github.com/sVoxelDev/sChat                                   |#</span><span class="w"></span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="c1">#|            WIKI:        https://schat.silthus.net/docs                                       |#</span><span class="w"></span>
 <a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="c1">#|            DISCORD:     https://discord.gg/R4st4QxAjb                                        |#</span><span class="w"></span>
 <a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="c1">#|            BUG REPORTS: https://github.com/sVoxelDev/sChat/issues                            |#</span><span class="w"></span>
 <a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="c1">#|                                                                                              |#</span><span class="w"></span>
 <a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="c1">#|     New options are not added to this file automatically. Default values are used if an      |#</span><span class="w"></span>
-<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="c1">#|     option cannot be found. There will always be an up-to-date config.default.yml which      |#</span><span class="w"></span>
-<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="c1">#|     also explains all of the available config options in detail.                             |#</span><span class="w"></span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="c1">#|     option cannot be found. There will always be an up-to-date config.default.yml and        |#</span><span class="w"></span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="c1">#|     all config values are explained in great detail on the wiki.                             |#</span><span class="w"></span>
 <a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="c1">#+----------------------------------------------------------------------------------------------+#</span><span class="w"></span>
 <a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="c1">##################################################################################################</span><span class="w"></span>
 <a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>
@@ -804,102 +810,137 @@ You can also take a look at the <a href="/configuration/reference">configuration
 <a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a>
 <a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a><span class="w">    </span><span class="c1">#</span><span class="w"></span>
 <a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a><span class="w">    </span><span class="c1"># The friendly display name of the channel as it is shown in the GUI and messages.</span><span class="w"></span>
-<a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a><span class="w">    </span><span class="c1"># The name is parsed with the MiniMessage format (see documentation).</span><span class="w"></span>
-<a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a><span class="w">    </span><span class="c1">#</span><span class="w"></span>
-<a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;#189AB4&gt;Global&quot;</span><span class="w"> </span><span class="c1"># colors the name with the given hex formatted color</span><span class="w"></span>
-<a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a>
-<a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a><span class="w">    </span><span class="c1">#</span><span class="w"></span>
-<a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a><span class="w">    </span><span class="c1"># Every channel can have an unlimited number of settings added and controlled by various features.</span><span class="w"></span>
-<a id="__codelineno-0-51" name="__codelineno-0-51" href="#__codelineno-0-51"></a><span class="w">    </span><span class="c1"># The settings documented here are the ones that come out of the box with sChat.</span><span class="w"></span>
-<a id="__codelineno-0-52" name="__codelineno-0-52" href="#__codelineno-0-52"></a><span class="w">    </span><span class="c1">#</span><span class="w"></span>
-<a id="__codelineno-0-53" name="__codelineno-0-53" href="#__codelineno-0-53"></a><span class="w">    </span><span class="nt">settings</span><span class="p">:</span><span class="w"></span>
-<a id="__codelineno-0-54" name="__codelineno-0-54" href="#__codelineno-0-54"></a>
-<a id="__codelineno-0-55" name="__codelineno-0-55" href="#__codelineno-0-55"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
-<a id="__codelineno-0-56" name="__codelineno-0-56" href="#__codelineno-0-56"></a><span class="w">      </span><span class="c1"># Channels can be &#39;protected&#39; to require a special permission to join.</span><span class="w"></span>
-<a id="__codelineno-0-57" name="__codelineno-0-57" href="#__codelineno-0-57"></a><span class="w">      </span><span class="c1"># The permission is composed of the channel key: &#39;schat.channel.&lt;key&gt;.join&#39;.</span><span class="w"></span>
-<a id="__codelineno-0-58" name="__codelineno-0-58" href="#__codelineno-0-58"></a><span class="w">      </span><span class="c1"># This &#39;global&#39; channel would require the &#39;schat.channel.global.join&#39; permission if &#39;protected: true&#39; is set.</span><span class="w"></span>
-<a id="__codelineno-0-59" name="__codelineno-0-59" href="#__codelineno-0-59"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
-<a id="__codelineno-0-60" name="__codelineno-0-60" href="#__codelineno-0-60"></a><span class="w">      </span><span class="c1"># default: false</span><span class="w"></span>
-<a id="__codelineno-0-61" name="__codelineno-0-61" href="#__codelineno-0-61"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
-<a id="__codelineno-0-62" name="__codelineno-0-62" href="#__codelineno-0-62"></a><span class="w">      </span><span class="nt">protected</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<a id="__codelineno-0-63" name="__codelineno-0-63" href="#__codelineno-0-63"></a>
-<a id="__codelineno-0-64" name="__codelineno-0-64" href="#__codelineno-0-64"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
-<a id="__codelineno-0-65" name="__codelineno-0-65" href="#__codelineno-0-65"></a><span class="w">      </span><span class="c1"># Channels with the &#39;auto_join&#39; setting are automatically added to players when they join the server</span><span class="w"></span>
-<a id="__codelineno-0-66" name="__codelineno-0-66" href="#__codelineno-0-66"></a><span class="w">      </span><span class="c1"># if they have the permission to join the channel.</span><span class="w"></span>
-<a id="__codelineno-0-67" name="__codelineno-0-67" href="#__codelineno-0-67"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
-<a id="__codelineno-0-68" name="__codelineno-0-68" href="#__codelineno-0-68"></a><span class="w">      </span><span class="c1"># default: false</span><span class="w"></span>
-<a id="__codelineno-0-69" name="__codelineno-0-69" href="#__codelineno-0-69"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
-<a id="__codelineno-0-70" name="__codelineno-0-70" href="#__codelineno-0-70"></a><span class="w">      </span><span class="nt">auto_join</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<a id="__codelineno-0-71" name="__codelineno-0-71" href="#__codelineno-0-71"></a>
-<a id="__codelineno-0-72" name="__codelineno-0-72" href="#__codelineno-0-72"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
-<a id="__codelineno-0-73" name="__codelineno-0-73" href="#__codelineno-0-73"></a><span class="w">      </span><span class="c1"># &#39;global&#39; channels are automatically synchronized across servers.</span><span class="w"></span>
-<a id="__codelineno-0-74" name="__codelineno-0-74" href="#__codelineno-0-74"></a><span class="w">      </span><span class="c1"># Messages sent to global channels are forwarded to all other servers in the network.</span><span class="w"></span>
-<a id="__codelineno-0-75" name="__codelineno-0-75" href="#__codelineno-0-75"></a><span class="w">      </span><span class="c1"># This requires the Bungeecord or Velocity sChat plugin. See the &#39;messenger&#39; configuration below for more details.</span><span class="w"></span>
-<a id="__codelineno-0-76" name="__codelineno-0-76" href="#__codelineno-0-76"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
-<a id="__codelineno-0-77" name="__codelineno-0-77" href="#__codelineno-0-77"></a><span class="w">      </span><span class="c1"># default: true</span><span class="w"></span>
-<a id="__codelineno-0-78" name="__codelineno-0-78" href="#__codelineno-0-78"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
-<a id="__codelineno-0-79" name="__codelineno-0-79" href="#__codelineno-0-79"></a><span class="w">      </span><span class="nt">global</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<a id="__codelineno-0-80" name="__codelineno-0-80" href="#__codelineno-0-80"></a>
-<a id="__codelineno-0-81" name="__codelineno-0-81" href="#__codelineno-0-81"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
-<a id="__codelineno-0-82" name="__codelineno-0-82" href="#__codelineno-0-82"></a><span class="w">      </span><span class="c1"># A &#39;forced&#39; channel cannot be left by players.</span><span class="w"></span>
-<a id="__codelineno-0-83" name="__codelineno-0-83" href="#__codelineno-0-83"></a><span class="w">      </span><span class="c1"># Combined with &#39;auto_join&#39; makes for perfect server wide default channels.</span><span class="w"></span>
-<a id="__codelineno-0-84" name="__codelineno-0-84" href="#__codelineno-0-84"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
-<a id="__codelineno-0-85" name="__codelineno-0-85" href="#__codelineno-0-85"></a><span class="w">      </span><span class="c1"># default: false</span><span class="w"></span>
-<a id="__codelineno-0-86" name="__codelineno-0-86" href="#__codelineno-0-86"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
-<a id="__codelineno-0-87" name="__codelineno-0-87" href="#__codelineno-0-87"></a><span class="w">      </span><span class="nt">forced</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a><span class="w">    </span><span class="c1">#</span><span class="w"></span>
+<a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Global&quot;</span><span class="w"></span>
+<a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a>
+<a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a><span class="w">    </span><span class="c1">#</span><span class="w"></span>
+<a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a><span class="w">    </span><span class="c1"># Every channel can have an unlimited number of settings added and controlled by various features.</span><span class="w"></span>
+<a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a><span class="w">    </span><span class="c1"># The settings documented here are the ones that come out of the box with sChat.</span><span class="w"></span>
+<a id="__codelineno-0-51" name="__codelineno-0-51" href="#__codelineno-0-51"></a><span class="w">    </span><span class="c1">#</span><span class="w"></span>
+<a id="__codelineno-0-52" name="__codelineno-0-52" href="#__codelineno-0-52"></a><span class="w">    </span><span class="nt">settings</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-0-53" name="__codelineno-0-53" href="#__codelineno-0-53"></a>
+<a id="__codelineno-0-54" name="__codelineno-0-54" href="#__codelineno-0-54"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
+<a id="__codelineno-0-55" name="__codelineno-0-55" href="#__codelineno-0-55"></a><span class="w">      </span><span class="c1"># Channels can be &#39;protected&#39; to require a special permission to join.</span><span class="w"></span>
+<a id="__codelineno-0-56" name="__codelineno-0-56" href="#__codelineno-0-56"></a><span class="w">      </span><span class="c1"># The permission is composed of the channel key: &#39;schat.channel.&lt;key&gt;.join&#39;.</span><span class="w"></span>
+<a id="__codelineno-0-57" name="__codelineno-0-57" href="#__codelineno-0-57"></a><span class="w">      </span><span class="c1"># This &#39;global&#39; channel would require the &#39;schat.channel.global.join&#39; permission if &#39;protected: true&#39; is set.</span><span class="w"></span>
+<a id="__codelineno-0-58" name="__codelineno-0-58" href="#__codelineno-0-58"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
+<a id="__codelineno-0-59" name="__codelineno-0-59" href="#__codelineno-0-59"></a><span class="w">      </span><span class="c1"># default: false</span><span class="w"></span>
+<a id="__codelineno-0-60" name="__codelineno-0-60" href="#__codelineno-0-60"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
+<a id="__codelineno-0-61" name="__codelineno-0-61" href="#__codelineno-0-61"></a><span class="w">      </span><span class="nt">protected</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<a id="__codelineno-0-62" name="__codelineno-0-62" href="#__codelineno-0-62"></a>
+<a id="__codelineno-0-63" name="__codelineno-0-63" href="#__codelineno-0-63"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
+<a id="__codelineno-0-64" name="__codelineno-0-64" href="#__codelineno-0-64"></a><span class="w">      </span><span class="c1"># Channels with the &#39;auto_join&#39; setting are automatically added to players when they join the server</span><span class="w"></span>
+<a id="__codelineno-0-65" name="__codelineno-0-65" href="#__codelineno-0-65"></a><span class="w">      </span><span class="c1"># if they have the permission to join the channel.</span><span class="w"></span>
+<a id="__codelineno-0-66" name="__codelineno-0-66" href="#__codelineno-0-66"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
+<a id="__codelineno-0-67" name="__codelineno-0-67" href="#__codelineno-0-67"></a><span class="w">      </span><span class="c1"># default: false</span><span class="w"></span>
+<a id="__codelineno-0-68" name="__codelineno-0-68" href="#__codelineno-0-68"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
+<a id="__codelineno-0-69" name="__codelineno-0-69" href="#__codelineno-0-69"></a><span class="w">      </span><span class="nt">auto_join</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<a id="__codelineno-0-70" name="__codelineno-0-70" href="#__codelineno-0-70"></a>
+<a id="__codelineno-0-71" name="__codelineno-0-71" href="#__codelineno-0-71"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
+<a id="__codelineno-0-72" name="__codelineno-0-72" href="#__codelineno-0-72"></a><span class="w">      </span><span class="c1"># &#39;global&#39; channels are automatically synchronized across servers.</span><span class="w"></span>
+<a id="__codelineno-0-73" name="__codelineno-0-73" href="#__codelineno-0-73"></a><span class="w">      </span><span class="c1"># Messages sent to global channels are forwarded to all other servers in the network.</span><span class="w"></span>
+<a id="__codelineno-0-74" name="__codelineno-0-74" href="#__codelineno-0-74"></a><span class="w">      </span><span class="c1"># This requires the Bungeecord or Velocity sChat plugin. See the &#39;messenger&#39; configuration below for more details.</span><span class="w"></span>
+<a id="__codelineno-0-75" name="__codelineno-0-75" href="#__codelineno-0-75"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
+<a id="__codelineno-0-76" name="__codelineno-0-76" href="#__codelineno-0-76"></a><span class="w">      </span><span class="c1"># default: true</span><span class="w"></span>
+<a id="__codelineno-0-77" name="__codelineno-0-77" href="#__codelineno-0-77"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
+<a id="__codelineno-0-78" name="__codelineno-0-78" href="#__codelineno-0-78"></a><span class="w">      </span><span class="nt">global</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<a id="__codelineno-0-79" name="__codelineno-0-79" href="#__codelineno-0-79"></a>
+<a id="__codelineno-0-80" name="__codelineno-0-80" href="#__codelineno-0-80"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
+<a id="__codelineno-0-81" name="__codelineno-0-81" href="#__codelineno-0-81"></a><span class="w">      </span><span class="c1"># A &#39;forced&#39; channel cannot be left by players.</span><span class="w"></span>
+<a id="__codelineno-0-82" name="__codelineno-0-82" href="#__codelineno-0-82"></a><span class="w">      </span><span class="c1"># Combined with &#39;auto_join&#39; makes for perfect server wide default channels.</span><span class="w"></span>
+<a id="__codelineno-0-83" name="__codelineno-0-83" href="#__codelineno-0-83"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
+<a id="__codelineno-0-84" name="__codelineno-0-84" href="#__codelineno-0-84"></a><span class="w">      </span><span class="c1"># default: false</span><span class="w"></span>
+<a id="__codelineno-0-85" name="__codelineno-0-85" href="#__codelineno-0-85"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
+<a id="__codelineno-0-86" name="__codelineno-0-86" href="#__codelineno-0-86"></a><span class="w">      </span><span class="nt">forced</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<a id="__codelineno-0-87" name="__codelineno-0-87" href="#__codelineno-0-87"></a>
 <a id="__codelineno-0-88" name="__codelineno-0-88" href="#__codelineno-0-88"></a>
-<a id="__codelineno-0-89" name="__codelineno-0-89" href="#__codelineno-0-89"></a>
-<a id="__codelineno-0-90" name="__codelineno-0-90" href="#__codelineno-0-90"></a><span class="w">      </span><span class="c1">#+-------------------------------------------------------------------+#</span><span class="w"></span>
-<a id="__codelineno-0-91" name="__codelineno-0-91" href="#__codelineno-0-91"></a><span class="w">      </span><span class="c1">#|                                                                   |#</span><span class="w"></span>
-<a id="__codelineno-0-92" name="__codelineno-0-92" href="#__codelineno-0-92"></a><span class="w">      </span><span class="c1">#|                    CHANNEL MESSAGE FORMAT                         |#</span><span class="w"></span>
-<a id="__codelineno-0-93" name="__codelineno-0-93" href="#__codelineno-0-93"></a><span class="w">      </span><span class="c1">#|                 ----------------------------                      |#</span><span class="w"></span>
-<a id="__codelineno-0-94" name="__codelineno-0-94" href="#__codelineno-0-94"></a><span class="w">      </span><span class="c1">#|      Controls the format of messages sent to the channel.         |#</span><span class="w"></span>
-<a id="__codelineno-0-95" name="__codelineno-0-95" href="#__codelineno-0-95"></a><span class="w">      </span><span class="c1">#|                                                                   |#</span><span class="w"></span>
-<a id="__codelineno-0-96" name="__codelineno-0-96" href="#__codelineno-0-96"></a><span class="w">      </span><span class="c1">#|  Wiki: https://docs.adventure.kyori.net/minimessage/format.html   |#</span><span class="w"></span>
-<a id="__codelineno-0-97" name="__codelineno-0-97" href="#__codelineno-0-97"></a><span class="w">      </span><span class="c1">#|  Web Viewer: https://bit.ly/3hpYRQF                               |#</span><span class="w"></span>
-<a id="__codelineno-0-98" name="__codelineno-0-98" href="#__codelineno-0-98"></a><span class="w">      </span><span class="c1">#|                                                                   |#</span><span class="w"></span>
-<a id="__codelineno-0-99" name="__codelineno-0-99" href="#__codelineno-0-99"></a><span class="w">      </span><span class="c1">#+-------------------------------------------------------------------+#</span><span class="w"></span>
-<a id="__codelineno-0-100" name="__codelineno-0-100" href="#__codelineno-0-100"></a>
-<a id="__codelineno-0-101" name="__codelineno-0-101" href="#__codelineno-0-101"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
-<a id="__codelineno-0-102" name="__codelineno-0-102" href="#__codelineno-0-102"></a><span class="w">      </span><span class="c1"># The &#39;message_format&#39; is used to format messages NOT sent by the viewer.</span><span class="w"></span>
-<a id="__codelineno-0-103" name="__codelineno-0-103" href="#__codelineno-0-103"></a><span class="w">      </span><span class="c1"># You can use the full power of MiniMessage (see above) and PlaceholderAPI placeholders.</span><span class="w"></span>
-<a id="__codelineno-0-104" name="__codelineno-0-104" href="#__codelineno-0-104"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
-<a id="__codelineno-0-105" name="__codelineno-0-105" href="#__codelineno-0-105"></a><span class="w">      </span><span class="nt">message_format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;yellow&gt;&lt;hover:show_text:&#39;&lt;gray&gt;Click</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">send</span><span class="nv"> </span><span class="s">&lt;yellow&gt;&lt;source.diplay_name&gt;&lt;/yellow&gt;</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">message.\n&lt;gray&gt;Since:</span><span class="nv"> </span><span class="s">&lt;aqua&gt;%player_first_played_formatted%&#39;&gt;&lt;click:run_command:&#39;/tell</span><span class="nv"> </span><span class="s">&lt;source.name&gt;&#39;&gt;&lt;source.display_name&gt;&lt;/click&gt;&lt;/yellow&gt;&lt;gray&gt;:</span><span class="nv"> </span><span class="s">&lt;text&gt;&quot;</span><span class="w"></span>
-<a id="__codelineno-0-106" name="__codelineno-0-106" href="#__codelineno-0-106"></a><span class="w">  </span><span class="nt">team</span><span class="p">:</span><span class="w"></span>
-<a id="__codelineno-0-107" name="__codelineno-0-107" href="#__codelineno-0-107"></a><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Team</span><span class="w"></span>
-<a id="__codelineno-0-108" name="__codelineno-0-108" href="#__codelineno-0-108"></a><span class="w">    </span><span class="nt">settings</span><span class="p">:</span><span class="w"></span>
-<a id="__codelineno-0-109" name="__codelineno-0-109" href="#__codelineno-0-109"></a><span class="w">      </span><span class="nt">protected</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<a id="__codelineno-0-110" name="__codelineno-0-110" href="#__codelineno-0-110"></a><span class="w">      </span><span class="nt">auto_join</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<a id="__codelineno-0-111" name="__codelineno-0-111" href="#__codelineno-0-111"></a><span class="w">      </span><span class="nt">global</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<a id="__codelineno-0-112" name="__codelineno-0-112" href="#__codelineno-0-112"></a><span class="w">      </span><span class="nt">forced</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<a id="__codelineno-0-113" name="__codelineno-0-113" href="#__codelineno-0-113"></a><span class="w">      </span><span class="nt">message_format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;#189AB4&gt;&lt;source.display_name&gt;&lt;gray&gt;:</span><span class="nv"> </span><span class="s">&lt;text&gt;&quot;</span><span class="w"></span>
-<a id="__codelineno-0-114" name="__codelineno-0-114" href="#__codelineno-0-114"></a>
-<a id="__codelineno-0-115" name="__codelineno-0-115" href="#__codelineno-0-115"></a><span class="c1">#+----------------------------------------------------------------------------------------------+#</span><span class="w"></span>
-<a id="__codelineno-0-116" name="__codelineno-0-116" href="#__codelineno-0-116"></a><span class="c1">#|                                                                                              |#</span><span class="w"></span>
-<a id="__codelineno-0-117" name="__codelineno-0-117" href="#__codelineno-0-117"></a><span class="c1">#|                                    PRIVATE MESSAGES                                          |#</span><span class="w"></span>
-<a id="__codelineno-0-118" name="__codelineno-0-118" href="#__codelineno-0-118"></a><span class="c1">#|                                      ------------                                            |#</span><span class="w"></span>
-<a id="__codelineno-0-119" name="__codelineno-0-119" href="#__codelineno-0-119"></a><span class="c1">#|                      Configure the behaviour of private chats here.                          |#</span><span class="w"></span>
-<a id="__codelineno-0-120" name="__codelineno-0-120" href="#__codelineno-0-120"></a><span class="c1">#+----------------------------------------------------------------------------------------------+#</span><span class="w"></span>
-<a id="__codelineno-0-121" name="__codelineno-0-121" href="#__codelineno-0-121"></a><span class="nt">private_chat</span><span class="p">:</span><span class="w"></span>
-<a id="__codelineno-0-122" name="__codelineno-0-122" href="#__codelineno-0-122"></a>
-<a id="__codelineno-0-123" name="__codelineno-0-123" href="#__codelineno-0-123"></a><span class="c1">#+----------------------------------------------------------------------------------------------+#</span><span class="w"></span>
-<a id="__codelineno-0-124" name="__codelineno-0-124" href="#__codelineno-0-124"></a><span class="c1">#|                                                                                              |#</span><span class="w"></span>
-<a id="__codelineno-0-125" name="__codelineno-0-125" href="#__codelineno-0-125"></a><span class="c1">#|                                   VIEW CONFIGURATION                                         |#</span><span class="w"></span>
-<a id="__codelineno-0-126" name="__codelineno-0-126" href="#__codelineno-0-126"></a><span class="c1">#|                                      ------------                                            |#</span><span class="w"></span>
-<a id="__codelineno-0-127" name="__codelineno-0-127" href="#__codelineno-0-127"></a><span class="c1">#|                      Configure the behaviour of private chats here.                          |#</span><span class="w"></span>
-<a id="__codelineno-0-128" name="__codelineno-0-128" href="#__codelineno-0-128"></a><span class="c1">#+----------------------------------------------------------------------------------------------+#</span><span class="w"></span>
-<a id="__codelineno-0-129" name="__codelineno-0-129" href="#__codelineno-0-129"></a><span class="nt">view</span><span class="p">:</span><span class="w"></span>
-<a id="__codelineno-0-130" name="__codelineno-0-130" href="#__codelineno-0-130"></a>
-<a id="__codelineno-0-131" name="__codelineno-0-131" href="#__codelineno-0-131"></a><span class="nt">messenger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pluginmessage</span><span class="w"></span>
+<a id="__codelineno-0-89" name="__codelineno-0-89" href="#__codelineno-0-89"></a><span class="w">      </span><span class="c1">#+-------------------------------------------------------------------+#</span><span class="w"></span>
+<a id="__codelineno-0-90" name="__codelineno-0-90" href="#__codelineno-0-90"></a><span class="w">      </span><span class="c1">#|                                                                   |#</span><span class="w"></span>
+<a id="__codelineno-0-91" name="__codelineno-0-91" href="#__codelineno-0-91"></a><span class="w">      </span><span class="c1">#|                    CHANNEL MESSAGE FORMAT                         |#</span><span class="w"></span>
+<a id="__codelineno-0-92" name="__codelineno-0-92" href="#__codelineno-0-92"></a><span class="w">      </span><span class="c1">#|                 ----------------------------                      |#</span><span class="w"></span>
+<a id="__codelineno-0-93" name="__codelineno-0-93" href="#__codelineno-0-93"></a><span class="w">      </span><span class="c1">#|      Controls the format of messages sent to the channel.         |#</span><span class="w"></span>
+<a id="__codelineno-0-94" name="__codelineno-0-94" href="#__codelineno-0-94"></a><span class="w">      </span><span class="c1">#|                                                                   |#</span><span class="w"></span>
+<a id="__codelineno-0-95" name="__codelineno-0-95" href="#__codelineno-0-95"></a><span class="w">      </span><span class="c1">#|  Wiki: https://docs.adventure.kyori.net/minimessage/format.html   |#</span><span class="w"></span>
+<a id="__codelineno-0-96" name="__codelineno-0-96" href="#__codelineno-0-96"></a><span class="w">      </span><span class="c1">#|  Web Viewer: https://bit.ly/3hpYRQF                               |#</span><span class="w"></span>
+<a id="__codelineno-0-97" name="__codelineno-0-97" href="#__codelineno-0-97"></a><span class="w">      </span><span class="c1">#|                                                                   |#</span><span class="w"></span>
+<a id="__codelineno-0-98" name="__codelineno-0-98" href="#__codelineno-0-98"></a><span class="w">      </span><span class="c1">#+-------------------------------------------------------------------+#</span><span class="w"></span>
+<a id="__codelineno-0-99" name="__codelineno-0-99" href="#__codelineno-0-99"></a>
+<a id="__codelineno-0-100" name="__codelineno-0-100" href="#__codelineno-0-100"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
+<a id="__codelineno-0-101" name="__codelineno-0-101" href="#__codelineno-0-101"></a><span class="w">      </span><span class="c1"># The &#39;message_format&#39; is used to format messages NOT sent by the viewer.</span><span class="w"></span>
+<a id="__codelineno-0-102" name="__codelineno-0-102" href="#__codelineno-0-102"></a><span class="w">      </span><span class="c1"># You can use the full power of MiniMessage (see above) and PlaceholderAPI placeholders.</span><span class="w"></span>
+<a id="__codelineno-0-103" name="__codelineno-0-103" href="#__codelineno-0-103"></a><span class="w">      </span><span class="c1">#</span><span class="w"></span>
+<a id="__codelineno-0-104" name="__codelineno-0-104" href="#__codelineno-0-104"></a><span class="w">      </span><span class="nt">message_format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;yellow&gt;&lt;hover:show_text:&#39;&lt;gray&gt;Click</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">send</span><span class="nv"> </span><span class="s">&lt;yellow&gt;&lt;source_diplay_name&gt;&lt;/yellow&gt;</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">message.\n&lt;gray&gt;Since:</span><span class="nv"> </span><span class="s">&lt;aqua&gt;%player_first_played_formatted%&#39;&gt;&lt;click:run_command:&#39;/tell</span><span class="nv"> </span><span class="s">&lt;source_name&gt;&#39;&gt;&lt;source_display_name&gt;&lt;/click&gt;&lt;/yellow&gt;&lt;gray&gt;:</span><span class="nv"> </span><span class="s">&lt;text&gt;&quot;</span><span class="w"></span>
+<a id="__codelineno-0-105" name="__codelineno-0-105" href="#__codelineno-0-105"></a><span class="w">  </span><span class="nt">team</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-0-106" name="__codelineno-0-106" href="#__codelineno-0-106"></a><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Team</span><span class="w"></span>
+<a id="__codelineno-0-107" name="__codelineno-0-107" href="#__codelineno-0-107"></a><span class="w">    </span><span class="nt">settings</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-0-108" name="__codelineno-0-108" href="#__codelineno-0-108"></a><span class="w">      </span><span class="nt">protected</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<a id="__codelineno-0-109" name="__codelineno-0-109" href="#__codelineno-0-109"></a><span class="w">      </span><span class="nt">auto_join</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<a id="__codelineno-0-110" name="__codelineno-0-110" href="#__codelineno-0-110"></a><span class="w">      </span><span class="nt">global</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<a id="__codelineno-0-111" name="__codelineno-0-111" href="#__codelineno-0-111"></a><span class="w">      </span><span class="nt">forced</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<a id="__codelineno-0-112" name="__codelineno-0-112" href="#__codelineno-0-112"></a><span class="w">      </span><span class="nt">message_format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;#189AB4&gt;&lt;source_display_name&gt;&lt;gray&gt;:</span><span class="nv"> </span><span class="s">&lt;text&gt;&quot;</span><span class="w"></span>
+<a id="__codelineno-0-113" name="__codelineno-0-113" href="#__codelineno-0-113"></a>
+<a id="__codelineno-0-114" name="__codelineno-0-114" href="#__codelineno-0-114"></a><span class="c1">#+----------------------------------------------------------------------------------------------+#</span><span class="w"></span>
+<a id="__codelineno-0-115" name="__codelineno-0-115" href="#__codelineno-0-115"></a><span class="c1">#|                                                                                              |#</span><span class="w"></span>
+<a id="__codelineno-0-116" name="__codelineno-0-116" href="#__codelineno-0-116"></a><span class="c1">#|                                    PRIVATE MESSAGES                                          |#</span><span class="w"></span>
+<a id="__codelineno-0-117" name="__codelineno-0-117" href="#__codelineno-0-117"></a><span class="c1">#|                                      ------------                                            |#</span><span class="w"></span>
+<a id="__codelineno-0-118" name="__codelineno-0-118" href="#__codelineno-0-118"></a><span class="c1">#|                      Configure the behaviour of private chats here.                          |#</span><span class="w"></span>
+<a id="__codelineno-0-119" name="__codelineno-0-119" href="#__codelineno-0-119"></a><span class="c1">#+----------------------------------------------------------------------------------------------+#</span><span class="w"></span>
+<a id="__codelineno-0-120" name="__codelineno-0-120" href="#__codelineno-0-120"></a><span class="nt">private_chat</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-0-121" name="__codelineno-0-121" href="#__codelineno-0-121"></a>
+<a id="__codelineno-0-122" name="__codelineno-0-122" href="#__codelineno-0-122"></a><span class="c1">#+----------------------------------------------------------------------------------------------+#</span><span class="w"></span>
+<a id="__codelineno-0-123" name="__codelineno-0-123" href="#__codelineno-0-123"></a><span class="c1">#|                                                                                              |#</span><span class="w"></span>
+<a id="__codelineno-0-124" name="__codelineno-0-124" href="#__codelineno-0-124"></a><span class="c1">#|                                   VIEW CONFIGURATION                                         |#</span><span class="w"></span>
+<a id="__codelineno-0-125" name="__codelineno-0-125" href="#__codelineno-0-125"></a><span class="c1">#|                                      ------------                                            |#</span><span class="w"></span>
+<a id="__codelineno-0-126" name="__codelineno-0-126" href="#__codelineno-0-126"></a><span class="c1">#|                      Configure the behaviour of private chats here.                          |#</span><span class="w"></span>
+<a id="__codelineno-0-127" name="__codelineno-0-127" href="#__codelineno-0-127"></a><span class="c1">#+----------------------------------------------------------------------------------------------+#</span><span class="w"></span>
+<a id="__codelineno-0-128" name="__codelineno-0-128" href="#__codelineno-0-128"></a><span class="nt">view</span><span class="p">:</span><span class="w"></span>
+<a id="__codelineno-0-129" name="__codelineno-0-129" href="#__codelineno-0-129"></a>
+<a id="__codelineno-0-130" name="__codelineno-0-130" href="#__codelineno-0-130"></a><span class="nt">messenger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pluginmessage</span><span class="w"></span>
 </code></pre></div>
 </details>
+<h2 id="configuration-reference-legend">Configuration Reference Legend<a class="headerlink" href="#configuration-reference-legend" title="Permanent link">&para;</a></h2>
+<p>You will notice several different icons and symbols across the <a href="reference/">config reference</a>. These are explained here.</p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M11.75 1a.75.75 0 0 1 .75.75V4h6.532c.42 0 .826.15 1.143.425l3.187 2.75a1.75 1.75 0 0 1 0 2.65l-3.187 2.75a1.75 1.75 0 0 1-1.143.425H12.5v9.25a.75.75 0 0 1-1.5 0V13H3.75A1.75 1.75 0 0 1 2 11.25v-5.5C2 4.783 2.784 4 3.75 4H11V1.75a.75.75 0 0 1 .75-.75zm0 4.5h7.282a.25.25 0 0 1 .163.06l3.188 2.75a.25.25 0 0 1 0 .38l-3.188 2.75a.25.25 0 0 1-.163.06H3.75a.25.25 0 0 1-.25-.25v-5.5a.25.25 0 0 1 .25-.25h8z"/></svg></span> 1.0.0</td>
+<td>The config option had its first stable release in the given version.</td>
+</tr>
+<tr>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M11.75 1a.75.75 0 0 1 .75.75V4h6.532c.42 0 .826.15 1.143.425l3.187 2.75a1.75 1.75 0 0 1 0 2.65l-3.187 2.75a1.75 1.75 0 0 1-1.143.425H12.5v9.25a.75.75 0 0 1-1.5 0V13H3.75A1.75 1.75 0 0 1 2 11.25v-5.5C2 4.783 2.784 4 3.75 4H11V1.75a.75.75 0 0 1 .75-.75zm0 4.5h7.282a.25.25 0 0 1 .163.06l3.188 2.75a.25.25 0 0 1 0 .38l-3.188 2.75a.25.25 0 0 1-.163.06H3.75a.25.25 0 0 1-.25-.25v-5.5a.25.25 0 0 1 .25-.25h8z"/></svg></span> next</td>
+<td>The option is currently under development and available in the latest snapshot.</td>
+</tr>
+<tr>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M7.886 1.553a1.75 1.75 0 0 1 2.869.604l.633 1.629a5.666 5.666 0 0 0 3.725 3.395l3.959 1.131a1.75 1.75 0 0 1 .757 2.92L16.06 15l5.594 5.595a.75.75 0 1 1-1.06 1.06L15 16.061l-3.768 3.768a1.75 1.75 0 0 1-2.92-.757l-1.131-3.96a5.667 5.667 0 0 0-3.395-3.724l-1.63-.633a1.75 1.75 0 0 1-.603-2.869l6.333-6.333zm6.589 12.912-.005.005-.005.005-4.294 4.293a.25.25 0 0 1-.417-.108l-1.13-3.96A7.166 7.166 0 0 0 4.33 9.99L2.7 9.356a.25.25 0 0 1-.086-.41l6.333-6.332a.25.25 0 0 1 .41.086l.633 1.63a7.167 7.167 0 0 0 4.71 4.293l3.96 1.131a.25.25 0 0 1 .108.417l-4.293 4.294z"/></svg></span></td>
+<td>Marks an option as the default option.</td>
+</tr>
+<tr>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.38 8A9.502 9.502 0 0 1 12 2.5a9.502 9.502 0 0 1 9.215 7.182.75.75 0 1 0 1.456-.364C21.473 4.539 17.15 1 12 1a10.995 10.995 0 0 0-9.5 5.452V4.75a.75.75 0 0 0-1.5 0V8.5a1 1 0 0 0 1 1h3.75a.75.75 0 0 0 0-1.5H3.38zm-.595 6.318a.75.75 0 0 0-1.455.364C2.527 19.461 6.85 23 12 23c4.052 0 7.592-2.191 9.5-5.451v1.701a.75.75 0 0 0 1.5 0V15.5a1 1 0 0 0-1-1h-3.75a.75.75 0 0 0 0 1.5h2.37A9.502 9.502 0 0 1 12 21.5c-4.446 0-8.181-3.055-9.215-7.182z"/></svg></span></td>
+<td>The config option is reloadable, requiring no full server restart. *</td>
+</tr>
+<tr>
+<td>All <a href="channels/">channel settings</a> are reloadable.*</td>
+<td></td>
+</tr>
+<tr>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M8 8.807V3.5h-.563a.75.75 0 0 1 0-1.5h9.125a.75.75 0 0 1 0 1.5H16v5.307l5.125 9.301c.964 1.75-.302 3.892-2.299 3.892H5.174c-1.998 0-3.263-2.142-2.3-3.892L8 8.807zM14.5 3.5h-5V9a.75.75 0 0 1-.093.362L7.127 13.5h9.746l-2.28-4.138A.75.75 0 0 1 14.5 9V3.5zM4.189 18.832 6.3 15h11.4l2.111 3.832a1.125 1.125 0 0 1-.985 1.668H5.174a1.125 1.125 0 0 1-.985-1.668z"/></svg></span></td>
+<td>The feature is still experimental and may behave unexpected or suddenly change.</td>
+</tr>
+</tbody>
+</table>
 
   <hr>
 <div class="md-source-file">
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">February 24, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">March 1, 2022</span>
       
         <br>
         Created:

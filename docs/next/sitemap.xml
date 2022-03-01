@@ -2,67 +2,67 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://schat.silthus.net/docs/next/</loc>
-         <lastmod>2022-02-28</lastmod>
+         <lastmod>2022-03-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://schat.silthus.net/docs/next/commands/</loc>
-         <lastmod>2022-02-28</lastmod>
+         <lastmod>2022-03-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://schat.silthus.net/docs/next/getting-started/</loc>
-         <lastmod>2022-02-28</lastmod>
+         <lastmod>2022-03-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://schat.silthus.net/docs/next/permissions/</loc>
-         <lastmod>2022-02-28</lastmod>
+         <lastmod>2022-03-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://schat.silthus.net/docs/next/configuration/</loc>
-         <lastmod>2022-02-28</lastmod>
+         <lastmod>2022-03-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://schat.silthus.net/docs/next/configuration/channels/</loc>
-         <lastmod>2022-02-28</lastmod>
+         <lastmod>2022-03-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://schat.silthus.net/docs/next/configuration/minimessage/</loc>
-         <lastmod>2022-02-28</lastmod>
+         <lastmod>2022-03-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://schat.silthus.net/docs/next/configuration/reference/</loc>
-         <lastmod>2022-02-28</lastmod>
+         <lastmod>2022-03-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://schat.silthus.net/docs/next/developer/</loc>
-         <lastmod>2022-02-28</lastmod>
+         <lastmod>2022-03-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://schat.silthus.net/docs/next/extensions/</loc>
-         <lastmod>2022-02-28</lastmod>
+         <lastmod>2022-03-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://schat.silthus.net/docs/next/extensions/placeholderapi/</loc>
-         <lastmod>2022-02-28</lastmod>
+         <lastmod>2022-03-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://schat.silthus.net/docs/next/partials/_config/</loc>
-         <lastmod>2022-02-28</lastmod>
+         <lastmod>2022-03-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://schat.silthus.net/docs/next/partials/_minimessage/</loc>
-         <lastmod>2022-02-28</lastmod>
+         <lastmod>2022-03-01</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
