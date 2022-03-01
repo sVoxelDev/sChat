@@ -24,7 +24,6 @@
 package net.silthus.schat.ui.views.tabbed;
 
 import lombok.SneakyThrows;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.flattener.ComponentFlattener;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -37,7 +36,6 @@ import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageSource;
-import net.silthus.schat.ui.ViewModule;
 import net.silthus.schat.ui.view.ViewConfig;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
@@ -49,9 +47,7 @@ import org.junit.jupiter.api.Test;
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
-import static net.kyori.adventure.text.format.TextDecoration.UNDERLINED;
 import static net.silthus.schat.AssertionHelper.assertNPE;
-import static net.silthus.schat.channel.Channel.DISPLAY_NAME;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
@@ -68,10 +64,8 @@ import static net.silthus.schat.message.Message.FORMATTED;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static net.silthus.schat.message.MessageSource.of;
-import static net.silthus.schat.ui.format.Format.ACTIVE_TAB_FORMAT;
-import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
-import static net.silthus.schat.ui.util.ViewHelper.subscriptOf;
 import static net.silthus.schat.ui.views.Views.tabbedChannels;
+import static net.silthus.schat.ui.views.tabbed.TabFormatConfig.FORMAT_CONFIG;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -93,7 +87,6 @@ class TabbedChannelsViewTests {
         eventBus.register(view);
 
         CreatePrivateChannelCommand.prototype(builder -> builder.channelRepository(createInMemoryChannelRepository(eventBus)));
-        ViewModule.configurePrivateChannel(new ViewConfig());
     }
 
     @AfterEach
@@ -206,21 +199,6 @@ class TabbedChannelsViewTests {
         void renders_source_name_with_message_text() {
             assertTextContains("Bob: Hi");
         }
-
-        @Nested
-        class and_custom_message_source_format {
-
-            @Test
-            void uses_format() {
-                view.config()
-                    .format().set(MESSAGE_FORMAT, (view, msg) ->
-                        text("<")
-                            .append(msg.getOrDefault(Message.SOURCE, MessageSource.nil()).displayName())
-                            .append(text("> "))
-                            .append(msg.getOrDefault(Message.TEXT, Component.empty())));
-                assertTextContains("<Bob> Hi");
-            }
-        }
     }
 
     @Nested
@@ -232,7 +210,7 @@ class TabbedChannelsViewTests {
             sendMessageWithSource("Silthus", "Yo");
             assertViewRenders("""
                 Hey
-                <yellow>Silthus<gray>: </gray><gray>Yo</gray></yellow>"""
+                <yellow>Silthus<gray>: </gray>Yo</yellow>"""
             );
         }
     }
@@ -241,7 +219,7 @@ class TabbedChannelsViewTests {
     class given_message_with_formatted_setting {
         @BeforeEach
         void setUp() {
-            final Message message = randomMessage();
+            final Message message = message().source(randomChatter()).create();
             message.set(FORMATTED, text("FORMATTED"));
             sendMessage(message);
         }
@@ -283,9 +261,7 @@ class TabbedChannelsViewTests {
             class and_different_format_is_used {
                 @BeforeEach
                 void setUp() {
-                    channel.set(ACTIVE_TAB_FORMAT, (view, type) -> type.getOrDefault(DISPLAY_NAME, empty())
-                        .color(RED)
-                        .decorate(UNDERLINED));
+                    channel.get(FORMAT_CONFIG).activeColor(RED);
                 }
 
                 @Test
@@ -349,8 +325,8 @@ class TabbedChannelsViewTests {
             Thread.sleep(1L);
             sendPrivateMessage(target, chatter, text("Hey back"));
             assertViewContains("""
-                <yellow><lang:schat.chat.message.you><gray>: </gray><gray>Hi</gray></lang></yellow>
-                <aqua>target<gray>: </gray><gray>Hey back</gray></aqua>""");
+                <dark_aqua><lang:schat.chat.message.you><gray>: </gray><gray>Hi</gray></lang></dark_aqua>
+                <yellow>target<gray>: </gray><gray>Hey back</gray></yellow>""");
         }
     }
 
@@ -411,7 +387,7 @@ class TabbedChannelsViewTests {
                 @Test
                 @Disabled
                 void then_channel_two_has_unread_indicator() {
-                    assertColorOnlyViewContains("<red>" + subscriptOf(1));
+                    assertColorOnlyViewContains("<white>two</white>");
                 }
             }
         }
@@ -463,15 +439,16 @@ class TabbedChannelsViewTests {
         @BeforeEach
         void setUp() {
             chatter.join(createChannel("aaa"));
-            chatter.activeChannel(channelWith(
-                    "zzz",
-                    set(PRIORITY, 10),
-                    set(MESSAGE_FORMAT, (v, message) -> message.get(Message.SOURCE)
-                        .orElse(MessageSource.nil())
-                        .displayName()
-                        .append(text(": ").append(message.getOrDefault(Message.TEXT, empty()))))
-                )
+            final Channel channel = channelWith(
+                "zzz",
+                set(PRIORITY, 10)
             );
+            channel.get(FORMAT_CONFIG).messageFormat((v, message) -> message.get(Message.SOURCE)
+                .orElse(MessageSource.nil())
+                .displayName()
+                .append(text(": ").append(message.getOrDefault(Message.TEXT, empty())))
+            );
+            chatter.activeChannel(channel);
             sendMessage("No Source!");
             sendMessageWithSource("Player", "Hey");
             sendMessageWithSource("Player2", "Hello");

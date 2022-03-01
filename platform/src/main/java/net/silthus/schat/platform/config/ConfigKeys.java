@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.silthus.schat.platform.config.adapter.ConfigurationSection;
 import net.silthus.schat.platform.config.key.ConfigKey;
 import net.silthus.schat.platform.config.key.KeyedConfiguration;
 import net.silthus.schat.ui.view.ViewConfig;
@@ -54,13 +53,7 @@ public final class ConfigKeys {
             c.set("channels." + channel.key(), channel);
         }
     });
-    public static final ConfigKey<ViewConfig> VIEW_CONFIG = key(config -> {
-        ConfigurationSection view = config.scoped("view");
-        ViewConfig viewConfig = new ViewConfig();
-        viewConfig.format().copyFrom((config.settings("view")));
-        viewConfig.privateChatFormat().copyFrom((config.settings("private_chat")));
-        return viewConfig.height(view.integer("height", 100));
-    });
+    public static final ConfigKey<ViewConfig> VIEW_CONFIG = key(config -> config.get("view", ViewConfig.class));
     /**
      * A list of the keys defined in this class.
      */

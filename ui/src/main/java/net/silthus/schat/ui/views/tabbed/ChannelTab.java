@@ -33,8 +33,8 @@ import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.message.MessageSource;
 import net.silthus.schat.pointer.Settings;
-import net.silthus.schat.ui.util.ViewHelper;
 import org.jetbrains.annotations.NotNull;
 
 import static net.kyori.adventure.text.Component.empty;
@@ -46,10 +46,6 @@ import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.silthus.schat.channel.ChannelSettings.FORCED;
-import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
-import static net.silthus.schat.ui.format.Format.ACTIVE_TAB_FORMAT;
-import static net.silthus.schat.ui.format.Format.INACTIVE_TAB_FORMAT;
-import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
 import static net.silthus.schat.util.Iterators.lastN;
 
 @SuppressWarnings("CheckStyle")
@@ -64,12 +60,15 @@ public class ChannelTab implements Tab {
 
     private final TabbedChannelsView view;
     private final Channel channel;
+    private final TabFormatConfig config;
     private final Settings settings;
 
     protected ChannelTab(@NonNull TabbedChannelsView view,
-                         @NonNull Channel channel) {
+                         @NonNull Channel channel,
+                         @NonNull TabFormatConfig config) {
         this.view = view;
         this.channel = channel;
+        this.config = config;
         this.settings = Settings.settingsBuilder()
             .withForward(NAME, channel, Channel.DISPLAY_NAME)
             .withForward(KEY, channel, Channel.KEY)
@@ -80,20 +79,49 @@ public class ChannelTab implements Tab {
     }
 
     @Override
-    public Component name() {
-        final Component name;
-        if (isActive())
-            name = channel.get(ACTIVE_TAB_FORMAT).format(view(), this);
-        else
-            name = channel.get(INACTIVE_TAB_FORMAT).format(view(), this);
+    public Component renderName() {
+        Component name;
+        if (isActive()) {
+            name = name().colorIfAbsent(config.activeColor());
+            if (config.activeDecoration() != null)
+                name = name.decorate(config.activeDecoration());
+        } else {
+            name = name().color(config.inactiveColor());
+            if (config.inactiveDecoration() != null)
+                name = name.decorate(config.inactiveDecoration());
+            name = joinChannel(name);
+        }
 
         return closeChannel().append(name);
     }
 
+    protected Component name() {
+        return channel().displayName();
+    }
+
     @Override
     public Component render() {
-        return ViewHelper.renderBlankLines(blankLineCount())
-            .append(join(newlines(), new MessageRenderer(view(), channel.get(MESSAGE_FORMAT)).renderMessages(messages())));
+        return renderMessages(messages());
+    }
+
+    protected Component renderMessages(@NonNull Collection<Message> messages) {
+        return join(newlines(), messages.stream()
+            .map(this::renderMessage)
+            .toList());
+    }
+
+    protected Component renderMessage(Message message) {
+        if (message.source().equals(MessageSource.nil()) && message.type() == Message.Type.SYSTEM)
+            return message.getOrDefault(Message.FORMATTED, message.text());
+        else if (message.source().equals(view().chatter()))
+            return message.getOrDefault(Message.FORMATTED, config.selfMessageFormat().format(view, message));
+        else
+            return message.getOrDefault(Message.FORMATTED, config.messageFormat().format(view, message));
+    }
+
+    @Override
+    public int length() {
+        return messages().size();
     }
 
     protected @NotNull Collection<Message> messages() {
@@ -108,11 +136,17 @@ public class ChannelTab implements Tab {
         return view().chatter().isActiveChannel(channel);
     }
 
-    private boolean isMessageDisplayed(Message message) {
-        if (channel.is(PRIVATE))
-            return message.type() != Message.Type.SYSTEM;
-        else
-            return message.type() == Message.Type.SYSTEM || message.channels().contains(channel);
+    protected boolean isMessageDisplayed(Message message) {
+        return message.type() == Message.Type.SYSTEM || message.channels().contains(channel);
+    }
+
+    private Component joinChannel(Component component) {
+        return component.hoverEvent(translatable("schat.hover.join-channel")
+            .args(name())
+            .color(GRAY)
+        ).clickEvent(
+            clickEvent(RUN_COMMAND, "/channel join " + channel.key())
+        );
     }
 
     private Component closeChannel() {
@@ -125,9 +159,5 @@ public class ChannelTab implements Tab {
             ).clickEvent(clickEvent(RUN_COMMAND, "/channel leave " + channel.key()));
         else
             return empty();
-    }
-
-    private int blankLineCount() {
-        return Math.max(0, view().config().height() - messages().size());
     }
 }

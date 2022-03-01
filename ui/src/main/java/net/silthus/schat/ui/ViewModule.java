@@ -25,11 +25,9 @@ package net.silthus.schat.ui;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import net.silthus.schat.channel.PrivateChannel;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.eventbus.Subscribe;
 import net.silthus.schat.events.chatter.ChatterJoinedServerEvent;
-import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.ui.placeholder.Replacements;
 import net.silthus.schat.ui.view.ViewConfig;
 import net.silthus.schat.ui.view.ViewController;
@@ -38,10 +36,6 @@ import net.silthus.schat.ui.view.ViewProvider;
 import net.silthus.schat.ui.views.Views;
 import net.silthus.schat.ui.views.tabbed.TabbedChannelsView;
 
-import static net.silthus.schat.ui.format.Format.ACTIVE_TAB_FORMAT;
-import static net.silthus.schat.ui.format.Format.INACTIVE_TAB_FORMAT;
-import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
-import static net.silthus.schat.ui.format.Format.SELF_MESSAGE_FORMAT;
 import static net.silthus.schat.ui.view.ViewProvider.cachingViewProvider;
 
 @Getter
@@ -71,7 +65,6 @@ public class ViewModule {
     }
 
     public void init() {
-        configurePrivateChannel(config);
         viewController.bind(eventBus);
         eventBus().register(this);
     }
@@ -79,15 +72,5 @@ public class ViewModule {
     @Subscribe
     private void onChatterJoin(ChatterJoinedServerEvent event) {
         viewProvider.view(event.chatter()).update();
-    }
-
-    public static void configurePrivateChannel(ViewConfig config) {
-        Settings format = config.privateChatFormat();
-        PrivateChannel.configure(channel -> channel
-            .set(MESSAGE_FORMAT, format.get(MESSAGE_FORMAT))
-            .set(SELF_MESSAGE_FORMAT, format.get(SELF_MESSAGE_FORMAT))
-            .set(ACTIVE_TAB_FORMAT, format.get(ACTIVE_TAB_FORMAT))
-            .set(INACTIVE_TAB_FORMAT, format.get(INACTIVE_TAB_FORMAT))
-        );
     }
 }

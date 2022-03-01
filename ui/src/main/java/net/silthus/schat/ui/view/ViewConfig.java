@@ -25,47 +25,34 @@ package net.silthus.schat.ui.view;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.pointer.Settings;
-import net.silthus.schat.ui.util.ViewHelper;
-import net.silthus.schat.ui.views.tabbed.Tab;
+import net.silthus.schat.message.MessageSource;
+import net.silthus.schat.ui.format.Format;
+import net.silthus.schat.ui.views.tabbed.TabFormatConfig;
+import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.silthus.schat.ui.format.Format.ACTIVE_TAB_DECORATION;
-import static net.silthus.schat.ui.format.Format.ACTIVE_TAB_FORMAT;
-import static net.silthus.schat.ui.format.Format.INACTIVE_TAB_DECORATION;
-import static net.silthus.schat.ui.format.Format.INACTIVE_TAB_FORMAT;
-import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
-import static net.silthus.schat.ui.util.ViewHelper.renderPrivateChannelName;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 @Data
 @Accessors(fluent = true)
+@ConfigSerializable
 public class ViewConfig {
 
     private int height = 100;
-    private Settings format = Settings.createSettings();
-    private Settings privateChatFormat = Settings.settingsBuilder()
-        .withStatic(MESSAGE_FORMAT, (view, message) -> ViewHelper.renderPrivateMessage(view.chatter(), (Message) message))
-        .withStatic(ACTIVE_TAB_FORMAT, (view, tab) ->
-            tab.get(Tab.CHANNEL)
-                .map(channel -> ACTIVE_TAB_DECORATION.apply(renderPrivateChannelName(view.chatter(), channel)))
-                .orElse(text("Unknown"))
-        )
-        .withStatic(INACTIVE_TAB_FORMAT, (view, tab) ->
-            tab.get(Tab.CHANNEL)
-                .map(channel -> INACTIVE_TAB_DECORATION.apply((Tab) tab, renderPrivateChannelName(view.chatter(), channel)))
-                .orElse(text("Unknown"))
-        )
-        .create();
-    private JoinConfiguration channelJoinConfig = JoinConfiguration.builder()
+    private Format systemMessageFormat = (view, msg) ->
+        msg.get(Message.SOURCE)
+            .filter(MessageSource.IS_NOT_NIL)
+            .map(identity -> identity.displayName().colorIfAbsent(YELLOW).append(text(": ", GRAY)))
+            .orElse(Component.empty())
+            .append(((Message) msg).text());
+    private TabFormatConfig privateChatFormat = new TabFormatConfig();
+    private transient JoinConfiguration channelJoinConfig = JoinConfiguration.builder()
         .prefix(text("| "))
         .separator(text(" | "))
         .suffix(text(" |"))
         .build();
-
-    public void channelJoinConfig(JoinConfiguration channelJoinConfig) {
-        if (channelJoinConfig != null)
-            this.channelJoinConfig = channelJoinConfig;
-    }
 }

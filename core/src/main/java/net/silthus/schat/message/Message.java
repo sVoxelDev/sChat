@@ -26,6 +26,7 @@ package net.silthus.schat.message;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.UUID;
+import java.util.function.Predicate;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
@@ -61,6 +62,8 @@ public sealed interface Message extends Configurable<Message> permits MessageImp
     static @NotNull Draft message(@NonNull Component text) {
         return message().text(text);
     }
+
+    Predicate<Message> IS_SYSTEM_MESSAGE = message -> message.type() == Type.SYSTEM;
 
     @NotNull UUID id();
 

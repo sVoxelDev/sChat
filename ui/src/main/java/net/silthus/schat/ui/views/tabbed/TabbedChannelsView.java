@@ -24,6 +24,7 @@
 package net.silthus.schat.ui.views.tabbed;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.SortedMap;
@@ -42,6 +43,7 @@ import net.silthus.schat.events.chatter.ChatterChangedActiveChannelEvent;
 import net.silthus.schat.events.chatter.ChatterReceivedMessageEvent;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.pointer.Setting;
+import net.silthus.schat.ui.util.ViewHelper;
 import net.silthus.schat.ui.view.View;
 import net.silthus.schat.ui.view.ViewConfig;
 import org.jetbrains.annotations.NotNull;
@@ -49,8 +51,10 @@ import org.jetbrains.annotations.NotNull;
 import static net.kyori.adventure.text.Component.join;
 import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.JoinConfiguration.newlines;
+import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.pointer.Setting.setting;
-import static net.silthus.schat.ui.format.Format.MESSAGE_FORMAT;
+import static net.silthus.schat.ui.views.tabbed.TabFormatConfig.FORMAT_CONFIG;
 
 @Getter
 @Accessors(fluent = true)
@@ -70,20 +74,15 @@ public class TabbedChannelsView implements View {
     public TabbedChannelsView(Chatter chatter, ViewConfig config) {
         this.chatter = chatter;
         this.config = config;
-        chatter.channels().forEach(channel -> addTab(new ChannelTab(this, channel)));
+        chatter.channels().forEach(channel -> addTab(new ChannelTab(this, channel, channel.get(FORMAT_CONFIG))));
         update();
-    }
-
-    @NotNull
-    private MessageRenderer messageRenderer() {
-        return new MessageRenderer(this, config().format().get(MESSAGE_FORMAT));
     }
 
     @Subscribe
     protected void onJoinedChannel(ChatterJoinedChannelEvent event) {
         if (isNotApplicable(event.chatter()))
             return;
-        addTab(new ChannelTab(this, event.channel()));
+        addTab(event.channel());
         update();
     }
 
@@ -111,7 +110,8 @@ public class TabbedChannelsView implements View {
 
     @Override
     public Component render() {
-        final TextComponent.Builder content = text();
+        final TextComponent.Builder content = text()
+            .append(ViewHelper.renderBlankLines(blankLineCount()));
 
         final Collection<Tab> tabs = tabs().values();
 
@@ -128,13 +128,15 @@ public class TabbedChannelsView implements View {
 
         return content
             .append(newline())
-            .append(joinTabs(tabs.stream().map(Tab::name).toList()))
+            .append(joinTabs(tabs.stream().map(Tab::renderName).toList()))
             .build();
     }
 
     private Component renderSystemMessages() {
-        return messageRenderer().renderMessages(chatter().messages()
-            .filter(message -> message.type() == Message.Type.SYSTEM)
+        return join(newlines(), chatter().messages().stream()
+            .filter(Message.IS_SYSTEM_MESSAGE)
+            .map(message -> message.getOrDefault(Message.FORMATTED, config.systemMessageFormat().format(this, message)))
+            .toList()
         );
     }
 
@@ -144,6 +146,13 @@ public class TabbedChannelsView implements View {
             return Component.empty();
         else
             return join(config().channelJoinConfig(), tabs);
+    }
+
+    private void addTab(Channel channel) {
+        if (channel.is(PRIVATE))
+            addTab(new PrivateChannelTab(this, channel, config().privateChatFormat()));
+        else
+            addTab(new ChannelTab(this, channel, channel.get(FORMAT_CONFIG)));
     }
 
     private void addTab(ChannelTab tab) {
@@ -160,5 +169,10 @@ public class TabbedChannelsView implements View {
 
     private boolean isNotApplicable(Chatter chatter) {
         return !chatter().equals(chatter);
+    }
+
+    private int blankLineCount() {
+        return tabs.values().stream().map(Tab::length).min(Comparator.naturalOrder())
+            .orElse(config.height());
     }
 }

@@ -41,9 +41,11 @@ public interface Tab extends Configurable<Tab> {
     @NotNull Pointer<Channel> CHANNEL = pointer(Channel.class, "channel");
     @NotNull Pointer<Chatter> VIEWER = pointer(Chatter.class, "viewer");
 
-    Component name();
+    Component renderName();
 
     Component render();
+
+    int length();
 
     boolean isActive();
 }
