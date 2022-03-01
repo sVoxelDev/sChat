@@ -24,8 +24,7 @@ mockito = "4.0.0"
 cucumber = "7.2.3"
 
 event-api = "3.0.0"
-adventure-api = "4.9.3"
-adventure-minimessage = "4.10.0-SNAPSHOT"
+adventure-api = "4.10.0"
 adventure-platform = "4.0.1"
 examination = "1.3.0"
 configurate = "4.1.2"
@@ -72,7 +71,7 @@ event = { module = "net.kyori:event-api", version.ref = "event-api" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
 adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure-api" }
-adventure-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure-minimessage" }
+adventure-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure-api" }
 adventure-plain = { module = "net.kyori:adventure-text-serializer-plain", version.ref = "adventure-api" }
 adventure-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure-api" }
 

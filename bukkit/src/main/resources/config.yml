@@ -10,13 +10,13 @@
 #|                                                                                              |#
 #|                         Supercharge your Minecraft Chat Experience!                          |#
 #|                                                                                              |#
-#|            WIKI:        https://github.com/sVoxelDev/sChat                                   |#
+#|            WIKI:        https://schat.silthus.net/docs                                       |#
 #|            DISCORD:     https://discord.gg/R4st4QxAjb                                        |#
 #|            BUG REPORTS: https://github.com/sVoxelDev/sChat/issues                            |#
 #|                                                                                              |#
 #|     New options are not added to this file automatically. Default values are used if an      |#
-#|     option cannot be found. There will always be an up-to-date config.default.yml which      |#
-#|     also explains all of the available config options in detail.                             |#
+#|     option cannot be found. There will always be an up-to-date config.default.yml and        |#
+#|     all config values are explained in great detail on the wiki.                             |#
 #+----------------------------------------------------------------------------------------------+#
 ##################################################################################################
 
@@ -42,9 +42,8 @@ channels:
 
     #
     # The friendly display name of the channel as it is shown in the GUI and messages.
-    # The name is parsed with the MiniMessage format (see documentation).
     #
-    name: "<#189AB4>Global" # colors the name with the given hex formatted color
+    name: "Global"
 
     #
     # Every channel can have an unlimited number of settings added and controlled by various features.
@@ -102,7 +101,7 @@ channels:
       # The 'message_format' is used to format messages NOT sent by the viewer.
       # You can use the full power of MiniMessage (see above) and PlaceholderAPI placeholders.
       #
-      message_format: "<yellow><hover:show_text:'<gray>Click to send <yellow><source.diplay_name></yellow> a message.\n<gray>Since: <aqua>%player_first_played_formatted%'><click:run_command:'/tell <source.name>'><source.display_name></click></yellow><gray>: <text>"
+      message_format: "<yellow><hover:show_text:'<gray>Click to send <yellow><source_diplay_name></yellow> a message.\n<gray>Since: <aqua>%player_first_played_formatted%'><click:run_command:'/tell <source_name>'><source_display_name></click></yellow><gray>: <text>"
   team:
     name: Team
     settings:
@@ -110,7 +109,7 @@ channels:
       auto_join: true
       global: true
       forced: false
-      message_format: "<#189AB4><source.display_name><gray>: <text>"
+      message_format: "<#189AB4><source_display_name><gray>: <text>"
 
 #+----------------------------------------------------------------------------------------------+#
 #|                                                                                              |#

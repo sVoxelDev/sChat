@@ -1,15 +1,15 @@
 messenger: mock
 view:
-  message_format: "<aqua>[<source.display_name>]</aqua>: <text>"
+  message_format: "<aqua>[<source_display_name>]</aqua>: <text>"
 private_chat:
-  message_format: "<red><source.display_name><gray>: <text>"
+  message_format: "<red><source_display_name><gray>: <text>"
 channels:
   test:
     name: Test
     settings:
       protected: true
       auto_join: true
-      message_format: "<yellow><source.display_name><gray>: <text>"
+      message_format: "<yellow><source_display_name><gray>: <text>"
       active_tab_format: "<red><underlined><channel.name>"
   global:
     name: Global

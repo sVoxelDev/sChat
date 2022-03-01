@@ -123,27 +123,31 @@ In addition to the [PlacerholderAPI][placeholderapi], the following placeholders
 | `<timestamp>` | The timestamp when the message was sent. | `2021-05-01T12:10:55.412386200Z` | [:octicons-milestone-24: next][next] |
 | `<type>` | The type of the message. | `SYSTEM` or `CHAT` | [:octicons-milestone-24: next][next] |
 | `<text>` | The text of the message. | `Hi there!` | [:octicons-milestone-24: next][next] |
-| `<source.uuid>` | The ID of the message sender. | `dd5c4f63-b5d9-43e7-9584-40b25494d7e8` | [:octicons-milestone-24: next][next] |
-| `<source.name>` | The name of the message sender. | `Silthus` | [:octicons-milestone-24: next][next] |
-| `<source.display_name>` | The formatted display or nickname of the sender. | `&aSilthus` | [:octicons-milestone-24: next][next] |
-| `<channel.key>` | The unique key of the channel. | `global` | [:octicons-milestone-24: next][next] |
-| `<channel.display_name>` | The formatted name of the channel. | `Global` | [:octicons-milestone-24: next][next] |
+| `<source_uuid>` | The ID of the message sender. | `dd5c4f63-b5d9-43e7-9584-40b25494d7e8` | [:octicons-milestone-24: next][next] |
+| `<source_name>` | The name of the message sender. | `Silthus` | [:octicons-milestone-24: next][next] |
+| `<source_display_name>` | The formatted display or nickname of the sender. | `&aSilthus` | [:octicons-milestone-24: next][next] |
+| `<channel_key>` | The unique key of the channel. | `global` | [:octicons-milestone-24: next][next] |
+| `<channel_display_name>` | The formatted name of the channel. | `Global` | [:octicons-milestone-24: next][next] |
 
 ??? example "Example with Name Hover and PlaceholderAPI"
-    ```yaml
-    channels:
-      global:
-        name: <green>Global
-        settings:
-          message_format: "<aqua>[<channel.name>]</aqua>%vault_prefix%<hover:show_text:'<source.display_name>\n<gray>Rank: <aqua>%vault_rank%'><source.display_name></hover>%vault_suffix%<gray>: <text>"
-    ```
+
+```yaml channels:
+global:
+name: <green>Global settings:
+message_format: "<aqua>[<channel_name>]</aqua>%vault_prefix%<hover:show_text:'<source_display_name>\n<gray>Rank: <aqua>%vault_rank%'><source_display_name></hover>%vault_suffix%<gray>: <text>"
+```
 
     ![Channel Message Format](images/channels-message_format.png)
     ![Channel Message Format Hover](images/channels-message_format_hover.png)
 
 [next]: https://github.com/sVoxelDev/sChat/releases/latest
+
 [developer]: /developer
+
 [commands]: /commands
+
 [messenger]: reference.md#messenger
+
 [minimessage]: minimessage.md
+
 [placeholderapi]: /extensions/placeholderapi

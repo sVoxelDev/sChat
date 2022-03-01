@@ -76,7 +76,7 @@ class MiniMessageFormatTest {
 
     @Test
     void message_with_source_and_source_format() {
-        assertFormat("<source.display_name>: <text>",
+        assertFormat("<source_display_name>: <text>",
             message("Hey").source(of(identity("Bob", text("Bobby")))),
             "Bobby: Hey"
         );
@@ -88,7 +88,7 @@ class MiniMessageFormatTest {
         source.activeChannel(channel("test").name(text("Test", GREEN)).create());
         final Message.Draft message = message(text("Hey ").append(text("@Silthus", RED, BOLD))).source(source);
 
-        assertFormat("<aqua>(<source.active_channel.name><aqua>) <yellow><source.display_name><gray>: <text>",
+        assertFormat("<aqua>(<source_active_channel_name><aqua>) <yellow><source_display_name><gray>: <text>",
             message,
             "<aqua>(<green>Test</green>) <yellow><dark_red>Bobby</dark_red><gray>: Hey <bold><red>@Silthus"
         );

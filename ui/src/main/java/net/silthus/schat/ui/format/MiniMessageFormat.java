@@ -54,19 +54,19 @@ public class MiniMessageFormat implements Format {
         ArrayList<TagResolver> resolvers = new ArrayList<>();
         for (Pointer<?> pointer : type.pointers().pointers()) {
             resolvers.add(type.get(pointer)
-                .map(value -> placeholder(path + pointer.key(), value))
+                .map(value -> resolve(path + pointer.key(), value))
                 .orElse(TagResolver.empty()));
         }
         return TagResolver.resolver(resolvers);
     }
 
-    private TagResolver placeholder(@NotNull String key, Object value) {
+    private TagResolver resolve(@NotNull String key, Object value) {
         if (value instanceof String)
             return Placeholder.parsed(key, (String) value);
         if (value instanceof Component)
             return Placeholder.component(key, (Component) value);
         if (value instanceof Pointered)
-            return resolvePlaceholders((Pointered) value, key + ".");
+            return resolvePlaceholders((Pointered) value, key + "_");
         return TagResolver.empty();
     }
 }

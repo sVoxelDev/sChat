@@ -37,10 +37,10 @@ Controls how messages are displayed inside private chats. By default this will r
 
 ```yaml
 private_chat:
-    message_format: "<dark_aqua><<yellow><source.display_name><dark_aqua>> <gray><text>"
+  message_format: "<dark_aqua><<yellow><source_display_name><dark_aqua>> <gray><text>"
 ```
 
-[![Private Chat Message Format](images/private_chat-message_format.png)](https://webui.adventure.kyori.net/?mode=chat_closed&input=%3Cdark_aqua%3E%3C%3Cyellow%3E%3Csource.display_name%3E%3Cdark_aqua%3E%3E%20%3Cgray%3E%3Ctext%3E&bg=grass&st=%7B%22channel.name%22%3A%22Global%22%2C%22text%22%3A%22Hi%22%2C%22channel.key%22%3A%22global%22%2C%22source.name%22%3A%22Silthus%22%2C%22source.display_name%22%3A%22Silthus%22%7D)
+[![Private Chat Message Format](images/private_chat-message_format.png)](https://webui.adventure.kyori.net/?mode=chat_closed&input=%3Cdark_aqua%3E%3C%3Cyellow%3E%3Csource_display_name%3E%3Cdark_aqua%3E%3E%20%3Cgray%3E%3Ctext%3E&bg=grass&st=%7B%22channel_name%22%3A%22Global%22%2C%22text%22%3A%22Hi%22%2C%22channel_key%22%3A%22global%22%2C%22source_name%22%3A%22Silthus%22%2C%22source_display_name%22%3A%22Silthus%22%7D)
 
 ## Global Chatting
 
