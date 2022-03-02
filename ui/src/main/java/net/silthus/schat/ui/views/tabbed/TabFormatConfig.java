@@ -56,6 +56,13 @@ public class TabFormatConfig {
     @Setting("inactive_decoration")
     private TextDecoration inactiveDecoration = null;
 
+    @Setting("highlight_unread")
+    private boolean highlightUnread = true;
+    @Setting("unread_color")
+    private TextColor unreadColor = NamedTextColor.WHITE;
+    @Setting("unread_decoration")
+    private TextDecoration unreadDecoration = null;
+
     @Setting("message_format")
     private Format messageFormat = (view, msg) ->
         msg.get(Message.SOURCE)

@@ -23,20 +23,25 @@
  */
 package net.silthus.schat.ui.views.tabbed;
 
-import java.util.Collection;
 import java.util.Comparator;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.stream.Stream;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageSource;
 import net.silthus.schat.pointer.Settings;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import static java.util.stream.Collectors.toMap;
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.join;
 import static net.kyori.adventure.text.Component.translatable;
@@ -46,7 +51,6 @@ import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.silthus.schat.channel.ChannelSettings.FORCED;
-import static net.silthus.schat.util.Iterators.lastN;
 
 @SuppressWarnings("CheckStyle")
 @Getter
@@ -62,6 +66,8 @@ public class ChannelTab implements Tab {
     private final Channel channel;
     private final TabFormatConfig config;
     private final Settings settings;
+    private final SortedMap<Message, Component> messages;
+    private int unreadCount = 0;
 
     protected ChannelTab(@NonNull TabbedChannelsView view,
                          @NonNull Channel channel,
@@ -76,21 +82,22 @@ public class ChannelTab implements Tab {
             .withStatic(VIEWER, view.chatter())
             .create()
             .copyFrom(channel.settings());
+        this.messages = new TreeMap<>(Stream.concat(channel.messages().stream(), view.chatter().messages().stream())
+            .filter(this::isMessageDisplayed)
+            .collect(toMap(message -> message, this::renderMessage)));
+        if (!isActive())
+            unreadCount(messages.size());
     }
 
     @Override
     public Component renderName() {
         Component name;
-        if (isActive()) {
-            name = name().colorIfAbsent(config.activeColor());
-            if (config.activeDecoration() != null)
-                name = name.decorate(config.activeDecoration());
-        } else {
-            name = name().color(config.inactiveColor());
-            if (config.inactiveDecoration() != null)
-                name = name.decorate(config.inactiveDecoration());
-            name = joinChannel(name);
-        }
+        if (isActive())
+            name = style(name(), config.activeColor(), config.activeDecoration());
+        else if (config.highlightUnread() && isUnread())
+            name = joinChannel(style(name(), config.unreadColor(), config.unreadDecoration()));
+        else
+            name = joinChannel(style(name(), config.inactiveColor(), config.inactiveDecoration()));
 
         return closeChannel().append(name);
     }
@@ -101,34 +108,31 @@ public class ChannelTab implements Tab {
 
     @Override
     public Component render() {
-        return renderMessages(messages());
-    }
-
-    protected Component renderMessages(@NonNull Collection<Message> messages) {
-        return join(newlines(), messages.stream()
-            .map(this::renderMessage)
-            .toList());
-    }
-
-    protected Component renderMessage(Message message) {
-        if (message.source().equals(MessageSource.nil()) && message.type() == Message.Type.SYSTEM)
-            return message.getOrDefault(Message.FORMATTED, message.text());
-        else if (message.source().equals(view().chatter()))
-            return message.getOrDefault(Message.FORMATTED, config.selfMessageFormat().format(view, message));
-        else
-            return message.getOrDefault(Message.FORMATTED, config.messageFormat().format(view, message));
+        if (isActive())
+            resetUnreadCounter();
+        return join(newlines(), messages.values());
     }
 
     @Override
     public int length() {
-        return messages().size();
+        return messages.size();
     }
 
-    protected @NotNull Collection<Message> messages() {
-        return view().chatter().messages().stream()
-            .filter(this::isMessageDisplayed)
-            .sorted(MESSAGE_COMPARATOR)
-            .collect(lastN(100));
+    @Override
+    public void onReceivedMessage(Message message) {
+        if (!isMessageDisplayed(message))
+            return;
+        this.messages.put(message, renderMessage(message));
+        if (!isActive())
+            unreadCount++;
+    }
+
+    public boolean isUnread() {
+        return unreadCount() > 0;
+    }
+
+    protected void activate() {
+        resetUnreadCounter();
     }
 
     @Override
@@ -138,6 +142,15 @@ public class ChannelTab implements Tab {
 
     protected boolean isMessageDisplayed(Message message) {
         return message.type() == Message.Type.SYSTEM || message.channels().contains(channel);
+    }
+
+    protected Component renderMessage(Message message) {
+        if (message.source().equals(MessageSource.nil()) && message.type() == Message.Type.SYSTEM)
+            return message.getOrDefault(Message.FORMATTED, message.text());
+        else if (message.source().equals(view().chatter()))
+            return message.getOrDefault(Message.FORMATTED, config.selfMessageFormat().format(view, message));
+        else
+            return message.getOrDefault(Message.FORMATTED, config.messageFormat().format(view, message));
     }
 
     private Component joinChannel(Component component) {
@@ -159,5 +172,27 @@ public class ChannelTab implements Tab {
             ).clickEvent(clickEvent(RUN_COMMAND, "/channel leave " + channel.key()));
         else
             return empty();
+    }
+
+    private Component style(@NonNull Component component, @Nullable TextColor color, @Nullable TextDecoration decoration) {
+        return decorate(color(component, color), decoration);
+    }
+
+    private Component color(@NonNull Component component, @Nullable TextColor color) {
+        if (color != null)
+            return component.color(color);
+        else
+            return component;
+    }
+
+    private Component decorate(@NonNull Component component, @Nullable TextDecoration decoration) {
+        if (decoration != null)
+            return component.decorate(decoration);
+        else
+            return component;
+    }
+
+    private void resetUnreadCounter() {
+        unreadCount(0);
     }
 }

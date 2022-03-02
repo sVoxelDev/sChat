@@ -38,6 +38,36 @@ Controls the decoration of tab when it is **inactive**. Use `null` to apply no d
 inactive_decoration: null
 ```
 
+#### `highlight_unread`
+
+[:octicons-milestone-24: next][next] · `boolean` · :octicons-pin-24: `true` · :octicons-sync-24:
+
+Set to `false` to disable all unread message indicators on the tab.
+
+```yaml
+highlight_unread: false
+```
+
+#### `unread_color`
+
+[:octicons-milestone-24: next][next] · [`color`][color] · :octicons-pin-24: `green` · :octicons-sync-24:
+
+Controls the color of the tab when it contains **unread messages**.
+
+```yaml
+unread_color: "gray"
+```
+
+#### `unread_decoration`
+
+[:octicons-milestone-24: next][next] · [`decoration`][decoration] · :octicons-pin-24: `underlined` · :octicons-sync-24:
+
+Controls the decoration of tab when it contains **unread messages**. Use `null` to apply no decoration.
+
+```yaml
+unread_decoration: null
+```
+
 #### `message_format`
 
 [:octicons-milestone-24: next][next] · [`minimessage`][minimessage] · :octicons-sync-24:

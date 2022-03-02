@@ -40,7 +40,6 @@ import net.silthus.schat.ui.view.ViewConfig;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -385,9 +384,14 @@ class TabbedChannelsViewTests {
                 }
 
                 @Test
-                @Disabled
                 void then_channel_two_has_unread_indicator() {
                     assertColorOnlyViewContains("<white>two</white>");
+                }
+
+                @Test
+                void given_highlight_unread_is_false_then_unread_indicator_is_hidden() {
+                    channelTwo.get(FORMAT_CONFIG).highlightUnread(false);
+                    assertColorOnlyViewContains("<gray>two</gray>");
                 }
             }
         }
@@ -460,7 +464,7 @@ class TabbedChannelsViewTests {
                 No Source!
                 Player: Hey
                 Player2: Hello
-                | <red><click:run_command:'/channel leave zzz'><hover:show_text:"<lang:schat.hover.leave-channel:'<gray>zzz'>">❌<underlined><green>zzz</green></underlined></hover></click></red> | <red><click:run_command:'/channel leave aaa'><hover:show_text:"<lang:schat.hover.leave-channel:'<gray>aaa'>">❌<gray><click:run_command:'/channel join aaa'><hover:show_text:"<gray><lang:schat.hover.join-channel:'aaa'>">aaa</hover></click></gray></hover></click></red> |""");
+                | <red><click:run_command:'/channel leave zzz'><hover:show_text:"<lang:schat.hover.leave-channel:'<gray>zzz'>">❌<underlined><green>zzz</green></underlined></hover></click></red> | <red><click:run_command:'/channel leave aaa'><hover:show_text:"<lang:schat.hover.leave-channel:'<gray>aaa'>">❌<white><click:run_command:'/channel join aaa'><hover:show_text:"<gray><lang:schat.hover.join-channel:'aaa'>">aaa</hover></click></white></hover></click></red> |""");
         }
     }
 

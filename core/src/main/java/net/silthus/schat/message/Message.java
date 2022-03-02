@@ -40,7 +40,7 @@ import org.jetbrains.annotations.Unmodifiable;
 
 import static net.silthus.schat.pointer.Pointer.pointer;
 
-public sealed interface Message extends Configurable<Message> permits MessageImpl {
+public sealed interface Message extends Configurable<Message>, Comparable<Message> permits MessageImpl {
 
     Pointer<UUID> ID = pointer(UUID.class, "id");
     Pointer<Instant> TIMESTAMP = pointer(Instant.class, "timestamp");

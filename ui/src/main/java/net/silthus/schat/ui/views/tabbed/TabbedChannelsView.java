@@ -47,6 +47,7 @@ import net.silthus.schat.ui.util.ViewHelper;
 import net.silthus.schat.ui.view.View;
 import net.silthus.schat.ui.view.ViewConfig;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static net.kyori.adventure.text.Component.join;
 import static net.kyori.adventure.text.Component.newline;
@@ -98,6 +99,7 @@ public class TabbedChannelsView implements View {
     protected void onChangeChannel(ChatterChangedActiveChannelEvent event) {
         if (isNotApplicable(event.chatter()))
             return;
+        tab(event.newChannel()).ifPresent(ChannelTab::activate);
         update();
     }
 
@@ -105,6 +107,7 @@ public class TabbedChannelsView implements View {
     protected void onMessage(ChatterReceivedMessageEvent event) {
         if (isNotApplicable(event.chatter()))
             return;
+        tabs().values().forEach(tab -> tab.onReceivedMessage(event.message()));
         update();
     }
 
@@ -163,7 +166,9 @@ public class TabbedChannelsView implements View {
         tabs.remove(channel);
     }
 
-    private Optional<ChannelTab> tab(Channel channel) {
+    protected Optional<ChannelTab> tab(@Nullable Channel channel) {
+        if (channel == null)
+            return Optional.empty();
         return Optional.ofNullable((ChannelTab) tabs.get(channel));
     }
 

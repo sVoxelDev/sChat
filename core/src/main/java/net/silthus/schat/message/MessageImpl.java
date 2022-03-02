@@ -95,6 +95,11 @@ final class MessageImpl implements Message {
         return new Draft(this);
     }
 
+    @Override
+    public int compareTo(@NotNull Message o) {
+        return timestamp().compareTo(o.timestamp());
+    }
+
     @NotNull
     private static Stream<Channel> filterAndMapChannels(Stream<MessageTarget> stream) {
         return stream
