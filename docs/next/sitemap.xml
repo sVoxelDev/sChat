@@ -26,6 +26,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://schat.silthus.net/docs/next/configuration/_tab_format_config/</loc>
+         <lastmod>2022-03-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://schat.silthus.net/docs/next/configuration/channels/</loc>
          <lastmod>2022-03-02</lastmod>
          <changefreq>daily</changefreq>
