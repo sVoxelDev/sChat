@@ -329,6 +329,27 @@ class TabbedChannelsViewTests {
         }
     }
 
+    @Nested class given_private_and_public_channel {
+        private Channel channel;
+        private ChatterMock target;
+
+        @BeforeEach
+        void setUp() {
+            target = randomChatter();
+            channel = createChannel("public");
+            target.join(channel);
+            chatter.join(channel);
+            chatter.activeChannel(createPrivateChannel(chatter, target).channel());
+            target.activeChannel(channel);
+        }
+
+        @Test
+        void message_sent_to_public_channel_is_not_shown_in_private_channel() {
+            target.message("in public").to(channel).send();
+            assertTextDoesNotContain("in public");
+        }
+    }
+
     @Nested
     class given_two_channels {
 

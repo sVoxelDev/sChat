@@ -51,9 +51,6 @@ public class PrivateChannelTab extends ChannelTab implements Tab {
 
     @Override
     protected boolean isMessageDisplayed(Message message) {
-        if (message.source() instanceof MessageTarget target)
-            return channel().targets().contains(target);
-        else
-            return message.channels().contains(channel());
+        return message.channels().contains(channel());
     }
 }
