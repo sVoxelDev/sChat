@@ -332,14 +332,16 @@ class TabbedChannelsViewTests {
     @Nested class given_private_and_public_channel {
         private Channel channel;
         private ChatterMock target;
+        private Channel privateChannel;
 
         @BeforeEach
         void setUp() {
-            target = randomChatter();
+            target = chatterMock(Identity.identity("target"));
             channel = createChannel("public");
             target.join(channel);
             chatter.join(channel);
-            chatter.activeChannel(createPrivateChannel(chatter, target).channel());
+            privateChannel = createPrivateChannel(chatter, target).channel();
+            chatter.activeChannel(privateChannel);
             target.activeChannel(channel);
         }
 
@@ -347,6 +349,24 @@ class TabbedChannelsViewTests {
         void message_sent_to_public_channel_is_not_shown_in_private_channel() {
             target.message("in public").to(channel).send();
             assertTextDoesNotContain("in public");
+        }
+
+        @Nested class given_chatter_leaves_private_chat {
+            @BeforeEach
+            void setUp() {
+                chatter.leave(privateChannel);
+            }
+
+            @Test
+            void then_private_chat_is_hidden() {
+                assertTextDoesNotContain("target");
+            }
+
+            @Test
+            void when_new_message_is_sent_to_inactive_private_chat_then_private_chat_is_shown() {
+                target.message("hi").to(privateChannel).send();
+                assertTextContains("target");
+            }
         }
     }
 
