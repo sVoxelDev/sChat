@@ -177,7 +177,9 @@ public class TabbedChannelsView implements View {
     }
 
     private int blankLineCount() {
-        return tabs.values().stream().map(Tab::length).min(Comparator.naturalOrder())
-            .orElse(config.height());
+        return config.height() - tabs.values().stream()
+            .map(Tab::length)
+            .min(Comparator.naturalOrder())
+            .orElse(0);
     }
 }
