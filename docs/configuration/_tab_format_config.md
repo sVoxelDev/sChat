@@ -50,22 +50,22 @@ highlight_unread: false
 
 #### `unread_color`
 
-[:octicons-milestone-24: next][next] · [`color`][color] · :octicons-pin-24: `green` · :octicons-sync-24:
+[:octicons-milestone-24: next][next] · [`color`][color] · :octicons-pin-24: `white` · :octicons-sync-24:
 
 Controls the color of the tab when it contains **unread messages**.
 
 ```yaml
-unread_color: "gray"
+unread_color: "blue"
 ```
 
 #### `unread_decoration`
 
-[:octicons-milestone-24: next][next] · [`decoration`][decoration] · :octicons-pin-24: `underlined` · :octicons-sync-24:
+[:octicons-milestone-24: next][next] · [`decoration`][decoration] · :octicons-pin-24: `null` · :octicons-sync-24:
 
 Controls the decoration of tab when it contains **unread messages**. Use `null` to apply no decoration.
 
 ```yaml
-unread_decoration: null
+unread_decoration: italic
 ```
 
 #### `message_format`
