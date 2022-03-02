@@ -14,7 +14,7 @@ sChat comes with the following features out of the box and can be extended using
 - [X] Multi-Platform Support
     - [X] Bukkit/Spigot/Paper
     - [X] Bungeecord
-    - [X] Velocity
+    - [X] ~~Velocity~~ (requires [this PR](https://github.com/PaperMC/Velocity/pull/658) to be merged)
 - [x] Hex Color Support
 - [X] Seperate Tabs for each conversation keeping the chat clean
 - [X] Network-wide Global Channels
