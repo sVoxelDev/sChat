@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.message.MessageHelper.randomMessage;
-import static net.silthus.schat.ui.views.tabbed.TabFormatConfig.FORMAT_CONFIG;
+import static net.silthus.schat.ui.view.ViewConfig.FORMAT_CONFIG;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ChannelTabTest {

@@ -28,14 +28,11 @@ import java.nio.file.Path;
 import java.util.function.Function;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import net.kyori.adventure.serializer.configurate4.ConfigurateComponentSerializer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
-import net.silthus.schat.platform.config.serializers.ColorSerializer;
 import net.silthus.schat.platform.config.serializers.MiniMessageComponentSerializer;
 import net.silthus.schat.platform.config.serializers.MiniMessageFormatSerializer;
 import net.silthus.schat.platform.config.serializers.SettingsSerializer;
-import net.silthus.schat.platform.config.serializers.TextDecorationSerializer;
 import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.ui.format.Format;
 import org.spongepowered.configurate.ConfigurateException;
@@ -51,9 +48,8 @@ public abstract class ConfigurateAdapter<T extends AbstractConfigurationLoader.B
 
     private static final TypeSerializerCollection SERIALIZERS = TypeSerializerCollection.builder()
         .register(Component.class, new MiniMessageComponentSerializer())
+        .registerAll(ConfigurateComponentSerializer.configurate().serializers())
         .register(Settings.class, new SettingsSerializer())
-        .register(TextColor.class, new ColorSerializer())
-        .register(TextDecoration.class, new TextDecorationSerializer())
         .register(Format.class, new MiniMessageFormatSerializer())
         .build();
 

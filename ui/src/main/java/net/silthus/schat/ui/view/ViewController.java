@@ -29,7 +29,6 @@ import net.silthus.schat.eventbus.EventListener;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.ui.placeholder.Replacements;
-import net.silthus.schat.ui.views.tabbed.TabFormatConfig;
 
 import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 
@@ -54,7 +53,7 @@ public class ViewController implements EventListener {
     }
 
     private Component formatMessage(SendChannelMessageEvent event) {
-        return event.channel().get(TabFormatConfig.FORMAT_CONFIG)
+        return event.channel().get(ViewConfig.FORMAT_CONFIG)
             .messageFormat().format(View.empty(), event.message());
     }
 }

@@ -54,7 +54,7 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.JoinConfiguration.newlines;
 import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.pointer.Setting.setting;
-import static net.silthus.schat.ui.views.tabbed.TabFormatConfig.FORMAT_CONFIG;
+import static net.silthus.schat.ui.view.ViewConfig.FORMAT_CONFIG;
 
 @Getter
 @Accessors(fluent = true)

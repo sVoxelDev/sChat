@@ -8,9 +8,9 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageSource;
-import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.ui.format.Format;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
@@ -23,14 +23,17 @@ import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 @ConfigSerializable
 public class TabFormatConfig {
 
-    public static final Setting<TabFormatConfig> FORMAT_CONFIG = Setting.setting(TabFormatConfig.class, "format", new TabFormatConfig());
-
+    @Setting("active_color")
     private TextColor activeColor = NamedTextColor.GREEN;
+    @Setting("active_decoration")
     private TextDecoration activeDecoration = TextDecoration.UNDERLINED;
 
+    @Setting("inactive_color")
     private TextColor inactiveColor = NamedTextColor.GRAY;
+    @Setting("inactive_decoration")
     private TextDecoration inactiveDecoration = null;
 
+    @Setting("message_format")
     private Format messageFormat = (view, msg) ->
         msg.get(Message.SOURCE)
             .filter(MessageSource.IS_NOT_NIL)
@@ -38,6 +41,7 @@ public class TabFormatConfig {
             .orElse(Component.empty())
             .append(((Message) msg).text().colorIfAbsent(GRAY));
 
+    @Setting("self_message_format")
     private Format selfMessageFormat = (view, msg) ->
         translatable("schat.chat.message.you").color(DARK_AQUA)
             .append(text(": ", GRAY))

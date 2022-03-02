@@ -21,8 +21,7 @@ You will notice several different icons and symbols across the [config reference
 | :octicons-milestone-24: 1.0.0 | The config option had its first stable release in the given version. |
 | :octicons-milestone-24: next | The option is currently under development and available in the latest snapshot. |
 | :octicons-pin-24: | Marks an option as the default option. |
-| :octicons-sync-24: | The config option is reloadable, requiring no full server restart. *
-All [channel settings][channels] are reloadable.* |
+| :octicons-sync-24: | The config option is reloadable, requiring no full server restart. *All [channel settings][channels] are reloadable.* |
 | :octicons-beaker-24: | The feature is still experimental and may behave unexpected or suddenly change. |
 
 [reference]: reference.md

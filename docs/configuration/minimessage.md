@@ -38,8 +38,26 @@ message_format: "<yellow><source_name>: <gradient:#5e4fa2:#f79459:red><text></gr
 !!! tip Visit the official [MiniMessage Documentation][minimessage] for even more cool features and in depth
 explanation.
 
-[message-format]: channels.md#message_format
+## Color
 
+In some configuration parts, you can use a `color` to control parts of the ui (*e.g. in the [channel format][channel-color]*).
+
+The color variable can be the name of any valid Minecraft color, e.g. `red`, `dark_aqua`, `gray`.  
+Or an hex color, e.g. `#ffaa23`
+
+## Decoration
+
+In addition to color and minimessage formatting, you have the option to define decorations.
+
+The following decorations are available:
+
+- `bold`
+- `italic`
+- `underlined`
+- `strikethrough`
+- `obfuscated`
+
+[channel-color]: channels#active_color
+[message-format]: channels.md#format
 [minimessage]: https://docs.adventure.kyori.net/minimessage/format.html
-
 [webviewer]: https://webui.adventure.kyori.net/?mode=chat_closed&input=%3Caqua%3E%5B%3Cgreen%3E%3Cchannel_name%3E%3C%2Fgreen%3E%5D%3C%2Faqua%3E%3Cdark_aqua%3E%5BDev%5D%3Cyellow%3E%3Chover%3Ashow_text%3A'%3Csource_display_name%3E%0A%3Cgray%3ERank%3A%20%3Caqua%3EDev'%3E%3Csource_display_name%3E%3C%2Fhover%3E%3C%2Fyellow%3E%3Cgray%3E%3A%20%3Ctext%3E&bg=grass&st=%7B%22channel_name%22%3A%22Global%22%2C%22text%22%3A%22Hi%22%2C%22channel_key%22%3A%22global%22%2C%22source_name%22%3A%22Silthus%22%2C%22source_display_name%22%3A%22Silthus%22%7D

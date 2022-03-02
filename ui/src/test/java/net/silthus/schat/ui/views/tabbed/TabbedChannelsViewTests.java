@@ -64,8 +64,8 @@ import static net.silthus.schat.message.Message.FORMATTED;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static net.silthus.schat.message.MessageSource.of;
+import static net.silthus.schat.ui.view.ViewConfig.FORMAT_CONFIG;
 import static net.silthus.schat.ui.views.Views.tabbedChannels;
-import static net.silthus.schat.ui.views.tabbed.TabFormatConfig.FORMAT_CONFIG;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

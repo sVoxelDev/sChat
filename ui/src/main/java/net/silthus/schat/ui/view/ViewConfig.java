@@ -32,6 +32,7 @@ import net.silthus.schat.message.MessageSource;
 import net.silthus.schat.ui.format.Format;
 import net.silthus.schat.ui.views.tabbed.TabFormatConfig;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
+import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
@@ -42,13 +43,18 @@ import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 @ConfigSerializable
 public class ViewConfig {
 
+    public static final net.silthus.schat.pointer.Setting<TabFormatConfig> FORMAT_CONFIG = net.silthus.schat.pointer.Setting.setting(TabFormatConfig.class, "format", new TabFormatConfig());
+
+    @Setting("height")
     private int height = 100;
+    @Setting("system_message_format")
     private Format systemMessageFormat = (view, msg) ->
         msg.get(Message.SOURCE)
             .filter(MessageSource.IS_NOT_NIL)
             .map(identity -> identity.displayName().colorIfAbsent(YELLOW).append(text(": ", GRAY)))
             .orElse(Component.empty())
             .append(((Message) msg).text());
+    @Setting("private_chat_format")
     private TabFormatConfig privateChatFormat = new TabFormatConfig();
     private transient JoinConfiguration channelJoinConfig = JoinConfiguration.builder()
         .prefix(text("| "))

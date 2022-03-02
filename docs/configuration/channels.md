@@ -16,7 +16,17 @@ channels: # all channels must go under the channels section
       ... # all channel specific settings go here
 ```
 
-## Settings
+## `name`
+
+[:octicons-milestone-24: next][next] · [`minimessage`][minimessage] | :octicons-pin-24: `<key>`
+
+The name of the channel is displayed in the output of commands and the ui and parsed in the [MiniMessage][minimessage] format.
+
+!!! note "Name Formatting"
+    Use the [`format`][#format] options to control the color of the name based on the state of the channel.  
+    The `active_color` is only used if the channel name has no color.
+
+## `settings`
 
 Every channel can have any or all of the following settings.  
 
@@ -85,7 +95,7 @@ Players that are joined to the channel will see it in the channel tabs like all 
 
 ### `auto_join`
 
-[:octicons-milestone-24: next][next] · `true` | :octicons-pin-24: `false`
+[:octicons-milestone-24: next][next] · `true` · :octicons-pin-24: `false`
 
 If enabled players will automatically join the channel when they join the server.  
 Only channels the player has access to will be auto joined.
@@ -96,19 +106,56 @@ Only channels the player has access to will be auto joined.
 
 ### `forced`
 
-[:octicons-milestone-24: next][next] · `true` | :octicons-pin-24: `false`
+[:octicons-milestone-24: next][next] · `true` · :octicons-pin-24: `false`
 
 Forced channels cannot be left by players.
 
-## Format
+### `format`
 
-The following settings are all formatting options and parsed with the [MiniMessage format][minimessage].
+The following settings are all formatting options that can be applied to the view of the channel.
 
-They go under the normal `settings` section like all other options.
+They go under the normal `settings.format` section.
 
-### `message_format`
+```yaml
+channels:
+  my_channel:
+    name: My Channel
+    settings:
+      format:
+        ... # <-- format options go here
+```
 
-[:octicons-milestone-24: next][next] · :octicons-beaker-24: Experimental · `string`
+#### `active_color`
+
+[:octicons-milestone-24: next][next] · [`color`][color] · :octicons-pin-24: `green`
+
+Controls the color of the channel in the tab view when it is active. This setting is only applied if the channel [`name`][#name] has no color.
+
+```yaml
+channels:
+  my_channel:
+    settings:
+      format:
+        active_color: "#5099d4"
+```
+
+#### `active_decoration`
+
+[:octicons-milestone-24: next][next] · [`decoration`][decoration] · :octicons-pin-24: `underlined`
+
+Controls the decoration of the channel in the tab view when it is active.
+
+```yaml
+channels:
+  my_channel:
+    settings:
+      format:
+        active_decoration: "bold"
+```
+
+#### `message_format`
+
+[:octicons-milestone-24: next][next] · [`minimessage`][minimessage]
 
 The message format controls how message are displayed for the given channel.  
 In addition to the [PlacerholderAPI][placeholderapi], the following placeholders are supported:
@@ -131,23 +178,28 @@ In addition to the [PlacerholderAPI][placeholderapi], the following placeholders
 
 ??? example "Example with Name Hover and PlaceholderAPI"
 
-```yaml channels:
-global:
-name: <green>Global settings:
-message_format: "<aqua>[<channel_name>]</aqua>%vault_prefix%<hover:show_text:'<source_display_name>\n<gray>Rank: <aqua>%vault_rank%'><source_display_name></hover>%vault_suffix%<gray>: <text>"
-```
+    ```yaml
+    channels:
+    global:
+        name: "<green>Global"
+        settings:
+        format:
+            message_format: "<aqua>[<channel_name>]</aqua>%vault_prefix%<hover:show_text:'<source_display_name>\n<gray>Rank: <aqua>%vault_rank%'><source_display_name></hover>%vault_suffix%<gray>: <text>"
+    ```
 
     ![Channel Message Format](images/channels-message_format.png)
     ![Channel Message Format Hover](images/channels-message_format_hover.png)
 
+#### `self_message_format`
+
+[:octicons-milestone-24: next][next] · :octicons-beaker-24: Experimental · [`minimessage`][minimessage]
+
+Controls the format of messages where the viewer is also the sender of the message. Behaves exactly the same as `message_format` and exposes identical placeholders.
+
 [next]: https://github.com/sVoxelDev/sChat/releases/latest
-
 [developer]: /developer
-
 [commands]: /commands
-
 [messenger]: reference.md#messenger
-
 [minimessage]: minimessage.md
-
+[color]: minimessage#color
 [placeholderapi]: /extensions/placeholderapi
