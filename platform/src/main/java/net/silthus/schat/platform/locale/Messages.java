@@ -35,10 +35,10 @@ import net.silthus.schat.platform.sender.Sender;
 
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.join;
+import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.JoinConfiguration.newlines;
 import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
 import static net.kyori.adventure.text.event.HoverEvent.showText;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
@@ -92,7 +92,7 @@ public interface Messages {
         // /____  >\______  |___|  (____  |__|
         //      \/        \/     \/     \/
 
-        return join(newlines(),
+        return join(newline(),
             empty(),
             text("       _________ .__            __   "),
             text("  _____\\_   ___ \\|  |__ _____ _/  |_ "),
