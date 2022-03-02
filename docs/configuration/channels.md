@@ -23,7 +23,7 @@ channels: # all channels must go under the channels section
 The name of the channel is displayed in the output of commands and the ui and parsed in the [MiniMessage][minimessage] format.
 
 !!! note "Name Formatting"
-    Use the [`format`][#format] options to control the color of the name based on the state of the channel.  
+    Use the [`format`](#format) options to control the color of the name based on the state of the channel.  
     The `active_color` is only used if the channel name has no color.
 
 ## `settings`
