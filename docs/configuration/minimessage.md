@@ -10,7 +10,8 @@ The [MiniMessage Format][minimessage] is a special parser that makes reading for
 The following examples all set the [`message_format`][message-format] of the channel. Formatting the messages sent to
 the channel.
 
-!!! info You can click on the images to open the web viewer with the example and play around with it.
+!!! info
+    You can click on the images to open the web viewer with the example and play around with it.
 
 [![Example 1](images/mm_example1.png){align=right}](https://webui.adventure.kyori.net/?mode=chat_closed&input=%3Cyellow%3E%3Csource_display_name%3E%3Cgray%3E%3A%20%3Ctext%3E&bg=grass&st=%7B%22channel_name%22%3A%22Global%22%2C%22text%22%3A%22Hi%22%2C%22channel_key%22%3A%22global%22%2C%22source_name%22%3A%22Silthus%22%2C%22source_display_name%22%3A%22Silthus%22%7D)
 
@@ -26,7 +27,6 @@ message_format: "<yellow><source_display_name><gray>: <text>"
 message_format: "<hover:show_text:'<source_name>'><source_display_name></hover> > <#fa9411><text>"
 ```
 
-
 <hr>
 
 ```yaml
@@ -35,8 +35,8 @@ message_format: "<yellow><source_name>: <gradient:#5e4fa2:#f79459:red><text></gr
 
 [![Example 3](images/mm_example3.png)](https://webui.adventure.kyori.net/?mode=chat_closed&input=%3Cyellow%3E%3Csource_name%3E%3A%20%3Cgradient%3A%235e4fa2%3A%23f79459%3Ared%3E%3Ctext%3E%3C%2Fgradient%3E%20&bg=grass&st=%7B%22channel_name%22%3A%22Global%22%2C%22text%22%3A%22Hi%20there%20how%20are%20you%20Mr.%20Gradient%3F%22%2C%22channel_key%22%3A%22global%22%2C%22source_name%22%3A%22Silthus%22%2C%22source_display_name%22%3A%22Silthus%22%7D)
 
-!!! tip Visit the official [MiniMessage Documentation][minimessage] for even more cool features and in depth
-explanation.
+!!! tip
+    Visit the official [MiniMessage Documentation][minimessage] for even more cool features and in depth explanation.
 
 ## Color
 

@@ -92,16 +92,18 @@ channels:
       #|                 ----------------------------                      |#
       #|      Controls the format of messages sent to the channel.         |#
       #|                                                                   |#
-      #|  Wiki: https://docs.adventure.kyori.net/minimessage/format.html   |#
-      #|  Web Viewer: https://bit.ly/3hpYRQF                               |#
+      #|    https://schat.silthus.net/docs/configuration/channels#format   |#
       #|                                                                   |#
       #+-------------------------------------------------------------------+#
 
-      #
-      # The 'message_format' is used to format messages NOT sent by the viewer.
-      # You can use the full power of MiniMessage (see above) and PlaceholderAPI placeholders.
-      #
-      message_format: "<yellow><hover:show_text:'<gray>Click to send <yellow><source_diplay_name></yellow> a message.\n<gray>Since: <aqua>%player_first_played_formatted%'><click:run_command:'/tell <source_name>'><source_display_name></click></yellow><gray>: <text>"
+      format:
+
+        #
+        # The 'message_format' is used to format messages NOT sent by the viewer.
+        # You can use the full power of MiniMessage (see above) and PlaceholderAPI placeholders.
+        #
+        message_format: "<yellow><hover:show_text:'<gray>Click to send <yellow><source_diplay_name></yellow> a message.\n<gray>Since: <aqua>%player_first_played_formatted%'><click:run_command:'/tell <source_name>'><source_display_name></click></yellow><gray>: <text>"
+
   team:
     name: Team
     settings:
@@ -109,22 +111,23 @@ channels:
       auto_join: true
       global: true
       forced: false
-      message_format: "<#189AB4><source_display_name><gray>: <text>"
-
-#+----------------------------------------------------------------------------------------------+#
-#|                                                                                              |#
-#|                                    PRIVATE MESSAGES                                          |#
-#|                                      ------------                                            |#
-#|                      Configure the behaviour of private chats here.                          |#
-#+----------------------------------------------------------------------------------------------+#
-private_chat:
+      format:
+        message_format: "<#189AB4><source_display_name><gray>: <text>"
 
 #+----------------------------------------------------------------------------------------------+#
 #|                                                                                              |#
 #|                                   VIEW CONFIGURATION                                         |#
 #|                                      ------------                                            |#
-#|                      Configure the behaviour of private chats here.                          |#
+#|                      Configure the behaviour of the view here.                               |#
+#|              https://schat.silthus.net/docs/configuration/reference#view                     |#
+#|                                                                                              |#
 #+----------------------------------------------------------------------------------------------+#
 view:
 
+#
+# Controls how global messages are relayed to the other servers.
+# Read the wiki before modifying this!
+#
+# Wiki: https://schat.silthus.net/docs/configuration/reference#messenger
+#
 messenger: pluginmessage

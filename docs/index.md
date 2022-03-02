@@ -15,6 +15,7 @@ sChat comes with the following features out of the box and can be extended using
     - [X] Bukkit/Spigot/Paper
     - [X] Bungeecord
     - [X] Velocity
+- [x] Hex Color Support
 - [X] Seperate Tabs for each conversation keeping the chat clean
 - [X] Network-wide Global Channels
 - [X] Network-wide Global Private Chats

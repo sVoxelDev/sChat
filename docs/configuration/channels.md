@@ -18,7 +18,7 @@ channels: # all channels must go under the channels section
 
 ## `name`
 
-[:octicons-milestone-24: next][next] · [`minimessage`][minimessage] | :octicons-pin-24: `<key>`
+[:octicons-milestone-24: next][next] · [`minimessage`][minimessage] · :octicons-pin-24: `<key>` · :octicons-sync-24:
 
 The name of the channel is displayed in the output of commands and the ui and parsed in the [MiniMessage][minimessage] format.
 
@@ -35,7 +35,7 @@ Every channel can have any or all of the following settings.
 
 ### `priority`
 
-[:octicons-milestone-24: next][next] · `int` | :octicons-pin-24: `100`
+[:octicons-milestone-24: next][next] · `number` · :octicons-pin-24: `100` · :octicons-sync-24:
 
 The priority of the channel controls its position in the tabs and commands.  
 The lower the `priority` value the higher up the channel appears.
@@ -64,7 +64,7 @@ Channels with the same priority are sorted by their name.
 
 ### `protected`
 
-[:octicons-milestone-24: next][next] · `true` | :octicons-pin-24: `false`
+[:octicons-milestone-24: next][next] · `boolean` · :octicons-pin-24: `false` · :octicons-sync-24:
 
 Protected channels can only be joined by players that have the `schat.channel.<key>.join` permission.  
 
@@ -72,7 +72,7 @@ For example the `team` channel requires the `schat.channel.team.join` permission
 
 ### `join_permission`
 
-[:octicons-milestone-24: next][next] · `string` | :octicons-pin-24: `schat.channel.<key>.join`
+[:octicons-milestone-24: next][next] · `string` · :octicons-pin-24: `schat.channel.<key>.join` · :octicons-sync-24:
 
 You can override the required join permission with this setting.
 
@@ -81,13 +81,13 @@ You can override the required join permission with this setting.
 
 ### `global`
 
-[:octicons-milestone-24: next][next] · :octicons-pin-24: `true` | `false`
+[:octicons-milestone-24: next][next] · `boolean` · :octicons-pin-24: `true` · :octicons-sync-24:
 
 Messages that are sent to a `global` channel are forwarded with the [configured messenger][messenger].  
 
 ### `hidden`
 
-[:octicons-milestone-24: next][next] · `true` | :octicons-pin-24: `false`
+[:octicons-milestone-24: next][next] · `boolean` · :octicons-pin-24: `false` · :octicons-sync-24:
 
 Hides the channel in commands, auto completion and listings.  
 Does not prevent joining or leaving the channel.  
@@ -95,7 +95,7 @@ Players that are joined to the channel will see it in the channel tabs like all 
 
 ### `auto_join`
 
-[:octicons-milestone-24: next][next] · `true` · :octicons-pin-24: `false`
+[:octicons-milestone-24: next][next] · `boolean` · :octicons-pin-24: `false` · :octicons-sync-24:
 
 If enabled players will automatically join the channel when they join the server.  
 Only channels the player has access to will be auto joined.
@@ -106,7 +106,7 @@ Only channels the player has access to will be auto joined.
 
 ### `forced`
 
-[:octicons-milestone-24: next][next] · `true` · :octicons-pin-24: `false`
+[:octicons-milestone-24: next][next] · `boolean` · :octicons-pin-24: `false` · :octicons-sync-24:
 
 Forced channels cannot be left by players.
 
@@ -125,76 +125,7 @@ channels:
         ... # <-- format options go here
 ```
 
-#### `active_color`
-
-[:octicons-milestone-24: next][next] · [`color`][color] · :octicons-pin-24: `green`
-
-Controls the color of the channel in the tab view when it is active. This setting is only applied if the channel [`name`][#name] has no color.
-
-```yaml
-channels:
-  my_channel:
-    settings:
-      format:
-        active_color: "#5099d4"
-```
-
-#### `active_decoration`
-
-[:octicons-milestone-24: next][next] · [`decoration`][decoration] · :octicons-pin-24: `underlined`
-
-Controls the decoration of the channel in the tab view when it is active.
-
-```yaml
-channels:
-  my_channel:
-    settings:
-      format:
-        active_decoration: "bold"
-```
-
-#### `message_format`
-
-[:octicons-milestone-24: next][next] · [`minimessage`][minimessage]
-
-The message format controls how message are displayed for the given channel.  
-In addition to the [PlacerholderAPI][placeholderapi], the following placeholders are supported:
-
-!!! tip
-    With sChat you have something completly new: **Tabbed Chat Channels**  
-    This gives you the power to declutter your chat and remove the now unneeded `[Channel]` prefix from the messages.
-
-| Placeholder | Description | Example | Since |
-| ----------- | ------- | -------- | -------: |
-| `<id>` | The unique id of the message. | `66ad5e0d-ed28-4601-bcde-617b6729b5b3` | [:octicons-milestone-24: next][next] |
-| `<timestamp>` | The timestamp when the message was sent. | `2021-05-01T12:10:55.412386200Z` | [:octicons-milestone-24: next][next] |
-| `<type>` | The type of the message. | `SYSTEM` or `CHAT` | [:octicons-milestone-24: next][next] |
-| `<text>` | The text of the message. | `Hi there!` | [:octicons-milestone-24: next][next] |
-| `<source_uuid>` | The ID of the message sender. | `dd5c4f63-b5d9-43e7-9584-40b25494d7e8` | [:octicons-milestone-24: next][next] |
-| `<source_name>` | The name of the message sender. | `Silthus` | [:octicons-milestone-24: next][next] |
-| `<source_display_name>` | The formatted display or nickname of the sender. | `&aSilthus` | [:octicons-milestone-24: next][next] |
-| `<channel_key>` | The unique key of the channel. | `global` | [:octicons-milestone-24: next][next] |
-| `<channel_display_name>` | The formatted name of the channel. | `Global` | [:octicons-milestone-24: next][next] |
-
-??? example "Example with Name Hover and PlaceholderAPI"
-
-    ```yaml
-    channels:
-    global:
-        name: "<green>Global"
-        settings:
-        format:
-            message_format: "<aqua>[<channel_name>]</aqua>%vault_prefix%<hover:show_text:'<source_display_name>\n<gray>Rank: <aqua>%vault_rank%'><source_display_name></hover>%vault_suffix%<gray>: <text>"
-    ```
-
-    ![Channel Message Format](images/channels-message_format.png)
-    ![Channel Message Format Hover](images/channels-message_format_hover.png)
-
-#### `self_message_format`
-
-[:octicons-milestone-24: next][next] · :octicons-beaker-24: Experimental · [`minimessage`][minimessage]
-
-Controls the format of messages where the viewer is also the sender of the message. Behaves exactly the same as `message_format` and exposes identical placeholders.
+--8<-- "docs/configuration/_tab_format_config.md"
 
 [next]: https://github.com/sVoxelDev/sChat/releases/latest
 [developer]: /developer
