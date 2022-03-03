@@ -260,7 +260,7 @@ class TabbedChannelsViewTests {
             class and_different_format_is_used {
                 @BeforeEach
                 void setUp() {
-                    channel.get(FORMAT_CONFIG).activeColor(RED);
+                    channel.set(FORMAT_CONFIG, new TabFormatConfig().activeColor(RED));
                 }
 
                 @Test
@@ -416,7 +416,7 @@ class TabbedChannelsViewTests {
                     assertTextRenders("""
                         System
                         Bob: one
-                        | ❌one | ❌two |""");
+                        | ❌one | ❌two₂ |""");
                 }
 
                 @Test
@@ -430,9 +430,25 @@ class TabbedChannelsViewTests {
                 }
 
                 @Test
+                void unread_counter_is_shown() {
+                    assertColorOnlyViewContains("<red>₂</red>");
+                }
+
+                @Test
+                void given_no_unread_messages_channel_one_has_no_unread_counter() {
+                    assertViewContains("<underlined><green>one</green></underlined>");
+                }
+
+                @Test
                 void given_highlight_unread_is_false_then_unread_indicator_is_hidden() {
-                    channelTwo.get(FORMAT_CONFIG).highlightUnread(false);
+                    channelTwo.set(FORMAT_CONFIG, new TabFormatConfig().highlightUnread(false));
                     assertColorOnlyViewContains("<gray>two</gray>");
+                }
+
+                @Test
+                void given_show_unread_counter_is_false_then_counter_is_hidden() {
+                    channelTwo.set(FORMAT_CONFIG, new TabFormatConfig().showUnreadCount(false));
+                    assertViewDoesNotContain("<red>₂</red>");
                 }
             }
         }
@@ -488,11 +504,11 @@ class TabbedChannelsViewTests {
                 "zzz",
                 set(PRIORITY, 10)
             );
-            channel.get(FORMAT_CONFIG).messageFormat((v, message) -> message.get(Message.SOURCE)
+            channel.set(FORMAT_CONFIG, new TabFormatConfig().messageFormat((v, message) -> message.get(Message.SOURCE)
                 .orElse(MessageSource.nil())
                 .displayName()
                 .append(text(": ").append(message.getOrDefault(Message.TEXT, empty())))
-            );
+            ));
             chatter.activeChannel(channel);
             sendMessage("No Source!");
             sendMessageWithSource("Player", "Hey");
@@ -505,7 +521,7 @@ class TabbedChannelsViewTests {
                 No Source!
                 Player: Hey
                 Player2: Hello
-                | <red><click:run_command:'/channel leave zzz'><hover:show_text:"<lang:schat.hover.leave-channel:'<gray>zzz'>">❌<underlined><green>zzz</green></underlined></hover></click></red> | <red><click:run_command:'/channel leave aaa'><hover:show_text:"<lang:schat.hover.leave-channel:'<gray>aaa'>">❌<white><click:run_command:'/channel join aaa'><hover:show_text:"<gray><lang:schat.hover.join-channel:'aaa'>">aaa</hover></click></white></hover></click></red> |""");
+                | <red><click:run_command:'/channel leave zzz'><hover:show_text:"<lang:schat.hover.leave-channel:'<gray>zzz'>">❌<underlined><green>zzz</green></underlined></hover></click></red> | <red><click:run_command:'/channel leave aaa'><hover:show_text:"<lang:schat.hover.leave-channel:'<gray>aaa'>">❌<italic><white><click:run_command:'/channel join aaa'><hover:show_text:"<gray><lang:schat.hover.join-channel:'aaa'>">aaa</hover></click></white></italic><red>₃</red></hover></click></red> |""");
         }
     }
 

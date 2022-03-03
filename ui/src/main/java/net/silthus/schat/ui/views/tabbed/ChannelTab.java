@@ -44,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import static java.util.stream.Collectors.toMap;
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.join;
+import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.JoinConfiguration.newlines;
 import static net.kyori.adventure.text.event.ClickEvent.Action.RUN_COMMAND;
@@ -51,6 +52,7 @@ import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.silthus.schat.channel.ChannelSettings.FORCED;
+import static net.silthus.schat.ui.util.ViewHelper.subscriptOf;
 
 @SuppressWarnings("CheckStyle")
 @Getter
@@ -59,7 +61,7 @@ import static net.silthus.schat.channel.ChannelSettings.FORCED;
 @EqualsAndHashCode(of = {"channel"})
 public class ChannelTab implements Tab {
 
-    private static final Component CLOSE_CHAR = Component.text("\u274C", RED); // ❌
+    private static final Component CLOSE_CHAR = text("\u274C", RED); // ❌
     private static final Comparator<Message> MESSAGE_COMPARATOR = Comparator.comparing(Message::timestamp);
 
     private final TabbedChannelsView view;
@@ -91,7 +93,7 @@ public class ChannelTab implements Tab {
 
     @Override
     public Component renderName() {
-        Component name;
+        final Component name;
         if (isActive())
             name = style(name(), config.activeColor(), config.activeDecoration());
         else if (config.highlightUnread() && isUnread())
@@ -99,7 +101,11 @@ public class ChannelTab implements Tab {
         else
             name = joinChannel(style(name(), config.inactiveColor(), config.inactiveDecoration()));
 
-        return closeChannel().append(name);
+        final Component tabName = closeChannel().append(name);
+        if (config.showUnreadCount() && isUnread())
+            return tabName.append(style(text(subscriptOf(unreadCount())), config.unreadCountColor(), config.unreadCountDecoration()));
+        else
+            return tabName;
     }
 
     protected Component name() {
