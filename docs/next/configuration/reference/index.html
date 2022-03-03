@@ -648,6 +648,27 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#show_unread_count" class="md-nav__link">
+    show_unread_count
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unread_count_color" class="md-nav__link">
+    unread_count_color
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unread_count_decoration" class="md-nav__link">
+    unread_count_decoration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#message_format" class="md-nav__link">
     message_format
   </a>
@@ -950,6 +971,27 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#show_unread_count" class="md-nav__link">
+    show_unread_count
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unread_count_color" class="md-nav__link">
+    unread_count_color
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#unread_count_decoration" class="md-nav__link">
+    unread_count_decoration
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#message_format" class="md-nav__link">
     message_format
   </a>
@@ -1221,6 +1263,12 @@ All config options reside under the <code>view</code> section.</p>
 <h3 id="private_chat_format"><code>private_chat_format</code><a class="headerlink" href="#private_chat_format" title="Permanent link">&para;</a></h3>
 <p>The following section controls how private chats are formatted.<br />
 All config options go under <code>view.private_chat_format</code> section.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The private chat formatting is <strong>not reloadable</strong>.<br />
+You must restart your server for the changes to take effect.<br />
+The formatting configs of channels is reloadable.</p>
+</div>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">view</span><span class="p">:</span><span class="w"></span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">private_chat_format</span><span class="p">:</span><span class="w"></span>
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">...</span><span class="w"> </span><span class="c1"># &lt;-- all options go here</span><span class="w"></span>
@@ -1256,19 +1304,31 @@ All config options go under <code>view.private_chat_format</code> section.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nt">unread_color</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;blue&quot;</span><span class="w"></span>
 </code></pre></div>
 <h4 id="unread_decoration"><code>unread_decoration</code><a class="headerlink" href="#unread_decoration" title="Permanent link">&para;</a></h4>
-<p><a href="https://github.com/sVoxelDev/sChat/releases/latest"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M11.75 1a.75.75 0 0 1 .75.75V4h6.532c.42 0 .826.15 1.143.425l3.187 2.75a1.75 1.75 0 0 1 0 2.65l-3.187 2.75a1.75 1.75 0 0 1-1.143.425H12.5v9.25a.75.75 0 0 1-1.5 0V13H3.75A1.75 1.75 0 0 1 2 11.25v-5.5C2 4.783 2.784 4 3.75 4H11V1.75a.75.75 0 0 1 .75-.75zm0 4.5h7.282a.25.25 0 0 1 .163.06l3.188 2.75a.25.25 0 0 1 0 .38l-3.188 2.75a.25.25 0 0 1-.163.06H3.75a.25.25 0 0 1-.25-.25v-5.5a.25.25 0 0 1 .25-.25h8z"/></svg></span> next</a> · <a href="../minimessage/#decoration"><code>decoration</code></a> · <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M7.886 1.553a1.75 1.75 0 0 1 2.869.604l.633 1.629a5.666 5.666 0 0 0 3.725 3.395l3.959 1.131a1.75 1.75 0 0 1 .757 2.92L16.06 15l5.594 5.595a.75.75 0 1 1-1.06 1.06L15 16.061l-3.768 3.768a1.75 1.75 0 0 1-2.92-.757l-1.131-3.96a5.667 5.667 0 0 0-3.395-3.724l-1.63-.633a1.75 1.75 0 0 1-.603-2.869l6.333-6.333zm6.589 12.912-.005.005-.005.005-4.294 4.293a.25.25 0 0 1-.417-.108l-1.13-3.96A7.166 7.166 0 0 0 4.33 9.99L2.7 9.356a.25.25 0 0 1-.086-.41l6.333-6.332a.25.25 0 0 1 .41.086l.633 1.63a7.167 7.167 0 0 0 4.71 4.293l3.96 1.131a.25.25 0 0 1 .108.417l-4.293 4.294z"/></svg></span> <code>null</code> · <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.38 8A9.502 9.502 0 0 1 12 2.5a9.502 9.502 0 0 1 9.215 7.182.75.75 0 1 0 1.456-.364C21.473 4.539 17.15 1 12 1a10.995 10.995 0 0 0-9.5 5.452V4.75a.75.75 0 0 0-1.5 0V8.5a1 1 0 0 0 1 1h3.75a.75.75 0 0 0 0-1.5H3.38zm-.595 6.318a.75.75 0 0 0-1.455.364C2.527 19.461 6.85 23 12 23c4.052 0 7.592-2.191 9.5-5.451v1.701a.75.75 0 0 0 1.5 0V15.5a1 1 0 0 0-1-1h-3.75a.75.75 0 0 0 0 1.5h2.37A9.502 9.502 0 0 1 12 21.5c-4.446 0-8.181-3.055-9.215-7.182z"/></svg></span></p>
+<p><a href="https://github.com/sVoxelDev/sChat/releases/latest"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M11.75 1a.75.75 0 0 1 .75.75V4h6.532c.42 0 .826.15 1.143.425l3.187 2.75a1.75 1.75 0 0 1 0 2.65l-3.187 2.75a1.75 1.75 0 0 1-1.143.425H12.5v9.25a.75.75 0 0 1-1.5 0V13H3.75A1.75 1.75 0 0 1 2 11.25v-5.5C2 4.783 2.784 4 3.75 4H11V1.75a.75.75 0 0 1 .75-.75zm0 4.5h7.282a.25.25 0 0 1 .163.06l3.188 2.75a.25.25 0 0 1 0 .38l-3.188 2.75a.25.25 0 0 1-.163.06H3.75a.25.25 0 0 1-.25-.25v-5.5a.25.25 0 0 1 .25-.25h8z"/></svg></span> next</a> · <a href="../minimessage/#decoration"><code>decoration</code></a> · <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M7.886 1.553a1.75 1.75 0 0 1 2.869.604l.633 1.629a5.666 5.666 0 0 0 3.725 3.395l3.959 1.131a1.75 1.75 0 0 1 .757 2.92L16.06 15l5.594 5.595a.75.75 0 1 1-1.06 1.06L15 16.061l-3.768 3.768a1.75 1.75 0 0 1-2.92-.757l-1.131-3.96a5.667 5.667 0 0 0-3.395-3.724l-1.63-.633a1.75 1.75 0 0 1-.603-2.869l6.333-6.333zm6.589 12.912-.005.005-.005.005-4.294 4.293a.25.25 0 0 1-.417-.108l-1.13-3.96A7.166 7.166 0 0 0 4.33 9.99L2.7 9.356a.25.25 0 0 1-.086-.41l6.333-6.332a.25.25 0 0 1 .41.086l.633 1.63a7.167 7.167 0 0 0 4.71 4.293l3.96 1.131a.25.25 0 0 1 .108.417l-4.293 4.294z"/></svg></span> <code>italic</code> · <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.38 8A9.502 9.502 0 0 1 12 2.5a9.502 9.502 0 0 1 9.215 7.182.75.75 0 1 0 1.456-.364C21.473 4.539 17.15 1 12 1a10.995 10.995 0 0 0-9.5 5.452V4.75a.75.75 0 0 0-1.5 0V8.5a1 1 0 0 0 1 1h3.75a.75.75 0 0 0 0-1.5H3.38zm-.595 6.318a.75.75 0 0 0-1.455.364C2.527 19.461 6.85 23 12 23c4.052 0 7.592-2.191 9.5-5.451v1.701a.75.75 0 0 0 1.5 0V15.5a1 1 0 0 0-1-1h-3.75a.75.75 0 0 0 0 1.5h2.37A9.502 9.502 0 0 1 12 21.5c-4.446 0-8.181-3.055-9.215-7.182z"/></svg></span></p>
 <p>Controls the decoration of tab when it contains <strong>unread messages</strong>. Use <code>null</code> to apply no decoration.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nt">unread_decoration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">italic</span><span class="w"></span>
+</code></pre></div>
+<h4 id="show_unread_count"><code>show_unread_count</code><a class="headerlink" href="#show_unread_count" title="Permanent link">&para;</a></h4>
+<p><a href="https://github.com/sVoxelDev/sChat/releases/latest"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M11.75 1a.75.75 0 0 1 .75.75V4h6.532c.42 0 .826.15 1.143.425l3.187 2.75a1.75 1.75 0 0 1 0 2.65l-3.187 2.75a1.75 1.75 0 0 1-1.143.425H12.5v9.25a.75.75 0 0 1-1.5 0V13H3.75A1.75 1.75 0 0 1 2 11.25v-5.5C2 4.783 2.784 4 3.75 4H11V1.75a.75.75 0 0 1 .75-.75zm0 4.5h7.282a.25.25 0 0 1 .163.06l3.188 2.75a.25.25 0 0 1 0 .38l-3.188 2.75a.25.25 0 0 1-.163.06H3.75a.25.25 0 0 1-.25-.25v-5.5a.25.25 0 0 1 .25-.25h8z"/></svg></span> next</a> · <code>boolean</code> · <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M7.886 1.553a1.75 1.75 0 0 1 2.869.604l.633 1.629a5.666 5.666 0 0 0 3.725 3.395l3.959 1.131a1.75 1.75 0 0 1 .757 2.92L16.06 15l5.594 5.595a.75.75 0 1 1-1.06 1.06L15 16.061l-3.768 3.768a1.75 1.75 0 0 1-2.92-.757l-1.131-3.96a5.667 5.667 0 0 0-3.395-3.724l-1.63-.633a1.75 1.75 0 0 1-.603-2.869l6.333-6.333zm6.589 12.912-.005.005-.005.005-4.294 4.293a.25.25 0 0 1-.417-.108l-1.13-3.96A7.166 7.166 0 0 0 4.33 9.99L2.7 9.356a.25.25 0 0 1-.086-.41l6.333-6.332a.25.25 0 0 1 .41.086l.633 1.63a7.167 7.167 0 0 0 4.71 4.293l3.96 1.131a.25.25 0 0 1 .108.417l-4.293 4.294z"/></svg></span> <code>true</code> · <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.38 8A9.502 9.502 0 0 1 12 2.5a9.502 9.502 0 0 1 9.215 7.182.75.75 0 1 0 1.456-.364C21.473 4.539 17.15 1 12 1a10.995 10.995 0 0 0-9.5 5.452V4.75a.75.75 0 0 0-1.5 0V8.5a1 1 0 0 0 1 1h3.75a.75.75 0 0 0 0-1.5H3.38zm-.595 6.318a.75.75 0 0 0-1.455.364C2.527 19.461 6.85 23 12 23c4.052 0 7.592-2.191 9.5-5.451v1.701a.75.75 0 0 0 1.5 0V15.5a1 1 0 0 0-1-1h-3.75a.75.75 0 0 0 0 1.5h2.37A9.502 9.502 0 0 1 12 21.5c-4.446 0-8.181-3.055-9.215-7.182z"/></svg></span></p>
+<p>Set to <code>false</code> to hide the unread counter after the channel name.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nt">show_unread_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+</code></pre></div>
+<h4 id="unread_count_color"><code>unread_count_color</code><a class="headerlink" href="#unread_count_color" title="Permanent link">&para;</a></h4>
+<p><a href="https://github.com/sVoxelDev/sChat/releases/latest"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M11.75 1a.75.75 0 0 1 .75.75V4h6.532c.42 0 .826.15 1.143.425l3.187 2.75a1.75 1.75 0 0 1 0 2.65l-3.187 2.75a1.75 1.75 0 0 1-1.143.425H12.5v9.25a.75.75 0 0 1-1.5 0V13H3.75A1.75 1.75 0 0 1 2 11.25v-5.5C2 4.783 2.784 4 3.75 4H11V1.75a.75.75 0 0 1 .75-.75zm0 4.5h7.282a.25.25 0 0 1 .163.06l3.188 2.75a.25.25 0 0 1 0 .38l-3.188 2.75a.25.25 0 0 1-.163.06H3.75a.25.25 0 0 1-.25-.25v-5.5a.25.25 0 0 1 .25-.25h8z"/></svg></span> next</a> · <a href="../minimessage/#color"><code>color</code></a> · <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M7.886 1.553a1.75 1.75 0 0 1 2.869.604l.633 1.629a5.666 5.666 0 0 0 3.725 3.395l3.959 1.131a1.75 1.75 0 0 1 .757 2.92L16.06 15l5.594 5.595a.75.75 0 1 1-1.06 1.06L15 16.061l-3.768 3.768a1.75 1.75 0 0 1-2.92-.757l-1.131-3.96a5.667 5.667 0 0 0-3.395-3.724l-1.63-.633a1.75 1.75 0 0 1-.603-2.869l6.333-6.333zm6.589 12.912-.005.005-.005.005-4.294 4.293a.25.25 0 0 1-.417-.108l-1.13-3.96A7.166 7.166 0 0 0 4.33 9.99L2.7 9.356a.25.25 0 0 1-.086-.41l6.333-6.332a.25.25 0 0 1 .41.086l.633 1.63a7.167 7.167 0 0 0 4.71 4.293l3.96 1.131a.25.25 0 0 1 .108.417l-4.293 4.294z"/></svg></span> <code>red</code> · <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.38 8A9.502 9.502 0 0 1 12 2.5a9.502 9.502 0 0 1 9.215 7.182.75.75 0 1 0 1.456-.364C21.473 4.539 17.15 1 12 1a10.995 10.995 0 0 0-9.5 5.452V4.75a.75.75 0 0 0-1.5 0V8.5a1 1 0 0 0 1 1h3.75a.75.75 0 0 0 0-1.5H3.38zm-.595 6.318a.75.75 0 0 0-1.455.364C2.527 19.461 6.85 23 12 23c4.052 0 7.592-2.191 9.5-5.451v1.701a.75.75 0 0 0 1.5 0V15.5a1 1 0 0 0-1-1h-3.75a.75.75 0 0 0 0 1.5h2.37A9.502 9.502 0 0 1 12 21.5c-4.446 0-8.181-3.055-9.215-7.182z"/></svg></span></p>
+<p>Controls the color of the unread counter. Only applicable if <code>show_unread_count: true</code> is set.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nt">unread_count_color</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="w"></span>
+</code></pre></div>
+<h4 id="unread_count_decoration"><code>unread_count_decoration</code><a class="headerlink" href="#unread_count_decoration" title="Permanent link">&para;</a></h4>
+<p><a href="https://github.com/sVoxelDev/sChat/releases/latest"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M11.75 1a.75.75 0 0 1 .75.75V4h6.532c.42 0 .826.15 1.143.425l3.187 2.75a1.75 1.75 0 0 1 0 2.65l-3.187 2.75a1.75 1.75 0 0 1-1.143.425H12.5v9.25a.75.75 0 0 1-1.5 0V13H3.75A1.75 1.75 0 0 1 2 11.25v-5.5C2 4.783 2.784 4 3.75 4H11V1.75a.75.75 0 0 1 .75-.75zm0 4.5h7.282a.25.25 0 0 1 .163.06l3.188 2.75a.25.25 0 0 1 0 .38l-3.188 2.75a.25.25 0 0 1-.163.06H3.75a.25.25 0 0 1-.25-.25v-5.5a.25.25 0 0 1 .25-.25h8z"/></svg></span> next</a> · <a href="../minimessage/#decoration"><code>decoration</code></a> · <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M7.886 1.553a1.75 1.75 0 0 1 2.869.604l.633 1.629a5.666 5.666 0 0 0 3.725 3.395l3.959 1.131a1.75 1.75 0 0 1 .757 2.92L16.06 15l5.594 5.595a.75.75 0 1 1-1.06 1.06L15 16.061l-3.768 3.768a1.75 1.75 0 0 1-2.92-.757l-1.131-3.96a5.667 5.667 0 0 0-3.395-3.724l-1.63-.633a1.75 1.75 0 0 1-.603-2.869l6.333-6.333zm6.589 12.912-.005.005-.005.005-4.294 4.293a.25.25 0 0 1-.417-.108l-1.13-3.96A7.166 7.166 0 0 0 4.33 9.99L2.7 9.356a.25.25 0 0 1-.086-.41l6.333-6.332a.25.25 0 0 1 .41.086l.633 1.63a7.167 7.167 0 0 0 4.71 4.293l3.96 1.131a.25.25 0 0 1 .108.417l-4.293 4.294z"/></svg></span> <code>null</code> · <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.38 8A9.502 9.502 0 0 1 12 2.5a9.502 9.502 0 0 1 9.215 7.182.75.75 0 1 0 1.456-.364C21.473 4.539 17.15 1 12 1a10.995 10.995 0 0 0-9.5 5.452V4.75a.75.75 0 0 0-1.5 0V8.5a1 1 0 0 0 1 1h3.75a.75.75 0 0 0 0-1.5H3.38zm-.595 6.318a.75.75 0 0 0-1.455.364C2.527 19.461 6.85 23 12 23c4.052 0 7.592-2.191 9.5-5.451v1.701a.75.75 0 0 0 1.5 0V15.5a1 1 0 0 0-1-1h-3.75a.75.75 0 0 0 0 1.5h2.37A9.502 9.502 0 0 1 12 21.5c-4.446 0-8.181-3.055-9.215-7.182z"/></svg></span></p>
+<p>Controls the decoration of the unread counter. Only applicable if <code>show_unread_count: true</code> is set.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nt">unread_count_decoration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span><span class="w"></span>
 </code></pre></div>
 <h4 id="message_format"><code>message_format</code><a class="headerlink" href="#message_format" title="Permanent link">&para;</a></h4>
 <p><a href="https://github.com/sVoxelDev/sChat/releases/latest"><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M11.75 1a.75.75 0 0 1 .75.75V4h6.532c.42 0 .826.15 1.143.425l3.187 2.75a1.75 1.75 0 0 1 0 2.65l-3.187 2.75a1.75 1.75 0 0 1-1.143.425H12.5v9.25a.75.75 0 0 1-1.5 0V13H3.75A1.75 1.75 0 0 1 2 11.25v-5.5C2 4.783 2.784 4 3.75 4H11V1.75a.75.75 0 0 1 .75-.75zm0 4.5h7.282a.25.25 0 0 1 .163.06l3.188 2.75a.25.25 0 0 1 0 .38l-3.188 2.75a.25.25 0 0 1-.163.06H3.75a.25.25 0 0 1-.25-.25v-5.5a.25.25 0 0 1 .25-.25h8z"/></svg></span> next</a> · <a href="../minimessage/"><code>minimessage</code></a> · <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3.38 8A9.502 9.502 0 0 1 12 2.5a9.502 9.502 0 0 1 9.215 7.182.75.75 0 1 0 1.456-.364C21.473 4.539 17.15 1 12 1a10.995 10.995 0 0 0-9.5 5.452V4.75a.75.75 0 0 0-1.5 0V8.5a1 1 0 0 0 1 1h3.75a.75.75 0 0 0 0-1.5H3.38zm-.595 6.318a.75.75 0 0 0-1.455.364C2.527 19.461 6.85 23 12 23c4.052 0 7.592-2.191 9.5-5.451v1.701a.75.75 0 0 0 1.5 0V15.5a1 1 0 0 0-1-1h-3.75a.75.75 0 0 0 0 1.5h2.37A9.502 9.502 0 0 1 12 21.5c-4.446 0-8.181-3.055-9.215-7.182z"/></svg></span></p>
 <p>The message format controls how message are displayed for the given channel.<br />
 In addition to the <a href="/extensions/placeholderapi">PlacerholderAPI</a>, the following placeholders are supported:</p>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>With sChat you have something completly new: <strong>Tabbed Chat Channels</strong><br />
-This gives you the power to declutter your chat and remove the now unneeded <code>[Channel]</code> prefix from the messages.</p>
-</div>
+<p>!!! tip With sChat you have something completly new: <strong>Tabbed Chat Channels</strong><br />
+    This gives you the power to declutter your chat and remove the now unneeded <code>[Channel]</code> prefix from the messages.</p>
 <table>
 <thead>
 <tr>
@@ -1337,7 +1397,7 @@ This gives you the power to declutter your chat and remove the now unneeded <cod
 </table>
 <details class="example">
 <summary>Example with Name Hover and PlaceholderAPI</summary>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nt">message_format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;aqua&gt;[&lt;channel_name&gt;]&lt;/aqua&gt;%vault_prefix%&lt;hover:show_text:&#39;&lt;source_display_name&gt;\n&lt;gray&gt;Rank:</span><span class="nv"> </span><span class="s">&lt;aqua&gt;%vault_rank%&#39;&gt;&lt;source_display_name&gt;&lt;/hover&gt;%vault_suffix%&lt;gray&gt;:</span><span class="nv"> </span><span class="s">&lt;text&gt;&quot;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nt">message_format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;aqua&gt;[&lt;channel_name&gt;]&lt;/aqua&gt;%vault_prefix%&lt;hover:show_text:&#39;&lt;source_display_name&gt;\n&lt;gray&gt;Rank:</span><span class="nv"> </span><span class="s">&lt;aqua&gt;%vault_rank%&#39;&gt;&lt;source_display_name&gt;&lt;/hover&gt;%vault_suffix%&lt;gray&gt;:</span><span class="nv"> </span><span class="s">&lt;text&gt;&quot;</span><span class="w"></span>
 </code></pre></div>
 <p><img alt="Channel Message Format" src="../images/channels-message_format.png" />
 <img alt="Channel Message Format Hover" src="../images/channels-message_format_hover.png" /></p>
@@ -1352,7 +1412,7 @@ This gives you the power to declutter your chat and remove the now unneeded <cod
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">March 2, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">March 3, 2022</span>
       
         <br>
         Created:
