@@ -30,13 +30,16 @@ import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.commands.JoinChannelCommand;
 import net.silthus.schat.commands.SendMessageResult;
-import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.eventbus.EventBusMock;
+import net.silthus.schat.events.channel.ChannelSettingChangedEvent;
+import net.silthus.schat.events.channel.ChannelSettingsChanged;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.pointer.Settings;
 import net.silthus.schat.policies.JoinChannelPolicy;
 import net.silthus.schat.policies.SendChannelMessagePolicy;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -49,6 +52,7 @@ import static net.silthus.schat.channel.Channel.KEY;
 import static net.silthus.schat.channel.Channel.createChannel;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
+import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
 import static net.silthus.schat.channel.ChannelSettings.PRIORITY;
 import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
@@ -63,12 +67,18 @@ class ChannelTests {
 
     public static final @NotNull TextComponent MY_CHANNEL = text("My Channel");
 
-    private Channel channel = randomChannel();
+    private final EventBusMock eventBus = EventBusMock.eventBusMock();
+    private Channel channel;
 
     @BeforeEach
     void setUp() {
         channel = randomChannel();
-        JoinChannelCommand.prototype(builder -> builder.eventBus(EventBus.empty()));
+        JoinChannelCommand.prototype(builder -> builder.eventBus(eventBus));
+    }
+
+    @AfterEach
+    void tearDown() {
+        eventBus.close();
     }
 
     private void assertInvalidKey(String key) {
@@ -144,6 +154,18 @@ class ChannelTests {
         channel.sendMessage(randomMessage());
 
         assertThat(chatter.isJoined(channel)).isTrue();
+    }
+
+    @Test
+    void when_setting_changes_channel_update_event_is_fired() {
+        channel.set(GLOBAL, false);
+        eventBus.assertEventFired(new ChannelSettingChangedEvent<>(channel, GLOBAL, true, false));
+    }
+
+    @Test
+    void when_all_settings_change_a_settings_changed_event_is_fired() {
+        channel.settings(Settings.settingsBuilder().withStatic(GLOBAL, false).create());
+        eventBus.assertEventFired(ChannelSettingsChanged.class);
     }
 
     @Nested
