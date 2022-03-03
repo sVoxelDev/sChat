@@ -150,6 +150,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/events/message/SendChannelMessageEvent.html#cancellationState()" class="member-name-link">cancellationState()</a> - Method in class net.silthus.schat.events.message.<a href="net/silthus/schat/events/message/SendChannelMessageEvent.html" title="class in net.silthus.schat.events.message">SendChannelMessageEvent</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/events/message/SendGlobalMessageEvent.html#cancellationState()" class="member-name-link">cancellationState()</a> - Method in class net.silthus.schat.events.message.<a href="net/silthus/schat/events/message/SendGlobalMessageEvent.html" title="class in net.silthus.schat.events.message">SendGlobalMessageEvent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/events/message/SendMessageEvent.html#cancellationState()" class="member-name-link">cancellationState()</a> - Method in class net.silthus.schat.events.message.<a href="net/silthus/schat/events/message/SendMessageEvent.html" title="class in net.silthus.schat.events.message">SendMessageEvent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/events/Cancellable.html#cancelled(boolean)" class="member-name-link">cancelled(boolean)</a> - Method in interface net.silthus.schat.events.<a href="net/silthus/schat/events/Cancellable.html" title="interface in net.silthus.schat.events">Cancellable</a></dt>
@@ -178,6 +180,14 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/commands/LeaveChannelCommand.html#channel()" class="member-name-link">channel()</a> - Method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/LeaveChannelCommand.html" title="class in net.silthus.schat.commands">LeaveChannelCommand</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html#channel()" class="member-name-link">channel()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html" title="class in net.silthus.schat.events.channel">ChannelSettingChangedEvent</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>channel</code> record component.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/ChannelSettingsChanged.html#channel()" class="member-name-link">channel()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChannelSettingsChanged.html" title="class in net.silthus.schat.events.channel">ChannelSettingsChanged</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>channel</code> record component.</div>
+</dd>
 <dt><a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html#channel()" class="member-name-link">channel()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterJoinedChannelEvent</a></dt>
 <dd>
 <div class="block">Returns the value of the <code>channel</code> record component.</div>
@@ -198,6 +208,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the channel that will forward the message.</div>
 </dd>
+<dt><a href="net/silthus/schat/events/message/SendGlobalMessageEvent.html#channel()" class="member-name-link">channel()</a> - Method in class net.silthus.schat.events.message.<a href="net/silthus/schat/events/message/SendGlobalMessageEvent.html" title="class in net.silthus.schat.events.message">SendGlobalMessageEvent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/channel/Channel.html#channel(java.lang.String)" class="member-name-link">channel(String)</a> - Static method in interface net.silthus.schat.channel.<a href="net/silthus/schat/channel/Channel.html" title="interface in net.silthus.schat.channel">Channel</a></dt>
 <dd>
 <div class="block">Creates a new channel builder that can be used to customize the new channel.</div>
@@ -252,6 +264,14 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/util/gson/serializers/ChannelSerializer.html#%3Cinit%3E(net.silthus.schat.channel.ChannelRepository)" class="member-name-link">ChannelSerializer(ChannelRepository)</a> - Constructor for class net.silthus.schat.util.gson.serializers.<a href="net/silthus/schat/util/gson/serializers/ChannelSerializer.html" title="class in net.silthus.schat.util.gson.serializers">ChannelSerializer</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html" class="type-name-link" title="class in net.silthus.schat.events.channel">ChannelSettingChangedEvent</a>&lt;<a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html" title="type parameter in ChannelSettingChangedEvent">V</a>&gt; - Record Class in <a href="net/silthus/schat/events/channel/package-summary.html">net.silthus.schat.events.channel</a></dt>
+<dd>
+<div class="block">The event is fired when a setting of a channel has changed.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html#%3Cinit%3E(net.silthus.schat.channel.Channel,net.silthus.schat.pointer.Setting,V,V)" class="member-name-link">ChannelSettingChangedEvent(Channel, Setting&lt;V&gt;, V, V)</a> - Constructor for record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html" title="class in net.silthus.schat.events.channel">ChannelSettingChangedEvent</a></dt>
+<dd>
+<div class="block">Creates an instance of a <code>ChannelSettingChangedEvent</code> record class.</div>
+</dd>
 <dt><a href="net/silthus/schat/commands/CreatePrivateChannelCommand.Builder.html#channelSettings()" class="member-name-link">channelSettings()</a> - Method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/CreatePrivateChannelCommand.Builder.html" title="class in net.silthus.schat.commands">CreatePrivateChannelCommand.Builder</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/commands/CreatePrivateChannelCommand.html#channelSettings()" class="member-name-link">channelSettings()</a> - Method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/CreatePrivateChannelCommand.html" title="class in net.silthus.schat.commands">CreatePrivateChannelCommand</a></dt>
@@ -261,6 +281,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/silthus/schat/channel/ChannelSettings.html" class="type-name-link" title="class in net.silthus.schat.channel">ChannelSettings</a> - Class in <a href="net/silthus/schat/channel/package-summary.html">net.silthus.schat.channel</a></dt>
 <dd>
 <div class="block">Holds references to all common settings of a <a href="net/silthus/schat/channel/Channel.html" title="interface in net.silthus.schat.channel"><code>Channel</code></a>.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/ChannelSettingsChanged.html" class="type-name-link" title="class in net.silthus.schat.events.channel">ChannelSettingsChanged</a> - Record Class in <a href="net/silthus/schat/events/channel/package-summary.html">net.silthus.schat.events.channel</a></dt>
+<dd>
+<div class="block">The event is fired if all settings of a channel change.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/ChannelSettingsChanged.html#%3Cinit%3E(net.silthus.schat.channel.Channel,net.silthus.schat.pointer.Settings,net.silthus.schat.pointer.Settings)" class="member-name-link">ChannelSettingsChanged(Channel, Settings, Settings)</a> - Constructor for record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChannelSettingsChanged.html" title="class in net.silthus.schat.events.channel">ChannelSettingsChanged</a></dt>
+<dd>
+<div class="block">Creates an instance of a <code>ChannelSettingsChanged</code> record class.</div>
 </dd>
 <dt><a href="net/silthus/schat/commands/ChatCommand.html#chat(net.silthus.schat.chatter.Chatter,net.kyori.adventure.text.Component)" class="member-name-link">chat(Chatter, Component)</a> - Static method in class net.silthus.schat.commands.<a href="net/silthus/schat/commands/ChatCommand.html" title="class in net.silthus.schat.commands">ChatCommand</a></dt>
 <dd>
@@ -684,6 +712,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </dd>
+<dt><a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html" title="class in net.silthus.schat.events.channel">ChannelSettingChangedEvent</a></dt>
+<dd>
+<div class="block">Indicates whether some other object is "equal to" this one.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/ChannelSettingsChanged.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChannelSettingsChanged.html" title="class in net.silthus.schat.events.channel">ChannelSettingsChanged</a></dt>
+<dd>
+<div class="block">Indicates whether some other object is "equal to" this one.</div>
+</dd>
 <dt><a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterJoinedChannelEvent</a></dt>
 <dd>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
@@ -712,6 +748,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </dd>
+<dt><a href="net/silthus/schat/events/message/SendGlobalMessageEvent.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class net.silthus.schat.events.message.<a href="net/silthus/schat/events/message/SendGlobalMessageEvent.html" title="class in net.silthus.schat.events.message">SendGlobalMessageEvent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/messenger/PluginMessage.html#equals(java.lang.Object)" class="member-name-link">equals(Object)</a> - Method in class net.silthus.schat.messenger.<a href="net/silthus/schat/messenger/PluginMessage.html" title="class in net.silthus.schat.messenger">PluginMessage</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/command/Result.html#error(java.lang.Throwable)" class="member-name-link">error(Throwable)</a> - Static method in interface net.silthus.schat.command.<a href="net/silthus/schat/command/Result.html" title="interface in net.silthus.schat.command">Result</a></dt>
@@ -840,8 +878,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Forces the player to stay in the channel preventing him from leaving.</div>
 </dd>
-<dt><a href="net/silthus/schat/message/Message.html#FORMATTED" class="member-name-link">FORMATTED</a> - Static variable in interface net.silthus.schat.message.<a href="net/silthus/schat/message/Message.html" title="interface in net.silthus.schat.message">Message</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/pointer/Pointer.html#forward(net.silthus.schat.pointer.Pointered,net.silthus.schat.pointer.Pointer)" class="member-name-link">forward(Pointered, Pointer&lt;T&gt;)</a> - Static method in interface net.silthus.schat.pointer.<a href="net/silthus/schat/pointer/Pointer.html" title="interface in net.silthus.schat.pointer">Pointer</a></dt>
 <dd>
 <div class="block">Creates a forward pointer to a pointer of another pointered resource.</div>
@@ -950,6 +986,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns a hash code value for this object.</div>
 </dd>
+<dt><a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html" title="class in net.silthus.schat.events.channel">ChannelSettingChangedEvent</a></dt>
+<dd>
+<div class="block">Returns a hash code value for this object.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/ChannelSettingsChanged.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChannelSettingsChanged.html" title="class in net.silthus.schat.events.channel">ChannelSettingsChanged</a></dt>
+<dd>
+<div class="block">Returns a hash code value for this object.</div>
+</dd>
 <dt><a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html#hashCode()" class="member-name-link">hashCode()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChatterJoinedChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterJoinedChannelEvent</a></dt>
 <dd>
 <div class="block">Returns a hash code value for this object.</div>
@@ -978,6 +1022,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns a hash code value for this object.</div>
 </dd>
+<dt><a href="net/silthus/schat/events/message/SendGlobalMessageEvent.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class net.silthus.schat.events.message.<a href="net/silthus/schat/events/message/SendGlobalMessageEvent.html" title="class in net.silthus.schat.events.message">SendGlobalMessageEvent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/messenger/PluginMessage.html#hashCode()" class="member-name-link">hashCode()</a> - Method in class net.silthus.schat.messenger.<a href="net/silthus/schat/messenger/PluginMessage.html" title="class in net.silthus.schat.messenger">PluginMessage</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/chatter/Chatter.PermissionHandler.html#hasPermission(java.lang.String)" class="member-name-link">hasPermission(String)</a> - Method in interface net.silthus.schat.chatter.<a href="net/silthus/schat/chatter/Chatter.PermissionHandler.html" title="interface in net.silthus.schat.chatter">Chatter.PermissionHandler</a></dt>
@@ -1265,6 +1311,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the message that was sent to the channel.</div>
 </dd>
+<dt><a href="net/silthus/schat/events/message/SendGlobalMessageEvent.html#message()" class="member-name-link">message()</a> - Method in class net.silthus.schat.events.message.<a href="net/silthus/schat/events/message/SendGlobalMessageEvent.html" title="class in net.silthus.schat.events.message">SendGlobalMessageEvent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/events/message/SendMessageEvent.html#message()" class="member-name-link">message()</a> - Method in class net.silthus.schat.events.message.<a href="net/silthus/schat/events/message/SendMessageEvent.html" title="class in net.silthus.schat.events.message">SendMessageEvent</a></dt>
 <dd>
 <div class="block">Gets the message that will be sent after this event is finished.</div>
@@ -1433,6 +1481,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <code>newChannel</code> record component.</div>
 </dd>
+<dt><a href="net/silthus/schat/events/channel/ChannelSettingsChanged.html#newSettings()" class="member-name-link">newSettings()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChannelSettingsChanged.html" title="class in net.silthus.schat.events.channel">ChannelSettingsChanged</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>newSettings</code> record component.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html#newValue()" class="member-name-link">newValue()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html" title="class in net.silthus.schat.events.channel">ChannelSettingChangedEvent</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>newValue</code> record component.</div>
+</dd>
 <dt><a href="net/silthus/schat/identity/Identity.html#nil()" class="member-name-link">nil()</a> - Static method in interface net.silthus.schat.identity.<a href="net/silthus/schat/identity/Identity.html" title="interface in net.silthus.schat.identity">Identity</a></dt>
 <dd>
 <div class="block">Gets a <code>nil</code> identity.</div>
@@ -1484,6 +1540,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/silthus/schat/events/chatter/ChatterChangedActiveChannelEvent.html#oldChannel()" class="member-name-link">oldChannel()</a> - Method in record class net.silthus.schat.events.chatter.<a href="net/silthus/schat/events/chatter/ChatterChangedActiveChannelEvent.html" title="class in net.silthus.schat.events.chatter">ChatterChangedActiveChannelEvent</a></dt>
 <dd>
 <div class="block">Returns the value of the <code>oldChannel</code> record component.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/ChannelSettingsChanged.html#oldSettings()" class="member-name-link">oldSettings()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChannelSettingsChanged.html" title="class in net.silthus.schat.events.channel">ChannelSettingsChanged</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>oldSettings</code> record component.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html#oldValue()" class="member-name-link">oldValue()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html" title="class in net.silthus.schat.events.channel">ChannelSettingChangedEvent</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>oldValue</code> record component.</div>
 </dd>
 <dt><a href="net/silthus/schat/eventbus/EventBus.html#on(java.lang.Class,java.util.function.Consumer)" class="member-name-link">on(Class&lt;E&gt;, Consumer&lt;? super E&gt;)</a> - Method in interface net.silthus.schat.eventbus.<a href="net/silthus/schat/eventbus/EventBus.html" title="interface in net.silthus.schat.eventbus">EventBus</a></dt>
 <dd>
@@ -1724,6 +1788,13 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/silthus/schat/policies/SendChannelMessagePolicy.html" class="type-name-link" title="interface in net.silthus.schat.policies">SendChannelMessagePolicy</a> - Interface in <a href="net/silthus/schat/policies/package-summary.html">net.silthus.schat.policies</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/events/message/SendGlobalMessageEvent.html" class="type-name-link" title="class in net.silthus.schat.events.message">SendGlobalMessageEvent</a> - Class in <a href="net/silthus/schat/events/message/package-summary.html">net.silthus.schat.events.message</a></dt>
+<dd>
+<div class="block">The event is fired when a channel has the <a href="net/silthus/schat/channel/ChannelSettings.html#GLOBAL"><code>ChannelSettings.GLOBAL</code></a> flag and
+ the message is about to be forwarded to another server.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/message/SendGlobalMessageEvent.html#%3Cinit%3E(net.silthus.schat.channel.Channel,net.silthus.schat.message.Message)" class="member-name-link">SendGlobalMessageEvent(Channel, Message)</a> - Constructor for class net.silthus.schat.events.message.<a href="net/silthus/schat/events/message/SendGlobalMessageEvent.html" title="class in net.silthus.schat.events.message">SendGlobalMessageEvent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/message/MessageTarget.html#sendMessage(net.silthus.schat.message.Message)" class="member-name-link">sendMessage(Message)</a> - Method in interface net.silthus.schat.message.<a href="net/silthus/schat/message/MessageTarget.html" title="interface in net.silthus.schat.message">MessageTarget</a></dt>
 <dd>
 <div class="block">Sends a message to the target.</div>
@@ -1827,6 +1898,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/silthus/schat/commands/SetActiveChannelCommand.html#%3Cinit%3E(net.silthus.schat.commands.JoinChannelCommand.Builder)" class="member-name-link">SetActiveChannelCommand(JoinChannelCommand.Builder)</a> - Constructor for class net.silthus.schat.commands.<a href="net/silthus/schat/commands/SetActiveChannelCommand.html" title="class in net.silthus.schat.commands">SetActiveChannelCommand</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html#setting()" class="member-name-link">setting()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html" title="class in net.silthus.schat.events.channel">ChannelSettingChangedEvent</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>setting</code> record component.</div>
+</dd>
 <dt><a href="net/silthus/schat/pointer/Setting.html#setting(java.lang.Class,java.lang.String,V)" class="member-name-link">setting(Class&lt;V&gt;, String, V)</a> - Static method in interface net.silthus.schat.pointer.<a href="net/silthus/schat/pointer/Setting.html" title="interface in net.silthus.schat.pointer">Setting</a></dt>
 <dd>
 <div class="block">Creates a new setting for the given type and key with the given default value.</div>
@@ -2017,6 +2092,14 @@ loadScripts(document, 'script');</script>
 <div class="block">Returns a string representation of this record class.</div>
 </dd>
 <dt><a href="net/silthus/schat/commands/SendMessageResult.html#toString()" class="member-name-link">toString()</a> - Method in record class net.silthus.schat.commands.<a href="net/silthus/schat/commands/SendMessageResult.html" title="class in net.silthus.schat.commands">SendMessageResult</a></dt>
+<dd>
+<div class="block">Returns a string representation of this record class.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html#toString()" class="member-name-link">toString()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html" title="class in net.silthus.schat.events.channel">ChannelSettingChangedEvent</a></dt>
+<dd>
+<div class="block">Returns a string representation of this record class.</div>
+</dd>
+<dt><a href="net/silthus/schat/events/channel/ChannelSettingsChanged.html#toString()" class="member-name-link">toString()</a> - Method in record class net.silthus.schat.events.channel.<a href="net/silthus/schat/events/channel/ChannelSettingsChanged.html" title="class in net.silthus.schat.events.channel">ChannelSettingsChanged</a></dt>
 <dd>
 <div class="block">Returns a string representation of this record class.</div>
 </dd>

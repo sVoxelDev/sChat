@@ -91,9 +91,17 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/util/gson/serializers/ChannelSerializer.html" title="class in net.silthus.schat.util.gson.serializers">ChannelSerializer</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/channel/ChannelSettings.html" title="class in net.silthus.schat.channel">ChannelSettings</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html" title="class in net.silthus.schat.events.channel">ChannelSettingChangedEvent</a>&lt;<a href="net/silthus/schat/events/channel/ChannelSettingChangedEvent.html" title="type parameter in ChannelSettingChangedEvent">V</a>&gt;</div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="block">The event is fired when a setting of a channel has changed.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/channel/ChannelSettings.html" title="class in net.silthus.schat.channel">ChannelSettings</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
 <div class="block">Holds references to all common settings of a <a href="net/silthus/schat/channel/Channel.html" title="interface in net.silthus.schat.channel"><code>Channel</code></a>.</div>
+</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="net/silthus/schat/events/channel/ChannelSettingsChanged.html" title="class in net.silthus.schat.events.channel">ChannelSettingsChanged</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">
+<div class="block">The event is fired if all settings of a channel change.</div>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/commands/ChatCommand.html" title="class in net.silthus.schat.commands">ChatCommand</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">
@@ -371,58 +379,63 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="net/silthus/schat/policies/SendChannelMessagePolicy.html" title="interface in net.silthus.schat.policies">SendChannelMessagePolicy</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab1">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/commands/SendMessageCommand.html" title="class in net.silthus.schat.commands">SendMessageCommand</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/commands/SendMessageCommand.Builder.html" title="class in net.silthus.schat.commands">SendMessageCommand.Builder</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/events/message/SendGlobalMessageEvent.html" title="class in net.silthus.schat.events.message">SendGlobalMessageEvent</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
+<div class="block">The event is fired when a channel has the <a href="net/silthus/schat/channel/ChannelSettings.html#GLOBAL"><code>ChannelSettings.GLOBAL</code></a> flag and
+ the message is about to be forwarded to another server.</div>
+</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/commands/SendMessageCommand.html" title="class in net.silthus.schat.commands">SendMessageCommand</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/commands/SendMessageCommand.Logging.html" title="class in net.silthus.schat.commands">SendMessageCommand.Logging</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/commands/SendMessageCommand.Builder.html" title="class in net.silthus.schat.commands">SendMessageCommand.Builder</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/events/message/SendMessageEvent.html" title="class in net.silthus.schat.events.message">SendMessageEvent</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/commands/SendMessageCommand.Logging.html" title="class in net.silthus.schat.commands">SendMessageCommand.Logging</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/events/message/SendMessageEvent.html" title="class in net.silthus.schat.events.message">SendMessageEvent</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">The <code>SendMessageEvent</code> is called before a message is sent to its targets.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab4"><a href="net/silthus/schat/commands/SendMessageResult.html" title="class in net.silthus.schat.commands">SendMessageResult</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/commands/SendPrivateMessageCommand.html" title="class in net.silthus.schat.commands">SendPrivateMessageCommand</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/commands/SendPrivateMessageCommand.Builder.html" title="class in net.silthus.schat.commands">SendPrivateMessageCommand.Builder</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab4"><a href="net/silthus/schat/commands/SendMessageResult.html" title="class in net.silthus.schat.commands">SendMessageResult</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/commands/SendPrivateMessageCommand.html" title="class in net.silthus.schat.commands">SendPrivateMessageCommand</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/commands/SetActiveChannelCommand.html" title="class in net.silthus.schat.commands">SetActiveChannelCommand</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/commands/SendPrivateMessageCommand.Builder.html" title="class in net.silthus.schat.commands">SendPrivateMessageCommand.Builder</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="net/silthus/schat/pointer/Setting.html" title="interface in net.silthus.schat.pointer">Setting</a>&lt;<a href="net/silthus/schat/pointer/Setting.html" title="type parameter in Setting">V</a>&gt;</div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/commands/SetActiveChannelCommand.html" title="class in net.silthus.schat.commands">SetActiveChannelCommand</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="net/silthus/schat/pointer/Setting.html" title="interface in net.silthus.schat.pointer">Setting</a>&lt;<a href="net/silthus/schat/pointer/Setting.html" title="type parameter in Setting">V</a>&gt;</div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">A setting of a resource with an optional default value.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="net/silthus/schat/pointer/Settings.html" title="interface in net.silthus.schat.pointer">Settings</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="net/silthus/schat/pointer/Settings.html" title="interface in net.silthus.schat.pointer">Settings</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
 <div class="block">A collection of <a href="net/silthus/schat/pointer/Setting.html" title="interface in net.silthus.schat.pointer"><code>settings</code></a>.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="net/silthus/schat/pointer/Settings.Builder.html" title="interface in net.silthus.schat.pointer">Settings.Builder</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="net/silthus/schat/pointer/Settings.Builder.html" title="interface in net.silthus.schat.pointer">Settings.Builder</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">
 <div class="block">A builder of settings.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/util/gson/serializers/SettingsSerializer.html" title="class in net.silthus.schat.util.gson.serializers">SettingsSerializer</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab7"><a href="net/silthus/schat/eventbus/Subscribe.html" title="annotation interface in net.silthus.schat.eventbus">Subscribe</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab7">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/util/gson/serializers/SettingsSerializer.html" title="class in net.silthus.schat.util.gson.serializers">SettingsSerializer</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab7"><a href="net/silthus/schat/eventbus/Subscribe.html" title="annotation interface in net.silthus.schat.eventbus">Subscribe</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab7">
 <div class="block">Subscribes the event in the method parameters to the event bus.</div>
 </div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/message/Targets.html" title="class in net.silthus.schat.message">Targets</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/message/Targets.html" title="class in net.silthus.schat.message">Targets</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">
 <div class="block">A container for targets that can be used to combine and filter multiple targets into one target.</div>
 </div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/message/TargetsFilter.html" title="class in net.silthus.schat.message">TargetsFilter</a></div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/message/TargetsFilter.html" title="class in net.silthus.schat.message">TargetsFilter</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/util/gson/serializers/TargetsSerializer.html" title="class in net.silthus.schat.util.gson.serializers">TargetsSerializer</a></div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/util/gson/serializers/TargetsSerializer.html" title="class in net.silthus.schat.util.gson.serializers">TargetsSerializer</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="net/silthus/schat/util/Throwing.html" title="interface in net.silthus.schat.util">Throwing</a></div>
-<div class="col-last odd-row-color all-classes-table all-classes-table-tab1">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="net/silthus/schat/util/Throwing.Consumer.html" title="interface in net.silthus.schat.util">Throwing.Consumer</a>&lt;<a href="net/silthus/schat/util/Throwing.Consumer.html" title="type parameter in Throwing.Consumer">T</a>&gt;</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="net/silthus/schat/util/Throwing.html" title="interface in net.silthus.schat.util">Throwing</a></div>
 <div class="col-last even-row-color all-classes-table all-classes-table-tab1">&nbsp;</div>
-<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="net/silthus/schat/util/Throwing.Runnable.html" title="interface in net.silthus.schat.util">Throwing.Runnable</a></div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab1"><a href="net/silthus/schat/util/Throwing.Consumer.html" title="interface in net.silthus.schat.util">Throwing.Consumer</a>&lt;<a href="net/silthus/schat/util/Throwing.Consumer.html" title="type parameter in Throwing.Consumer">T</a>&gt;</div>
 <div class="col-last odd-row-color all-classes-table all-classes-table-tab1">&nbsp;</div>
-<div class="col-first even-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/util/UUIDUtil.html" title="class in net.silthus.schat.util">UUIDUtil</a></div>
-<div class="col-last even-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
+<div class="col-first even-row-color all-classes-table all-classes-table-tab1"><a href="net/silthus/schat/util/Throwing.Runnable.html" title="interface in net.silthus.schat.util">Throwing.Runnable</a></div>
+<div class="col-last even-row-color all-classes-table all-classes-table-tab1">&nbsp;</div>
+<div class="col-first odd-row-color all-classes-table all-classes-table-tab2"><a href="net/silthus/schat/util/UUIDUtil.html" title="class in net.silthus.schat.util">UUIDUtil</a></div>
+<div class="col-last odd-row-color all-classes-table all-classes-table-tab2">&nbsp;</div>
 </div>
 </div>
 </div>
