@@ -29,12 +29,11 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identified;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageTarget;
 
 public class PrivateChannelTab extends ChannelTab implements Tab {
 
-    protected PrivateChannelTab(@NonNull TabbedChannelsView view, @NonNull Channel channel, TabFormatConfig config) {
-        super(view, channel, config);
+    protected PrivateChannelTab(@NonNull TabbedChannelsView view, @NonNull Channel channel) {
+        super(view, channel);
     }
 
     @Override

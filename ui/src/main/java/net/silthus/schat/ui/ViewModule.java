@@ -25,17 +25,18 @@ package net.silthus.schat.ui;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import net.silthus.schat.channel.PrivateChannel;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.eventbus.Subscribe;
 import net.silthus.schat.events.chatter.ChatterJoinedServerEvent;
 import net.silthus.schat.ui.placeholder.Replacements;
 import net.silthus.schat.ui.view.ViewConfig;
-import net.silthus.schat.ui.view.ViewController;
 import net.silthus.schat.ui.view.ViewFactory;
 import net.silthus.schat.ui.view.ViewProvider;
 import net.silthus.schat.ui.views.Views;
 import net.silthus.schat.ui.views.tabbed.TabbedChannelsView;
 
+import static net.silthus.schat.ui.view.ViewConfig.FORMAT_CONFIG;
 import static net.silthus.schat.ui.view.ViewProvider.cachingViewProvider;
 
 @Getter
@@ -46,7 +47,6 @@ public class ViewModule {
     private final EventBus eventBus;
     private final ViewFactory viewFactory;
     private final ViewProvider viewProvider;
-    private final ViewController viewController;
     private final Replacements replacements = new Replacements();
 
     public ViewModule(ViewConfig config, EventBus eventBus) {
@@ -59,18 +59,21 @@ public class ViewModule {
         };
         this.viewProvider = cachingViewProvider(viewFactory());
 
-        this.viewController = new ViewController(replacements);
-
         init();
     }
 
     public void init() {
-        viewController.bind(eventBus);
         eventBus().register(this);
+        eventBus().register(replacements);
+        configurePrivateChats();
     }
 
     @Subscribe
     private void onChatterJoin(ChatterJoinedServerEvent event) {
         viewProvider.view(event.chatter()).update();
+    }
+
+    private void configurePrivateChats() {
+        PrivateChannel.configure(builder -> builder.set(FORMAT_CONFIG, config().privateChatFormat()));
     }
 }

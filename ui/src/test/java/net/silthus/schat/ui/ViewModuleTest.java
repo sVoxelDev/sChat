@@ -25,19 +25,19 @@ package net.silthus.schat.ui;
 
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.eventbus.EventBusMock;
-import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.ui.format.MiniMessageFormat;
 import net.silthus.schat.ui.view.ViewConfig;
+import net.silthus.schat.ui.views.tabbed.TabFormatConfig;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.channel.ChannelHelper.randomChannel;
+import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.eventbus.EventBusMock.eventBusMock;
-import static net.silthus.schat.message.Message.FORMATTED;
-import static net.silthus.schat.message.MessageHelper.randomMessage;
-import static net.silthus.schat.policies.SendChannelMessagePolicy.ALLOW;
+import static net.silthus.schat.message.Message.message;
+import static net.silthus.schat.ui.placeholder.ReplacementProvider.REPLACED_MESSAGE_FORMAT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ViewModuleTest {
@@ -47,7 +47,9 @@ class ViewModuleTest {
     @BeforeEach
     void setUp() {
         eventBus = eventBusMock();
-        new ViewModule(new ViewConfig(), eventBus).init();
+        final ViewModule viewModule = new ViewModule(new ViewConfig(), eventBus);
+        viewModule.init();
+        viewModule.replacements().addReplacementProvider((message, text) -> text.replace("%test%", "success"));
     }
 
     @AfterEach
@@ -57,15 +59,13 @@ class ViewModuleTest {
 
     @NotNull
     private Message sendMessage(Channel channel) {
-        final Message message = randomMessage();
-        eventBus.post(new SendChannelMessageEvent(channel, message, ALLOW));
-        return message;
+        return message("Hi there").to(channel).send();
     }
 
     @Test
     void on_sendChannelMessage_event_message_is_rendered_and_set() {
-        final Message message = sendMessage(randomChannel());
-        assertThat(message.settings().contains(FORMATTED)).isTrue();
+        final Message message = sendMessage(channelWith(ViewConfig.FORMAT_CONFIG, new TabFormatConfig().messageFormat(new MiniMessageFormat("%test%: <text>"))));
+        assertThat(message.get(REPLACED_MESSAGE_FORMAT)).isEqualTo("success: <text>");
     }
 
 }

@@ -151,7 +151,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
     private void loadFeatures() {
         logger().info("Loading Features...");
-        features.add(new GlobalChatFeature(messenger()));
+        features.add(new GlobalChatFeature(eventBus(), messenger()));
         features.add(new AutoJoinChannelsFeature(chatterRepository(), channelRepository()));
 
         features.stream()

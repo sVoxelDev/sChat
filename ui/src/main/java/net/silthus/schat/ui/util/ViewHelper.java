@@ -26,19 +26,14 @@ package net.silthus.schat.ui.util;
 import java.util.Map;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.identity.Identified;
 import net.silthus.schat.message.Message;
-import org.jetbrains.annotations.NotNull;
+import net.silthus.schat.ui.format.Format;
+import net.silthus.schat.ui.format.MiniMessageFormat;
+import net.silthus.schat.ui.placeholder.ReplacementProvider;
+import net.silthus.schat.ui.view.View;
 
 import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.translatable;
-import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
-import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
-import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
-import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 
 public final class ViewHelper {
 
@@ -64,45 +59,20 @@ public final class ViewHelper {
         return str.toString();
     }
 
-    @NotNull
-    public static Component renderPrivateChannelName(Chatter chatter, Channel channel) {
-        return channel.targets().stream()
-            .filter(target -> target instanceof Chatter)
-            .filter(target -> !target.equals(Chatter.empty()))
-            .filter(target -> !target.equals(chatter))
-            .findFirst()
-            .map(target -> (Chatter) target)
-            .map(Identified::displayName)
-            .orElse(channel.displayName());
-    }
-
-    public static Component renderPartnerName(Chatter viewer, Message message) {
-        return message.targets().stream()
-            .filter(target -> target instanceof Channel)
-            .map(target -> (Channel) target)
-            .filter(channel -> channel.is(PRIVATE))
-            .map(channel -> renderPrivateChannelName(viewer, channel))
-            .findFirst()
-            .orElse(Component.empty());
-    }
-
-    public static Component renderPrivateMessage(Chatter viewer, Message message) {
-        Component name;
-        if (message.source().equals(viewer))
-            name = translatable("schat.chat.message.you").color(YELLOW);
-        else
-            name = renderPartnerName(viewer, message).colorIfAbsent(AQUA);
-
-        return name.append(text(": ", GRAY))
-            .append(message.text().colorIfAbsent(GRAY));
-    }
-
     public static Component renderBlankLines(int amount) {
         final TextComponent.Builder builder = text();
         for (int i = 0; i < amount; i++) {
             builder.append(newline());
         }
         return builder.build();
+    }
+
+    public static Component formatMessage(View view, Message message, Format defaultFormat) {
+        final String replacedFormat = message.get(ReplacementProvider.REPLACED_MESSAGE_FORMAT);
+        if (replacedFormat != null)
+            return new MiniMessageFormat(replacedFormat).format(view, message);
+        else
+            return defaultFormat.format(view, message);
     }
 
     private ViewHelper() {

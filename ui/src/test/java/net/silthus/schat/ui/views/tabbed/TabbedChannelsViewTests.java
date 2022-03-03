@@ -59,10 +59,10 @@ import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.commands.CreatePrivateChannelCommand.createPrivateChannel;
 import static net.silthus.schat.commands.SendPrivateMessageCommand.sendPrivateMessage;
 import static net.silthus.schat.identity.Identity.identity;
-import static net.silthus.schat.message.Message.FORMATTED;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static net.silthus.schat.message.MessageSource.of;
+import static net.silthus.schat.ui.placeholder.ReplacementProvider.REPLACED_MESSAGE_FORMAT;
 import static net.silthus.schat.ui.view.ViewConfig.FORMAT_CONFIG;
 import static net.silthus.schat.ui.views.Views.tabbedChannels;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -219,7 +219,7 @@ class TabbedChannelsViewTests {
         @BeforeEach
         void setUp() {
             final Message message = message().source(randomChatter()).create();
-            message.set(FORMATTED, text("FORMATTED"));
+            message.set(REPLACED_MESSAGE_FORMAT, "FORMATTED");
             sendMessage(message);
         }
 

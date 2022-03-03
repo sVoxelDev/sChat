@@ -33,7 +33,6 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.commands.SendMessageResult;
 import net.silthus.schat.pointer.Configurable;
 import net.silthus.schat.pointer.Pointer;
-import net.silthus.schat.pointer.Setting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -48,8 +47,6 @@ public sealed interface Message extends Configurable<Message>, Comparable<Messag
     Pointer<Component> TEXT = pointer(Component.class, "text");
     Pointer<Channel> CHANNEL = pointer(Channel.class, "channel");
     Pointer<Type> TYPE = pointer(Type.class, "type");
-
-    Setting<Component> FORMATTED = Setting.setting(Component.class, "formatted", null);
 
     static @NotNull Draft message() {
         return MessageImpl.builder();

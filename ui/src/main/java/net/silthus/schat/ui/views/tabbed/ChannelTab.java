@@ -24,6 +24,7 @@
 package net.silthus.schat.ui.views.tabbed;
 
 import java.util.Comparator;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Stream;
@@ -52,7 +53,9 @@ import static net.kyori.adventure.text.event.ClickEvent.clickEvent;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.silthus.schat.channel.ChannelSettings.FORCED;
+import static net.silthus.schat.ui.util.ViewHelper.formatMessage;
 import static net.silthus.schat.ui.util.ViewHelper.subscriptOf;
+import static net.silthus.schat.ui.view.ViewConfig.FORMAT_CONFIG;
 
 @SuppressWarnings("CheckStyle")
 @Getter
@@ -66,17 +69,14 @@ public class ChannelTab implements Tab {
 
     private final TabbedChannelsView view;
     private final Channel channel;
-    private final TabFormatConfig config;
     private final Settings settings;
     private final SortedMap<Message, Component> messages;
     private int unreadCount = 0;
 
     protected ChannelTab(@NonNull TabbedChannelsView view,
-                         @NonNull Channel channel,
-                         @NonNull TabFormatConfig config) {
+                         @NonNull Channel channel) {
         this.view = view;
         this.channel = channel;
-        this.config = config;
         this.settings = Settings.settingsBuilder()
             .withForward(NAME, channel, Channel.DISPLAY_NAME)
             .withForward(KEY, channel, Channel.KEY)
@@ -91,19 +91,23 @@ public class ChannelTab implements Tab {
             unreadCount(messages.size());
     }
 
+    private TabFormatConfig config() {
+        return channel().get(FORMAT_CONFIG);
+    }
+
     @Override
     public Component renderName() {
         final Component name;
         if (isActive())
-            name = style(name(), config.activeColor(), config.activeDecoration());
-        else if (config.highlightUnread() && isUnread())
-            name = joinChannel(style(name(), config.unreadColor(), config.unreadDecoration()));
+            name = style(name(), config().activeColor(), config().activeDecoration());
+        else if (config().highlightUnread() && isUnread())
+            name = joinChannel(style(name(), config().unreadColor(), config().unreadDecoration()));
         else
-            name = joinChannel(style(name(), config.inactiveColor(), config.inactiveDecoration()));
+            name = joinChannel(style(name(), config().inactiveColor(), config().inactiveDecoration()));
 
         final Component tabName = closeChannel().append(name);
-        if (config.showUnreadCount() && isUnread())
-            return tabName.append(style(text(subscriptOf(unreadCount())), config.unreadCountColor(), config.unreadCountDecoration()));
+        if (config().showUnreadCount() && isUnread())
+            return tabName.append(style(text(subscriptOf(unreadCount())), config().unreadCountColor(), config().unreadCountDecoration()));
         else
             return tabName;
     }
@@ -117,6 +121,12 @@ public class ChannelTab implements Tab {
         if (isActive())
             resetUnreadCounter();
         return join(newlines(), messages.values());
+    }
+
+    protected void refresh() {
+        for (Map.Entry<Message, Component> entry : messages().entrySet()) {
+            entry.setValue(renderMessage(entry.getKey()));
+        }
     }
 
     @Override
@@ -152,11 +162,11 @@ public class ChannelTab implements Tab {
 
     protected Component renderMessage(Message message) {
         if (message.source().equals(MessageSource.nil()) && message.type() == Message.Type.SYSTEM)
-            return message.getOrDefault(Message.FORMATTED, message.text());
+            return formatMessage(view, message, view.config().systemMessageFormat());
         else if (message.source().equals(view().chatter()))
-            return message.getOrDefault(Message.FORMATTED, config.selfMessageFormat().format(view, message));
+            return formatMessage(view, message, config().selfMessageFormat());
         else
-            return message.getOrDefault(Message.FORMATTED, config.messageFormat().format(view, message));
+            return formatMessage(view, message, config().messageFormat());
     }
 
     private Component joinChannel(Component component) {
