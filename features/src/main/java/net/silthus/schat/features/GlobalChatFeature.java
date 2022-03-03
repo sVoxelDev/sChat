@@ -30,6 +30,7 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.eventbus.EventListener;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
+import net.silthus.schat.events.message.SendGlobalMessageEvent;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.messenger.Messenger;
 import net.silthus.schat.messenger.PluginMessage;
@@ -38,9 +39,11 @@ import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
 
 public class GlobalChatFeature implements EventListener {
 
+    private final EventBus eventBus;
     private final Messenger messenger;
 
-    public GlobalChatFeature(Messenger messenger) {
+    public GlobalChatFeature(EventBus eventBus, Messenger messenger) {
+        this.eventBus = eventBus;
         this.messenger = messenger;
         messenger.registerMessageType(GlobalChannelPluginMessage.class);
     }
@@ -52,6 +55,12 @@ public class GlobalChatFeature implements EventListener {
 
     private void onChannelMessage(SendChannelMessageEvent event) {
         if (event.channel().is(GLOBAL))
+            sendGlobalMessage(event.channel(), event.message());
+    }
+
+    private void sendGlobalMessage(Channel channel, Message message) {
+        final SendGlobalMessageEvent event = eventBus.post(new SendGlobalMessageEvent(channel, message));
+        if (event.isNotCancelled())
             messenger.sendPluginMessage(new GlobalChannelPluginMessage(event.channel(), event.message()));
     }
 

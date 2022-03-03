@@ -33,7 +33,8 @@ import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
-import net.silthus.schat.message.MessageHelper;
+import net.silthus.schat.events.message.SendGlobalMessageEvent;
+import net.silthus.schat.message.Message;
 import net.silthus.schat.messenger.GsonPluginMessageSerializer;
 import net.silthus.schat.messenger.Messenger;
 import net.silthus.schat.messenger.PluginMessage;
@@ -45,6 +46,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class GlobalChatFeatureTests implements Messenger {
@@ -61,7 +63,7 @@ class GlobalChatFeatureTests implements Messenger {
             .registerTargetsSerializer(ChatterRepository.createInMemoryChatterRepository())
             .registerMessageSourceSerializer(ChatterRepository.createInMemoryChatterRepository());
         serializer = PluginMessageSerializer.gsonSerializer(gsonProvider);
-        new GlobalChatFeature(this).bind(events);
+        new GlobalChatFeature(events, this).bind(events);
     }
 
     @AfterEach
@@ -71,7 +73,7 @@ class GlobalChatFeatureTests implements Messenger {
 
     @Test
     void channel_without_global_flag_is_not_sent() {
-        ChannelHelper.channelWith(ChannelSettings.GLOBAL, false).sendMessage(MessageHelper.randomMessage());
+        ChannelHelper.channelWith(ChannelSettings.GLOBAL, false).sendMessage(randomMessage());
         assertThat(messengerCalled).isFalse();
     }
 
@@ -102,13 +104,13 @@ class GlobalChatFeatureTests implements Messenger {
 
         @Test
         void sendMessage_dispatches_plugin_message() {
-            channel.sendMessage(MessageHelper.randomMessage());
+            channel.sendMessage(randomMessage());
             assertThat(messengerCalled).isTrue();
         }
 
         @Test
         void plugin_message_is_serializable() {
-            final GlobalChatFeature.GlobalChannelPluginMessage message = new GlobalChatFeature.GlobalChannelPluginMessage(channel, MessageHelper.randomMessage());
+            final GlobalChatFeature.GlobalChannelPluginMessage message = new GlobalChatFeature.GlobalChannelPluginMessage(channel, randomMessage());
             final String encode = serializer.encode(message);
             final PluginMessage decode = serializer.decode(encode);
             Assertions.assertThat(decode).isEqualTo(message);
@@ -116,7 +118,7 @@ class GlobalChatFeatureTests implements Messenger {
 
         @Test
         void process_sends_message_to_channel() {
-            final GlobalChatFeature.GlobalChannelPluginMessage message = new GlobalChatFeature.GlobalChannelPluginMessage(channel, MessageHelper.randomMessage());
+            final GlobalChatFeature.GlobalChannelPluginMessage message = new GlobalChatFeature.GlobalChannelPluginMessage(channel, randomMessage());
             message.process();
             assertThat(messageCount).isEqualTo(1);
         }
@@ -125,9 +127,23 @@ class GlobalChatFeatureTests implements Messenger {
         void process_joins_channel_targets_to_channel() {
             final ChatterMock chatter = ChatterMock.randomChatter();
             channel.addTarget(chatter);
-            final GlobalChatFeature.GlobalChannelPluginMessage message = new GlobalChatFeature.GlobalChannelPluginMessage(channel, MessageHelper.randomMessage());
+            final GlobalChatFeature.GlobalChannelPluginMessage message = new GlobalChatFeature.GlobalChannelPluginMessage(channel, randomMessage());
             message.process();
             chatter.assertJoinedChannel(channel);
+        }
+
+        @Test
+        void SendGlobalMessageEvent_is_fired() {
+            final Message message = randomMessage();
+            channel.sendMessage(message);
+            events.assertEventFired(new SendGlobalMessageEvent(channel, message));
+        }
+
+        @Test
+        void global_message_is_not_sent_if_event_is_cancelled() {
+            events.on(SendGlobalMessageEvent.class, event -> event.cancelled(true));
+            channel.sendMessage(randomMessage());
+            assertThat(messengerCalled).isFalse();
         }
     }
 }
