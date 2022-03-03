@@ -11,6 +11,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://schat.silthus.net/docs/next/faq/</loc>
+         <lastmod>2022-03-03</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://schat.silthus.net/docs/next/getting-started/</loc>
          <lastmod>2022-03-03</lastmod>
          <changefreq>daily</changefreq>
