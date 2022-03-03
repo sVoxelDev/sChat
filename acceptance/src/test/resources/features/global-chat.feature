@@ -11,4 +11,9 @@ Feature: Cross Server Global Chatting
 
   Scenario: Users can chat across two servers
     When I send a message
-    Then player2 receives the message
+    Then the view of player2 shows the message
+
+  Scenario: Chatting in global channel with custom format
+    Given the channel global has a custom format
+    When I send a message
+    Then the view of player2 shows the message

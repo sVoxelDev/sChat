@@ -67,6 +67,7 @@ public abstract class ConnectionListener {
     }
 
     @NotNull
+    @SuppressWarnings("checkstyle:MethodName")
     private Chatter getOrCreateChatter(Sender sender) {
         return chatterRepository.findOrCreate(sender.uniqueId(), chatterFactory::createChatter);
     }
@@ -88,6 +89,7 @@ public abstract class ConnectionListener {
         private Identity identity;
         private transient ChatterRepository repository;
         private transient ChatterFactory factory;
+        private transient EventBus eventBus;
 
         ChatterJoined(Identity identity) {
             super();
@@ -96,15 +98,21 @@ public abstract class ConnectionListener {
 
         @Override
         public void process() {
-            if (!repository.contains(identity.uniqueId()))
-                repository.add(factory.createChatter(identity.uniqueId()));
+            if (!repository.contains(identity.uniqueId())) {
+                final Chatter chatter = factory.createChatter(identity.uniqueId());
+                repository.add(chatter);
+                eventBus.post(new ChatterJoinedServerEvent(chatter));
+            }
         }
     }
 
     private final class MessageCreator implements InstanceCreator<ChatterJoined> {
         @Override
         public ChatterJoined createInstance(Type type) {
-            return new ChatterJoined().repository(chatterRepository).factory(chatterFactory);
+            return new ChatterJoined()
+                .repository(chatterRepository)
+                .factory(chatterFactory)
+                .eventBus(eventBus);
         }
     }
 }
