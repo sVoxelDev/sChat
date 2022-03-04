@@ -26,7 +26,6 @@ package net.silthus.schat.features;
 import java.lang.reflect.Type;
 import lombok.NonNull;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.channel.ChannelHelper;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.channel.ChannelSettings;
 import net.silthus.schat.chatter.ChatterMock;
@@ -35,7 +34,6 @@ import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.events.message.SendGlobalMessageEvent;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.message.Targets;
 import net.silthus.schat.messenger.GsonPluginMessageSerializer;
 import net.silthus.schat.messenger.Messenger;
 import net.silthus.schat.messenger.PluginMessage;
@@ -50,7 +48,6 @@ import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
-import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
@@ -74,7 +71,7 @@ class GlobalChatFeatureTests implements Messenger {
             channelRepository
         );
         serializer = PluginMessageSerializer.gsonSerializer(gsonProvider);
-        feature = new GlobalChatFeature(events, this, channelRepository);
+        feature = new GlobalChatFeature(events, this);
     }
 
     @AfterEach
@@ -165,29 +162,6 @@ class GlobalChatFeatureTests implements Messenger {
             final ChatterMock chatter = randomChatter();
             chatter.join(channel);
             assertMessageDispatched();
-        }
-
-        @Test
-        void global_channel_update_is_serializable() {
-            assertPluginMessageIsSerializable(new GlobalChatFeature.UpdateGlobalChannel(ChannelHelper.randomChannel()));
-        }
-
-        @Test
-        void when_global_update_message_is_received_then_channel_is_updated() {
-            final Channel channel = channelWith("test", GLOBAL, true);
-            channelRepository.add(channel);
-            final ChatterMock chatter = randomChatter();
-            chatterRepository.add(chatter);
-            final GlobalChatFeature.UpdateGlobalChannel message = new GlobalChatFeature.UpdateGlobalChannel(channelWith("test", builder -> builder
-                .set(GLOBAL, true)
-                .set(PRIVATE, true)
-                .targets(Targets.of(chatter))
-            )).channelRepository(channelRepository);
-
-            message.process();
-            assertThat(channel.is(PRIVATE)).isTrue();
-            assertThat(channel.is(GLOBAL)).isTrue();
-            assertThat(channel.targets()).contains(chatter);
         }
     }
 }

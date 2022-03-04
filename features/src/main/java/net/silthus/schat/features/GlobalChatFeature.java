@@ -23,9 +23,6 @@
  */
 package net.silthus.schat.features;
 
-import com.google.gson.InstanceCreator;
-import java.lang.reflect.Type;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -33,15 +30,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.eventbus.Subscribe;
-import net.silthus.schat.events.channel.ChannelRegisteredEvent;
-import net.silthus.schat.events.channel.ChannelSettingChangedEvent;
-import net.silthus.schat.events.channel.ChannelSettingsChanged;
-import net.silthus.schat.events.channel.ChannelTargetAdded;
-import net.silthus.schat.events.channel.ChannelTargetRemoved;
 import net.silthus.schat.events.channel.ChatterJoinedChannelEvent;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.events.message.SendGlobalMessageEvent;
@@ -55,17 +46,13 @@ public class GlobalChatFeature {
 
     private final EventBus eventBus;
     private final Messenger messenger;
-    private final ChannelRepository channelRepository;
 
-    public GlobalChatFeature(EventBus eventBus, Messenger messenger, ChannelRepository channelRepository) {
+    public GlobalChatFeature(EventBus eventBus, Messenger messenger) {
         this.eventBus = eventBus;
         this.messenger = messenger;
-        this.channelRepository = channelRepository;
 
         messenger.registerMessageType(SendGlobalMessage.class);
         messenger.registerMessageType(ChatterJoinedChannel.class);
-        messenger.registerMessageType(UpdateGlobalChannel.class);
-        messenger.registerTypeAdapter(UpdateGlobalChannel.class, new MessageCreator());
         eventBus.register(this);
     }
 
@@ -80,44 +67,10 @@ public class GlobalChatFeature {
         messenger.sendPluginMessage(new ChatterJoinedChannel(event.chatter(), event.channel()));
     }
 
-    @Subscribe
-    protected void onChannelTargetAdded(ChannelTargetAdded event) {
-        updateChannel(event.channel());
-    }
-
-    @Subscribe
-    protected void onChannelTargetRemoved(ChannelTargetRemoved event) {
-        updateChannel(event.channel());
-    }
-
-    @Subscribe
-    protected void onChannelSettingsChanged(ChannelSettingsChanged event) {
-        updateChannel(event.channel());
-    }
-
-    @Subscribe
-    protected void onChannelSettingChange(ChannelSettingChangedEvent<?> event) {
-        updateChannel(event.channel());
-    }
-
-    @Subscribe
-    protected void onChannelRegistered(ChannelRegisteredEvent event) {
-        updateChannel(event.channel());
-    }
-
-    private void updateChannel(Channel event) {
-        if (event.is(GLOBAL))
-            sendUpdateChannelMessage(event);
-    }
-
     private void sendGlobalMessage(Channel channel, Message message) {
         final SendGlobalMessageEvent event = eventBus.post(new SendGlobalMessageEvent(channel, message));
         if (event.isNotCancelled())
             messenger.sendPluginMessage(new SendGlobalMessage(event.message()));
-    }
-
-    private void sendUpdateChannelMessage(Channel channel) {
-//        messenger.sendPluginMessage(new UpdateGlobalChannel(channel));
     }
 
     @Getter
@@ -150,34 +103,6 @@ public class GlobalChatFeature {
         @Override
         public void process() {
             chatter.join(channel);
-        }
-    }
-
-    @Getter
-    @Setter(AccessLevel.PROTECTED)
-    @Accessors(fluent = true)
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-    public static final class UpdateGlobalChannel extends PluginMessage {
-        private ChannelRepository channelRepository;
-        private Channel channel;
-
-        public UpdateGlobalChannel(Channel channel) {
-            this.channel = channel;
-        }
-
-        @Override
-        public void process() {
-            final Channel existing = channelRepository.findOrCreate(channel.key(), Channel::createChannel);
-            existing.settings(channel.settings()).targets(channel.targets());
-        }
-    }
-
-    private final class MessageCreator implements InstanceCreator<UpdateGlobalChannel> {
-        @Override
-        public UpdateGlobalChannel createInstance(Type type) {
-            return new UpdateGlobalChannel()
-                .channelRepository(channelRepository);
         }
     }
 }
