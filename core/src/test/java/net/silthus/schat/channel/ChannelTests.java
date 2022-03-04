@@ -33,6 +33,8 @@ import net.silthus.schat.commands.SendMessageResult;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.events.channel.ChannelSettingChangedEvent;
 import net.silthus.schat.events.channel.ChannelSettingsChanged;
+import net.silthus.schat.events.channel.ChannelTargetAdded;
+import net.silthus.schat.events.channel.ChannelTargetRemoved;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.pointer.Settings;
@@ -156,16 +158,39 @@ class ChannelTests {
         assertThat(chatter.isJoined(channel)).isTrue();
     }
 
-    @Test
-    void when_setting_changes_channel_update_event_is_fired() {
-        channel.set(GLOBAL, false);
-        eventBus.assertEventFired(new ChannelSettingChangedEvent<>(channel, GLOBAL, true, false));
-    }
+    @Nested class events {
+        @Test
+        void when_setting_changes_channel_update_event_is_fired() {
+            channel.set(GLOBAL, false);
+            eventBus.assertEventFired(new ChannelSettingChangedEvent<>(channel, GLOBAL, true, false));
+        }
 
-    @Test
-    void when_all_settings_change_a_settings_changed_event_is_fired() {
-        channel.settings(Settings.settingsBuilder().withStatic(GLOBAL, false).create());
-        eventBus.assertEventFired(ChannelSettingsChanged.class);
+        @Test
+        void when_all_settings_change_a_settings_changed_event_is_fired() {
+            channel.settings(Settings.settingsBuilder().withStatic(GLOBAL, false).create());
+            eventBus.assertEventFired(ChannelSettingsChanged.class);
+        }
+
+        @Test
+        void when_target_is_added_then_event_is_fired() {
+            final ChatterMock target = randomChatter();
+            channel.addTarget(target);
+            eventBus.assertEventFired(new ChannelTargetAdded(channel, target));
+        }
+
+        @Test
+        void given_target_does_not_exist_when_target_is_removed_then_no_event_is_fired() {
+            channel.removeTarget(randomChatter());
+            eventBus.assertNoEventFired(ChannelTargetAdded.class);
+        }
+
+        @Test
+        void given_target_exists_when_target_is_removed_then_event_is_fired() {
+            final ChatterMock target = randomChatter();
+            channel.addTarget(target);
+            channel.removeTarget(target);
+            eventBus.assertEventFired(new ChannelTargetRemoved(channel, target));
+        }
     }
 
     @Nested

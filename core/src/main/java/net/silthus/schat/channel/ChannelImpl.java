@@ -40,6 +40,8 @@ import net.silthus.schat.commands.SendMessageResult;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.events.channel.ChannelSettingChangedEvent;
 import net.silthus.schat.events.channel.ChannelSettingsChanged;
+import net.silthus.schat.events.channel.ChannelTargetAdded;
+import net.silthus.schat.events.channel.ChannelTargetRemoved;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
@@ -137,14 +139,16 @@ final class ChannelImpl implements Channel {
     }
 
     @Override
-    public void addTarget(@NonNull MessageTarget user) {
-        targets.add(user);
+    public void addTarget(@NonNull MessageTarget target) {
+        if (targets.add(target))
+            eventBus.post(new ChannelTargetAdded(this, target));
     }
 
     @Override
     public void removeTarget(@NonNull MessageTarget target) {
         if (isNot(PRIVATE))
-            targets.remove(target);
+            if (targets.remove(target))
+                eventBus.post(new ChannelTargetRemoved(this, target));
     }
 
     @Override
