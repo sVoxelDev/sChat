@@ -50,6 +50,8 @@ public final class IdentitySerializer implements JsonSerializer<Identity>, JsonD
     @Override
     public Identity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         final JsonObject object = json.getAsJsonObject();
+        if (object.has("identity"))
+            return deserialize(object.get("identity"), typeOfT, context);
         return Identity.identity(
             context.deserialize(object.get("id"), UUID.class),
             object.get("name").getAsString(),

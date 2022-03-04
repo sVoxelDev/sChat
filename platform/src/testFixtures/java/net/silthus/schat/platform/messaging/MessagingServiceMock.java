@@ -37,11 +37,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class MessagingServiceMock extends MessagingService {
 
+    public static MessagingServiceMock messengerMock() {
+        return new MessagingServiceMock();
+    }
+
     private final Queue<PluginMessage> sentMessages = new LinkedList<>();
     private PluginMessage lastReceivedMessage;
+
     private int processedMessageCount = 0;
 
-    public MessagingServiceMock() {
+    protected MessagingServiceMock() {
         super(new MockMessagingGatewayProvider(), gsonSerializer(gsonProvider()));
         registerMessageType(MockPluginMessage.class);
     }

@@ -23,18 +23,30 @@
  */
 package net.silthus.schat.ui;
 
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.channel.PrivateChannel;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.eventbus.Subscribe;
 import net.silthus.schat.events.chatter.ChatterJoinedServerEvent;
+import net.silthus.schat.ui.format.Format;
+import net.silthus.schat.ui.format.MiniMessageFormat;
 import net.silthus.schat.ui.placeholder.Replacements;
 import net.silthus.schat.ui.view.ViewConfig;
 import net.silthus.schat.ui.view.ViewFactory;
 import net.silthus.schat.ui.view.ViewProvider;
 import net.silthus.schat.ui.views.Views;
 import net.silthus.schat.ui.views.tabbed.TabbedChannelsView;
+import net.silthus.schat.util.gson.GsonProvider;
 
 import static net.silthus.schat.ui.view.ViewConfig.FORMAT_CONFIG;
 import static net.silthus.schat.ui.view.ViewProvider.cachingViewProvider;
@@ -46,10 +58,11 @@ public class ViewModule {
     private final ViewConfig config;
     private final EventBus eventBus;
     private final ViewFactory viewFactory;
+    private final GsonProvider gsonProvider;
     private final ViewProvider viewProvider;
     private final Replacements replacements = new Replacements();
 
-    public ViewModule(ViewConfig config, EventBus eventBus) {
+    public ViewModule(ViewConfig config, EventBus eventBus, GsonProvider gsonProvider) {
         this.config = config;
         this.eventBus = eventBus;
         this.viewFactory = chatter -> {
@@ -57,12 +70,14 @@ public class ViewModule {
             eventBus.register(view);
             return view;
         };
+        this.gsonProvider = gsonProvider;
         this.viewProvider = cachingViewProvider(viewFactory());
 
         init();
     }
 
     public void init() {
+        gsonProvider.builder().registerTypeHierarchyAdapter(Format.class, new MiniMessageFormatSerializer());
         eventBus().register(this);
         eventBus().register(replacements);
         configurePrivateChats();
@@ -75,5 +90,24 @@ public class ViewModule {
 
     private void configurePrivateChats() {
         PrivateChannel.configure(builder -> builder.set(FORMAT_CONFIG, config().privateChatFormat()));
+    }
+
+    private static final class MiniMessageFormatSerializer implements JsonSerializer<Format>, JsonDeserializer<Format> {
+
+        @Override
+        public JsonElement serialize(Format src, Type typeOfSrc, JsonSerializationContext context) {
+            if (src instanceof MiniMessageFormat format)
+                return new JsonPrimitive(format.format());
+            else
+                return JsonNull.INSTANCE;
+        }
+
+        @Override
+        public Format deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            if (json.isJsonNull())
+                return null;
+            else
+                return new MiniMessageFormat(json.getAsString());
+        }
     }
 }

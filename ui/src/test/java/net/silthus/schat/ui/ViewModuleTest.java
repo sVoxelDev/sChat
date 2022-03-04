@@ -38,6 +38,7 @@ import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.eventbus.EventBusMock.eventBusMock;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.ui.placeholder.ReplacementProvider.REPLACED_MESSAGE_FORMAT;
+import static net.silthus.schat.util.gson.GsonProvider.gsonProvider;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ViewModuleTest {
@@ -47,7 +48,7 @@ class ViewModuleTest {
     @BeforeEach
     void setUp() {
         eventBus = eventBusMock();
-        final ViewModule viewModule = new ViewModule(new ViewConfig(), eventBus);
+        final ViewModule viewModule = new ViewModule(new ViewConfig(), eventBus, gsonProvider());
         viewModule.init();
         viewModule.replacements().addReplacementProvider((message, text) -> text.replace("%test%", "success"));
     }

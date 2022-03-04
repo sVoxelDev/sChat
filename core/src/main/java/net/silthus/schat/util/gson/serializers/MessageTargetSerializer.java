@@ -26,6 +26,7 @@ package net.silthus.schat.util.gson.serializers;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
@@ -33,6 +34,7 @@ import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.commands.SendMessageResult;
 import net.silthus.schat.message.MessageTarget;
 
 public class MessageTargetSerializer implements JsonSerializer<MessageTarget>, JsonDeserializer<MessageTarget> {
@@ -43,7 +45,7 @@ public class MessageTargetSerializer implements JsonSerializer<MessageTarget>, J
             return new JsonPrimitive("chatter:" + chatter.uniqueId());
         if (src instanceof Channel channel)
             return new JsonPrimitive("channel:" + channel.key());
-        return null;
+        return JsonNull.INSTANCE;
     }
 
     @Override
@@ -52,7 +54,7 @@ public class MessageTargetSerializer implements JsonSerializer<MessageTarget>, J
         return switch (split[0]) {
             case "chatter" -> context.deserialize(new JsonPrimitive(split[1]), Chatter.class);
             case "channel" -> context.deserialize(new JsonPrimitive(split[1]), Channel.class);
-            default -> null;
+            default -> SendMessageResult::failure;
         };
     }
 }

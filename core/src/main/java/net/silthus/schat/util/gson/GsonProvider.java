@@ -31,6 +31,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
 import net.silthus.schat.chatter.Chatter;
@@ -60,7 +61,8 @@ public final class GsonProvider {
         return new GsonProvider();
     }
 
-    private final GsonBuilder gson = new GsonBuilder()
+    private final GsonBuilder gson = GsonComponentSerializer.gson().populator().apply(
+        new GsonBuilder()
         .disableHtmlEscaping()
         .registerTypeAdapter(Instant.class, new InstantSerializer())
         .registerTypeHierarchyAdapter(Component.class, new ComponentSerializer())
@@ -68,9 +70,9 @@ public final class GsonProvider {
         .registerTypeHierarchyAdapter(Settings.class, new SettingsSerializer())
         .registerTypeHierarchyAdapter(Identity.class, new IdentitySerializer())
         .registerTypeAdapter(Targets.class, new TargetsSerializer())
-        .registerTypeAdapter(MessageTarget.class, new MessageTargetSerializer());
-
-    private final GsonBuilder prettyPrinting = gson.setPrettyPrinting();
+        .registerTypeAdapter(MessageTarget.class, new MessageTargetSerializer())
+        .registerTypeAdapter(MessageSource.class, new MessageSourceSerializer())
+    );
 
     private GsonProvider() {
     }
@@ -85,17 +87,16 @@ public final class GsonProvider {
         return this;
     }
 
-    public GsonProvider registerMessageSourceSerializer(ChatterRepository chatters) {
-        gson.registerTypeHierarchyAdapter(MessageSource.class, new MessageSourceSerializer(chatters));
-        return this;
-    }
-
     public Gson gson() {
         return gson.create();
     }
 
     public Gson prettyGson() {
-        return prettyPrinting.create();
+        return gson.setPrettyPrinting().create();
+    }
+
+    public GsonBuilder builder() {
+        return gson;
     }
 
     public void registerTypeAdapter(Type type, @NonNull Object adapter) {

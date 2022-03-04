@@ -27,27 +27,34 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
-import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.MessageSource;
 
 public final class MessageSourceSerializer implements JsonSerializer<MessageSource>, JsonDeserializer<MessageSource> {
 
-    private final ChatterRepository chatters;
-
-    public MessageSourceSerializer(ChatterRepository chatters) {
-        this.chatters = chatters;
-    }
-
     @Override
     public JsonElement serialize(MessageSource src, Type typeOfSrc, JsonSerializationContext context) {
-        return null;
+        if (src instanceof Chatter chatter)
+            return new JsonPrimitive("chatter:" + chatter.uniqueId());
+        else
+            return context.serialize(src.identity(), Identity.class);
     }
 
     @Override
     public MessageSource deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        return null;
+        if (json.isJsonPrimitive()) {
+            final String[] split = json.getAsString().split(":");
+            return switch (split[0]) {
+                case "chatter" -> context.deserialize(new JsonPrimitive(split[1]), Chatter.class);
+                default -> MessageSource.nil();
+            };
+        } else {
+            return MessageSource.of(context.deserialize(json, Identity.class));
+        }
     }
 }

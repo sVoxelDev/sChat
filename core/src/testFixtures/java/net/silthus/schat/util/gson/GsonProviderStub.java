@@ -39,7 +39,6 @@ public class GsonProviderStub {
     public static GsonProvider gsonProviderStub(ChatterRepository chatterRepository, ChannelRepository channelRepository) {
         return GsonProvider.gsonProvider()
             .registerChannelSerializer(channelRepository)
-            .registerMessageSourceSerializer(chatterRepository)
             .registerChatterSerializer(chatterRepository);
     }
 }

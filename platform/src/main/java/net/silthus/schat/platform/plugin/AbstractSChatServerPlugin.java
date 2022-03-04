@@ -82,7 +82,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
     @Override
     protected void onEnable() {
-        viewModule = new ViewModule(config().get(VIEW_CONFIG), eventBus());
+        viewModule = new ViewModule(config().get(VIEW_CONFIG), eventBus(), gsonProvider());
         viewModule.init();
 
         chatterRepository = createInMemoryChatterRepository(config().get(DEBUG));
@@ -124,8 +124,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     private void registerSerializers() {
         gsonProvider()
             .registerChannelSerializer(channelRepository())
-            .registerChatterSerializer(chatterRepository())
-            .registerMessageSourceSerializer(chatterRepository());
+            .registerChatterSerializer(chatterRepository());
     }
 
     private void setupPrototypes() {
@@ -150,7 +149,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
 
     private void loadFeatures() {
         logger().info("Loading Features...");
-        features.add(new GlobalChatFeature(eventBus(), messenger()));
+        features.add(new GlobalChatFeature(eventBus(), messenger(), channelRepository()));
         features.add(new AutoJoinChannelsFeature(chatterRepository(), channelRepository()));
 
         features.stream()

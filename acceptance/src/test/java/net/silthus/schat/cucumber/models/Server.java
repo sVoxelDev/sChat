@@ -59,8 +59,9 @@ public class Server {
         plugin().gatewayProviderRegistry().register(GATEWAY_TYPE, messenger);
     }
 
-    public void addChannel(Channel channel) {
+    public Channel addChannel(Channel channel) {
         plugin().channelRepository().add(channel);
+        return channel;
     }
 
     public void join(SenderMock sender) {

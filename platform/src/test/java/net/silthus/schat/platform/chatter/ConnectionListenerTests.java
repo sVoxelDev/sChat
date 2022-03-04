@@ -51,7 +51,7 @@ class ConnectionListenerTests {
     @BeforeEach
     void setUp() {
         chatterRepository = createInMemoryChatterRepository();
-        messenger = new MessagingServiceMock();
+        messenger = MessagingServiceMock.messengerMock();
         eventBus = EventBusMock.eventBusMock();
         listener = new ConnectionListener(chatterRepository, ChatterMock::randomChatter, messenger, eventBus) {
         };

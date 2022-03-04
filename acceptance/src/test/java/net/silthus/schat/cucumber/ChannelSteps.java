@@ -51,7 +51,7 @@ public class ChannelSteps {
     }
 
     private Channel createChannel(String key) {
-        return context.addChannelToAllServers(Channel.createChannel(key));
+        return context.primaryServer().addChannel(Channel.createChannel(key));
     }
 
     @ParameterType("[a-zA-Z]+")

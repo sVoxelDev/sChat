@@ -24,52 +24,42 @@
 package net.silthus.schat.util.gson.serializers;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonPrimitive;
-import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.chatter.ChatterMock;
+import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.eventbus.EventBus;
-import net.silthus.schat.util.gson.GsonProvider;
+import net.silthus.schat.message.MessageSource;
+import net.silthus.schat.util.gson.GsonProviderStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ChannelSerializerTest {
+class MessageSourceSerializerTest {
 
+    private final ChatterRepository chatterRepository = ChatterRepository.createInMemoryChatterRepository();
     private Gson gson;
-    private ChannelRepository channelRepository;
 
     @BeforeEach
     void setUp() {
-        channelRepository = ChannelRepository.createInMemoryChannelRepository(EventBus.empty());
-        gson = GsonProvider.gsonProvider()
-            .registerChannelSerializer(channelRepository)
-            .prettyGson();
+        gson = GsonProviderStub.gsonProviderStub(
+            chatterRepository,
+            ChannelRepository.createInMemoryChannelRepository(EventBus.eventBus())
+        ).prettyGson();
     }
 
     @Test
-    void serializes_channel_properties() {
-        final String json = gson.toJson(channelWith("test"));
-        assertThat(json).contains(
-            "\"key\": \"test\"",
-            "\"targets\": []",
-            "\"settings\":",
-            "\"join_permission\": \"schat.channel.test.join\"");
+    void deserializes_chatter_source_as_id() {
+        final ChatterMock chatter = ChatterMock.randomChatter();
+        final String json = gson.toJson(chatter, MessageSource.class);
+        assertThat(json).isEqualTo("\"chatter:%s\"".formatted(chatter.uniqueId()));
     }
 
     @Test
-    void deserializes_channel_with_key_from_repository() {
-        final Channel channel = channelWith("test");
-        channelRepository.add(channel);
-
-        final Channel result = gson.fromJson(new JsonPrimitive("test"), Channel.class);
-        assertThat(result).isNotNull().isSameAs(channel);
-    }
-
-    @Test
-    void deserializes_unknown_channel_to_null() {
-        final Channel channel = gson.fromJson(new JsonPrimitive("foobar"), Channel.class);
-        assertThat(channel).isNull();
+    void serializes_chatter_by_id() {
+        final ChatterMock chatter = ChatterMock.randomChatter();
+        chatterRepository.add(chatter);
+        final MessageSource messageSource = gson.fromJson("\"chatter:%s\"".formatted(chatter.uniqueId()), MessageSource.class);
+        assertThat(messageSource).isSameAs(chatter);
     }
 }

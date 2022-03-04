@@ -48,6 +48,7 @@ import static net.silthus.schat.platform.messaging.CrossServerMessengerGateway.p
 @ScenarioScoped
 public class Context {
     public static final String PRIMARY_SERVER = "server1";
+    public static final String SECOND_SERVER = "server2";
 
     private final UserSteps userSteps;
     private final ServerSteps serverSteps;
@@ -69,7 +70,7 @@ public class Context {
     @Before(order = 10)
     public void setup() {
         servers.put(PRIMARY_SERVER, serverSteps.createServer());
-        servers.put("server2", serverSteps.createServer());
+        servers.put(SECOND_SERVER, serverSteps.createServer());
     }
 
     @Before(order = 20)

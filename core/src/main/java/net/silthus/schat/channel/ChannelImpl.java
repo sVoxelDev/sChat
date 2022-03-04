@@ -87,10 +87,10 @@ final class ChannelImpl implements Channel {
     private static final String VALID_KEY_PATTERN = "^[a-zA-Z0-9_-]+$";
 
     private final String key;
-    private final Targets targets;
     private final transient Messages messages = new Messages();
     private final transient EventBus eventBus;
     private final transient Map<Class<? extends Policy>, Policy> policies;
+    private @NonNull Targets targets;
     private @NonNull Settings settings;
 
     private ChannelImpl(Builder builder) {
@@ -136,6 +136,12 @@ final class ChannelImpl implements Channel {
     @Override
     public @NotNull @Unmodifiable Targets targets() {
         return Targets.unmodifiable(targets);
+    }
+
+    @Override
+    public @NotNull Channel targets(@NonNull Targets targets) {
+        this.targets = Targets.copyOf(targets);
+        return this;
     }
 
     @Override

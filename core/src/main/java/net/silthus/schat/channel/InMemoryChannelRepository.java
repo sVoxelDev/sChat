@@ -25,7 +25,7 @@ package net.silthus.schat.channel;
 
 import lombok.extern.java.Log;
 import net.silthus.schat.eventbus.EventBus;
-import net.silthus.schat.events.channel.RegisteredChannelEvent;
+import net.silthus.schat.events.channel.ChannelRegisteredEvent;
 import net.silthus.schat.repository.InMemoryRepository;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +42,7 @@ class InMemoryChannelRepository extends InMemoryRepository<String, Channel> impl
         if (contains(channel.key()))
             throw new DuplicateChannel(channel);
         super.add(channel);
-        eventBus.post(new RegisteredChannelEvent(channel));
+        eventBus.post(new ChannelRegisteredEvent(channel));
     }
 
     @Log(topic = "sChat:ChannelRepository")

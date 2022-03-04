@@ -30,7 +30,7 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.eventbus.EventListener;
-import net.silthus.schat.events.channel.RegisteredChannelEvent;
+import net.silthus.schat.events.channel.ChannelRegisteredEvent;
 import net.silthus.schat.events.chatter.ChatterJoinedServerEvent;
 import net.silthus.schat.events.config.ConfigReloadedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +52,7 @@ public class AutoJoinChannelsFeature implements EventListener {
     public void bind(EventBus bus) {
         bus.on(ChatterJoinedServerEvent.class, this::onChatterJoin);
         bus.on(ConfigReloadedEvent.class, this::onConfigReload);
-        bus.on(RegisteredChannelEvent.class, this::onRegisteredChannel);
+        bus.on(ChannelRegisteredEvent.class, this::onRegisteredChannel);
     }
 
     protected void onChatterJoin(ChatterJoinedServerEvent event) {
@@ -68,7 +68,7 @@ public class AutoJoinChannelsFeature implements EventListener {
             autoJoinChannel(chatter, channel);
     }
 
-    protected void onRegisteredChannel(RegisteredChannelEvent event) {
+    protected void onRegisteredChannel(ChannelRegisteredEvent event) {
         if (event.channel().is(AUTO_JOIN))
             autojoinAllChattersToChannel(event.channel());
     }

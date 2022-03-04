@@ -32,5 +32,5 @@ import net.silthus.schat.events.SChatEvent;
  *
  * @since next
  */
-public record RegisteredChannelEvent(Channel channel) implements SChatEvent {
+public record ChannelRegisteredEvent(Channel channel) implements SChatEvent {
 }

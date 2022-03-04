@@ -38,7 +38,7 @@ public class ServerSteps {
 
     @ParameterType("[a-zA-Z0-9]+")
     public Server server(String name) {
-        return context.servers().computeIfAbsent(name, n -> createServer());
+        return context.servers().get(name);
     }
 
     public Server createServer() {
