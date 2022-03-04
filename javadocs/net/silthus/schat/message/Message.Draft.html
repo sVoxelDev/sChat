@@ -72,11 +72,16 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
+<dt>All Superinterfaces:</dt>
+<dd><code><a href="../pointer/Configured.Builder.html" title="interface in net.silthus.schat.pointer">Configured.Builder</a>&lt;<a href="Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a>&gt;</code></dd>
+</dl>
+<dl class="notes">
 <dt>Enclosing interface:</dt>
 <dd><a href="Message.html" title="interface in net.silthus.schat.message">Message</a></dd>
 </dl>
 <hr>
-<div class="type-signature"><span class="modifiers">public static sealed interface </span><span class="element-name type-name-label">Message.Draft</span></div>
+<div class="type-signature"><span class="modifiers">public static sealed interface </span><span class="element-name type-name-label">Message.Draft</span><span class="extends-implements">
+extends <a href="../pointer/Configured.Builder.html" title="interface in net.silthus.schat.pointer">Configured.Builder</a>&lt;<a href="Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a>&gt;</span></div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -115,33 +120,39 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull @Unmodifiable <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collection.html" title="class or interface in java.util" class="external-link">Collection</a>&lt;<a href="MessageTarget.html" title="interface in net.silthus.schat.message">MessageTarget</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#targets()" class="member-name-link">targets</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull net.kyori.adventure.text.Component</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#text()" class="member-name-link">text</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#targets(net.silthus.schat.message.Targets)" class="member-name-link">targets</a><wbr>(<a href="Targets.html" title="class in net.silthus.schat.message">Targets</a>&nbsp;targets)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#text(net.kyori.adventure.text.Component)" class="member-name-link">text</a><wbr>(@Nullable net.kyori.adventure.text.Component&nbsp;text)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#timestamp()" class="member-name-link">timestamp</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#timestamp(java.time.Instant)" class="member-name-link">timestamp</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;timestamp)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull net.kyori.adventure.text.Component</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#text()" class="member-name-link">text</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#to(net.silthus.schat.channel.Channel)" class="member-name-link">to</a><wbr>(@NonNull <a href="../channel/Channel.html" title="interface in net.silthus.schat.channel">Channel</a>&nbsp;channel)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#text(net.kyori.adventure.text.Component)" class="member-name-link">text</a><wbr>(@Nullable net.kyori.adventure.text.Component&nbsp;text)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#timestamp()" class="member-name-link">timestamp</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#timestamp(java.time.Instant)" class="member-name-link">timestamp</a><wbr>(@NonNull <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/Instant.html" title="class or interface in java.time" class="external-link">Instant</a>&nbsp;timestamp)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#to(net.silthus.schat.message.MessageTarget)" class="member-name-link">to</a><wbr>(@NonNull <a href="MessageTarget.html" title="interface in net.silthus.schat.message">MessageTarget</a>&nbsp;target)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#to(net.silthus.schat.channel.Channel)" class="member-name-link">to</a><wbr>(@NonNull <a href="../channel/Channel.html" title="interface in net.silthus.schat.channel">Channel</a>&nbsp;channel)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="Message.Type.html" title="enum class in net.silthus.schat.message">Message.Type</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#to(net.silthus.schat.message.MessageTarget)" class="member-name-link">to</a><wbr>(@NonNull <a href="MessageTarget.html" title="interface in net.silthus.schat.message">MessageTarget</a>&nbsp;target)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#type(net.silthus.schat.message.Message.Type)" class="member-name-link">type</a><wbr>(@NonNull <a href="Message.Type.html" title="enum class in net.silthus.schat.message">Message.Type</a>&nbsp;type)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="Message.Type.html" title="enum class in net.silthus.schat.message">Message.Type</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#type()" class="member-name-link">type</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#type(net.silthus.schat.message.Message.Type)" class="member-name-link">type</a><wbr>(@NonNull <a href="Message.Type.html" title="enum class in net.silthus.schat.message">Message.Type</a>&nbsp;type)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
 </div>
 </div>
 </div>
+<div class="inherited-list">
+<h3 id="methods-inherited-from-class-net.silthus.schat.pointer.Configured.Builder">Methods inherited from interface&nbsp;net.silthus.schat.pointer.<a href="../pointer/Configured.Builder.html" title="interface in net.silthus.schat.pointer">Configured.Builder</a></h3>
+<code><a href="../pointer/Configured.Builder.html#set(net.silthus.schat.pointer.Setting,V)">set</a>, <a href="../pointer/Configured.Builder.html#settings(net.silthus.schat.pointer.Settings)">settings</a></code></div>
 </section>
 </li>
 </ul>
@@ -204,6 +215,13 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="annotations">@NotNull
 </span><span class="return-type">@NotNull <a href="Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></span>&nbsp;<span class="element-name">to</span><wbr><span class="parameters">(@NonNull
  @NonNull <a href="MessageTarget.html" title="interface in net.silthus.schat.message">MessageTarget</a>&nbsp;target)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="targets(net.silthus.schat.message.Targets)">
+<h3>targets</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="return-type">@NotNull <a href="Message.Draft.html" title="interface in net.silthus.schat.message">Message.Draft</a></span>&nbsp;<span class="element-name">targets</span><wbr><span class="parameters">(<a href="Targets.html" title="class in net.silthus.schat.message">Targets</a>&nbsp;targets)</span></div>
 </section>
 </li>
 <li>

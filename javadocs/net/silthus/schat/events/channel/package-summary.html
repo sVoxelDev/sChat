@@ -94,33 +94,41 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary" aria-labelledby="class-summary-tab0">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color class-summary class-summary-tab4"><a href="ChannelSettingChangedEvent.html" title="class in net.silthus.schat.events.channel">ChannelSettingChangedEvent</a>&lt;V&gt;</div>
-<div class="col-last even-row-color class-summary class-summary-tab4">
-<div class="block">The event is fired when a setting of a channel has changed.</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="ChannelSettingsChanged.html" title="class in net.silthus.schat.events.channel">ChannelSettingsChanged</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab4">
-<div class="block">The event is fired if all settings of a channel change.</div>
-</div>
-<div class="col-first even-row-color class-summary class-summary-tab4"><a href="ChatterJoinedChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterJoinedChannelEvent</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab4">
-<div class="block">The event is fired after a chatter has joined a channel.</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="ChatterLeftChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterLeftChannelEvent</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab4">
-<div class="block">The event is fired after a chatter has left a channel.</div>
-</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="JoinChannelEvent.html" title="class in net.silthus.schat.events.channel">JoinChannelEvent</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">The event is fired before a chatter joins a channel and allows the manipulation of the <a href="../../policies/JoinChannelPolicy.html" title="interface in net.silthus.schat.policies"><code>JoinChannelPolicy</code></a> and outcome of the <a href="../../commands/JoinChannelCommand.html" title="class in net.silthus.schat.commands"><code>JoinChannelCommand</code></a>.</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="LeaveChannelEvent.html" title="class in net.silthus.schat.events.channel">LeaveChannelEvent</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">The event is fired before a chatter leaves a channel and allows the manipulation of the <a href="../../policies/LeaveChannelPolicy.html" title="interface in net.silthus.schat.policies"><code>LeaveChannelPolicy</code></a> and outcome of the <a href="../../commands/LeaveChannelCommand.html" title="class in net.silthus.schat.commands"><code>LeaveChannelCommand</code></a>.</div>
-</div>
-<div class="col-first even-row-color class-summary class-summary-tab4"><a href="RegisteredChannelEvent.html" title="class in net.silthus.schat.events.channel">RegisteredChannelEvent</a></div>
+<div class="col-first even-row-color class-summary class-summary-tab4"><a href="ChannelRegisteredEvent.html" title="class in net.silthus.schat.events.channel">ChannelRegisteredEvent</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab4">
 <div class="block">The event is fired when a new channel is added to the <a href="../../channel/ChannelRepository.html" title="interface in net.silthus.schat.channel"><code>ChannelRepository</code></a>.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="ChannelSettingChangedEvent.html" title="class in net.silthus.schat.events.channel">ChannelSettingChangedEvent</a>&lt;V&gt;</div>
+<div class="col-last odd-row-color class-summary class-summary-tab4">
+<div class="block">The event is fired when a setting of a channel has changed.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab4"><a href="ChannelSettingsChanged.html" title="class in net.silthus.schat.events.channel">ChannelSettingsChanged</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab4">
+<div class="block">The event is fired if all settings of a channel change.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="ChannelTargetAdded.html" title="class in net.silthus.schat.events.channel">ChannelTargetAdded</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab4">
+<div class="block">The event is fired after a new target has been added to a channel.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab4"><a href="ChannelTargetRemoved.html" title="class in net.silthus.schat.events.channel">ChannelTargetRemoved</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab4">
+<div class="block">The event is fired after a target has been remove from a channel.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="ChatterJoinedChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterJoinedChannelEvent</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab4">
+<div class="block">The event is fired after a chatter has joined a channel.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab4"><a href="ChatterLeftChannelEvent.html" title="class in net.silthus.schat.events.channel">ChatterLeftChannelEvent</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab4">
+<div class="block">The event is fired after a chatter has left a channel.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="JoinChannelEvent.html" title="class in net.silthus.schat.events.channel">JoinChannelEvent</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab2">
+<div class="block">The event is fired before a chatter joins a channel and allows the manipulation of the <a href="../../policies/JoinChannelPolicy.html" title="interface in net.silthus.schat.policies"><code>JoinChannelPolicy</code></a> and outcome of the <a href="../../commands/JoinChannelCommand.html" title="class in net.silthus.schat.commands"><code>JoinChannelCommand</code></a>.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab2"><a href="LeaveChannelEvent.html" title="class in net.silthus.schat.events.channel">LeaveChannelEvent</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab2">
+<div class="block">The event is fired before a chatter leaves a channel and allows the manipulation of the <a href="../../policies/LeaveChannelPolicy.html" title="interface in net.silthus.schat.policies"><code>LeaveChannelPolicy</code></a> and outcome of the <a href="../../commands/LeaveChannelCommand.html" title="class in net.silthus.schat.commands"><code>LeaveChannelCommand</code></a>.</div>
 </div>
 </div>
 </div>

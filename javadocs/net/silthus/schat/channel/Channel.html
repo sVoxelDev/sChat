@@ -220,9 +220,14 @@ extends <a href="../repository/Entity.html" title="interface in net.silthus.scha
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Gets all targets of this channel.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#updateTargets()" class="member-name-link">updateTargets</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>@NotNull <a href="Channel.html" title="interface in net.silthus.schat.channel">Channel</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#targets(net.silthus.schat.message.Targets)" class="member-name-link">targets</a><wbr>(@NonNull <a href="../message/Targets.html" title="class in net.silthus.schat.message">Targets</a>&nbsp;targets)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Replaces all targets of the channel with the given targets.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code>default void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5"><code><a href="#updateTargets()" class="member-name-link">updateTargets</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab5">
 <div class="block">Updates the targets of this channel joining all
  chatters that are a member of this channel.</div>
 </div>
@@ -393,6 +398,23 @@ extends <a href="../repository/Entity.html" title="interface in net.silthus.scha
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>a list unmodifiable of targets</dd>
+<dt>Since:</dt>
+<dd>next</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="targets(net.silthus.schat.message.Targets)">
+<h3>targets</h3>
+<div class="member-signature"><span class="annotations">@NotNull
+</span><span class="return-type">@NotNull <a href="Channel.html" title="interface in net.silthus.schat.channel">Channel</a></span>&nbsp;<span class="element-name">targets</span><wbr><span class="parameters">(@NonNull
+ @NonNull <a href="../message/Targets.html" title="class in net.silthus.schat.message">Targets</a>&nbsp;targets)</span></div>
+<div class="block">Replaces all targets of the channel with the given targets.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>targets</code> - the targets to set</dd>
+<dt>Returns:</dt>
+<dd>this channel</dd>
 <dt>Since:</dt>
 <dd>next</dd>
 </dl>
