@@ -28,6 +28,8 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
 import java.time.Instant;
 import java.util.UUID;
@@ -35,10 +37,25 @@ import net.kyori.adventure.text.Component;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageSource;
 import net.silthus.schat.message.Targets;
+import net.silthus.schat.pointer.Settings;
+import net.silthus.schat.util.gson.JObject;
 
 import static net.silthus.schat.message.Message.message;
 
-public final class MessageSerializer implements JsonDeserializer<Message> {
+public final class MessageSerializer implements JsonSerializer<Message>, JsonDeserializer<Message> {
+
+    @Override
+    public JsonElement serialize(Message src, Type typeOfSrc, JsonSerializationContext context) {
+        return JObject.json()
+            .add("id", context.serialize(src.id()))
+            .add("timestamp", context.serialize(src.timestamp()))
+            .add("text", context.serialize(src.text(), Component.class))
+            .add("type", context.serialize(src.type()))
+            .add("source", context.serialize(src.source(), MessageSource.class))
+            .add("targets", context.serialize(src.targets(), Targets.class))
+            .add("settings", context.serialize(src.settings(), Settings.class))
+            .create();
+    }
 
     @Override
     public Message deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -50,6 +67,7 @@ public final class MessageSerializer implements JsonDeserializer<Message> {
             .type(context.deserialize(object.get("type"), Message.Type.class))
             .source(context.deserialize(object.get("source"), MessageSource.class))
             .targets(context.deserialize(object.get("targets"), Targets.class))
+            .settings(context.deserialize(object.get("settings"), Settings.class))
             .create();
     }
 }

@@ -86,6 +86,7 @@ public class ChannelTab implements Tab {
             .copyFrom(channel.settings());
         this.messages = new TreeMap<>(Stream.concat(channel.messages().stream(), view.chatter().messages().stream())
             .filter(this::isMessageDisplayed)
+            .distinct()
             .collect(toMap(message -> message, this::renderMessage)));
         if (!isActive())
             unreadCount(messages.size());

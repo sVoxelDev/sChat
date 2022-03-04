@@ -68,7 +68,7 @@ public final class GsonProvider {
         .registerTypeHierarchyAdapter(Component.class, new ComponentSerializer())
         .registerTypeHierarchyAdapter(Message.class, new MessageSerializer())
         .registerTypeHierarchyAdapter(Settings.class, new SettingsSerializer())
-        .registerTypeHierarchyAdapter(Identity.class, new IdentitySerializer())
+        .registerTypeAdapter(Identity.class, new IdentitySerializer())
         .registerTypeAdapter(Targets.class, new TargetsSerializer())
         .registerTypeAdapter(MessageTarget.class, new MessageTargetSerializer())
         .registerTypeAdapter(MessageSource.class, new MessageSourceSerializer())

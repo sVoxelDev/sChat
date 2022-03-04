@@ -19,4 +19,3 @@ Feature: Private Chats
   Scenario: Players can send private messages across servers
     When I send a private message to player4
     Then player4 receives the message
-#    And the view of player4 shows the message

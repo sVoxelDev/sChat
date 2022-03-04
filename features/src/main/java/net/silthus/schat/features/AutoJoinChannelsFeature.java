@@ -60,17 +60,17 @@ public class AutoJoinChannelsFeature implements EventListener {
     }
 
     protected void onConfigReload(ConfigReloadedEvent event) {
-        autoJoinableChannels().forEach(this::autojoinAllChattersToChannel);
+        autoJoinableChannels().forEach(this::autoJoinAllChattersToChannel);
     }
 
-    private void autojoinAllChattersToChannel(Channel channel) {
+    private void autoJoinAllChattersToChannel(Channel channel) {
         for (final Chatter chatter : chatterRepository.all())
             autoJoinChannel(chatter, channel);
     }
 
     protected void onRegisteredChannel(ChannelRegisteredEvent event) {
         if (event.channel().is(AUTO_JOIN))
-            autojoinAllChattersToChannel(event.channel());
+            autoJoinAllChattersToChannel(event.channel());
     }
 
     private void autoJoinChannels(Chatter chatter) {

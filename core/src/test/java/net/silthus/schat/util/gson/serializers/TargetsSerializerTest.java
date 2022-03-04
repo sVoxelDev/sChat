@@ -32,14 +32,16 @@ import java.util.UUID;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.message.Targets;
-import net.silthus.schat.util.gson.GsonProvider;
+import net.silthus.schat.util.gson.GsonProviderStub;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static java.util.UUID.randomUUID;
+import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,9 +53,10 @@ class TargetsSerializerTest {
     @BeforeEach
     void setUp() {
         chatterRepository = createInMemoryChatterRepository();
-        gson = GsonProvider.gsonProvider()
-            .registerChatterSerializer(chatterRepository)
-            .prettyGson();
+        gson = GsonProviderStub.gsonProviderStub(
+                chatterRepository,
+                createInMemoryChannelRepository(EventBus.empty())
+            ).prettyGson();
     }
 
     @NotNull

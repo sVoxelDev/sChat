@@ -50,7 +50,7 @@ public final class ChatterSerializer implements JsonSerializer<Chatter>, JsonDes
     @Override
     public JsonElement serialize(Chatter src, Type typeOfSrc, JsonSerializationContext context) {
         return JObject.json()
-            .add("identity", context.serialize(src.identity()))
+            .add("identity", context.serialize(src.identity(), Identity.class))
             .add("active_channel", src.activeChannel().map(Channel::key).orElse(null))
             .add("channels", context.serialize(src.channels().stream().map(Channel::key).toList()))
             .create();
@@ -67,9 +67,7 @@ public final class ChatterSerializer implements JsonSerializer<Chatter>, JsonDes
     private Chatter deserializeChatter(JsonElement json, JsonDeserializationContext context) {
         final JsonObject object = json.getAsJsonObject();
         final Identity identity = context.deserialize(object.get("identity"), Identity.class);
-        final Chatter chatter = chatters
-            .findOrCreate(identity.uniqueId(), uuid -> Chatter.chatter(identity))
-            .activeChannel(context.deserialize(object.get("active_channel"), Channel.class));
+        final Chatter chatter = chatters.findOrCreate(identity.uniqueId(), uuid -> Chatter.chatter(identity));
         deserializeAndJoinChannels(chatter, object.getAsJsonArray("channels"), context);
         return chatter;
     }

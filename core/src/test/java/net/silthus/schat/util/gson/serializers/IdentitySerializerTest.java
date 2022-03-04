@@ -45,7 +45,7 @@ class IdentitySerializerTest {
     @Test
     void serialize_stores_identity_properties() {
         final Identity identity = Identity.identity("Bob", text("Bobby"));
-        final String json = gson.toJson(identity);
+        final String json = gson.toJson(identity, Identity.class);
         assertThat(json).isEqualTo("""
             {
               "id": "%s",
@@ -76,7 +76,7 @@ class IdentitySerializerTest {
     @Test
     void deserializes_identity() {
         final Identity origin = Identity.identity("Bob", text("Bobby"));
-        final String json = gson.toJson(origin);
+        final String json = gson.toJson(origin, Identity.class);
         final Identity identity = gson.fromJson(json, Identity.class);
         assertThat(identity).extracting(
             Identity::uniqueId,

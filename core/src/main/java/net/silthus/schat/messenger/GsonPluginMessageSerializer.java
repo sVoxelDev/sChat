@@ -64,15 +64,15 @@ public final class GsonPluginMessageSerializer implements PluginMessageSerialize
     public @NotNull String encode(PluginMessage pluginMessage) {
         if (!supports(pluginMessage))
             throw new IllegalArgumentException(pluginMessage.getClass().getCanonicalName() + " is not a supported PluginMessage type!");
-        final Gson gson = this.gsonProvider.gson();
-        final JsonObject json = gson.toJsonTree(pluginMessage).getAsJsonObject();
+        final Gson gson = this.gsonProvider.prettyGson();
+        final JsonObject json = gson.toJsonTree(pluginMessage, pluginMessage.getClass()).getAsJsonObject();
         json.addProperty("type", pluginMessage.getClass().getTypeName());
         return gson.toJson(json);
     }
 
     @Override
     public @NotNull PluginMessage decode(@NonNull String encodedString) {
-        final Gson gson = this.gsonProvider.gson();
+        final Gson gson = this.gsonProvider.prettyGson();
         final JsonObject json = gson.fromJson(encodedString, JsonObject.class);
         final String type = json.get("type").getAsString();
         return gson.fromJson(json, typeMap.get(type));

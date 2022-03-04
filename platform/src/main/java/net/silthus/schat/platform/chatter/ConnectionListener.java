@@ -35,7 +35,6 @@ import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.events.chatter.ChatterJoinedServerEvent;
-import net.silthus.schat.identity.Identity;
 import net.silthus.schat.messenger.Messenger;
 import net.silthus.schat.messenger.PluginMessage;
 import net.silthus.schat.platform.sender.Sender;
@@ -77,29 +76,27 @@ public abstract class ConnectionListener {
     }
 
     protected void sendGlobalJoinPing(Chatter chatter) {
-        messenger.sendPluginMessage(new ChatterJoined(chatter.identity()));
+        messenger.sendPluginMessage(new ChatterJoined(chatter));
     }
 
     @Getter
     @Setter
     @Accessors(fluent = true)
     @NoArgsConstructor
-    @EqualsAndHashCode(of = {"identity"}, callSuper = true)
+    @EqualsAndHashCode(of = {"chatter"}, callSuper = true)
     final static class ChatterJoined extends PluginMessage {
-        private Identity identity;
+        private Chatter chatter;
         private transient ChatterRepository repository;
         private transient ChatterFactory factory;
         private transient EventBus eventBus;
 
-        ChatterJoined(Identity identity) {
-            super();
-            this.identity = identity;
+        ChatterJoined(Chatter chatter) {
+            this.chatter = chatter;
         }
 
         @Override
         public void process() {
-            if (!repository.contains(identity.uniqueId())) {
-                final Chatter chatter = factory.createChatter(identity.uniqueId());
+            if (!repository.contains(chatter.uniqueId())) {
                 repository.add(chatter);
                 eventBus.post(new ChatterJoinedServerEvent(chatter));
             }
