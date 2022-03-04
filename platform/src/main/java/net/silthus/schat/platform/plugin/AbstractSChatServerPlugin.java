@@ -125,8 +125,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
         gsonProvider()
             .registerChannelSerializer(channelRepository())
             .registerChatterSerializer(chatterRepository())
-            .registerMessageSourceSerializer(chatterRepository())
-            .registerTargetsSerializer(chatterRepository());
+            .registerMessageSourceSerializer(chatterRepository());
     }
 
     private void setupPrototypes() {

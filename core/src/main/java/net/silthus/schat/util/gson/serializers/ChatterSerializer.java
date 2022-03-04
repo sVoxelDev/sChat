@@ -23,6 +23,7 @@
  */
 package net.silthus.schat.util.gson.serializers;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -31,6 +32,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
+import java.util.UUID;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterRepository;
@@ -56,15 +58,27 @@ public final class ChatterSerializer implements JsonSerializer<Chatter>, JsonDes
 
     @Override
     public Chatter deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        if (json.isJsonPrimitive())
+            return chatters.find(UUID.fromString(json.getAsString())).orElse(null);
+        else
+            return deserializeChatter(json, context);
+    }
+
+    private Chatter deserializeChatter(JsonElement json, JsonDeserializationContext context) {
         final JsonObject object = json.getAsJsonObject();
         final Identity identity = context.deserialize(object.get("identity"), Identity.class);
-        final Chatter chatter = chatters.findOrCreate(identity.uniqueId(), uuid -> Chatter.chatter(identity))
+        final Chatter chatter = chatters
+            .findOrCreate(identity.uniqueId(), uuid -> Chatter.chatter(identity))
             .activeChannel(context.deserialize(object.get("active_channel"), Channel.class));
-        for (final JsonElement element : object.getAsJsonArray("channels")) {
+        deserializeAndJoinChannels(chatter, object.getAsJsonArray("channels"), context);
+        return chatter;
+    }
+
+    private void deserializeAndJoinChannels(Chatter chatter, JsonArray channels, JsonDeserializationContext context) {
+        for (final JsonElement element : channels) {
             Channel channel = context.deserialize(element, Channel.class);
             if (channel != null)
                 chatter.join(channel);
         }
-        return chatter;
     }
 }

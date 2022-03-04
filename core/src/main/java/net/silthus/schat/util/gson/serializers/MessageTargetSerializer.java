@@ -26,30 +26,33 @@ package net.silthus.schat.util.gson.serializers;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
-import java.time.Instant;
-import java.util.UUID;
-import net.kyori.adventure.text.Component;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.message.MessageSource;
-import net.silthus.schat.message.Targets;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.message.MessageTarget;
 
-import static net.silthus.schat.message.Message.message;
-
-public final class MessageSerializer implements JsonDeserializer<Message> {
+public class MessageTargetSerializer implements JsonSerializer<MessageTarget>, JsonDeserializer<MessageTarget> {
 
     @Override
-    public Message deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        final JsonObject object = json.getAsJsonObject();
-        return message()
-            .id(context.deserialize(object.get("id"), UUID.class))
-            .timestamp(context.deserialize(object.get("timestamp"), Instant.class))
-            .text(context.deserialize(object.get("text"), Component.class))
-            .type(context.deserialize(object.get("type"), Message.Type.class))
-            .source(context.deserialize(object.get("source"), MessageSource.class))
-            .targets(context.deserialize(object.get("targets"), Targets.class))
-            .create();
+    public JsonElement serialize(MessageTarget src, Type typeOfSrc, JsonSerializationContext context) {
+        if (src instanceof Chatter chatter)
+            return new JsonPrimitive("chatter:" + chatter.uniqueId());
+        if (src instanceof Channel channel)
+            return new JsonPrimitive("channel:" + channel.key());
+        return null;
+    }
+
+    @Override
+    public MessageTarget deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        final String[] split = json.getAsString().split(":");
+        return switch (split[0]) {
+            case "chatter" -> context.deserialize(new JsonPrimitive(split[1]), Chatter.class);
+            case "channel" -> context.deserialize(new JsonPrimitive(split[1]), Channel.class);
+            default -> null;
+        };
     }
 }

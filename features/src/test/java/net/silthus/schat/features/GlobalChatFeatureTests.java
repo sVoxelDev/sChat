@@ -60,7 +60,6 @@ class GlobalChatFeatureTests implements Messenger {
         final GsonProvider gsonProvider = GsonProvider.gsonProvider()
             .registerChannelSerializer(ChannelRepository.createInMemoryChannelRepository(events))
             .registerChatterSerializer(ChatterRepository.createInMemoryChatterRepository())
-            .registerTargetsSerializer(ChatterRepository.createInMemoryChatterRepository())
             .registerMessageSourceSerializer(ChatterRepository.createInMemoryChatterRepository());
         serializer = PluginMessageSerializer.gsonSerializer(gsonProvider);
         new GlobalChatFeature(events, this).bind(events);

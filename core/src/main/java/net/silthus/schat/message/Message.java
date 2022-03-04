@@ -32,6 +32,7 @@ import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.commands.SendMessageResult;
 import net.silthus.schat.pointer.Configurable;
+import net.silthus.schat.pointer.Configured;
 import net.silthus.schat.pointer.Pointer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,7 +81,7 @@ public sealed interface Message extends Configurable<Message>, Comparable<Messag
 
     @NotNull Draft copy();
 
-    sealed interface Draft permits MessageImpl.Draft {
+    sealed interface Draft extends Configured.Builder<Draft> permits MessageImpl.Draft {
 
         @NotNull UUID id();
 
@@ -95,6 +96,8 @@ public sealed interface Message extends Configurable<Message>, Comparable<Messag
         @NotNull Draft source(@Nullable MessageSource identity);
 
         @NotNull Draft to(@NonNull MessageTarget target);
+
+        @NotNull Draft targets(Targets targets);
 
         @NotNull @Unmodifiable Collection<MessageTarget> targets();
 

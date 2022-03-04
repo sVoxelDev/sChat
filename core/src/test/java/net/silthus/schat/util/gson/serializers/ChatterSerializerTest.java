@@ -21,31 +21,34 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.util.gson;
+package net.silthus.schat.util.gson.serializers;
 
 import com.google.gson.Gson;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.identity.Identity;
+import net.silthus.schat.util.gson.GsonProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ChatterSerializerTest {
 
+    private final ChatterRepository chatterRepository = createInMemoryChatterRepository();
+
     private Gson gson;
 
     @BeforeEach
     void setUp() {
-        final ChatterRepository chatterRepository = createInMemoryChatterRepository();
         gson = GsonProvider.gsonProvider()
-            .registerTargetsSerializer(chatterRepository)
             .registerChatterSerializer(chatterRepository)
             .registerChannelSerializer(createInMemoryChannelRepository(EventBus.empty()))
             .prettyGson();
@@ -92,7 +95,6 @@ class ChatterSerializerTest {
 
     @Test
     void channels_are_serialized() {
-
         final Chatter chatter = Chatter.chatter(Identity.identity("Bob"));
         chatter.join(Channel.createChannel("test"));
         chatter.activeChannel(Channel.createChannel("active"));
@@ -111,5 +113,13 @@ class ChatterSerializerTest {
                 "active"
               ]
             }""".formatted(chatter.uniqueId().toString()));
+    }
+
+    @Test
+    void chatter_with_id_only_is_deserialized_from_repository() {
+        final ChatterMock chatter = randomChatter();
+        chatterRepository.add(chatter);
+        final Chatter deserialized = gson.fromJson("\"" + chatter.uniqueId() + "\"", Chatter.class);
+        assertThat(deserialized).isSameAs(chatter);
     }
 }

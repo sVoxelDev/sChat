@@ -21,32 +21,25 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.message;
+package net.silthus.schat.util.gson;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.experimental.Accessors;
-import net.silthus.schat.identity.Identity;
-import net.silthus.schat.pointer.Pointers;
+import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.eventbus.EventBus;
 
-import static net.silthus.schat.pointer.Pointers.pointersBuilder;
+import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
 
-@Getter
-@Accessors(fluent = true)
-@EqualsAndHashCode(of = {"identity"})
-final class IdentityMessageSource implements MessageSource {
+public class GsonProviderStub {
 
-    static final IdentityMessageSource NIL = new IdentityMessageSource(Identity.nil());
+    public static GsonProvider gsonProviderStub() {
+        return gsonProviderStub(createInMemoryChatterRepository(), createInMemoryChannelRepository(EventBus.empty()));
+    }
 
-    private final Identity identity;
-    private final transient Pointers pointers;
-
-    IdentityMessageSource(Identity identity) {
-        this.identity = identity;
-        pointers = pointersBuilder()
-            .withForward(Identity.ID, identity(), Identity.ID)
-            .withForward(Identity.NAME, identity(), Identity.NAME)
-            .withForward(Identity.DISPLAY_NAME, identity(), Identity.DISPLAY_NAME)
-            .create();
+    public static GsonProvider gsonProviderStub(ChatterRepository chatterRepository, ChannelRepository channelRepository) {
+        return GsonProvider.gsonProvider()
+            .registerChannelSerializer(channelRepository)
+            .registerMessageSourceSerializer(chatterRepository)
+            .registerChatterSerializer(chatterRepository);
     }
 }

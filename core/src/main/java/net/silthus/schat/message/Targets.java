@@ -35,6 +35,7 @@ import lombok.NonNull;
 import net.silthus.schat.commands.SendMessageResult;
 import net.silthus.schat.util.FilterableCollection;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import static net.silthus.schat.commands.SendMessageResult.success;
@@ -119,8 +120,17 @@ public final class Targets extends AbstractSet<MessageTarget> implements Message
         this.targets = new LinkedHashSet<>();
     }
 
+    /**
+     * Adds the given target to the collection.
+     *
+     * @param target the target to add. null values are silently ignored.
+     * @return true if the target was added. false if it was not added because it existed or was null.
+     * @since next
+     */
     @Override
-    public boolean add(final @NonNull MessageTarget target) {
+    public boolean add(final @Nullable MessageTarget target) {
+        if (target == null)
+            return false;
         return this.targets.add(target);
     }
 

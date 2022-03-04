@@ -21,11 +21,12 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.util.gson;
+package net.silthus.schat.util.gson.serializers;
 
 import com.google.gson.Gson;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
+import net.silthus.schat.util.gson.GsonProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
