@@ -13,7 +13,7 @@ const config = {
     ],
 }
 
-if (config.branches.some(it => it === branch || (it.name === branch && it.prerelease))) {
+if (config.branches.some(it => (it === branch || it.name === branch) && it.prerelease)) {
     config.plugins.push(
         ["@google/semantic-release-replace-plugin", {
             "replacements": [
