@@ -67,7 +67,6 @@ jobs:
         if: always()
         with:
           files: "**/build/test-results/**/*.xml"
-
   javadoc:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next' || github.ref == 'refs/heads/release'
