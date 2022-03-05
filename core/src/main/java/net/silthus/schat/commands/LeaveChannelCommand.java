@@ -127,17 +127,12 @@ public class LeaveChannelCommand implements Command {
 
     private Result leaveChannel() {
         chatter.leave(channel);
-        fireLeftChannelEvent();
         return success();
     }
 
     private LeaveChannelEvent fireLeaveChannelEvent() {
         return eventBus.post(new LeaveChannelEvent(chatter, channel, channel.policy(LeaveChannelPolicy.class)
             .orElse(LEAVE_CHANNEL_POLICY)));
-    }
-
-    private void fireLeftChannelEvent() {
-        eventBus.post(new ChatterLeftChannelEvent(chatter, channel));
     }
 
     /**

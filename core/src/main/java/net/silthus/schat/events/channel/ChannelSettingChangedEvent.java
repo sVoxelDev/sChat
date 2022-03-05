@@ -21,35 +21,27 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui.views.tabbed;
+package net.silthus.schat.events.channel;
 
-import lombok.NonNull;
-import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.identity.Identified;
-import net.silthus.schat.message.Message;
+import net.silthus.schat.events.SChatEvent;
+import net.silthus.schat.pointer.Setting;
+import net.silthus.schat.pointer.Settings;
 
-public class PrivateChannelTab extends ChannelTab implements Tab {
-
-    protected PrivateChannelTab(@NonNull TabbedChannelsView view, @NonNull Channel channel) {
-        super(view, channel);
-    }
-
-    @Override
-    public Component name() {
-        return channel().targets().stream()
-            .filter(target -> target instanceof Chatter)
-            .filter(target -> !target.equals(Chatter.empty()))
-            .filter(target -> !target.equals(view().chatter()))
-            .findFirst()
-            .map(target -> (Chatter) target)
-            .map(Identified::displayName)
-            .orElse(channel().displayName());
-    }
-
-    @Override
-    protected boolean isMessageDisplayed(Message message) {
-        return message.channels().contains(channel());
-    }
+/**
+ * The event is fired when a setting of a channel has changed.
+ *
+ * <p>This event is only fired if a setting changes using {@link Channel#set(Setting, Object)}.
+ * The {@link ChannelSettingsChanged} event is fired if all settings are replaced using {@link Channel#settings(Settings)}.</p>
+ *
+ * @param <V> the type of the setting
+ * @see ChannelSettingsChanged
+ * @since next
+ */
+public record ChannelSettingChangedEvent<V>(
+    Channel channel,
+    Setting<V> setting,
+    V oldValue,
+    V newValue
+) implements SChatEvent {
 }

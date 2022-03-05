@@ -25,27 +25,32 @@ package net.silthus.schat.ui.placeholder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Function;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextReplacementConfig;
+import net.silthus.schat.eventbus.Subscribe;
+import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.ui.format.Format;
+import net.silthus.schat.ui.format.MiniMessageFormat;
+import net.silthus.schat.ui.view.ViewConfig;
 
 public class Replacements {
 
-    private final List<Function<Message, TextReplacementConfig>> replacements = new ArrayList<>();
+    private final List<ReplacementProvider> replacementProviders = new ArrayList<>();
 
-    public void addMessageReplacement(Function<Message, TextReplacementConfig> replacement) {
-        replacements.add(replacement);
+    @Subscribe
+    public void onChannelMessage(SendChannelMessageEvent event) {
+        final Format format = event.channel().get(ViewConfig.FORMAT_CONFIG).messageFormat();
+        if (format instanceof MiniMessageFormat miniMessageFormat)
+            event.message().set(ReplacementProvider.REPLACED_MESSAGE_FORMAT, applyTo(event.message(), miniMessageFormat.format()));
     }
 
-    public Component applyTo(final Message message, final Component formatted) {
-        Component result = formatted;
-        for (TextReplacementConfig replacement : replacements.stream()
-            .map(fn -> fn.apply(message))
-            .filter(Objects::nonNull)
-            .toList()) {
-            result = result.replaceText(replacement);
+    public void addReplacementProvider(ReplacementProvider provider) {
+        this.replacementProviders.add(provider);
+    }
+
+    public String applyTo(final Message message, final String format) {
+        String result = format;
+        for (ReplacementProvider replacementProvider : replacementProviders) {
+            result = replacementProvider.replaceText(message, result);
         }
         return result;
     }

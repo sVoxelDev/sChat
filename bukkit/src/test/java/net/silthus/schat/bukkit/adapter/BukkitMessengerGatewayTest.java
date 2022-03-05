@@ -57,7 +57,7 @@ class BukkitMessengerGatewayTest extends BukkitTests {
         server = mock(Server.class);
         messenger = mock(Messenger.class);
         when(server.getMessenger()).thenReturn(messenger);
-        consumer = new MessagingServiceMock();
+        consumer = MessagingServiceMock.messengerMock();
         final SChatConfig config = mock(SChatConfig.class);
         when(config.get(ConfigKeys.DEBUG)).thenReturn(false);
         gateway = BukkitMessengerGateway.createBukkitMessengerGateway(mockPlugin, server, scheduler, consumer, config);

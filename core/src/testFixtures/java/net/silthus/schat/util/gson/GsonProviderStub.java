@@ -21,49 +21,24 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.channel;
+package net.silthus.schat.util.gson;
 
-import lombok.extern.java.Log;
+import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.eventbus.EventBus;
-import net.silthus.schat.events.channel.ChannelRegisteredEvent;
-import net.silthus.schat.repository.InMemoryRepository;
-import org.jetbrains.annotations.NotNull;
 
-class InMemoryChannelRepository extends InMemoryRepository<String, Channel> implements ChannelRepository {
+import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
 
-    private final EventBus eventBus;
+public class GsonProviderStub {
 
-    InMemoryChannelRepository(EventBus eventBus) {
-        this.eventBus = eventBus;
+    public static GsonProvider gsonProviderStub() {
+        return gsonProviderStub(createInMemoryChatterRepository(), createInMemoryChannelRepository(EventBus.empty()));
     }
 
-    @Override
-    public void add(@NotNull Channel channel) {
-        if (contains(channel.key()))
-            throw new DuplicateChannel(channel);
-        super.add(channel);
-        eventBus.post(new ChannelRegisteredEvent(channel));
-    }
-
-    @Log(topic = "sChat:ChannelRepository")
-    static final class Logging extends InMemoryChannelRepository {
-
-        Logging(EventBus eventBus) {
-            super(eventBus);
-        }
-
-        @Override
-        public void add(@NotNull Channel channel) {
-            super.add(channel);
-            log.info("Added Channel: " + channel);
-        }
-
-        @Override
-        public Channel remove(@NotNull String key) {
-            final Channel channel = super.remove(key);
-            if (channel != null)
-                log.info("Removed Channel: " + key);
-            return channel;
-        }
+    public static GsonProvider gsonProviderStub(ChatterRepository chatterRepository, ChannelRepository channelRepository) {
+        return GsonProvider.gsonProvider()
+            .registerChannelSerializer(channelRepository)
+            .registerChatterSerializer(chatterRepository);
     }
 }

@@ -52,9 +52,9 @@ class LeaveChannelCommandTest {
 
     @BeforeEach
     void setUp() {
+        eventBus = eventBusMock();
         chatter = randomChatter();
         channel = randomChannel();
-        eventBus = eventBusMock();
     }
 
     @AfterEach

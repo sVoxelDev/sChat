@@ -43,7 +43,10 @@ import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 @ConfigSerializable
 public class ViewConfig {
 
-    public static final net.silthus.schat.pointer.Setting<TabFormatConfig> FORMAT_CONFIG = net.silthus.schat.pointer.Setting.setting(TabFormatConfig.class, "format", new TabFormatConfig());
+    /**
+     * Controls the formatting of a channel tab.
+     */
+    public static final net.silthus.schat.pointer.Setting<TabFormatConfig> FORMAT_CONFIG = net.silthus.schat.pointer.Setting.dynamicSetting(TabFormatConfig.class, "format", TabFormatConfig::new);
 
     @Setting("height")
     private int height = 100;

@@ -39,7 +39,7 @@ class MessagingServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new MessagingServiceMock();
+        service = MessagingServiceMock.messengerMock();
     }
 
     @Test

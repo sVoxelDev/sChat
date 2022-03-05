@@ -23,13 +23,11 @@
  */
 package net.silthus.schat.bukkit.placeholderapi;
 
-import java.util.regex.Pattern;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextReplacementConfig;
+import net.silthus.schat.message.MessageSource;
 import net.silthus.schat.ui.placeholder.Replacements;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 public class PlaceholderApiIntegration {
 
@@ -40,19 +38,15 @@ public class PlaceholderApiIntegration {
     }
 
     public void init() {
-        replacements.addMessageReplacement(message -> {
-            final Player player = Bukkit.getPlayer(message.source().uniqueId());
-            if (player != null)
-                return replacePlaceholderAPIPlaceholders(player);
-            else
+        replacements.addReplacementProvider((message, text) -> {
+            if (message.source().equals(MessageSource.nil()))
                 return null;
+            else
+                return replacePlaceholderAPIPlaceholders(Bukkit.getOfflinePlayer(message.source().uniqueId()), text);
         });
     }
 
-    private TextReplacementConfig replacePlaceholderAPIPlaceholders(Player player) {
-        return TextReplacementConfig.builder()
-            .match(Pattern.compile("(%[a-zA-Z0-9_-]+%)"))
-            .replacement((matchResult, builder) -> Component.text(PlaceholderAPI.setPlaceholders(player, matchResult.group())))
-            .build();
+    private String replacePlaceholderAPIPlaceholders(OfflinePlayer player, String text) {
+        return PlaceholderAPI.setPlaceholders(player, text);
     }
 }

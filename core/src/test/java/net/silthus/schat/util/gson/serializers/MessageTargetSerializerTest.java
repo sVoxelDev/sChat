@@ -21,66 +21,70 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.util.gson;
+package net.silthus.schat.util.gson.serializers;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonPrimitive;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.chatter.ChatterMock;
+import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.message.MessageTarget;
+import net.silthus.schat.util.gson.GsonProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
-import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
+import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
+import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ChannelSerializerTest {
+class MessageTargetSerializerTest {
+
+    private final ChatterRepository chatterRepository = createInMemoryChatterRepository();
+    private final ChannelRepository channelRepository = createInMemoryChannelRepository(EventBus.empty());
 
     private Gson gson;
-    private ChannelRepository channelRepository;
 
     @BeforeEach
     void setUp() {
-        channelRepository = ChannelRepository.createInMemoryChannelRepository(EventBus.empty());
         gson = GsonProvider.gsonProvider()
+            .registerChatterSerializer(chatterRepository)
             .registerChannelSerializer(channelRepository)
-            .registerTargetsSerializer(createInMemoryChatterRepository())
             .prettyGson();
     }
 
     @Test
-    void serializes_channel_properties() {
-        final String json = gson.toJson(channelWith("test"));
-        assertThat(json).contains(
-            "\"key\": \"test\"",
-            "\"targets\": []",
-            "\"settings\":",
-            "\"join_permission\": \"schat.channel.test.join\"");
+    void chatter_is_serialized_into_prefixed_with_id() {
+        final ChatterMock chatter = randomChatter();
+        final String json = gson.toJson(chatter, MessageTarget.class);
+        assertThat(json).isEqualTo("\"chatter:" + chatter.uniqueId() + "\"");
     }
 
     @Test
-    void deserializes_channel_with_key_from_repository() {
+    void chatter_is_deserialized_into_chatter() {
+        final ChatterMock chatter = randomChatter();
+        chatterRepository.add(chatter);
+        final MessageTarget target = gson.fromJson("\"chatter:" + chatter.uniqueId() + "\"", MessageTarget.class);
+        assertThat(target).isInstanceOf(Chatter.class)
+            .isSameAs(chatter);
+    }
+
+    @Test
+    void channel_is_serialized_into_prefixed_with_key() {
+        final Channel channel = channelWith("test");
+        final String json = gson.toJson(channel, MessageTarget.class);
+        assertThat(json).isEqualTo("\"channel:test\"");
+    }
+
+    @Test
+    void channel_is_deserialized_from_repository() {
         final Channel channel = channelWith("test");
         channelRepository.add(channel);
-
-        final Channel result = gson.fromJson(new JsonPrimitive("test"), Channel.class);
-        assertThat(result).isNotNull().isSameAs(channel);
-    }
-
-    @Test
-    void deserializes_unknown_channel_to_null() {
-        final Channel channel = gson.fromJson(new JsonPrimitive("foobar"), Channel.class);
-        assertThat(channel).isNull();
-    }
-
-    @Test
-    void deserializes_full_channel_from_repository_if_existant() {
-        final Channel channel = channelWith("test").set(GLOBAL, true);
-        channelRepository.add(channel);
-
-        final Channel result = gson.fromJson(JObject.json().add("key", "test").create(), Channel.class);
-        assertThat(result).isSameAs(channel);
+        final MessageTarget target = gson.fromJson("\"channel:test\"", MessageTarget.class);
+        assertThat(target).isInstanceOf(Channel.class)
+            .isSameAs(channel);
     }
 }

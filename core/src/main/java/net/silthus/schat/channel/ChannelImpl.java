@@ -38,6 +38,10 @@ import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.commands.SendMessageResult;
 import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.events.channel.ChannelSettingChangedEvent;
+import net.silthus.schat.events.channel.ChannelSettingsChanged;
+import net.silthus.schat.events.channel.ChannelTargetAdded;
+import net.silthus.schat.events.channel.ChannelTargetRemoved;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageTarget;
@@ -83,10 +87,10 @@ final class ChannelImpl implements Channel {
     private static final String VALID_KEY_PATTERN = "^[a-zA-Z0-9_-]+$";
 
     private final String key;
-    private final Targets targets;
     private final transient Messages messages = new Messages();
     private final transient EventBus eventBus;
     private final transient Map<Class<? extends Policy>, Policy> policies;
+    private @NonNull Targets targets;
     private @NonNull Settings settings;
 
     private ChannelImpl(Builder builder) {
@@ -102,10 +106,20 @@ final class ChannelImpl implements Channel {
 
     @Override
     public @NotNull ChannelImpl settings(@NonNull Settings settings) {
+        final Settings oldSettings = this.settings();
         this.settings = settings.toBuilder()
             .withStatic(KEY, key())
             .withStatic(DISPLAY_NAME, displayName())
             .create();
+        eventBus.post(new ChannelSettingsChanged(this, oldSettings, this.settings));
+        return this;
+    }
+
+    @Override
+    public @NotNull <V> Channel set(@NonNull Setting<V> setting, @Nullable V value) {
+        final V oldValue = get(setting);
+        Channel.super.set(setting, value);
+        eventBus.post(new ChannelSettingChangedEvent<>(this, setting, oldValue, value));
         return this;
     }
 
@@ -125,14 +139,22 @@ final class ChannelImpl implements Channel {
     }
 
     @Override
-    public void addTarget(@NonNull MessageTarget user) {
-        targets.add(user);
+    public @NotNull Channel targets(@NonNull Targets targets) {
+        this.targets = Targets.copyOf(targets);
+        return this;
+    }
+
+    @Override
+    public void addTarget(@NonNull MessageTarget target) {
+        if (targets.add(target))
+            eventBus.post(new ChannelTargetAdded(this, target));
     }
 
     @Override
     public void removeTarget(@NonNull MessageTarget target) {
         if (isNot(PRIVATE))
-            targets.remove(target);
+            if (targets.remove(target))
+                eventBus.post(new ChannelTargetRemoved(this, target));
     }
 
     @Override

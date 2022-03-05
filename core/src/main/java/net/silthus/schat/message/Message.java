@@ -32,15 +32,15 @@ import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.commands.SendMessageResult;
 import net.silthus.schat.pointer.Configurable;
+import net.silthus.schat.pointer.Configured;
 import net.silthus.schat.pointer.Pointer;
-import net.silthus.schat.pointer.Setting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import static net.silthus.schat.pointer.Pointer.pointer;
 
-public sealed interface Message extends Configurable<Message> permits MessageImpl {
+public sealed interface Message extends Configurable<Message>, Comparable<Message> permits MessageImpl {
 
     Pointer<UUID> ID = pointer(UUID.class, "id");
     Pointer<Instant> TIMESTAMP = pointer(Instant.class, "timestamp");
@@ -48,8 +48,6 @@ public sealed interface Message extends Configurable<Message> permits MessageImp
     Pointer<Component> TEXT = pointer(Component.class, "text");
     Pointer<Channel> CHANNEL = pointer(Channel.class, "channel");
     Pointer<Type> TYPE = pointer(Type.class, "type");
-
-    Setting<Component> FORMATTED = Setting.setting(Component.class, "formatted", null);
 
     static @NotNull Draft message() {
         return MessageImpl.builder();
@@ -83,7 +81,7 @@ public sealed interface Message extends Configurable<Message> permits MessageImp
 
     @NotNull Draft copy();
 
-    sealed interface Draft permits MessageImpl.Draft {
+    sealed interface Draft extends Configured.Builder<Draft> permits MessageImpl.Draft {
 
         @NotNull UUID id();
 
@@ -98,6 +96,8 @@ public sealed interface Message extends Configurable<Message> permits MessageImp
         @NotNull Draft source(@Nullable MessageSource identity);
 
         @NotNull Draft to(@NonNull MessageTarget target);
+
+        @NotNull Draft targets(Targets targets);
 
         @NotNull @Unmodifiable Collection<MessageTarget> targets();
 

@@ -74,6 +74,11 @@ view:
 The following section controls how private chats are formatted.  
 All config options go under `view.private_chat_format` section.
 
+!!! warning
+    The private chat formatting is **not reloadable**.  
+    You must restart your server for the changes to take effect.  
+    The formatting configs of channels is reloadable.
+
 ```yaml
 view:
   private_chat_format:

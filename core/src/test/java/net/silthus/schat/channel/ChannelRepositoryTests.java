@@ -24,7 +24,7 @@
 package net.silthus.schat.channel;
 
 import net.silthus.schat.eventbus.EventBusMock;
-import net.silthus.schat.events.channel.RegisteredChannelEvent;
+import net.silthus.schat.events.channel.ChannelRegisteredEvent;
 import net.silthus.schat.repository.Repository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,7 +83,7 @@ class ChannelRepositoryTests {
 
         @Test
         void RegisteredChannelEvent_is_fired() {
-            eventBus.assertEventFired(RegisteredChannelEvent.class);
+            eventBus.assertEventFired(ChannelRegisteredEvent.class);
         }
 
         @Nested

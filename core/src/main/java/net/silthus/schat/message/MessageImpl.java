@@ -37,6 +37,7 @@ import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.commands.SendMessageCommand;
 import net.silthus.schat.commands.SendMessageResult;
+import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.pointer.Settings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +59,7 @@ final class MessageImpl implements Message {
     private final UUID id;
     private final Instant timestamp;
     private final MessageSource source;
-    private final transient Targets targets;
+    private final Targets targets;
     private final Component text;
     private final Type type;
     private final Settings settings;
@@ -70,7 +71,7 @@ final class MessageImpl implements Message {
         this.targets = unmodifiable(copyOf(draft.targets));
         this.text = draft.text;
         this.type = draft.type;
-        this.settings = Settings.settingsBuilder()
+        this.settings = draft.settings
             .withStatic(Message.ID, id)
             .withStatic(Message.TIMESTAMP, timestamp)
             .withStatic(Message.SOURCE, source)
@@ -95,6 +96,11 @@ final class MessageImpl implements Message {
         return new Draft(this);
     }
 
+    @Override
+    public int compareTo(@NotNull Message o) {
+        return timestamp().compareTo(o.timestamp());
+    }
+
     @NotNull
     private static Stream<Channel> filterAndMapChannels(Stream<MessageTarget> stream) {
         return stream
@@ -112,6 +118,7 @@ final class MessageImpl implements Message {
         private Targets targets = new Targets();
         private Component text = Component.empty();
         private Type type = Type.SYSTEM;
+        private Settings.Builder settings = Settings.settingsBuilder();
 
         private Draft() {
         }
@@ -145,6 +152,12 @@ final class MessageImpl implements Message {
         }
 
         @Override
+        public @NotNull Draft targets(Targets targets) {
+            this.targets = copyOf(targets);
+            return this;
+        }
+
+        @Override
         public @NotNull @Unmodifiable Collection<MessageTarget> targets() {
             return Collections.unmodifiableCollection(targets);
         }
@@ -158,6 +171,18 @@ final class MessageImpl implements Message {
         @Override
         public @NotNull @Unmodifiable Collection<Channel> channels() {
             return filterAndMapChannels(targets.stream()).toList();
+        }
+
+        @Override
+        public @NotNull <V> Message.Draft set(@NonNull Setting<V> setting, @Nullable V value) {
+            settings.withStatic(setting, value);
+            return this;
+        }
+
+        @Override
+        public @NotNull Message.Draft settings(@NonNull Settings settings) {
+            this.settings = settings.toBuilder();
+            return this;
         }
 
         @Override

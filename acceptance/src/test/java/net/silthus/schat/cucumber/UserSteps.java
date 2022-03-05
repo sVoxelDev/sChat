@@ -31,6 +31,7 @@ import io.cucumber.java.en.When;
 import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.cucumber.models.User;
 import net.silthus.schat.platform.sender.SenderMock;
@@ -40,8 +41,11 @@ import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.identity.Identity.identity;
 import static net.silthus.schat.platform.locale.Messages.JOINED_CHANNEL;
 import static net.silthus.schat.platform.locale.Messages.JOIN_CHANNEL_ERROR;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserSteps {
+
+    private static final PlainTextComponentSerializer SERIALIZER = PlainTextComponentSerializer.plainText();
 
     private final Context context;
 
@@ -59,7 +63,7 @@ public class UserSteps {
         return context.users().computeIfAbsent(user, this::createUser);
     }
 
-    @ParameterType(value = "my view|(the view of (?<user>[a-zA-Z0-9]+))")
+    @ParameterType(value = "my view|the view of (?<user>[a-zA-Z0-9]+)")
     public View view(String user) {
         if (user == null)
             return me().view();
@@ -122,7 +126,9 @@ public class UserSteps {
     }
 
     @Then("{view} shows the message")
-    public void theMessageIsShownInASeparateTab(View view) {
-        view.render().contains(context.lastMessageText());
+    public void viewShowsMessage(View view) {
+        final String renderedView = SERIALIZER.serialize(view.render()).trim();
+        final String text = SERIALIZER.serialize(context.lastMessageText());
+        assertThat(renderedView).contains(text);
     }
 }

@@ -166,11 +166,5 @@ public class MessagingService implements Messenger, IncomingMessageConsumer {
                 log.info("PluginMessage(" + message + ") - NOT processed");
             return processed;
         }
-
-        @Override
-        public boolean consumeIncomingMessageAsString(@NonNull String encodedString) {
-            log.info("Decoding Incoming Message: " + encodedString);
-            return super.consumeIncomingMessageAsString(encodedString);
-        }
     }
 }

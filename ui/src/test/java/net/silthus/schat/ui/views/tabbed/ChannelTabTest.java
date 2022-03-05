@@ -23,31 +23,37 @@
  */
 package net.silthus.schat.ui.views.tabbed;
 
+import lombok.SneakyThrows;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelHelper;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.ui.view.ViewConfig;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.message.MessageHelper.randomMessage;
-import static net.silthus.schat.ui.view.ViewConfig.FORMAT_CONFIG;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ChannelTabTest {
 
-    private final @NotNull ChatterMock chatter = ChatterMock.randomChatter();
-    private final Channel channel = ChannelHelper.randomChannel();
-    private final ChannelTab tab = new ChannelTab(new TabbedChannelsView(chatter, new ViewConfig()), channel, channel.get(FORMAT_CONFIG));
     private final EventBusMock eventBus = EventBusMock.eventBusMock();
+    private ChatterMock chatter;
+    private Channel channel;
+    private ChannelTab tab;
 
     @BeforeEach
     void setUp() {
-        chatter.join(channel);
+        chatter = ChatterMock.randomChatter();
+        channel = ChannelHelper.randomChannel();
+
+        TabbedChannelsView view = new TabbedChannelsView(chatter, new ViewConfig());
+        eventBus.register(view);
+
+        chatter.activeChannel(channel);
+        tab = view.tab(channel).get();
     }
 
     @AfterEach
@@ -55,9 +61,58 @@ class ChannelTabTest {
         eventBus.close();
     }
 
+    @SneakyThrows
     private void sendMessages(int amount) {
         for (int i = 0; i < amount; i++) {
             channel.sendMessage(randomMessage());
+            Thread.sleep(1L);
+        }
+    }
+
+    @Nested class unread_counter {
+        @Test
+        void given_no_messages_then_unread_counter_is_zero_() {
+            assertThat(tab.unreadCount()).isZero();
+        }
+
+        @Nested class given_tab_is_inactive {
+            @BeforeEach
+            void setUp() {
+                chatter.activeChannel(null);
+            }
+
+            @Test
+            void unread_counter_increases() {
+                sendMessages(2);
+                assertThat(tab.unreadCount()).isEqualTo(2);
+                sendMessages(3);
+                assertThat(tab.unreadCount()).isEqualTo(5);
+                assertThat(tab.isUnread()).isTrue();
+            }
+
+            @Test
+            void when_channel_becomes_active_unread_counter_resets() {
+                sendMessages(3);
+                chatter.activeChannel(channel);
+                assertThat(tab.unreadCount()).isZero();
+                chatter.activeChannel(null);
+                sendMessages(2);
+                assertThat(tab.unreadCount()).isEqualTo(2);
+            }
+        }
+
+        @Nested class given_tab_is_active {
+            @BeforeEach
+            void setUp() {
+                chatter.activeChannel(channel);
+            }
+
+            @Test
+            void then_unread_counter_does_not_increase() {
+                sendMessages(3);
+                assertThat(tab.unreadCount()).isZero();
+                assertThat(tab.isUnread()).isFalse();
+            }
         }
     }
 

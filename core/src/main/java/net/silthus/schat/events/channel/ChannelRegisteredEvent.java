@@ -21,39 +21,16 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui.view;
+package net.silthus.schat.events.channel;
 
-import net.kyori.adventure.text.Component;
-import net.silthus.schat.eventbus.EventBus;
-import net.silthus.schat.eventbus.EventListener;
-import net.silthus.schat.events.message.SendChannelMessageEvent;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.ui.placeholder.Replacements;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.events.SChatEvent;
 
-import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
-
-public class ViewController implements EventListener {
-
-    private final Replacements replacements;
-
-    public ViewController(Replacements replacements) {
-        this.replacements = replacements;
-    }
-
-    @Override
-    public void bind(EventBus bus) {
-        bus.on(SendChannelMessageEvent.class, this::handleMessage);
-    }
-
-    private void handleMessage(SendChannelMessageEvent event) {
-        if (event.channel().is(PRIVATE))
-            return;
-        final Component formatted = formatMessage(event);
-        event.message().set(Message.FORMATTED, replacements.applyTo(event.message(), formatted));
-    }
-
-    private Component formatMessage(SendChannelMessageEvent event) {
-        return event.channel().get(ViewConfig.FORMAT_CONFIG)
-            .messageFormat().format(View.empty(), event.message());
-    }
+/**
+ * The event is fired when a new channel is added to the {@link ChannelRepository}.
+ *
+ * @since next
+ */
+public record ChannelRegisteredEvent(Channel channel) implements SChatEvent {
 }

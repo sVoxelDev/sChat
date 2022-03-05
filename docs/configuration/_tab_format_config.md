@@ -38,6 +38,66 @@ Controls the decoration of tab when it is **inactive**. Use `null` to apply no d
 inactive_decoration: null
 ```
 
+#### `highlight_unread`
+
+[:octicons-milestone-24: next][next] · `boolean` · :octicons-pin-24: `true` · :octicons-sync-24:
+
+Set to `false` to disable all unread message indicators on the tab.
+
+```yaml
+highlight_unread: false
+```
+
+#### `unread_color`
+
+[:octicons-milestone-24: next][next] · [`color`][color] · :octicons-pin-24: `white` · :octicons-sync-24:
+
+Controls the color of the tab when it contains **unread messages**.
+
+```yaml
+unread_color: "blue"
+```
+
+#### `unread_decoration`
+
+[:octicons-milestone-24: next][next] · [`decoration`][decoration] · :octicons-pin-24: `italic` · :octicons-sync-24:
+
+Controls the decoration of tab when it contains **unread messages**. Use `null` to apply no decoration.
+
+```yaml
+unread_decoration: italic
+```
+
+#### `show_unread_count`
+
+[:octicons-milestone-24: next][next] · `boolean` · :octicons-pin-24: `true` · :octicons-sync-24:
+
+Set to `false` to hide the unread counter after the channel name.
+
+```yaml
+show_unread_count: false
+```
+
+#### `unread_count_color`
+
+[:octicons-milestone-24: next][next] · [`color`][color] · :octicons-pin-24: `red` · :octicons-sync-24:
+
+Controls the color of the unread counter. Only applicable if `show_unread_count: true` is set.
+
+```yaml
+unread_count_color: "red"
+```
+
+#### `unread_count_decoration`
+
+[:octicons-milestone-24: next][next] · [`decoration`][decoration] · :octicons-pin-24: `null` · :octicons-sync-24:
+
+Controls the decoration of the unread counter. Only applicable if `show_unread_count: true` is set.
+
+```yaml
+unread_count_decoration: null
+```
+
 #### `message_format`
 
 [:octicons-milestone-24: next][next] · [`minimessage`][minimessage] · :octicons-sync-24:
@@ -45,8 +105,7 @@ inactive_decoration: null
 The message format controls how message are displayed for the given channel.  
 In addition to the [PlacerholderAPI][placeholderapi], the following placeholders are supported:
 
-!!! tip
-    With sChat you have something completly new: **Tabbed Chat Channels**  
+!!! tip With sChat you have something completly new: **Tabbed Chat Channels**  
     This gives you the power to declutter your chat and remove the now unneeded `[Channel]` prefix from the messages.
 
 | Placeholder | Description | Example | Since |

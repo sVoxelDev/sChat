@@ -29,10 +29,12 @@ import javax.inject.Inject;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.channel.ChannelHelper;
 import net.silthus.schat.channel.ChannelSettings;
+import net.silthus.schat.ui.format.MiniMessageFormat;
 
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
 import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
+import static net.silthus.schat.ui.view.ViewConfig.FORMAT_CONFIG;
 
 public class ChannelSteps {
 
@@ -49,7 +51,7 @@ public class ChannelSteps {
     }
 
     private Channel createChannel(String key) {
-        return context.addChannelToAllServers(Channel.createChannel(key));
+        return context.primaryServer().addChannel(Channel.createChannel(key));
     }
 
     @ParameterType("[a-zA-Z]+")
@@ -65,5 +67,10 @@ public class ChannelSteps {
     @Given("a {setting} channel {channel}")
     public void configureChannel(ChannelHelper.ConfiguredSetting<?> setting, Channel channel) {
         setting.applyTo(channel);
+    }
+
+    @Given("the channel {channel} has a custom format")
+    public void theChannelGlobalHasACustomFormat(Channel channel) {
+        channel.get(FORMAT_CONFIG).messageFormat(new MiniMessageFormat("<source_display_name>: <text>"));
     }
 }

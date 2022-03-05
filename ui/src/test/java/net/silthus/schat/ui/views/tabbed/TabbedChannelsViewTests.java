@@ -40,7 +40,6 @@ import net.silthus.schat.ui.view.ViewConfig;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -60,10 +59,10 @@ import static net.silthus.schat.chatter.ChatterMock.randomChatter;
 import static net.silthus.schat.commands.CreatePrivateChannelCommand.createPrivateChannel;
 import static net.silthus.schat.commands.SendPrivateMessageCommand.sendPrivateMessage;
 import static net.silthus.schat.identity.Identity.identity;
-import static net.silthus.schat.message.Message.FORMATTED;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static net.silthus.schat.message.MessageSource.of;
+import static net.silthus.schat.ui.placeholder.ReplacementProvider.REPLACED_MESSAGE_FORMAT;
 import static net.silthus.schat.ui.view.ViewConfig.FORMAT_CONFIG;
 import static net.silthus.schat.ui.views.Views.tabbedChannels;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -220,7 +219,7 @@ class TabbedChannelsViewTests {
         @BeforeEach
         void setUp() {
             final Message message = message().source(randomChatter()).create();
-            message.set(FORMATTED, text("FORMATTED"));
+            message.set(REPLACED_MESSAGE_FORMAT, "FORMATTED");
             sendMessage(message);
         }
 
@@ -261,7 +260,7 @@ class TabbedChannelsViewTests {
             class and_different_format_is_used {
                 @BeforeEach
                 void setUp() {
-                    channel.get(FORMAT_CONFIG).activeColor(RED);
+                    channel.set(FORMAT_CONFIG, new TabFormatConfig().activeColor(RED));
                 }
 
                 @Test
@@ -330,6 +329,47 @@ class TabbedChannelsViewTests {
         }
     }
 
+    @Nested class given_private_and_public_channel {
+        private Channel channel;
+        private ChatterMock target;
+        private Channel privateChannel;
+
+        @BeforeEach
+        void setUp() {
+            target = chatterMock(Identity.identity("target"));
+            channel = createChannel("public");
+            target.join(channel);
+            chatter.join(channel);
+            privateChannel = createPrivateChannel(chatter, target).channel();
+            chatter.activeChannel(privateChannel);
+            target.activeChannel(channel);
+        }
+
+        @Test
+        void message_sent_to_public_channel_is_not_shown_in_private_channel() {
+            target.message("in public").to(channel).send();
+            assertTextDoesNotContain("in public");
+        }
+
+        @Nested class given_chatter_leaves_private_chat {
+            @BeforeEach
+            void setUp() {
+                chatter.leave(privateChannel);
+            }
+
+            @Test
+            void then_private_chat_is_hidden() {
+                assertTextDoesNotContain("target");
+            }
+
+            @Test
+            void when_new_message_is_sent_to_inactive_private_chat_then_private_chat_is_shown() {
+                target.message("hi").to(privateChannel).send();
+                assertTextContains("target");
+            }
+        }
+    }
+
     @Nested
     class given_two_channels {
 
@@ -376,7 +416,7 @@ class TabbedChannelsViewTests {
                     assertTextRenders("""
                         System
                         Bob: one
-                        | ❌one | ❌two |""");
+                        | ❌one | ❌two₂ |""");
                 }
 
                 @Test
@@ -385,9 +425,30 @@ class TabbedChannelsViewTests {
                 }
 
                 @Test
-                @Disabled
                 void then_channel_two_has_unread_indicator() {
                     assertColorOnlyViewContains("<white>two</white>");
+                }
+
+                @Test
+                void unread_counter_is_shown() {
+                    assertColorOnlyViewContains("<red>₂</red>");
+                }
+
+                @Test
+                void given_no_unread_messages_channel_one_has_no_unread_counter() {
+                    assertViewContains("<underlined><green>one</green></underlined>");
+                }
+
+                @Test
+                void given_highlight_unread_is_false_then_unread_indicator_is_hidden() {
+                    channelTwo.set(FORMAT_CONFIG, new TabFormatConfig().highlightUnread(false));
+                    assertColorOnlyViewContains("<gray>two</gray>");
+                }
+
+                @Test
+                void given_show_unread_counter_is_false_then_counter_is_hidden() {
+                    channelTwo.set(FORMAT_CONFIG, new TabFormatConfig().showUnreadCount(false));
+                    assertViewDoesNotContain("<red>₂</red>");
                 }
             }
         }
@@ -443,11 +504,11 @@ class TabbedChannelsViewTests {
                 "zzz",
                 set(PRIORITY, 10)
             );
-            channel.get(FORMAT_CONFIG).messageFormat((v, message) -> message.get(Message.SOURCE)
+            channel.set(FORMAT_CONFIG, new TabFormatConfig().messageFormat((v, message) -> message.get(Message.SOURCE)
                 .orElse(MessageSource.nil())
                 .displayName()
                 .append(text(": ").append(message.getOrDefault(Message.TEXT, empty())))
-            );
+            ));
             chatter.activeChannel(channel);
             sendMessage("No Source!");
             sendMessageWithSource("Player", "Hey");
@@ -460,7 +521,7 @@ class TabbedChannelsViewTests {
                 No Source!
                 Player: Hey
                 Player2: Hello
-                | <red><click:run_command:'/channel leave zzz'><hover:show_text:"<lang:schat.hover.leave-channel:'<gray>zzz'>">❌<underlined><green>zzz</green></underlined></hover></click></red> | <red><click:run_command:'/channel leave aaa'><hover:show_text:"<lang:schat.hover.leave-channel:'<gray>aaa'>">❌<gray><click:run_command:'/channel join aaa'><hover:show_text:"<gray><lang:schat.hover.join-channel:'aaa'>">aaa</hover></click></gray></hover></click></red> |""");
+                | <red><click:run_command:'/channel leave zzz'><hover:show_text:"<lang:schat.hover.leave-channel:'<gray>zzz'>">❌<underlined><green>zzz</green></underlined></hover></click></red> | <red><click:run_command:'/channel leave aaa'><hover:show_text:"<lang:schat.hover.leave-channel:'<gray>aaa'>">❌<italic><white><click:run_command:'/channel join aaa'><hover:show_text:"<gray><lang:schat.hover.join-channel:'aaa'>">aaa</hover></click></white></italic><red>₃</red></hover></click></red> |""");
         }
     }
 

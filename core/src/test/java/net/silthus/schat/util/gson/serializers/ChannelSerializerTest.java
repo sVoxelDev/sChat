@@ -21,52 +21,55 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui;
+package net.silthus.schat.util.gson.serializers;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonPrimitive;
 import net.silthus.schat.channel.Channel;
-import net.silthus.schat.eventbus.EventBusMock;
-import net.silthus.schat.message.Message;
-import net.silthus.schat.ui.format.MiniMessageFormat;
-import net.silthus.schat.ui.view.ViewConfig;
-import net.silthus.schat.ui.views.tabbed.TabFormatConfig;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.AfterEach;
+import net.silthus.schat.channel.ChannelRepository;
+import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.util.gson.GsonProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
-import static net.silthus.schat.eventbus.EventBusMock.eventBusMock;
-import static net.silthus.schat.message.Message.message;
-import static net.silthus.schat.ui.placeholder.ReplacementProvider.REPLACED_MESSAGE_FORMAT;
-import static net.silthus.schat.util.gson.GsonProvider.gsonProvider;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ViewModuleTest {
+class ChannelSerializerTest {
 
-    private EventBusMock eventBus;
+    private Gson gson;
+    private ChannelRepository channelRepository;
 
     @BeforeEach
     void setUp() {
-        eventBus = eventBusMock();
-        final ViewModule viewModule = new ViewModule(new ViewConfig(), eventBus, gsonProvider());
-        viewModule.init();
-        viewModule.replacements().addReplacementProvider((message, text) -> text.replace("%test%", "success"));
-    }
-
-    @AfterEach
-    void tearDown() {
-        eventBus.close();
-    }
-
-    @NotNull
-    private Message sendMessage(Channel channel) {
-        return message("Hi there").to(channel).send();
+        channelRepository = ChannelRepository.createInMemoryChannelRepository(EventBus.empty());
+        gson = GsonProvider.gsonProvider()
+            .registerChannelSerializer(channelRepository)
+            .prettyGson();
     }
 
     @Test
-    void on_sendChannelMessage_event_message_is_rendered_and_set() {
-        final Message message = sendMessage(channelWith(ViewConfig.FORMAT_CONFIG, new TabFormatConfig().messageFormat(new MiniMessageFormat("%test%: <text>"))));
-        assertThat(message.get(REPLACED_MESSAGE_FORMAT)).isEqualTo("success: <text>");
+    void serializes_channel_properties() {
+        final String json = gson.toJson(channelWith("test"));
+        assertThat(json).contains(
+            "\"key\": \"test\"",
+            "\"targets\": []",
+            "\"settings\":",
+            "\"join_permission\": \"schat.channel.test.join\"");
     }
 
+    @Test
+    void deserializes_channel_with_key_from_repository() {
+        final Channel channel = channelWith("test");
+        channelRepository.add(channel);
+
+        final Channel result = gson.fromJson(new JsonPrimitive("test"), Channel.class);
+        assertThat(result).isNotNull().isSameAs(channel);
+    }
+
+    @Test
+    void deserializes_unknown_channel_to_null() {
+        final Channel channel = gson.fromJson(new JsonPrimitive("foobar"), Channel.class);
+        assertThat(channel).isNull();
+    }
 }

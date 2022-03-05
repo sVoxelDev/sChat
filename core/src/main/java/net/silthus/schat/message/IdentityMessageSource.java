@@ -39,7 +39,7 @@ final class IdentityMessageSource implements MessageSource {
     static final IdentityMessageSource NIL = new IdentityMessageSource(Identity.nil());
 
     private final Identity identity;
-    private final Pointers pointers;
+    private final transient Pointers pointers;
 
     IdentityMessageSource(Identity identity) {
         this.identity = identity;

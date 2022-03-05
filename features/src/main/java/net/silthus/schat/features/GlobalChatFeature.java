@@ -23,55 +23,86 @@
  */
 package net.silthus.schat.features;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.eventbus.EventBus;
-import net.silthus.schat.eventbus.EventListener;
+import net.silthus.schat.eventbus.Subscribe;
+import net.silthus.schat.events.channel.ChatterJoinedChannelEvent;
 import net.silthus.schat.events.message.SendChannelMessageEvent;
+import net.silthus.schat.events.message.SendGlobalMessageEvent;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.messenger.Messenger;
 import net.silthus.schat.messenger.PluginMessage;
 
 import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
 
-public class GlobalChatFeature implements EventListener {
+public class GlobalChatFeature {
 
+    private final EventBus eventBus;
     private final Messenger messenger;
 
-    public GlobalChatFeature(Messenger messenger) {
+    public GlobalChatFeature(EventBus eventBus, Messenger messenger) {
+        this.eventBus = eventBus;
         this.messenger = messenger;
-        messenger.registerMessageType(GlobalChannelPluginMessage.class);
+
+        messenger.registerMessageType(SendGlobalMessage.class);
+        messenger.registerMessageType(ChatterJoinedChannel.class);
+        eventBus.register(this);
     }
 
-    @Override
-    public void bind(EventBus bus) {
-        bus.on(SendChannelMessageEvent.class, this::onChannelMessage);
-    }
-
-    private void onChannelMessage(SendChannelMessageEvent event) {
+    @Subscribe
+    protected void onChannelMessage(SendChannelMessageEvent event) {
         if (event.channel().is(GLOBAL))
-            messenger.sendPluginMessage(new GlobalChannelPluginMessage(event.channel(), event.message()));
+            sendGlobalMessage(event.channel(), event.message());
+    }
+
+    @Subscribe
+    protected void onChatterJoined(ChatterJoinedChannelEvent event) {
+        messenger.sendPluginMessage(new ChatterJoinedChannel(event.chatter(), event.channel()));
+    }
+
+    private void sendGlobalMessage(Channel channel, Message message) {
+        final SendGlobalMessageEvent event = eventBus.post(new SendGlobalMessageEvent(channel, message));
+        if (event.isNotCancelled())
+            messenger.sendPluginMessage(new SendGlobalMessage(event.message()));
     }
 
     @Getter
     @Accessors(fluent = true)
     @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-    public static final class GlobalChannelPluginMessage extends PluginMessage {
-        private final Channel channel;
+    public static final class SendGlobalMessage extends PluginMessage {
         private final Message message;
 
-        public GlobalChannelPluginMessage(Channel channel, Message message) {
-            super();
-            this.channel = channel;
+        public SendGlobalMessage(Message message) {
             this.message = message;
         }
 
         @Override
         public void process() {
-            channel.updateTargets();
-            message.copy().to(channel).send();
+            message.send();
+        }
+    }
+
+    @Getter
+    @Setter
+    @Accessors(fluent = true)
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
+    public static final class ChatterJoinedChannel extends PluginMessage {
+
+        private Chatter chatter;
+        private Channel channel;
+
+        @Override
+        public void process() {
+            chatter.join(channel);
         }
     }
 }

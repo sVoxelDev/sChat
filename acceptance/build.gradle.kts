@@ -19,6 +19,8 @@ dependencies {
 
     testImplementation(libs.javax.inject)
     testImplementation(libs.guice)
+    testImplementation(libs.configurate.core)
+    testImplementation(libs.adventure.plain)
 }
 
 cucumber {

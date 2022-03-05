@@ -37,6 +37,8 @@ import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.eventbus.Subscribe;
+import net.silthus.schat.events.channel.ChannelSettingChangedEvent;
+import net.silthus.schat.events.channel.ChannelSettingsChanged;
 import net.silthus.schat.events.channel.ChatterJoinedChannelEvent;
 import net.silthus.schat.events.channel.ChatterLeftChannelEvent;
 import net.silthus.schat.events.chatter.ChatterChangedActiveChannelEvent;
@@ -47,6 +49,7 @@ import net.silthus.schat.ui.util.ViewHelper;
 import net.silthus.schat.ui.view.View;
 import net.silthus.schat.ui.view.ViewConfig;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static net.kyori.adventure.text.Component.join;
 import static net.kyori.adventure.text.Component.newline;
@@ -54,7 +57,6 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.JoinConfiguration.newlines;
 import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 import static net.silthus.schat.pointer.Setting.setting;
-import static net.silthus.schat.ui.view.ViewConfig.FORMAT_CONFIG;
 
 @Getter
 @Accessors(fluent = true)
@@ -74,7 +76,19 @@ public class TabbedChannelsView implements View {
     public TabbedChannelsView(Chatter chatter, ViewConfig config) {
         this.chatter = chatter;
         this.config = config;
-        chatter.channels().forEach(channel -> addTab(new ChannelTab(this, channel, channel.get(FORMAT_CONFIG))));
+        chatter.channels().forEach(channel -> addTab(new ChannelTab(this, channel)));
+        update();
+    }
+
+    @Subscribe
+    protected void onSettingsChange(ChannelSettingsChanged event) {
+        tab(event.channel()).ifPresent(ChannelTab::refresh);
+        update();
+    }
+
+    @Subscribe
+    protected void onSettingChange(ChannelSettingChangedEvent<?> event) {
+        tab(event.channel()).ifPresent(ChannelTab::refresh);
         update();
     }
 
@@ -98,6 +112,7 @@ public class TabbedChannelsView implements View {
     protected void onChangeChannel(ChatterChangedActiveChannelEvent event) {
         if (isNotApplicable(event.chatter()))
             return;
+        tab(event.newChannel()).ifPresent(ChannelTab::activate);
         update();
     }
 
@@ -105,6 +120,7 @@ public class TabbedChannelsView implements View {
     protected void onMessage(ChatterReceivedMessageEvent event) {
         if (isNotApplicable(event.chatter()))
             return;
+        tabs().values().forEach(tab -> tab.onReceivedMessage(event.message()));
         update();
     }
 
@@ -135,7 +151,7 @@ public class TabbedChannelsView implements View {
     private Component renderSystemMessages() {
         return join(newlines(), chatter().messages().stream()
             .filter(Message.IS_SYSTEM_MESSAGE)
-            .map(message -> message.getOrDefault(Message.FORMATTED, config.systemMessageFormat().format(this, message)))
+            .map(message -> ViewHelper.formatMessage(this, message, config.systemMessageFormat()))
             .toList()
         );
     }
@@ -150,9 +166,9 @@ public class TabbedChannelsView implements View {
 
     private void addTab(Channel channel) {
         if (channel.is(PRIVATE))
-            addTab(new PrivateChannelTab(this, channel, config().privateChatFormat()));
+            addTab(new PrivateChannelTab(this, channel));
         else
-            addTab(new ChannelTab(this, channel, channel.get(FORMAT_CONFIG)));
+            addTab(new ChannelTab(this, channel));
     }
 
     private void addTab(ChannelTab tab) {
@@ -163,7 +179,9 @@ public class TabbedChannelsView implements View {
         tabs.remove(channel);
     }
 
-    private Optional<ChannelTab> tab(Channel channel) {
+    protected Optional<ChannelTab> tab(@Nullable Channel channel) {
+        if (channel == null)
+            return Optional.empty();
         return Optional.ofNullable((ChannelTab) tabs.get(channel));
     }
 
@@ -172,7 +190,9 @@ public class TabbedChannelsView implements View {
     }
 
     private int blankLineCount() {
-        return tabs.values().stream().map(Tab::length).min(Comparator.naturalOrder())
-            .orElse(config.height());
+        return config.height() - tabs.values().stream()
+            .map(Tab::length)
+            .min(Comparator.naturalOrder())
+            .orElse(0);
     }
 }

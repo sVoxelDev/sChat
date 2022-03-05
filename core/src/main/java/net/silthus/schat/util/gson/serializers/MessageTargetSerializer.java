@@ -26,36 +26,35 @@ package net.silthus.schat.util.gson.serializers;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
-import java.util.UUID;
-import net.kyori.adventure.text.Component;
-import net.silthus.schat.identity.Identity;
-import net.silthus.schat.util.gson.JObject;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.commands.SendMessageResult;
+import net.silthus.schat.message.MessageTarget;
 
-public final class IdentitySerializer implements JsonSerializer<Identity>, JsonDeserializer<Identity> {
+public class MessageTargetSerializer implements JsonSerializer<MessageTarget>, JsonDeserializer<MessageTarget> {
 
     @Override
-    public JsonElement serialize(Identity src, Type typeOfSrc, JsonSerializationContext context) {
-        return JObject.json()
-            .add("id", context.serialize(src.uniqueId(), UUID.class))
-            .add("name", src.name())
-            .add("display_name", context.serialize(src.displayName(), Component.class))
-            .create();
+    public JsonElement serialize(MessageTarget src, Type typeOfSrc, JsonSerializationContext context) {
+        if (src instanceof Chatter chatter)
+            return new JsonPrimitive("chatter:" + chatter.uniqueId());
+        if (src instanceof Channel channel)
+            return new JsonPrimitive("channel:" + channel.key());
+        return JsonNull.INSTANCE;
     }
 
     @Override
-    public Identity deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        final JsonObject object = json.getAsJsonObject();
-        if (object.has("identity"))
-            return deserialize(object.get("identity"), typeOfT, context);
-        return Identity.identity(
-            context.deserialize(object.get("id"), UUID.class),
-            object.get("name").getAsString(),
-            (Component) context.deserialize(object.get("display_name"), Component.class)
-        );
+    public MessageTarget deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        final String[] split = json.getAsString().split(":");
+        return switch (split[0]) {
+            case "chatter" -> context.deserialize(new JsonPrimitive(split[1]), Chatter.class);
+            case "channel" -> context.deserialize(new JsonPrimitive(split[1]), Channel.class);
+            default -> SendMessageResult::failure;
+        };
     }
 }

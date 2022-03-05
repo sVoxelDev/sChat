@@ -31,39 +31,24 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
-import java.util.UUID;
-import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.chatter.ChatterRepository;
+import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.message.Targets;
-
-import static net.silthus.schat.message.MessageTarget.IS_CHATTER;
-import static net.silthus.schat.util.UUIDUtil.isUuid;
 
 public final class TargetsSerializer implements JsonSerializer<Targets>, JsonDeserializer<Targets> {
 
-    private final ChatterRepository chatterRepository;
-
-    public TargetsSerializer(ChatterRepository chatterRepository) {
-        this.chatterRepository = chatterRepository;
-    }
-
     @Override
-    public JsonElement serialize(Targets targets, Type type, JsonSerializationContext jsonSerializationContext) {
+    public JsonElement serialize(Targets targets, Type type, JsonSerializationContext context) {
         final JsonArray elements = new JsonArray();
-        targets.stream()
-            .filter(IS_CHATTER)
-            .map(target -> (Chatter) target)
-            .forEach(target -> elements.add(target.uniqueId().toString()));
+        for (MessageTarget target : targets)
+            elements.add(context.serialize(target, MessageTarget.class));
         return elements;
     }
 
     @Override
-    public Targets deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+    public Targets deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
         final Targets targets = new Targets();
         for (final JsonElement element : jsonElement.getAsJsonArray())
-            if (isUuid(element.getAsString()))
-                chatterRepository.find(UUID.fromString(element.getAsString())).ifPresent(targets::add);
-
+            targets.add(context.deserialize(element, MessageTarget.class));
         return targets;
     }
 }

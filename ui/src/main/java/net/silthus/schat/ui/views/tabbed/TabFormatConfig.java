@@ -39,6 +39,7 @@ import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.format.NamedTextColor.DARK_AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 @Data
@@ -55,6 +56,20 @@ public class TabFormatConfig {
     private TextColor inactiveColor = NamedTextColor.GRAY;
     @Setting("inactive_decoration")
     private TextDecoration inactiveDecoration = null;
+
+    @Setting("highlight_unread")
+    private boolean highlightUnread = true;
+    @Setting("unread_color")
+    private TextColor unreadColor = NamedTextColor.WHITE;
+    @Setting("unread_decoration")
+    private TextDecoration unreadDecoration = TextDecoration.ITALIC;
+
+    @Setting("show_unread_count")
+    private boolean showUnreadCount = true;
+    @Setting("unread_count_color")
+    private TextColor unreadCountColor = RED;
+    @Setting("unread_count_decoration")
+    private TextDecoration unreadCountDecoration = null;
 
     @Setting("message_format")
     private Format messageFormat = (view, msg) ->

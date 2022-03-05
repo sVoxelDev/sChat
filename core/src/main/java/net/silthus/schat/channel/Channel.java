@@ -163,6 +163,15 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
     @NotNull @Unmodifiable Targets targets();
 
     /**
+     * Replaces all targets of the channel with the given targets.
+     *
+     * @param targets the targets to set
+     * @return this channel
+     * @since next
+     */
+    @NotNull Channel targets(@NonNull Targets targets);
+
+    /**
      * Adds a target to this channel without performing any checks.
      *
      * <p>Use the {@link JoinChannelCommand} to join a {@link Chatter} testing all policies.</p>

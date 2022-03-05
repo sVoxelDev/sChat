@@ -26,19 +26,20 @@ package net.silthus.schat.ui;
 import net.silthus.schat.commands.CreatePrivateChannelCommand;
 import net.silthus.schat.eventbus.EventBus;
 import net.silthus.schat.ui.view.ViewConfig;
+import net.silthus.schat.util.gson.GsonProvider;
 
 import static net.silthus.schat.channel.ChannelRepository.createInMemoryChannelRepository;
 
 public final class ViewModuleMock extends ViewModule {
 
     public static ViewModuleMock viewModuleMock(EventBus eventBus) {
-        final ViewModuleMock module = new ViewModuleMock(new ViewConfig(), eventBus);
+        final ViewModuleMock module = new ViewModuleMock(new ViewConfig(), eventBus, GsonProvider.gsonProvider());
         module.init();
         return module;
     }
 
-    private ViewModuleMock(ViewConfig config, EventBus eventBus) {
-        super(config, eventBus);
+    private ViewModuleMock(ViewConfig config, EventBus eventBus, GsonProvider gsonProvider) {
+        super(config, eventBus, gsonProvider);
     }
 
     @Override

@@ -34,7 +34,8 @@ Head over to the [documentation][documentation] to learn more. Or directly [down
 - Multi-Platform Support
   - Bukkit/Spigot/Paper
   - Bungeecord
-  - Velocity
+  - Velocity (requires at least [build #116][velocity])
+- Hex Color Support
 - Seperate Tabs for each conversation keeping the chat clean
 - Network-wide Global Channels
 - Network-wide Global Private Chats
@@ -45,3 +46,4 @@ Head over to the [documentation][documentation] to learn more. Or directly [down
 [getting-started]: https://schat.silthus.net/docs/latest/getting-started/
 [placeholderapi]: https://github.com/PlaceholderAPI/PlaceholderAPI
 [developer]: https://schat.silthus.net/docs/latest/developer/
+[velocity]: https://papermc.io/downloads#Velocity

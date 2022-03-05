@@ -26,6 +26,7 @@ package net.silthus.schat.ui.views.tabbed;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.message.Message;
 import net.silthus.schat.pointer.Configurable;
 import net.silthus.schat.pointer.Pointer;
 import net.silthus.schat.pointer.Setting;
@@ -46,6 +47,9 @@ public interface Tab extends Configurable<Tab> {
     Component render();
 
     int length();
+
+    default void onReceivedMessage(Message message) {
+    }
 
     boolean isActive();
 }

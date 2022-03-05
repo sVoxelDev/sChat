@@ -28,10 +28,14 @@ import com.google.gson.JsonObject;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.experimental.Accessors;
 import net.silthus.schat.util.gson.GsonProvider;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
+@Accessors(fluent = true)
 public final class GsonPluginMessageSerializer implements PluginMessageSerializer {
 
     private final GsonProvider gsonProvider;
@@ -48,7 +52,7 @@ public final class GsonPluginMessageSerializer implements PluginMessageSerialize
 
     @Override
     public void registerTypeAdapter(Type type, Object adapter) {
-        gsonProvider.registerTypeAdapter(type, adapter);
+        gsonProvider.builder().registerTypeAdapter(type, adapter);
     }
 
     @Override
@@ -58,15 +62,17 @@ public final class GsonPluginMessageSerializer implements PluginMessageSerialize
 
     @Override
     public @NotNull String encode(PluginMessage pluginMessage) {
-        final Gson gson = this.gsonProvider.normalGson();
-        final JsonObject json = gson.toJsonTree(pluginMessage).getAsJsonObject();
+        if (!supports(pluginMessage))
+            throw new IllegalArgumentException(pluginMessage.getClass().getCanonicalName() + " is not a supported PluginMessage type!");
+        final Gson gson = this.gsonProvider.prettyGson();
+        final JsonObject json = gson.toJsonTree(pluginMessage, pluginMessage.getClass()).getAsJsonObject();
         json.addProperty("type", pluginMessage.getClass().getTypeName());
         return gson.toJson(json);
     }
 
     @Override
     public @NotNull PluginMessage decode(@NonNull String encodedString) {
-        final Gson gson = this.gsonProvider.normalGson();
+        final Gson gson = this.gsonProvider.prettyGson();
         final JsonObject json = gson.fromJson(encodedString, JsonObject.class);
         final String type = json.get("type").getAsString();
         return gson.fromJson(json, typeMap.get(type));

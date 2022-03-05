@@ -11,6 +11,7 @@ copyright: Copyright &copy; 2021 - 2022 sVoxelDev
 nav:
   - Home:
     - About sChat: index.md
+    - FAQ: faq.md
   - Getting Started:
     - getting-started.md
     - Commands: commands.md

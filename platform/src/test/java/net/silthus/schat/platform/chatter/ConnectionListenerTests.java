@@ -23,6 +23,7 @@
  */
 package net.silthus.schat.platform.chatter;
 
+import java.util.UUID;
 import net.silthus.schat.chatter.ChatterMock;
 import net.silthus.schat.chatter.ChatterRepository;
 import net.silthus.schat.eventbus.EventBusMock;
@@ -35,7 +36,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.chatter.ChatterRepository.createInMemoryChatterRepository;
-import static net.silthus.schat.identity.IdentityHelper.randomIdentity;
 import static net.silthus.schat.platform.sender.SenderMock.randomSender;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,7 +50,7 @@ class ConnectionListenerTests {
     @BeforeEach
     void setUp() {
         chatterRepository = createInMemoryChatterRepository();
-        messenger = new MessagingServiceMock();
+        messenger = MessagingServiceMock.messengerMock();
         eventBus = EventBusMock.eventBusMock();
         listener = new ConnectionListener(chatterRepository, ChatterMock::randomChatter, messenger, eventBus) {
         };
@@ -63,9 +63,20 @@ class ConnectionListenerTests {
     }
 
     private ConnectionListener.ChatterJoined createRandomPluginMessage() {
-        return new ConnectionListener.ChatterJoined(randomIdentity())
+        return new ConnectionListener.ChatterJoined(ChatterMock.randomChatter())
             .repository(chatterRepository)
-            .factory(ChatterMock::randomChatter);
+            .factory(ChatterMock::randomChatter)
+            .eventBus(eventBus);
+    }
+
+    private ConnectionListener.ChatterJoined consumeIncomingMessage() {
+        final ConnectionListener.ChatterJoined msg = createRandomPluginMessage();
+        messenger.consumeIncomingMessage(msg);
+        return msg;
+    }
+
+    private void assertJoinEventFired(UUID id) {
+        eventBus.assertEventFired(new ChatterJoinedServerEvent(chatterRepository.get(id)));
     }
 
     @Nested class onJoin {
@@ -83,22 +94,24 @@ class ConnectionListenerTests {
         void sends_join_ping_to_all_servers() {
             join();
             messenger.assertSentMessage(ConnectionListener.ChatterJoined.class);
-            messenger.assertLastReceivedMessage(ConnectionListener.ChatterJoined.class)
-                .extracting(ConnectionListener.ChatterJoined::identity)
-                .isEqualTo(sender.identity());
         }
 
         @Test
         void when_ping_is_processed_then_chatter_is_created() {
-            final ConnectionListener.ChatterJoined msg = createRandomPluginMessage();
-            messenger.consumeIncomingMessage(msg);
-            assertThat(chatterRepository.contains(msg.identity().uniqueId())).isTrue();
+            final ConnectionListener.ChatterJoined msg = consumeIncomingMessage();
+            assertThat(chatterRepository.contains(msg.chatter().uniqueId())).isTrue();
+        }
+
+        @Test
+        void when_ping_is_processed_then_joined_server_event_is_fired() {
+            final ConnectionListener.ChatterJoined msg = consumeIncomingMessage();
+            assertJoinEventFired(msg.chatter().uniqueId());
         }
 
         @Test
         void fires_join_event() {
             join();
-            eventBus.assertEventFired(new ChatterJoinedServerEvent(chatterRepository.get(sender.uniqueId())));
+            assertJoinEventFired(sender.uniqueId());
         }
     }
 }

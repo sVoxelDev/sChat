@@ -14,11 +14,12 @@ sChat comes with the following features out of the box and can be extended using
 - [X] Multi-Platform Support
     - [X] Bukkit/Spigot/Paper
     - [X] Bungeecord
-    - [X] Velocity
+    - [X] Velocity (requires at least [build #116][velocity])
 - [x] Hex Color Support
 - [X] Seperate Tabs for each conversation keeping the chat clean
 - [X] Network-wide Global Channels
 - [X] Network-wide Global Private Chats
 - [X] PlaceholderAPI Support
 
- [API]: developer
+[API]: developer
+[velocity]: https://papermc.io/downloads#Velocity
