@@ -41,7 +41,7 @@ if (config.branches.some(it => it === branch || (it.name === branch && it.prerel
             ]
         }]
     )
-} else if (config.branches.some(it => it === branch || (it.name === branch && !it.prerelease))) {
+} else {
     config.plugins.push('@semantic-release/changelog',
         ["@google/semantic-release-replace-plugin", {
             "replacements": [
