@@ -1,0 +1,76 @@
+/*
+ * This file is part of sChat, licensed under the MIT License.
+ * Copyright (C) Silthus <https://www.github.com/silthus>
+ * Copyright (C) sChat team and contributors
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ */
+package net.silthus.schat.cucumber;
+
+import io.cucumber.java.ParameterType;
+import io.cucumber.java.en.Given;
+import javax.inject.Inject;
+import net.silthus.schat.channel.Channel;
+import net.silthus.schat.channel.ChannelHelper;
+import net.silthus.schat.channel.ChannelSettings;
+import net.silthus.schat.ui.format.MiniMessageFormat;
+
+import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
+import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
+import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
+import static net.silthus.schat.ui.view.ViewConfig.FORMAT_CONFIG;
+
+public class ChannelSteps {
+
+    private final Context context;
+
+    @Inject
+    public ChannelSteps(Context context) {
+        this.context = context;
+    }
+
+    @ParameterType("'?([a-zA-Z0-9]+)'?")
+    public Channel channel(String key) {
+        return context.channels().computeIfAbsent(key, this::createChannel);
+    }
+
+    private Channel createChannel(String key) {
+        return context.primaryServer().addChannel(Channel.createChannel(key));
+    }
+
+    @ParameterType("[a-zA-Z]+")
+    public ChannelHelper.ConfiguredSetting<?> setting(String type) {
+        return switch (type.toLowerCase()) {
+            case "global" -> set(GLOBAL, true);
+            case "public" -> set(PROTECTED, false);
+            case "private", "protected" -> set(PROTECTED, true);
+            default -> set(ChannelSettings.PRIORITY, 100);
+        };
+    }
+
+    @Given("a {setting} channel {channel}")
+    public void configureChannel(ChannelHelper.ConfiguredSetting<?> setting, Channel channel) {
+        setting.applyTo(channel);
+    }
+
+    @Given("the channel {channel} has a custom format")
+    public void theChannelGlobalHasACustomFormat(Channel channel) {
+        channel.get(FORMAT_CONFIG).messageFormat(new MiniMessageFormat("<source_display_name>: <text>"));
+    }
+}

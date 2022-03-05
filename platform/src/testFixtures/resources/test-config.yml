@@ -1,0 +1,22 @@
+messenger: mock
+view:
+  system_message_format: "<red><text>"
+  private_chat_format:
+    active_color: "red"
+    message_format: "<aqua>[<source_display_name>]</aqua>: <text>"
+private_chat:
+  message_format: "<red><source_display_name><gray>: <text>"
+channels:
+  test:
+    name: "<aqua>Test"
+    settings:
+      protected: true
+      auto_join: true
+      format:
+        message_format: "<aqua><source_display_name><green>: <text>"
+        active_color: "red"
+  global:
+    name: Global
+    settings:
+      global: true
+  invalid: null
