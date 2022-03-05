@@ -58,8 +58,6 @@ Now that you are setup, you have one of many options:
 - deep dive into the [configuration][configuration]
 - or get started with the [developer API][api]
 
-!!!tip "May the Force be with you :rocket:"
-
 [api]: ../developer/
 [commands]: commands/
 [permissions]: permissions/
