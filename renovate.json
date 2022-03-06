@@ -2,6 +2,10 @@
   "extends": [
     "config:base"
   ],
+  "schedule": [
+    "before 2am"
+  ],
+  "timezone": "Europe/Berlin",
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
