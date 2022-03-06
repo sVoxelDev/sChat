@@ -16,7 +16,7 @@ bstats = "3.0.0"
 mockbukkit = "1.15.5"
 placeholderapi = "2.11.1"
 
-checkerframework = "3.21.2"
+checkerframework = "3.21.3"
 junit-jupiter = "5.8.2"
 junit-platform = "1.8.2"
 assertj = "3.21.0"
