@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * This event is fired after a chatter changed his active channel.
  *
- * @since next
+ * @since 1.0.0
  */
 public record ChatterChangedActiveChannelEvent(
     @NonNull Chatter chatter,

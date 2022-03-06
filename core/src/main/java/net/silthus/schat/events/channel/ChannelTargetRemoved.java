@@ -30,7 +30,7 @@ import net.silthus.schat.message.MessageTarget;
 /**
  * The event is fired after a target has been remove from a channel.
  *
- * @since next
+ * @since 1.0.0
  */
 public record ChannelTargetRemoved(Channel channel, MessageTarget target) implements SChatEvent {
 }

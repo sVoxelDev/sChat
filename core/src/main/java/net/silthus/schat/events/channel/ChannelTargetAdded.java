@@ -30,7 +30,7 @@ import net.silthus.schat.message.MessageTarget;
 /**
  * The event is fired after a new target has been added to a channel.
  *
- * @since next
+ * @since 1.0.0
  */
 public record ChannelTargetAdded(Channel channel, MessageTarget target) implements SChatEvent {
 }

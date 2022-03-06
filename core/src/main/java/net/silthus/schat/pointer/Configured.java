@@ -32,7 +32,7 @@ import org.jetbrains.annotations.UnknownNullability;
 /**
  * Something that can retrieve a {@link Setting} from {@link Settings}.
  *
- * @since next
+ * @since 1.0.0
  */
 public interface Configured extends Pointered {
 
@@ -47,7 +47,7 @@ public interface Configured extends Pointered {
      * @param setting the setting
      * @param <V>     the type
      * @return the value
-     * @since next
+     * @since 1.0.0
      */
     default <V> @UnknownNullability V get(final @NonNull Setting<V> setting) {
         return this.settings().get(setting);
@@ -62,7 +62,7 @@ public interface Configured extends Pointered {
      * @param defaultValue the default value
      * @param <V>          the type
      * @return the value
-     * @since next
+     * @since 1.0.0
      */
     @SuppressWarnings("checkstyle:MethodName")
     default <V> @UnknownNullability V getOrDefault(final @NonNull Setting<V> setting, final @Nullable V defaultValue) {
@@ -78,7 +78,7 @@ public interface Configured extends Pointered {
      * @param defaultValue the default value supplier
      * @param <V>          the type
      * @return the value
-     * @since next
+     * @since 1.0.0
      */
     @SuppressWarnings("checkstyle:MethodName")
     default <V> @UnknownNullability V getOrDefaultFrom(final @NonNull Setting<V> setting, final @NonNull Supplier<? extends V> defaultValue) {
@@ -109,7 +109,7 @@ public interface Configured extends Pointered {
      * Gets the settings for this object.
      *
      * @return the settings
-     * @since next
+     * @since 1.0.0
      */
     default @NotNull Settings settings() {
         return Settings.createSettings();
@@ -119,7 +119,7 @@ public interface Configured extends Pointered {
      * The builder for creating a configured class.
      *
      * @param <T> the type of the builder
-     * @since next
+     * @since 1.0.0
      */
     interface Builder<T> {
 
@@ -130,7 +130,7 @@ public interface Configured extends Pointered {
          * @param value   the value of the setting
          * @param <V>     the type of the setting
          * @return this builder
-         * @since next
+         * @since 1.0.0
          */
         <V> @NotNull T set(@NonNull Setting<V> setting, @Nullable V value);
 
@@ -139,7 +139,7 @@ public interface Configured extends Pointered {
          *
          * @param settings the settings to use
          * @return this builder
-         * @since next
+         * @since 1.0.0
          */
         @NotNull T settings(@NonNull Settings settings);
     }

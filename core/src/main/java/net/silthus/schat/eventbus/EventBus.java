@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Unmodifiable;
  *
  * <p>Used to subscribe (or "listen") to sChat events.</p>
  *
- * @since next
+ * @since 1.0.0
  */
 public interface EventBus extends AutoCloseable {
 
@@ -42,7 +42,7 @@ public interface EventBus extends AutoCloseable {
      * Creates a new empty event bus instance.
      *
      * @return the new empty event bus
-     * @since next
+     * @since 1.0.0
      */
     static EventBus empty() {
         return new EmptyEventBus();
@@ -54,7 +54,7 @@ public interface EventBus extends AutoCloseable {
      * <p>Make sure to free up the event bus calling {@link #close()}.</p>
      *
      * @return the created event bus
-     * @since next
+     * @since 1.0.0
      */
     static EventBus eventBus() {
         return eventBus(false);
@@ -65,7 +65,7 @@ public interface EventBus extends AutoCloseable {
      *
      * @param debug true to log all calls to the bus
      * @return the created event bus
-     * @since next
+     * @since 1.0.0
      */
     static EventBus eventBus(boolean debug) {
         if (debug)
@@ -78,7 +78,7 @@ public interface EventBus extends AutoCloseable {
      * Posts a new event to the event bus informing all subscribers about the event.
      *
      * @param event the event to post
-     * @since next
+     * @since 1.0.0
      */
     <E extends SChatEvent> E post(@NonNull E event);
 
@@ -93,7 +93,7 @@ public interface EventBus extends AutoCloseable {
      * @param handler    the event handler
      * @param <E>        the event class
      * @return an event handler instance representing this subscription
-     * @since next
+     * @since 1.0.0
      */
     <E extends SChatEvent> @NonNull EventSubscription<E> on(@NonNull Class<E> eventClass, @NonNull Consumer<? super E> handler);
 
@@ -104,7 +104,7 @@ public interface EventBus extends AutoCloseable {
      *
      * @param listener the listener to search for events
      * @return a list of registered event subscriptions
-     * @since next
+     * @since 1.0.0
      */
     @NonNull @Unmodifiable Set<EventSubscription<?>> register(Object listener);
 
@@ -114,14 +114,14 @@ public interface EventBus extends AutoCloseable {
      * @param eventClass the event to find handlers for
      * @param <E>        the event class
      * @return an immutable set of event handlers
-     * @since next
+     * @since 1.0.0
      */
     <E extends SChatEvent> @NonNull @Unmodifiable Set<EventSubscription<E>> subscriptions(@NonNull Class<E> eventClass);
 
     /**
      * Closes the event bus unsubscribing all event handlers freeing up resource locks.
      *
-     * @since next
+     * @since 1.0.0
      */
     void close();
 }

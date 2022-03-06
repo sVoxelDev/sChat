@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
  * <p>Identities could be players, channels, the console and so on.
  * If the identity is a player the id of the player in the platform matches the identity's id.</p>
  *
- * @since next
+ * @since 1.0.0
  */
 record IdentityImpl(@NonNull UUID uniqueId, @NonNull Pointers pointers) implements Identity {
     static final Identity NIL = Identity.identity(NIL_IDENTITY_ID, "", Component.empty());

@@ -29,7 +29,7 @@ import org.jetbrains.annotations.ApiStatus;
 /**
  * Internal utility for configuring the prototype of chatters.
  *
- * @since next
+ * @since 1.0.0
  */
 @ApiStatus.Internal
 public final class ChatterPrototype {
@@ -39,7 +39,7 @@ public final class ChatterPrototype {
      * <p>This is internal functionality and should not be used.</p>
      *
      * @param eventBus the event bus to use
-     * @since next
+     * @since 1.0.0
      */
     @ApiStatus.Internal
     public static void configure(EventBus eventBus) {

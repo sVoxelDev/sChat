@@ -48,7 +48,7 @@ import net.silthus.schat.policies.SendChannelMessagePolicy;
  * Any modification of those targets are not reflected in the actual targets of the channel.
  * They are only scoped to the forwarded message of this event.</p>
  *
- * @since next
+ * @since 1.0.0
  */
 @Getter
 @Setter
@@ -70,7 +70,7 @@ public final class SendChannelMessageEvent implements SChatEvent, Cancellable {
      * @param channel the channel
      * @param message the message
      * @param policy the policy
-     * @since next
+     * @since 1.0.0
      */
     public SendChannelMessageEvent(final @NonNull Channel channel, final @NonNull Message message, final @NonNull SendChannelMessagePolicy policy) {
         this.channel = channel;
@@ -83,7 +83,7 @@ public final class SendChannelMessageEvent implements SChatEvent, Cancellable {
      * Gets the channel that will forward the message.
      *
      * @return the forwarding channel and initial target of the message
-     * @since next
+     * @since 1.0.0
      */
     public Channel channel() {
         return channel;
@@ -95,7 +95,7 @@ public final class SendChannelMessageEvent implements SChatEvent, Cancellable {
      * <p>{@link Message#copy()} the message to modify it and then set it with {@link #message(Message)}.</p>
      *
      * @return the original message sent to the channel
-     * @since next
+     * @since 1.0.0
      */
     public Message message() {
         return message;
@@ -106,7 +106,7 @@ public final class SendChannelMessageEvent implements SChatEvent, Cancellable {
      *
      * @param message the new message
      * @return this event
-     * @since next
+     * @since 1.0.0
      */
     public SendChannelMessageEvent message(@NonNull final Message message) {
         this.message = message;
@@ -119,7 +119,7 @@ public final class SendChannelMessageEvent implements SChatEvent, Cancellable {
      * <p>Use the {@link Targets#filter(Predicate)} method to filter the targets and then set them with {@link #targets(Targets)}.</p>
      *
      * @return the targets of the channel
-     * @since next
+     * @since 1.0.0
      */
     public Targets targets() {
         return targets;
@@ -132,7 +132,7 @@ public final class SendChannelMessageEvent implements SChatEvent, Cancellable {
      *
      * @param targets the new targets of the message
      * @return this event
-     * @since next
+     * @since 1.0.0
      */
     public SendChannelMessageEvent targets(@NonNull final Targets targets) {
         this.targets = targets;

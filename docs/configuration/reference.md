@@ -18,7 +18,7 @@ These are all of the available config options for sChat. The following type of s
 
 ## `debug`
 
-[:octicons-milestone-24: next][next] · `boolean` · :octicons-pin-24: `false`
+[:octicons-milestone-24: 1.0.0][1.0.0] · `boolean` · :octicons-pin-24: `false`
 
 Set to `true` and restart your server to produce an enormous amount of debug logs.
 
@@ -28,13 +28,13 @@ debug: true
 
 ## `messenger`
 
-[:octicons-milestone-24: next][next] · `string` · :octicons-pin-24: `pluginmessage`
+[:octicons-milestone-24: 1.0.0][1.0.0] · `string` · :octicons-pin-24: `pluginmessage`
 
 The messenger controls how [`global`][channels] messages are forwarded to the other servers in the network.
 
 | Type | Description | Since |
 | ---- | ----------- | ----- |
-| :octicons-pin-24: `pluginmessage` | Messages are sent thru the [Plugin Messaging Channel][pluginmessage] to the proxy. The proxy then forwards them to all other servers in the network. **sChat must be installed on the proxy** for this to work. | [:octicons-milestone-24: next][next] |
+| :octicons-pin-24: `pluginmessage` | Messages are sent thru the [Plugin Messaging Channel][pluginmessage] to the proxy. The proxy then forwards them to all other servers in the network. **sChat must be installed on the proxy** for this to work. | [:octicons-milestone-24: 1.0.0][1.0.0] |
 
 ```yaml
 messenger: "pluginmessage"
@@ -55,7 +55,7 @@ view:
 
 ### `system_message_format`
 
-[:octicons-milestone-24: next][next] · [`minimessage`][minimessage] · :octicons-sync-24:
+[:octicons-milestone-24: 1.0.0][1.0.0] · [`minimessage`][minimessage] · :octicons-sync-24:
 
 Controls how system messages (messages not sent by players) are rendered.  
 
@@ -92,6 +92,7 @@ view:
 [channels]: channels.md
 [minimessage]: minimessage.md
 [next]: https://github.com/sVoxelDev/sChat/releases/latest
+[1.0.0]: https://github.com/sVoxelDev/sChat/releases/tag/1.0.0
 [pluginmessage]: https://www.spigotmc.org/wiki/bukkit-bungee-plugin-messaging-channel/
 [color]: minimessage.md#color
 [decoration]: minimessage.md#decoration

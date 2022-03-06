@@ -35,7 +35,7 @@ import net.silthus.schat.pointer.Settings;
  * The {@link ChannelSettingChangedEvent} is fired if a setting changed using {@link Channel#set(Setting, Object)}.</p>
  *
  * @see ChannelSettingChangedEvent
- * @since next
+ * @since 1.0.0
  */
 public record ChannelSettingsChanged(
     Channel channel,

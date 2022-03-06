@@ -30,7 +30,7 @@ import static net.silthus.schat.pointer.Setting.setting;
 /**
  * Holds references to all common settings of a {@link Channel}.
  *
- * @since next
+ * @since 1.0.0
  */
 public final class ChannelSettings {
 

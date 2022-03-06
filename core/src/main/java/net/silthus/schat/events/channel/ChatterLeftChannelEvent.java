@@ -33,7 +33,7 @@ import net.silthus.schat.events.SChatEvent;
  *
  * <p>The event will not fire if {@link LeaveChannelCommand#leaveChannel(Chatter, Channel)} fails or {@link LeaveChannelEvent} is cancelled.</p>
  *
- * @since next
+ * @since 1.0.0
  */
 public record ChatterLeftChannelEvent(Chatter chatter, Channel channel) implements SChatEvent {
 }

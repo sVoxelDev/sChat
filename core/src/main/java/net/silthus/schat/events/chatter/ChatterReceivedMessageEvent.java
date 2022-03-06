@@ -32,7 +32,7 @@ import net.silthus.schat.message.Message;
  *
  * <p>The event will not fire multiple times for the same message.</p>
  *
- * @since next
+ * @since 1.0.0
  */
 public record ChatterReceivedMessageEvent(Chatter chatter, Message message) implements SChatEvent {
 }

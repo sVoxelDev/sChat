@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Marks an entity as identified requiring it to hold an {@link Identity}.
  *
- * @since next
+ * @since 1.0.0
  */
 public interface Identified extends Pointered {
 
@@ -40,7 +40,7 @@ public interface Identified extends Pointered {
      * Gets the identity of the identified entity.
      *
      * @return the identity
-     * @since next
+     * @since 1.0.0
      */
     @NotNull Identity identity();
 
@@ -48,7 +48,7 @@ public interface Identified extends Pointered {
      * A delegate to the unique id of the {@link #identity()}.
      *
      * @return the unique id
-     * @since next
+     * @since 1.0.0
      */
     @ApiStatus.NonExtendable
     default /*final*/ UUID uniqueId() {
@@ -59,7 +59,7 @@ public interface Identified extends Pointered {
      * A delegate to the name of the {@link #identity()}.
      *
      * @return the name
-     * @since next
+     * @since 1.0.0
      */
     @ApiStatus.NonExtendable
     default /*final*/ String name() {
@@ -70,7 +70,7 @@ public interface Identified extends Pointered {
      * A delegate to the display name of the {@link #identity()}.
      *
      * @return the display name
-     * @since next
+     * @since 1.0.0
      */
     @ApiStatus.NonExtendable
     default /*final*/ Component displayName() {

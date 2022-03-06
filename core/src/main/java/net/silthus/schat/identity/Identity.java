@@ -47,7 +47,7 @@ import static net.silthus.schat.pointer.Pointer.pointer;
  *
  * <p>No {@code null} reference to an identity should be used. Use the {@link Identity#nil()} object instead.</p>
  *
- * @since next
+ * @since 1.0.0
  */
 public sealed interface Identity extends Pointered permits IdentityImpl {
 
@@ -70,7 +70,7 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
      * of the application, but changes for every lifecycle.</p>
      *
      * @return the nil identity
-     * @since next
+     * @since 1.0.0
      */
     static @NotNull Identity nil() {
         return IdentityImpl.NIL;
@@ -83,7 +83,7 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
      *
      * @param id the id
      * @return the identity
-     * @since next
+     * @since 1.0.0
      */
     static Identity identity(@NonNull UUID id) {
         return identity(id, "", empty());
@@ -97,7 +97,7 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
      *
      * @param name the name
      * @return the identity
-     * @since next
+     * @since 1.0.0
      */
     static @NotNull Identity identity(@NonNull String name) {
         return identity(UUID.randomUUID(), name);
@@ -109,7 +109,7 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
      * @param name        the name
      * @param displayName the display name
      * @return the identity
-     * @since next
+     * @since 1.0.0
      */
     static @NotNull Identity identity(@NonNull String name, @NonNull Component displayName) {
         return identity(UUID.randomUUID(), name, displayName);
@@ -121,7 +121,7 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
      * @param name        the name of the identity
      * @param displayName the display name provider
      * @return the identity
-     * @since next
+     * @since 1.0.0
      */
     static @NotNull Identity identity(@NonNull String name, @NonNull Supplier<Component> displayName) {
         return identity(UUID.randomUUID(), name, displayName);
@@ -135,7 +135,7 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
      * @param id   the id
      * @param name the name
      * @return the identity
-     * @since next
+     * @since 1.0.0
      */
     static @NotNull Identity identity(@NonNull UUID id, @NonNull String name) {
         return identity(id, name, text(name));
@@ -148,7 +148,7 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
      * @param name        the name
      * @param displayName the display name
      * @return the identity
-     * @since next
+     * @since 1.0.0
      */
     static Identity identity(final UUID id, final String name, final Component displayName) {
         return identity(id, name, () -> displayName);
@@ -161,7 +161,7 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
      * @param name        the name
      * @param displayName the display name supplier
      * @return the identity
-     * @since next
+     * @since 1.0.0
      */
     static Identity identity(final UUID id, final String name, final Supplier<Component> displayName) {
         return new IdentityImpl(id, Pointers.pointersBuilder()
@@ -176,7 +176,7 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
      * Gets the unique id of the identity.
      *
      * @return the unique id
-     * @since next
+     * @since 1.0.0
      */
     UUID uniqueId();
 
@@ -186,7 +186,7 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
      * <p>Defaults to an empty string if the identity has no name.</p>
      *
      * @return the name
-     * @since next
+     * @since 1.0.0
      */
     default String name() {
         return getOrDefault(NAME, "");
@@ -199,7 +199,7 @@ public sealed interface Identity extends Pointered permits IdentityImpl {
      * The {@link #name()} is used if the identity has one.</p>
      *
      * @return the display name
-     * @since next
+     * @since 1.0.0
      */
     default Component displayName() {
         return getOrDefault(DISPLAY_NAME, empty());

@@ -30,7 +30,7 @@ import net.silthus.schat.events.SChatEvent;
 /**
  * The event is fired when a new channel is added to the {@link ChannelRepository}.
  *
- * @since next
+ * @since 1.0.0
  */
 public record ChannelRegisteredEvent(Channel channel) implements SChatEvent {
 }

@@ -56,7 +56,7 @@ import static net.silthus.schat.policies.LeaveChannelPolicy.LEAVE_CHANNEL_POLICY
  * <p>If extended, the {@link Builder} must also be overwritten.</p>
  *
  * @see Chatter#leave(Channel)
- * @since next
+ * @since 1.0.0
  */
 @Getter
 @Accessors(fluent = true)
@@ -70,7 +70,7 @@ public class LeaveChannelCommand implements Command {
      * Configures the prototype of the command.
      *
      * @param consumer the prototype builder
-     * @since next
+     * @since 1.0.0
      */
     @ApiStatus.Internal
     public static void prototype(Consumer<Builder> consumer) {
@@ -86,7 +86,7 @@ public class LeaveChannelCommand implements Command {
      * @param chatter the chatter that is leaving the channel
      * @param channel the channel to be left
      * @return the result of the command. unsuccessful if the policy or event denied the request.
-     * @since next
+     * @since 1.0.0
      */
     public static Result leaveChannel(Chatter chatter, Channel channel) {
         return leaveChannelBuilder(chatter, channel).execute();
@@ -98,7 +98,7 @@ public class LeaveChannelCommand implements Command {
      * @param chatter the chatter that is leaving the channel
      * @param channel the channel to be left
      * @return the builder of the command
-     * @since next
+     * @since 1.0.0
      */
     public static LeaveChannelCommand.Builder leaveChannelBuilder(Chatter chatter, Channel channel) {
         final Builder builder = new Builder(chatter, channel);
@@ -140,7 +140,7 @@ public class LeaveChannelCommand implements Command {
      *
      * <p>The builder can be extended together with the command itself to add new features to it.</p>
      *
-     * @since next
+     * @since 1.0.0
      */
     @Getter
     @Setter

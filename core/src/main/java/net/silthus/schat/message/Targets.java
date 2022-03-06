@@ -45,7 +45,7 @@ import static net.silthus.schat.commands.SendMessageResult.success;
  *
  * <p>The target container can be made unmodifiable with {@link Targets#unmodifiable(Targets)} to make it unmodifiable.</p>
  *
- * @since next
+ * @since 1.0.0
  */
 public final class Targets extends AbstractSet<MessageTarget> implements MessageTarget, FilterableCollection<MessageTarget> {
 
@@ -57,7 +57,7 @@ public final class Targets extends AbstractSet<MessageTarget> implements Message
      *
      * @param targets the set for which an unmodifiable view is to be returned.
      * @return an unmodifiable view of the target container.
-     * @since next
+     * @since 1.0.0
      */
     public static @NotNull @Unmodifiable Targets unmodifiable(final @NonNull Targets targets) {
         return new Targets(Collections.unmodifiableSet(targets));
@@ -68,7 +68,7 @@ public final class Targets extends AbstractSet<MessageTarget> implements Message
      *
      * @return an empty unmodifiable target container
      * @see #unmodifiable(Targets)
-     * @since next
+     * @since 1.0.0
      */
     public static @NotNull @Unmodifiable Targets of() {
         return unmodifiable(new Targets());
@@ -79,7 +79,7 @@ public final class Targets extends AbstractSet<MessageTarget> implements Message
      *
      * @param targets the initial targets
      * @return the new target container
-     * @since next
+     * @since 1.0.0
      */
     public static @NotNull Targets of(final @NonNull MessageTarget @NonNull ... targets) {
         return new Targets(List.of(targets));
@@ -105,7 +105,7 @@ public final class Targets extends AbstractSet<MessageTarget> implements Message
      * Creates a new target container with the given initial targets.
      *
      * @param targets the initial targets
-     * @since next
+     * @since 1.0.0
      */
     public Targets(final @NonNull Collection<MessageTarget> targets) {
         this(new LinkedHashSet<>(targets));
@@ -114,7 +114,7 @@ public final class Targets extends AbstractSet<MessageTarget> implements Message
     /**
      * Creates a new empty target container.
      *
-     * @since next
+     * @since 1.0.0
      */
     public Targets() {
         this.targets = new LinkedHashSet<>();
@@ -125,7 +125,7 @@ public final class Targets extends AbstractSet<MessageTarget> implements Message
      *
      * @param target the target to add. null values are silently ignored.
      * @return true if the target was added. false if it was not added because it existed or was null.
-     * @since next
+     * @since 1.0.0
      */
     @Override
     public boolean add(final @Nullable MessageTarget target) {

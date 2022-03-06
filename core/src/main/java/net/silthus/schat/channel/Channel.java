@@ -74,14 +74,14 @@ import static net.silthus.schat.pointer.Setting.setting;
  * sChat.channelRepository().add(channel); // registers the channel in the repository
  * }</pre>
  *
- * @since next
+ * @since 1.0.0
  */
 public sealed interface Channel extends Entity<String>, Configurable<Channel>, MessageTarget, Comparable<Channel>, AutoCloseable permits ChannelImpl {
 
     /**
      * This is a pointer to the {@link #key()} of the channel.
      *
-     * @since next
+     * @since 1.0.0
      */
     Pointer<String> KEY = Pointer.pointer(String.class, "key");
     /**
@@ -89,7 +89,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
      *
      * <p>Default: {@link Channel#key()}</p>
      *
-     * @since next
+     * @since 1.0.0
      */
     Setting<Component> DISPLAY_NAME = setting(Component.class, "name", Component.empty());
 
@@ -100,7 +100,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
      *
      * @param key the key of the channel
      * @return the created channel
-     * @since next
+     * @since 1.0.0
      */
     static @NotNull Channel createChannel(String key) {
         return channel(key).create();
@@ -113,7 +113,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
      *
      * @param key the key of the channel
      * @return the builder of the channel
-     * @since next
+     * @since 1.0.0
      */
     static @NotNull Builder channel(String key) {
         return ChannelImpl.builder(key);
@@ -123,7 +123,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
      * The key of the channel.
      *
      * @return the key
-     * @since next
+     * @since 1.0.0
      */
     @NotNull String key();
 
@@ -131,7 +131,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
      * The display name of the channel.
      *
      * @return the display name
-     * @since next
+     * @since 1.0.0
      */
     default @NotNull Component displayName() {
         return get(DISPLAY_NAME);
@@ -142,7 +142,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
      *
      * @param settings the new settings
      * @return this channel
-     * @since next
+     * @since 1.0.0
      */
     @NotNull Channel settings(@NonNull Settings settings);
 
@@ -150,7 +150,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
      * Gets all messages this channel received.
      *
      * @return a list of received messages
-     * @since next
+     * @since 1.0.0
      */
     @NotNull @Unmodifiable Messages messages();
 
@@ -158,7 +158,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
      * Gets all targets of this channel.
      *
      * @return a list unmodifiable of targets
-     * @since next
+     * @since 1.0.0
      */
     @NotNull @Unmodifiable Targets targets();
 
@@ -167,7 +167,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
      *
      * @param targets the targets to set
      * @return this channel
-     * @since next
+     * @since 1.0.0
      */
     @NotNull Channel targets(@NonNull Targets targets);
 
@@ -177,7 +177,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
      * <p>Use the {@link JoinChannelCommand} to join a {@link Chatter} testing all policies.</p>
      *
      * @param target the target to add
-     * @since next
+     * @since 1.0.0
      */
     void addTarget(@NonNull MessageTarget target);
 
@@ -187,7 +187,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
      * <p>Use the {@link LeaveChannelCommand} to join a {@link Chatter} testing all policies.</p>
      *
      * @param target the target to remove
-     * @since next
+     * @since 1.0.0
      */
     void removeTarget(@NonNull MessageTarget target);
 
@@ -195,7 +195,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
      * Updates the targets of this channel joining all
      * chatters that are a member of this channel.
      *
-     * @since next
+     * @since 1.0.0
      */
     default void updateTargets() {
         for (MessageTarget target : targets())
@@ -209,7 +209,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
      * @param policy the policy to find
      * @param <P>    the policy type
      * @return the policy if the channel has one
-     * @since next
+     * @since 1.0.0
      */
     <P extends Policy> @NotNull Optional<P> policy(@NonNull Class<P> policy);
 
@@ -222,7 +222,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
     /**
      * The builder of a {@link Channel}.
      *
-     * @since next
+     * @since 1.0.0
      */
     interface Builder extends Configured.Builder<Builder> {
 
@@ -231,7 +231,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
          *
          * @param displayName the name
          * @return this builder
-         * @since next
+         * @since 1.0.0
          */
         @NotNull Builder name(@NonNull Component displayName);
 
@@ -240,7 +240,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
          *
          * @param targets the targets
          * @return this builder
-         * @since next
+         * @since 1.0.0
          */
         @NotNull Builder targets(@NonNull Targets targets);
 
@@ -251,7 +251,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
          * @param policy the policy
          * @param <P> the type of the policy
          * @return this builder
-         * @since next
+         * @since 1.0.0
          */
         @NotNull <P extends Policy> Builder policy(@NonNull Class<P> type, @NonNull P policy);
 
@@ -259,7 +259,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
          * Creates a new instance of the channel using this builder.
          *
          * @return the new channel
-         * @since next
+         * @since 1.0.0
          */
         @NotNull Channel create();
     }
@@ -269,7 +269,7 @@ public sealed interface Channel extends Entity<String>, Configurable<Channel>, M
      *
      * <p>A valid key must match the following pattern: {@code ^[a-zA-Z0-9_-]+$}</p>
      *
-     * @since next
+     * @since 1.0.0
      */
     final class InvalidKey extends RuntimeException {
         @Serial private static final long serialVersionUID = 4355995383300553731L;

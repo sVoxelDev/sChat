@@ -34,7 +34,7 @@ import lombok.experimental.Accessors;
  *
  * @param <B> the type of the builder
  * @param <C> the type of the command
- * @since next
+ * @since 1.0.0
  */
 @Getter
 @Accessors(fluent = true)

@@ -33,7 +33,7 @@ import org.jetbrains.annotations.UnknownNullability;
 /**
  * Something that can retrieve values based on a given {@link Pointer}.
  *
- * @since next
+ * @since 1.0.0
  */
 public interface Pointered {
     /**
@@ -42,7 +42,7 @@ public interface Pointered {
      * @param pointer the pointer
      * @param <T>     the type
      * @return the value
-     * @since next
+     * @since 1.0.0
      */
     default <T> @NotNull Optional<T> get(final @NotNull Pointer<T> pointer) {
         return this.pointers().get(pointer);
@@ -53,7 +53,7 @@ public interface Pointered {
      *
      * @param pointer the pointer to resolve
      * @return the value of the pointer. false if it does not exist.
-     * @since next
+     * @since 1.0.0
      */
     default boolean is(Pointer<Boolean> pointer) {
         return getOrDefault(pointer, false);
@@ -66,7 +66,7 @@ public interface Pointered {
      *
      * @param pointer the pointer to resolve
      * @return the negated value of the pointer. true if it does not exist.
-     * @since next
+     * @since 1.0.0
      */
     default boolean isNot(Pointer<Boolean> pointer) {
         return !is(pointer);
@@ -76,7 +76,7 @@ public interface Pointered {
      * Gets the pointers for this object.
      *
      * @return the pointers
-     * @since next
+     * @since 1.0.0
      */
     default @NotNull Pointers pointers() {
         return Pointers.empty();
@@ -91,7 +91,7 @@ public interface Pointered {
      * @param defaultValue the default value
      * @param <T>          the type
      * @return the value
-     * @since next
+     * @since 1.0.0
      */
     @Contract("_, null -> _; _, !null -> !null")
     @SuppressWarnings("checkstyle:MethodName")
@@ -108,7 +108,7 @@ public interface Pointered {
      * @param defaultValue the default value supplier
      * @param <T>          the type
      * @return the value
-     * @since next
+     * @since 1.0.0
      */
     @SuppressWarnings("checkstyle:MethodName")
     default <T> @UnknownNullability T getOrDefaultFrom(final @NotNull Pointer<T> pointer, final @NotNull Supplier<? extends T> defaultValue) {

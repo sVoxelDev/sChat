@@ -52,7 +52,7 @@ import static net.silthus.schat.message.Message.message;
 /**
  * Handles the player chat packet flow and rewrites non sChat packets into sChat packets.
  *
- * @since next
+ * @since 1.0.0
  */
 @Log(topic = "sChat")
 public final class ChatPacketListener extends PacketAdapter {
@@ -89,7 +89,7 @@ public final class ChatPacketListener extends PacketAdapter {
     /**
      * Enables the ProtocolLib integration.
      *
-     * @since next
+     * @since 1.0.0
      */
     public void enable() {
         try {
@@ -215,7 +215,7 @@ public final class ChatPacketListener extends PacketAdapter {
     /**
      * The exception is thrown if the handling of a chat packet failed.
      *
-     * @since next
+     * @since 1.0.0
      */
     public static final class HandleChatPacket extends RuntimeException {
         @Serial private static final long serialVersionUID = -8061095814474497204L;

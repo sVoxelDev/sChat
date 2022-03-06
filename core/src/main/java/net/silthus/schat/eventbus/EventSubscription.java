@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
  * Represents a subscription to a {@link SChatEvent}.
  *
  * @param <T> the event class
- * @since next
+ * @since 1.0.0
  */
 public interface EventSubscription<T extends SChatEvent> extends AutoCloseable {
 
@@ -39,7 +39,7 @@ public interface EventSubscription<T extends SChatEvent> extends AutoCloseable {
      * Gets the class this handler is listening to.
      *
      * @return the event class
-     * @since next
+     * @since 1.0.0
      */
     @NotNull Class<T> eventClass();
 
@@ -47,14 +47,14 @@ public interface EventSubscription<T extends SChatEvent> extends AutoCloseable {
      * Returns true if this handler is active.
      *
      * @return true if this handler is still active
-     * @since next
+     * @since 1.0.0
      */
     boolean isActive();
 
     /**
      * Unregisters this handler from the event bus.
      *
-     * @since next
+     * @since 1.0.0
      */
     @Override
     void close();
@@ -63,7 +63,7 @@ public interface EventSubscription<T extends SChatEvent> extends AutoCloseable {
      * Gets the event consumer responsible for handling the event.
      *
      * @return the event consumer
-     * @since next
+     * @since 1.0.0
      */
     @NotNull Consumer<? super T> handler();
 }

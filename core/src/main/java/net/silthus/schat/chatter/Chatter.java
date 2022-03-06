@@ -57,7 +57,7 @@ import org.jetbrains.annotations.Unmodifiable;
  * <p>Chatters are bound to unique entities (e.g. players or the console) and can join {@link Channel}s.
  * The chatter instances are cached inside the {@link ChatterRepository} and should be retrieved by the {@link ChatterRepository#get(Object)} method.</p>
  *
- * @since next
+ * @since 1.0.0
  */
 public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified, MessageSource, Permissable permits ChatterImpl, ChatterImpl.EmptyChatter {
 
@@ -67,7 +67,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
      * Gets a chatter with no functionality and the {@link Identity#nil()}.
      *
      * @return an empty chatter
-     * @since next
+     * @since 1.0.0
      */
     static Chatter empty() {
         return ChatterImpl.EMPTY;
@@ -78,7 +78,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
      *
      * @param identity the identity of the chatter
      * @return the created chatter
-     * @since next
+     * @since 1.0.0
      */
     static Chatter chatter(@NonNull Identity identity) {
         return chatterBuilder(identity).create();
@@ -89,7 +89,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
      *
      * @param identity the identity of the chatter
      * @return the builder
-     * @since next
+     * @since 1.0.0
      */
     static Builder chatterBuilder(@NonNull Identity identity) {
         return ChatterImpl.builder(identity);
@@ -106,7 +106,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
      * <p>Just be cause a channel is in this list does not mean the chatter is joined to it.</p>
      *
      * @return a list of channels of this chatter
-     * @since next
+     * @since 1.0.0
      */
     @NotNull @Unmodifiable List<Channel> channels();
 
@@ -115,7 +115,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
      *
      * @param key the key of the channel
      * @return the channel if the chatter is a member
-     * @since next
+     * @since 1.0.0
      */
     @NotNull Optional<Channel> channel(String key);
 
@@ -123,7 +123,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
      * Gets the current active channel of the chatter.
      *
      * @return the active channel
-     * @since next
+     * @since 1.0.0
      */
     @NotNull Optional<Channel> activeChannel();
 
@@ -135,7 +135,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
      * <p>The chatter will automatically {@link #join(Channel)} the channel.</p>
      *
      * @param activeChannel the channel to set active
-     * @since next
+     * @since 1.0.0
      */
     Chatter activeChannel(@Nullable Channel activeChannel);
 
@@ -146,7 +146,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
      *
      * @param channel the channel
      * @return true if the channel is active
-     * @since next
+     * @since 1.0.0
      */
     default boolean isActiveChannel(@Nullable Channel channel) {
         return activeChannel().map(c -> c.equals(channel)).orElse(false);
@@ -161,7 +161,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
      *
      * @param channel the channel to join
      * @see JoinChannelCommand
-     * @since next
+     * @since 1.0.0
      */
     void join(@NonNull Channel channel);
 
@@ -170,7 +170,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
      *
      * @param channel the channel to check
      * @return true if the chatter is a member of the channel
-     * @since next
+     * @since 1.0.0
      */
     boolean isJoined(@Nullable Channel channel);
 
@@ -183,7 +183,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
      *
      * @param channel the channel to leave
      * @see LeaveChannelCommand
-     * @since next
+     * @since 1.0.0
      */
     void leave(@NonNull Channel channel);
 
@@ -191,7 +191,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
      * Gets all messages received by this chatter.
      *
      * @return a list of unmodifiable received messages
-     * @since next
+     * @since 1.0.0
      */
     @NotNull @Unmodifiable Messages messages();
 
@@ -201,14 +201,14 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
      * <p>The message is directly forwarded to the underlying platform consumer using the {@link MessageHandler}.</p>
      *
      * @param message the message to sent
-     * @since next
+     * @since 1.0.0
      */
     void sendRawMessage(Component message);
 
     /**
      * The builder of a {@link Chatter}.
      *
-     * @since next
+     * @since 1.0.0
      */
     interface Builder {
         /**
@@ -218,7 +218,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
          *
          * @param eventBus the event bus
          * @return this builder
-         * @since next
+         * @since 1.0.0
          */
         @ApiStatus.Internal
         @NotNull Builder eventBus(@NonNull EventBus eventBus);
@@ -230,7 +230,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
          *
          * @param messageHandler the message handler to set
          * @return this builder
-         * @since next
+         * @since 1.0.0
          */
         @ApiStatus.Internal
         @NotNull Builder messageHandler(@NonNull MessageHandler messageHandler);
@@ -242,7 +242,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
          *
          * @param permissionHandler the permission handler
          * @return this builder
-         * @since next
+         * @since 1.0.0
          */
         @ApiStatus.Internal
         @NotNull Builder permissionHandler(@NonNull PermissionHandler permissionHandler);
@@ -251,7 +251,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
          * Creates the chatter.
          *
          * @return the newly created chatter
-         * @since next
+         * @since 1.0.0
          */
         @NotNull Chatter create();
     }
@@ -259,7 +259,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
     /**
      * The permission handler used by a chatter to validate a permission node.
      *
-     * @since next
+     * @since 1.0.0
      */
     interface PermissionHandler {
         /**
@@ -267,7 +267,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
          *
          * @param permission the permission to check
          * @return true if the chatter has the permission
-         * @since next
+         * @since 1.0.0
          */
         boolean hasPermission(String permission);
     }
@@ -277,7 +277,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
      *
      * <p>The message is directly forwarded to the receiver on the implementing platform.</p>
      *
-     * @since next
+     * @since 1.0.0
      */
     interface MessageHandler {
 
@@ -287,7 +287,7 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
          * <p>This method should, in the most cases, only be called by the view after it has been rendered.</p>
          *
          * @param message the raw message to sent
-         * @since next
+         * @since 1.0.0
          */
         void sendRawMessage(Component message);
     }

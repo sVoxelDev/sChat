@@ -42,7 +42,7 @@ import static net.silthus.schat.policies.JoinChannelPolicy.CAN_JOIN_PRIVATE_CHAN
  *
  * <p>The {@link #configure(Consumer)} method is non destructive adding to the builder.</p>
  *
- * @since next
+ * @since 1.0.0
  */
 @Accessors(fluent = true)
 public final class PrivateChannel {
@@ -64,7 +64,7 @@ public final class PrivateChannel {
      * settings are replaced with the values from this call.</p>
      *
      * @param channel the private channel builder
-     * @since next
+     * @since 1.0.0
      */
     public static void configure(Consumer<Channel.Builder> channel) {
         prototype = prototype.andThen(channel);

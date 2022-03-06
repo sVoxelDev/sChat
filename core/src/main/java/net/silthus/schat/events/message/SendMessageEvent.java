@@ -39,7 +39,7 @@ import net.silthus.schat.message.Targets;
  *
  * <p>Cancelling the event will prevent the message from being sent to its targets.</p>
  *
- * @since next
+ * @since 1.0.0
  */
 @Accessors(fluent = true)
 public final class SendMessageEvent implements SChatEvent, Cancellable {
@@ -53,7 +53,7 @@ public final class SendMessageEvent implements SChatEvent, Cancellable {
      * Creates a new event.
      *
      * @param message the message of the event
-     * @since next
+     * @since 1.0.0
      */
     public SendMessageEvent(final @NonNull Message message) {
         this.message = message;
@@ -66,7 +66,7 @@ public final class SendMessageEvent implements SChatEvent, Cancellable {
      * <p>You can modify the {@link Message#targets()} or cancel the sending.</p>
      *
      * @return the message that will be sent
-     * @since next
+     * @since 1.0.0
      */
     public Message message() {
         return message;

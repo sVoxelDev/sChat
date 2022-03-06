@@ -37,7 +37,7 @@ import net.silthus.schat.pointer.Pointered;
  * <p>The primary source of messages is the {@link Chatter},
  * but any {@link Identity} can be wrapped as a source using the {@link #of(Identity)} method.</p>
  *
- * @since next
+ * @since 1.0.0
  */
 public interface MessageSource extends Identified, Pointered {
 
@@ -48,7 +48,7 @@ public interface MessageSource extends Identified, Pointered {
      * Gets an empty message source represented by the {@link Identity#nil()}.
      *
      * @return the empty message source
-     * @since next
+     * @since 1.0.0
      */
     static MessageSource nil() {
         return IdentityMessageSource.NIL;
@@ -59,7 +59,7 @@ public interface MessageSource extends Identified, Pointered {
      *
      * @param identity the identity to wrap as a source
      * @return the wrapped message source
-     * @since next
+     * @since 1.0.0
      */
     static MessageSource of(Identity identity) {
         return new IdentityMessageSource(identity);
@@ -70,7 +70,7 @@ public interface MessageSource extends Identified, Pointered {
      *
      * @param text the text of the message
      * @return the message draft
-     * @since next
+     * @since 1.0.0
      */
     default Message.Draft message(String text) {
         return Message.message(text).source(this);
@@ -81,7 +81,7 @@ public interface MessageSource extends Identified, Pointered {
      *
      * @param text the text of the message
      * @return the message draft
-     * @since next
+     * @since 1.0.0
      */
     default Message.Draft message(Component text) {
         return Message.message(text).source(this);

@@ -43,7 +43,7 @@ import static net.silthus.schat.message.Message.message;
 /**
  * Sends a chat message to the active channel of the chatter.
  *
- * @since next
+ * @since 1.0.0
  */
 public class ChatCommand implements Command {
 
@@ -54,7 +54,7 @@ public class ChatCommand implements Command {
      * @param text the message
      * @return the message that was sent
      * @throws NoActiveChannel if the chatter has no active channel
-     * @since next
+     * @since 1.0.0
      */
     public static Message chat(Chatter chatter, Component text) throws NoActiveChannel {
         return new Builder(chatter).text(text).create().execute().message();
@@ -65,7 +65,7 @@ public class ChatCommand implements Command {
      *
      * @param chatter the chatter that is chatting
      * @return the builder
-     * @since next
+     * @since 1.0.0
      */
     public static Builder chatCommand(Chatter chatter) {
         return new Builder(chatter);
@@ -98,7 +98,7 @@ public class ChatCommand implements Command {
     /**
      * The result of the {@link ChatCommand} containing the final message.
      *
-     * @since next
+     * @since 1.0.0
      */
     public record ChatResult(Message message) implements Result {
         @Override
@@ -110,7 +110,7 @@ public class ChatCommand implements Command {
     /**
      * The builder of a {@link ChatCommand}.
      *
-     * @since next
+     * @since 1.0.0
      */
     @Getter
     @Setter
@@ -129,7 +129,7 @@ public class ChatCommand implements Command {
     /**
      * The exception is thrown if a chatter tries to chat without an active channel.
      *
-     * @since next
+     * @since 1.0.0
      */
     public static final class NoActiveChannel extends Error {
         @Serial private static final long serialVersionUID = 6326031138206622013L;

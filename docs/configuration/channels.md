@@ -18,7 +18,7 @@ channels: # all channels must go under the channels section
 
 ## `name`
 
-[:octicons-milestone-24: next][next] · [`minimessage`][minimessage] · :octicons-pin-24: `<key>` · :octicons-sync-24:
+[:octicons-milestone-24: 1.0.0][1.0.0] · [`minimessage`][minimessage] · :octicons-pin-24: `<key>` · :octicons-sync-24:
 
 The name of the channel is displayed in the output of commands and the ui and parsed in the [MiniMessage][minimessage] format.
 
@@ -35,7 +35,7 @@ Every channel can have any or all of the following settings.
 
 ### `priority`
 
-[:octicons-milestone-24: next][next] · `number` · :octicons-pin-24: `100` · :octicons-sync-24:
+[:octicons-milestone-24: 1.0.0][1.0.0] · `number` · :octicons-pin-24: `100` · :octicons-sync-24:
 
 The priority of the channel controls its position in the tabs and commands.  
 The lower the `priority` value the higher up the channel appears.
@@ -64,7 +64,7 @@ Channels with the same priority are sorted by their name.
 
 ### `protected`
 
-[:octicons-milestone-24: next][next] · `boolean` · :octicons-pin-24: `false` · :octicons-sync-24:
+[:octicons-milestone-24: 1.0.0][1.0.0] · `boolean` · :octicons-pin-24: `false` · :octicons-sync-24:
 
 Protected channels can only be joined by players that have the `schat.channel.<key>.join` permission.  
 
@@ -72,7 +72,7 @@ For example the `team` channel requires the `schat.channel.team.join` permission
 
 ### `join_permission`
 
-[:octicons-milestone-24: next][next] · `string` · :octicons-pin-24: `schat.channel.<key>.join` · :octicons-sync-24:
+[:octicons-milestone-24: 1.0.0][1.0.0] · `string` · :octicons-pin-24: `schat.channel.<key>.join` · :octicons-sync-24:
 
 You can override the required join permission with this setting.
 
@@ -81,13 +81,13 @@ You can override the required join permission with this setting.
 
 ### `global`
 
-[:octicons-milestone-24: next][next] · `boolean` · :octicons-pin-24: `true` · :octicons-sync-24:
+[:octicons-milestone-24: 1.0.0][1.0.0] · `boolean` · :octicons-pin-24: `true` · :octicons-sync-24:
 
 Messages that are sent to a `global` channel are forwarded with the [configured messenger][messenger].  
 
 ### `hidden`
 
-[:octicons-milestone-24: next][next] · `boolean` · :octicons-pin-24: `false` · :octicons-sync-24:
+[:octicons-milestone-24: 1.0.0][1.0.0] · `boolean` · :octicons-pin-24: `false` · :octicons-sync-24:
 
 Hides the channel in commands, auto completion and listings.  
 Does not prevent joining or leaving the channel.  
@@ -95,7 +95,7 @@ Players that are joined to the channel will see it in the channel tabs like all 
 
 ### `auto_join`
 
-[:octicons-milestone-24: next][next] · `boolean` · :octicons-pin-24: `false` · :octicons-sync-24:
+[:octicons-milestone-24: 1.0.0][1.0.0] · `boolean` · :octicons-pin-24: `false` · :octicons-sync-24:
 
 If enabled players will automatically join the channel when they join the server.  
 Only channels the player has access to will be auto joined.
@@ -106,7 +106,7 @@ Only channels the player has access to will be auto joined.
 
 ### `forced`
 
-[:octicons-milestone-24: next][next] · `boolean` · :octicons-pin-24: `false` · :octicons-sync-24:
+[:octicons-milestone-24: 1.0.0][1.0.0] · `boolean` · :octicons-pin-24: `false` · :octicons-sync-24:
 
 Forced channels cannot be left by players.
 
@@ -128,6 +128,7 @@ channels:
 --8<-- "docs/configuration/_tab_format_config.md"
 
 [next]: https://github.com/sVoxelDev/sChat/releases/latest
+[1.0.0]: https://github.com/sVoxelDev/sChat/releases/tag/1.0.0
 [developer]: /developer
 [commands]: /commands
 [messenger]: reference.md#messenger

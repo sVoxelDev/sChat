@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Unmodifiable;
  *
  * @param <K> the type of the key
  * @param <E> the type of the entity
- * @since next
+ * @since 1.0.0
  */
 public interface Repository<K, E extends Entity<K>> {
 
@@ -49,7 +49,7 @@ public interface Repository<K, E extends Entity<K>> {
      * Gets all entities in the repository.
      *
      * @return all entities
-     * @since next
+     * @since 1.0.0
      */
     @NotNull @Unmodifiable Collection<E> all();
 
@@ -57,7 +57,7 @@ public interface Repository<K, E extends Entity<K>> {
      * Gets a list of all keys stored in this repository.
      *
      * @return all keys
-     * @since next
+     * @since 1.0.0
      */
     @NotNull @Unmodifiable List<K> keys();
 
@@ -66,7 +66,7 @@ public interface Repository<K, E extends Entity<K>> {
      *
      * @param key the key of the entity
      * @return true if the entity exists
-     * @since next
+     * @since 1.0.0
      */
     boolean contains(K key);
 
@@ -75,7 +75,7 @@ public interface Repository<K, E extends Entity<K>> {
      *
      * @param entity the entity
      * @return true if the entity exists
-     * @since next
+     * @since 1.0.0
      */
     default boolean contains(E entity) {
         return contains(entity.key());
@@ -87,7 +87,7 @@ public interface Repository<K, E extends Entity<K>> {
      * @param id the id of the entity
      * @return the chatter if found, else throws NotFound
      * @throws NotFound if entity does not exist
-     * @since next
+     * @since 1.0.0
      */
     @NotNull E get(@NotNull K id) throws NotFound;
 
@@ -97,7 +97,7 @@ public interface Repository<K, E extends Entity<K>> {
      * <p>Does nothing if the entity already exists.</p>
      *
      * @param entity the entity to add
-     * @since next
+     * @since 1.0.0
      */
     void add(@NotNull E entity);
 
@@ -105,7 +105,7 @@ public interface Repository<K, E extends Entity<K>> {
      * Removes the entity with the given key from the repository.
      *
      * @param key the key of the entity
-     * @since next
+     * @since 1.0.0
      */
     @Nullable E remove(@NotNull K key);
 
@@ -115,7 +115,7 @@ public interface Repository<K, E extends Entity<K>> {
      * <p>Does nothing if the entity does not exist.</p>
      *
      * @param entity the entity to remove
-     * @since next
+     * @since 1.0.0
      */
     default @Nullable E remove(@NotNull E entity) {
         return remove(entity.key());
@@ -128,7 +128,7 @@ public interface Repository<K, E extends Entity<K>> {
      *
      * @param filter the predicate to filter for
      * @return an unmodifiable filtered list of entities matching the filter
-     * @since next
+     * @since 1.0.0
      */
     default @NotNull @Unmodifiable List<E> filter(final @NonNull Predicate<E> filter) {
         final ArrayList<E> entities = new ArrayList<>();
@@ -144,7 +144,7 @@ public interface Repository<K, E extends Entity<K>> {
      *
      * @param key the key of the entity
      * @return the found entity or an empty optional
-     * @since next
+     * @since 1.0.0
      */
     default Optional<E> find(K key) {
         return find(e -> e.key().equals(key));
@@ -157,7 +157,7 @@ public interface Repository<K, E extends Entity<K>> {
      * @param key the key of the entity
      * @param creator the function used to create the entity if it does not exist
      * @return the existing or newly created entity
-     * @since next
+     * @since 1.0.0
      */
     default E findOrCreate(K key, Function<K, E> creator) {
         return find(e -> e.key().equals(key)).orElseGet(() -> {
@@ -172,7 +172,7 @@ public interface Repository<K, E extends Entity<K>> {
      *
      * @param filter the filter used to search for the entity
      * @return the entity if found
-     * @since next
+     * @since 1.0.0
      */
     default @NotNull Optional<E> find(final @NonNull Predicate<E> filter) {
         for (final E entity : all()) {

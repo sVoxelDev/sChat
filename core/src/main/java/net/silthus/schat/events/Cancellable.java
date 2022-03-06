@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents an event that can be cancelled.
  *
- * @since next
+ * @since 1.0.0
  */
 public interface Cancellable {
 
@@ -37,7 +37,7 @@ public interface Cancellable {
      * Gets an {@link AtomicBoolean} holding the cancellation state of the event.
      *
      * @return the cancellation
-     * @since next
+     * @since 1.0.0
      */
     @NotNull AtomicBoolean cancellationState();
 
@@ -45,7 +45,7 @@ public interface Cancellable {
      * Returns true if the event is currently cancelled.
      *
      * @return if the event is cancelled
-     * @since next
+     * @since 1.0.0
      */
     default boolean isCancelled() {
         return cancellationState().get();
@@ -55,7 +55,7 @@ public interface Cancellable {
      * Returns true if the event is not currently cancelled.
      *
      * @return if the event is not cancelled
-     * @since next
+     * @since 1.0.0
      */
     default boolean isNotCancelled() {
         return !isCancelled();
@@ -66,7 +66,7 @@ public interface Cancellable {
      *
      * @param cancelled the new state
      * @return the previous state
-     * @since next
+     * @since 1.0.0
      */
     default boolean cancelled(boolean cancelled) {
         return cancellationState().getAndSet(cancelled);

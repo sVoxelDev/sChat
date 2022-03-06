@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
  * Represents an entity that can be stored in a {@link Repository} by its key.
  *
  * @param <K> the type of the key
- * @since next
+ * @since 1.0.0
  */
 public interface Entity<K> {
 
@@ -37,7 +37,7 @@ public interface Entity<K> {
      * Gets the unique key of the entity.
      *
      * @return the unique key
-     * @since next
+     * @since 1.0.0
      */
     @NotNull K key();
 }

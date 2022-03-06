@@ -34,7 +34,7 @@ import net.silthus.schat.events.SChatEvent;
  *
  * <p>The event will not fire on subsequent joins to a channel if chatter is already a member.</p>
  *
- * @since next
+ * @since 1.0.0
  */
 public record ChatterJoinedChannelEvent(Chatter chatter, Channel channel) implements SChatEvent {
 }

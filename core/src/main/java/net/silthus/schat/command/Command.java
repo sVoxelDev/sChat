@@ -31,7 +31,7 @@ import java.util.function.Function;
  *
  * <p>A list of common commands can be found inside the {@link net.silthus.schat.commands} package.</p>
  *
- * @since next
+ * @since 1.0.0
  */
 public interface Command {
 
@@ -39,7 +39,7 @@ public interface Command {
      * Executes this command and returns the result.
      *
      * @return the result of the command
-     * @since next
+     * @since 1.0.0
      */
     Result execute();
 
@@ -48,7 +48,7 @@ public interface Command {
      *
      * @param <B> the type of the command builder
      * @param <C> the type of the command
-     * @since next
+     * @since 1.0.0
      */
     interface Builder<B extends Builder<B, C>, C extends Command> {
 
@@ -56,7 +56,7 @@ public interface Command {
          * Directly creates and then executes the command created from this builder.
          *
          * @return the result of the command execution
-         * @since next
+         * @since 1.0.0
          */
         default Result execute() {
             return create().execute();
@@ -66,7 +66,7 @@ public interface Command {
          * Gets the factory that creates the command from this builder.
          *
          * @return the command factory
-         * @since next
+         * @since 1.0.0
          */
         Function<B, ? extends C> command();
 
@@ -75,7 +75,7 @@ public interface Command {
          *
          * @param command the type of the command to use
          * @return this builder
-         * @since next
+         * @since 1.0.0
          */
         B use(Function<B, ? extends C> command);
 
@@ -83,7 +83,7 @@ public interface Command {
          * Creates a new command instance from this builder.
          *
          * @return the created command
-         * @since next
+         * @since 1.0.0
          */
         @SuppressWarnings("unchecked")
         default C create() {
@@ -94,7 +94,7 @@ public interface Command {
     /**
      * A generic error that can be thrown by commands.
      *
-     * @since next
+     * @since 1.0.0
      */
     class Error extends RuntimeException {
         @Serial private static final long serialVersionUID = 7958152949989995416L;

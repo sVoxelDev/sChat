@@ -33,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Holds all channels registered on the server.
  *
- * @since next
+ * @since 1.0.0
  */
 public interface ChannelRepository extends Repository<String, Channel> {
 
@@ -42,7 +42,7 @@ public interface ChannelRepository extends Repository<String, Channel> {
      *
      * @param eventBus the event bus
      * @return the new in memory repository
-     * @since next
+     * @since 1.0.0
      */
     static ChannelRepository createInMemoryChannelRepository(EventBus eventBus) {
         return createInMemoryChannelRepository(eventBus, false);
@@ -54,7 +54,7 @@ public interface ChannelRepository extends Repository<String, Channel> {
      * @param eventBus the event bus
      * @param debug    true to print all operations into the log
      * @return the new in memory repository
-     * @since next
+     * @since 1.0.0
      */
     static ChannelRepository createInMemoryChannelRepository(EventBus eventBus, boolean debug) {
         if (debug)
@@ -75,7 +75,7 @@ public interface ChannelRepository extends Repository<String, Channel> {
     /**
      * The exception is thrown if someone tries to add a channel with the same key to the repository.
      *
-     * @since next
+     * @since 1.0.0
      */
     @Getter
     @Accessors(fluent = true)

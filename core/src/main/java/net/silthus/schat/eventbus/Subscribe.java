@@ -33,7 +33,7 @@ import java.lang.annotation.Target;
  *
  * <p>The class containing the method must be {@link EventBus#register}</p>
  *
- * @since next
+ * @since 1.0.0
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

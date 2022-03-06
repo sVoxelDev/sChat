@@ -29,7 +29,7 @@ import java.util.Optional;
 /**
  * Represents a generic result, which can either be successful or fail.
  *
- * @since next
+ * @since 1.0.0
  */
 @FunctionalInterface
 public interface Result {
@@ -37,14 +37,14 @@ public interface Result {
     /**
      * Instance of {@link Result} which always reports success.
      *
-     * @since next
+     * @since 1.0.0
      */
     Result GENERIC_SUCCESS = () -> true;
 
     /**
      * Instance of {@link Result} which always reports failure.
      *
-     * @since next
+     * @since 1.0.0
      */
     Result GENERIC_FAILURE = () -> false;
 
@@ -52,7 +52,7 @@ public interface Result {
      * Creates a new generic success result.
      *
      * @return a success
-     * @since next
+     * @since 1.0.0
      */
     static Result success() {
         return GENERIC_SUCCESS;
@@ -62,7 +62,7 @@ public interface Result {
      * Creates a new generic failure result.
      *
      * @return a failure
-     * @since next
+     * @since 1.0.0
      */
     static Result failure() {
         return GENERIC_FAILURE;
@@ -72,7 +72,7 @@ public interface Result {
      * Creates a new generic error result containing the given exception.
      *
      * @return a failure with an exception
-     * @since next
+     * @since 1.0.0
      */
     static Result error(Throwable exception) {
         return new ResultImpl(false, exception);
@@ -83,7 +83,7 @@ public interface Result {
      *
      * @param result the result
      * @return the result based on the input
-     * @since next
+     * @since 1.0.0
      */
     static Result of(boolean result) {
         return new ResultImpl(result, null);
@@ -93,7 +93,7 @@ public interface Result {
      * Gets if the operation which produced this result completed successfully.
      *
      * @return if the result indicates a success
-     * @since next
+     * @since 1.0.0
      */
     boolean wasSuccessful();
 
@@ -104,7 +104,7 @@ public interface Result {
      * to throw the reason of failure if one is present.</p>
      *
      * @return if the result indicates a failure
-     * @since next
+     * @since 1.0.0
      */
     default boolean wasFailure() {
         return !wasSuccessful();
@@ -114,7 +114,7 @@ public interface Result {
      * The exception that lead to the failed result.
      *
      * @return the exception responsible for the result failure
-     * @since next
+     * @since 1.0.0
      */
     default Optional<Throwable> failureReason() {
         return Optional.empty();
@@ -125,7 +125,7 @@ public interface Result {
      *
      * @return the result if no error occurred
      * @throws Error the error encapsulating the underlying {@link #failureReason()}
-     * @since next
+     * @since 1.0.0
      */
     default Result raiseError() throws Error {
         final Throwable throwable = failureReason().orElse(null);
@@ -137,7 +137,7 @@ public interface Result {
     /**
      * Encapsulates an exception thrown during the execution of a {@link Command}.
      *
-     * @since next
+     * @since 1.0.0
      */
     final class Error extends RuntimeException {
         @Serial

@@ -39,7 +39,7 @@ import net.silthus.schat.message.Message;
  * The event is fired when a channel has the {@link ChannelSettings#GLOBAL} flag and
  * the message is about to be forwarded to another server.
  *
- * @since next
+ * @since 1.0.0
  */
 @Getter
 @Setter

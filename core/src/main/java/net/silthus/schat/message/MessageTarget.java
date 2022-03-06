@@ -36,7 +36,7 @@ import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
  *
  * <p>The primary example for this would be the {@link Chatter}.</p>
  *
- * @since next
+ * @since 1.0.0
  */
 public interface MessageTarget {
 
@@ -48,7 +48,7 @@ public interface MessageTarget {
      *
      * @param message the message to sent
      * @return the result if the message was processed
-     * @since next
+     * @since 1.0.0
      */
     SendMessageResult sendMessage(@NonNull Message message);
 }

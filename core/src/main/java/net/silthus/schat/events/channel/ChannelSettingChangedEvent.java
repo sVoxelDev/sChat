@@ -36,7 +36,7 @@ import net.silthus.schat.pointer.Settings;
  *
  * @param <V> the type of the setting
  * @see ChannelSettingsChanged
- * @since next
+ * @since 1.0.0
  */
 public record ChannelSettingChangedEvent<V>(
     Channel channel,

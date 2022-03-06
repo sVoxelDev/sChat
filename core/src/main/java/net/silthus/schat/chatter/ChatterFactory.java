@@ -28,7 +28,7 @@ import java.util.UUID;
 /**
  * Used to create new instances of a chatter based on the type of the implementing platform.
  *
- * @since next
+ * @since 1.0.0
  */
 public interface ChatterFactory {
 
@@ -37,7 +37,7 @@ public interface ChatterFactory {
      *
      * @param id the id of the chatter
      * @return the created chatter
-     * @since next
+     * @since 1.0.0
      */
     Chatter createChatter(UUID id);
 }

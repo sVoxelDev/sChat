@@ -47,7 +47,7 @@ import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
 /**
  * Creates a new private channel between the two chatters.
  *
- * @since next
+ * @since 1.0.0
  */
 @Getter
 @Accessors(fluent = true)

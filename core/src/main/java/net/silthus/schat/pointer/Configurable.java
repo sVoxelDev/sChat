@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
  * Marks a type as configurable allowing the direct setting of settings at runtime.
  *
  * @param <T> the type
- * @since next
+ * @since 1.0.0
  */
 public interface Configurable<T> extends Configured {
     /**
@@ -41,7 +41,7 @@ public interface Configurable<T> extends Configured {
      * @param value   the value of the setting
      * @param <V>     the type of the setting
      * @return this builder
-     * @since next
+     * @since 1.0.0
      */
     @SuppressWarnings("unchecked")
     default <V> @NotNull T set(@NonNull Setting<V> setting, @Nullable V value) {
