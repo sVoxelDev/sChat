@@ -136,6 +136,7 @@ In addition to the [PlacerholderAPI][placeholderapi], the following placeholders
 Controls the format of messages where the viewer is also the sender of the message. Behaves exactly the same as `message_format` and exposes identical placeholders.
 
 [next]: https://github.com/sVoxelDev/sChat/releases/latest
+[1.0.1]: https://github.com/sVoxelDev/sChat/releases/tag/v1.0.1
 [1.0.0]: https://github.com/sVoxelDev/sChat/releases/tag/v1.0.0
 [1.0.0]: https://github.com/sVoxelDev/sChat/releases/tag/1.0.0
 [developer]: /developer
