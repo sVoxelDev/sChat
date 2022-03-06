@@ -17,7 +17,7 @@ mockbukkit = "1.15.5"
 placeholderapi = "2.11.1"
 
 checkerframework = "3.21.2"
-junit-jupiter = "5.8.1"
+junit-jupiter = "5.8.2"
 junit-platform = "1.8.2"
 assertj = "3.21.0"
 mockito = "4.0.0"
