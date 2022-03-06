@@ -19,7 +19,7 @@ placeholderapi = "2.11.1"
 checkerframework = "3.21.3"
 junit-jupiter = "5.8.2"
 junit-platform = "1.8.2"
-assertj = "3.21.0"
+assertj = "3.22.0"
 mockito = "4.0.0"
 cucumber = "7.2.3"
 
