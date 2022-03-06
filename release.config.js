@@ -95,7 +95,7 @@ if (config.branches.some(it => (it === branch || it.name === branch) && it.prere
         }],
         ["@semantic-release/exec", {
             "publishCmd": "./gradlew -PforceSign=true publish closeAndReleaseSonatypeStagingRepository --no-daemon",
-            "successCmd": "mike deploy --prefix docs --push --update-aliases ${nextRelease.version.replace(/\.\d+$/, '')} latest"
+            "successCmd": "git config --global user.name mkdocs-deploy && git config --global user.email mkdocs-deploy@users.noreply.github.com && mike deploy --prefix docs --push --update-aliases ${nextRelease.version.replace(/.\d+$/, '')} latest"
         }],
         ["@semantic-release/github", {
             "assets": [
