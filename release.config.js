@@ -72,7 +72,7 @@ if (config.branches.some(it => (it === branch || it.name === branch) && it.prere
                         "docs/**/*.md"
                     ],
                     "from": "\\[next\\]: https://github.com/sVoxelDev/sChat/releases/latest",
-                    "to": "[next]: https://github.com/sVoxelDev/sChat/releases/latest\n[${nextRelease.version}]: https://github.com/sVoxelDev/sChat/releases/tag/${nextRelease.version}",
+                    "to": "[next]: https://github.com/sVoxelDev/sChat/releases/latest\n[${nextRelease.version}]: https://github.com/sVoxelDev/sChat/releases/tag/v${nextRelease.version}",
                     "countMatches": true
                 },
                 {
