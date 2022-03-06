@@ -27,4 +27,5 @@ As an admin you have access to the following commands.
 
 [permissions]: /permissions
 [next]: https://github.com/sVoxelDev/sChat/releases/latest
+[1.0.0]: https://github.com/sVoxelDev/sChat/releases/tag/v1.0.0
 [1.0.0]: https://github.com/sVoxelDev/sChat/releases/tag/1.0.0
