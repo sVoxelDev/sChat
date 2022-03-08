@@ -25,13 +25,8 @@ package net.silthus.schat.ui.view;
 
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.chatter.Chatter;
-import net.silthus.schat.pointer.Setting;
-
-import static net.silthus.schat.pointer.Setting.setting;
 
 public interface View {
-
-    Setting<Integer> VIEW_HEIGHT = setting(Integer.class, "height", 100); // minecraft chat box height in lines
 
     static View empty() {
         return EmptyView.EMPTY;

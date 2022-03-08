@@ -34,7 +34,7 @@ import net.silthus.schat.ui.format.MiniMessageFormat;
 import static net.silthus.schat.channel.ChannelHelper.ConfiguredSetting.set;
 import static net.silthus.schat.channel.ChannelSettings.GLOBAL;
 import static net.silthus.schat.channel.ChannelSettings.PROTECTED;
-import static net.silthus.schat.ui.view.ViewConfig.FORMAT_CONFIG;
+import static net.silthus.schat.ui.views.tabbed.TabFormatConfig.TAB_FORMAT_CONFIG;
 
 public class ChannelSteps {
 
@@ -71,6 +71,6 @@ public class ChannelSteps {
 
     @Given("the channel {channel} has a custom format")
     public void theChannelGlobalHasACustomFormat(Channel channel) {
-        channel.get(FORMAT_CONFIG).messageFormat(new MiniMessageFormat("<source_display_name>: <text>"));
+        channel.get(TAB_FORMAT_CONFIG).messageFormat(new MiniMessageFormat("<source_display_name>: <text>"));
     }
 }

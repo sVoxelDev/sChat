@@ -30,7 +30,7 @@ import net.silthus.schat.events.message.SendChannelMessageEvent;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.ui.format.Format;
 import net.silthus.schat.ui.format.MiniMessageFormat;
-import net.silthus.schat.ui.view.ViewConfig;
+import net.silthus.schat.ui.views.tabbed.TabFormatConfig;
 
 public class Replacements {
 
@@ -38,7 +38,7 @@ public class Replacements {
 
     @Subscribe
     public void onChannelMessage(SendChannelMessageEvent event) {
-        final Format format = event.channel().get(ViewConfig.FORMAT_CONFIG).messageFormat();
+        final Format format = event.channel().get(TabFormatConfig.TAB_FORMAT_CONFIG).messageFormat();
         if (format instanceof MiniMessageFormat miniMessageFormat)
             event.message().set(ReplacementProvider.REPLACED_MESSAGE_FORMAT, applyTo(event.message(), miniMessageFormat.format()));
     }

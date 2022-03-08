@@ -48,8 +48,8 @@ import net.silthus.schat.ui.views.Views;
 import net.silthus.schat.ui.views.tabbed.TabbedChannelsView;
 import net.silthus.schat.util.gson.GsonProvider;
 
-import static net.silthus.schat.ui.view.ViewConfig.FORMAT_CONFIG;
 import static net.silthus.schat.ui.view.ViewProvider.cachingViewProvider;
+import static net.silthus.schat.ui.views.tabbed.TabFormatConfig.TAB_FORMAT_CONFIG;
 
 @Getter
 @Accessors(fluent = true)
@@ -89,7 +89,7 @@ public class ViewModule {
     }
 
     private void configurePrivateChats() {
-        PrivateChannel.configure(builder -> builder.set(FORMAT_CONFIG, config().privateChatFormat()));
+        PrivateChannel.configure(builder -> builder.set(TAB_FORMAT_CONFIG, config().privateChatFormat()));
     }
 
     private static final class MiniMessageFormatSerializer implements JsonSerializer<Format>, JsonDeserializer<Format> {

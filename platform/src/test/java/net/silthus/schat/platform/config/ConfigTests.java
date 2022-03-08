@@ -52,7 +52,7 @@ import static net.silthus.schat.message.MessageSource.of;
 import static net.silthus.schat.platform.config.ConfigKeys.CHANNELS;
 import static net.silthus.schat.platform.config.ConfigKeys.VIEW_CONFIG;
 import static net.silthus.schat.platform.config.TestConfigurationAdapter.testConfigAdapter;
-import static net.silthus.schat.ui.view.ViewConfig.FORMAT_CONFIG;
+import static net.silthus.schat.ui.views.tabbed.TabFormatConfig.TAB_FORMAT_CONFIG;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ConfigTests {
@@ -118,7 +118,7 @@ class ConfigTests {
         @Test
         void loads_message_format() {
             final Component format = getTestChannelConfig()
-                .get(FORMAT_CONFIG)
+                .get(TAB_FORMAT_CONFIG)
                 .messageFormat()
                 .format(View.empty(), message("Hey").source(of(identity("Notch"))).create());
             assertThat(format).isEqualTo(text("Notch", AQUA).append(text(": Hey", GREEN)));
@@ -126,7 +126,7 @@ class ConfigTests {
 
         @Test
         void loads_active_color() {
-            final TextColor activeColor = getTestChannelConfig().get(FORMAT_CONFIG).activeColor();
+            final TextColor activeColor = getTestChannelConfig().get(TAB_FORMAT_CONFIG).activeColor();
             assertThat(activeColor).isEqualTo(RED);
         }
     }
