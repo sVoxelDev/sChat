@@ -37,6 +37,8 @@ public interface View {
     Component render();
 
     default void update() {
-        chatter().sendRawMessage(render());
+        final Component render = render();
+        if (!render.equals(Component.empty()))
+            chatter().sendRawMessage(render);
     }
 }

@@ -85,6 +85,10 @@ public final class ChatterMock extends ChatterImpl {
         assertThat(receivesMessages).contains(component);
     }
 
+    public void assertReceivedNoRawMessage() {
+        assertThat(receivesMessages).isEmpty();
+    }
+
     public void assertLastRawMessage(Component render) {
         assertThat(receivesMessages).last()
             .isEqualTo(render);
