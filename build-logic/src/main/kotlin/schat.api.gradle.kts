@@ -17,6 +17,9 @@ plugins {
 }
 
 indra {
+    javaVersions {
+        target(17)
+    }
     checkstyle("9.3")
 }
 

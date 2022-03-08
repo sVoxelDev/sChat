@@ -1,5 +1,6 @@
 plugins {
     `kotlin-dsl`
+    kotlin("jvm") version "1.5.31"
 }
 
 repositories {
@@ -16,4 +17,10 @@ dependencies {
     implementation(libs.gradle.plugin.cucumber)
 
     implementation(files(libs.javaClass.protectionDomain.codeSource.location))
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }

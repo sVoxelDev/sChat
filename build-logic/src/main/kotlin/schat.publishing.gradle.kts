@@ -11,10 +11,6 @@ if (System.getenv("CI").toBoolean()) {
 }
 
 indra {
-    javaVersions {
-        target(17)
-    }
-
     github("sVoxelDev", "sChat") {
         ci(true)
     }
