@@ -48,6 +48,11 @@ final class EmptyEventBus implements EventBus {
     }
 
     @Override
+    public void unregister(Object listener) {
+
+    }
+
+    @Override
     public @NonNull @Unmodifiable <E extends SChatEvent> Set<EventSubscription<E>> subscriptions(@NonNull Class<E> eventClass) {
         return Set.of();
     }

@@ -31,6 +31,7 @@ import lombok.experimental.Accessors;
 import lombok.extern.java.Log;
 import net.kyori.event.EventSubscriber;
 import net.silthus.schat.events.SChatEvent;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Log(topic = "sChat:EventBus")
@@ -40,14 +41,17 @@ class EventSubscriptionImpl<E extends SChatEvent> implements EventSubscription<E
     private final EventBusImpl eventBus;
     private final Class<E> eventClass;
     private final Consumer<? super E> handler;
+    private final @Nullable Object owner;
     private final AtomicBoolean active = new AtomicBoolean(true);
 
     EventSubscriptionImpl(final EventBusImpl eventBus,
                           final Class<E> eventClass,
-                          final Consumer<? super E> consumer) {
+                          final Consumer<? super E> consumer,
+                          final @Nullable Object owner) {
         this.eventBus = eventBus;
         this.eventClass = eventClass;
         this.handler = consumer;
+        this.owner = owner;
     }
 
     @Override
@@ -81,8 +85,8 @@ class EventSubscriptionImpl<E extends SChatEvent> implements EventSubscription<E
     @Log(topic = "sChat:EventBus")
     static final class Logging<E extends SChatEvent> extends EventSubscriptionImpl<E> {
 
-        Logging(EventBusImpl eventBus, Class<E> eventClass, Consumer<? super E> consumer) {
-            super(eventBus, eventClass, consumer);
+        Logging(EventBusImpl eventBus, Class<E> eventClass, Consumer<? super E> consumer, @Nullable Object owner) {
+            super(eventBus, eventClass, consumer, owner);
         }
 
         @Override

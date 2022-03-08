@@ -36,6 +36,7 @@ import net.kyori.event.EventSubscriber;
 import net.kyori.event.SimpleEventBus;
 import net.silthus.schat.events.SChatEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 @Accessors(fluent = true)
@@ -68,6 +69,11 @@ class EventBusImpl implements EventBus, AutoCloseable {
             .collect(Collectors.toUnmodifiableSet());
     }
 
+    @Override
+    public void unregister(@NonNull Object listener) {
+        bus.unregister(sub -> ((EventSubscriptionImpl<?>) sub).owner() == listener);
+    }
+
     @NotNull
     @SuppressWarnings("unchecked")
     private EventSubscription<? extends SChatEvent> registerSubscription(Object listener, Method method) {
@@ -78,20 +84,29 @@ class EventBusImpl implements EventBus, AutoCloseable {
             } catch (IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }
-        });
+        }, listener);
     }
 
     private <T extends SChatEvent> EventSubscription<T> registerSubscription(final Class<T> eventClass,
                                                                              final Consumer<? super T> handler) {
-        final EventSubscriptionImpl<T> eventHandler = createSubscription(eventClass, handler);
+        final EventSubscriptionImpl<T> eventHandler = createSubscription(eventClass, handler, null);
+        this.bus.register(eventClass, eventHandler);
+
+        return eventHandler;
+    }
+
+    private <T extends SChatEvent> EventSubscription<T> registerSubscription(final Class<T> eventClass,
+                                                                             final Consumer<? super T> handler,
+                                                                             final @Nullable Object owner) {
+        final EventSubscriptionImpl<T> eventHandler = createSubscription(eventClass, handler, owner);
         this.bus.register(eventClass, eventHandler);
 
         return eventHandler;
     }
 
     @NotNull
-    protected <T extends SChatEvent> EventSubscriptionImpl<T> createSubscription(Class<T> eventClass, Consumer<? super T> handler) {
-        return new EventSubscriptionImpl<>(this, eventClass, handler);
+    protected <T extends SChatEvent> EventSubscriptionImpl<T> createSubscription(Class<T> eventClass, Consumer<? super T> handler, @Nullable Object owner) {
+        return new EventSubscriptionImpl<>(this, eventClass, handler, owner);
     }
 
     @Override
@@ -150,8 +165,8 @@ class EventBusImpl implements EventBus, AutoCloseable {
         }
 
         @Override
-        protected @NotNull <T extends SChatEvent> EventSubscriptionImpl<T> createSubscription(Class<T> eventClass, Consumer<? super T> handler) {
-            return new EventSubscriptionImpl.Logging<>(this, eventClass, handler);
+        protected @NotNull <T extends SChatEvent> EventSubscriptionImpl<T> createSubscription(Class<T> eventClass, Consumer<? super T> handler, Object owner) {
+            return new EventSubscriptionImpl.Logging<>(this, eventClass, handler, owner);
         }
     }
 }
