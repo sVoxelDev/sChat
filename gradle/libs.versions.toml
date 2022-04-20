@@ -21,7 +21,7 @@ junit-jupiter = "5.8.2"
 junit-platform = "1.8.2"
 assertj = "3.22.0"
 mockito = "4.5.0"
-cucumber = "7.3.0"
+cucumber = "7.3.1"
 
 event-api = "3.0.0"
 adventure-api = "4.10.1"
