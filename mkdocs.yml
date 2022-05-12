@@ -21,6 +21,7 @@ nav:
     - Reference: configuration/reference.md
     - Channels: configuration/channels.md
     - MiniMessage Format: configuration/minimessage.md
+    - Translations: configuration/translations.md
   - Extensions:
     - extensions/index.md
     - PlaceholderAPI: extensions/placeholderapi.md
