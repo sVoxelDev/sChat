@@ -55,6 +55,7 @@ public class SenderMock implements Sender {
 
     private final Identity identity;
     private final Queue<Component> messages = new LinkedList<>();
+    private final Queue<Component> actionBarMessages = new LinkedList<>();
     private final Chatter.PermissionHandler permissionHandler = mock(Chatter.PermissionHandler.class);
 
     public SenderMock(Identity identity) {
@@ -68,7 +69,7 @@ public class SenderMock implements Sender {
 
     @Override
     public void sendActionBar(Component message) {
-        sendMessage(message);
+        actionBarMessages.add(message);
     }
 
     @Override
@@ -86,6 +87,13 @@ public class SenderMock implements Sender {
             assertThat(messages.peek()).isNull();
         else
             assertThat(messages.peek()).isEqualTo(component);
+    }
+
+    public void assertLastActionbarIs(Component component) {
+        if (component == null)
+            assertThat(actionBarMessages.peek()).isNull();
+        else
+            assertThat(actionBarMessages.peek()).isEqualTo(component);
     }
 
     public void mockPermission(String permission, boolean state) {

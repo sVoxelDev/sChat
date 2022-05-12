@@ -25,6 +25,9 @@ package net.silthus.schat.platform.locale;
 
 import java.util.Collection;
 import java.util.Iterator;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
 import net.kyori.adventure.text.TextComponent;
@@ -35,10 +38,10 @@ import net.silthus.schat.platform.sender.Sender;
 
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.join;
-import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.space;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.Component.translatable;
+import static net.kyori.adventure.text.JoinConfiguration.newlines;
 import static net.kyori.adventure.text.event.ClickEvent.suggestCommand;
 import static net.kyori.adventure.text.event.HoverEvent.showText;
 import static net.kyori.adventure.text.format.NamedTextColor.AQUA;
@@ -52,6 +55,8 @@ import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.kyori.adventure.text.format.TextDecoration.BOLD;
 import static net.kyori.adventure.text.format.TextDecoration.ITALIC;
 import static net.silthus.schat.message.Message.message;
+import static net.silthus.schat.platform.locale.Messages.DisplayMode.ACTION_BAR;
+import static net.silthus.schat.platform.locale.Messages.DisplayMode.TEXT;
 
 public interface Messages {
 
@@ -92,7 +97,7 @@ public interface Messages {
         // /____  >\______  |___|  (____  |__|
         //      \/        \/     \/     \/
 
-        return join(newline(),
+        return join(newlines(),
             empty(),
             text("       _________ .__            __   "),
             text("  _____\\_   ___ \\|  |__ _____ _/  |_ "),
@@ -107,42 +112,42 @@ public interface Messages {
     /**
      * Joined the channel: {0}.
      */
-    Args1<Channel> JOINED_CHANNEL = channel -> prefixed(translatable()
+    DisplayArgs1<Channel> JOINED_CHANNEL = displayMode(channel -> prefixed(translatable()
         .key("schat.command.channel.join.success")
         .color(GREEN)
         .args(channel.displayName())
         .append(FULL_STOP)
-    );
+    ), ACTION_BAR);
 
     /**
      * Unable to join the channel: {0}.
      */
-    Args1<Channel> JOIN_CHANNEL_ERROR = channel -> prefixed(translatable()
+    Args1<Channel> JOIN_CHANNEL_ERROR = displayMode(channel -> prefixed(translatable()
         .key("schat.command.channel.join.error")
         .color(RED)
         .args(channel.displayName())
         .append(FULL_STOP)
-    );
+    ), TEXT);
 
     /**
      * Left the channel: {0}.
      */
-    Args1<Channel> LEFT_CHANNEL = channel -> prefixed(translatable()
+    Args1<Channel> LEFT_CHANNEL = displayMode(channel -> prefixed(translatable()
         .key("schat.command.channel.leave.success")
         .color(GREEN)
         .args(channel.displayName())
         .append(FULL_STOP)
-    );
+    ), ACTION_BAR);
 
     /**
      * Unable to leave the channel: {0}.
      */
-    Args1<Channel> LEAVE_CHANNEL_ERROR = channel -> prefixed(translatable()
+    Args1<Channel> LEAVE_CHANNEL_ERROR = displayMode(channel -> prefixed(translatable()
         .key("schat.command.channel.leave.error")
         .color(RED)
         .args(channel.displayName())
         .append(FULL_STOP)
-    );
+    ), TEXT);
 
     /**
      * Join a channel with {@code /channel join <channel>}.
@@ -227,6 +232,30 @@ public interface Messages {
         Component build();
     }
 
+    @Data
+    @AllArgsConstructor
+    @Accessors(fluent = true)
+    class DynamicArgs0 implements Args0 {
+        private final Args0 builder;
+        private DisplayMode mode;
+
+        public void display(Sender sender) {
+            switch (mode) {
+                case ACTION_BAR -> actionBar(sender);
+                case TEXT -> send(sender);
+            }
+        }
+
+        @Override
+        public Component build() {
+            return builder.build();
+        }
+    }
+
+    static Args0 displayMode(Args0 builder, DisplayMode mode) {
+        return new DynamicArgs0(builder, mode);
+    }
+
     interface Args1<A0> {
         default void send(Sender sender, A0 arg0) {
             sender.sendMessage(build(arg0));
@@ -241,6 +270,30 @@ public interface Messages {
         }
 
         Component build(A0 arg0);
+    }
+
+    @Data
+    @AllArgsConstructor
+    @Accessors(fluent = true)
+    class DisplayArgs1<A0> implements Args1<A0> {
+        private final Args1<A0> builder;
+        private DisplayMode mode;
+
+        public void send(Sender sender, A0 arg0) {
+            switch (mode) {
+                case ACTION_BAR -> actionBar(sender, arg0);
+                case TEXT -> Args1.super.send(sender, arg0);
+            }
+        }
+
+        @Override
+        public Component build(A0 arg0) {
+            return builder.build(arg0);
+        }
+    }
+
+    static <A extends Args1<A0>, A0> DisplayArgs1<A0> displayMode(A builder, DisplayMode mode) {
+        return new DisplayArgs1<>(builder, mode);
     }
 
     interface Args2<A0, A1> {
@@ -281,5 +334,11 @@ public interface Messages {
         }
 
         Component build(A0 arg0, A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5);
+    }
+
+    enum DisplayMode {
+        NONE,
+        TEXT,
+        ACTION_BAR
     }
 }

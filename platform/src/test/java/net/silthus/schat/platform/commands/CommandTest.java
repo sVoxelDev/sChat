@@ -90,6 +90,10 @@ public abstract class CommandTest {
         sender.assertLastMessageIs(component);
     }
 
+    protected void assertLastActionbarIs(Component component) {
+        sender.assertLastActionbarIs(component);
+    }
+
     private void registerArgumentTypes() {
         registerChatterArgument(commandManager, chatterRepository);
         registerChannelArgument(commandManager, channelRepository, chatterRepository);

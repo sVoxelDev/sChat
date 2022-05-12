@@ -30,8 +30,12 @@ import cloud.commandframework.annotations.CommandMethod;
 import cloud.commandframework.annotations.CommandPermission;
 import cloud.commandframework.annotations.ProxiedBy;
 import cloud.commandframework.annotations.specifier.Greedy;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
+import net.silthus.schat.platform.config.Config;
 import net.silthus.schat.platform.sender.Sender;
 
 import static net.silthus.schat.commands.LeaveChannelCommand.leaveChannel;
@@ -41,7 +45,15 @@ import static net.silthus.schat.platform.locale.Messages.JOIN_CHANNEL_ERROR;
 import static net.silthus.schat.platform.locale.Messages.LEAVE_CHANNEL_ERROR;
 import static net.silthus.schat.platform.locale.Messages.LEFT_CHANNEL;
 
+@Accessors(fluent = true)
 public final class ChannelCommands implements Command {
+
+    @Getter(AccessLevel.PRIVATE)
+    private final Config config;
+
+    public ChannelCommands(Config config) {
+        this.config = config;
+    }
 
     @Override
     public void register(CommandManager<Sender> commandManager, AnnotationParser<Sender> parser) {
@@ -56,7 +68,7 @@ public final class ChannelCommands implements Command {
             if (chatter.isActiveChannel(channel))
                 return;
             if (setActiveChannel(chatter, channel).raiseError().wasSuccessful()) {
-                JOINED_CHANNEL.actionBar(sender, channel);
+                JOINED_CHANNEL.send(sender, channel);
             }
         } catch (Throwable e) {
             JOIN_CHANNEL_ERROR.send(sender, channel);

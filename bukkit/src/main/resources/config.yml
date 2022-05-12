@@ -131,3 +131,16 @@ view:
 # Wiki: https://schat.silthus.net/docs/configuration/reference#messenger
 #
 messenger: pluginmessage
+
+#
+# Change how some messages are presented to the user.
+# Available modes are:
+#   - NONE
+#   - ACTION_BAR
+#   - TEXT
+#
+message_modes:
+  JOINED_CHANNEL: ACTION_BAR
+  JOIN_CHANNEL_ERROR: TEXT
+  LEFT_CHANNEL: ACTION_BAR
+  LEAVE_CHANNEL_ERROR: TEXT

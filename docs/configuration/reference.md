@@ -43,6 +43,31 @@ messenger: "pluginmessage"
 !!! error "Invalid Messenger"
     An invalid messenger type will prevent your server from starting.
 
+## `message_modes`
+
+[:octicons-milestone-24: next][next] · `map` · :octicons-sync-24:
+
+Controls how some messages are displayed to the user. The following message modes can be configured:
+
+- `NONE`: *the message is not displayed*
+- `ACTION_BAR`: *the message is shown in the action bar*
+- `TEXT`: *the message is shown as text in the active channel*
+
+The mode of the following messages can currently be customized:
+
+| Message Key          | Default Mode |
+|----------------------|--------------|
+| `JOINED_CHANNEL`     | `ACTION_BAR` |
+| `JOIN_CHANNEL_ERROR` | `TEXT`       |
+| `LEFT_CHANNEL`       | `ACTION_BAR` |
+| `LEAVE_CHANNEL_ERROR`| `TEXT`       |
+
+??? example
+    ```yaml
+    message_modes:
+      JOINED_CHANNEL: TEXT
+    ```
+
 ## `view`
 
 The following settings control how the view is rendered to players.  
@@ -92,9 +117,7 @@ view:
 [channels]: channels.md
 [minimessage]: minimessage.md
 [next]: https://github.com/sVoxelDev/sChat/releases/latest
-[1.0.1]: https://github.com/sVoxelDev/sChat/releases/tag/v1.0.1
 [1.0.0]: https://github.com/sVoxelDev/sChat/releases/tag/v1.0.0
-[1.0.0]: https://github.com/sVoxelDev/sChat/releases/tag/1.0.0
 [pluginmessage]: https://www.spigotmc.org/wiki/bukkit-bungee-plugin-messaging-channel/
 [color]: minimessage.md#color
 [decoration]: minimessage.md#decoration

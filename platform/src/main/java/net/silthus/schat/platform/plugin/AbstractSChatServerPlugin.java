@@ -185,7 +185,7 @@ public abstract class AbstractSChatServerPlugin extends AbstractSChatPlugin {
     }
 
     private void registerNativeCommands(Commands commands) {
-        commands.register(new ChannelCommands());
+        commands.register(new ChannelCommands(config()));
         commands.register(new PrivateMessageCommands());
         commands.register(new AdminCommands(this::reload));
     }

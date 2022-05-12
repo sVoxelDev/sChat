@@ -23,13 +23,19 @@
  */
 package net.silthus.schat.platform.config;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.key.ConfigKey;
 import net.silthus.schat.platform.config.key.KeyedConfiguration;
+import net.silthus.schat.platform.locale.Messages;
 import net.silthus.schat.ui.view.ViewConfig;
+import org.jetbrains.annotations.NotNull;
 
 import static java.util.Objects.requireNonNullElse;
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.booleanKey;
@@ -37,6 +43,7 @@ import static net.silthus.schat.platform.config.key.ConfigKeyFactory.key;
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.lowercaseStringKey;
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.modifiable;
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.notReloadable;
+import static net.silthus.schat.platform.locale.Messages.DisplayMode.TEXT;
 
 public final class ConfigKeys {
 
@@ -54,10 +61,32 @@ public final class ConfigKeys {
         }
     });
     public static final ConfigKey<ViewConfig> VIEW_CONFIG = key(config -> config.get("view", ViewConfig.class));
+    public static final ConfigKey<Map<String, Messages.DisplayMode>> MESSAGE_MODES = key(ConfigKeys::loadMessageModes);
+
     /**
      * A list of the keys defined in this class.
      */
     private static final List<? extends ConfigKey<?>> KEYS = KeyedConfiguration.initialise(ConfigKeys.class);
+
+    @NotNull
+    private static HashMap<String, Messages.DisplayMode> loadMessageModes(ConfigurationAdapter config) {
+        final HashMap<String, Messages.DisplayMode> messageModes = new HashMap<>();
+        for (String key : config.keys("message_modes", new ArrayList<>())) {
+            final Messages.DisplayMode value = requireNonNullElse(config.get("message_modes." + key, Messages.DisplayMode.class), TEXT);
+            for (Field field : Messages.class.getDeclaredFields()) {
+                if (field.getName().equalsIgnoreCase(key)) {
+                    try {
+                        final Method method = field.getType().getMethod("mode", Messages.DisplayMode.class);
+                        method.invoke(field.get(null), value);
+                        messageModes.put(key, value);
+                    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
+        return messageModes;
+    }
 
     private ConfigKeys() {
     }

@@ -20,3 +20,5 @@ channels:
     settings:
       global: true
   invalid: null
+message_modes:
+  JOINED_CHANNEL: TEXT

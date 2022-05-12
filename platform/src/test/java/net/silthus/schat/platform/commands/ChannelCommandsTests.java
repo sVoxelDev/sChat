@@ -29,6 +29,7 @@ import net.silthus.schat.channel.Channel;
 import net.silthus.schat.eventbus.EventBusMock;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.platform.commands.parser.ChannelArgument;
+import net.silthus.schat.platform.config.TestConfig;
 import net.silthus.schat.platform.sender.Sender;
 import net.silthus.schat.policies.JoinChannelPolicy;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +42,8 @@ import org.junit.jupiter.api.Test;
 import static net.kyori.adventure.text.Component.text;
 import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
+import static net.silthus.schat.platform.config.TestConfig.testConfig;
+import static net.silthus.schat.platform.locale.Messages.JOINED_CHANNEL;
 import static net.silthus.schat.platform.locale.Messages.JOIN_CHANNEL_ERROR;
 import static net.silthus.schat.platform.locale.Messages.LEFT_CHANNEL;
 import static net.silthus.schat.policies.JoinChannelPolicy.DENY;
@@ -50,12 +53,14 @@ class ChannelCommandsTests extends CommandTest {
 
     private Channel channel;
     private EventBusMock eventBus;
+    private TestConfig config;
 
     @BeforeEach
     void setUp() {
-        commands.register(new ChannelCommands());
-        channel = addRandomChannel();
         eventBus = EventBusMock.eventBusMock();
+        config = testConfig(eventBus);
+        commands.register(new ChannelCommands(config));
+        channel = addRandomChannel();
     }
 
     @AfterEach
@@ -94,6 +99,7 @@ class ChannelCommandsTests extends CommandTest {
                 assertThat(chatter.isJoined(channel)).isTrue();
                 assertThat(chatter.activeChannel())
                     .isPresent().get().isEqualTo(channel);
+                assertLastMessageIs(JOINED_CHANNEL.build(channel));
             }
 
             @Nested class given_join_fails {
@@ -140,7 +146,7 @@ class ChannelCommandsTests extends CommandTest {
         void can_leave_channel() {
             executeLeaveCommand();
             chatter.assertNotJoinedChannel(channel);
-            assertLastMessageIs(LEFT_CHANNEL.build(channel));
+            assertLastActionbarIs(LEFT_CHANNEL.build(channel));
         }
     }
 
