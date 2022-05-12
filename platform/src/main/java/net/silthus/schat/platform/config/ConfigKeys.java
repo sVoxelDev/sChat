@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.java.Log;
 import net.silthus.schat.platform.config.adapter.ConfigurationAdapter;
 import net.silthus.schat.platform.config.key.ConfigKey;
 import net.silthus.schat.platform.config.key.KeyedConfiguration;
@@ -45,6 +46,7 @@ import static net.silthus.schat.platform.config.key.ConfigKeyFactory.modifiable;
 import static net.silthus.schat.platform.config.key.ConfigKeyFactory.notReloadable;
 import static net.silthus.schat.platform.locale.Messages.DisplayMode.TEXT;
 
+@Log(topic = "sChat:config")
 public final class ConfigKeys {
 
     public static final ConfigKey<String> MESSENGER = notReloadable(lowercaseStringKey("messenger", "pluginmessage"));
@@ -76,11 +78,11 @@ public final class ConfigKeys {
             for (Field field : Messages.class.getDeclaredFields()) {
                 if (field.getName().equalsIgnoreCase(key)) {
                     try {
-                        final Method method = field.getType().getMethod("mode", Messages.DisplayMode.class);
+                        final Method method = field.getType().getDeclaredMethod("mode", Messages.DisplayMode.class);
                         method.invoke(field.get(null), value);
                         messageModes.put(key, value);
                     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                        throw new RuntimeException(e);
+                        log.warning(key + " is not a valid message type whose display mode can be modified.");
                     }
                 }
             }

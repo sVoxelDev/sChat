@@ -122,7 +122,7 @@ public interface Messages {
     /**
      * Unable to join the channel: {0}.
      */
-    Args1<Channel> JOIN_CHANNEL_ERROR = displayMode(channel -> prefixed(translatable()
+    DisplayArgs1<Channel> JOIN_CHANNEL_ERROR = displayMode(channel -> prefixed(translatable()
         .key("schat.command.channel.join.error")
         .color(RED)
         .args(channel.displayName())
@@ -132,7 +132,7 @@ public interface Messages {
     /**
      * Left the channel: {0}.
      */
-    Args1<Channel> LEFT_CHANNEL = displayMode(channel -> prefixed(translatable()
+    DisplayArgs1<Channel> LEFT_CHANNEL = displayMode(channel -> prefixed(translatable()
         .key("schat.command.channel.leave.success")
         .color(GREEN)
         .args(channel.displayName())
@@ -142,7 +142,7 @@ public interface Messages {
     /**
      * Unable to leave the channel: {0}.
      */
-    Args1<Channel> LEAVE_CHANNEL_ERROR = displayMode(channel -> prefixed(translatable()
+    DisplayArgs1<Channel> LEAVE_CHANNEL_ERROR = displayMode(channel -> prefixed(translatable()
         .key("schat.command.channel.leave.error")
         .color(RED)
         .args(channel.displayName())
@@ -239,10 +239,10 @@ public interface Messages {
         private final Args0 builder;
         private DisplayMode mode;
 
-        public void display(Sender sender) {
+        public void send(Sender sender) {
             switch (mode) {
                 case ACTION_BAR -> actionBar(sender);
-                case TEXT -> send(sender);
+                case TEXT -> Args0.super.send(sender);
             }
         }
 
