@@ -24,12 +24,15 @@
 package net.silthus.schat.chatter;
 
 import java.util.UUID;
+import java.util.function.BiConsumer;
+import net.silthus.schat.pointer.Pointers;
 
 /**
  * Used to create new instances of a chatter based on the type of the implementing platform.
  *
  * @since 1.0.0
  */
+@FunctionalInterface
 public interface ChatterFactory {
 
     /**
@@ -40,4 +43,15 @@ public interface ChatterFactory {
      * @since 1.0.0
      */
     Chatter createChatter(UUID id);
+
+    /**
+     * Adds a pointer to every chatter that is created by the factory.
+     *
+     * @param pointer the pointer to add
+     * @return the factory
+     * @since next
+     */
+    default ChatterFactory addPointer(BiConsumer<UUID, Pointers.Builder> pointer) {
+        return this;
+    }
 }

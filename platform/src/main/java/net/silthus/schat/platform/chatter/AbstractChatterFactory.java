@@ -23,7 +23,10 @@
  */
 package net.silthus.schat.platform.chatter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.identity.Identity;
@@ -35,12 +38,14 @@ import static net.silthus.schat.chatter.Chatter.chatterBuilder;
 
 public abstract class AbstractChatterFactory implements ChatterFactory {
 
+    private final List<BiConsumer<UUID, Pointers.Builder>> additionalPointers = new ArrayList<>();
+
     @Override
     public final Chatter createChatter(UUID id) {
         return chatterBuilder(createIdentity(id))
             .permissionHandler(createPermissionHandler(id))
             .messageHandler(createMessageHandler(id))
-            .pointers(builder -> buildPointers(id, builder))
+            .pointers(builder -> createPointers(id, builder))
             .create();
     }
 
@@ -50,6 +55,17 @@ public abstract class AbstractChatterFactory implements ChatterFactory {
     protected abstract Chatter.PermissionHandler createPermissionHandler(UUID id);
 
     protected abstract Chatter.MessageHandler createMessageHandler(UUID id);
+
+    @Override
+    public final ChatterFactory addPointer(BiConsumer<UUID, Pointers.Builder> pointer) {
+        this.additionalPointers.add(pointer);
+        return this;
+    }
+
+    private void createPointers(UUID id, Pointers.Builder pointers) {
+        additionalPointers.forEach(consumer -> consumer.accept(id, pointers));
+        buildPointers(id, pointers);
+    }
 
     /**
      * Add platform specific pointers by overriding this method.
