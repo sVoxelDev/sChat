@@ -82,7 +82,7 @@ public final class ChannelCommands implements Command {
         if (!chatter.isJoined(channel))
             return;
         if (leaveChannel(chatter, channel).wasSuccessful()) {
-            LEFT_CHANNEL.actionBar(sender, channel);
+            LEFT_CHANNEL.send(sender, channel);
         } else {
             LEAVE_CHANNEL_ERROR.send(sender, channel);
         }

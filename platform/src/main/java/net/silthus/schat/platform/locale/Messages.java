@@ -221,10 +221,6 @@ public interface Messages {
             sender.sendMessage(build());
         }
 
-        default void actionBar(Sender sender) {
-            sender.sendActionBar(build());
-        }
-
         default void send(Chatter chatter) {
             message(build()).to(chatter).send();
         }
@@ -246,6 +242,10 @@ public interface Messages {
             }
         }
 
+        protected void actionBar(Sender sender) {
+            sender.sendActionBar(build());
+        }
+
         @Override
         public Component build() {
             return builder.build();
@@ -259,10 +259,6 @@ public interface Messages {
     interface Args1<A0> {
         default void send(Sender sender, A0 arg0) {
             sender.sendMessage(build(arg0));
-        }
-
-        default void actionBar(Sender sender, A0 arg0) {
-            sender.sendActionBar(build(arg0));
         }
 
         default void send(Chatter chatter, A0 arg0) {
@@ -284,6 +280,10 @@ public interface Messages {
                 case ACTION_BAR -> actionBar(sender, arg0);
                 case TEXT -> Args1.super.send(sender, arg0);
             }
+        }
+
+        protected void actionBar(Sender sender, A0 arg0) {
+            sender.sendActionBar(build(arg0));
         }
 
         @Override
