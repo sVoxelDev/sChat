@@ -31,6 +31,7 @@ import net.silthus.schat.events.chatter.ChatterChangedActiveChannelEvent;
 import net.silthus.schat.events.chatter.ChatterReceivedMessageEvent;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.message.Message;
+import net.silthus.schat.pointer.Pointer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -38,9 +39,11 @@ import org.junit.jupiter.api.Test;
 
 import static net.silthus.schat.AssertionHelper.assertNPE;
 import static net.silthus.schat.channel.ChannelHelper.randomChannel;
+import static net.silthus.schat.chatter.Chatter.chatterBuilder;
 import static net.silthus.schat.eventbus.EventBusMock.eventBusMock;
 import static net.silthus.schat.identity.IdentityHelper.randomIdentity;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
+import static net.silthus.schat.pointer.Pointer.pointer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
@@ -306,7 +309,7 @@ class ChatterTest {
 
             @BeforeEach
             void setUp() {
-                chatter = Chatter.chatterBuilder(randomIdentity()).permissionHandler(permission -> {
+                chatter = chatterBuilder(randomIdentity()).permissionHandler(permission -> {
                     permissionHandlerCalled = true;
                     return false;
                 }).create();
@@ -317,6 +320,27 @@ class ChatterTest {
                 chatter.hasPermission("test");
                 assertThat(permissionHandlerCalled).isTrue();
             }
+        }
+    }
+
+    @Nested class pointers {
+        @Test
+        void additional_pointers_are_accessible() {
+            final Pointer<String> pointer = pointer(String.class, "test");
+            Chatter chatter = chatterBuilder(randomIdentity())
+                .pointers(p -> p.withStatic(pointer, "TEST"))
+                .create();
+            assertThat(chatter.get(pointer))
+                .isPresent().get().isEqualTo("TEST");
+        }
+
+        @Test
+        void system_pointers_cannot_be_overwritten() {
+            final Identity identity = randomIdentity();
+            final Chatter chatter = chatterBuilder(identity)
+                .pointers(builder -> builder.withStatic(Identity.NAME, "invalid"))
+                .create();
+            assertThat(chatter.name()).isEqualTo(identity.name());
         }
     }
 }

@@ -26,6 +26,7 @@ package net.silthus.schat.chatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.channel.Channel;
@@ -42,6 +43,7 @@ import net.silthus.schat.message.MessageSource;
 import net.silthus.schat.message.MessageTarget;
 import net.silthus.schat.message.Messages;
 import net.silthus.schat.pointer.Pointer;
+import net.silthus.schat.pointer.Pointers;
 import net.silthus.schat.policies.JoinChannelPolicy;
 import net.silthus.schat.policies.LeaveChannelPolicy;
 import net.silthus.schat.repository.Entity;
@@ -246,6 +248,21 @@ public sealed interface Chatter extends Entity<UUID>, MessageTarget, Identified,
          */
         @ApiStatus.Internal
         @NotNull Builder permissionHandler(@NonNull PermissionHandler permissionHandler);
+
+        /**
+         * Sets additional pointers provided by the created chatter.
+         *
+         * <p>An example would be adding a dynamic pointer to the current location of the chatter,
+         * allowing special channels to act upon the location of their members.</p>
+         *
+         * <p>This should be done by the {@link ChatterFactory} of the implementing platform.</p>
+         *
+         * @param pointers the pointers builder to consume
+         * @return this builder
+         * @since next
+         */
+        @ApiStatus.Internal
+        @NotNull Builder pointers(Consumer<Pointers.Builder> pointers);
 
         /**
          * Creates the chatter.

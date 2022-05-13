@@ -27,6 +27,7 @@ import java.util.UUID;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.identity.Identity;
+import net.silthus.schat.pointer.Pointers;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.chatter.Chatter.chatterBuilder;
@@ -38,6 +39,7 @@ public abstract class AbstractChatterFactory implements ChatterFactory {
         return chatterBuilder(createIdentity(id))
             .permissionHandler(createPermissionHandler(id))
             .messageHandler(createMessageHandler(id))
+            .pointers(builder -> buildPointers(id, builder))
             .create();
     }
 
@@ -48,4 +50,6 @@ public abstract class AbstractChatterFactory implements ChatterFactory {
 
     protected abstract Chatter.MessageHandler createMessageHandler(UUID id);
 
+    protected void buildPointers(UUID id, Pointers.Builder pointers) {
+    }
 }

@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -85,7 +86,7 @@ non-sealed class ChatterImpl implements Chatter {
         this.eventBus = builder.eventBus();
         this.messageHandler = builder.messageHandler;
         this.permissionHandler = builder.permissionHandler();
-        this.pointers = Pointers.pointersBuilder()
+        this.pointers = builder.pointers()
             .withForward(Identity.ID, identity(), Identity.ID)
             .withForward(Identity.NAME, identity(), Identity.NAME)
             .withForward(Identity.DISPLAY_NAME, identity(), Identity.DISPLAY_NAME)
@@ -191,9 +192,16 @@ non-sealed class ChatterImpl implements Chatter {
         };
         private @NonNull PermissionHandler permissionHandler = permission -> false;
         private @NonNull EventBus eventBus = EventBus.empty();
+        private @NonNull Pointers.Builder pointers = Pointers.pointersBuilder();
 
         private Builder(Identity identity) {
             this.identity = identity;
+        }
+
+        @Override
+        public Chatter.@NotNull Builder pointers(Consumer<Pointers.Builder> pointers) {
+            pointers.accept(this.pointers);
+            return this;
         }
 
         @Override
