@@ -29,12 +29,14 @@ import net.silthus.schat.bukkit.BukkitTests;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.commands.SendMessageCommand;
 import net.silthus.schat.eventbus.EventBus;
+import net.silthus.schat.util.Location;
 import org.bukkit.OfflinePlayer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.silthus.schat.util.Location.LOCATION;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BukkitChatterFactoryTests extends BukkitTests {
@@ -63,6 +65,28 @@ class BukkitChatterFactoryTests extends BukkitTests {
             return create(player.getUniqueId());
         }
 
+        private void assertLocationIs(org.bukkit.Location l) {
+            assertThat(createChatter().get(LOCATION))
+                .isPresent().get()
+                .extracting(
+                    Location::x,
+                    Location::y,
+                    Location::z,
+                    Location::pitch,
+                    Location::yaw,
+                    location -> location.world().id(),
+                    location -> location.world().name()
+                ).contains(
+                    l.getX(),
+                    l.getY(),
+                    l.getZ(),
+                    l.getPitch(),
+                    l.getYaw(),
+                    l.getWorld().getUID(),
+                    l.getWorld().getName()
+                );
+        }
+
         @Test
         void then_chatter_name_is_player_name() {
             assertThat(createChatter().name()).isEqualTo(player.getName());
@@ -72,6 +96,18 @@ class BukkitChatterFactoryTests extends BukkitTests {
         void then_chatter_display_name_is_player_display_name() {
             player.setDisplayName("Bob");
             assertThat(createChatter().displayName()).isEqualTo(text("Bob"));
+        }
+
+        @Test
+        void then_chatter_location_is_player_location() {
+            assertLocationIs(player.getLocation());
+        }
+
+        @Test
+        void when_location_changes_then_chatter_location_changes() {
+            final org.bukkit.Location l = new org.bukkit.Location(player.getWorld(), 12, 34, 56);
+            player.teleport(l);
+            assertLocationIs(l);
         }
 
         @Test

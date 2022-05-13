@@ -28,6 +28,7 @@ import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.chatter.ChatterFactory;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.pointer.Pointers;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import static net.silthus.schat.chatter.Chatter.chatterBuilder;
@@ -50,6 +51,14 @@ public abstract class AbstractChatterFactory implements ChatterFactory {
 
     protected abstract Chatter.MessageHandler createMessageHandler(UUID id);
 
+    /**
+     * Add platform specific pointers by overriding this method.
+     *
+     * @param id the id of the chatter being created
+     * @param pointers the additional pointers to add to the chatter
+     * @since next
+     */
+    @ApiStatus.OverrideOnly
     protected void buildPointers(UUID id, Pointers.Builder pointers) {
     }
 }

@@ -29,11 +29,17 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.silthus.schat.chatter.Chatter;
 import net.silthus.schat.identity.Identity;
 import net.silthus.schat.platform.chatter.AbstractChatterFactory;
+import net.silthus.schat.pointer.Pointers;
+import net.silthus.schat.util.Location;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static net.silthus.schat.bukkit.adapter.BukkitIdentityAdapter.identity;
 import static net.silthus.schat.bukkit.protocollib.ChatPacketListener.MESSAGE_MARKER;
+import static net.silthus.schat.util.Location.LOCATION;
 import static org.bukkit.Bukkit.getOfflinePlayer;
 
 public final class BukkitChatterFactory extends AbstractChatterFactory {
@@ -52,7 +58,7 @@ public final class BukkitChatterFactory extends AbstractChatterFactory {
 
     @Override
     protected Chatter.PermissionHandler createPermissionHandler(UUID id) {
-        return permission -> Optional.ofNullable(Bukkit.getPlayer(id))
+        return permission -> player(id)
             .map(player -> player.hasPermission(permission))
             .orElse(false);
     }
@@ -62,4 +68,41 @@ public final class BukkitChatterFactory extends AbstractChatterFactory {
         return msg -> audiences.player(id).sendMessage(msg.append(MESSAGE_MARKER));
     }
 
+    @Override
+    protected void buildPointers(UUID id, Pointers.Builder pointers) {
+        pointers.withDynamic(LOCATION, () -> player(id).map(this::getLocation).orElse(null));
+    }
+
+    @NotNull
+    private Location getLocation(Player player) {
+        return fromBukkitLocation(player.getLocation());
+    }
+
+    @NotNull
+    private Location fromBukkitLocation(org.bukkit.Location l) {
+        return new Location(
+            fromBukkitWorld(l.getWorld()),
+            l.getX(),
+            l.getY(),
+            l.getZ(),
+            l.getYaw(),
+            l.getPitch()
+        );
+    }
+
+    @Nullable
+    private Location.World fromBukkitWorld(@Nullable World world) {
+        if (world == null)
+            return null;
+        else
+            return new Location.World(
+                world.getUID(),
+                world.getName()
+            );
+    }
+
+    @NotNull
+    private Optional<Player> player(UUID id) {
+        return Optional.ofNullable(Bukkit.getPlayer(id));
+    }
 }
