@@ -13,7 +13,7 @@ velocity = "3.0.1"
 
 protocollib = "4.7.0"
 bstats = "3.0.0"
-mockbukkit = "1.24.1"
+mockbukkit = "1.26.1"
 placeholderapi = "2.11.1"
 
 checkerframework = "3.22.0"
