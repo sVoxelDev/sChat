@@ -44,7 +44,6 @@ import net.silthus.schat.events.channel.ChatterLeftChannelEvent;
 import net.silthus.schat.events.chatter.ChatterChangedActiveChannelEvent;
 import net.silthus.schat.events.chatter.ChatterReceivedMessageEvent;
 import net.silthus.schat.message.Message;
-import net.silthus.schat.pointer.Setting;
 import net.silthus.schat.ui.util.ViewHelper;
 import net.silthus.schat.ui.view.View;
 import net.silthus.schat.ui.view.ViewConfig;
@@ -56,17 +55,16 @@ import static net.kyori.adventure.text.Component.newline;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.JoinConfiguration.newlines;
 import static net.silthus.schat.channel.ChannelSettings.PRIVATE;
-import static net.silthus.schat.pointer.Setting.setting;
 
 @Getter
 @Accessors(fluent = true)
 public class TabbedChannelsView implements View {
 
-    public static final Setting<JoinConfiguration> CHANNEL_JOIN_CONFIG = setting(JoinConfiguration.class, "channel_join_config", JoinConfiguration.builder()
+    public static final JoinConfiguration CHANNEL_JOIN_CONFIG = JoinConfiguration.builder()
         .prefix(text("| "))
         .separator(text(" | "))
         .suffix(text(" |"))
-        .build());
+        .build();
 
     private final Chatter chatter;
     private final ViewConfig config;
@@ -161,7 +159,7 @@ public class TabbedChannelsView implements View {
         if (tabs.isEmpty())
             return Component.empty();
         else
-            return join(config().channelJoinConfig(), tabs);
+            return join(CHANNEL_JOIN_CONFIG, tabs);
     }
 
     private void addTab(Channel channel) {

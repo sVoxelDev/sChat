@@ -38,6 +38,7 @@ import static net.silthus.schat.channel.ChannelHelper.channelWith;
 import static net.silthus.schat.eventbus.EventBusMock.eventBusMock;
 import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.ui.placeholder.ReplacementProvider.REPLACED_MESSAGE_FORMAT;
+import static net.silthus.schat.ui.views.tabbed.TabFormatConfig.TAB_FORMAT_CONFIG;
 import static net.silthus.schat.util.gson.GsonProvider.gsonProvider;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -65,7 +66,7 @@ class ViewModuleTest {
 
     @Test
     void on_sendChannelMessage_event_message_is_rendered_and_set() {
-        final Message message = sendMessage(channelWith(ViewConfig.FORMAT_CONFIG, new TabFormatConfig().messageFormat(new MiniMessageFormat("%test%: <text>"))));
+        final Message message = sendMessage(channelWith(TAB_FORMAT_CONFIG, new TabFormatConfig().messageFormat(new MiniMessageFormat("%test%: <text>"))));
         assertThat(message.get(REPLACED_MESSAGE_FORMAT)).isEqualTo("success: <text>");
     }
 

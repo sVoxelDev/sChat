@@ -24,7 +24,6 @@
 package net.silthus.schat.ui.views.tabbed;
 
 import lombok.SneakyThrows;
-import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.flattener.ComponentFlattener;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags;
@@ -63,8 +62,8 @@ import static net.silthus.schat.message.Message.message;
 import static net.silthus.schat.message.MessageHelper.randomMessage;
 import static net.silthus.schat.message.MessageSource.of;
 import static net.silthus.schat.ui.placeholder.ReplacementProvider.REPLACED_MESSAGE_FORMAT;
-import static net.silthus.schat.ui.view.ViewConfig.FORMAT_CONFIG;
 import static net.silthus.schat.ui.views.Views.tabbedChannels;
+import static net.silthus.schat.ui.views.tabbed.TabFormatConfig.TAB_FORMAT_CONFIG;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -260,7 +259,7 @@ class TabbedChannelsViewTests {
             class and_different_format_is_used {
                 @BeforeEach
                 void setUp() {
-                    channel.set(FORMAT_CONFIG, new TabFormatConfig().activeColor(RED));
+                    channel.set(TAB_FORMAT_CONFIG, new TabFormatConfig().activeColor(RED));
                 }
 
                 @Test
@@ -441,13 +440,13 @@ class TabbedChannelsViewTests {
 
                 @Test
                 void given_highlight_unread_is_false_then_unread_indicator_is_hidden() {
-                    channelTwo.set(FORMAT_CONFIG, new TabFormatConfig().highlightUnread(false));
+                    channelTwo.set(TAB_FORMAT_CONFIG, new TabFormatConfig().highlightUnread(false));
                     assertColorOnlyViewContains("<gray>two</gray>");
                 }
 
                 @Test
                 void given_show_unread_counter_is_false_then_counter_is_hidden() {
-                    channelTwo.set(FORMAT_CONFIG, new TabFormatConfig().showUnreadCount(false));
+                    channelTwo.set(TAB_FORMAT_CONFIG, new TabFormatConfig().showUnreadCount(false));
                     assertViewDoesNotContain("<red>₂</red>");
                 }
             }
@@ -479,20 +478,6 @@ class TabbedChannelsViewTests {
                 }
             }
         }
-
-        @Nested
-        class with_custom_channel_join_config_format {
-
-            @BeforeEach
-            void setUp() {
-                view.config().channelJoinConfig(JoinConfiguration.builder().separator(text(" - ")).build());
-            }
-
-            @Test
-            void uses_custom_format() {
-                assertTextRenders("❌one - ❌two");
-            }
-        }
     }
 
     @Nested
@@ -504,7 +489,7 @@ class TabbedChannelsViewTests {
                 "zzz",
                 set(PRIORITY, 10)
             );
-            channel.set(FORMAT_CONFIG, new TabFormatConfig().messageFormat((v, message) -> message.get(Message.SOURCE)
+            channel.set(TAB_FORMAT_CONFIG, new TabFormatConfig().messageFormat((v, message) -> message.get(Message.SOURCE)
                 .orElse(MessageSource.nil())
                 .displayName()
                 .append(text(": ").append(message.getOrDefault(Message.TEXT, empty())))

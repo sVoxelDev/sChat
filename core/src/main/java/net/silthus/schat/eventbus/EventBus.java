@@ -109,6 +109,16 @@ public interface EventBus extends AutoCloseable {
     @NonNull @Unmodifiable Set<EventSubscription<?>> register(Object listener);
 
     /**
+     * Unregisters the given listener from this event bus.
+     *
+     * <p>All event handlers that are annotated with {@link Subscribe} in the listener are unregistered.</p>
+     *
+     * @param listener the listener to unregister
+     * @since next
+     */
+    void unregister(Object listener);
+
+    /**
      * Gets a set of all registered handlers for a given event.
      *
      * @param eventClass the event to find handlers for

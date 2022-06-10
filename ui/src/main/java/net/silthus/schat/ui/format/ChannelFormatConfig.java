@@ -21,36 +21,43 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-package net.silthus.schat.ui.view;
+package net.silthus.schat.ui.format;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
 import net.kyori.adventure.text.Component;
 import net.silthus.schat.message.Message;
 import net.silthus.schat.message.MessageSource;
-import net.silthus.schat.ui.format.Format;
-import net.silthus.schat.ui.views.tabbed.TabFormatConfig;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.translatable;
+import static net.kyori.adventure.text.format.NamedTextColor.DARK_AQUA;
 import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
 import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 @Data
 @Accessors(fluent = true)
 @ConfigSerializable
-public class ViewConfig {
+public class ChannelFormatConfig {
 
-    @Setting("height")
-    private int height = 100;
-    @Setting("system_message_format")
-    private Format systemMessageFormat = (view, msg) ->
+    /**
+     * Controls the formatting of a channel tab.
+     */
+    public static final net.silthus.schat.pointer.Setting<ChannelFormatConfig> FORMAT_CONFIG = net.silthus.schat.pointer.Setting.dynamicSetting(ChannelFormatConfig.class, "format", ChannelFormatConfig::new);
+
+    @Setting("message_format")
+    private Format messageFormat = (view, msg) ->
         msg.get(Message.SOURCE)
             .filter(MessageSource.IS_NOT_NIL)
             .map(identity -> identity.displayName().colorIfAbsent(YELLOW).append(text(": ", GRAY)))
             .orElse(Component.empty())
-            .append(((Message) msg).text());
-    @Setting("private_chat_format")
-    private TabFormatConfig privateChatFormat = new TabFormatConfig();
+            .append(((Message) msg).text().colorIfAbsent(GRAY));
+
+    @Setting("self_message_format")
+    private Format selfMessageFormat = (view, msg) ->
+        translatable("schat.chat.message.you").color(DARK_AQUA)
+            .append(text(": ", GRAY))
+            .append(((Message) msg).text().colorIfAbsent(GRAY));
 }

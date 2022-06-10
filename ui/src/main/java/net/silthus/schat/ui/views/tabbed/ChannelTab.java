@@ -55,7 +55,7 @@ import static net.kyori.adventure.text.format.NamedTextColor.RED;
 import static net.silthus.schat.channel.ChannelSettings.FORCED;
 import static net.silthus.schat.ui.util.ViewHelper.formatMessage;
 import static net.silthus.schat.ui.util.ViewHelper.subscriptOf;
-import static net.silthus.schat.ui.view.ViewConfig.FORMAT_CONFIG;
+import static net.silthus.schat.ui.views.tabbed.TabFormatConfig.TAB_FORMAT_CONFIG;
 
 @SuppressWarnings("CheckStyle")
 @Getter
@@ -93,7 +93,7 @@ public class ChannelTab implements Tab {
     }
 
     private TabFormatConfig config() {
-        return channel().get(FORMAT_CONFIG);
+        return channel().get(TAB_FORMAT_CONFIG);
     }
 
     @Override
