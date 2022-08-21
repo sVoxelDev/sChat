@@ -47,7 +47,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: deblockt/cucumber-report-annotations-action@v1.8
+      - uses: deblockt/cucumber-report-annotations-action@v1.10
         with:
           access-token: ${{ secrets.GITHUB_TOKEN }}
           path: "**/cucumber-report.json"
