@@ -5,7 +5,7 @@ gradle-plugin-lombok = "6.5.1"
 gradle-plugin-shadow = "7.1.2"
 gradle-plugin-cucumber = "0.0.11"
 
-checkstyle-plugin-stylecheck = "0.1"
+checkstyle-plugin-stylecheck = "0.2.0"
 
 minecraft = "1.18.1-R0.1-SNAPSHOT"
 bungeecord = "1.16-R0.5-SNAPSHOT"
