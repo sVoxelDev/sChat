@@ -26,4 +26,4 @@ six==1.16.0
 smmap==5.0.0
 verspec==0.1.0
 watchdog==2.1.9
-zipp==3.9.0
+zipp==3.10.0
