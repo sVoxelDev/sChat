@@ -11,7 +11,7 @@ minecraft = "1.18.1-R0.1-SNAPSHOT"
 bungeecord = "1.16-R0.5-SNAPSHOT"
 velocity = "3.0.1"
 
-protocollib = "4.7.0"
+protocollib = "4.8.0"
 bstats = "3.0.0"
 mockbukkit = "1.26.1"
 placeholderapi = "2.11.2"
