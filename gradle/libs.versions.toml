@@ -1,7 +1,7 @@
 [versions]
 gradle-plugin-indra = "2.2.0"
 gradle-plugin-testlog = "3.2.0"
-gradle-plugin-lombok = "6.6"
+gradle-plugin-lombok = "6.6.1"
 gradle-plugin-shadow = "7.1.2"
 gradle-plugin-cucumber = "0.0.11"
 
