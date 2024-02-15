@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: sChat
+  annotations:
+    github.com/project-slug: sVoxelDev/sChat
+spec:
+  type: other
+  lifecycle: unknown
+  owner: guests
