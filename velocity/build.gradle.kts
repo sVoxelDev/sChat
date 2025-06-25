@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id("schat.api")
     id("schat.shadow")
@@ -14,7 +16,7 @@ dependencies {
     implementation(libs.bstats.velocity)
 }
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+tasks.withType<ShadowJar> {
     dependencies {
         include(dependency("net.kyori:event-api:"))
         include(dependency("net.kyori:adventure-serializer-configurate4:"))

@@ -1,9 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import gradle.kotlin.dsl.accessors._9bc3b6a3f384e4e728217dbc108ce9f4.build
-import gradle.kotlin.dsl.accessors._9bc3b6a3f384e4e728217dbc108ce9f4.publish
 
 plugins {
-    id("com.github.johnrengelman.shadow")
+    id("com.gradleup.shadow")
 }
 
 tasks.withType<ShadowJar> {
@@ -27,10 +25,12 @@ tasks.withType<ShadowJar> {
     relocate("org.bstats", "$lib.bstats")
 }
 
-tasks.build {
+/*
+tasks.named("build") {
     dependsOn(tasks.withType<ShadowJar>())
 }
 
-tasks.publish {
+tasks.named("publish") {
     dependsOn(tasks.withType<ShadowJar>())
 }
+*/

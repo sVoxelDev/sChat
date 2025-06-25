@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 import net.silthus.schat.channel.Channel;
 import net.silthus.schat.chatter.Chatter;
@@ -92,7 +93,7 @@ public interface Messages {
         // /____  >\______  |___|  (____  |__|
         //      \/        \/     \/     \/
 
-        return join(newline(),
+        return join(JoinConfiguration.builder().build(), newline(),
             empty(),
             text("       _________ .__            __   "),
             text("  _____\\_   ___ \\|  |__ _____ _/  |_ "),

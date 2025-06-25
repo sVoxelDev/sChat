@@ -1,5 +1,4 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
-import net.kyori.indra.repository.sonatypeSnapshots
 import org.gradle.accessors.dm.LibrariesForLibs
 
 plugins {
@@ -7,7 +6,7 @@ plugins {
     id("net.kyori.indra")
     id("net.kyori.indra.crossdoc")
     id("net.kyori.indra.checkstyle")
-    id("net.kyori.indra.license-header")
+    //id("org.cadixdev.licenser")
     id("com.adarshr.test-logger")
     id("io.freefair.lombok")
     java
@@ -15,6 +14,11 @@ plugins {
     `java-test-fixtures`
     jacoco
 }
+
+/*
+license {
+    header = project.rootProject.file("license_header.txt")
+}*/
 
 indra {
     checkstyle("9.3")
@@ -37,7 +41,7 @@ configurations {
 
 repositories {
     mavenCentral()
-    sonatypeSnapshots()
+    sonatype.ossSnapshots()
     maven("https://repo.velocitypowered.com/snapshots/") {
         content {
             includeGroup("com.velocitypowered")
@@ -89,6 +93,7 @@ tasks {
         options.compilerArgs.add("-parameters")
     }
 
+
     processResources {
         project.setProperty("version", version)
         filesMatching("*.properties") {
@@ -101,6 +106,7 @@ tasks {
             expand("version" to version)
         }
     }
+
 
     javadoc {
         val opt = options as StandardJavadocDocletOptions
